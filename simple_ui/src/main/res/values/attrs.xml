@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="RecyclerScrollStateView">
+        <attr name="edgeReachThreshold" format="integer" />
+        <attr name="scrollDirectionThreshold" format="integer" />
+    </declare-styleable>
+    
+    <declare-styleable name="RecyclerView">
+        <attr name="layoutManager" format="string" />
+        <attr name="orientation" format="enum">
+            <enum name="vertical" value="0" />
+            <enum name="horizontal" value="1" />
+        </attr>
+        <attr name="spanCount" format="integer" />
+        <attr name="reverseLayout" format="boolean" />
+    </declare-styleable>
+
+</resources>

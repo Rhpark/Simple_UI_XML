@@ -9,6 +9,7 @@ pluginManagement {
         }
         mavenCentral()
         gradlePluginPortal()
+        maven( url = "https://jitpack.io")
     }
 }
 dependencyResolutionManagement {
@@ -16,9 +17,10 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven( url = "https://jitpack.io")
     }
 }
 
 rootProject.name = "SimpleUI_XML"
 include(":app")
- 
+include(":simple_ui")
