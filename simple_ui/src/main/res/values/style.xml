@@ -2289,7 +2289,7 @@
 
     <!-- Base RadioGroup Setting -->
     <!-- ex) RadioGroup.(width,height).(orientation) -->
-    <style name="RadioGroup" parent="Widget.AppCompat.LinearLayout" />
+    <style name="RadioGroup" />
 
     <style name="RadioGroup.MatchWarp">
         <item name="android:layout_width">match_parent</item>
@@ -2400,6 +2400,58 @@
     </style>
 
     <style name="RecyclerView" />
+
+    <!-- MatchWarp -->
+    <style name="RecyclerView.MatchWarp">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <!-- AllMatch -->
+    <style name="RecyclerView.AllMatch">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+    </style>
+
+    <!-- AllWarp -->
+    <style name="RecyclerView.AllWarp">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <!-- WarpMatch -->
+    <style name="RecyclerView.WarpMatch">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
+    </style>
+
+    <!-- MatchWeight -->
+    <style name="RecyclerView.MatchWeight">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_weight">10</item>
+    </style>
+
+    <!-- WeightMatch -->
+    <style name="RecyclerView.WeightMatch">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">10</item>
+    </style>
+
+    <!-- WeightWarp -->
+    <style name="RecyclerView.WeightWarp">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">10</item>
+    </style>
+
+    <!-- WarpWeight -->
+    <style name="RecyclerView.WarpWeight">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_weight">10</item>
+    </style>
     
     <!-- MatchWarp LinearLayoutManager with Orientation -->
     <style name="RecyclerView.MatchWarp.LinearLayoutManager" >
