@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- BaseLifeCycle*Layout을 사용하기 위해 필요한 id-->
+    <item name="tag_lifecycle_observer" type="id"/>
+
+
+    <item name="tag_last_click_time" type="id"/>
+    <item name="tag_fade_animator" type="id"/>
+</resources>

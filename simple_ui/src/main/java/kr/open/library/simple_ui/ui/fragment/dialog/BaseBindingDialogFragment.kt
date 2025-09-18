@@ -14,10 +14,11 @@ import androidx.lifecycle.ViewModelProvider
 public abstract class BaseBindingDialogFragment<BINDING : ViewDataBinding>(@LayoutRes private val layoutRes: Int) :
     RootDialogFragment() {
 
-    /**
+
+    /*********************************************
      * The View Binding object for the fragment.
      * 프래그먼트에 대한 뷰 바인딩 객체.
-     */
+     **********************************************/
     protected lateinit var binding: BINDING
 
     override fun onCreateView(
@@ -27,6 +28,7 @@ public abstract class BaseBindingDialogFragment<BINDING : ViewDataBinding>(@Layo
         afterOnCreateView(binding.root, savedInstanceState)
         return binding.root
     }
+
 
     /**
      * Called immediately after onCreateView() has returned, but before any saved state has been restored in to the view.
@@ -42,10 +44,17 @@ public abstract class BaseBindingDialogFragment<BINDING : ViewDataBinding>(@Layo
 
     }
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.lifecycleOwner = this
     }
+
+
+    /*********************************
+     *  ViewModel 이벤트 구독 및 처리   *
+     *********************************/
+    protected open fun eventVmCollect() {}
 
     override fun onDestroyView() {
         super.onDestroyView()

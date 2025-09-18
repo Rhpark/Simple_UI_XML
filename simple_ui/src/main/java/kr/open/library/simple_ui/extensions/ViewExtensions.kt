@@ -4,29 +4,46 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.IntegerRes
-
-
-internal object ViewIds {
-    const val LAST_CLICK_TIME = -1001
-    const val FADE_ANIMATOR = -1002
-}
-
+import androidx.annotation.LayoutRes
+import androidx.annotation.MainThread
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.findViewTreeLifecycleOwner
+import kr.open.library.simple_ui.R
 
 /********
  * View *
  ********/
+
+
+internal object ViewIds {
+    val LAST_CLICK_TIME = R.id.tag_last_click_time
+    val FADE_ANIMATOR = R.id.tag_fade_animator
+
+
+    /***************************
+     * usefor LifeCycle*Layout
+     ***************************/
+    val TAG_OBSERVED_OWNER = R.id.tag_lifecycle_observer
+}
+
+
+
+
 public fun View.setVisible() {
     if (this.visibility != View.VISIBLE) this.visibility = View.VISIBLE
 }
+
 
 public fun View.setGone() {
     if (this.visibility != View.GONE) this.visibility = View.GONE
 }
 
+
 public fun View.setInvisible() {
     if (this.visibility != View.INVISIBLE) this.visibility = View.INVISIBLE
 }
+
 
 /**
  * Sets a debounced click listener on this view to prevent rapid consecutive clicks
@@ -58,6 +75,7 @@ public fun View.setOnDebouncedClickListener(
     }
 }
 
+
 /*************
  * ViewGroup *
  *************/
@@ -67,13 +85,12 @@ public fun ViewGroup.forEachChild(action: (View) -> Unit) {
     }
 }
 
+
 @SuppressLint("ResourceType")
 public fun ViewGroup.getLayoutInflater(
-    @IntegerRes xmlRes: Int,
+    @LayoutRes xmlRes: Int,
     attachToRoot: Boolean,
 ): View = LayoutInflater.from(this.context).inflate(xmlRes, this, attachToRoot)
-
-
 
 
 /**
@@ -102,6 +119,7 @@ public fun View.setMargins(
     }
 }
 
+
 /**
  * Sets uniform margin for all sides
  *
@@ -116,6 +134,7 @@ public fun View.setMargin(margin: Int) {
     setMargins(margin, margin, margin, margin)
 }
 
+
 /**
  * Sets uniform padding for all sides
  *
@@ -129,6 +148,7 @@ public fun View.setMargin(margin: Int) {
 public fun View.setPadding(padding: Int) {
     setPadding(padding, padding, padding, padding)
 }
+
 
 /**
  * Sets the width of the view
@@ -147,6 +167,7 @@ public fun View.setWidth(width: Int) {
     }
 }
 
+
 /**
  * Sets the height of the view
  *
@@ -163,6 +184,7 @@ public fun View.setHeight(height: Int) {
         layoutParams = params
     }
 }
+
 
 /**
  * Sets both width and height of the view
@@ -183,6 +205,7 @@ public fun View.setSize(width: Int, height: Int) {
     }
 }
 
+
 /**
  * Sets the view width to match parent
  *
@@ -194,6 +217,7 @@ public fun View.setSize(width: Int, height: Int) {
 public fun View.setWidthMatchParent() {
     setWidth(ViewGroup.LayoutParams.MATCH_PARENT)
 }
+
 
 /**
  * Sets the view height to match parent
@@ -207,6 +231,7 @@ public fun View.setHeightMatchParent() {
     setHeight(ViewGroup.LayoutParams.MATCH_PARENT)
 }
 
+
 /**
  * Sets the view width to wrap content
  *
@@ -219,6 +244,7 @@ public fun View.setWidthWrapContent() {
     setWidth(ViewGroup.LayoutParams.WRAP_CONTENT)
 }
 
+
 /**
  * Sets the view height to wrap content
  *
@@ -229,4 +255,34 @@ public fun View.setWidthWrapContent() {
  */
 public fun View.setHeightWrapContent() {
     setHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
+}
+
+
+/** View → 호스트 LifecycleOwner (Fragment의 viewLifecycleOwner 우선, 없으면 Activity) */
+@MainThread
+inline fun View.findHostLifecycleOwner(): LifecycleOwner? =
+    findViewTreeLifecycleOwner() ?: (context as? LifecycleOwner)
+
+
+/** 옵저버를 현재 Owner에 바인딩. 기존 Owner와 다르면 교체, 중복 등록 방지 */
+@MainThread
+fun View.bindLifecycleObserver(observer: DefaultLifecycleObserver): LifecycleOwner? {
+    val current = findHostLifecycleOwner() ?: return null
+    val old = getTag(ViewIds.TAG_OBSERVED_OWNER) as? LifecycleOwner
+    if (old !== current) {
+        old?.lifecycle?.removeObserver(observer)
+        try {
+            current.lifecycle.addObserver(observer)
+            setTag(ViewIds.TAG_OBSERVED_OWNER, current)
+        } catch (e:Exception) { return null }
+    }
+    return current
+}
+
+
+/** 바인딩 해제(attach 해제/재부모 전환 시 호출) */
+@MainThread
+fun View.unbindLifecycleObserver(observer: DefaultLifecycleObserver) {
+    (getTag(ViewIds.TAG_OBSERVED_OWNER) as? LifecycleOwner)?.lifecycle?.removeObserver(observer)
+    setTag(ViewIds.TAG_OBSERVED_OWNER, null)
 }

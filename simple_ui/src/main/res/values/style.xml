@@ -5,17 +5,17 @@
     <!-- ex) View.(width,height)-->
     <style name="View" />
 
-    <style name="View.MatchWarp">
+    <style name="View.MatchWrap">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
 
-    <style name="View.WarpMatch">
+    <style name="View.WrapMatch">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">match_parent</item>
     </style>
 
-    <style name="View.WeightWarp">
+    <style name="View.WeightWrap">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_weight">10</item>
         <item name="android:layout_height">wrap_content</item>
@@ -27,7 +27,7 @@
         <item name="android:layout_height">match_parent</item>
     </style>
 
-    <style name="View.WarpWeight">
+    <style name="View.WrapWeight">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">0dp</item>
         <item name="android:layout_weight">10</item>
@@ -44,7 +44,7 @@
         <item name="android:layout_height">match_parent</item>
     </style>
 
-    <style name="View.AllWarp">
+    <style name="View.AllWrap">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
@@ -54,85 +54,75 @@
     <!-- ex) Layout.(width,height).(orientation) -->
     <style name="Layout" />
 
-    <style name="Layout.MatchWarp">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-    </style>
+    <style name="Layout.MatchWrap" parent="View.MatchWrap"/>
 
-    <style name="Layout.MatchWarp.Vertical">
+    <style name="Layout.MatchWrap.Vertical">
         <item name="android:orientation">vertical</item>
     </style>
 
-    <style name="Layout.MatchWarp.Horizontal">
+    <style name="Layout.MatchWrap.Horizontal">
         <item name="android:orientation">horizontal</item>
     </style>
 
-    <style name="Layout.MatchWarp.Vertical.Center">
+    <style name="Layout.MatchWrap.Vertical.Center">
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="Layout.MatchWarp.Vertical.CenterHorizontal">
+    <style name="Layout.MatchWrap.Vertical.CenterHorizontal">
         <item name="android:gravity">center_horizontal</item>
     </style>
 
-    <style name="Layout.MatchWarp.Vertical.CenterVertical">
+    <style name="Layout.MatchWrap.Vertical.CenterVertical">
         <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="Layout.MatchWarp.Horizontal.Center">
+    <style name="Layout.MatchWrap.Horizontal.Center">
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="Layout.MatchWarp.Horizontal.CenterHorizontal">
+    <style name="Layout.MatchWrap.Horizontal.CenterHorizontal">
         <item name="android:gravity">center_horizontal</item>
     </style>
 
-    <style name="Layout.MatchWarp.Horizontal.CenterVertical">
+    <style name="Layout.MatchWrap.Horizontal.CenterVertical">
         <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="Layout.WarpMatch">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">match_parent</item>
-    </style>
+    <style name="Layout.WrapMatch" parent="View.WrapMatch"/>
 
-    <style name="Layout.WarpMatch.Vertical">
+    <style name="Layout.WrapMatch.Vertical">
         <item name="android:orientation">vertical</item>
     </style>
 
-    <style name="Layout.WarpMatch.Horizontal">
+    <style name="Layout.WrapMatch.Horizontal">
         <item name="android:orientation">horizontal</item>
     </style>
 
-    <style name="Layout.WarpMatch.Vertical.Center">
+    <style name="Layout.WrapMatch.Vertical.Center">
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="Layout.WarpMatch.Vertical.CenterHorizontal">
+    <style name="Layout.WrapMatch.Vertical.CenterHorizontal">
         <item name="android:gravity">center_horizontal</item>
     </style>
 
-    <style name="Layout.WarpMatch.Vertical.CenterVertical">
+    <style name="Layout.WrapMatch.Vertical.CenterVertical">
         <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="Layout.WarpMatch.Horizontal.Center">
+    <style name="Layout.WrapMatch.Horizontal.Center">
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="Layout.WarpMatch.Horizontal.CenterHorizontal">
+    <style name="Layout.WrapMatch.Horizontal.CenterHorizontal">
         <item name="android:gravity">center_horizontal</item>
     </style>
 
-    <style name="Layout.WarpMatch.Horizontal.CenterVertical">
+    <style name="Layout.WrapMatch.Horizontal.CenterVertical">
         <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="Layout.MatchWeight">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">0dp</item>
-        <item name="android:layout_weight">10</item>
-    </style>
+    <style name="Layout.MatchWeight" parent="View.MatchWeight"/>
 
     <style name="Layout.MatchWeight.Vertical">
         <item name="android:orientation">vertical</item>
@@ -142,25 +132,17 @@
         <item name="android:orientation">horizontal</item>
     </style>
 
-    <style name="Layout.WarpWeight">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">0dp</item>
-        <item name="android:layout_weight">10</item>
-    </style>
+    <style name="Layout.WrapWeight" parent="View.WrapWeight"/>
 
-    <style name="Layout.WarpWeight.Vertical">
+    <style name="Layout.WrapWeight.Vertical">
         <item name="android:orientation">vertical</item>
     </style>
 
-    <style name="Layout.WarpWeight.Horizontal">
+    <style name="Layout.WrapWeight.Horizontal">
         <item name="android:orientation">horizontal</item>
     </style>
 
-    <style name="Layout.WeightMatch">
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_weight">10</item>
-        <item name="android:layout_height">match_parent</item>
-    </style>
+    <style name="Layout.WeightMatch" parent="View.WeightMatch"/>
 
     <style name="Layout.WeightMatch.Vertical">
         <item name="android:orientation">vertical</item>
@@ -170,24 +152,17 @@
         <item name="android:orientation">horizontal</item>
     </style>
 
-    <style name="Layout.WeightWarp">
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_weight">10</item>
-        <item name="android:layout_height">wrap_content</item>
-    </style>
+    <style name="Layout.WeightWrap" parent="View.WeightWrap"/>
 
-    <style name="Layout.WeightWarp.Vertical">
+    <style name="Layout.WeightWrap.Vertical">
         <item name="android:orientation">vertical</item>
     </style>
 
-    <style name="Layout.WeightWarp.Horizontal">
+    <style name="Layout.WeightWrap.Horizontal">
         <item name="android:orientation">horizontal</item>
     </style>
 
-    <style name="Layout.AllMatch">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">match_parent</item>
-    </style>
+    <style name="Layout.AllMatch" parent="View.AllMatch"/>
 
     <style name="Layout.AllMatch.Vertical">
         <item name="android:orientation">vertical</item>
@@ -197,16 +172,13 @@
         <item name="android:orientation">horizontal</item>
     </style>
 
-    <style name="Layout.AllWarp">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-    </style>
+    <style name="Layout.AllWrap" parent="View.AllWrap"/>
 
-    <style name="Layout.AllWarp.Vertical">
+    <style name="Layout.AllWrap.Vertical">
         <item name="android:orientation">vertical</item>
     </style>
 
-    <style name="Layout.AllWarp.Horizontal">
+    <style name="Layout.AllWrap.Horizontal">
         <item name="android:orientation">horizontal</item>
     </style>
 
@@ -235,27 +207,27 @@
         <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="Layout.WarpWeight.Vertical.Center">
+    <style name="Layout.WrapWeight.Vertical.Center">
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="Layout.WarpWeight.Vertical.CenterHorizontal">
+    <style name="Layout.WrapWeight.Vertical.CenterHorizontal">
         <item name="android:gravity">center_horizontal</item>
     </style>
 
-    <style name="Layout.WarpWeight.Vertical.CenterVertical">
+    <style name="Layout.WrapWeight.Vertical.CenterVertical">
         <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="Layout.WarpWeight.Horizontal.Center">
+    <style name="Layout.WrapWeight.Horizontal.Center">
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="Layout.WarpWeight.Horizontal.CenterHorizontal">
+    <style name="Layout.WrapWeight.Horizontal.CenterHorizontal">
         <item name="android:gravity">center_horizontal</item>
     </style>
 
-    <style name="Layout.WarpWeight.Horizontal.CenterVertical">
+    <style name="Layout.WrapWeight.Horizontal.CenterVertical">
         <item name="android:gravity">center_vertical</item>
     </style>
 
@@ -283,27 +255,27 @@
         <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="Layout.WeightWarp.Vertical.Center">
+    <style name="Layout.WeightWrap.Vertical.Center">
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="Layout.WeightWarp.Vertical.CenterHorizontal">
+    <style name="Layout.WeightWrap.Vertical.CenterHorizontal">
         <item name="android:gravity">center_horizontal</item>
     </style>
 
-    <style name="Layout.WeightWarp.Vertical.CenterVertical">
+    <style name="Layout.WeightWrap.Vertical.CenterVertical">
         <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="Layout.WeightWarp.Horizontal.Center">
+    <style name="Layout.WeightWrap.Horizontal.Center">
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="Layout.WeightWarp.Horizontal.CenterHorizontal">
+    <style name="Layout.WeightWrap.Horizontal.CenterHorizontal">
         <item name="android:gravity">center_horizontal</item>
     </style>
 
-    <style name="Layout.WeightWarp.Horizontal.CenterVertical">
+    <style name="Layout.WeightWrap.Horizontal.CenterVertical">
         <item name="android:gravity">center_vertical</item>
     </style>
 
@@ -331,27 +303,27 @@
         <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="Layout.AllWarp.Vertical.Center">
+    <style name="Layout.AllWrap.Vertical.Center">
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="Layout.AllWarp.Vertical.CenterHorizontal">
+    <style name="Layout.AllWrap.Vertical.CenterHorizontal">
         <item name="android:gravity">center_horizontal</item>
     </style>
 
-    <style name="Layout.AllWarp.Vertical.CenterVertical">
+    <style name="Layout.AllWrap.Vertical.CenterVertical">
         <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="Layout.AllWarp.Horizontal.Center">
+    <style name="Layout.AllWrap.Horizontal.Center">
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="Layout.AllWarp.Horizontal.CenterHorizontal">
+    <style name="Layout.AllWrap.Horizontal.CenterHorizontal">
         <item name="android:gravity">center_horizontal</item>
     </style>
 
-    <style name="Layout.AllWarp.Horizontal.CenterVertical">
+    <style name="Layout.AllWrap.Horizontal.CenterVertical">
         <item name="android:gravity">center_vertical</item>
     </style>
 
@@ -360,28 +332,21 @@
     <!-- ex) TextView.(width,height).(TextStyle) -->
     <style name="TextView" parent="Widget.AppCompat.TextView" />
 
-    <style name="TextView.MatchWarp">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-    </style>
+    <style name="TextView.MatchWrap" parent="View.MatchWrap"/>
 
-    <style name="TextView.MatchWarp.Bold">
+    <style name="TextView.MatchWrap.Bold">
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="TextView.MatchWarp.Italic">
+    <style name="TextView.MatchWrap.Italic">
         <item name="android:textStyle">italic</item>
     </style>
 
-    <style name="TextView.MatchWarp.Normal">
+    <style name="TextView.MatchWrap.Normal">
         <item name="android:textStyle">normal</item>
     </style>
 
-    <style name="TextView.MatchWeight">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">0dp</item>
-        <item name="android:layout_weight">10</item>
-    </style>
+    <style name="TextView.MatchWeight" parent="View.MatchWeight"/>
 
     <style name="TextView.MatchWeight.Bold">
         <item name="android:textStyle">bold</item>
@@ -395,45 +360,35 @@
         <item name="android:textStyle">normal</item>
     </style>
 
-    <style name="TextView.WarpMatch">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">match_parent</item>
-    </style>
+    <style name="TextView.WrapMatch" parent="View.WrapMatch"/>
 
-    <style name="TextView.WarpMatch.Bold">
+    <style name="TextView.WrapMatch.Bold">
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="TextView.WarpMatch.Italic">
+    <style name="TextView.WrapMatch.Italic">
         <item name="android:textStyle">italic</item>
     </style>
 
-    <style name="TextView.WarpMatch.Normal">
+    <style name="TextView.WrapMatch.Normal">
         <item name="android:textStyle">normal</item>
     </style>
 
-    <style name="TextView.WarpWeight">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">0dp</item>
-        <item name="android:layout_weight">10</item>
-    </style>
+    <style name="TextView.WrapWeight" parent="View.WrapWeight"/>
 
-    <style name="TextView.WarpWeight.Bold">
+    <style name="TextView.WrapWeight.Bold">
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="TextView.WarpWeight.Italic">
+    <style name="TextView.WrapWeight.Italic">
         <item name="android:textStyle">italic</item>
     </style>
 
-    <style name="TextView.WarpWeight.Normal">
+    <style name="TextView.WrapWeight.Normal">
         <item name="android:textStyle">normal</item>
     </style>
 
-    <style name="TextView.AllMatch">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">match_parent</item>
-    </style>
+    <style name="TextView.AllMatch" parent="View.AllMatch"/>
 
     <style name="TextView.AllMatch.Bold">
         <item name="android:textStyle">bold</item>
@@ -447,57 +402,54 @@
         <item name="android:textStyle">normal</item>
     </style>
 
-    <style name="TextView.AllWarp">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-    </style>
+    <style name="TextView.AllWrap" parent="View.AllWrap"/>
 
-    <style name="TextView.AllWarp.Bold">
+    <style name="TextView.AllWrap.Bold">
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="TextView.AllWarp.Italic">
+    <style name="TextView.AllWrap.Italic">
         <item name="android:textStyle">italic</item>
     </style>
 
-    <style name="TextView.AllWarp.Normal">
+    <style name="TextView.AllWrap.Normal">
         <item name="android:textStyle">normal</item>
     </style>
 
     <!-- TextView Gravity Extensions -->
-    <style name="TextView.MatchWarp.Bold.Center">
+    <style name="TextView.MatchWrap.Bold.Center">
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="TextView.MatchWarp.Bold.CenterHorizontal">
+    <style name="TextView.MatchWrap.Bold.CenterHorizontal">
         <item name="android:gravity">center_horizontal</item>
     </style>
 
-    <style name="TextView.MatchWarp.Bold.CenterVertical">
+    <style name="TextView.MatchWrap.Bold.CenterVertical">
         <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="TextView.MatchWarp.Italic.Center">
+    <style name="TextView.MatchWrap.Italic.Center">
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="TextView.MatchWarp.Italic.CenterHorizontal">
+    <style name="TextView.MatchWrap.Italic.CenterHorizontal">
         <item name="android:gravity">center_horizontal</item>
     </style>
 
-    <style name="TextView.MatchWarp.Italic.CenterVertical">
+    <style name="TextView.MatchWrap.Italic.CenterVertical">
         <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="TextView.MatchWarp.Normal.Center">
+    <style name="TextView.MatchWrap.Normal.Center">
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="TextView.MatchWarp.Normal.CenterHorizontal">
+    <style name="TextView.MatchWrap.Normal.CenterHorizontal">
         <item name="android:gravity">center_horizontal</item>
     </style>
 
-    <style name="TextView.MatchWarp.Normal.CenterVertical">
+    <style name="TextView.MatchWrap.Normal.CenterVertical">
         <item name="android:gravity">center_vertical</item>
     </style>
 
@@ -537,75 +489,75 @@
         <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="TextView.WarpMatch.Bold.Center">
+    <style name="TextView.WrapMatch.Bold.Center">
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="TextView.WarpMatch.Bold.CenterHorizontal">
+    <style name="TextView.WrapMatch.Bold.CenterHorizontal">
         <item name="android:gravity">center_horizontal</item>
     </style>
 
-    <style name="TextView.WarpMatch.Bold.CenterVertical">
+    <style name="TextView.WrapMatch.Bold.CenterVertical">
         <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="TextView.WarpMatch.Italic.Center">
+    <style name="TextView.WrapMatch.Italic.Center">
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="TextView.WarpMatch.Italic.CenterHorizontal">
+    <style name="TextView.WrapMatch.Italic.CenterHorizontal">
         <item name="android:gravity">center_horizontal</item>
     </style>
 
-    <style name="TextView.WarpMatch.Italic.CenterVertical">
+    <style name="TextView.WrapMatch.Italic.CenterVertical">
         <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="TextView.WarpMatch.Normal.Center">
+    <style name="TextView.WrapMatch.Normal.Center">
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="TextView.WarpMatch.Normal.CenterHorizontal">
+    <style name="TextView.WrapMatch.Normal.CenterHorizontal">
         <item name="android:gravity">center_horizontal</item>
     </style>
 
-    <style name="TextView.WarpMatch.Normal.CenterVertical">
+    <style name="TextView.WrapMatch.Normal.CenterVertical">
         <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="TextView.WarpWeight.Bold.Center">
+    <style name="TextView.WrapWeight.Bold.Center">
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="TextView.WarpWeight.Bold.CenterHorizontal">
+    <style name="TextView.WrapWeight.Bold.CenterHorizontal">
         <item name="android:gravity">center_horizontal</item>
     </style>
 
-    <style name="TextView.WarpWeight.Bold.CenterVertical">
+    <style name="TextView.WrapWeight.Bold.CenterVertical">
         <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="TextView.WarpWeight.Italic.Center">
+    <style name="TextView.WrapWeight.Italic.Center">
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="TextView.WarpWeight.Italic.CenterHorizontal">
+    <style name="TextView.WrapWeight.Italic.CenterHorizontal">
         <item name="android:gravity">center_horizontal</item>
     </style>
 
-    <style name="TextView.WarpWeight.Italic.CenterVertical">
+    <style name="TextView.WrapWeight.Italic.CenterVertical">
         <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="TextView.WarpWeight.Normal.Center">
+    <style name="TextView.WrapWeight.Normal.Center">
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="TextView.WarpWeight.Normal.CenterHorizontal">
+    <style name="TextView.WrapWeight.Normal.CenterHorizontal">
         <item name="android:gravity">center_horizontal</item>
     </style>
 
-    <style name="TextView.WarpWeight.Normal.CenterVertical">
+    <style name="TextView.WrapWeight.Normal.CenterVertical">
         <item name="android:gravity">center_vertical</item>
     </style>
 
@@ -645,47 +597,43 @@
         <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="TextView.AllWarp.Bold.Center">
+    <style name="TextView.AllWrap.Bold.Center">
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="TextView.AllWarp.Bold.CenterHorizontal">
+    <style name="TextView.AllWrap.Bold.CenterHorizontal">
         <item name="android:gravity">center_horizontal</item>
     </style>
 
-    <style name="TextView.AllWarp.Bold.CenterVertical">
+    <style name="TextView.AllWrap.Bold.CenterVertical">
         <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="TextView.AllWarp.Italic.Center">
+    <style name="TextView.AllWrap.Italic.Center">
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="TextView.AllWarp.Italic.CenterHorizontal">
+    <style name="TextView.AllWrap.Italic.CenterHorizontal">
         <item name="android:gravity">center_horizontal</item>
     </style>
 
-    <style name="TextView.AllWarp.Italic.CenterVertical">
+    <style name="TextView.AllWrap.Italic.CenterVertical">
         <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="TextView.AllWarp.Normal.Center">
+    <style name="TextView.AllWrap.Normal.Center">
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="TextView.AllWarp.Normal.CenterHorizontal">
+    <style name="TextView.AllWrap.Normal.CenterHorizontal">
         <item name="android:gravity">center_horizontal</item>
     </style>
 
-    <style name="TextView.AllWarp.Normal.CenterVertical">
+    <style name="TextView.AllWrap.Normal.CenterVertical">
         <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="TextView.WeightMatch">
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_weight">10</item>
-        <item name="android:layout_height">match_parent</item>
-    </style>
+    <style name="TextView.WeightMatch" parent="View.WeightMatch"/>
 
     <style name="TextView.WeightMatch.Bold">
         <item name="android:textStyle">bold</item>
@@ -699,21 +647,17 @@
         <item name="android:textStyle">normal</item>
     </style>
 
-    <style name="TextView.WeightWarp">
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_weight">10</item>
-        <item name="android:layout_height">wrap_content</item>
-    </style>
+    <style name="TextView.WeightWrap" parent="View.WeightWrap"/>
 
-    <style name="TextView.WeightWarp.Bold">
+    <style name="TextView.WeightWrap.Bold">
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="TextView.WeightWarp.Italic">
+    <style name="TextView.WeightWrap.Italic">
         <item name="android:textStyle">italic</item>
     </style>
 
-    <style name="TextView.WeightWarp.Normal">
+    <style name="TextView.WeightWrap.Normal">
         <item name="android:textStyle">normal</item>
     </style>
 
@@ -722,129 +666,112 @@
     <!-- ex) EditText.(width,height).(InputType) -->
     <style name="EditText" parent="Widget.AppCompat.EditText" />
 
-    <style name="EditText.MatchWarp">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-    </style>
+    <style name="EditText.MatchWrap" parent="View.MatchWrap"/>
 
-    <style name="EditText.MatchWarp.Text">
+    <style name="EditText.MatchWrap.Text">
         <item name="android:inputType">text</item>
     </style>
 
-    <style name="EditText.MatchWarp.Password">
+    <style name="EditText.MatchWrap.Password">
         <item name="android:inputType">textPassword</item>
     </style>
 
-    <style name="EditText.MatchWarp.Email">
+    <style name="EditText.MatchWrap.Email">
         <item name="android:inputType">textEmailAddress</item>
     </style>
 
-    <style name="EditText.MatchWarp.Phone">
+    <style name="EditText.MatchWrap.Phone">
         <item name="android:inputType">phone</item>
     </style>
 
-    <style name="EditText.MatchWarp.Number">
+    <style name="EditText.MatchWrap.Number">
         <item name="android:inputType">number</item>
     </style>
 
-    <style name="EditText.MatchWarp.MultiLine">
+    <style name="EditText.MatchWrap.MultiLine">
         <item name="android:inputType">textMultiLine</item>
     </style>
 
-    <style name="EditText.AllWarp">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-    </style>
+    <style name="EditText.AllWrap" parent="View.AllWrap"/>
 
-    <style name="EditText.AllWarp.Text">
+    <style name="EditText.AllWrap.Text">
         <item name="android:inputType">text</item>
     </style>
 
-    <style name="EditText.AllWarp.Password">
+    <style name="EditText.AllWrap.Password">
         <item name="android:inputType">textPassword</item>
     </style>
 
-    <style name="EditText.AllWarp.Email">
+    <style name="EditText.AllWrap.Email">
         <item name="android:inputType">textEmailAddress</item>
     </style>
 
-    <style name="EditText.AllWarp.Phone">
+    <style name="EditText.AllWrap.Phone">
         <item name="android:inputType">phone</item>
     </style>
 
-    <style name="EditText.AllWarp.Number">
+    <style name="EditText.AllWrap.Number">
         <item name="android:inputType">number</item>
     </style>
 
-    <style name="EditText.AllWarp.MultiLine">
+    <style name="EditText.AllWrap.MultiLine">
         <item name="android:inputType">textMultiLine</item>
     </style>
 
-    <style name="EditText.WeightWarp">
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_weight">10</item>
-        <item name="android:layout_height">wrap_content</item>
-    </style>
+    <style name="EditText.WeightWrap" parent="View.WeightWrap"/>
 
-    <style name="EditText.WeightWarp.Text">
+    <style name="EditText.WeightWrap.Text">
         <item name="android:inputType">text</item>
     </style>
 
-    <style name="EditText.WeightWarp.Password">
+    <style name="EditText.WeightWrap.Password">
         <item name="android:inputType">textPassword</item>
     </style>
 
-    <style name="EditText.WeightWarp.Email">
+    <style name="EditText.WeightWrap.Email">
         <item name="android:inputType">textEmailAddress</item>
     </style>
 
-    <style name="EditText.WeightWarp.Phone">
+    <style name="EditText.WeightWrap.Phone">
         <item name="android:inputType">phone</item>
     </style>
 
-    <style name="EditText.WeightWarp.Number">
+    <style name="EditText.WeightWrap.Number">
         <item name="android:inputType">number</item>
     </style>
 
-    <style name="EditText.WeightWarp.MultiLine">
+    <style name="EditText.WeightWrap.MultiLine">
         <item name="android:inputType">textMultiLine</item>
     </style>
 
     <!-- Missing EditText size combinations -->
-    <style name="EditText.WarpMatch">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">match_parent</item>
-    </style>
+    <style name="EditText.WrapMatch" parent="View.WrapMatch"/>
     
-    <style name="EditText.WarpMatch.Text">
+    <style name="EditText.WrapMatch.Text">
         <item name="android:inputType">text</item>
     </style>
     
-    <style name="EditText.WarpMatch.Password">
+    <style name="EditText.WrapMatch.Password">
         <item name="android:inputType">textPassword</item>
     </style>
     
-    <style name="EditText.WarpMatch.Email">
+    <style name="EditText.WrapMatch.Email">
         <item name="android:inputType">textEmailAddress</item>
     </style>
     
-    <style name="EditText.WarpMatch.Phone">
+    <style name="EditText.WrapMatch.Phone">
         <item name="android:inputType">phone</item>
     </style>
     
-    <style name="EditText.WarpMatch.Number">
+    <style name="EditText.WrapMatch.Number">
         <item name="android:inputType">number</item>
     </style>
     
-    <style name="EditText.WarpMatch.MultiLine">
+    <style name="EditText.WrapMatch.MultiLine">
         <item name="android:inputType">textMultiLine</item>
     </style>
 
-    <style name="EditText.MatchWeight">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">0dp</item>
-        <item name="android:layout_weight">10</item>
-    </style>
+    <style name="EditText.MatchWeight" parent="View.MatchWeight"/>
     
     <style name="EditText.MatchWeight.Text">
         <item name="android:inputType">text</item>
@@ -870,11 +797,7 @@
         <item name="android:inputType">textMultiLine</item>
     </style>
 
-    <style name="EditText.WeightMatch">
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_weight">10</item>
-        <item name="android:layout_height">match_parent</item>
-    </style>
+    <style name="EditText.WeightMatch" parent="View.WeightMatch"/>
     
     <style name="EditText.WeightMatch.Text">
         <item name="android:inputType">text</item>
@@ -900,322 +823,318 @@
         <item name="android:inputType">textMultiLine</item>
     </style>
 
-    <style name="EditText.WarpWeight">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">0dp</item>
-        <item name="android:layout_weight">10</item>
-    </style>
+    <style name="EditText.WrapWeight" parent="View.WrapWeight"/>
     
-    <style name="EditText.WarpWeight.Text">
+    <style name="EditText.WrapWeight.Text">
         <item name="android:inputType">text</item>
     </style>
     
-    <style name="EditText.WarpWeight.Password">
+    <style name="EditText.WrapWeight.Password">
         <item name="android:inputType">textPassword</item>
     </style>
     
-    <style name="EditText.WarpWeight.Email">
+    <style name="EditText.WrapWeight.Email">
         <item name="android:inputType">textEmailAddress</item>
     </style>
     
-    <style name="EditText.WarpWeight.Phone">
+    <style name="EditText.WrapWeight.Phone">
         <item name="android:inputType">phone</item>
     </style>
     
-    <style name="EditText.WarpWeight.Number">
+    <style name="EditText.WrapWeight.Number">
         <item name="android:inputType">number</item>
     </style>
     
-    <style name="EditText.WarpWeight.MultiLine">
+    <style name="EditText.WrapWeight.MultiLine">
         <item name="android:inputType">textMultiLine</item>
     </style>
 
     <!-- EditText Gravity Extensions -->
-    <style name="EditText.MatchWarp.Text.Center">
+    <style name="EditText.MatchWrap.Text.Center">
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="EditText.MatchWarp.Text.CenterHorizontal">
+    <style name="EditText.MatchWrap.Text.CenterHorizontal">
         <item name="android:gravity">center_horizontal</item>
     </style>
 
-    <style name="EditText.MatchWarp.Text.CenterVertical">
+    <style name="EditText.MatchWrap.Text.CenterVertical">
         <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="EditText.MatchWarp.Password.Center">
+    <style name="EditText.MatchWrap.Password.Center">
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="EditText.MatchWarp.Password.CenterHorizontal">
+    <style name="EditText.MatchWrap.Password.CenterHorizontal">
         <item name="android:gravity">center_horizontal</item>
     </style>
 
-    <style name="EditText.MatchWarp.Password.CenterVertical">
+    <style name="EditText.MatchWrap.Password.CenterVertical">
         <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="EditText.MatchWarp.Email.Center">
+    <style name="EditText.MatchWrap.Email.Center">
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="EditText.MatchWarp.Email.CenterHorizontal">
+    <style name="EditText.MatchWrap.Email.CenterHorizontal">
         <item name="android:gravity">center_horizontal</item>
     </style>
 
-    <style name="EditText.MatchWarp.Email.CenterVertical">
+    <style name="EditText.MatchWrap.Email.CenterVertical">
         <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="EditText.MatchWarp.Phone.Center">
+    <style name="EditText.MatchWrap.Phone.Center">
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="EditText.MatchWarp.Phone.CenterHorizontal">
+    <style name="EditText.MatchWrap.Phone.CenterHorizontal">
         <item name="android:gravity">center_horizontal</item>
     </style>
 
-    <style name="EditText.MatchWarp.Phone.CenterVertical">
+    <style name="EditText.MatchWrap.Phone.CenterVertical">
         <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="EditText.MatchWarp.Number.Center">
+    <style name="EditText.MatchWrap.Number.Center">
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="EditText.MatchWarp.Number.CenterHorizontal">
+    <style name="EditText.MatchWrap.Number.CenterHorizontal">
         <item name="android:gravity">center_horizontal</item>
     </style>
 
-    <style name="EditText.MatchWarp.Number.CenterVertical">
+    <style name="EditText.MatchWrap.Number.CenterVertical">
         <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="EditText.MatchWarp.MultiLine.Center">
+    <style name="EditText.MatchWrap.MultiLine.Center">
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="EditText.MatchWarp.MultiLine.CenterHorizontal">
+    <style name="EditText.MatchWrap.MultiLine.CenterHorizontal">
         <item name="android:gravity">center_horizontal</item>
     </style>
 
-    <style name="EditText.MatchWarp.MultiLine.CenterVertical">
+    <style name="EditText.MatchWrap.MultiLine.CenterVertical">
         <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="EditText.AllWarp.Text.Center">
+    <style name="EditText.AllWrap.Text.Center">
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="EditText.AllWarp.Text.CenterHorizontal">
+    <style name="EditText.AllWrap.Text.CenterHorizontal">
         <item name="android:gravity">center_horizontal</item>
     </style>
 
-    <style name="EditText.AllWarp.Text.CenterVertical">
+    <style name="EditText.AllWrap.Text.CenterVertical">
         <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="EditText.AllWarp.Password.Center">
+    <style name="EditText.AllWrap.Password.Center">
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="EditText.AllWarp.Password.CenterHorizontal">
+    <style name="EditText.AllWrap.Password.CenterHorizontal">
         <item name="android:gravity">center_horizontal</item>
     </style>
 
-    <style name="EditText.AllWarp.Password.CenterVertical">
+    <style name="EditText.AllWrap.Password.CenterVertical">
         <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="EditText.AllWarp.Email.Center">
+    <style name="EditText.AllWrap.Email.Center">
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="EditText.AllWarp.Email.CenterHorizontal">
+    <style name="EditText.AllWrap.Email.CenterHorizontal">
         <item name="android:gravity">center_horizontal</item>
     </style>
 
-    <style name="EditText.AllWarp.Email.CenterVertical">
+    <style name="EditText.AllWrap.Email.CenterVertical">
         <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="EditText.AllWarp.Phone.Center">
+    <style name="EditText.AllWrap.Phone.Center">
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="EditText.AllWarp.Phone.CenterHorizontal">
+    <style name="EditText.AllWrap.Phone.CenterHorizontal">
         <item name="android:gravity">center_horizontal</item>
     </style>
 
-    <style name="EditText.AllWarp.Phone.CenterVertical">
+    <style name="EditText.AllWrap.Phone.CenterVertical">
         <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="EditText.AllWarp.Number.Center">
+    <style name="EditText.AllWrap.Number.Center">
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="EditText.AllWarp.Number.CenterHorizontal">
+    <style name="EditText.AllWrap.Number.CenterHorizontal">
         <item name="android:gravity">center_horizontal</item>
     </style>
 
-    <style name="EditText.AllWarp.Number.CenterVertical">
+    <style name="EditText.AllWrap.Number.CenterVertical">
         <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="EditText.AllWarp.MultiLine.Center">
+    <style name="EditText.AllWrap.MultiLine.Center">
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="EditText.AllWarp.MultiLine.CenterHorizontal">
+    <style name="EditText.AllWrap.MultiLine.CenterHorizontal">
         <item name="android:gravity">center_horizontal</item>
     </style>
 
-    <style name="EditText.AllWarp.MultiLine.CenterVertical">
+    <style name="EditText.AllWrap.MultiLine.CenterVertical">
         <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="EditText.WeightWarp.Text.Center">
+    <style name="EditText.WeightWrap.Text.Center">
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="EditText.WeightWarp.Text.CenterHorizontal">
+    <style name="EditText.WeightWrap.Text.CenterHorizontal">
         <item name="android:gravity">center_horizontal</item>
     </style>
 
-    <style name="EditText.WeightWarp.Text.CenterVertical">
+    <style name="EditText.WeightWrap.Text.CenterVertical">
         <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="EditText.WeightWarp.Password.Center">
+    <style name="EditText.WeightWrap.Password.Center">
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="EditText.WeightWarp.Password.CenterHorizontal">
+    <style name="EditText.WeightWrap.Password.CenterHorizontal">
         <item name="android:gravity">center_horizontal</item>
     </style>
 
-    <style name="EditText.WeightWarp.Password.CenterVertical">
+    <style name="EditText.WeightWrap.Password.CenterVertical">
         <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="EditText.WeightWarp.Email.Center">
+    <style name="EditText.WeightWrap.Email.Center">
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="EditText.WeightWarp.Email.CenterHorizontal">
+    <style name="EditText.WeightWrap.Email.CenterHorizontal">
         <item name="android:gravity">center_horizontal</item>
     </style>
 
-    <style name="EditText.WeightWarp.Email.CenterVertical">
+    <style name="EditText.WeightWrap.Email.CenterVertical">
         <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="EditText.WeightWarp.Phone.Center">
+    <style name="EditText.WeightWrap.Phone.Center">
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="EditText.WeightWarp.Phone.CenterHorizontal">
+    <style name="EditText.WeightWrap.Phone.CenterHorizontal">
         <item name="android:gravity">center_horizontal</item>
     </style>
 
-    <style name="EditText.WeightWarp.Phone.CenterVertical">
+    <style name="EditText.WeightWrap.Phone.CenterVertical">
         <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="EditText.WeightWarp.Number.Center">
+    <style name="EditText.WeightWrap.Number.Center">
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="EditText.WeightWarp.Number.CenterHorizontal">
+    <style name="EditText.WeightWrap.Number.CenterHorizontal">
         <item name="android:gravity">center_horizontal</item>
     </style>
 
-    <style name="EditText.WeightWarp.Number.CenterVertical">
+    <style name="EditText.WeightWrap.Number.CenterVertical">
         <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="EditText.WeightWarp.MultiLine.Center">
+    <style name="EditText.WeightWrap.MultiLine.Center">
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="EditText.WeightWarp.MultiLine.CenterHorizontal">
+    <style name="EditText.WeightWrap.MultiLine.CenterHorizontal">
         <item name="android:gravity">center_horizontal</item>
     </style>
 
-    <style name="EditText.WeightWarp.MultiLine.CenterVertical">
+    <style name="EditText.WeightWrap.MultiLine.CenterVertical">
         <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="EditText.WarpMatch.Text.Center">
+    <style name="EditText.WrapMatch.Text.Center">
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="EditText.WarpMatch.Text.CenterHorizontal">
+    <style name="EditText.WrapMatch.Text.CenterHorizontal">
         <item name="android:gravity">center_horizontal</item>
     </style>
 
-    <style name="EditText.WarpMatch.Text.CenterVertical">
+    <style name="EditText.WrapMatch.Text.CenterVertical">
         <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="EditText.WarpMatch.Password.Center">
+    <style name="EditText.WrapMatch.Password.Center">
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="EditText.WarpMatch.Password.CenterHorizontal">
+    <style name="EditText.WrapMatch.Password.CenterHorizontal">
         <item name="android:gravity">center_horizontal</item>
     </style>
 
-    <style name="EditText.WarpMatch.Password.CenterVertical">
+    <style name="EditText.WrapMatch.Password.CenterVertical">
         <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="EditText.WarpMatch.Email.Center">
+    <style name="EditText.WrapMatch.Email.Center">
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="EditText.WarpMatch.Email.CenterHorizontal">
+    <style name="EditText.WrapMatch.Email.CenterHorizontal">
         <item name="android:gravity">center_horizontal</item>
     </style>
 
-    <style name="EditText.WarpMatch.Email.CenterVertical">
+    <style name="EditText.WrapMatch.Email.CenterVertical">
         <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="EditText.WarpMatch.Phone.Center">
+    <style name="EditText.WrapMatch.Phone.Center">
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="EditText.WarpMatch.Phone.CenterHorizontal">
+    <style name="EditText.WrapMatch.Phone.CenterHorizontal">
         <item name="android:gravity">center_horizontal</item>
     </style>
 
-    <style name="EditText.WarpMatch.Phone.CenterVertical">
+    <style name="EditText.WrapMatch.Phone.CenterVertical">
         <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="EditText.WarpMatch.Number.Center">
+    <style name="EditText.WrapMatch.Number.Center">
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="EditText.WarpMatch.Number.CenterHorizontal">
+    <style name="EditText.WrapMatch.Number.CenterHorizontal">
         <item name="android:gravity">center_horizontal</item>
     </style>
 
-    <style name="EditText.WarpMatch.Number.CenterVertical">
+    <style name="EditText.WrapMatch.Number.CenterVertical">
         <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="EditText.WarpMatch.MultiLine.Center">
+    <style name="EditText.WrapMatch.MultiLine.Center">
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="EditText.WarpMatch.MultiLine.CenterHorizontal">
+    <style name="EditText.WrapMatch.MultiLine.CenterHorizontal">
         <item name="android:gravity">center_horizontal</item>
     </style>
 
-    <style name="EditText.WarpMatch.MultiLine.CenterVertical">
+    <style name="EditText.WrapMatch.MultiLine.CenterVertical">
         <item name="android:gravity">center_vertical</item>
     </style>
 
@@ -1363,75 +1282,75 @@
         <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="EditText.WarpWeight.Text.Center">
+    <style name="EditText.WrapWeight.Text.Center">
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="EditText.WarpWeight.Text.CenterHorizontal">
+    <style name="EditText.WrapWeight.Text.CenterHorizontal">
         <item name="android:gravity">center_horizontal</item>
     </style>
 
-    <style name="EditText.WarpWeight.Text.CenterVertical">
+    <style name="EditText.WrapWeight.Text.CenterVertical">
         <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="EditText.WarpWeight.Password.Center">
+    <style name="EditText.WrapWeight.Password.Center">
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="EditText.WarpWeight.Password.CenterHorizontal">
+    <style name="EditText.WrapWeight.Password.CenterHorizontal">
         <item name="android:gravity">center_horizontal</item>
     </style>
 
-    <style name="EditText.WarpWeight.Password.CenterVertical">
+    <style name="EditText.WrapWeight.Password.CenterVertical">
         <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="EditText.WarpWeight.Email.Center">
+    <style name="EditText.WrapWeight.Email.Center">
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="EditText.WarpWeight.Email.CenterHorizontal">
+    <style name="EditText.WrapWeight.Email.CenterHorizontal">
         <item name="android:gravity">center_horizontal</item>
     </style>
 
-    <style name="EditText.WarpWeight.Email.CenterVertical">
+    <style name="EditText.WrapWeight.Email.CenterVertical">
         <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="EditText.WarpWeight.Phone.Center">
+    <style name="EditText.WrapWeight.Phone.Center">
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="EditText.WarpWeight.Phone.CenterHorizontal">
+    <style name="EditText.WrapWeight.Phone.CenterHorizontal">
         <item name="android:gravity">center_horizontal</item>
     </style>
 
-    <style name="EditText.WarpWeight.Phone.CenterVertical">
+    <style name="EditText.WrapWeight.Phone.CenterVertical">
         <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="EditText.WarpWeight.Number.Center">
+    <style name="EditText.WrapWeight.Number.Center">
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="EditText.WarpWeight.Number.CenterHorizontal">
+    <style name="EditText.WrapWeight.Number.CenterHorizontal">
         <item name="android:gravity">center_horizontal</item>
     </style>
 
-    <style name="EditText.WarpWeight.Number.CenterVertical">
+    <style name="EditText.WrapWeight.Number.CenterVertical">
         <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="EditText.WarpWeight.MultiLine.Center">
+    <style name="EditText.WrapWeight.MultiLine.Center">
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="EditText.WarpWeight.MultiLine.CenterHorizontal">
+    <style name="EditText.WrapWeight.MultiLine.CenterHorizontal">
         <item name="android:gravity">center_horizontal</item>
     </style>
 
-    <style name="EditText.WarpWeight.MultiLine.CenterVertical">
+    <style name="EditText.WrapWeight.MultiLine.CenterVertical">
         <item name="android:gravity">center_vertical</item>
     </style>
 
@@ -1440,81 +1359,64 @@
     <!-- ex) Button.(width,height).(ButtonStyle) -->
     <style name="Button" parent="Widget.AppCompat.Button" />
 
-    <style name="Button.MatchWarp">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-    </style>
+    <style name="Button.MatchWrap" parent="View.MatchWrap"/>
 
-    <style name="Button.MatchWarp.Bold">
+    <style name="Button.MatchWrap.Bold">
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="Button.MatchWarp.Italic">
+    <style name="Button.MatchWrap.Italic">
         <item name="android:textStyle">italic</item>
     </style>
 
-    <style name="Button.MatchWarp.Normal">
+    <style name="Button.MatchWrap.Normal">
         <item name="android:textStyle">normal</item>
     </style>
 
-    <style name="Button.AllWarp">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-    </style>
+    <style name="Button.AllWrap" parent="View.AllWrap"/>
 
-    <style name="Button.AllWarp.Bold">
+    <style name="Button.AllWrap.Bold">
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="Button.AllWarp.Italic">
+    <style name="Button.AllWrap.Italic">
         <item name="android:textStyle">italic</item>
     </style>
 
-    <style name="Button.AllWarp.Normal">
+    <style name="Button.AllWrap.Normal">
         <item name="android:textStyle">normal</item>
     </style>
 
-    <style name="Button.WeightWarp">
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_weight">10</item>
-        <item name="android:layout_height">wrap_content</item>
-    </style>
+    <style name="Button.WeightWrap" parent="View.WeightWrap"/>
 
-    <style name="Button.WeightWarp.Bold">
+    <style name="Button.WeightWrap.Bold">
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="Button.WeightWarp.Italic">
+    <style name="Button.WeightWrap.Italic">
         <item name="android:textStyle">italic</item>
     </style>
 
-    <style name="Button.WeightWarp.Normal">
+    <style name="Button.WeightWrap.Normal">
         <item name="android:textStyle">normal</item>
     </style>
     
     <!-- Missing Button size combinations -->
-    <style name="Button.WarpMatch">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">match_parent</item>
-    </style>
+    <style name="Button.WrapMatch" parent="View.WrapMatch"/>
 
-    <style name="Button.WarpMatch.Bold">
+    <style name="Button.WrapMatch.Bold">
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="Button.WarpMatch.Italic">
+    <style name="Button.WrapMatch.Italic">
         <item name="android:textStyle">italic</item>
     </style>
 
-    <style name="Button.WarpMatch.Normal">
+    <style name="Button.WrapMatch.Normal">
         <item name="android:textStyle">normal</item>
     </style>
     
-    <style name="Button.MatchWeight">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">0dp</item>
-        <item name="android:layout_weight">10</item>
-    </style>
+    <style name="Button.MatchWeight" parent="View.MatchWeight"/>
 
     <style name="Button.MatchWeight.Bold">
         <item name="android:textStyle">bold</item>
@@ -1528,11 +1430,7 @@
         <item name="android:textStyle">normal</item>
     </style>
     
-    <style name="Button.WeightMatch">
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_weight">10</item>
-        <item name="android:layout_height">match_parent</item>
-    </style>
+    <style name="Button.WeightMatch" parent="View.WeightMatch"/>
 
     <style name="Button.WeightMatch.Bold">
         <item name="android:textStyle">bold</item>
@@ -1546,28 +1444,21 @@
         <item name="android:textStyle">normal</item>
     </style>
     
-    <style name="Button.WarpWeight">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">0dp</item>
-        <item name="android:layout_weight">10</item>
-    </style>
+    <style name="Button.WrapWeight" parent="View.WrapWeight"/>
 
-    <style name="Button.WarpWeight.Bold">
+    <style name="Button.WrapWeight.Bold">
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="Button.WarpWeight.Italic">
+    <style name="Button.WrapWeight.Italic">
         <item name="android:textStyle">italic</item>
     </style>
 
-    <style name="Button.WarpWeight.Normal">
+    <style name="Button.WrapWeight.Normal">
         <item name="android:textStyle">normal</item>
     </style>
     
-    <style name="Button.AllMatch">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">match_parent</item>
-    </style>
+    <style name="Button.AllMatch" parent="View.AllMatch"/>
 
     <style name="Button.AllMatch.Bold">
         <item name="android:textStyle">bold</item>
@@ -1584,54 +1475,54 @@
     <!-- Material Button Variants -->
     <style name="Button.Material" parent="Widget.Material3.Button" />
     
-    <style name="Button.Material.MatchWarp">
+    <style name="Button.Material.MatchWrap">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
 
-    <style name="Button.Material.MatchWarp.Bold">
+    <style name="Button.Material.MatchWrap.Bold">
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="Button.Material.MatchWarp.Italic">
+    <style name="Button.Material.MatchWrap.Italic">
         <item name="android:textStyle">italic</item>
     </style>
 
-    <style name="Button.Material.MatchWarp.Normal">
+    <style name="Button.Material.MatchWrap.Normal">
         <item name="android:textStyle">normal</item>
     </style>
     
-    <style name="Button.Material.AllWarp">
+    <style name="Button.Material.AllWrap">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
 
-    <style name="Button.Material.AllWarp.Bold">
+    <style name="Button.Material.AllWrap.Bold">
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="Button.Material.AllWarp.Italic">
+    <style name="Button.Material.AllWrap.Italic">
         <item name="android:textStyle">italic</item>
     </style>
 
-    <style name="Button.Material.AllWarp.Normal">
+    <style name="Button.Material.AllWrap.Normal">
         <item name="android:textStyle">normal</item>
     </style>
     
-    <style name="Button.Material.WarpMatch">
+    <style name="Button.Material.WrapMatch">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">match_parent</item>
     </style>
 
-    <style name="Button.Material.WarpMatch.Bold">
+    <style name="Button.Material.WrapMatch.Bold">
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="Button.Material.WarpMatch.Italic">
+    <style name="Button.Material.WrapMatch.Italic">
         <item name="android:textStyle">italic</item>
     </style>
 
-    <style name="Button.Material.WarpMatch.Normal">
+    <style name="Button.Material.WrapMatch.Normal">
         <item name="android:textStyle">normal</item>
     </style>
     
@@ -1671,39 +1562,39 @@
         <item name="android:textStyle">normal</item>
     </style>
     
-    <style name="Button.Material.WeightWarp">
+    <style name="Button.Material.WeightWrap">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_weight">10</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
 
-    <style name="Button.Material.WeightWarp.Bold">
+    <style name="Button.Material.WeightWrap.Bold">
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="Button.Material.WeightWarp.Italic">
+    <style name="Button.Material.WeightWrap.Italic">
         <item name="android:textStyle">italic</item>
     </style>
 
-    <style name="Button.Material.WeightWarp.Normal">
+    <style name="Button.Material.WeightWrap.Normal">
         <item name="android:textStyle">normal</item>
     </style>
     
-    <style name="Button.Material.WarpWeight">
+    <style name="Button.Material.WrapWeight">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">0dp</item>
         <item name="android:layout_weight">10</item>
     </style>
 
-    <style name="Button.Material.WarpWeight.Bold">
+    <style name="Button.Material.WrapWeight.Bold">
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="Button.Material.WarpWeight.Italic">
+    <style name="Button.Material.WrapWeight.Italic">
         <item name="android:textStyle">italic</item>
     </style>
 
-    <style name="Button.Material.WarpWeight.Normal">
+    <style name="Button.Material.WrapWeight.Normal">
         <item name="android:textStyle">normal</item>
     </style>
     
@@ -1729,63 +1620,50 @@
     <!-- ex) ImageView.(width,height).(ScaleType) -->
     <style name="ImageView" />
 
-    <style name="ImageView.MatchWarp">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-    </style>
+    <style name="ImageView.MatchWrap" parent="View.MatchWrap"/>
 
-    <style name="ImageView.MatchWarp.CenterCrop">
+    <style name="ImageView.MatchWrap.CenterCrop">
         <item name="android:scaleType">centerCrop</item>
     </style>
 
-    <style name="ImageView.MatchWarp.CenterInside">
+    <style name="ImageView.MatchWrap.CenterInside">
         <item name="android:scaleType">centerInside</item>
     </style>
 
-    <style name="ImageView.MatchWarp.FitXY">
+    <style name="ImageView.MatchWrap.FitXY">
         <item name="android:scaleType">fitXY</item>
     </style>
 
-    <style name="ImageView.AllWarp">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-    </style>
+    <style name="ImageView.AllWrap" parent="View.AllWrap"/>
 
-    <style name="ImageView.AllWarp.CenterCrop">
+    <style name="ImageView.AllWrap.CenterCrop">
         <item name="android:scaleType">centerCrop</item>
     </style>
 
-    <style name="ImageView.AllWarp.CenterInside">
+    <style name="ImageView.AllWrap.CenterInside">
         <item name="android:scaleType">centerInside</item>
     </style>
 
-    <style name="ImageView.AllWarp.FitXY">
+    <style name="ImageView.AllWrap.FitXY">
         <item name="android:scaleType">fitXY</item>
     </style>
 
     <!-- Missing ImageView size combinations -->
-    <style name="ImageView.WarpMatch">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">match_parent</item>
-    </style>
+    <style name="ImageView.WrapMatch" parent="View.WrapMatch"/>
 
-    <style name="ImageView.WarpMatch.CenterCrop">
+    <style name="ImageView.WrapMatch.CenterCrop">
         <item name="android:scaleType">centerCrop</item>
     </style>
 
-    <style name="ImageView.WarpMatch.CenterInside">
+    <style name="ImageView.WrapMatch.CenterInside">
         <item name="android:scaleType">centerInside</item>
     </style>
 
-    <style name="ImageView.WarpMatch.FitXY">
+    <style name="ImageView.WrapMatch.FitXY">
         <item name="android:scaleType">fitXY</item>
     </style>
 
-    <style name="ImageView.MatchWeight">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">0dp</item>
-        <item name="android:layout_weight">10</item>
-    </style>
+    <style name="ImageView.MatchWeight" parent="View.MatchWeight"/>
 
     <style name="ImageView.MatchWeight.CenterCrop">
         <item name="android:scaleType">centerCrop</item>
@@ -1799,11 +1677,7 @@
         <item name="android:scaleType">fitXY</item>
     </style>
 
-    <style name="ImageView.WeightMatch">
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_weight">10</item>
-        <item name="android:layout_height">match_parent</item>
-    </style>
+    <style name="ImageView.WeightMatch" parent="View.WeightMatch"/>
 
     <style name="ImageView.WeightMatch.CenterCrop">
         <item name="android:scaleType">centerCrop</item>
@@ -1817,46 +1691,35 @@
         <item name="android:scaleType">fitXY</item>
     </style>
 
-    <style name="ImageView.WeightWarp">
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_weight">10</item>
-        <item name="android:layout_height">wrap_content</item>
-    </style>
+    <style name="ImageView.WeightWrap" parent="View.WeightWrap"/>
 
-    <style name="ImageView.WeightWarp.CenterCrop">
+    <style name="ImageView.WeightWrap.CenterCrop">
         <item name="android:scaleType">centerCrop</item>
     </style>
 
-    <style name="ImageView.WeightWarp.CenterInside">
+    <style name="ImageView.WeightWrap.CenterInside">
         <item name="android:scaleType">centerInside</item>
     </style>
 
-    <style name="ImageView.WeightWarp.FitXY">
+    <style name="ImageView.WeightWrap.FitXY">
         <item name="android:scaleType">fitXY</item>
     </style>
 
-    <style name="ImageView.WarpWeight">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">0dp</item>
-        <item name="android:layout_weight">10</item>
-    </style>
+    <style name="ImageView.WrapWeight" parent="View.WrapWeight"/>
 
-    <style name="ImageView.WarpWeight.CenterCrop">
+    <style name="ImageView.WrapWeight.CenterCrop">
         <item name="android:scaleType">centerCrop</item>
     </style>
 
-    <style name="ImageView.WarpWeight.CenterInside">
+    <style name="ImageView.WrapWeight.CenterInside">
         <item name="android:scaleType">centerInside</item>
     </style>
 
-    <style name="ImageView.WarpWeight.FitXY">
+    <style name="ImageView.WrapWeight.FitXY">
         <item name="android:scaleType">fitXY</item>
     </style>
 
-    <style name="ImageView.AllMatch">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">match_parent</item>
-    </style>
+    <style name="ImageView.AllMatch" parent="View.AllMatch"/>
 
     <style name="ImageView.AllMatch.CenterCrop">
         <item name="android:scaleType">centerCrop</item>
@@ -1875,72 +1738,52 @@
     <!-- ex) CheckBox.(width,height) -->
     <style name="CheckBox" parent="Widget.AppCompat.CompoundButton.CheckBox" />
 
-    <style name="CheckBox.MatchWarp">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
+    <style name="CheckBox.MatchWrap" parent="View.MatchWrap">
     </style>
 
-    <style name="CheckBox.AllWarp">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
+    <style name="CheckBox.AllWrap" parent="View.AllWrap">
     </style>
 
-    <style name="CheckBox.WarpMatch">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">match_parent</item>
+    <style name="CheckBox.WrapMatch" parent="View.WrapMatch">
     </style>
 
-    <style name="CheckBox.MatchWeight">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">0dp</item>
-        <item name="android:layout_weight">10</item>
+    <style name="CheckBox.MatchWeight" parent="View.MatchWeight">
     </style>
 
-    <style name="CheckBox.WeightMatch">
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_weight">10</item>
-        <item name="android:layout_height">match_parent</item>
+    <style name="CheckBox.WeightMatch" parent="View.WeightMatch">
     </style>
 
-    <style name="CheckBox.WeightWarp">
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_weight">10</item>
-        <item name="android:layout_height">wrap_content</item>
+    <style name="CheckBox.WeightWrap" parent="View.WeightWrap">
     </style>
 
-    <style name="CheckBox.WarpWeight">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">0dp</item>
-        <item name="android:layout_weight">10</item>
+    <style name="CheckBox.WrapWeight" parent="View.WrapWeight">
     </style>
 
-    <style name="CheckBox.AllMatch">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">match_parent</item>
+    <style name="CheckBox.AllMatch" parent="View.AllMatch">
     </style>
 
     <!-- CheckBox with Default Checked State -->
-    <style name="CheckBox.MatchWarp.Checked">
+    <style name="CheckBox.MatchWrap.Checked">
         <item name="android:checked">true</item>
     </style>
 
-    <style name="CheckBox.MatchWarp.Unchecked">
+    <style name="CheckBox.MatchWrap.Unchecked">
         <item name="android:checked">false</item>
     </style>
 
-    <style name="CheckBox.AllWarp.Checked">
+    <style name="CheckBox.AllWrap.Checked">
         <item name="android:checked">true</item>
     </style>
 
-    <style name="CheckBox.AllWarp.Unchecked">
+    <style name="CheckBox.AllWrap.Unchecked">
         <item name="android:checked">false</item>
     </style>
 
-    <style name="CheckBox.WarpMatch.Checked">
+    <style name="CheckBox.WrapMatch.Checked">
         <item name="android:checked">true</item>
     </style>
 
-    <style name="CheckBox.WarpMatch.Unchecked">
+    <style name="CheckBox.WrapMatch.Unchecked">
         <item name="android:checked">false</item>
     </style>
 
@@ -1960,19 +1803,19 @@
         <item name="android:checked">false</item>
     </style>
 
-    <style name="CheckBox.WeightWarp.Checked">
+    <style name="CheckBox.WeightWrap.Checked">
         <item name="android:checked">true</item>
     </style>
 
-    <style name="CheckBox.WeightWarp.Unchecked">
+    <style name="CheckBox.WeightWrap.Unchecked">
         <item name="android:checked">false</item>
     </style>
 
-    <style name="CheckBox.WarpWeight.Checked">
+    <style name="CheckBox.WrapWeight.Checked">
         <item name="android:checked">true</item>
     </style>
 
-    <style name="CheckBox.WarpWeight.Unchecked">
+    <style name="CheckBox.WrapWeight.Unchecked">
         <item name="android:checked">false</item>
     </style>
 
@@ -1989,72 +1832,44 @@
     <!-- ex) RadioButton.(width,height) -->
     <style name="RadioButton" parent="Widget.AppCompat.CompoundButton.RadioButton" />
 
-    <style name="RadioButton.MatchWarp">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-    </style>
+    <style name="RadioButton.MatchWrap" parent="View.MatchWrap"/>
 
-    <style name="RadioButton.AllWarp">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-    </style>
+    <style name="RadioButton.AllWrap" parent="View.AllWrap"/>
 
-    <style name="RadioButton.WarpMatch">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">match_parent</item>
-    </style>
+    <style name="RadioButton.WrapMatch" parent="View.WrapMatch"/>
 
-    <style name="RadioButton.MatchWeight">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">0dp</item>
-        <item name="android:layout_weight">10</item>
-    </style>
+    <style name="RadioButton.MatchWeight" parent="View.MatchWeight"/>
 
-    <style name="RadioButton.WeightMatch">
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_weight">10</item>
-        <item name="android:layout_height">match_parent</item>
-    </style>
+    <style name="RadioButton.WeightMatch" parent="View.WeightMatch"/>
 
-    <style name="RadioButton.WeightWarp">
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_weight">10</item>
-        <item name="android:layout_height">wrap_content</item>
-    </style>
+    <style name="RadioButton.WeightWrap" parent="View.WeightWrap"/>
 
-    <style name="RadioButton.WarpWeight">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">0dp</item>
-        <item name="android:layout_weight">10</item>
-    </style>
+    <style name="RadioButton.WrapWeight" parent="View.WrapWeight"/>
 
-    <style name="RadioButton.AllMatch">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">match_parent</item>
-    </style>
+    <style name="RadioButton.AllMatch" parent="View.AllMatch"/>
 
     <!-- RadioButton with Default Checked State -->
-    <style name="RadioButton.MatchWarp.Checked">
+    <style name="RadioButton.MatchWrap.Checked">
         <item name="android:checked">true</item>
     </style>
 
-    <style name="RadioButton.MatchWarp.Unchecked">
+    <style name="RadioButton.MatchWrap.Unchecked">
         <item name="android:checked">false</item>
     </style>
 
-    <style name="RadioButton.AllWarp.Checked">
+    <style name="RadioButton.AllWrap.Checked">
         <item name="android:checked">true</item>
     </style>
 
-    <style name="RadioButton.AllWarp.Unchecked">
+    <style name="RadioButton.AllWrap.Unchecked">
         <item name="android:checked">false</item>
     </style>
 
-    <style name="RadioButton.WarpMatch.Checked">
+    <style name="RadioButton.WrapMatch.Checked">
         <item name="android:checked">true</item>
     </style>
 
-    <style name="RadioButton.WarpMatch.Unchecked">
+    <style name="RadioButton.WrapMatch.Unchecked">
         <item name="android:checked">false</item>
     </style>
 
@@ -2074,19 +1889,19 @@
         <item name="android:checked">false</item>
     </style>
 
-    <style name="RadioButton.WeightWarp.Checked">
+    <style name="RadioButton.WeightWrap.Checked">
         <item name="android:checked">true</item>
     </style>
 
-    <style name="RadioButton.WeightWarp.Unchecked">
+    <style name="RadioButton.WeightWrap.Unchecked">
         <item name="android:checked">false</item>
     </style>
 
-    <style name="RadioButton.WarpWeight.Checked">
+    <style name="RadioButton.WrapWeight.Checked">
         <item name="android:checked">true</item>
     </style>
 
-    <style name="RadioButton.WarpWeight.Unchecked">
+    <style name="RadioButton.WrapWeight.Unchecked">
         <item name="android:checked">false</item>
     </style>
 
@@ -2103,72 +1918,44 @@
     <!-- ex) Switch.(width,height).(CheckedState) -->
     <style name="Switch" parent="Widget.AppCompat.CompoundButton.Switch" />
 
-    <style name="Switch.MatchWarp">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-    </style>
+    <style name="Switch.MatchWrap" parent="View.MatchWrap"/>
 
-    <style name="Switch.AllWarp">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-    </style>
+    <style name="Switch.AllWrap" parent="View.AllWrap"/>
 
-    <style name="Switch.WarpMatch">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">match_parent</item>
-    </style>
+    <style name="Switch.WrapMatch" parent="View.WrapMatch"/>
 
-    <style name="Switch.MatchWeight">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">0dp</item>
-        <item name="android:layout_weight">10</item>
-    </style>
+    <style name="Switch.MatchWeight" parent="View.MatchWeight"/>
 
-    <style name="Switch.WeightMatch">
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_weight">10</item>
-        <item name="android:layout_height">match_parent</item>
-    </style>
+    <style name="Switch.WeightMatch" parent="View.WeightMatch"/>
 
-    <style name="Switch.WeightWarp">
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_weight">10</item>
-        <item name="android:layout_height">wrap_content</item>
-    </style>
+    <style name="Switch.WeightWrap" parent="View.WeightWrap"/>
 
-    <style name="Switch.WarpWeight">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">0dp</item>
-        <item name="android:layout_weight">10</item>
-    </style>
+    <style name="Switch.WrapWeight" parent="View.WrapWeight"/>
 
-    <style name="Switch.AllMatch">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">match_parent</item>
-    </style>
+    <style name="Switch.AllMatch" parent="View.AllMatch"/>
 
     <!-- Switch with Default Checked State -->
-    <style name="Switch.MatchWarp.On">
+    <style name="Switch.MatchWrap.On">
         <item name="android:checked">true</item>
     </style>
 
-    <style name="Switch.MatchWarp.Off">
+    <style name="Switch.MatchWrap.Off">
         <item name="android:checked">false</item>
     </style>
 
-    <style name="Switch.AllWarp.On">
+    <style name="Switch.AllWrap.On">
         <item name="android:checked">true</item>
     </style>
 
-    <style name="Switch.AllWarp.Off">
+    <style name="Switch.AllWrap.Off">
         <item name="android:checked">false</item>
     </style>
 
-    <style name="Switch.WarpMatch.On">
+    <style name="Switch.WrapMatch.On">
         <item name="android:checked">true</item>
     </style>
 
-    <style name="Switch.WarpMatch.Off">
+    <style name="Switch.WrapMatch.Off">
         <item name="android:checked">false</item>
     </style>
 
@@ -2188,19 +1975,19 @@
         <item name="android:checked">false</item>
     </style>
 
-    <style name="Switch.WeightWarp.On">
+    <style name="Switch.WeightWrap.On">
         <item name="android:checked">true</item>
     </style>
 
-    <style name="Switch.WeightWarp.Off">
+    <style name="Switch.WeightWrap.Off">
         <item name="android:checked">false</item>
     </style>
 
-    <style name="Switch.WarpWeight.On">
+    <style name="Switch.WrapWeight.On">
         <item name="android:checked">true</item>
     </style>
 
-    <style name="Switch.WarpWeight.Off">
+    <style name="Switch.WrapWeight.Off">
         <item name="android:checked">false</item>
     </style>
 
@@ -2218,64 +2005,41 @@
     <style name="ProgressBar" parent="Widget.AppCompat.ProgressBar" />
 
     <!-- Basic Size Combinations -->
-    <style name="ProgressBar.MatchWarp">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-    </style>
+    <style name="ProgressBar.MatchWrap" parent="View.MatchWrap"/>
 
-    <style name="ProgressBar.AllWarp">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-    </style>
+    <style name="ProgressBar.AllWrap" parent="View.AllWrap"/>
 
-    <style name="ProgressBar.WarpMatch">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">match_parent</item>
-    </style>
+    <style name="ProgressBar.WrapMatch" parent="View.WrapMatch"/>
 
-    <style name="ProgressBar.WeightWarp">
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_weight">10</item>
-        <item name="android:layout_height">wrap_content</item>
-    </style>
+    <style name="ProgressBar.WeightWrap" parent="View.WeightWrap"/>
 
     <!-- Horizontal ProgressBar Styles -->
-    <style name="ProgressBar.MatchWarp.Horizontal" parent="Widget.AppCompat.ProgressBar.Horizontal">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-    </style>
+    <style name="ProgressBar.MatchWrap.Horizontal" parent="Widget.AppCompat.ProgressBar.Horizontal"/>
 
-    <style name="ProgressBar.MatchWarp.Horizontal.Indeterminate">
+    <style name="ProgressBar.MatchWrap.Horizontal.Indeterminate">
         <item name="android:indeterminate">true</item>
     </style>
 
-    <style name="ProgressBar.MatchWarp.Horizontal.Determinate">
+    <style name="ProgressBar.MatchWrap.Horizontal.Determinate">
         <item name="android:indeterminate">false</item>
         <item name="android:progress">50</item>
         <item name="android:max">100</item>
     </style>
 
-    <style name="ProgressBar.WeightWarp.Horizontal" parent="Widget.AppCompat.ProgressBar.Horizontal">
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_weight">10</item>
-        <item name="android:layout_height">wrap_content</item>
-    </style>
+    <style name="ProgressBar.WeightWrap.Horizontal" parent="Widget.AppCompat.ProgressBar.Horizontal"/>
 
-    <style name="ProgressBar.WeightWarp.Horizontal.Indeterminate">
+    <style name="ProgressBar.WeightWrap.Horizontal.Indeterminate">
         <item name="android:indeterminate">true</item>
     </style>
 
-    <style name="ProgressBar.WeightWarp.Horizontal.Determinate">
+    <style name="ProgressBar.WeightWrap.Horizontal.Determinate">
         <item name="android:indeterminate">false</item>
         <item name="android:progress">50</item>
         <item name="android:max">100</item>
     </style>
 
     <!-- Circle ProgressBar Styles -->
-    <style name="ProgressBar.AllWarp.Circle">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-    </style>
+    <style name="ProgressBar.AllWrap.Circle" parent="ProgressBar.AllWrap"/>
 
 
     <!-- Center Aligned ProgressBars -->
@@ -2291,50 +2055,37 @@
     <!-- ex) RadioGroup.(width,height).(orientation) -->
     <style name="RadioGroup" />
 
-    <style name="RadioGroup.MatchWarp">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-    </style>
+    <style name="RadioGroup.MatchWrap" parent="View.MatchWrap"/>
 
-    <style name="RadioGroup.MatchWarp.Vertical">
+    <style name="RadioGroup.MatchWrap.Vertical">
         <item name="android:orientation">vertical</item>
     </style>
 
-    <style name="RadioGroup.MatchWarp.Horizontal">
+    <style name="RadioGroup.MatchWrap.Horizontal">
         <item name="android:orientation">horizontal</item>
     </style>
 
-    <style name="RadioGroup.AllWarp">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-    </style>
+    <style name="RadioGroup.AllWrap" parent="View.AllWrap"/>
 
-    <style name="RadioGroup.AllWarp.Vertical">
+    <style name="RadioGroup.AllWrap.Vertical">
         <item name="android:orientation">vertical</item>
     </style>
 
-    <style name="RadioGroup.AllWarp.Horizontal">
+    <style name="RadioGroup.AllWrap.Horizontal">
         <item name="android:orientation">horizontal</item>
     </style>
 
-    <style name="RadioGroup.WarpMatch">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">match_parent</item>
-    </style>
+    <style name="RadioGroup.WrapMatch" parent="View.WrapMatch"/>
 
-    <style name="RadioGroup.WarpMatch.Vertical">
+    <style name="RadioGroup.WrapMatch.Vertical">
         <item name="android:orientation">vertical</item>
     </style>
 
-    <style name="RadioGroup.WarpMatch.Horizontal">
+    <style name="RadioGroup.WrapMatch.Horizontal">
         <item name="android:orientation">horizontal</item>
     </style>
 
-    <style name="RadioGroup.MatchWeight">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">0dp</item>
-        <item name="android:layout_weight">10</item>
-    </style>
+    <style name="RadioGroup.MatchWeight" parent="View.MatchWeight"/>
 
     <style name="RadioGroup.MatchWeight.Vertical">
         <item name="android:orientation">vertical</item>
@@ -2344,11 +2095,7 @@
         <item name="android:orientation">horizontal</item>
     </style>
 
-    <style name="RadioGroup.WeightMatch">
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_weight">10</item>
-        <item name="android:layout_height">match_parent</item>
-    </style>
+    <style name="RadioGroup.WeightMatch" parent="View.WeightMatch"/>
 
     <style name="RadioGroup.WeightMatch.Vertical">
         <item name="android:orientation">vertical</item>
@@ -2358,38 +2105,27 @@
         <item name="android:orientation">horizontal</item>
     </style>
 
-    <style name="RadioGroup.WeightWarp">
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_weight">10</item>
-        <item name="android:layout_height">wrap_content</item>
-    </style>
+    <style name="RadioGroup.WeightWrap" parent="View.WeightWrap"/>
 
-    <style name="RadioGroup.WeightWarp.Vertical">
+    <style name="RadioGroup.WeightWrap.Vertical">
         <item name="android:orientation">vertical</item>
     </style>
 
-    <style name="RadioGroup.WeightWarp.Horizontal">
+    <style name="RadioGroup.WeightWrap.Horizontal">
         <item name="android:orientation">horizontal</item>
     </style>
 
-    <style name="RadioGroup.WarpWeight">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">0dp</item>
-        <item name="android:layout_weight">10</item>
-    </style>
+    <style name="RadioGroup.WrapWeight" parent="View.WrapWeight"/>
 
-    <style name="RadioGroup.WarpWeight.Vertical">
+    <style name="RadioGroup.WrapWeight.Vertical">
         <item name="android:orientation">vertical</item>
     </style>
 
-    <style name="RadioGroup.WarpWeight.Horizontal">
+    <style name="RadioGroup.WrapWeight.Horizontal">
         <item name="android:orientation">horizontal</item>
     </style>
 
-    <style name="RadioGroup.AllMatch">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">match_parent</item>
-    </style>
+    <style name="RadioGroup.AllMatch" parent="View.AllMatch"/>
 
     <style name="RadioGroup.AllMatch.Vertical">
         <item name="android:orientation">vertical</item>
@@ -2401,93 +2137,61 @@
 
     <style name="RecyclerView" />
 
-    <!-- MatchWarp -->
-    <style name="RecyclerView.MatchWarp">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
+    <style name="RecyclerView.MatchWrap" parent="View.MatchWrap"/>
+
+    <style name="RecyclerView.AllMatch" parent="View.AllMatch"/>
+
+    <style name="RecyclerView.AllWrap" parent="View.AllWrap"/>
+
+    <style name="RecyclerView.WrapMatch" parent="View.WrapMatch"/>
+
+    <style name="RecyclerView.MatchWeight" parent="View.MatchWeight"/>
+
+    <style name="RecyclerView.WeightMatch" parent="View.WeightMatch"/>
+
+    <style name="RecyclerView.WeightWrap" parent="View.WeightWrap"/>
+
+    <style name="RecyclerView.WrapWeight" parent="View.WrapWeight">
     </style>
 
-    <!-- AllMatch -->
-    <style name="RecyclerView.AllMatch">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">match_parent</item>
-    </style>
-
-    <!-- AllWarp -->
-    <style name="RecyclerView.AllWarp">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-    </style>
-
-    <!-- WarpMatch -->
-    <style name="RecyclerView.WarpMatch">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">match_parent</item>
-    </style>
-
-    <!-- MatchWeight -->
-    <style name="RecyclerView.MatchWeight">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">0dp</item>
-        <item name="android:layout_weight">10</item>
-    </style>
-
-    <!-- WeightMatch -->
-    <style name="RecyclerView.WeightMatch">
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_height">match_parent</item>
-        <item name="android:layout_weight">10</item>
-    </style>
-
-    <!-- WeightWarp -->
-    <style name="RecyclerView.WeightWarp">
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_weight">10</item>
-    </style>
-
-    <!-- WarpWeight -->
-    <style name="RecyclerView.WarpWeight">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">0dp</item>
-        <item name="android:layout_weight">10</item>
-    </style>
-    
-    <!-- MatchWarp LinearLayoutManager with Orientation -->
-    <style name="RecyclerView.MatchWarp.LinearLayoutManager" >
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
+    <style name="RecyclerView.MatchWrap.LinearLayoutManager" >
         <item name="layoutManager">androidx.recyclerview.widget.LinearLayoutManager</item>
     </style>
-    <style name="RecyclerView.MatchWarp.LinearLayoutManager.Vertical" parent="RecyclerView.MatchWarp.LinearLayoutManager">
+    <style name="RecyclerView.MatchWrap.LinearLayoutManager.Vertical" parent="RecyclerView.MatchWrap.LinearLayoutManager">
         <item name="orientation">vertical</item>
     </style>
-    <style name="RecyclerView.MatchWarp.LinearLayoutManager.Horizontal" parent="RecyclerView.MatchWarp.LinearLayoutManager">
+    <style name="RecyclerView.MatchWrap.LinearLayoutManager.Horizontal" parent="RecyclerView.MatchWrap.LinearLayoutManager">
         <item name="orientation">horizontal</item>
     </style>
-    
-    <!-- MatchWarp GridLayoutManager -->
-    <style name="RecyclerView.MatchWarp.GridLayoutManager" >
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
+
+    <style name="RecyclerView.MatchWrap.GridLayoutManager" >
         <item name="layoutManager">androidx.recyclerview.widget.GridLayoutManager</item>
     </style>
-    <style name="RecyclerView.MatchWarp.StaggeredGridLayoutManager" >
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
+
+    <style name="RecyclerView.MatchWrap.GridLayoutManager.Vertical" >
+        <item name="orientation">vertical</item>
+    </style>
+
+    <style name="RecyclerView.MatchWrap.GridLayoutManager.Horizontal" >
+        <item name="orientation">horizontal</item>
+    </style>
+
+    <style name="RecyclerView.MatchWrap.StaggeredGridLayoutManager">
         <item name="layoutManager">androidx.recyclerview.widget.StaggeredGridLayoutManager</item>
     </style>
-    <style name="RecyclerView.MatchWarp.CarouselLayoutManager" >
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
+    <style name="RecyclerView.MatchWrap.StaggeredGridLayoutManager.Vertical">
+        <item name="orientation">vertical</item>
+    </style>
+    <style name="RecyclerView.MatchWrap.StaggeredGridLayoutManager.Horizontal">
+        <item name="orientation">horizontal</item>
+    </style>
+    <style name="RecyclerView.MatchWrap.CarouselLayoutManager">
         <item name="layoutManager">com.google.android.material.carousel.CarouselLayoutManager</item>
     </style>
 
 
     <!-- AllMatch LinearLayoutManager with Orientation -->
     <style name="RecyclerView.AllMatch.LinearLayoutManager" >
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">match_parent</item>
         <item name="layoutManager">androidx.recyclerview.widget.LinearLayoutManager</item>
     </style>
     <style name="RecyclerView.AllMatch.LinearLayoutManager.Vertical" parent="RecyclerView.AllMatch.LinearLayoutManager">
@@ -2499,82 +2203,93 @@
     
     <!-- AllMatch GridLayoutManager -->
     <style name="RecyclerView.AllMatch.GridLayoutManager" >
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">match_parent</item>
         <item name="layoutManager">androidx.recyclerview.widget.GridLayoutManager</item>
+    </style>
+    <style name="RecyclerView.AllMatch.GridLayoutManager.Vertical" parent="RecyclerView.AllMatch.GridLayoutManager">
+        <item name="orientation">vertical</item>
+    </style>
+    <style name="RecyclerView.AllMatch.GridLayoutManager.Horizontal" parent="RecyclerView.AllMatch.GridLayoutManager">
+        <item name="orientation">horizontal</item>
     </style>
     <style name="RecyclerView.AllMatch.StaggeredGridLayoutManager" >
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">match_parent</item>
         <item name="layoutManager">androidx.recyclerview.widget.StaggeredGridLayoutManager</item>
+    </style>
+    <style name="RecyclerView.AllMatch.StaggeredGridLayoutManager.Vertical" parent="RecyclerView.AllMatch.StaggeredGridLayoutManager">
+        <item name="orientation">vertical</item>
+    </style>
+    <style name="RecyclerView.AllMatch.StaggeredGridLayoutManager.Horizontal" parent="RecyclerView.AllMatch.StaggeredGridLayoutManager">
+        <item name="orientation">horizontal</item>
     </style>
     <style name="RecyclerView.AllMatch.CarouselLayoutManager" >
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">match_parent</item>
         <item name="layoutManager">com.google.android.material.carousel.CarouselLayoutManager</item>
     </style>
 
-    <!-- AllWarp LinearLayoutManager with Orientation -->
-    <style name="RecyclerView.AllWarp.LinearLayoutManager" >
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
+    <!-- AllWrap LinearLayoutManager with Orientation -->
+    <style name="RecyclerView.AllWrap.LinearLayoutManager" >
         <item name="layoutManager">androidx.recyclerview.widget.LinearLayoutManager</item>
     </style>
-    <style name="RecyclerView.AllWarp.LinearLayoutManager.Vertical" parent="RecyclerView.AllWarp.LinearLayoutManager">
+    <style name="RecyclerView.AllWrap.LinearLayoutManager.Vertical" parent="RecyclerView.AllWrap.LinearLayoutManager">
         <item name="orientation">vertical</item>
     </style>
-    <style name="RecyclerView.AllWarp.LinearLayoutManager.Horizontal" parent="RecyclerView.AllWarp.LinearLayoutManager">
+    <style name="RecyclerView.AllWrap.LinearLayoutManager.Horizontal" parent="RecyclerView.AllWrap.LinearLayoutManager">
         <item name="orientation">horizontal</item>
     </style>
-    <style name="RecyclerView.AllWarp.GridLayoutManager" >
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
+    <style name="RecyclerView.AllWrap.GridLayoutManager" >
         <item name="layoutManager">androidx.recyclerview.widget.GridLayoutManager</item>
     </style>
-    <style name="RecyclerView.AllWarp.StaggeredGridLayoutManager" >
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
+    <style name="RecyclerView.AllWrap.GridLayoutManager.Vertical" parent="RecyclerView.AllWrap.GridLayoutManager">
+        <item name="orientation">vertical</item>
+    </style>
+    <style name="RecyclerView.AllWrap.GridLayoutManager.Horizontal" parent="RecyclerView.AllWrap.GridLayoutManager">
+        <item name="orientation">horizontal</item>
+    </style>
+    <style name="RecyclerView.AllWrap.StaggeredGridLayoutManager" >
         <item name="layoutManager">androidx.recyclerview.widget.StaggeredGridLayoutManager</item>
     </style>
-    <style name="RecyclerView.AllWarp.CarouselLayoutManager" >
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
+    <style name="RecyclerView.AllWrap.StaggeredGridLayoutManager.Vertical" parent="RecyclerView.AllWrap.StaggeredGridLayoutManager">
+        <item name="orientation">vertical</item>
+    </style>
+    <style name="RecyclerView.AllWrap.StaggeredGridLayoutManager.Horizontal" parent="RecyclerView.AllWrap.StaggeredGridLayoutManager">
+        <item name="orientation">horizontal</item>
+    </style>
+    <style name="RecyclerView.AllWrap.CarouselLayoutManager" >
         <item name="layoutManager">com.google.android.material.carousel.CarouselLayoutManager</item>
     </style>
 
-    <!-- WarpMatch LinearLayoutManager with Orientation -->
-    <style name="RecyclerView.WarpMatch.LinearLayoutManager" >
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">match_parent</item>
+    <!-- WrapMatch LinearLayoutManager with Orientation -->
+    <style name="RecyclerView.WrapMatch.LinearLayoutManager" >
         <item name="layoutManager">androidx.recyclerview.widget.LinearLayoutManager</item>
     </style>
-    <style name="RecyclerView.WarpMatch.LinearLayoutManager.Vertical" parent="RecyclerView.WarpMatch.LinearLayoutManager">
+    <style name="RecyclerView.WrapMatch.LinearLayoutManager.Vertical" parent="RecyclerView.WrapMatch.LinearLayoutManager">
         <item name="orientation">vertical</item>
     </style>
-    <style name="RecyclerView.WarpMatch.LinearLayoutManager.Horizontal" parent="RecyclerView.WarpMatch.LinearLayoutManager">
+    <style name="RecyclerView.WrapMatch.LinearLayoutManager.Horizontal" parent="RecyclerView.WrapMatch.LinearLayoutManager">
         <item name="orientation">horizontal</item>
     </style>
-    <style name="RecyclerView.WarpMatch.GridLayoutManager" >
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">match_parent</item>
+    <style name="RecyclerView.WrapMatch.GridLayoutManager" >
         <item name="layoutManager">androidx.recyclerview.widget.GridLayoutManager</item>
     </style>
-    <style name="RecyclerView.WarpMatch.StaggeredGridLayoutManager" >
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">match_parent</item>
+    <style name="RecyclerView.WrapMatch.GridLayoutManager.Vertical" parent="RecyclerView.WrapMatch.GridLayoutManager">
+        <item name="orientation">vertical</item>
+    </style>
+    <style name="RecyclerView.WrapMatch.GridLayoutManager.Horizontal" parent="RecyclerView.WrapMatch.GridLayoutManager">
+        <item name="orientation">horizontal</item>
+    </style>
+    <style name="RecyclerView.WrapMatch.StaggeredGridLayoutManager" >
         <item name="layoutManager">androidx.recyclerview.widget.StaggeredGridLayoutManager</item>
     </style>
-    <style name="RecyclerView.WarpMatch.CarouselLayoutManager" >
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">match_parent</item>
+    <style name="RecyclerView.WrapMatch.StaggeredGridLayoutManager.Vertical" parent="RecyclerView.WrapMatch.StaggeredGridLayoutManager">
+        <item name="orientation">vertical</item>
+    </style>
+    <style name="RecyclerView.WrapMatch.StaggeredGridLayoutManager.Horizontal" parent="RecyclerView.WrapMatch.StaggeredGridLayoutManager">
+        <item name="orientation">horizontal</item>
+    </style>
+    <style name="RecyclerView.WrapMatch.CarouselLayoutManager" >
         <item name="layoutManager">com.google.android.material.carousel.CarouselLayoutManager</item>
     </style>
 
     <!-- MatchWeight LinearLayoutManager with Orientation -->
     <style name="RecyclerView.MatchWeight.LinearLayoutManager" >
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">0dp</item>
-        <item name="android:layout_weight">10</item>
         <item name="layoutManager">androidx.recyclerview.widget.LinearLayoutManager</item>
     </style>
     <style name="RecyclerView.MatchWeight.LinearLayoutManager.Vertical" parent="RecyclerView.MatchWeight.LinearLayoutManager">
@@ -2584,29 +2299,29 @@
         <item name="orientation">horizontal</item>
     </style>
     <style name="RecyclerView.MatchWeight.GridLayoutManager" >
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">0dp</item>
-        <item name="android:layout_weight">10</item>
         <item name="layoutManager">androidx.recyclerview.widget.GridLayoutManager</item>
     </style>
+    <style name="RecyclerView.MatchWeight.GridLayoutManager.Vertical" parent="RecyclerView.MatchWeight.GridLayoutManager">
+        <item name="orientation">vertical</item>
+    </style>
+    <style name="RecyclerView.MatchWeight.GridLayoutManager.Horizontal" parent="RecyclerView.MatchWeight.GridLayoutManager">
+        <item name="orientation">horizontal</item>
+    </style>
     <style name="RecyclerView.MatchWeight.StaggeredGridLayoutManager" >
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">0dp</item>
-        <item name="android:layout_weight">10</item>
         <item name="layoutManager">androidx.recyclerview.widget.StaggeredGridLayoutManager</item>
     </style>
+    <style name="RecyclerView.MatchWeight.StaggeredGridLayoutManager.Vertical" parent="RecyclerView.MatchWeight.StaggeredGridLayoutManager">
+        <item name="orientation">vertical</item>
+    </style>
+    <style name="RecyclerView.MatchWeight.StaggeredGridLayoutManager.Horizontal" parent="RecyclerView.MatchWeight.StaggeredGridLayoutManager">
+        <item name="orientation">horizontal</item>
+    </style>
     <style name="RecyclerView.MatchWeight.CarouselLayoutManager" >
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">0dp</item>
-        <item name="android:layout_weight">10</item>
         <item name="layoutManager">com.google.android.material.carousel.CarouselLayoutManager</item>
     </style>
 
     <!-- WeightMatch LinearLayoutManager with Orientation -->
     <style name="RecyclerView.WeightMatch.LinearLayoutManager" >
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_weight">10</item>
-        <item name="android:layout_height">match_parent</item>
         <item name="layoutManager">androidx.recyclerview.widget.LinearLayoutManager</item>
     </style>
     <style name="RecyclerView.WeightMatch.LinearLayoutManager.Vertical" parent="RecyclerView.WeightMatch.LinearLayoutManager">
@@ -2616,85 +2331,88 @@
         <item name="orientation">horizontal</item>
     </style>
     <style name="RecyclerView.WeightMatch.GridLayoutManager" >
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_weight">10</item>
-        <item name="android:layout_height">match_parent</item>
         <item name="layoutManager">androidx.recyclerview.widget.GridLayoutManager</item>
+    </style>
+    <style name="RecyclerView.WeightMatch.GridLayoutManager.Vertical" parent="RecyclerView.WeightMatch.GridLayoutManager">
+        <item name="orientation">vertical</item>
+    </style>
+    <style name="RecyclerView.WeightMatch.GridLayoutManager.Horizontal" parent="RecyclerView.WeightMatch.GridLayoutManager">
+        <item name="orientation">horizontal</item>
     </style>
     <style name="RecyclerView.WeightMatch.StaggeredGridLayoutManager" >
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_weight">10</item>
-        <item name="android:layout_height">match_parent</item>
         <item name="layoutManager">androidx.recyclerview.widget.StaggeredGridLayoutManager</item>
+    </style>
+    <style name="RecyclerView.WeightMatch.StaggeredGridLayoutManager.Vertical" parent="RecyclerView.WeightMatch.StaggeredGridLayoutManager">
+        <item name="orientation">vertical</item>
+    </style>
+    <style name="RecyclerView.WeightMatch.StaggeredGridLayoutManager.Horizontal" parent="RecyclerView.WeightMatch.StaggeredGridLayoutManager">
+        <item name="orientation">horizontal</item>
     </style>
     <style name="RecyclerView.WeightMatch.CarouselLayoutManager" >
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_weight">10</item>
-        <item name="android:layout_height">match_parent</item>
         <item name="layoutManager">com.google.android.material.carousel.CarouselLayoutManager</item>
     </style>
 
-    <!-- WeightWarp LinearLayoutManager with Orientation -->
-    <style name="RecyclerView.WeightWarp.LinearLayoutManager" >
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_weight">10</item>
-        <item name="android:layout_height">wrap_content</item>
+    <!-- WeightWrap LinearLayoutManager with Orientation -->
+    <style name="RecyclerView.WeightWrap.LinearLayoutManager" >
         <item name="layoutManager">androidx.recyclerview.widget.LinearLayoutManager</item>
     </style>
-    <style name="RecyclerView.WeightWarp.LinearLayoutManager.Vertical" parent="RecyclerView.WeightWarp.LinearLayoutManager">
+    <style name="RecyclerView.WeightWrap.LinearLayoutManager.Vertical" parent="RecyclerView.WeightWrap.LinearLayoutManager">
         <item name="orientation">vertical</item>
     </style>
-    <style name="RecyclerView.WeightWarp.LinearLayoutManager.Horizontal" parent="RecyclerView.WeightWarp.LinearLayoutManager">
+    <style name="RecyclerView.WeightWrap.LinearLayoutManager.Horizontal" parent="RecyclerView.WeightWrap.LinearLayoutManager">
         <item name="orientation">horizontal</item>
     </style>
-    <style name="RecyclerView.WeightWarp.GridLayoutManager" >
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_weight">10</item>
-        <item name="android:layout_height">wrap_content</item>
+    <style name="RecyclerView.WeightWrap.GridLayoutManager" >
         <item name="layoutManager">androidx.recyclerview.widget.GridLayoutManager</item>
     </style>
-    <style name="RecyclerView.WeightWarp.StaggeredGridLayoutManager" >
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_weight">10</item>
-        <item name="android:layout_height">wrap_content</item>
+    <style name="RecyclerView.WeightWrap.GridLayoutManager.Vertical" parent="RecyclerView.WeightWrap.GridLayoutManager">
+        <item name="orientation">vertical</item>
+    </style>
+    <style name="RecyclerView.WeightWrap.GridLayoutManager.Horizontal" parent="RecyclerView.WeightWrap.GridLayoutManager">
+        <item name="orientation">horizontal</item>
+    </style>
+    <style name="RecyclerView.WeightWrap.StaggeredGridLayoutManager" >
         <item name="layoutManager">androidx.recyclerview.widget.StaggeredGridLayoutManager</item>
     </style>
-    <style name="RecyclerView.WeightWarp.CarouselLayoutManager" >
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_weight">10</item>
-        <item name="android:layout_height">wrap_content</item>
+    <style name="RecyclerView.WeightWrap.StaggeredGridLayoutManager.Vertical" parent="RecyclerView.WeightWrap.StaggeredGridLayoutManager">
+        <item name="orientation">vertical</item>
+    </style>
+    <style name="RecyclerView.WeightWrap.StaggeredGridLayoutManager.Horizontal" parent="RecyclerView.WeightWrap.StaggeredGridLayoutManager">
+        <item name="orientation">horizontal</item>
+    </style>
+    <style name="RecyclerView.WeightWrap.CarouselLayoutManager" >
         <item name="layoutManager">com.google.android.material.carousel.CarouselLayoutManager</item>
     </style>
 
-    <!-- WarpWeight LinearLayoutManager with Orientation -->
-    <style name="RecyclerView.WarpWeight.LinearLayoutManager" >
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">0dp</item>
-        <item name="android:layout_weight">10</item>
+    <!-- WrapWeight LinearLayoutManager with Orientation -->
+    <style name="RecyclerView.WrapWeight.LinearLayoutManager" >
         <item name="layoutManager">androidx.recyclerview.widget.LinearLayoutManager</item>
     </style>
-    <style name="RecyclerView.WarpWeight.LinearLayoutManager.Vertical" parent="RecyclerView.WarpWeight.LinearLayoutManager">
+    <style name="RecyclerView.WrapWeight.LinearLayoutManager.Vertical" parent="RecyclerView.WrapWeight.LinearLayoutManager">
         <item name="orientation">vertical</item>
     </style>
-    <style name="RecyclerView.WarpWeight.LinearLayoutManager.Horizontal" parent="RecyclerView.WarpWeight.LinearLayoutManager">
+    <style name="RecyclerView.WrapWeight.LinearLayoutManager.Horizontal" parent="RecyclerView.WrapWeight.LinearLayoutManager">
         <item name="orientation">horizontal</item>
     </style>
-    <style name="RecyclerView.WarpWeight.GridLayoutManager" >
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">0dp</item>
-        <item name="android:layout_weight">10</item>
+    <style name="RecyclerView.WrapWeight.GridLayoutManager" >
         <item name="layoutManager">androidx.recyclerview.widget.GridLayoutManager</item>
     </style>
-    <style name="RecyclerView.WarpWeight.StaggeredGridLayoutManager" >
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">0dp</item>
-        <item name="android:layout_weight">10</item>
+    <style name="RecyclerView.WrapWeight.GridLayoutManager.Vertical" parent="RecyclerView.WrapWeight.GridLayoutManager">
+        <item name="orientation">vertical</item>
+    </style>
+    <style name="RecyclerView.WrapWeight.GridLayoutManager.Horizontal" parent="RecyclerView.WrapWeight.GridLayoutManager">
+        <item name="orientation">horizontal</item>
+    </style>
+    <style name="RecyclerView.WrapWeight.StaggeredGridLayoutManager" >
         <item name="layoutManager">androidx.recyclerview.widget.StaggeredGridLayoutManager</item>
     </style>
-    <style name="RecyclerView.WarpWeight.CarouselLayoutManager" >
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">0dp</item>
-        <item name="android:layout_weight">10</item>
+    <style name="RecyclerView.WrapWeight.StaggeredGridLayoutManager.Vertical" parent="RecyclerView.WrapWeight.StaggeredGridLayoutManager">
+        <item name="orientation">vertical</item>
+    </style>
+    <style name="RecyclerView.WrapWeight.StaggeredGridLayoutManager.Horizontal" parent="RecyclerView.WrapWeight.StaggeredGridLayoutManager">
+        <item name="orientation">horizontal</item>
+    </style>
+    <style name="RecyclerView.WrapWeight.CarouselLayoutManager" >
         <item name="layoutManager">com.google.android.material.carousel.CarouselLayoutManager</item>
     </style>
 </resources>

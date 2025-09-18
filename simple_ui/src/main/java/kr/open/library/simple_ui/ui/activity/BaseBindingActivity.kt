@@ -49,6 +49,14 @@ public abstract class BaseBindingActivity<BINDING : ViewDataBinding>(@LayoutRes 
     protected open fun onCreateView(rootView: View, savedInstanceState: Bundle?) {
 
     }
+
+
+    /*********************************
+     *  ViewModel 이벤트 구독 및 처리   *
+     *********************************/
+    protected open fun eventVmCollect() {}
+
+
     /**
      * Obtains a ViewModel of the specified type.
      * 지정된 유형의 ViewModel을 가져옵니다.
@@ -56,4 +64,5 @@ public abstract class BaseBindingActivity<BINDING : ViewDataBinding>(@LayoutRes 
     protected inline fun <reified T : ViewModel> getViewModel(): T {
         return ViewModelProvider(this)[T::class.java]
     }
+
 }

@@ -99,7 +99,7 @@ abstract class RootActivity : AppCompatActivity() {
 
     protected fun requestPermissions(permissions: List<String>, onResult: ((deniedPermissions: List<String>) -> Unit)) {
         currentRequestId = permissionManager.request(
-            context= this,
+            context = this,
             requestPermissionLauncher = requestPermissionLauncher,
             specialPermissionLaunchers = specialPermissionLaunchers,
             permissions = permissions,

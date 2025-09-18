@@ -39,6 +39,7 @@ public abstract class BaseBindingFragment<BINDING : ViewDataBinding>(@LayoutRes 
      */
     protected lateinit var binding: BINDING
 
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -46,6 +47,7 @@ public abstract class BaseBindingFragment<BINDING : ViewDataBinding>(@LayoutRes 
         afterOnCrateView(binding.root, savedInstanceState)
         return binding.root
     }
+
 
     /**
      * Called immediately after onCreateView() has returned, but before any saved state has been restored in to the view.
@@ -61,10 +63,20 @@ public abstract class BaseBindingFragment<BINDING : ViewDataBinding>(@LayoutRes 
 
     }
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.lifecycleOwner = this
     }
+
+
+
+    /*********************************
+     *  ViewModel 이벤트 구독 및 처리   *
+     *********************************/
+    protected open fun eventVmCollect() {}
+
+
 
     /**
      * Obtains a ViewModel of the specified type.
