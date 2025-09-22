@@ -46,8 +46,10 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.3")
-    implementation("com.github.rhpark:Android_Custom_Logcat:0.9.2")
-    implementation("com.github.rhpark:Permissions:0.9.4")
-    implementation("com.github.rhpark:Extensions:0.1.1")
+
+    // Android Lifecycle components for proper flush handling use for Logx(Logcat)
+    implementation("androidx.lifecycle:lifecycle-process:2.9.3")
+    implementation("androidx.lifecycle:lifecycle-common:2.9.3")
+
     implementation("com.github.rhpark:CustomSystemService:0.1.0")
 }

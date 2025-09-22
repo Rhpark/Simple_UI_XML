@@ -7,9 +7,9 @@ import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import kr.open.library.easy_extensions.conditional.checkSdkVersion
 import kr.open.library.logcat.Logx
-import kr.open.library.simple_ui.ui.activity.BaseBindingActivity
+import kr.open.library.simple_ui.extensions.conditional.checkSdkVersion
+import kr.open.library.simple_ui.presenter.ui.activity.BaseBindingActivity
 import kr.open.library.simpleui_xml.databinding.ActivityMainBinding
 
 class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
@@ -62,7 +62,7 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 
         checkSdkVersion(Build.VERSION_CODES.M,
             positiveWork = {
-                requestPermissions(listOf(Manifest.permission.CAMERA)) { deniedPermissions ->
+                onRequestPermissions(listOf(Manifest.permission.CAMERA)) { deniedPermissions ->
                     if (deniedPermissions.isEmpty()) {
                         updatePermissionStatus("✅ 카메라 권한이 허용되었습니다")
                     } else {
@@ -88,7 +88,7 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
             }
         }
 
-        requestPermissions(locationPermissions) { deniedPermissions ->
+        onRequestPermissions(locationPermissions) { deniedPermissions ->
             if (deniedPermissions.isEmpty()) {
                 val backgroundNote = checkSdkVersion(Build.VERSION_CODES.Q,
                     positiveWork = { " (백그라운드 포함)" },
@@ -114,7 +114,7 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
             }
         )
 
-        requestPermissions(storagePermissions) { deniedPermissions ->
+        onRequestPermissions(storagePermissions) { deniedPermissions ->
             if (deniedPermissions.isEmpty()) {
                 val apiNote = checkSdkVersion(Build.VERSION_CODES.R,
                     positiveWork = { " (MANAGE_EXTERNAL_STORAGE)" },
@@ -160,7 +160,7 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
             }
         }
 
-        requestPermissions(allPermissions) { deniedPermissions ->
+        onRequestPermissions(allPermissions) { deniedPermissions ->
             if (deniedPermissions.isEmpty()) {
                 updatePermissionStatus("✅ 모든 권한이 허용되었습니다 (SDK ${Build.VERSION.SDK_INT} 기준)")
             } else {
