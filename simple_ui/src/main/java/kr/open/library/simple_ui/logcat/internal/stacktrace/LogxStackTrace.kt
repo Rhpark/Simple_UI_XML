@@ -1,7 +1,6 @@
 package kr.open.library.simple_ui.logcat.internal.stacktrace
 
 import android.util.Log
-import kr.open.library.logcat.internal.stacktrace.LogxStackTraceMetaData
 import kr.open.library.simple_ui.logcat.Logx
 
 
