@@ -9,6 +9,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import kr.open.library.logcat.Logx
 import kr.open.library.simple_ui.extensions.conditional.checkSdkVersion
+import kr.open.library.simple_ui.presenter.extensions.view.bold
 import kr.open.library.simple_ui.presenter.ui.activity.BaseBindingActivity
 import kr.open.library.simpleui_xml.databinding.ActivityMainBinding
 
@@ -55,6 +56,8 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
         checkSdkVersion(Build.VERSION_CODES.TIRAMISU) {
             // 알림 권한 요청 기능 추가 가능
         }
+
+        binding.tvTitle.bold()
     }
 
     private fun requestCameraPermission() {

@@ -9,7 +9,6 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kr.open.library.simple_ui.logcat.internal.file_writer.base.LogxFileWriterImp
 import kr.open.library.simple_ui.logcat.model.LogxType
-
 import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter

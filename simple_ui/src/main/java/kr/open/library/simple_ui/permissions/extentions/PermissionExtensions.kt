@@ -14,6 +14,7 @@ import android.provider.Settings
 import androidx.core.content.ContextCompat
 import androidx.core.app.NotificationManagerCompat
 import kr.open.library.simple_ui.extensions.conditional.*
+import kr.open.library.simple_ui.extensions.trycatch.safeCatch
 
 
 public inline fun Context.hasPermission(permission: String): Boolean =
@@ -85,35 +86,30 @@ public inline fun Context.hasPermissions(vararg permissions: String, doWork: () 
 public inline fun Context.remainPermissions(permissions: List<String>): List<String> =
     permissions.filterNot { hasPermission(it) }
 
-public inline fun Context.hasUsageStatsPermission(): Boolean = try {
+public inline fun Context.hasUsageStatsPermission(): Boolean = safeCatch(defaultValue = false) {
     val appOps = getSystemService(Context.APP_OPS_SERVICE) as? AppOpsManager
     appOps?.checkOpNoThrow(
         AppOpsManager.OPSTR_GET_USAGE_STATS,
         Process.myUid(),
         packageName
     ) == AppOpsManager.MODE_ALLOWED
-} catch (e: Exception) {
-    false
 }
 
-public inline fun Context.hasAccessibilityServicePermission(): Boolean = try {
-    val enabledServices = Settings.Secure.getString(
-        contentResolver,
-        Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
-    )
-    enabledServices?.contains(packageName) == true
-} catch (e: Exception) {
-    false
-}
+public inline fun Context.hasAccessibilityServicePermission(): Boolean =
+    safeCatch(defaultValue = false) {
+        val enabledServices = Settings.Secure.getString(
+            contentResolver,
+            Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
+        )
+        enabledServices?.contains(packageName) == true
+    }
 
-public inline fun Context.hasNotificationListenerPermission(): Boolean = try {
+public inline fun Context.hasNotificationListenerPermission(): Boolean = safeCatch(defaultValue = false) {
     val enabledListeners = Settings.Secure.getString(
         contentResolver,
         "enabled_notification_listeners"
     )
     enabledListeners?.contains(packageName) == true
-} catch (e: Exception) {
-    false
 }
 
 public inline fun Context.isSpecialPermission(permission: String): Boolean =
@@ -129,8 +125,7 @@ public inline fun Context.isSpecialPermission(permission: String): Boolean =
         else -> false
     }
 
-public inline fun Context.getPermissionProtectionLevel(permission: String): Int = try {
-    packageManager.getPermissionInfo(permission, 0).protection
-} catch (e: PackageManager.NameNotFoundException) {
-    PermissionInfo.PROTECTION_DANGEROUS
-}
+public inline fun Context.getPermissionProtectionLevel(permission: String): Int =
+    safeCatch(defaultValue = PermissionInfo.PROTECTION_DANGEROUS) {
+        packageManager.getPermissionInfo(permission, 0).protection
+    }

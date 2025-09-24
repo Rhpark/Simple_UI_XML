@@ -51,5 +51,4 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-process:2.9.3")
     implementation("androidx.lifecycle:lifecycle-common:2.9.3")
 
-    implementation("com.github.rhpark:CustomSystemService:0.1.0")
 }

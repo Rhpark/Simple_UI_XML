@@ -1,5 +1,6 @@
 package kr.open.library.simple_ui.logcat.internal.formatter
 
+import kr.open.library.simple_ui.extensions.trycatch.safeCatch
 import kr.open.library.simple_ui.logcat.config.LogxConfig
 import kr.open.library.simple_ui.logcat.internal.formatter.base.LogxBaseFormatter
 import kr.open.library.simple_ui.logcat.internal.formatter.base.LogxFormatterImp
@@ -31,12 +32,7 @@ class JsonLogFormatter(config: LogxConfig) :
         }
 
         // 개선된 JSON 포맷팅
-        return try {
-            formatJsonPretty(trimmed)
-        } catch (e: Exception) {
-            // 포맷팅 실패 시 원본 반환
-            trimmed
-        }
+        return safeCatch(defaultValue = trimmed) { formatJsonPretty(trimmed) }
     }
 
     /**

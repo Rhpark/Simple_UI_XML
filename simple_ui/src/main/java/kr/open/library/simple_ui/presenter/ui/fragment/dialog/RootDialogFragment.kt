@@ -13,7 +13,7 @@ import androidx.fragment.app.FragmentManager
 import kr.open.library.simple_ui.logcat.Logx
 import kr.open.library.simple_ui.permissions.PermissionRequester
 import kr.open.library.simple_ui.permissions.register.PermissionDelegate
-import kr.open.library.systemmanager.extenstions.getDisplayInfo
+import kr.open.library.simple_ui.system_manager.extensions.getDisplayInfo
 
 public abstract class RootDialogFragment() : DialogFragment(), PermissionRequester {
 

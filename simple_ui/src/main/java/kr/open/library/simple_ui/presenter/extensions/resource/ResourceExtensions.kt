@@ -7,6 +7,7 @@ import androidx.annotation.DimenRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
+import kr.open.library.simple_ui.extensions.trycatch.safeCatch
 
 /**
  * Resource access extensions for cleaner resource handling
@@ -105,13 +106,7 @@ public fun Context.getInteger(intRes: Int): Int = resources.getInteger(intRes)
  * val safeIcon = getDrawableSafe(userProvidedResourceId)
  */
 public fun Context.getDrawableSafe(@DrawableRes drawableRes: Int,
-): Drawable? = try {
-    ContextCompat.getDrawable(this, drawableRes)
-} catch (e: android.content.res.Resources.NotFoundException) {
-    null
-} catch (e: OutOfMemoryError) {
-    null
-}
+): Drawable? = safeCatch(defaultValue = null) { ContextCompat.getDrawable(this, drawableRes) }
 
 /**
  * Safely gets a color, returning a default color if resource is not found or invalid
@@ -125,11 +120,7 @@ public fun Context.getDrawableSafe(@DrawableRes drawableRes: Int,
  */
 public fun Context.getColorSafe(
     @ColorRes colorRes: Int, defaultColor: Int,
-): Int = try {
-    ContextCompat.getColor(this, colorRes)
-} catch (e: android.content.res.Resources.NotFoundException) {
-    defaultColor
-}
+): Int = safeCatch(defaultValue = defaultColor) { ContextCompat.getColor(this, colorRes) }
 
 /**
  * Safely gets a string, returning empty string if resource is not found or invalid
@@ -140,9 +131,4 @@ public fun Context.getColorSafe(
  * Example:
  * val text = getStringSafe(R.string.optional_text)
  */
-public fun Context.getStringSafe(@StringRes stringRes: Int,
-): String = try {
-    getString(stringRes)
-} catch (e: android.content.res.Resources.NotFoundException) {
-    ""
-}
+public fun Context.getStringSafe(@StringRes stringRes: Int, ): String = safeCatch(defaultValue = "") { getString(stringRes) }

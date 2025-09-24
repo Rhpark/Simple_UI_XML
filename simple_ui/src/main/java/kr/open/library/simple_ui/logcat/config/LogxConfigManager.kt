@@ -1,6 +1,7 @@
 package kr.open.library.simple_ui.logcat.config
 
 
+import android.util.Log
 import kr.open.library.simple_ui.logcat.model.LogxType
 import java.util.EnumSet
 import java.util.concurrent.locks.ReentrantReadWriteLock
@@ -121,7 +122,7 @@ class LogxConfigManager(initialConfig: LogxConfig = LogxConfig()) {
             try {
                 listener.onConfigChanged(newConfig)
             } catch (e: Exception) {
-                android.util.Log.e("LogxConfigManager", "Error notifying config change listener", e)
+                Log.e("LogxConfigManager", "Error notifying config change listener", e)
             }
         }
     }

@@ -19,6 +19,7 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import kr.open.library.simple_ui.R
+import kr.open.library.simple_ui.extensions.trycatch.safeCatch
 
 /********
  * View *
@@ -278,10 +279,12 @@ fun View.bindLifecycleObserver(observer: DefaultLifecycleObserver): LifecycleOwn
     val old = getTag(ViewIds.TAG_OBSERVED_OWNER) as? LifecycleOwner
     if (old !== current) {
         old?.lifecycle?.removeObserver(observer)
-        try {
+        val res = safeCatch(false) {
             current.lifecycle.addObserver(observer)
             setTag(ViewIds.TAG_OBSERVED_OWNER, current)
-        } catch (e:Exception) { return null }
+            true
+        }
+        if(res == false) return null
     }
     return current
 }

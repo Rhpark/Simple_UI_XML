@@ -56,19 +56,17 @@ object LogxPathUtils {
     /**
      * 공용 외부 저장소 경로 (권한 필요)
      */
-    fun getPublicExternalLogPath(context: Context): String {
-        return checkSdkVersion(Build.VERSION_CODES.Q,
-            positiveWork = {
-                (context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)?.absolutePath + "/$LOG_DIR_NAME")
-                    ?: getAppExternalLogPath(context)
-            },
-            negativeWork = {
-                // API 28 이하: 전통적인 외부 저장소
-                @Suppress("DEPRECATION")
-                Environment.getExternalStorageDirectory().absolutePath + "/$LOG_DIR_NAME"
-            }
-        )
-    }
+    fun getPublicExternalLogPath(context: Context): String = checkSdkVersion(Build.VERSION_CODES.Q,
+        positiveWork = {
+            (context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)?.absolutePath + "/$LOG_DIR_NAME")
+                ?: getAppExternalLogPath(context)
+        },
+        negativeWork = {
+            // API 28 이하: 전통적인 외부 저장소
+            @Suppress("DEPRECATION")
+            Environment.getExternalStorageDirectory().absolutePath + "/$LOG_DIR_NAME"
+        }
+    )
 
     /**
      * 저장소 타입별 권한 필요 여부 확인
