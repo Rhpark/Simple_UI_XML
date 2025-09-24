@@ -1,7 +1,7 @@
 package kr.open.library.simple_ui.presenter.ui.fragment
 
 import androidx.fragment.app.Fragment
-import kr.open.library.simple_ui.permissions.PermissionRequester
+import kr.open.library.simple_ui.permissions.register.PermissionRequester
 import kr.open.library.simple_ui.permissions.register.PermissionDelegate
 
 abstract class RootFragment: Fragment(), PermissionRequester {

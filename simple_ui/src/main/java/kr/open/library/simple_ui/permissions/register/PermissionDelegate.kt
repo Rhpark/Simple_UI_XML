@@ -11,23 +11,17 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import kr.open.library.simple_ui.permissions.manager.PermissionManager
 import kr.open.library.simple_ui.permissions.extentions.hasPermission
+import kr.open.library.simple_ui.permissions.vo.PermissionSpecialType
 
 public class PermissionDelegate<T: Any>(private val contextProvider: T) {
     protected val permissionManager = PermissionManager.getInstance()
     private var currentRequestId: String? = null
 
-
+//    : Map<String, String> = buildMap
     private val specialPermissionLauncher : Map<String, ActivityResultLauncher<Intent>>  by lazy {
-        mapOf(
-            Manifest.permission.SYSTEM_ALERT_WINDOW to getSpecialResult(Manifest.permission.SYSTEM_ALERT_WINDOW),
-            Manifest.permission.WRITE_SETTINGS to getSpecialResult(Manifest.permission.WRITE_SETTINGS),
-            Manifest.permission.PACKAGE_USAGE_STATS to getSpecialResult(Manifest.permission.PACKAGE_USAGE_STATS),
-            Manifest.permission.MANAGE_EXTERNAL_STORAGE to getSpecialResult(Manifest.permission.MANAGE_EXTERNAL_STORAGE),
-            Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS to getSpecialResult(Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS),
-            Manifest.permission.SCHEDULE_EXACT_ALARM to getSpecialResult(Manifest.permission.SCHEDULE_EXACT_ALARM),
-            Manifest.permission.BIND_ACCESSIBILITY_SERVICE to getSpecialResult(Manifest.permission.BIND_ACCESSIBILITY_SERVICE),
-            Manifest.permission.BIND_NOTIFICATION_LISTENER_SERVICE to getSpecialResult(Manifest.permission.BIND_NOTIFICATION_LISTENER_SERVICE),
-        )
+        buildMap {
+            PermissionSpecialType.entries.forEach { put(it.permission, getSpecialResult(it.permission)) }
+        }
     }
 
     init {

@@ -23,8 +23,6 @@ import androidx.core.util.forEach
 import kr.open.library.simple_ui.extensions.conditional.checkSdkVersion
 import kr.open.library.simple_ui.logcat.Logx
 import kr.open.library.simple_ui.system_manager.base.BaseSystemService
-import kr.open.library.simple_ui.system_manager.base.SystemServiceError
-import kr.open.library.simple_ui.system_manager.base.SystemServiceException
 import kr.open.library.simple_ui.system_manager.extensions.getTelephonyManager
 import kr.open.library.simple_ui.system_manager.info.network.telephony.callback.CommonTelephonyCallback
 import kr.open.library.simple_ui.system_manager.info.network.telephony.data.current.CurrentCellInfo
@@ -391,27 +389,19 @@ public class TelephonyInfo(context: Context) :
         onSignalStrengthChanged: ((SignalStrength) -> Unit)? = null,
         onServiceStateChanged: ((ServiceState) -> Unit)? = null,
         onNetworkStateChanged: ((TelephonyNetworkState) -> Unit)? = null
-    ): Result<Unit> {
-        return try {
-            if (!isPermissionAllGranted()) {
-                return Result.failure(SystemServiceException(createPermissionError()))
+    ):Boolean = tryCatchSystemManager(false) {
+        checkSdkVersion(Build.VERSION_CODES.S,
+            positiveWork = {
+                registerModernCallback(handler, onSignalStrengthChanged, onServiceStateChanged, onNetworkStateChanged)
+                true
+            },
+            negativeWork = {
+                registerLegacyCallback(onSignalStrengthChanged, onServiceStateChanged, onNetworkStateChanged)
+                true
             }
-
-            checkSdkVersion(Build.VERSION_CODES.S,
-                positiveWork = {
-                    registerModernCallback(handler, onSignalStrengthChanged, onServiceStateChanged, onNetworkStateChanged)
-                },
-                negativeWork = {
-                    registerLegacyCallback(onSignalStrengthChanged, onServiceStateChanged, onNetworkStateChanged)
-                }
-            )
-
-            Result.success(Unit)
-        } catch (e: Exception) {
-            Logx.e("Failed to register callback: ${e.message}")
-            Result.failure(SystemServiceException(SystemServiceError.Unknown.Exception(e, "registerCallback")))
-        }
+        )
     }
+
     
     @RequiresApi(Build.VERSION_CODES.S)
     private fun registerModernCallback(
@@ -592,26 +582,16 @@ public class TelephonyInfo(context: Context) :
         onCallState: ((callState: Int, phoneNumber: String?) -> Unit)? = null,
         onDisplayInfo: ((telephonyDisplayInfo: TelephonyDisplayInfo) -> Unit)? = null,
         onTelephonyNetworkState: ((telephonyNetworkState: TelephonyNetworkState) -> Unit)? = null
-    ): Result<Unit> {
-        return try {
-            if (!isPermissionAllGranted()) {
-                return Result.failure(SystemServiceException(createPermissionError()))
-            }
+    ): Boolean = tryCatchSystemManager(false) {
+        val subscriptionInfoList = getActiveSubscriptionInfoListInternal()
+        val defaultSim = subscriptionInfoList.firstOrNull() ?: throw IllegalStateException("No default SIM found")
 
-            val subscriptionInfoList = getActiveSubscriptionInfoListInternal()
-            val defaultSim = subscriptionInfoList.firstOrNull()
-                ?: throw IllegalStateException("No default SIM found")
-
-            registerTelephonyCallBack(
-                defaultSim.simSlotIndex, executor, isGpsOn, onActiveDataSubId,
-                onDataConnectionState, onCellInfo, onSignalStrength, onServiceState,
-                onCallState, onDisplayInfo, onTelephonyNetworkState
-            )
-            Result.success(Unit)
-        } catch (e: Exception) {
-            Logx.e("Failed to register telephony callback from default SIM: ${e.message}")
-            Result.failure(SystemServiceException(SystemServiceError.Unknown.Exception(e, "registerTelephonyCallBackFromDefaultUSim")))
-        }
+        registerTelephonyCallBack(
+            defaultSim.simSlotIndex, executor, isGpsOn, onActiveDataSubId,
+            onDataConnectionState, onCellInfo, onSignalStrength, onServiceState,
+            onCallState, onDisplayInfo, onTelephonyNetworkState
+        )
+        true
     }
     
     /**

@@ -11,7 +11,7 @@ import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import kr.open.library.simple_ui.extensions.conditional.checkSdkVersion
-import kr.open.library.simple_ui.permissions.PermissionRequester
+import kr.open.library.simple_ui.permissions.register.PermissionRequester
 import kr.open.library.simple_ui.permissions.register.PermissionDelegate
 
 abstract class RootActivity : AppCompatActivity(), PermissionRequester {

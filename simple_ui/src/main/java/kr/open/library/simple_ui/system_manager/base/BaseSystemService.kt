@@ -55,13 +55,6 @@ public abstract class BaseSystemService(
      */
     protected fun isPermissionAllGranted(): Boolean = remainPermissions.isEmpty()
 
-    /**
-     * Creates a permission error for missing permissions.
-     * 누락된 권한에 대한 권한 오류를 생성합니다.
-     */
-    protected fun createPermissionError(): SystemServiceError.Permission.NotGranted {
-        return SystemServiceError.Permission.NotGranted(remainPermissions)
-    }
 
     /**
      * Simple safe execution with basic error handling.

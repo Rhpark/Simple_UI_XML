@@ -15,6 +15,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.app.NotificationManagerCompat
 import kr.open.library.simple_ui.extensions.conditional.*
 import kr.open.library.simple_ui.extensions.trycatch.safeCatch
+import kr.open.library.simple_ui.permissions.vo.PermissionSpecialType
 
 
 public inline fun Context.hasPermission(permission: String): Boolean =
@@ -112,18 +113,14 @@ public inline fun Context.hasNotificationListenerPermission(): Boolean = safeCat
     enabledListeners?.contains(packageName) == true
 }
 
-public inline fun Context.isSpecialPermission(permission: String): Boolean =
-    when (permission) {
-        Manifest.permission.SYSTEM_ALERT_WINDOW,
-        Manifest.permission.WRITE_SETTINGS,
-        Manifest.permission.PACKAGE_USAGE_STATS,
-        Manifest.permission.MANAGE_EXTERNAL_STORAGE,
-        Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
-        Manifest.permission.SCHEDULE_EXACT_ALARM,
-        Manifest.permission.BIND_ACCESSIBILITY_SERVICE,
-        Manifest.permission.BIND_NOTIFICATION_LISTENER_SERVICE -> true
-        else -> false
+public inline fun Context.isSpecialPermission(permission: String): Boolean {
+
+    var isContain = false
+    PermissionSpecialType.entries.forEach {
+        if (permission == it.permission) return true
     }
+    return isContain
+}
 
 public inline fun Context.getPermissionProtectionLevel(permission: String): Int =
     safeCatch(defaultValue = PermissionInfo.PROTECTION_DANGEROUS) {

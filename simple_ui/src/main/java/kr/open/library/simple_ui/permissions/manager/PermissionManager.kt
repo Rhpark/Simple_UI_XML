@@ -9,7 +9,7 @@ import android.os.Handler
 import android.os.Looper
 import androidx.activity.result.ActivityResultLauncher
 import kr.open.library.simple_ui.logcat.Logx
-import kr.open.library.simple_ui.permissions.PermissionConstants
+import kr.open.library.simple_ui.permissions.vo.PermissionConstants
 import kr.open.library.simple_ui.permissions.extentions.*
 import java.lang.ref.WeakReference
 import java.util.UUID

@@ -1,4 +1,4 @@
-package kr.open.library.simple_ui.permissions
+package kr.open.library.simple_ui.permissions.register
 
 
 interface PermissionRequester {
