@@ -2158,10 +2158,10 @@
         <item name="layoutManager">androidx.recyclerview.widget.LinearLayoutManager</item>
     </style>
     <style name="RecyclerView.MatchWrap.LinearLayoutManager.Vertical" parent="RecyclerView.MatchWrap.LinearLayoutManager">
-        <item name="orientation">vertical</item>
+        <item name="android:orientation">vertical</item>
     </style>
     <style name="RecyclerView.MatchWrap.LinearLayoutManager.Horizontal" parent="RecyclerView.MatchWrap.LinearLayoutManager">
-        <item name="orientation">horizontal</item>
+        <item name="android:orientation">horizontal</item>
     </style>
 
     <style name="RecyclerView.MatchWrap.GridLayoutManager" >
@@ -2169,21 +2169,21 @@
     </style>
 
     <style name="RecyclerView.MatchWrap.GridLayoutManager.Vertical" >
-        <item name="orientation">vertical</item>
+        <item name="android:orientation">vertical</item>
     </style>
 
     <style name="RecyclerView.MatchWrap.GridLayoutManager.Horizontal" >
-        <item name="orientation">horizontal</item>
+        <item name="android:orientation">horizontal</item>
     </style>
 
     <style name="RecyclerView.MatchWrap.StaggeredGridLayoutManager">
         <item name="layoutManager">androidx.recyclerview.widget.StaggeredGridLayoutManager</item>
     </style>
     <style name="RecyclerView.MatchWrap.StaggeredGridLayoutManager.Vertical">
-        <item name="orientation">vertical</item>
+        <item name="android:orientation">vertical</item>
     </style>
     <style name="RecyclerView.MatchWrap.StaggeredGridLayoutManager.Horizontal">
-        <item name="orientation">horizontal</item>
+        <item name="android:orientation">horizontal</item>
     </style>
     <style name="RecyclerView.MatchWrap.CarouselLayoutManager">
         <item name="layoutManager">com.google.android.material.carousel.CarouselLayoutManager</item>
@@ -2195,10 +2195,10 @@
         <item name="layoutManager">androidx.recyclerview.widget.LinearLayoutManager</item>
     </style>
     <style name="RecyclerView.AllMatch.LinearLayoutManager.Vertical" parent="RecyclerView.AllMatch.LinearLayoutManager">
-        <item name="orientation">vertical</item>
+        <item name="android:orientation">vertical</item>
     </style>
     <style name="RecyclerView.AllMatch.LinearLayoutManager.Horizontal" parent="RecyclerView.AllMatch.LinearLayoutManager">
-        <item name="orientation">horizontal</item>
+        <item name="android:orientation">horizontal</item>
     </style>
     
     <!-- AllMatch GridLayoutManager -->
@@ -2206,19 +2206,19 @@
         <item name="layoutManager">androidx.recyclerview.widget.GridLayoutManager</item>
     </style>
     <style name="RecyclerView.AllMatch.GridLayoutManager.Vertical" parent="RecyclerView.AllMatch.GridLayoutManager">
-        <item name="orientation">vertical</item>
+        <item name="android:orientation">vertical</item>
     </style>
     <style name="RecyclerView.AllMatch.GridLayoutManager.Horizontal" parent="RecyclerView.AllMatch.GridLayoutManager">
-        <item name="orientation">horizontal</item>
+        <item name="android:orientation">horizontal</item>
     </style>
     <style name="RecyclerView.AllMatch.StaggeredGridLayoutManager" >
         <item name="layoutManager">androidx.recyclerview.widget.StaggeredGridLayoutManager</item>
     </style>
     <style name="RecyclerView.AllMatch.StaggeredGridLayoutManager.Vertical" parent="RecyclerView.AllMatch.StaggeredGridLayoutManager">
-        <item name="orientation">vertical</item>
+        <item name="android:orientation">vertical</item>
     </style>
     <style name="RecyclerView.AllMatch.StaggeredGridLayoutManager.Horizontal" parent="RecyclerView.AllMatch.StaggeredGridLayoutManager">
-        <item name="orientation">horizontal</item>
+        <item name="android:orientation">horizontal</item>
     </style>
     <style name="RecyclerView.AllMatch.CarouselLayoutManager" >
         <item name="layoutManager">com.google.android.material.carousel.CarouselLayoutManager</item>
@@ -2229,28 +2229,28 @@
         <item name="layoutManager">androidx.recyclerview.widget.LinearLayoutManager</item>
     </style>
     <style name="RecyclerView.AllWrap.LinearLayoutManager.Vertical" parent="RecyclerView.AllWrap.LinearLayoutManager">
-        <item name="orientation">vertical</item>
+        <item name="android:orientation">vertical</item>
     </style>
     <style name="RecyclerView.AllWrap.LinearLayoutManager.Horizontal" parent="RecyclerView.AllWrap.LinearLayoutManager">
-        <item name="orientation">horizontal</item>
+        <item name="android:orientation">horizontal</item>
     </style>
     <style name="RecyclerView.AllWrap.GridLayoutManager" >
         <item name="layoutManager">androidx.recyclerview.widget.GridLayoutManager</item>
     </style>
     <style name="RecyclerView.AllWrap.GridLayoutManager.Vertical" parent="RecyclerView.AllWrap.GridLayoutManager">
-        <item name="orientation">vertical</item>
+        <item name="android:orientation">vertical</item>
     </style>
     <style name="RecyclerView.AllWrap.GridLayoutManager.Horizontal" parent="RecyclerView.AllWrap.GridLayoutManager">
-        <item name="orientation">horizontal</item>
+        <item name="android:orientation">horizontal</item>
     </style>
     <style name="RecyclerView.AllWrap.StaggeredGridLayoutManager" >
         <item name="layoutManager">androidx.recyclerview.widget.StaggeredGridLayoutManager</item>
     </style>
     <style name="RecyclerView.AllWrap.StaggeredGridLayoutManager.Vertical" parent="RecyclerView.AllWrap.StaggeredGridLayoutManager">
-        <item name="orientation">vertical</item>
+        <item name="android:orientation">vertical</item>
     </style>
     <style name="RecyclerView.AllWrap.StaggeredGridLayoutManager.Horizontal" parent="RecyclerView.AllWrap.StaggeredGridLayoutManager">
-        <item name="orientation">horizontal</item>
+        <item name="android:orientation">horizontal</item>
     </style>
     <style name="RecyclerView.AllWrap.CarouselLayoutManager" >
         <item name="layoutManager">com.google.android.material.carousel.CarouselLayoutManager</item>
@@ -2261,28 +2261,28 @@
         <item name="layoutManager">androidx.recyclerview.widget.LinearLayoutManager</item>
     </style>
     <style name="RecyclerView.WrapMatch.LinearLayoutManager.Vertical" parent="RecyclerView.WrapMatch.LinearLayoutManager">
-        <item name="orientation">vertical</item>
+        <item name="android:orientation">vertical</item>
     </style>
     <style name="RecyclerView.WrapMatch.LinearLayoutManager.Horizontal" parent="RecyclerView.WrapMatch.LinearLayoutManager">
-        <item name="orientation">horizontal</item>
+        <item name="android:orientation">horizontal</item>
     </style>
     <style name="RecyclerView.WrapMatch.GridLayoutManager" >
         <item name="layoutManager">androidx.recyclerview.widget.GridLayoutManager</item>
     </style>
     <style name="RecyclerView.WrapMatch.GridLayoutManager.Vertical" parent="RecyclerView.WrapMatch.GridLayoutManager">
-        <item name="orientation">vertical</item>
+        <item name="android:orientation">vertical</item>
     </style>
     <style name="RecyclerView.WrapMatch.GridLayoutManager.Horizontal" parent="RecyclerView.WrapMatch.GridLayoutManager">
-        <item name="orientation">horizontal</item>
+        <item name="android:orientation">horizontal</item>
     </style>
     <style name="RecyclerView.WrapMatch.StaggeredGridLayoutManager" >
         <item name="layoutManager">androidx.recyclerview.widget.StaggeredGridLayoutManager</item>
     </style>
     <style name="RecyclerView.WrapMatch.StaggeredGridLayoutManager.Vertical" parent="RecyclerView.WrapMatch.StaggeredGridLayoutManager">
-        <item name="orientation">vertical</item>
+        <item name="android:orientation">vertical</item>
     </style>
     <style name="RecyclerView.WrapMatch.StaggeredGridLayoutManager.Horizontal" parent="RecyclerView.WrapMatch.StaggeredGridLayoutManager">
-        <item name="orientation">horizontal</item>
+        <item name="android:orientation">horizontal</item>
     </style>
     <style name="RecyclerView.WrapMatch.CarouselLayoutManager" >
         <item name="layoutManager">com.google.android.material.carousel.CarouselLayoutManager</item>
@@ -2293,28 +2293,28 @@
         <item name="layoutManager">androidx.recyclerview.widget.LinearLayoutManager</item>
     </style>
     <style name="RecyclerView.MatchWeight.LinearLayoutManager.Vertical" parent="RecyclerView.MatchWeight.LinearLayoutManager">
-        <item name="orientation">vertical</item>
+        <item name="android:orientation">vertical</item>
     </style>
     <style name="RecyclerView.MatchWeight.LinearLayoutManager.Horizontal" parent="RecyclerView.MatchWeight.LinearLayoutManager">
-        <item name="orientation">horizontal</item>
+        <item name="android:orientation">horizontal</item>
     </style>
     <style name="RecyclerView.MatchWeight.GridLayoutManager" >
         <item name="layoutManager">androidx.recyclerview.widget.GridLayoutManager</item>
     </style>
     <style name="RecyclerView.MatchWeight.GridLayoutManager.Vertical" parent="RecyclerView.MatchWeight.GridLayoutManager">
-        <item name="orientation">vertical</item>
+        <item name="android:orientation">vertical</item>
     </style>
     <style name="RecyclerView.MatchWeight.GridLayoutManager.Horizontal" parent="RecyclerView.MatchWeight.GridLayoutManager">
-        <item name="orientation">horizontal</item>
+        <item name="android:orientation">horizontal</item>
     </style>
     <style name="RecyclerView.MatchWeight.StaggeredGridLayoutManager" >
         <item name="layoutManager">androidx.recyclerview.widget.StaggeredGridLayoutManager</item>
     </style>
     <style name="RecyclerView.MatchWeight.StaggeredGridLayoutManager.Vertical" parent="RecyclerView.MatchWeight.StaggeredGridLayoutManager">
-        <item name="orientation">vertical</item>
+        <item name="android:orientation">vertical</item>
     </style>
     <style name="RecyclerView.MatchWeight.StaggeredGridLayoutManager.Horizontal" parent="RecyclerView.MatchWeight.StaggeredGridLayoutManager">
-        <item name="orientation">horizontal</item>
+        <item name="android:orientation">horizontal</item>
     </style>
     <style name="RecyclerView.MatchWeight.CarouselLayoutManager" >
         <item name="layoutManager">com.google.android.material.carousel.CarouselLayoutManager</item>
@@ -2325,28 +2325,28 @@
         <item name="layoutManager">androidx.recyclerview.widget.LinearLayoutManager</item>
     </style>
     <style name="RecyclerView.WeightMatch.LinearLayoutManager.Vertical" parent="RecyclerView.WeightMatch.LinearLayoutManager">
-        <item name="orientation">vertical</item>
+        <item name="android:orientation">vertical</item>
     </style>
     <style name="RecyclerView.WeightMatch.LinearLayoutManager.Horizontal" parent="RecyclerView.WeightMatch.LinearLayoutManager">
-        <item name="orientation">horizontal</item>
+        <item name="android:orientation">horizontal</item>
     </style>
     <style name="RecyclerView.WeightMatch.GridLayoutManager" >
         <item name="layoutManager">androidx.recyclerview.widget.GridLayoutManager</item>
     </style>
     <style name="RecyclerView.WeightMatch.GridLayoutManager.Vertical" parent="RecyclerView.WeightMatch.GridLayoutManager">
-        <item name="orientation">vertical</item>
+        <item name="android:orientation">vertical</item>
     </style>
     <style name="RecyclerView.WeightMatch.GridLayoutManager.Horizontal" parent="RecyclerView.WeightMatch.GridLayoutManager">
-        <item name="orientation">horizontal</item>
+        <item name="android:orientation">horizontal</item>
     </style>
     <style name="RecyclerView.WeightMatch.StaggeredGridLayoutManager" >
         <item name="layoutManager">androidx.recyclerview.widget.StaggeredGridLayoutManager</item>
     </style>
     <style name="RecyclerView.WeightMatch.StaggeredGridLayoutManager.Vertical" parent="RecyclerView.WeightMatch.StaggeredGridLayoutManager">
-        <item name="orientation">vertical</item>
+        <item name="android:orientation">vertical</item>
     </style>
     <style name="RecyclerView.WeightMatch.StaggeredGridLayoutManager.Horizontal" parent="RecyclerView.WeightMatch.StaggeredGridLayoutManager">
-        <item name="orientation">horizontal</item>
+        <item name="android:orientation">horizontal</item>
     </style>
     <style name="RecyclerView.WeightMatch.CarouselLayoutManager" >
         <item name="layoutManager">com.google.android.material.carousel.CarouselLayoutManager</item>
@@ -2357,28 +2357,28 @@
         <item name="layoutManager">androidx.recyclerview.widget.LinearLayoutManager</item>
     </style>
     <style name="RecyclerView.WeightWrap.LinearLayoutManager.Vertical" parent="RecyclerView.WeightWrap.LinearLayoutManager">
-        <item name="orientation">vertical</item>
+        <item name="android:orientation">vertical</item>
     </style>
     <style name="RecyclerView.WeightWrap.LinearLayoutManager.Horizontal" parent="RecyclerView.WeightWrap.LinearLayoutManager">
-        <item name="orientation">horizontal</item>
+        <item name="android:orientation">horizontal</item>
     </style>
     <style name="RecyclerView.WeightWrap.GridLayoutManager" >
         <item name="layoutManager">androidx.recyclerview.widget.GridLayoutManager</item>
     </style>
     <style name="RecyclerView.WeightWrap.GridLayoutManager.Vertical" parent="RecyclerView.WeightWrap.GridLayoutManager">
-        <item name="orientation">vertical</item>
+        <item name="android:orientation">vertical</item>
     </style>
     <style name="RecyclerView.WeightWrap.GridLayoutManager.Horizontal" parent="RecyclerView.WeightWrap.GridLayoutManager">
-        <item name="orientation">horizontal</item>
+        <item name="android:orientation">horizontal</item>
     </style>
     <style name="RecyclerView.WeightWrap.StaggeredGridLayoutManager" >
         <item name="layoutManager">androidx.recyclerview.widget.StaggeredGridLayoutManager</item>
     </style>
     <style name="RecyclerView.WeightWrap.StaggeredGridLayoutManager.Vertical" parent="RecyclerView.WeightWrap.StaggeredGridLayoutManager">
-        <item name="orientation">vertical</item>
+        <item name="android:orientation">vertical</item>
     </style>
     <style name="RecyclerView.WeightWrap.StaggeredGridLayoutManager.Horizontal" parent="RecyclerView.WeightWrap.StaggeredGridLayoutManager">
-        <item name="orientation">horizontal</item>
+        <item name="android:orientation">horizontal</item>
     </style>
     <style name="RecyclerView.WeightWrap.CarouselLayoutManager" >
         <item name="layoutManager">com.google.android.material.carousel.CarouselLayoutManager</item>
@@ -2389,28 +2389,28 @@
         <item name="layoutManager">androidx.recyclerview.widget.LinearLayoutManager</item>
     </style>
     <style name="RecyclerView.WrapWeight.LinearLayoutManager.Vertical" parent="RecyclerView.WrapWeight.LinearLayoutManager">
-        <item name="orientation">vertical</item>
+        <item name="android:orientation">vertical</item>
     </style>
     <style name="RecyclerView.WrapWeight.LinearLayoutManager.Horizontal" parent="RecyclerView.WrapWeight.LinearLayoutManager">
-        <item name="orientation">horizontal</item>
+        <item name="android:orientation">horizontal</item>
     </style>
     <style name="RecyclerView.WrapWeight.GridLayoutManager" >
         <item name="layoutManager">androidx.recyclerview.widget.GridLayoutManager</item>
     </style>
     <style name="RecyclerView.WrapWeight.GridLayoutManager.Vertical" parent="RecyclerView.WrapWeight.GridLayoutManager">
-        <item name="orientation">vertical</item>
+        <item name="android:orientation">vertical</item>
     </style>
     <style name="RecyclerView.WrapWeight.GridLayoutManager.Horizontal" parent="RecyclerView.WrapWeight.GridLayoutManager">
-        <item name="orientation">horizontal</item>
+        <item name="android:orientation">horizontal</item>
     </style>
     <style name="RecyclerView.WrapWeight.StaggeredGridLayoutManager" >
         <item name="layoutManager">androidx.recyclerview.widget.StaggeredGridLayoutManager</item>
     </style>
     <style name="RecyclerView.WrapWeight.StaggeredGridLayoutManager.Vertical" parent="RecyclerView.WrapWeight.StaggeredGridLayoutManager">
-        <item name="orientation">vertical</item>
+        <item name="android:orientation">vertical</item>
     </style>
     <style name="RecyclerView.WrapWeight.StaggeredGridLayoutManager.Horizontal" parent="RecyclerView.WrapWeight.StaggeredGridLayoutManager">
-        <item name="orientation">horizontal</item>
+        <item name="android:orientation">horizontal</item>
     </style>
     <style name="RecyclerView.WrapWeight.CarouselLayoutManager" >
         <item name="layoutManager">com.google.android.material.carousel.CarouselLayoutManager</item>
