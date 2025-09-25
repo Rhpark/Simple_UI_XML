@@ -94,6 +94,61 @@ RhPark[]  kr.open.library.simpleui_xml  E  (LogxActivity.kt:60).demonstrateBasic
 <br>
 </br>
 
+## ⚡ 빠른 시작 가이드
+
+### 1단계: 초기화 (필수)
+```kotlin
+// Activity의 onCreate()에서 초기화
+override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+
+    // Logx 초기화 (필수)
+    Logx.init(this) // or in MyApplication.kt 
+
+    // 파일 저장 활성화 (선택사항)
+    Logx.setSaveToFile(true)
+}
+```
+
+<br>
+</br>
+
+### 2단계: 바로 사용
+```kotlin
+// 기본 로깅
+Logx.d("디버그 메시지")
+Logx.i("정보 메시지")
+
+// 확장 함수 사용
+"디버그 메시지".logxD()
+
+// 고급 기능
+Logx.j("JSON_TAG", jsonData)  // JSON 자동 포맷팅
+Logx.p("Parent Method 추적")  // 호출자 추적
+Logx.t("Thread 정보")         // 스레드 정보
+```
+
+<br>
+</br>
+
+### 3단계: 고급 설정 (선택사항)
+```kotlin
+Logx.configure {
+    appName = "MyApp"
+    debugMode = true
+
+    fileConfig {
+        saveToFile = true
+    }
+
+    logTypes {
+        all() // 모든 로그 레벨 허용
+    }
+}
+```
+
+---
+
 ## 실제 코드 비교
 
 <br>
@@ -435,9 +490,6 @@ private fun setupLogging() {
 
 ## Simple UI Logx의 핵심 장점
 
-<br>
-</br>
-
 ### 1. **압도적인 생산성 향상**
 - **JSON 포맷팅**: 복잡한 파싱 로직 → `Logx.j()` 한 줄
 - **Stack 추적**: 현재 StackTrace → `Logx.p()` 한 줄
@@ -474,9 +526,9 @@ private fun setupLogging() {
 
 ## 개발자들의 후기
 
-> **"JSON 로깅이 이렇게 간단할 줄 몰랐어!"**
->
 > **"Parent Method 추적으로 복잡한 호출 관계도 한 눈에 파악!"**
+>
+> **"JSON 로깅이 이렇게 간단할 줄 몰랐어!"**
 >
 > **"파일 저장 설정 한 줄로 모든 로그 자동 백업!"**
 >
@@ -490,7 +542,7 @@ private fun setupLogging() {
 ## 결론: 로깅의 새로운 표준
 
 **Simple UI Logx**는 기존의 로깅 방식을 완전히 바꿉니다.
-**복잡한 로깅 코드를 95% 단축**시키고, **개발 생산성을 크게 향상**시키며 **직관적인 로깅 경험**을 제공합니다.
+**복잡한 로깅 코드를 단축**시키고, **개발 생산성을 크게 향상**시키며 **직관적인 로깅 경험**을 제공합니다.
 
 **JSON 파싱, Stack 추적, Thread 정보, 파일 저장**
 모든 고급기능이 **Logx**로, 간단하고 **강력하게**.
