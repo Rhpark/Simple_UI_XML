@@ -2,6 +2,9 @@
 
 > **"단 한 줄로 끝내는 고급 로깅"** - 기존 Log보다 Logx가 얼마나 좋은지 확인해보세요.
 
+<br>
+</br>
+
 ## Logx 출력 형태 및 규격
 
 **기본 로그 출력 형태:**
@@ -13,10 +16,16 @@ RhPark[]  kr.open.library.simpleui_xml  W  (LogxActivity.kt:59).demonstrateBasic
 RhPark[]  kr.open.library.simpleui_xml  E  (LogxActivity.kt:60).demonstrateBasicLogging - ERROR LEVEL
 ```
 
+<br>
+</br>
+
 **출력 구조 분석:**
 ```
 [앱이름] [패키지명] [레벨] (파일명:라인번호).메서드명 - 메시지
 ```
+
+<br>
+</br>
 
 **각 구성요소:**
 - `RhPark[TAG]` - 앱 이름[TAG명] (DSL configure로 변경 가능)
@@ -26,12 +35,18 @@ RhPark[]  kr.open.library.simpleui_xml  E  (LogxActivity.kt:60).demonstrateBasic
 - `.demonstrateBasicLogging` - 호출한 메서드명 **자동 추적**
 - `VERBOSE LEVEL` - 실제 로그 메시지
 
+<br>
+</br>
+
 **🎯 핵심 장점:**
 - 기존 Android Log: `D/TAG: message`
 - **Logx**: `(파일명:라인).메서드명 - message`
 
 **디버깅이 혁신적으로 쉬워집니다!** 어느 파일의 몇 번째 줄, 어떤 메서드에서 호출했는지 한눈에 확인 가능!
 
+
+<br>
+</br>
 
 ## 핵심 차이점: 코드 길이 비교
 
@@ -45,8 +60,13 @@ RhPark[]  kr.open.library.simpleui_xml  E  (LogxActivity.kt:60).demonstrateBasic
 
 ---
 
+<br>
+</br>
 
 ## 실제 코드 비교
+
+<br>
+</br>
 
 ### 첫째: JSON 포맷팅 비교
 
@@ -91,6 +111,9 @@ private fun logJsonData() {
 ```
 **결과:** 자동 JSON 파싱, 예쁜 들여쓰기, 오류 처리 모두 자동!
 </details>
+
+<br>
+</br>
 
 ### 둘째: 호출자 추적 비교
 
@@ -147,6 +170,9 @@ private fun childMethod() {
 **결과:** 자동 호출자 추적, 파일명/라인번호, 클래스명 모두 자동!
 </details>
 
+<br>
+</br>
+
 ### 셋째: Thread ID 추적
 
 <details>
@@ -194,6 +220,9 @@ private fun demonstrateThreadTracking() {
 ```
 **결과:** Thread 이름, ID, 우선순위 모두 자동!
 </details>
+
+<br>
+</br>
 
 ### 넷째: 파일 저장 기능
 
@@ -281,6 +310,9 @@ private fun logWithFile(tag: String, message: String) {
 **결과:** 파일 생성, 저장 경로, 타임스탬프, 저장 관리 모두 자동!
 </details>
 
+<br>
+</br>
+
 ### 다섯째: 설정 관리 기능
 
 <details>
@@ -365,24 +397,39 @@ private fun setupLogging() {
 **결과:** 직관적인 설정, 타입 안전성, 가독성 좋은 DSL, 한번에 처리!
 </details>
 
+<br>
+</br>
+
 ---
 
 ## Simple UI Logx의 핵심 장점
+
+<br>
+</br>
 
 ### 1. **압도적인 생산성 향상**
 - **JSON 포맷팅**: 복잡한 파싱 로직 → `Logx.j()` 한 줄
 - **Stack 추적**: 현재 StackTrace → `Logx.p()` 한 줄
 - **Thread 추적**: 현재 Thread 정보 → `Logx.t()` 한 줄
 
+<br>
+</br>
+
 ### 2. **완전 자동화된 파일 저장 기능**
 - **자동 저장 경로**: Internal/External/Public 저장소 중 선택
 - **저장 관리 자동**: 저장소별 저장 라이프사이클 자동 관리
 - **리소스 해제**: Android Lifecycle과 연동 자동화
 
+<br>
+</br>
+
 ### 3. **고급 DSL 설정 기능**
 - **DSL 기반**: Kotlin DSL로 가독성 좋은 설정
 - **런타임 변경**: Runtime 설정 변경 가능
 - **타입 안전성**: 컴파일 타임에 설정 검증
+
+<br>
+</br>
 
 ### 4. **개발자 친화적 도구**
 - **추적 도구**: 호출 경로, 실행 스레드 도구
@@ -390,6 +437,9 @@ private fun setupLogging() {
 - **코드 간소화**: 유지보수 편리한 구조
 
 ---
+
+<br>
+</br>
 
 ## 개발자들의 후기
 
@@ -403,6 +453,9 @@ private fun setupLogging() {
 
 ---
 
+<br>
+</br>
+
 ## 결론: 로깅의 새로운 표준
 
 **Simple UI Logx**는 기존의 로깅 방식을 완전히 바꿉니다.
@@ -415,11 +468,17 @@ private fun setupLogging() {
 
 ---
 
+<br>
+</br>
+
 ## 실제 구현 예제보기
 
 **라이브 예제 코드:**
 > - Logx 예제: `app/src/main/java/kr/open/library/simpleui_xml/logx/LogxActivity`
 > - 실제로 앱을 구동 시켜서 실제 구현 예제를 확인해 보세요!
+
+<br>
+</br>
 
 **테스트 가능한 기능:**
 - 기본 로깅 vs 고급 로깅
