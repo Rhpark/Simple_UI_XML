@@ -98,15 +98,12 @@ RhPark[]  kr.open.library.simpleui_xml  E  (LogxActivity.kt:60).demonstrateBasic
 
 ### 1단계: 초기화 (필수)
 ```kotlin
-// Activity의 onCreate()에서 초기화
-override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
+// MyApplication의 onCreate()에서 초기화
+override fun onCreate() {
+    super.onCreate()
 
     // Logx 초기화 (필수)
-    Logx.init(this) // or in MyApplication.kt 
-
-    // 파일 저장 활성화 (선택사항)
-    Logx.setSaveToFile(true)
+    Logx.init(this)
 }
 ```
 

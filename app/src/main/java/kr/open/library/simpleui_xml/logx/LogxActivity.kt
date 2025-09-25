@@ -27,7 +27,7 @@ class LogxActivity : BaseBindingActivity<ActivityLogxBinding>(R.layout.activity_
         lifecycle.addObserver(vm)
 
         // Logx 초기화
-        Logx.init(this) // or in MyApplication
+        // Logx.init(this) or in MyApplication
         Logx.setSaveToFile(true)
 
         eventVmCollect()
