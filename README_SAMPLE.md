@@ -2,6 +2,8 @@
 
 > **"말보다는 코드로!"** - 동일한 권한 관리 기능을 두 가지 방법으로 비교.
 
+![simple_example.gif](example%2Fsimple_example.gif)
+
 ## 🎯 비교 대상: MVVM + Flow 기반 권한 관리 시스템
 
 **구현 기능:**
