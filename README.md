@@ -1,7 +1,10 @@
 # 🚀 Simple UI XML — 복잡함은 우리가, 속도는 당신에게
 
 > **반복되는 Activity/Fragment 세팅**, **끝나지 않는 권한 처리**, 그리고 불어나는 보일러플레이트...  
-> 그 시간을 돌려주기 위해 **Simple UI XML**을 만들었습니다.
+> 그 시간을 돌려주기 위해 **Simple UI XML**을 만들었다.
+
+<br>
+</br>
 
 ## ✨ Simple UI XML: 핵심 효과 & 도입 이유 (Numbers that matter)
 
@@ -13,10 +16,14 @@
 
 > **한 줄 결론:** 복잡함은 **Simple UI XML**에게, 속도는 **당신에게**.
 
+<br>
+</br>
 
 ## 🎯 **타겟 사용자**
 **XML View 시스템** 환경
 
+<br>
+</br>
 
 ## 📋 **라이브러리 기본 설정**
 
@@ -25,6 +32,8 @@
 - **Kotlin**: 2.0.21
 - **Android Gradle Plugin**: 8.8.2
 
+<br>
+</br>
 
 ## ✨ 핵심 특징
 
@@ -52,10 +61,14 @@
 - **디바이스 정보**: Battery, Display, Location 실시간 모니터링
 - **UI 제어**: SoftKeyboard, Vibrator, FloatingView (Drag/Fixed)
 
+<br>
+</br>
 
 ## 예제
 - **간단 사용** 예제 : [README_SAMPLE.md](README_SAMPLE.md)
 
+<br>
+</br>
 
 ## 🚀 **설치 방법**
 
