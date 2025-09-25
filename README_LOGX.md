@@ -1,11 +1,38 @@
 # Logx vs Android Log - 완벽 비교 가이드
-![logx_example.gif](example%2Flogx_example.gif)
-> **"단 한 줄로 끝내는 고급 로깅"** - 기존 Log보다 Logx가 얼마나 좋은지 확인해보세요.
+
+> **“단 한 줄로 끝내는 고급 로깅.”** 기존 `Log` 대비 Logx가 주는 체감 차이를 한눈에 확인하세요.
 
 <br>
 </br>
 
-## Logx 출력 형태 및 규격
+## 🔎 한눈 비교 (At a glance)
+
+| 항목 | Android Log | Logx |
+|:--|:--:|:--:|
+| 출력 포맷 | `D/TAG: message` | `[앱] [패키지] [레벨] (파일:라인).메서드 - message` |
+| 파일/라인 자동 표기 | ❌ | ✅ |
+| 호출 메서드 자동 표기 | ❌ | ✅ |
+| 스레드 ID 자동 표기 | △(수동 처리) | ✅ |
+| JSON Pretty Print | △(직접 포맷) | ✅ |
+| 파일 저장(로그 아카이브) | △(직접 구현) | ✅ |
+| DSL 기반 구성/필터 | ❌ | ✅ |
+
+> **핵심:** Logx는 “알고 싶은 메타정보”를 **자동**으로 붙여 줍니다. 디버깅 속도가 달라집니다.
+
+<br>
+</br>
+
+## 💡 왜 중요한가:
+
+- 문제 지점까지의 시간 단축: 파일·라인·메서드를 찾는 수고가 0.
+- 재현성 향상: 스레드/컨텍스트 메타가 붙어 원인 파악이 빨라집니다.
+- 읽을 수 있는 로그: JSON을 자동 정렬해 데이터 구조가 한눈에 보입니다.
+- 운영 편의: 파일 저장/필터/레벨 제어로 개발↔운영 모두 유리합니다.
+
+<br>
+</br>
+
+## Logx 출력 예시
 
 **기본 로그 출력 형태:**
 ```
@@ -31,7 +58,7 @@ RhPark[]  kr.open.library.simpleui_xml  E  (LogxActivity.kt:60).demonstrateBasic
 - `RhPark[TAG]` - 앱 이름[TAG명] (DSL configure로 변경 가능)
 - `kr.open.library.simpleui_xml` - 패키지명 자동 감지
 - `V/D/I/W/E` - 로그 레벨 (Verbose/Debug/Info/Warning/Error)
-- `(LogxActivity.kt:56)` - 파일명과 라인번호 **자동 추적**
+- `(LogxActivity.kt:56)` - 파일명과 라인번호 **자동 추적(IDE에서 클릭 시 이동)**
 - `.demonstrateBasicLogging` - 호출한 메서드명 **자동 추적**
 - `VERBOSE LEVEL` - 실제 로그 메시지
 
@@ -43,7 +70,6 @@ RhPark[]  kr.open.library.simpleui_xml  E  (LogxActivity.kt:60).demonstrateBasic
 - **Logx**: `(파일명:라인).메서드명 - message`
 
 **디버깅이 혁신적으로 쉬워집니다!** 어느 파일의 몇 번째 줄, 어떤 메서드에서 호출했는지 한눈에 확인 가능!
-
 
 <br>
 </br>
@@ -57,6 +83,7 @@ RhPark[]  kr.open.library.simpleui_xml  E  (LogxActivity.kt:60).demonstrateBasic
 - 파일 저장 자동화
 - DSL 기반 설정
 - 고급 필터링
+- TAG는 옵션
 
 ---
 
