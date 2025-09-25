@@ -1,8 +1,11 @@
 # 📊 Simple UI XML vs 순수 Android - 실제 코드 비교
 
+![simple_example.gif](example%2Fsimple_example.gif)
+
 > **"말보다는 코드로!"** - 동일한 권한 관리 기능을 두 가지 방법으로 비교.
 
-![simple_example.gif](example%2Fsimple_example.gif)
+<br>
+</br>
 
 ## 🎯 비교 대상: MVVM + Flow 기반 권한 관리 시스템
 
@@ -15,6 +18,9 @@
 
 ---
 
+<br>
+</br>
+
 ## 📈 수치로 보는 차이점
 
 | 구분 | 순수 Android API | Simple UI XML | 개선도 |
@@ -25,6 +31,9 @@
 | **보일러플레이트** | 대량 | 최소화 | **획기적 개선** |
 
 ---
+
+<br>
+</br>
 
 ## 🔍 코드 비교 상세
 
@@ -132,6 +141,9 @@ class PermissionsActivity : BaseBindingActivity<ActivityPermissionsBinding>(R.la
 ```
 </details>
 
+<br>
+</br>
+
 ### 🧠 ViewModel 구현
 
 <details>
@@ -184,6 +196,9 @@ class PermissionsActivityVm : BaseViewModelEvent<PermissionsActivityVmEvent>() {
 
 ---
 
+<br>
+</br>
+
 ## 🚀 Simple UI XML의 압도적 장점
 
 ### 1. **📉 보일러플레이트 대폭 제거**
@@ -191,15 +206,24 @@ class PermissionsActivityVm : BaseViewModelEvent<PermissionsActivityVmEvent>() {
 - **특수 권한**: 50줄+ 로직 → 자동 처리
 - **RecyclerView**: 커스텀 Adapter → `SimpleRcvAdapter` 한 줄
 
+<br>
+</br>
+
 ### 2. **⚡ 개발 속도 극대화**
 - **복잡한 설정 없음**: BaseActivity가 모든 초기화 자동 처리
 - **이벤트 시스템**: `BaseViewModelEvent`로 Flow 채널 자동 구성
 - **에러 없는 개발**: 검증된 라이브러리로 실수 방지
 
+<br>
+</br>
+
 ### 3. **🛡️ 안정성과 유지보수성**
 - **검증된 코드**: 수많은 프로젝트에서 검증된 안정적인 구현
 - **통일된 패턴**: 팀 전체가 동일한 코드 스타일 유지
 - **버그 감소**: 표준화된 구현으로 예외 상황 최소화
+
+<br>
+</br>
 
 ### 4. **🎯 핵심 로직에만 집중**
 - **비즈니스 로직만 작성**: 반복 코드는 라이브러리가 담당
@@ -207,6 +231,9 @@ class PermissionsActivityVm : BaseViewModelEvent<PermissionsActivityVmEvent>() {
 - **품질 향상**: 반복 작업 대신 핵심 기능 개발에 집중
 
 ---
+
+<br>
+</br>
 
 ## 💡 개발자 후기
 
@@ -218,6 +245,9 @@ class PermissionsActivityVm : BaseViewModelEvent<PermissionsActivityVmEvent>() {
 
 ---
 
+<br>
+</br>
+
 ## 🎉 결론: 개발 생산성의 혁신
 
 **Simple UI XML**은 단순한 라이브러리가 아닙니다.
@@ -228,6 +258,14 @@ class PermissionsActivityVm : BaseViewModelEvent<PermissionsActivityVmEvent>() {
 
 ---
 
+<br>
+</br>
+
 > **실제 코드 위치:**
 > - 순수 Android: `app/src/main/java/kr/open/library/simpleui_xml/permissions_origin/`
 > - Simple UI XML: `app/src/main/java/kr/open/library/simpleui_xml/permission/`
+
+<br>
+</br>
+
+.
