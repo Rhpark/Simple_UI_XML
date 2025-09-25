@@ -33,6 +33,10 @@
 </br>
 
 ## Logx 출력 예시
+![logx_example.gif](example%2Flogx_example.gif)
+
+<br>
+</br>
 
 **기본 로그 출력 형태:**
 ```
