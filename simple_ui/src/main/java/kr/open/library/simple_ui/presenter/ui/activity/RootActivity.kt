@@ -19,7 +19,7 @@ abstract class RootActivity : AppCompatActivity(), PermissionRequester {
     /************************
      *   Permission Check   *
      ************************/
-    protected val permissionDelegate : PermissionDelegate<AppCompatActivity> by lazy { PermissionDelegate(this) }
+    protected lateinit var permissionDelegate : PermissionDelegate<AppCompatActivity>
 
 
     /*************************
@@ -52,6 +52,7 @@ abstract class RootActivity : AppCompatActivity(), PermissionRequester {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        permissionDelegate = PermissionDelegate(this)
         beforeOnCreated(savedInstanceState)
     }
 

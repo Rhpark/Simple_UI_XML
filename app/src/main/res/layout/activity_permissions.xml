@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="vm"
+            type="kr.open.library.simpleui_xml.permission.PermissionsActivityVm" />
+    </data>
+
+    <LinearLayout
+        style="@style/Layout.AllMatch.Vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/tvTitle"
+            style="@style/TextView.MatchWrap.Bold.Center"
+            android:layout_height="60dp"
+            android:text="New Permission Example"
+            android:textSize="24sp" />
+
+        <Button
+            android:id="@+id/btnCameraPermission"
+            style="@style/Button.MatchWrap.Bold"
+            android:onClick="@{v -> vm.onClickPermissionCamera()}"
+            android:text="Camera" />
+
+        <Button
+            android:id="@+id/btnLocationPermission"
+            style="@style/Button.MatchWrap.Italic"
+            android:onClick="@{v -> vm.onClickPermissionLocation()}"
+            android:text="GPS" />
+
+        <Button
+            android:id="@+id/btnMultiplePermissions"
+            android:onClick="@{v -> vm.onClickPermissionMulti()}"
+            style="@style/Button.MatchWrap.Bold"
+            android:text="Multi" />
+
+        <kr.open.library.simple_ui.presenter.ui.view.recyclerview.RecyclerScrollStateView
+            android:id="@+id/rcvPermission"
+            style="@style/RecyclerView.MatchWeight.LinearLayoutManager" />
+
+    </LinearLayout>
+</layout>

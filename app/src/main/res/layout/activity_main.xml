@@ -5,68 +5,51 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/main"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        style="@style/Layout.AllMatch.Vertical"
         android:padding="16dp"
         tools:context=".MainActivity">
 
         <TextView
             android:id="@+id/tvTitle"
-            style="@style/TextView.AllWrap.Bold.Center"
-            android:layout_marginTop="32dp"
-            android:text="권한 요청 예제"
+            style="@style/TextView.MatchWrap.Bold.Center"
+            android:layout_height="80dp"
+            android:text="Main Activity"
             android:textSize="24sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <Button
-            android:id="@+id/btnCameraPermission"
-            style="@style/Button.MatchWrap"
-            android:layout_marginTop="32dp"
-            android:text="카메라 권한 요청"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvTitle" />
+        <ScrollView
+            style="@style/Layout.MatchWeight.Vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvTitle">
 
-        <Button
-            android:id="@+id/btnLocationPermission"
-            style="@style/Button.MatchWrap"
-            android:layout_marginTop="16dp"
-            android:text="위치 권한 요청"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/btnCameraPermission" />
+            <LinearLayout style="@style/Layout.AllMatch.Vertical">
 
-        <Button
-            android:id="@+id/btnStoragePermission"
-            style="@style/Button.MatchWrap"
-            android:layout_marginTop="16dp"
-            android:text="저장소 권한 요청"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/btnLocationPermission" />
+                <Button
+                    android:id="@+id/btnNewPermissionActivity"
+                    style="@style/Button.MatchWrap"
+                    android:text="Go to New Permission Activity" />
 
-        <Button
-            android:id="@+id/btnMultiplePermissions"
-            style="@style/Button.MatchWrap"
-            android:layout_marginTop="16dp"
-            android:text="복수 권한 요청"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/btnStoragePermission" />
+                <Button
+                    android:id="@+id/btnOriginPermissionActivity"
+                    style="@style/Button.MatchWrap"
+                    android:text="Go to Origin Permission Activity" />
 
-        <TextView
-            android:id="@+id/tvPermissionStatus"
-            style="@style/TextView.MatchWrap.Normal.Center"
-            android:layout_marginTop="32dp"
-            android:background="@android:color/transparent"
-            android:padding="16dp"
-            android:text="권한 상태가 여기에 표시됩니다"
-            android:textColor="@android:color/darker_gray"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/btnMultiplePermissions" />
+                <Button
+                    android:id="@+id/btnStoragePermission"
+                    style="@style/Button.MatchWrap"
+                    android:text="저장소 권한 요청" />
+
+                <Button
+                    android:id="@+id/btnMultiplePermissions"
+                    style="@style/Button.MatchWrap"
+                    android:text="복수 권한 요청" />
+            </LinearLayout>
+        </ScrollView>
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

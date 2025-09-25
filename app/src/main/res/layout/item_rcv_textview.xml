@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <TextView
+        android:id="@+id/tvItem01"
+        style="@style/TextView.MatchWrap.Bold.Center"/>
+
+</layout>

@@ -1,6 +1,5 @@
 package kr.open.library.simple_ui.permissions.register
 
-import android.Manifest
 import android.content.Intent
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
@@ -14,14 +13,25 @@ import kr.open.library.simple_ui.permissions.extentions.hasPermission
 import kr.open.library.simple_ui.permissions.vo.PermissionSpecialType
 
 public class PermissionDelegate<T: Any>(private val contextProvider: T) {
+
     protected val permissionManager = PermissionManager.getInstance()
     private var currentRequestId: String? = null
 
-//    : Map<String, String> = buildMap
-    private val specialPermissionLauncher : Map<String, ActivityResultLauncher<Intent>>  by lazy {
-        buildMap {
-            PermissionSpecialType.entries.forEach { put(it.permission, getSpecialResult(it.permission)) }
+
+    private val specialPermissionLauncher = buildMap<String, ActivityResultLauncher<Intent>> {
+        PermissionSpecialType.entries.forEach { put(it.permission, createSpecialLauncher(it.permission)) }
+    }
+
+    private val normalPermissionLauncher: ActivityResultLauncher<Array<String>> = when (contextProvider) {
+        is ComponentActivity -> contextProvider.registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+            permissionManager.result(getContext(), permissions, currentRequestId)
         }
+
+        is Fragment -> contextProvider.registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+            permissionManager.result(getContext(), permissions, currentRequestId)
+        }
+
+        else -> throw IllegalArgumentException("Unsupported context provider type")
     }
 
     init {
@@ -66,25 +76,12 @@ public class PermissionDelegate<T: Any>(private val contextProvider: T) {
     ) {
         currentRequestId = permissionManager.request(
             context = getContext(),
-            requestPermissionLauncher = getNormalPermissionLauncher(),
+            requestPermissionLauncher = normalPermissionLauncher,
             specialPermissionLaunchers = specialPermissionLauncher,
             permissions = permissions,
             callback = onResult
         )
     }
-
-    private fun getNormalPermissionLauncher() = when (contextProvider) {
-        is ComponentActivity -> contextProvider.registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-            permissionManager.result(getContext(), permissions, currentRequestId)
-        }
-
-        is Fragment -> contextProvider.registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-            permissionManager.result(getContext(), permissions, currentRequestId)
-        }
-
-        else -> throw IllegalArgumentException("Unsupported context provider type")
-    }
-
 
 
     /**
@@ -124,7 +121,7 @@ public class PermissionDelegate<T: Any>(private val contextProvider: T) {
         permissionManager.resultSpecialPermission(getContext(), permission, currentRequestId)
 
 
-    protected fun getSpecialResult(permission: String) = when (contextProvider) {
+    protected fun createSpecialLauncher(permission: String) = when (contextProvider) {
         is ComponentActivity -> contextProvider.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
                 permissionManager.resultSpecialPermission(getContext(), permission, currentRequestId)
             }
