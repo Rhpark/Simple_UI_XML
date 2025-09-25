@@ -45,6 +45,8 @@
 - **XML 스타일 시스템**: 포괄적인 UI 스타일 라이브러리 (style.xml)
 - **MVVM 지원**: ViewModel, DataBinding 완벽 호환
 
+<br>
+</br>
 
 ### 🔧 **개발 편의성**
 - **확장 함수**: Bundle, String, Date, Time, TryCatch 등 실용적인 Extensions
@@ -53,6 +55,8 @@
 - **고급 로깅**: Logx - 파일 저장, 필터링, 커스텀 포매팅 지원
 - **로컬 저장**: BaseSharedPreference 관리
 
+<br>
+</br>
 
 ### ⚙️ **간단히 사용가능한 시스템 제어 (System Manager)**
 - **알림 시스템**: Alarm, Notification 제어
@@ -79,6 +83,8 @@ dependencies {
 }
 ```
 
+<br>
+</br>
 
 ## 📄 **라이선스**
 
@@ -86,5 +92,12 @@ MIT License - 자유롭게 사용하세요!
 
 ---
 
+<br>
+</br>
 
 **프로젝트 구조**: `simple_ui` 모듈이 실제 라이브러리, `app` 모듈은 테스트용 샘플
+
+<br>
+</br>
+
+.
