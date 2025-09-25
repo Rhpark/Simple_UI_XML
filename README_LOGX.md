@@ -1,5 +1,5 @@
 # Logx vs Android Log - 완벽 비교 가이드
-
+![logx_example.gif](example%2Flogx_example.gif)
 > **"단 한 줄로 끝내는 고급 로깅"** - 기존 Log보다 Logx가 얼마나 좋은지 확인해보세요.
 
 <br>
@@ -68,54 +68,7 @@ RhPark[]  kr.open.library.simpleui_xml  E  (LogxActivity.kt:60).demonstrateBasic
 <br>
 </br>
 
-### 첫째: JSON 포맷팅 비교
-
-<details>
-<summary><strong>기존 Android Log - JSON 포맷팅</strong></summary>
-
-```kotlin
-// JSON 포맷팅 - 복잡한 처리과정
-private fun logJsonData() {
-    val jsonData = """{"user":{"name":"홍길동","age":30},"timestamp":"${System.currentTimeMillis()}"}"""
-
-    // 1. JSON 파싱 시도
-    try {
-        val jsonObject = JSONObject(jsonData)
-        val prettyJson = jsonObject.toString(2) // 들여쓰기
-
-        // 2. 여러 라인으로 나누어 출력 (라인 길이 제한)
-        val lines = prettyJson.split("\n")
-        for (line in lines) {
-            Log.d("JSON_LOG", line)
-        }
-    } catch (e: Exception) {
-        // 3. 파싱 실패시 원본 출력
-        Log.d("JSON_LOG", "Raw JSON: $jsonData")
-        Log.e("JSON_LOG", "JSON parsing failed", e)
-    }
-}
-```
-**문제점:** 복잡한 파싱, 예외처리, 여러 라인 분할, 오류 처리 필요
-</details>
-
-<details>
-<summary><strong>Simple UI Logx - JSON 포맷팅</strong></summary>
-
-```kotlin
-// JSON 포맷팅 - 한 줄 완료
-private fun logJsonData() {
-    val jsonData = """{"user":{"name":"홍길동","age":30},"timestamp":"${System.currentTimeMillis()}"}"""
-
-    Logx.j("JSON_DEMO", jsonData) // 끝!
-}
-```
-**결과:** 자동 JSON 파싱, 예쁜 들여쓰기, 오류 처리 모두 자동!
-</details>
-
-<br>
-</br>
-
-### 둘째: 호출자 추적 비교
+### 첫째: 호출자 추적 비교
 
 <details>
 <summary><strong>기존 Android Log - Stack 추적</strong></summary>
@@ -168,6 +121,53 @@ private fun childMethod() {
 }
 ```
 **결과:** 자동 호출자 추적, 파일명/라인번호, 클래스명 모두 자동!
+</details>
+
+<br>
+</br>
+
+### 둘째: JSON 포맷팅 비교
+
+<details>
+<summary><strong>기존 Android Log - JSON 포맷팅</strong></summary>
+
+```kotlin
+// JSON 포맷팅 - 복잡한 처리과정
+private fun logJsonData() {
+    val jsonData = """{"user":{"name":"홍길동","age":30},"timestamp":"${System.currentTimeMillis()}"}"""
+
+    // 1. JSON 파싱 시도
+    try {
+        val jsonObject = JSONObject(jsonData)
+        val prettyJson = jsonObject.toString(2) // 들여쓰기
+
+        // 2. 여러 라인으로 나누어 출력 (라인 길이 제한)
+        val lines = prettyJson.split("\n")
+        for (line in lines) {
+            Log.d("JSON_LOG", line)
+        }
+    } catch (e: Exception) {
+        // 3. 파싱 실패시 원본 출력
+        Log.d("JSON_LOG", "Raw JSON: $jsonData")
+        Log.e("JSON_LOG", "JSON parsing failed", e)
+    }
+}
+```
+**문제점:** 복잡한 파싱, 예외처리, 여러 라인 분할, 오류 처리 필요
+</details>
+
+<details>
+<summary><strong>Simple UI Logx - JSON 포맷팅</strong></summary>
+
+```kotlin
+// JSON 포맷팅 - 한 줄 완료
+private fun logJsonData() {
+    val jsonData = """{"user":{"name":"홍길동","age":30},"timestamp":"${System.currentTimeMillis()}"}"""
+
+    Logx.j("JSON_DEMO", jsonData) // 끝!
+}
+```
+**결과:** 자동 JSON 파싱, 예쁜 들여쓰기, 오류 처리 모두 자동!
 </details>
 
 <br>

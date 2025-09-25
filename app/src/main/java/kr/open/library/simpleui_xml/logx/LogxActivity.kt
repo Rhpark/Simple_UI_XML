@@ -10,6 +10,7 @@ import kotlinx.coroutines.withContext
 import kr.open.library.simple_ui.logcat.Logx
 import kr.open.library.simple_ui.logcat.config.LogxStorageType
 import kr.open.library.simple_ui.logcat.config.logxConfig
+import kr.open.library.simple_ui.logcat.extensions.logxD
 import kr.open.library.simple_ui.logcat.model.LogxType
 import kr.open.library.simple_ui.presenter.ui.activity.BaseBindingActivity
 import kr.open.library.simpleui_xml.R
@@ -54,7 +55,7 @@ class LogxActivity : BaseBindingActivity<ActivityLogxBinding>(R.layout.activity_
      */
     private fun demonstrateBasicLogging() {
         Logx.v("VERBOSE LEVEL")
-        Logx.d("DEBUG LEVEL")
+        "DEBUG LEVEL".logxD()
         Logx.i("INFO LEVEL")
         Logx.w("WARNING LEVEL")
         Logx.e("ERROR LEVEL")
