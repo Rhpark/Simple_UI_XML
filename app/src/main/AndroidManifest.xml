@@ -20,6 +20,9 @@
         android:theme="@style/Theme.SimpleUI_XML"
         tools:targetApi="31">
         <activity
+            android:name=".logx.LogxActivity"
+            android:exported="false" />
+        <activity
             android:name=".permissions_origin.PermissionsActivityOrigin"
             android:exported="false" />
         <activity

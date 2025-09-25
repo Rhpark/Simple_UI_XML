@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="vm"
+            type="kr.open.library.simpleui_xml.logx.LogxActivityVm" />
+    </data>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".logx.LogxActivity">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/tvTitle"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:gravity="center"
+                android:text="Logx 고급 기능 시연"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="각 버튼을 눌러서 Logcat과 파일을 확인해보세요!"
+                android:textAlignment="center"
+                android:layout_marginBottom="16dp"
+                android:textColor="@android:color/darker_gray" />
+
+            <!-- 기본 로깅 -->
+            <Button
+                android:id="@+id/btnBasicLogging"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:onClick="@{v -> vm.onClickBasicLogging()}"
+                android:text="📝 기본 로깅 (v, d, i, w, e)" />
+
+            <!-- JSON 로깅 -->
+            <Button
+                android:id="@+id/btnJsonLogging"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:onClick="@{v -> vm.onClickJsonLogging()}"
+                android:text="🔧 JSON 포맷팅 (j)" />
+
+            <!-- Parent Method 추적 -->
+            <Button
+                android:id="@+id/btnParentTracking"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:onClick="@{v -> vm.onClickParentTracking()}"
+                android:text="🔍 Parent Method 추적 (p)" />
+
+            <!-- Thread 추적 -->
+            <Button
+                android:id="@+id/btnThreadTracking"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:onClick="@{v -> vm.onClickThreadTracking()}"
+                android:text="🧵 Thread ID 추적 (t)" />
+
+            <!-- 파일 로깅 -->
+            <Button
+                android:id="@+id/btnFileLogging"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:onClick="@{v -> vm.onClickFileLogging()}"
+                android:text="💾 파일 저장 기능" />
+
+            <!-- 저장소 설정 -->
+            <Button
+                android:id="@+id/btnStorageConfig"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:onClick="@{v -> vm.onClickStorageConfig()}"
+                android:text="📁 저장소 타입 변경" />
+
+            <!-- 고급 설정 -->
+            <Button
+                android:id="@+id/btnAdvancedConfig"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:onClick="@{v -> vm.onClickAdvancedConfig()}"
+                android:text="⚙️ DSL 고급 설정" />
+
+            <!-- 로그 필터링 -->
+            <Button
+                android:id="@+id/btnLogFiltering"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:onClick="@{v -> vm.onClickLogFiltering()}"
+                android:text="🎯 로그 필터링 and 태그" />
+
+            <!-- 결과 표시 -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="💡 결과 확인 방법:"
+                android:textStyle="bold"
+                android:textSize="16sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="• Logcat: Android Studio Logcat 창 확인\n• 파일: /storage/emulated/0/Android/data/패키지명/files/logs/"
+                android:textColor="@android:color/darker_gray"
+                android:layout_marginTop="4dp" />
+
+        </LinearLayout>
+    </ScrollView>
+</layout>

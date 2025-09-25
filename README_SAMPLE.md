@@ -251,7 +251,7 @@ class PermissionsActivityVm : BaseViewModelEvent<PermissionsActivityVmEvent>() {
 ## 🎉 결론: 개발 생산성의 혁신
 
 **Simple UI XML**은 단순한 라이브러리가 아닙니다.
-**개발 시간을 60% 단축**하고, **코드 품질을 향상**시키는 **개발 생산성 혁신 도구**입니다.
+**개발 시간을 50% 이상 단축**하고, **코드 품질을 향상**시키는 **개발 생산성 혁신 도구**입니다.
 
 복잡함은 **Simple UI XML**에게, 속도는 **당신에게**.
 지금 바로 경험해보세요! 🚀

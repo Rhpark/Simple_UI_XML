@@ -5,6 +5,7 @@ import android.os.Bundle
 import kr.open.library.simple_ui.presenter.extensions.view.bold
 import kr.open.library.simple_ui.presenter.ui.activity.BaseBindingActivity
 import kr.open.library.simpleui_xml.databinding.ActivityMainBinding
+import kr.open.library.simpleui_xml.logx.LogxActivity
 import kr.open.library.simpleui_xml.permission.PermissionsActivity
 import kr.open.library.simpleui_xml.permissions_origin.PermissionsActivityOrigin
 
@@ -23,6 +24,10 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 
         binding.btnOriginPermissionActivity.setOnClickListener {
             startActivity(Intent(this, PermissionsActivityOrigin::class.java))
+//            requestLocationPermission()
+        }
+        binding.btnLogxActivity.setOnClickListener {
+            startActivity(Intent(this, LogxActivity::class.java))
 //            requestLocationPermission()
         }
 

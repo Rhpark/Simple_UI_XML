@@ -39,9 +39,9 @@
                     android:text="Go to Origin Permission Activity" />
 
                 <Button
-                    android:id="@+id/btnStoragePermission"
+                    android:id="@+id/btnLogxActivity"
                     style="@style/Button.MatchWrap"
-                    android:text="저장소 권한 요청" />
+                    android:text="Go to Logx Example Activity" />
 
                 <Button
                     android:id="@+id/btnMultiplePermissions"
