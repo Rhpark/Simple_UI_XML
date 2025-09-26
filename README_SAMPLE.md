@@ -188,7 +188,7 @@ class PermissionsViewModelOrigin : ViewModel() {
     }
 }
 
-// Activity에서 수동 구독
+// Activity에서 구독
 private fun observeViewModel() {
     lifecycleScope.launch {
         viewModel.events.collect { event ->
@@ -217,7 +217,7 @@ class PermissionsActivityVm : BaseViewModelEvent<PermissionsActivityVmEvent>() {
     fun onClickPermissionMulti() = sendEventVm(PermissionsActivityVmEvent.OnClickPermissionsMulti)
 }
 
-// Activity에서 자동 구독
+// Activity에서 구독
 override fun eventVmCollect() {
     lifecycleScope.launch {
         vm.mEventVm.collect { event ->
