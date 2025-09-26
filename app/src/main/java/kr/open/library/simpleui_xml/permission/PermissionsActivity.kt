@@ -20,7 +20,7 @@ class PermissionsActivity : BaseBindingActivity<ActivityPermissionsBinding>(R.la
     private val vm :PermissionsActivityVm by viewModels()
 
     private val adapter = SimpleRcvAdapter<String>(R.layout.item_rcv_textview) {
-        holder, item, position -> holder.findViewById<TextView>(R.id.tvItem01).text = item
+        holder, item, position -> holder.findViewById<TextView>(R.id.tvTitle).text = item
     }.apply {
         setOnItemClickListener { i, s, view -> view.snackBarShowShort("OnClick ${s}") }
     }

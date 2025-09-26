@@ -8,6 +8,8 @@ import kr.open.library.simpleui_xml.databinding.ActivityMainBinding
 import kr.open.library.simpleui_xml.logx.LogxActivity
 import kr.open.library.simpleui_xml.permission.PermissionsActivity
 import kr.open.library.simpleui_xml.permissions_origin.PermissionsActivityOrigin
+import kr.open.library.simpleui_xml.recyclerview.new_.RecyclerViewActivity
+import kr.open.library.simpleui_xml.recyclerview.origin.RecyclerViewActivityOrigin
 
 class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
 
@@ -28,6 +30,16 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
         }
         binding.btnLogxActivity.setOnClickListener {
             startActivity(Intent(this, LogxActivity::class.java))
+//            requestLocationPermission()
+        }
+
+        binding.btnNewRecyclerView.setOnClickListener {
+            startActivity(Intent(this, RecyclerViewActivity::class.java))
+//            requestLocationPermission()
+        }
+
+        binding.btnOriginRecyclerView.setOnClickListener {
+            startActivity(Intent(this, RecyclerViewActivityOrigin::class.java))
 //            requestLocationPermission()
         }
 

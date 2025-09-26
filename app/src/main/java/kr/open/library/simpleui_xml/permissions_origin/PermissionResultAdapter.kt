@@ -11,7 +11,7 @@ class PermissionResultAdapter : ListAdapter<String, PermissionResultAdapter.View
 
     class ViewHolder(private val binding: ItemRcvTextviewBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: String) {
-            binding.tvItem01.text = item
+            binding.tvTitle.text = item
         }
     }
 

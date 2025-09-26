@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        
+    </data>
+
+    <LinearLayout
+        style="@style/Layout.AllMatch.Vertical"
+        android:padding="16dp"
+        tools:context=".recyclerview.new_.RecyclerViewActivity">
+
+
+        <TextView
+            style="@style/TextView.MatchWrap.Bold.Center"
+            android:layout_marginBottom="16dp"
+            android:text="Simple UI RecyclerView Demo"
+            android:textSize="24sp" />
+
+        <TextView
+            style="@style/TextView.MatchWrap.Normal"
+            android:text="Adapter Mode" />
+
+        <RadioGroup
+            style="@style/RadioGroup.MatchWrap.Horizontal">
+
+            <RadioButton
+                android:id="@+id/rBtnChangeSimpleListAdapter"
+                style="@style/RadioButton.WeightWrap.Checked"
+                android:layout_marginEnd="4dp"
+                android:text="SimpleList" />
+
+            <RadioButton
+                android:id="@+id/rBtnChangeSimpleAdapter"
+                style="@style/RadioButton.WeightWrap.Unchecked"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:text="Simple" />
+
+            <RadioButton
+                android:id="@+id/rBtnChangeCustomLIstAdapter"
+                style="@style/RadioButton.WeightWrap.Unchecked"
+                android:layout_marginStart="4dp"
+                android:text="Custom" />
+
+        </RadioGroup>
+
+        <TextView
+            android:id="@+id/tvScrollInfo"
+            style="@style/TextView.MatchWrap.Normal.Center"
+            android:layout_marginBottom="8dp"
+            android:background="@android:color/darker_gray"
+            android:padding="8dp"
+            android:textColor="@android:color/white"
+            tools:text="Scroll State" />
+
+
+        <LinearLayout
+            style="@style/Layout.MatchWrap.Horizontal"
+            android:layout_marginBottom="8dp">
+
+            <Button
+                android:id="@+id/btnAddItem"
+                style="@style/Button.WeightWrap"
+                android:layout_marginEnd="4dp"
+                android:text="Add" />
+
+            <Button
+                android:id="@+id/btnClearItems"
+                style="@style/Button.WeightWrap"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:text="All Delete" />
+
+            <Button
+                android:id="@+id/btnShuffleItems"
+                style="@style/Button.WeightWrap"
+                android:layout_marginStart="4dp"
+                android:text="Change" />
+
+        </LinearLayout>
+
+        <!-- RecyclerScrollStateView (Simple UI의 고급 RecyclerView) -->
+        <kr.open.library.simple_ui.presenter.ui.view.recyclerview.RecyclerScrollStateView
+            android:id="@+id/rcvItems"
+            style="@style/RecyclerView.MatchWeight.LinearLayoutManager"
+            app:edgeReachThreshold="10"
+            app:scrollDirectionThreshold="20"
+            tools:listitem="@layout/item_rcv_textview" />
+
+        <TextView
+            style="@style/TextView.MatchWrap"
+            android:layout_marginTop="8dp"
+            android:text="Item Click -> Delete"
+            android:textAlignment="center"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="12sp" />
+
+    </LinearLayout>
+</layout>

@@ -44,9 +44,14 @@
                     android:text="Go to Logx Example Activity" />
 
                 <Button
-                    android:id="@+id/btnMultiplePermissions"
+                    android:id="@+id/btnNewRecyclerView"
                     style="@style/Button.MatchWrap"
-                    android:text="복수 권한 요청" />
+                    android:text="Go to New RecyclerView Activity" />
+
+                <Button
+                    android:id="@+id/btnOriginRecyclerView"
+                    style="@style/Button.MatchWrap"
+                    android:text="Go to Origin RecyclerView Activity" />
             </LinearLayout>
         </ScrollView>
 

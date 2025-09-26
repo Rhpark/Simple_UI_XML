@@ -19,6 +19,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SimpleUI_XML"
         tools:targetApi="31">
+
+        <activity
+            android:name=".recyclerview.origin.RecyclerViewActivityOrigin"
+            android:exported="false" />
+        <activity
+            android:name=".recyclerview.new_.RecyclerViewActivity"
+            android:exported="false" />
         <activity
             android:name=".logx.LogxActivity"
             android:exported="false" />
