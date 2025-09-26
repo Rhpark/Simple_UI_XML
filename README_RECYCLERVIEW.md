@@ -2,7 +2,7 @@
 
 ![recyclerview_example.gif](example%2Frecyclerview_example.gif)
 
-> **"복잡한 RecyclerView 구현을 몇 줄로 끝내자!"** 기존 RecyclerView 개발 대비 Simple UI가 주는 체감 차이를 한눈에 확인하세요.
+> **"복잡한 RecyclerView 구현을 단 몇 줄로 끝내자!"** 기존 RecyclerView 개발 대비 Simple UI가 주는 체감 차이를 한눈에 확인하세요.
 
 <br>
 </br>
