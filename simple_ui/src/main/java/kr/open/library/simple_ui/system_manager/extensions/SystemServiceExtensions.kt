@@ -18,7 +18,6 @@ import android.telephony.euicc.EuiccManager
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import androidx.annotation.RequiresApi
-import kotlinx.coroutines.CoroutineScope
 import kr.open.library.simple_ui.system_manager.controller.alarm.AlarmController
 import kr.open.library.simple_ui.system_manager.controller.notification.SimpleNotificationController
 import kr.open.library.simple_ui.system_manager.controller.notification.vo.SimpleNotificationType
@@ -103,8 +102,6 @@ public fun Context.getWifiController(): WifiController = WifiController(this)
 //public fun Context.getNetworkStateInfo(): NetworkStateInfo =
 //    NetworkStateInfo(this)
 
-public fun Context.getBatteryStateInfo(): BatteryStateInfo =
-    BatteryStateInfo(this)
+public fun Context.getBatteryStateInfo(): BatteryStateInfo = BatteryStateInfo(this)
 
-public fun Context.getLocationStateInfo(coroutineScope: CoroutineScope): LocationStateInfo =
-    LocationStateInfo(this, coroutineScope)
+public fun Context.getLocationStateInfo(): LocationStateInfo = LocationStateInfo(this)

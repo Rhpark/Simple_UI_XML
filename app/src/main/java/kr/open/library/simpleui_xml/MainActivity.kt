@@ -10,6 +10,8 @@ import kr.open.library.simpleui_xml.permission.PermissionsActivity
 import kr.open.library.simpleui_xml.permissions_origin.PermissionsActivityOrigin
 import kr.open.library.simpleui_xml.recyclerview.new_.RecyclerViewActivity
 import kr.open.library.simpleui_xml.recyclerview.origin.RecyclerViewActivityOrigin
+import kr.open.library.simpleui_xml.system_service_manager.controller.ServiceManagerControllerActivity
+import kr.open.library.simpleui_xml.system_service_manager.info.ServiceManagerInfoActivity
 
 class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
 
@@ -26,21 +28,25 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 
         binding.btnOriginPermissionActivity.setOnClickListener {
             startActivity(Intent(this, PermissionsActivityOrigin::class.java))
-//            requestLocationPermission()
         }
         binding.btnLogxActivity.setOnClickListener {
             startActivity(Intent(this, LogxActivity::class.java))
-//            requestLocationPermission()
         }
 
         binding.btnNewRecyclerView.setOnClickListener {
             startActivity(Intent(this, RecyclerViewActivity::class.java))
-//            requestLocationPermission()
         }
 
         binding.btnOriginRecyclerView.setOnClickListener {
             startActivity(Intent(this, RecyclerViewActivityOrigin::class.java))
-//            requestLocationPermission()
+        }
+
+        binding.btnSystemServiceManagerController.setOnClickListener {
+            startActivity(Intent(this, ServiceManagerControllerActivity::class.java))
+        }
+
+        binding.btnSystemServiceManagerInfo.setOnClickListener {
+            startActivity(Intent(this, ServiceManagerInfoActivity::class.java))
         }
 
         binding.tvTitle.bold()

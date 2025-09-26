@@ -95,7 +95,6 @@ public open class FloatingViewController(context: Context) :
                         FloatingViewTouchType.TOUCH_MOVE,
                         getCollisionTypeWithFixedView(floatingView)
                     )
-                    // 중복 호출 제거됨 (기존 버그 수정)
                     true
                 }
 

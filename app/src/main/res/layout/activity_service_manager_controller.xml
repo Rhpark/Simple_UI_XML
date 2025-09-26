@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <LinearLayout style="@style/Layout.AllMatch.Vertical"
+        android:padding="12dp">
+
+        <TextView
+            style="@style/TextView.MatchWrap.Bold.Center"
+            android:layout_height="64dp"
+            android:text="Controller"
+            android:textSize="24sp" />
+
+        <EditText
+            android:id="@+id/edtTest01"
+            style="@style/EditText.MatchWrap.Number" />
+
+        <Button
+            android:id="@+id/btnSoftKeyboard"
+            style="@style/Button.MatchWrap.Normal"
+            android:text="SoftKeyboard" />
+
+        <Button
+            android:id="@+id/btnVibrator"
+            style="@style/Button.MatchWrap.Normal"
+            android:text="Vibrator" />
+
+        <Button
+            android:id="@+id/btnAlarm"
+            style="@style/Button.MatchWrap.Normal"
+            android:text="Alarm" />
+
+        <TextView
+            android:layout_marginTop="16dp"
+            style="@style/TextView.MatchWrap.Bold"
+            android:text="Floating View Test"/>
+
+        <LinearLayout
+            style="@style/Layout.MatchWrap.Horizontal">
+            <Button
+                android:id="@+id/btnFloatingViewDrag"
+                style="@style/Button.WeightWrap.Normal"
+                android:text="Drag" />
+            <Button
+                android:id="@+id/btnFloatingViewFix"
+                style="@style/Button.WeightWrap.Normal"
+                android:text="Fix" />
+
+            <Button
+                android:id="@+id/btnFloatingViewRemove"
+                style="@style/Button.WeightWrap.Normal"
+                android:text="Clear" />
+        </LinearLayout>
+        <TextView
+            android:id="@+id/rcvResult"
+            android:text="result"
+            style="@style/TextView.MatchWeight.Bold.Center"/>
+
+    </LinearLayout>
+</layout>

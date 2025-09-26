@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <LinearLayout
+        style="@style/Layout.AllMatch.Vertical"
+        android:padding="12dp">
+
+        <TextView
+            style="@style/TextView.MatchWrap.Bold.Center"
+            android:layout_height="64dp"
+            android:text="Info"
+            android:textSize="24sp" />
+
+        <Button
+            android:id="@+id/btnDisplay"
+            style="@style/Button.MatchWrap.Normal"
+            android:text="Display" />
+
+        <LinearLayout style="@style/Layout.MatchWrap.Horizontal">
+
+            <Button
+                android:id="@+id/btnBatteryRegister"
+                style="@style/Button.WeightWrap.Normal"
+                android:text="Battery Register" />
+
+            <Button
+                android:id="@+id/btnBatteryUnregister"
+                style="@style/Button.WeightWrap.Normal"
+                android:text="Battery Unregister" />
+
+        </LinearLayout>
+
+
+        <LinearLayout style="@style/Layout.MatchWrap.Horizontal">
+
+            <Button
+                android:id="@+id/btnLocationRegister"
+                style="@style/Button.WeightWrap.Normal"
+                android:text="Location Register" />
+
+            <Button
+                android:id="@+id/btnLocationUnregister"
+                style="@style/Button.WeightWrap.Normal"
+                android:text="Location Unregister" />
+
+        </LinearLayout>
+
+
+        <kr.open.library.simple_ui.presenter.ui.view.recyclerview.RecyclerScrollStateView
+            android:id="@+id/rcvResult"
+            style="@style/RecyclerView.MatchWeight.LinearLayoutManager"
+            android:text="result" />
+
+    </LinearLayout>
+</layout>

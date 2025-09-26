@@ -164,6 +164,17 @@ public open class BatteryStateInfo(context: Context) :
         }
     }
 
+    public fun registerStart(coroutine: CoroutineScope, updateCycleTime: Long = DEFAULT_UPDATE_CYCLE_MS) {
+        if(registerReceiver()) {
+            if(!updateStart(coroutine,updateCycleTime)) {
+                unRegisterReceiver()
+                throw Exception("BatteryStateInfo: updateStart() failed!!.")
+            }
+        } else {
+            throw Exception("BatteryStateInfo: Receiver not registered!!.")
+        }
+    }
+
     /**
      * Registers a broadcast receiver for battery-related events.
      * Call this method before starting updates.
@@ -174,7 +185,7 @@ public open class BatteryStateInfo(context: Context) :
      * @return True if registration succeeded, false otherwise
      * @return 등록 성공 시 true, 실패 시 false
      */
-    public fun registerBatteryReceiver(): Boolean = tryCatchSystemManager(false) {
+    private fun registerReceiver(): Boolean = tryCatchSystemManager(false) {
         unRegisterReceiver()
         checkSdkVersion(Build.VERSION_CODES.TIRAMISU,
             positiveWork = {
@@ -199,10 +210,10 @@ public open class BatteryStateInfo(context: Context) :
      * @return True if update started successfully, false otherwise
      * @return 업데이트 시작 성공 시 true, 실패 시 false
      */
-    public fun updateStart(coroutine: CoroutineScope, updateCycleTime: Long = DEFAULT_UPDATE_CYCLE_MS): Boolean = tryCatchSystemManager(false) {
+    private fun updateStart(coroutine: CoroutineScope, updateCycleTime: Long = DEFAULT_UPDATE_CYCLE_MS): Boolean = tryCatchSystemManager(false) {
         if (!isReceiverRegistered) {
             Logx.w("BatteryStateInfo: Receiver not registered, calling registerBatteryReceiver().")
-            if (!registerBatteryReceiver()) {
+            if (!registerReceiver()) {
                 return@tryCatchSystemManager false
             }
         }
@@ -242,7 +253,7 @@ public open class BatteryStateInfo(context: Context) :
      * @return True if stop succeeded, false otherwise
      * @return 중지 성공 시 true, 실패 시 false
      */
-    public fun updateStop(): Boolean = tryCatchSystemManager(false) {
+    private fun updateStop(): Boolean = tryCatchSystemManager(false) {
         if(updateJob == null) return@tryCatchSystemManager true
         updateJob?.cancel()
         updateJob = null
@@ -272,6 +283,11 @@ public open class BatteryStateInfo(context: Context) :
         }
     }
 
+    public fun unRegister() {
+        unRegisterReceiver()
+        updateStop()
+    }
+
     /**
      * Unregisters the battery broadcast receiver.
      * 
@@ -280,7 +296,7 @@ public open class BatteryStateInfo(context: Context) :
      * @return True if unregistration succeeded, false otherwise
      * @return 등록 해제 성공 시 true, 실패 시 false
      */
-    public fun unRegisterReceiver(): Boolean = tryCatchSystemManager(false) {
+    private fun unRegisterReceiver(): Boolean = tryCatchSystemManager(false) {
         if (!isReceiverRegistered) return@tryCatchSystemManager true
 
         context.unregisterReceiver(batteryBroadcastReceiver)

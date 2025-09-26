@@ -55,7 +55,7 @@ public open class FloatingFixedView(
                     LayoutParams.WRAP_CONTENT,
                     LayoutParams.WRAP_CONTENT,
                     LayoutParams.TYPE_APPLICATION_OVERLAY,
-                    LayoutParams.FLAG_NOT_FOCUSABLE or LayoutParams.FLAG_NOT_TOUCHABLE,
+                    LayoutParams.FLAG_NOT_FOCUSABLE,
                     PixelFormat.TRANSLUCENT
                 )
             },
@@ -69,7 +69,7 @@ public open class FloatingFixedView(
                     checkSdkVersion(Build.VERSION_CODES.KITKAT,
                         positiveWork = { LayoutParams.TYPE_APPLICATION_OVERLAY },
                         negativeWork = { LayoutParams.TYPE_SYSTEM_ALERT }),
-                    LayoutParams.FLAG_NOT_FOCUSABLE or LayoutParams.FLAG_NOT_TOUCHABLE,
+                    LayoutParams.FLAG_NOT_FOCUSABLE,
                     PixelFormat.TRANSLUCENT
                 )
             }
