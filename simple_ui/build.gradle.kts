@@ -1,6 +1,31 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+    id ("maven-publish")
+}
+
+publishing {
+    publications {
+        register("release", MavenPublication::class) { // MavenPublication::class 사용 가능
+            groupId = "com.github.Rhpark"
+            artifactId = "Simple_UI_XML"
+            version = "0.0.0"
+
+            afterEvaluate {
+                from(components.findByName("release"))
+            }
+        }
+
+        register("debug", MavenPublication::class) { // MavenPublication::class 사용 가능
+            groupId = "com.github.Rhpark"
+            artifactId = "Simple_UI_XML"
+            version = "0.0.0" // 동일 버전 사용 시 주의 (이전 답변 참고)
+
+            afterEvaluate {
+                from(components.findByName("debug"))
+            }
+        }
+    }
 }
 
 android {
@@ -45,10 +70,10 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.3")
 
-    // Android Lifecycle components for proper flush handling use for Logx(Logcat)
-    implementation("androidx.lifecycle:lifecycle-process:2.9.3")
-    implementation("androidx.lifecycle:lifecycle-common:2.9.3")
+
+    implementation(libs.androidx.lifecycle.viewmodel)
+    implementation(libs.androidx.lifecycle.process)
+    implementation(libs.androidx.lifecycle.common)
 
 }

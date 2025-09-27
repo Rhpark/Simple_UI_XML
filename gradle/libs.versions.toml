@@ -9,16 +9,32 @@ appcompat = "1.7.1"
 material = "1.12.0"
 activity = "1.10.1"
 constraintlayout = "2.2.1"
+lifecycle = "2.9.3"
 
 [libraries]
+# Core Android
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+
+# Lifecycle Management
+androidx-lifecycle-viewmodel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
+androidx-lifecycle-process = { group = "androidx.lifecycle", name = "lifecycle-process", version.ref = "lifecycle" }
+androidx-lifecycle-common = { group = "androidx.lifecycle", name = "lifecycle-common", version.ref = "lifecycle" }
+
+# User Interface
+androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
+androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+
+# Unit & UI Testing
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
-androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
-androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
-androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+
+#[bundles]
+#lifecycle = ["androidx-lifecycle-viewmodel", "androidx-lifecycle-process", "androidx-lifecycle-common"]
+#ui = ["androidx-activity", "androidx-constraintlayout", "material"]
+#testing = ["junit", "androidx-junit", "androidx-espresso-core"]
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
