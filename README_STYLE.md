@@ -283,7 +283,7 @@
     android:inputType="number" />
 ```
 
-#### **6️⃣ ImageView.WidthHeight.scaleType**
+#### **6️⃣ ImageView.WidthHeight.ScaleType**
 ```xml
 <ImageView
     style="@style/ImageView.AllWrap.CenterCrop"
