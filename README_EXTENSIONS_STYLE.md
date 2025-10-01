@@ -30,12 +30,12 @@
 </br>
 
 ### XML Style 시스템
-| 항목 | 순수 Android |           Simple UI           |
-|:--|:--:|:-----------------------------:|
-| 레이아웃 크기 설정 | 매번 width/height 작성 |         Style 상속으로 간편         |
-| 방향 설정 | 매번 orientation 작성 | Layout.MatchWrap.Vertical 한 줄 |
-| Weight 설정 | weight + width=0dp 반복 |      View.WeightWrap 한 줄      |
-| Gravity 방향 | orientation + gravity 조합 |    .Horizontal.Center 한 줄     |
+| 항목 | 순수 Android | Simple UI | 효과 |
+|:--|:--|:--|:--|
+| **기본 레이아웃** | `layout_width="match_parent"`<br>`layout_height="wrap_content"`<br>`orientation="vertical"`<br>`gravity="center"` | `style="@style/Layout.MatchWrap.Vertical.Center"` | **4속성→1줄** |
+| **Weight 균등 분할** | `layout_width="0dp"`<br>`layout_weight="1"`<br>`layout_height="wrap_content"` | `style="@style/View.WeightWrap"` | **3속성→1줄** |
+| **View 크기** | `layout_width="match_parent"`<br>`layout_height="wrap_content"` | `style="@style/View.MatchWrap"` | **2속성→1줄** |
+| **중첩 속성** | orientation + gravity + width + height 매번 작성 | Style 체이닝으로 조합 | **반복 제거** |
 
 > **핵심:** Simple UI는 "반복 코드"를 **확장함수**로 해결합니다. 개발 속도가 달라집니다.
 
