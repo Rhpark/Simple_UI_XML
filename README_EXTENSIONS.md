@@ -132,6 +132,9 @@
 - **통합 권한 체크**: hasPermission(Manifest.permission.CAMERA)
 - **일반/특수 권한 모두 지원**
 
+<br>
+</br>
+
 #### **🎨 resource/** - 리소스 접근 Extensions
 - **안전한 접근**: getDrawableCompat(R.drawable.icon)
 - **버전 분기 자동**: SDK 버전별 자동 처리
@@ -550,6 +553,9 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 | **단위 변환** | `TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, resources.displayMetrics)` <br>(90자) | `dp.dpToPx(this)` <br>(16자) | **82% 감소** |
 | **SDK 버전 분기** | `if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) { }` <br>(54자) | `checkSdkVersion(S) { }` <br>(24자) | **55% 감소** |
 
+<br>
+</br>
+
 #### **한 번 작성으로 반복 사용 (유틸 함수 불필요)**
 
 | 기능 | 순수 Android | Simple UI |
@@ -557,6 +563,9 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 | **이메일 검증** | Patterns.EMAIL_ADDRESS.matcher(email).matches() 메서드 작성 필요 | `email.isEmailValid()` - 바로 사용 |
 | **숫자 반올림** | Math.round() 계산식 매번 작성 | `price.roundTo(2)` - 바로 사용 |
 | **View 애니메이션** | ValueAnimator + Listener 구현 (15~20줄) | `view.fadeIn()` - 바로 사용 |
+
+<br>
+</br>
 
 **💡 실측 결과**:
 - **타이핑량 평균 55~82% 감소**
@@ -578,6 +587,9 @@ val name = bundle.getString("name")  // null 반환 가능
 val age = bundle.getValue("age", 0)  // Reified Type
 val name = bundle.getValue("name", "Unknown")  // Null 안전
 ```
+
+<br>
+</br>
 
 #### **타입 추론으로 실수 방지**
 ```kotlin
@@ -610,6 +622,9 @@ errorField.shake()    // "에러 필드를 흔들어"
 heartIcon.pulse()     // "하트 아이콘을 펄스 효과로"
 panel.slideIn(RIGHT)  // "패널을 오른쪽에서 슬라이드"
 ```
+
+<br>
+</br>
 
 #### **체이닝으로 의도 명확화**
 ```kotlin
@@ -718,7 +733,7 @@ val userId = intent.extras?.getValue("user_id", -1) ?: -1
 ## 📂 실제 코드 확인
 
 **실제 예시 파일:**
-> - 🎯 Activity: `app/src/main/java/kr/open/library/simpleui_xml/extenstions_style/ExtensionsStyleActivity`
+> - 🎯 Activity: `package kr.open.library.simpleui_xml.extenstions_style/ExtensionsStyleActivity`
 > - ⚡ 직접 실행해보면 체감 차이를 확실히 느끼실 수 있습니다!
 
 <br>
@@ -752,7 +767,13 @@ val userId = intent.extras?.getValue("user_id", -1) ?: -1
 - `roundUp(decimals)` - 지정된 자리로 올림
 - `roundDown(decimals)` - 지정된 자리로 내림
 
+<br>
+</br>
+
 **지원 타입:** Double, Float, Int, Long, Short
+
+<br>
+</br>
 
 **사용 예시:**
 ```kotlin
@@ -802,6 +823,9 @@ val result = checkSdkVersion(Build.VERSION_CODES.S,
 )
 ```
 
+<br>
+</br>
+
 **2. 숫자 조건부 실행 (ifGreaterThan, ifEquals)**
 ```kotlin
 // 기존 방식
@@ -827,6 +851,9 @@ value.ifEquals(100) {
 }
 ```
 
+<br>
+</br>
+
 **3. Boolean 조건부 실행 (ifTrue, ifFalse)**
 ```kotlin
 // 기존 방식
@@ -848,6 +875,9 @@ isNetworkAvailable.ifTrue {
 }
 ```
 
+<br>
+</br>
+
 **4. Null 체크 (firstNotNull)**
 ```kotlin
 // 여러 값 중 첫 번째 null이 아닌 값 반환
@@ -856,6 +886,9 @@ val finalValue = firstNotNull(userInput, cachedValue, defaultValue)
 // 기존 방식
 val finalValue = userInput ?: cachedValue ?: defaultValue
 ```
+
+<br>
+</br>
 
 **5. Collection 조건부 (filterIf, ifNotEmpty)**
 ```kotlin
@@ -871,6 +904,9 @@ searchResults
     .ifEmpty { showNoResultsMessage() }
     .ifNotEmpty { hideNoResultsMessage() }
 ```
+
+<br>
+</br>
 
 **장점:**
 - if문 중첩 제거로 가독성 향상
@@ -930,6 +966,9 @@ val price = editText.textToFloat() ?: 0f
 val distance = editText.textToDouble() ?: 0.0
 ```
 
+<br>
+</br>
+
 #### **ImageView Extensions**
 ```kotlin
 // 이미지 설정
@@ -956,12 +995,18 @@ imageView.load(R.drawable.icon) {
 }
 ```
 
+<br>
+</br>
+
 #### **View Extensions - Visibility**
 ```kotlin
 view.setVisible()    // visibility = VISIBLE
 view.setGone()       // visibility = GONE
 view.setInvisible()  // visibility = INVISIBLE
 ```
+
+<br>
+</br>
 
 #### **View Extensions - 중복 클릭 방지**
 ```kotlin
@@ -982,6 +1027,9 @@ button.setOnDebouncedClickListener(600L) { view ->
 }
 ```
 
+<br>
+</br>
+
 #### **View Extensions - 레이아웃 조작**
 ```kotlin
 // Margin 설정
@@ -1000,6 +1048,9 @@ view.setSize(200, 100)
 view.setWidthMatchParent()
 view.setHeightWrapContent()
 ```
+
+<br>
+</br>
 
 #### **View Extensions - 애니메이션**
 ```kotlin
@@ -1029,6 +1080,9 @@ errorField.shake(intensity = 15f) {
 // Rotate 애니메이션
 arrowIcon.rotate(toDegrees = 180f, duration = 200L)
 ```
+
+<br>
+</br>
 
 #### **View Extensions - 고급 기능**
 ```kotlin
