@@ -69,10 +69,9 @@
 </br>
 
 ## 예제
-- **간단 사용** 예제 : [README_SAMPLE.md](README_SAMPLE.md)
 - **Logx 사용** 예제 : [README_LOGX.md](README_LOGX.md)
 - **Recycler/Adapter 사용** 예제 : [README_RECYCLERVIEW.md](README_RECYCLERVIEW.md)
-- 
+- **간단 사용** 예제 : [README_SAMPLE.md](README_SAMPLE.md)
 
 <br>
 </br>
