@@ -12,7 +12,6 @@
 </br>
 
 ### Activity/Fragment 초기화
-![mvvm_activity_init_example.gif](example%2Fmvvm_activity_init_example.gif)
 
 | 항목 | 순수 Android |   Simple UI    |
 |:--|:--:|:--------------:|
@@ -20,6 +19,12 @@
 | LifecycleOwner 설정 | 수동 binding.lifecycleOwner 설정 |    자동 연동 ✅     |
 | ViewModel 바인딩 | 수동 binding.viewModel 설정 |  선택적 간단 사용 ✅   |
 | onCreate 보일러플레이트 | 복잡한 초기화 코드 |   최소화된 코드 ✅    |
+
+#### 초기 상속
+![mvvm_activity_init_example.gif](example%2Fmvvm_activity_init_example.gif)
+
+#### 초기 사용
+![mvvm_activity_vm_init_2_example.gif](example%2Fmvvm_activity_vm_init_2_example.gif)
 
 <br>
 </br>
