@@ -13,6 +13,9 @@
 - **현업이 매일 바라던 기능을 기본 제공** — 도입 즉시 체감 속도 상승.
 - **반복 코딩 감소 → 핵심 기능 개발 집중** — 팀 전체 **리드타임·품질** 동시 향상.
 
+<br>
+</br>
+
 ### 👥 **팀 개발 생산성 혁신**
 - **코드 일관성 보장**: 모든 팀원이 동일한 Base 클래스 & Extension 사용 → 버그 추적·유지보수 효율성 극대화
 - **신규 멤버 온보딩 가속화**: 복잡한 Android API 학습 불필요 → 적응 기간 단축
@@ -76,10 +79,10 @@
 
 ## 예제
 - **Recycler/Adapter 사용** 예제 : [README_RECYCLERVIEW.md](README_RECYCLERVIEW.md)
+- **Layout Style XML 사용** 예제 : [README_STYLE.md](README_STYLE.md)
+- **Extensions 사용** 예제 : [README_EXTENSIONS.md](README_EXTENSIONS.md)
 - **MVVM 패턴 사용** 예제 : [README_MVVM.md](README_MVVM.md)
 - **Logx 사용** 예제 : [README_LOGX.md](README_LOGX.md)
-- **Extensions 사용** 예제 : [README_EXTENSIONS_STYLE.md](README_EXTENSIONS)
-- **Layout Style XML 사용** 예제 : [README_STYLE.md](README_STYLE.md)
 - **간단 사용** 예제 : [README_SAMPLE.md](README_SAMPLE.md)
 
 <br>
