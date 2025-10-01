@@ -39,7 +39,7 @@
 
 ![mvvm_vm_example.png](example%2Fmvvm_vm_example.png)
 
-> **핵심:** Simple UI는 "복잡한 MVVM 보일러플레이트"를 **자동화**합니다. 개발 속도가 달라집니다.
+> **핵심:** Simple UI는 "복잡한 MVVM 보일러플레이트"를 **자동화**를 통해 개발 속도가 향상 됩니다.
 
 <br>
 </br>
@@ -81,8 +81,10 @@
 ```kotlin
 class MainActivity : AppCompatActivity() {
     
+    //binding 선언
     private lateinit var binding: ActivityMainBinding
-    
+
+    //viewmodel 선언
     private val viewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -140,7 +142,8 @@ class MainActivity : AppCompatActivity() {
 
 ```kotlin
 class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
-    
+
+    //viewmodel 선언
     private val vm: MainViewModel by viewModels()
     
     // 이벤트 수집 규격화
@@ -193,11 +196,11 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 
 ```kotlin
 class MainFragment : Fragment() {
-    //binding 
+    //binding 선언
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
     
-    //viewmodel
+    //viewmodel 선언
     private val viewModel: MainViewModel by viewModels()
 
     
@@ -267,7 +270,7 @@ class MainFragment : Fragment() {
 ```kotlin
 class MainFragment : BaseBindingFragment<FragmentMainBinding>(R.layout.fragment_main) {
     
-    //viewmodel
+    //viewmodel 선언
     private val vm: MainViewModel by viewModels()
 
     // DataBinding, LifecycleOwner 자동 설정!
