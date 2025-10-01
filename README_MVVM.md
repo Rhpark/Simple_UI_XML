@@ -12,6 +12,8 @@
 </br>
 
 ### Activity/Fragment 초기화
+![mvvm_activity_init_example.gif](example%2Fmvvm_activity_init_example.gif)
+
 | 항목 | 순수 Android |   Simple UI    |
 |:--|:--:|:--------------:|
 | DataBinding 설정 | 수동 inflate + setContentView (7줄+) | 생성자 파라미터로 자동 ✅ |
@@ -57,7 +59,6 @@
 
 ---
 
-![mvvm_activity_init_example.gif](example%2Fmvvm_activity_init_example.gif)
 
 <br>
 </br>
