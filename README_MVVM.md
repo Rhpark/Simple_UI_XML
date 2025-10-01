@@ -66,9 +66,14 @@
 
 ---
 
+<br>
+</br>
+
 
 <br>
 </br>
+
+---
 
 ## 실제 코드 비교
 
@@ -664,5 +669,131 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 
 <br>
 </br>
+
+
+## 📚 BaseActivity vs BaseBindingActivity - 어떤 걸 선택할까?
+
+Simple UI는 **두 가지 Base 클래스**를 제공합니다. 프로젝트 상황에 맞춰 선택하세요.
+
+<br>
+</br>
+
+### 🎯 **선택 가이드**
+
+| 구분 | BaseActivity | BaseBindingActivity |
+|:--|:--|:--|
+| **사용 시기** | 간단한 화면, DataBinding 불필요 | MVVM 패턴, 복잡한 데이터 바인딩 |
+| **View 접근** | `findViewById()` 또는 ViewBinding | DataBinding (양방향 바인딩 가능) |
+| **코드량** | 매우 간결 (레이아웃만 지정) | 간결 (Binding 자동 처리) |
+| **ViewModel 연동** | 수동 연결 필요 | 자동 lifecycleOwner 설정 |
+| **추천 용도** | 단순 UI, 설정 화면, 정적 페이지 | 데이터 기반 UI, 실시간 업데이트 |
+
+<br>
+</br>
+
+### 💡 **BaseActivity - 간단한 화면용**
+
+DataBinding이 필요 없는 간단한 화면에 적합합니다.
+
+#### **특징**
+- ✅ 레이아웃만 지정하면 자동으로 `setContentView()` 처리
+- ✅ 매우 가벼움 (오버헤드 최소)
+- ✅ findViewById() 또는 ViewBinding 직접 사용
+
+#### **코드 예시**
+```kotlin
+class SettingsActivity : BaseActivity(R.layout.activity_settings) {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        // findViewById로 직접 접근
+        val btnSave = findViewById<Button>(R.id.btnSave)
+        btnSave.setOnClickListener {
+            saveSettings()
+        }
+    }
+}
+```
+
+**장점:**
+- 코드 3~4줄로 Activity 완성
+- DataBinding 오버헤드 없음
+- 간단한 화면에 최적
+
+<br>
+</br>
+
+### 🎨 **BaseBindingActivity - MVVM 패턴용**
+
+DataBinding + ViewModel을 사용하는 MVVM 패턴에 적합합니다.
+
+#### **특징**
+- ✅ DataBinding 자동 설정 (inflate + setContentView + lifecycleOwner)
+- ✅ ViewModel과 양방향 바인딩 가능
+- ✅ XML에서 직접 데이터 표시 및 이벤트 처리
+
+#### **코드 예시**
+```kotlin
+class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
+
+    private val viewModel: MainViewModel by viewModels()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        // binding은 자동으로 초기화됨
+        // lifecycleOwner도 자동 설정됨
+        binding.viewModel = viewModel
+
+        // XML에서 직접 ViewModel 데이터 사용 가능
+    }
+}
+```
+
+**장점:**
+- DataBinding 보일러플레이트 완전 제거
+- lifecycleOwner 자동 설정
+- XML에서 `@{viewModel.data}` 직접 사용
+
+<br>
+</br>
+
+### 🤔 **어떤 걸 선택해야 할까?**
+
+#### **BaseActivity를 선택하세요 👉**
+- ✅ 간단한 정보 표시 화면
+- ✅ 설정(Settings) 화면
+- ✅ 정적 컨텐츠 페이지
+- ✅ DataBinding이 과한 경우
+
+#### **BaseBindingActivity를 선택하세요 👉**
+- ✅ 실시간 데이터 업데이트가 필요한 화면
+- ✅ ViewModel과 함께 MVVM 패턴 사용
+- ✅ 복잡한 UI 상태 관리
+- ✅ 양방향 데이터 바인딩 필요
+
+<br>
+</br>
+
+### 📖 **Fragment도 동일한 패턴**
+
+Fragment도 동일하게 두 가지 Base 클래스를 제공합니다:
+
+- **BaseFragment** - 간단한 Fragment용
+- **BaseBindingFragment** - MVVM 패턴용
+
+```kotlin
+// 간단한 Fragment
+class SimpleFragment : BaseFragment(R.layout.fragment_simple) {
+    // findViewById() 사용
+}
+
+// MVVM Fragment
+class DataFragment : BaseBindingFragment<FragmentDataBinding>(R.layout.fragment_data) {
+    private val viewModel: DataViewModel by viewModels()
+    // DataBinding 사용
+}
+```
 
 .
