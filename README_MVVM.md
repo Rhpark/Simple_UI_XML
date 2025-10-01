@@ -81,31 +81,31 @@
 ```kotlin
 class MainActivity : AppCompatActivity() {
     
-    //binding 선언
+    // 1. binding 선언
     private lateinit var binding: ActivityMainBinding
 
-    //viewmodel 선언
+    // 2. viewmodel 선언
     private val viewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // 1. DataBinding 설정 (복잡한 초기화)
+        // 3. DataBinding 설정 (복잡한 초기화)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
-        // 2. LifecycleOwner 연결
+        // 4. LifecycleOwner 연결
         binding.lifecycleOwner = this
 
-        // 3. ViewModel 바인딩
+        // 5. ViewModel 바인딩
         binding.viewModel = viewModel
 
-        // 4. 생명 주기 콜백
+        // 6. 생명 주기 콜백
         lifecycle.addObserver(viewModel)
         
-        // 5. 이벤트 수집 설정 (함수명 달라질 가능성 존재)
+        // 7. 이벤트 수집 설정 (함수명 달라질 가능성 존재)
         setupObservers()
 
-        // 6. 초기화 로직
+        // 8. 초기화 로직
         initViews()
     }
 
@@ -143,9 +143,25 @@ class MainActivity : AppCompatActivity() {
 ```kotlin
 class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
 
-    //viewmodel 선언
+    // 1. viewmodel 선언
     private val vm: MainViewModel by viewModels()
-    
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        // 2. ViewModel 바인딩
+        binding.vm = vm
+
+        // 3. 생명 주기 콜백
+        lifecycle.addObserver(vm)
+
+        // 4. viewmodel 이벤트 수집 설정
+        eventVmCollect()
+        
+        // 5. 초기화 로직핵심 로직만 집중!
+        initViews()
+    }
+
     // 이벤트 수집 규격화
     override fun eventVmCollect() {
         // 이벤트 수집
@@ -158,23 +174,7 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
             }
         }
     }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        // 1. ViewModel 바인딩
-        binding.vm = vm
-
-        // 2. 생명 주기 콜백
-        lifecycle.addObserver(vm)
-
-        // 3. viewmodel 이벤트 수집 설정
-        eventVmCollect()
-        
-        // 4. 초기화 로직핵심 로직만 집중!
-        initViews()
-    }
-
+    
     //핵심 로직에 더 집중!
     private fun initViews() {
         binding.btnIncrement.setOnClickListener {
@@ -196,16 +196,16 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 
 ```kotlin
 class MainFragment : Fragment() {
-    //binding 선언
+    // 1. binding 선언
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
     
-    //viewmodel 선언
+    // 2. viewmodel 선언
     private val viewModel: MainViewModel by viewModels()
 
     
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        // 1. DataBinding inflate
+        // 3. DataBinding inflate
         _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_main, ontainer, false)
         return binding.root
     }
@@ -213,19 +213,19 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 2. LifecycleOwner 설정
+        // 4. LifecycleOwner 설정
         binding.lifecycleOwner = viewLifecycleOwner
 
-        // 3. ViewModel 바인딩
+        // 5. ViewModel 바인딩
         binding.viewModel = viewModel
 
-        // 4.  생명 주기 콜백
+        // 6.  생명 주기 콜백
         lifecycle.addObserver(viewModel)
         
-        // 5. 이벤트 수집 설정
+        // 7. 이벤트 수집 설정
         setupObservers()
 
-        // 6. 초기화 로직
+        // 8. 초기화 로직
         initViews()
     }
 
@@ -256,7 +256,7 @@ class MainFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        // 6. 메모리 누수 방지 수동 처리
+        // 9. 메모리 누수 방지 수동 처리
         _binding = null
     }
 }
@@ -270,12 +270,30 @@ class MainFragment : Fragment() {
 ```kotlin
 class MainFragment : BaseBindingFragment<FragmentMainBinding>(R.layout.fragment_main) {
     
-    //viewmodel 선언
+    // 1. viewmodel 선언
     private val vm: MainViewModel by viewModels()
 
     // DataBinding, LifecycleOwner 자동 설정!
     // nullable binding 처리 자동!
     // 메모리 누수 방지 자동!
+
+
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState) 
+        
+        // 2. ViewModel 수동 바인딩
+        binding.vm = vm
+
+        // 3.  생명 주기 콜백
+        lifecycle.addObserver(vm)
+
+        // 4. 이벤트 수집 설정
+        eventVmCollect()
+        
+        // 5. 핵심 로직만 집중!
+        initViews()
+    }
 
     //이벤트 수집 설정 (함수명 달라질 가능성 존재)
     override fun eventVmCollect() {
@@ -289,23 +307,7 @@ class MainFragment : BaseBindingFragment<FragmentMainBinding>(R.layout.fragment_
             }
         }
     }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState) 
-        
-        // 1. ViewModel 수동 바인딩
-        binding.vm = vm
-
-        // 2.  생명 주기 콜백
-        lifecycle.addObserver(vm)
-
-        // 3. 이벤트 수집 설정
-        eventVmCollect()
-        
-        // 핵심 로직만 집중!
-        initViews()
-    }
-
+    
     private fun initViews() {
         binding.btnAction.setOnClickListener {
             viewModel.onActionClick()
@@ -377,14 +379,14 @@ sealed class MainEvent {
 
 ```kotlin
 class MainViewModel : BaseViewModelEvent<MainEvent>() {
-    // StateFlow 관리
+    // 1. StateFlow 관리
     private val _counter = MutableStateFlow(0)
     val counter: StateFlow<Int> = _counter.asStateFlow()
 
     private val _data = MutableStateFlow("")
     val data: StateFlow<String> = _data.asStateFlow()
 
-    // 이벤트 전송 한 줄로 완성!
+    // 2. 이벤트 전송 한 줄로 완성!
     fun onIncrementClick() {
         viewModelScope.launch {
             _counter.value += 1
@@ -552,15 +554,8 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 
 ## 🚀 Simple UI MVVM의 핵심 장점
 
-### 1. **📉 압도적인 코드 간소화**
-- **Activity 초기화**: 20-30줄 → 10줄 미만 **70% 단축**
-- **Fragment 초기화**: 40-50줄 → 15줄 미만 **70% 단축**
-- **ViewModel 이벤트**: Channel 구성 10줄+ → sendEventVm() 한 줄
 
-<br>
-</br>
-
-### 2. **⚡ 사용이 편한 DataBinding**
+### 1. **⚡ 사용이 편한 DataBinding**
 - **자동 inflate**: 생성자 파라미터로 레이아웃 자동 설정
 - **자동 LifecycleOwner**: 수동 연결 불필요
 - **메모리 관리**: nullable binding 처리 자동
@@ -568,7 +563,7 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 <br>
 </br>
 
-### 3. **🛠️ 표준화된 이벤트 시스템**
+### 2. **🛠️ 표준화된 이벤트 시스템**
 - **BaseViewModelEvent**: Flow/Channel 자동 구성
 - **sendEventVm()**: 이벤트 전송 한 줄
 - **리소스 관리**: 채널 자동 해제
@@ -576,7 +571,7 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 <br>
 </br>
 
-### 4. **🎨 RootActivity 시스템바 제어**
+### 3. **🎨 RootActivity 시스템바 제어**
 - **statusBarHeight/navigationBarHeight**: SDK 버전별 자동 계산
 - **SystemBars 제어**: 투명/색상/아이콘 모드 한 줄 설정
 - **beforeOnCreated()**: onCreate 전 초기화 훅 제공
@@ -584,7 +579,7 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 <br>
 </br>
 
-### 5. **🎯 개발자 경험 최적화**
+### 4. **🎯 개발자 경험 최적화**
 - **타입 안전성**: 컴파일 타임 오류 방지
 - **일관된 패턴**: 팀 전체 동일한 MVVM 구조
 - **빠른 개발**: 보일러플레이트 제거로 생산성 향상
@@ -592,10 +587,18 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 <br>
 </br>
 
-### 6. **🔧 실수 방지**
+### 5. **🔧 실수 방지**
 - **LifecycleOwner 누락**: 자동 연결로 방지
 - **메모리 누수**: Fragment nullable binding 자동 처리
 - **채널 해제**: BaseViewModelEvent가 자동 관리
+
+<br>
+</br>
+
+### 6. **📉 압도적인 코드 간소화**
+- **Activity 초기화**: 20-30줄 → 10줄 미만 **70% 단축**
+- **Fragment 초기화**: 40-50줄 → 15줄 미만 **70% 단축**
+- **ViewModel 이벤트**: Channel 구성 10줄+ → sendEventVm() 한 줄
 
 ---
 
