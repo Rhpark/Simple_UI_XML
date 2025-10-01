@@ -20,7 +20,7 @@
 | ViewModel 바인딩 | 수동 binding.viewModel 설정 |  선택적 간단 사용 ✅   |
 | onCreate 보일러플레이트 | 복잡한 초기화 코드 |   최소화된 코드 ✅    |
 
-#### 초기 상속
+#### 초기 설정
 ![mvvm_activity_init_example.gif](example%2Fmvvm_activity_init_example.gif)
 
 #### 초기 사용
@@ -36,6 +36,8 @@
 | 이벤트 전송 | viewModelScope.launch + send |       sendEventVm() 한 줄 ✅       |
 | 채널 리소스 관리 | 수동 close() 필요 |             자동 관리 ✅             |
 | 이벤트 수집 | 수동 lifecycleScope.launch |    eventVmCollect() 오버라이드 ✅     |
+
+![mvvm_vm_example.png](example%2Fmvvm_vm_example.png)
 
 > **핵심:** Simple UI는 "복잡한 MVVM 보일러플레이트"를 **자동화**합니다. 개발 속도가 달라집니다.
 
