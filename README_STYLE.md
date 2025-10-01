@@ -2,7 +2,7 @@
 
 
 
-> **"더 명확한 XML로 Style을!"** 순수 XML 대비  Style이 주는 체감 차이를 한눈에 확인하세요.
+> **"더 간단한 Layout Style XML로!"** 순수 XML 대비  Style이 주는 체감 차이를 한눈에 확인하세요.
 
 <br>
 </br>
@@ -169,7 +169,7 @@
 
 ## 🎯 결론: Android 개발자를 위한 필수 도구
 
-**Style XML**은 순수 Android에서 Layout 개발의 **반복과 불편함**을 해결하기 위해 만들어졌습니다.
+**Style XML**은 순수 Android에서 Layout Style 설정의 **반복과 불편함**을 해결하기 위해 만들어졌습니다.
 
 ✅ **XML Style 시스템** - 레이아웃 기본 속성을 단 한줄로!
 
@@ -195,7 +195,9 @@
 <br>
 </br>
 
-### 📐 기본 View Style 패턴
+### 🎯 지원 가능한 Style 패턴
+
+### 📐 View.WidthHeight.
 
 모든 View에서 사용 가능한 기본 크기 조합:
 
@@ -216,39 +218,7 @@
 <br>
 </br>
 
-### 🔲 Layout Style 패턴 (LinearLayout, FrameLayout, RelativeLayout 등)
-
-Layout은 기본 크기 + Orientation + Gravity 조합을 지원합니다.
-
-#### **기본 구조**
-```
-Layout.[WidthHeight].[Orientation].[Gravity]
-```
-
-#### **사용 예시**
-```xml
-<!-- Orientation 설정 -->
-<LinearLayout style="@style/Layout.MatchWrap.Vertical" />
-<LinearLayout style="@style/Layout.MatchWrap.Horizontal" />
-
-<!-- Orientation + Gravity 설정 -->
-<LinearLayout style="@style/Layout.MatchWrap.Vertical.Center" />
-<LinearLayout style="@style/Layout.MatchWrap.Vertical.CenterHorizontal" />
-<LinearLayout style="@style/Layout.MatchWrap.Vertical.CenterVertical" />
-
-<LinearLayout style="@style/Layout.MatchWrap.Horizontal.Center" />
-<LinearLayout style="@style/Layout.MatchWrap.Horizontal.CenterHorizontal" />
-<LinearLayout style="@style/Layout.MatchWrap.Horizontal.CenterVertical" />
-
-<!-- Weight 조합도 동일하게 지원 -->
-<LinearLayout style="@style/Layout.WeightWrap.Vertical" />
-<LinearLayout style="@style/Layout.MatchWeight.Horizontal.Center" />
-```
-
-<br>
-</br>
-
-### 🎯 지원 가능한 View별 Style 조합
+### 🎯 지원 가능한 Style 조합
 
 각 View 타입별로 적용 가능한 Style 패턴을 정리했습니다.
 
