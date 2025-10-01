@@ -1008,14 +1008,3 @@ private fun checkWifiBands() {
 <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 ```
-
-**Application 설정:**
-```kotlin
-class MyApplication : Application() {
-    override fun onCreate() {
-        super.onCreate()
-        // System Service Manager는 별도 초기화 필요 없음
-        // Context Extension으로 바로 사용 가능!
-    }
-}
-```
