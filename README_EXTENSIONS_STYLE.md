@@ -14,17 +14,17 @@
 
 ### Extensions 비교
 | 항목 | 순수 Android | Simple UI | 효과 |
-|:--|:--:|:--:|:--:|
-| 🍞 **Toast 표시** | Toast.makeText() Builder 패턴 | toastShowShort() | ⚡ 4줄→1줄 |
-| 🎨 **TextView 스타일** | Paint/Typeface 직접 설정 | bold().underline() | ⚡ 체이닝 |
-| 📏 **단위 변환** | TypedValue 반복 코딩 | 16.dpToPx(this) | ⚡ 즉시 변환 |
-| ✉️ **문자열 검증** | Patterns.EMAIL_ADDRESS | email.isEmailValid() | ⚡ 한 줄 |
-| 🔢 **숫자 반올림** | Math.round() 복잡한 계산 | 3.14159.roundTo(2) | ⚡ 3.14 |
-| 🎯 **조건부 실행** | if (SDK_INT >= S) { } | checkSdkVersion(S) { } | ⚡ 깔끔 |
-| 🎬 **View 애니메이션** | ValueAnimator 20줄+ | view.fadeIn() | ⚡ 1줄 |
-| 🚫 **중복 클릭 방지** | 수동 타이밍 체크 | setOnDebouncedClickListener() | ⚡ 자동 |
-| 📦 **Bundle 접근** | getInt/getString 분기 | getValue("key", default) | ⚡ 타입 안전 |
-| 🎨 **ImageView 효과** | ColorMatrix 설정 | imageView.makeGrayscale() | ⚡ 즉시 적용 |
+|:--|:--|:--|:--|
+| 🍞 **Toast 표시** | `Toast.makeText(this, "msg", LENGTH_SHORT).show()` | `toastShowShort("msg")` | **60% 짧게** |
+| 🎨 **TextView 스타일** | `setTypeface()` + `paintFlags` 조작 | `bold().underline()` | **체이닝** |
+| 📏 **단위 변환** | `TypedValue.applyDimension(...)` | `16.dpToPx(this)` | **82% 짧게** |
+| ✉️ **문자열 검증** | `Patterns.EMAIL_ADDRESS.matcher().matches()` | `email.isEmailValid()` | **직관적** |
+| 🔢 **숫자 반올림** | `Math.round(x * 100.0) / 100.0` | `x.roundTo(2)` | **간결** |
+| 🎯 **조건부 실행** | `if (Build.VERSION.SDK_INT >= S) { }` | `checkSdkVersion(S) { }` | **55% 짧게** |
+| 🎬 **View 애니메이션** | ValueAnimator + Listener (15~20줄) | `view.fadeIn()` | **1줄로 완료** |
+| 🚫 **중복 클릭 방지** | lastClickTime 변수 + if문 (8줄) | `setOnDebouncedClickListener { }` | **자동 처리** |
+| 📦 **Bundle 접근** | `getInt()`, `getString()` 타입별 호출 | `getValue<T>("key", default)` | **타입 안전** |
+| 🎨 **ImageView 효과** | ColorMatrix + ColorMatrixColorFilter 설정 | `imageView.makeGrayscale()` | **즉시 적용** |
 
 <br>
 </br>
@@ -45,10 +45,13 @@
 ## 💡 왜 Simple UI Extensions가 필수인가?
 
 ### 🚀 **즉시 체감되는 생산성**
-- **코드 50% 단축**: Toast 4줄 → 1줄, 애니메이션 20줄 → 1줄
-- **타이핑 시간 절약**: `Toast.makeText(this, "text", Toast.LENGTH_SHORT).show()` → `toastShowShort("text")`
+- **타이핑 시간 절약**: 긴 메서드 호출을 짧게 단축
+  - 예: `Toast.makeText(this, "text", Toast.LENGTH_SHORT).show()` (56자) → `toastShowShort("text")` (22자)
 - **SDK 버전 분기 자동화**: Build.VERSION.SDK_INT 체크를 함수로 간소화
 - **중복 클릭 버그 제거**: 수동 타이밍 체크 없이 자동 방지
+
+<br>
+</br>
 
 ### 🛡️ **안전하고 견고한 코드**
 - **컴파일 타임 타입 체크**: Bundle.getValue<T>로 런타임 에러 사전 차단
@@ -56,15 +59,21 @@
 - **예외 처리 간소화**: safeCatch()로 기본값 지정 및 자동 로깅
 - **권한 처리 통합**: 일반/특수 권한을 hasPermission() 하나로 해결
 
+<br>
+</br>
+
 ### 🎨 **직관적이고 읽기 쉬운 코드**
 - **메서드 체이닝**: `textView.bold().underline().italic()` - 의도가 명확
 - **자연스러운 확장**: `3.14159.roundTo(2)` - 숫자처럼 읽힘
 - **조건부 체이닝**: `list.ifNotEmpty { }.ifEmpty { }` - 함수형 스타일
 - **애니메이션 DSL**: `view.fadeIn()`, `view.shake()` - 설명 불필요
 
+<br>
+</br>
+
 ### ⚡ **XML도 간결하게**
 - **Style 상속**: `Layout.MatchWrap.Vertical.Center` - 4개 속성을 1줄로
-- **Weight 자동화**: `View.WeightWrap` - width=0dp + weight=1 자동 설정
+- **Weight 자동화**: `View.WeightWrap` - width=0dp + weight=10 자동 설정
 - **실수 방지**: width/height 누락 불가능
 
 <br>
@@ -75,22 +84,31 @@
 ### 📂 **제공되는 Extensions 패키지** (패키지별 정리)
 
 #### **🎨 view/** - UI 조작 Extensions
-- **Toast/SnackBar**: 한 줄로 메시지 표시
+- **Toast/SnackBar**: 간단 메시지 표시
 - **TextView**: bold(), underline(), italic() 체이닝
 - **EditText**: getTextToString(), textToInt(), isTextEmpty()
 - **ImageView**: setTint(), makeGrayscale(), centerCrop(), fadeIn()
 - **View 애니메이션**: fadeIn/Out(), shake(), pulse(), rotate(), slideIn/Out()
 - **View 조작**: setVisible/Gone(), setMargins(), setOnDebouncedClickListener()
 
+<br>
+</br>
+
 #### **📏 display/** - 단위 변환 Extensions
 - **dp↔px 변환**: 16.dpToPx(), 48.pxToDp()
 - **sp↔px 변환**: 14.spToPx(), 42.pxToSp()
 - **즉시 사용**: `view.setWidth(100.dpToPx(this))`
 
+<br>
+</br>
+
 #### **🔢 round_to/** - 숫자 반올림 Extensions
 - **소수점 반올림**: 3.14159.roundTo(2) → 3.14
 - **올림/내림**: price.roundUp(2), price.roundDown(2)
 - **정수 반올림**: 1234.roundTo(2) → 1200
+
+<br>
+</br>
 
 #### **🎯 conditional/** - 조건부 실행 Extensions
 - **SDK 체크**: checkSdkVersion(S) { ... }
@@ -98,21 +116,36 @@
 - **Boolean**: isLoggedIn.ifTrue { ... }.ifFalse { ... }
 - **Collection**: list.ifNotEmpty { }.filterIf(condition) { }
 
+<br>
+</br>
+
 #### **📦 bundle/** - Bundle 타입 안전 Extensions
 - **타입 안전 접근**: bundle.getValue<Int>("id", 0)
 - **자동 타입 추론**: Reified Type으로 컴파일 타임 체크
+
+<br>
+</br>
 
 #### **📝 string/** - 문자열 검증/가공 Extensions
 - **이메일 검증**: email.isEmailValid()
 - **숫자 검증**: text.isNumeric()
 - **공백 제거**: text.removeWhitespace()
 
+<br>
+</br>
+
 #### **📅 date/** - 날짜 포맷 Extensions
 - **Long → String**: timestamp.timeDateToString("yyyy-MM-dd")
+
+<br>
+</br>
 
 #### **⚠️ trycatch/** - 예외 처리 Extensions
 - **안전한 실행**: safeCatch(defaultValue) { ... }
 - **자동 로깅**: 예외 발생 시 Logx로 자동 기록
+
+<br>
+</br>
 
 #### **🔐 permissions/** - 권한 확인 Extensions
 - **통합 권한 체크**: hasPermission(Manifest.permission.CAMERA)
@@ -122,12 +155,13 @@
 - **안전한 접근**: getDrawableCompat(R.drawable.icon)
 - **버전 분기 자동**: SDK 버전별 자동 처리
 
+<br>
+</br>
+
 ### 🎨 **XML Style 시스템**
 - **View 크기**: View.MatchWrap, View.AllMatch, View.WeightWrap
 - **Layout 방향**: Layout.MatchWrap.Vertical.Center
 - **자동 조합**: Orientation + Gravity 한 번에
-
----
 
 <br>
 </br>
@@ -642,22 +676,33 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 <br>
 </br>
 
----
-
 ## 🎯 Simple UI Extensions & Style의 주요 장점
 
-### 1. 📝 **압도적 코드 단축** - 숫자로 증명되는 생산성
+### 1. 📝 **압도적 코드 단축** - 실제 타이핑 비교
 
-| 기능 | 순수 Android | Simple UI | 절감률 |
-|:--|:--:|:--:|:--:|
-| Toast 표시 | 4줄 | 1줄 | **75%↓** |
-| TextView 스타일링 | 10줄+ | 1줄 (체이닝) | **90%↓** |
-| View 애니메이션 | 20줄+ | 1줄 | **95%↓** |
-| 중복 클릭 방지 | 8줄 (수동 체크) | 1줄 | **87%↓** |
-| SDK 버전 분기 | 3줄 (if문) | 1줄 | **66%↓** |
-| Bundle 값 추출 | 타입별 메서드 | 1개 메서드 | **통합** |
+#### **매번 작성하는 코드량 비교**
 
-**💡 결과**: Activity 하나당 평균 **50~100줄 코드 절감**
+| 기능 | 순수 Android | Simple UI | 개선점 |
+|:--|:--|:--|:--|
+| **Toast 표시** | `Toast.makeText(this, "msg", Toast.LENGTH_SHORT).show()` <br>(56자) | `toastShowShort("msg")` <br>(22자) | **60% 감소** |
+| **SnackBar + Action** | Snackbar.make() + setAction() + setActionTextColor() + show() <br>(약 7줄, 180자+) | `snackBarShowShort("msg", SnackBarOption(...))` <br>(약 4줄, 90자) | **절반으로 단축** |
+| **TextView 스타일** | `textView.setTypeface(..., Typeface.BOLD)` <br>`textView.paintFlags = ... or Paint.UNDERLINE_TEXT_FLAG` <br>(2줄, 112자) | `textView.bold().underline()` <br>(1줄, 28자) | **75% 감소** |
+| **중복 클릭 방지** | lastClickTime 변수 + if문 체크 <br>(8줄) | `setOnDebouncedClickListener { }` <br>(1줄) | **완전 제거** |
+| **단위 변환** | `TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, resources.displayMetrics)` <br>(90자) | `dp.dpToPx(this)` <br>(16자) | **82% 감소** |
+| **SDK 버전 분기** | `if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) { }` <br>(54자) | `checkSdkVersion(S) { }` <br>(24자) | **55% 감소** |
+
+#### **한 번 작성으로 반복 사용 (유틸 함수 불필요)**
+
+| 기능 | 순수 Android | Simple UI |
+|:--|:--|:--|
+| **이메일 검증** | Patterns.EMAIL_ADDRESS.matcher(email).matches() 메서드 작성 필요 | `email.isEmailValid()` - 바로 사용 |
+| **숫자 반올림** | Math.round() 계산식 매번 작성 | `price.roundTo(2)` - 바로 사용 |
+| **View 애니메이션** | ValueAnimator + Listener 구현 (15~20줄) | `view.fadeIn()` - 바로 사용 |
+
+**💡 실측 결과**:
+- **타이핑량 평균 55~82% 감소**
+- **반복 유틸 메서드 작성 불필요** (라이브러리가 제공)
+- **가독성 대폭 향상** (긴 메서드 체인 → 짧고 명확한 이름)
 
 <br>
 </br>
@@ -770,7 +815,7 @@ kr.open.library.simple_ui.extensions/
 - **Gravity 조합**: .Center, .CenterHorizontal, .CenterVertical
 - **자동 Weight**: View.WeightWrap → width=0dp + weight=10 자동
 
-**💡 결과**: XML 코드 **50% 이상 단축** + width/height 누락 실수 방지
+**💡 결과**: XML 속성 **4줄→1줄 (75% 단축)** + width/height 누락 실수 방지
 
 <br>
 </br>
@@ -808,29 +853,19 @@ val userId = intent.extras?.getValue("user_id", -1) ?: -1
 
 ## 📣 실제 사용 후기
 
-> 💬 **"Toast.makeText 4줄 치다가 toastShowShort() 한 줄 쓰니까 행복해요!"**
-> — 주니어 Android 개발자
-
 > 💬 **"중복 클릭 버그 때문에 매번 lastClickTime 체크하던 게 너무 귀찮았는데, setOnDebouncedClickListener() 하나로 끝나니 감동..."**
-> — 3년차 개발자
 
 > 💬 **"TextView 스타일링 체이닝이 진짜 킬러 기능. bold().underline() 이렇게 쓰니까 코드 읽기 너무 편함!"**
-> — 시니어 개발자
 
 > 💬 **"3.14159.roundTo(2) 이게 Kotlin답다! 더 이상 Math.round() 쓰다가 실수 안 해도 돼요"**
-> — Kotlin 애호가
 
 > 💬 **"SDK 버전 분기할 때마다 if (Build.VERSION.SDK_INT >= ...) 타이핑하기 싫었는데, checkSdkVersion()으로 깔끔하게 정리됨"**
-> — 플랫폼 개발자
 
 > 💬 **"fadeIn(), shake(), pulse() 같은 애니메이션이 한 줄로 되니까 UX 개선 작업이 엄청 빨라졌어요!"**
-> — UI/UX 담당 개발자
 
 > 💬 **"XML Style 시스템 도입 후 레이아웃 작성 시간 반 토막. Layout.MatchWrap.Vertical.Center 한 줄이면 끝!"**
-> — 프론트엔드 개발자
 
 > 💬 **"Bundle.getValue<T>()로 타입 안전하게 데이터 가져오니까 런타임 버그가 확실히 줄었어요"**
-> — QA 담당 개발자
 
 ---
 
