@@ -1,0 +1,430 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <ScrollView
+        style="@style/Layout.AllMatch.Vertical"
+        android:fillViewport="true"
+        tools:context=".extenstions_style.ExtensionsStyleActivity">
+
+        <LinearLayout
+            style="@style/Layout.MatchWrap.Vertical"
+            android:padding="16dp">
+
+            <!-- 타이틀 -->
+            <TextView
+                style="@style/TextView.MatchWrap.Bold.Center"
+                android:layout_marginBottom="16dp"
+                android:text="Simple UI Extensions 예제"
+                android:textSize="24sp" />
+
+            <!-- 섹션 1: View Extensions (Toast/SnackBar/TextView) -->
+            <TextView
+                style="@style/TextView.MatchWrap.Bold"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:text="📁 view/ (UI 피드백)"
+                android:textSize="18sp" />
+
+            <LinearLayout
+                style="@style/Layout.MatchWrap.Horizontal"
+                android:layout_marginBottom="8dp">
+
+                <Button
+                    android:id="@+id/btnToastShort"
+                    style="@style/Button.WeightWrap"
+                    android:layout_marginEnd="4dp"
+                    android:text="Toast Short" />
+
+                <Button
+                    android:id="@+id/btnToastLong"
+                    style="@style/Button.WeightWrap"
+                    android:layout_marginStart="4dp"
+                    android:text="Toast Long" />
+            </LinearLayout>
+
+            <LinearLayout
+                style="@style/Layout.MatchWrap.Horizontal"
+                android:layout_marginBottom="8dp">
+
+                <Button
+                    android:id="@+id/btnSnackBarShort"
+                    style="@style/Button.WeightWrap"
+                    android:layout_marginEnd="4dp"
+                    android:text="SnackBar" />
+
+                <Button
+                    android:id="@+id/btnSnackBarAction"
+                    style="@style/Button.WeightWrap"
+                    android:layout_marginStart="4dp"
+                    android:text="SnackBar + Action" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvSampleText"
+                style="@style/TextView.MatchWrap.Normal.Center"
+                android:layout_marginBottom="8dp"
+                android:background="#F0F0F0"
+                android:padding="8dp"
+                android:text="Sample Text for Styling"
+                android:textSize="16sp" />
+
+            <LinearLayout
+                style="@style/Layout.MatchWrap.Horizontal"
+                android:layout_marginBottom="8dp">
+
+                <Button
+                    android:id="@+id/btnBold"
+                    style="@style/Button.WeightWrap"
+                    android:layout_marginEnd="2dp"
+                    android:text="Bold" />
+
+                <Button
+                    android:id="@+id/btnItalic"
+                    style="@style/Button.WeightWrap"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginEnd="2dp"
+                    android:text="Italic" />
+
+                <Button
+                    android:id="@+id/btnUnderline"
+                    style="@style/Button.WeightWrap"
+                    android:layout_marginStart="2dp"
+                    android:text="Underline" />
+            </LinearLayout>
+
+            <LinearLayout
+                style="@style/Layout.MatchWrap.Horizontal"
+                android:layout_marginBottom="16dp">
+
+                <Button
+                    android:id="@+id/btnStrikeThrough"
+                    style="@style/Button.WeightWrap"
+                    android:layout_marginEnd="4dp"
+                    android:text="StrikeThrough" />
+
+                <Button
+                    android:id="@+id/btnResetStyle"
+                    style="@style/Button.WeightWrap"
+                    android:layout_marginStart="4dp"
+                    android:text="Reset" />
+            </LinearLayout>
+
+            <View
+                style="@style/View.MatchWrap"
+                android:layout_height="1dp"
+                android:layout_marginVertical="8dp"
+                android:background="#CCCCCC" />
+
+            <!-- 섹션 2: Display Extensions (단위 변환) -->
+            <TextView
+                style="@style/TextView.MatchWrap.Bold"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:text="📁 display/ (단위 변환)"
+                android:textSize="18sp" />
+
+            <EditText
+                android:id="@+id/edtDisplayValue"
+                style="@style/EditText.MatchWrap.NumberDecimal"
+                android:layout_marginBottom="8dp"
+                android:hint="숫자 입력 (예: 16)" />
+
+            <LinearLayout
+                style="@style/Layout.MatchWrap.Horizontal"
+                android:layout_marginBottom="8dp">
+
+                <Button
+                    android:id="@+id/btnDpToPx"
+                    style="@style/Button.WeightWrap"
+                    android:layout_marginEnd="2dp"
+                    android:text="DP → PX" />
+
+                <Button
+                    android:id="@+id/btnPxToDp"
+                    style="@style/Button.WeightWrap"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginEnd="2dp"
+                    android:text="PX → DP" />
+
+                <Button
+                    android:id="@+id/btnSpToPx"
+                    style="@style/Button.WeightWrap"
+                    android:layout_marginStart="2dp"
+                    android:text="SP → PX" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvDisplayResult"
+                style="@style/TextView.MatchWrap"
+                android:layout_marginBottom="16dp"
+                android:background="#E8F5E9"
+                android:padding="8dp"
+                android:text="결과: " />
+
+            <View
+                style="@style/View.MatchWrap"
+                android:layout_height="1dp"
+                android:layout_marginVertical="8dp"
+                android:background="#CCCCCC" />
+
+            <!-- 섹션 3: Resource Extensions -->
+            <TextView
+                style="@style/TextView.MatchWrap.Bold"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:text="📁 resource/ (리소스 접근)"
+                android:textSize="18sp" />
+
+            <LinearLayout
+                style="@style/Layout.MatchWrap.Horizontal"
+                android:layout_marginBottom="8dp">
+
+                <Button
+                    android:id="@+id/btnGetDrawable"
+                    style="@style/Button.WeightWrap"
+                    android:layout_marginEnd="4dp"
+                    android:text="Get Drawable" />
+
+                <Button
+                    android:id="@+id/btnGetColor"
+                    style="@style/Button.WeightWrap"
+                    android:layout_marginStart="4dp"
+                    android:text="Get Color" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvResourceResult"
+                style="@style/TextView.MatchWrap"
+                android:layout_marginBottom="16dp"
+                android:background="#E3F2FD"
+                android:padding="8dp"
+                android:text="결과: " />
+
+            <View
+                style="@style/View.MatchWrap"
+                android:layout_height="1dp"
+                android:layout_marginVertical="8dp"
+                android:background="#CCCCCC" />
+
+            <!-- 섹션 4: String Extensions (문자열 검증) -->
+            <TextView
+                style="@style/TextView.MatchWrap.Bold"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:text="📁 string/ (문자열 검증)"
+                android:textSize="18sp" />
+
+            <EditText
+                android:id="@+id/edtEmail"
+                style="@style/EditText.MatchWrap.Email"
+                android:layout_marginBottom="4dp"
+                android:hint="이메일 입력" />
+
+            <TextView
+                android:id="@+id/tvEmailResult"
+                style="@style/TextView.MatchWrap"
+                android:layout_marginBottom="8dp"
+                android:padding="8dp"
+                android:text="✅ / ❌" />
+
+            <EditText
+                android:id="@+id/edtNumber"
+                style="@style/EditText.MatchWrap.Text"
+                android:layout_marginBottom="4dp"
+                android:hint="숫자 입력" />
+
+            <TextView
+                android:id="@+id/tvNumberResult"
+                style="@style/TextView.MatchWrap"
+                android:layout_marginBottom="8dp"
+                android:padding="8dp"
+                android:text="✅ / ❌" />
+
+            <EditText
+                android:id="@+id/edtWhitespace"
+                style="@style/EditText.MatchWrap.Text"
+                android:layout_marginBottom="4dp"
+                android:hint="공백 제거 테스트" />
+
+            <Button
+                android:id="@+id/btnRemoveWhitespace"
+                style="@style/Button.MatchWrap"
+                android:layout_marginBottom="4dp"
+                android:text="공백 제거" />
+
+            <TextView
+                android:id="@+id/tvWhitespaceResult"
+                style="@style/TextView.MatchWrap"
+                android:layout_marginBottom="16dp"
+                android:background="#FFF3E0"
+                android:padding="8dp"
+                android:text="결과: " />
+
+            <View
+                style="@style/View.MatchWrap"
+                android:layout_height="1dp"
+                android:layout_marginVertical="8dp"
+                android:background="#CCCCCC" />
+
+            <!-- 섹션 5: Date Extensions -->
+            <TextView
+                style="@style/TextView.MatchWrap.Bold"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:text="📁 date/ (날짜 처리)"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/btnFormatDate"
+                style="@style/Button.MatchWrap"
+                android:layout_marginBottom="4dp"
+                android:text="현재 시간 포맷팅" />
+
+            <TextView
+                android:id="@+id/tvDateResult"
+                style="@style/TextView.MatchWrap"
+                android:layout_marginBottom="16dp"
+                android:background="#F3E5F5"
+                android:padding="8dp"
+                android:text="결과: " />
+
+            <View
+                style="@style/View.MatchWrap"
+                android:layout_height="1dp"
+                android:layout_marginVertical="8dp"
+                android:background="#CCCCCC" />
+
+            <!-- 섹션 6: TryCatch Extensions -->
+            <TextView
+                style="@style/TextView.MatchWrap.Bold"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:text="📁 trycatch/ (안전한 예외 처리)"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/btnSafeCatch"
+                style="@style/Button.MatchWrap"
+                android:layout_marginBottom="4dp"
+                android:text="safeCatch 테스트" />
+
+            <TextView
+                android:id="@+id/tvSafeCatchResult"
+                style="@style/TextView.MatchWrap"
+                android:layout_marginBottom="16dp"
+                android:background="#FFEBEE"
+                android:padding="8dp"
+                android:text="결과: " />
+
+            <View
+                style="@style/View.MatchWrap"
+                android:layout_height="1dp"
+                android:layout_marginVertical="8dp"
+                android:background="#CCCCCC" />
+
+            <!-- 섹션 7: Permission Extensions -->
+            <TextView
+                style="@style/TextView.MatchWrap.Bold"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:text="📁 permissions/ (권한 체크)"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/btnCheckPermission"
+                style="@style/Button.MatchWrap"
+                android:layout_marginBottom="4dp"
+                android:text="CAMERA 권한 체크" />
+
+            <TextView
+                android:id="@+id/tvPermissionResult"
+                style="@style/TextView.MatchWrap"
+                android:layout_marginBottom="16dp"
+                android:background="#E0F2F1"
+                android:padding="8dp"
+                android:text="결과: " />
+
+            <View
+                style="@style/TextView.MatchWrap"
+                android:layout_height="1dp"
+                android:layout_marginVertical="8dp"
+                android:background="#CCCCCC" />
+
+            <!-- 섹션 8: XML Style 데모 -->
+            <TextView
+                style="@style/TextView.MatchWrap.Bold"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:text="🎨 XML Style 데모"
+                android:textSize="18sp" />
+
+            <TextView
+                style="@style/TextView.MatchWrap"
+                android:layout_marginBottom="8dp"
+                android:text="다양한 Layout Style 조합 예제"
+                android:textSize="14sp" />
+
+            <!-- Style 예제들 -->
+            <LinearLayout
+                style="@style/Layout.MatchWrap.Horizontal.Center"
+                android:layout_marginBottom="8dp"
+                android:background="#E8EAF6"
+                android:padding="16dp">
+
+                <TextView
+                    style="@style/TextView.AllWrap"
+                    android:text="Layout.MatchWrap.Horizontal.Center"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                style="@style/Layout.MatchWrap.Vertical.CenterHorizontal"
+                android:layout_marginBottom="8dp"
+                android:background="#FCE4EC"
+                android:padding="16dp">
+
+                <TextView
+                    style="@style/TextView.AllWrap"
+                    android:text="Layout.MatchWrap"
+                    android:textSize="12sp" />
+
+                <TextView
+                    style="@style/TextView.AllWrap"
+                    android:text=".Vertical.CenterHorizontal"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                style="@style/Layout.MatchWrap.Horizontal"
+                android:layout_marginBottom="8dp">
+
+                <TextView
+                    style="@style/TextView.WeightMatch.Bold"
+                    android:layout_marginEnd="4dp"
+                    android:background="#C8E6C9"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="Weight = 1" />
+
+                <TextView
+                    style="@style/TextView.WeightWrap.Normal.Center"
+                    android:layout_marginStart="4dp"
+                    android:background="#FFCCBC"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="Weight = 1" />
+            </LinearLayout>
+
+            <TextView
+                style="@style/TextView.MatchWrap"
+                android:layout_marginBottom="16dp"
+                android:background="#FFFDE7"
+                android:padding="8dp"
+                android:text="✅ Style을 사용하면 반복적인 속성 작성을 줄일 수 있습니다!"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+    </ScrollView>
+</layout>

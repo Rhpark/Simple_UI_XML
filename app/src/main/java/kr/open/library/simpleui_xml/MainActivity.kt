@@ -5,6 +5,7 @@ import android.os.Bundle
 import kr.open.library.simple_ui.presenter.extensions.view.bold
 import kr.open.library.simple_ui.presenter.ui.activity.BaseBindingActivity
 import kr.open.library.simpleui_xml.databinding.ActivityMainBinding
+import kr.open.library.simpleui_xml.extenstions_style.ExtensionsStyleActivity
 import kr.open.library.simpleui_xml.logx.LogxActivity
 import kr.open.library.simpleui_xml.permission.PermissionsActivity
 import kr.open.library.simpleui_xml.permissions_origin.PermissionsActivityOrigin
@@ -47,6 +48,10 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 
         binding.btnSystemServiceManagerInfo.setOnClickListener {
             startActivity(Intent(this, ServiceManagerInfoActivity::class.java))
+        }
+
+        binding.btnGotoExtensionsStyle.setOnClickListener {
+            startActivity(Intent(this, ExtensionsStyleActivity::class.java))
         }
 
         binding.tvTitle.bold()

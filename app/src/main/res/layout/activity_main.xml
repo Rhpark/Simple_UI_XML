@@ -54,6 +54,11 @@
                     android:text="Go to Origin RecyclerView Activity" />
 
                 <Button
+                    android:id="@+id/btnGotoExtensionsStyle"
+                    style="@style/Button.MatchWrap"
+                    android:text="Go to Extensions Style Activity" />
+
+                <Button
                     android:id="@+id/btnSystemServiceManagerController"
                     style="@style/Button.MatchWrap"
                     android:text="Go to New Service Manager Controller Activity" />

@@ -647,6 +647,43 @@
         <item name="android:textStyle">normal</item>
     </style>
 
+    <!-- TextView Gravity Extensions for WeightMatch -->
+    <style name="TextView.WeightMatch.Bold.Center">
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="TextView.WeightMatch.Bold.CenterHorizontal">
+        <item name="android:gravity">center_horizontal</item>
+    </style>
+
+    <style name="TextView.WeightMatch.Bold.CenterVertical">
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="TextView.WeightMatch.Italic.Center">
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="TextView.WeightMatch.Italic.CenterHorizontal">
+        <item name="android:gravity">center_horizontal</item>
+    </style>
+
+    <style name="TextView.WeightMatch.Italic.CenterVertical">
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="TextView.WeightMatch.Normal.Center">
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="TextView.WeightMatch.Normal.CenterHorizontal">
+        <item name="android:gravity">center_horizontal</item>
+    </style>
+
+    <style name="TextView.WeightMatch.Normal.CenterVertical">
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
     <style name="TextView.WeightWrap" parent="View.WeightWrap"/>
 
     <style name="TextView.WeightWrap.Bold">
@@ -661,6 +698,42 @@
         <item name="android:textStyle">normal</item>
     </style>
 
+    <!-- TextView Gravity Extensions for WeightWrap -->
+    <style name="TextView.WeightWrap.Bold.Center">
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="TextView.WeightWrap.Bold.CenterHorizontal">
+        <item name="android:gravity">center_horizontal</item>
+    </style>
+
+    <style name="TextView.WeightWrap.Bold.CenterVertical">
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="TextView.WeightWrap.Italic.Center">
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="TextView.WeightWrap.Italic.CenterHorizontal">
+        <item name="android:gravity">center_horizontal</item>
+    </style>
+
+    <style name="TextView.WeightWrap.Italic.CenterVertical">
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="TextView.WeightWrap.Normal.Center">
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="TextView.WeightWrap.Normal.CenterHorizontal">
+        <item name="android:gravity">center_horizontal</item>
+    </style>
+
+    <style name="TextView.WeightWrap.Normal.CenterVertical">
+        <item name="android:gravity">center_vertical</item>
+    </style>
 
     <!-- Base EditText Setting -->
     <!-- ex) EditText.(width,height).(InputType) -->
@@ -686,6 +759,9 @@
 
     <style name="EditText.MatchWrap.Number">
         <item name="android:inputType">number</item>
+    </style>
+    <style name="EditText.MatchWrap.NumberDecimal">
+        <item name="android:inputType">numberDecimal</item>
     </style>
 
     <style name="EditText.MatchWrap.MultiLine">
@@ -907,6 +983,18 @@
     </style>
 
     <style name="EditText.MatchWrap.Number.CenterVertical">
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="EditText.MatchWrap.NumberDecimal.Center">
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="EditText.MatchWrap.NumberDecimal.CenterHorizontal">
+        <item name="android:gravity">center_horizontal</item>
+    </style>
+
+    <style name="EditText.MatchWrap.NumberDecimal.CenterVertical">
         <item name="android:gravity">center_vertical</item>
     </style>
 
