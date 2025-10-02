@@ -28,10 +28,16 @@
 - **SDK 버전 처리 자동화**: Vibrator/VibratorManager 버전 분기를 내부에서 자동 처리
 - **복잡한 설정 숨김**: Alarm Calendar 계산, Floating View Touch 처리 등을 캡슐화
 
+<br>
+</br>
+
 ### 안전한 에러 처리
 - **자동 예외 처리**: Controller 내부에서 자동 예외 처리 후 Runtime 결과 반환
 - **결과 값 리턴**: `tryCatchSystemManager()` 통해 안전한 Boolean 반환
 - **Lifecycle 연동**: `onDestroy()` 시 모든 리소스 자동 정리
+
+<br>
+</br>
 
 ### 개발자 친화적 인터페이스
 - **통합 API 제공**: `show()`, `vibrate()`, `registerAlarmClock()` 등 직관적 메서드
@@ -843,8 +849,6 @@ private fun checkWifiBands() {
 <br>
 </br>
 
----
-
 ## System Service Manager Controller의 핵심 장점
 
 ### 1. **압도적인 코드 간소화**
@@ -895,8 +899,6 @@ private fun checkWifiBands() {
 - **WiFi**: 연결 정보, 스캔, 신호 강도, 대역 지원 확인 등 풍부한 API
 - **Floating View**: 충돌 감지, 드래그/고정 뷰, Touch 콜백 제공
 
----
-
 <br>
 </br>
 
@@ -914,8 +916,6 @@ private fun checkWifiBands() {
 >
 > **"자동 처리, 안전한 예외 처리, Lifecycle까지 캡슐화! 코드가 깔끔해졌어!"**
 
----
-
 <br>
 </br>
 
@@ -929,8 +929,6 @@ private fun checkWifiBands() {
 모든 복잡한 System Service가 **Controller 한 줄**로, 간단하고 **강력하게**.
 
 지금 바로 시작하세요! ✨
-
----
 
 <br>
 </br>
@@ -1057,10 +1055,6 @@ private fun checkWifiBands() {
 <br>
 </br>
 
-### ⚙️ Controller별 상세 권한 설정
-
----
-
 #### 1️⃣ **SoftKeyboard Controller** - 권한 불필요 ✅
 
 키보드 제어는 **권한이 필요하지 않습니다**.
@@ -1070,7 +1064,10 @@ private fun checkWifiBands() {
 getSoftKeyboardController().show(editText)
 ```
 
----
+
+<br>
+</br>
+
 
 #### 2️⃣ **Vibrator Controller** - VIBRATE 권한 필요
 
@@ -1087,7 +1084,10 @@ getVibratorController().vibrate(200)
 
 > **참고**: `VIBRATE`는 일반 권한으로 **런타임 요청 불필요**
 
----
+
+<br>
+</br>
+
 
 #### 3️⃣ **Alarm Controller** - SCHEDULE_EXACT_ALARM 권한 (API 31+)
 
@@ -1115,7 +1115,10 @@ getAlarmController().registerAlarmClock(receiver, alarmVo)
 
 > **참고**: Android 12+ (API 31+)부터는 **사용자가 설정에서 직접 허용**해야 함
 
----
+
+<br>
+</br>
+
 
 #### 4️⃣ **Notification Controller** - POST_NOTIFICATIONS 권한 (API 33+)
 
@@ -1149,7 +1152,10 @@ checkSdkVersion(Build.VERSION_CODES.TIRAMISU,
 
 > **참고**: Android 13+ (API 33+)부터는 **런타임 권한 요청 필수**
 
----
+
+<br>
+</br>
+
 
 #### 5️⃣ **WiFi Controller** - 다중 권한 필요
 
@@ -1187,7 +1193,10 @@ onRequestPermissions(listOf(
 > - `ACCESS_FINE_LOCATION`은 위험 권한 (런타임 요청 필수)
 > - WiFi 켜기/끄기는 Android 10+ (API 29+)부터 **더 이상 지원되지 않음**
 
----
+
+<br>
+</br>
+
 
 #### 6️⃣ **Floating View Controller** - SYSTEM_ALERT_WINDOW 특수 권한
 
@@ -1241,8 +1250,6 @@ onRequestPermissions(listOf(
 ```
 
 > **참고**: `SYSTEM_ALERT_WINDOW`는 특수 권한으로 **별도 설정 화면**이 필요하지만, Simple UI의 `onRequestPermissions()`를 사용하면 **자동 처리** 가능!
-
----
 
 <br>
 </br>

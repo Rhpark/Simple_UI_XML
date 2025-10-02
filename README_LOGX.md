@@ -89,8 +89,6 @@ RhPark[]  kr.open.library.simpleui_xml  E  (LogxActivity.kt:60).demonstrateBasic
 - 고급 필터링
 - TAG는 옵션
 
----
-
 <br>
 </br>
 
@@ -178,7 +176,8 @@ Logx.configure {
 ✅ **장점**: 권한 불필요, 앱 삭제 시 자동 정리
 ❌ **단점**: 사용자가 직접 접근 불가
 
----
+<br>
+</br>
 
 **2. APP_EXTERNAL (앱 전용 외부 저장소)** - 권한 불필요 ✅ **권장**
 ```kotlin
@@ -192,7 +191,8 @@ Logx.configure {
 ✅ **장점**: 권한 불필요, 파일 관리자로 접근 가능, 앱 삭제 시 자동 정리
 ✅ **추천**: 대부분의 경우 최선의 선택!
 
----
+<br>
+</br>
 
 **3. PUBLIC_EXTERNAL (공용 외부 저장소)** - Android 9 이하 권한 필요
 ```kotlin
@@ -279,7 +279,10 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 
 > **결론**: 대부분의 경우 **APP_EXTERNAL (권한 불필요)**를 사용하는 것이 가장 좋습니다! ✅
 
----
+
+<br>
+</br>
+
 
 ## 실제 코드 비교
 
@@ -618,8 +621,6 @@ private fun setupLogging() {
 <br>
 </br>
 
----
-
 ## Simple UI Logx의 핵심 장점
 
 ### 1. **압도적인 생산성 향상**
@@ -651,8 +652,6 @@ private fun setupLogging() {
 - **구조적 출력**: JSON 데이터의 체계적 출력
 - **코드 간소화**: 유지보수 편리한 구조
 
----
-
 <br>
 </br>
 
@@ -666,8 +665,6 @@ private fun setupLogging() {
 >
 > **"DSL 설정으로 팀 전체 로깅 규칙을 통일했어!"**
 
----
-
 <br>
 </br>
 
@@ -680,8 +677,6 @@ private fun setupLogging() {
 모든 고급기능이 **Logx**로, 간단하고 **강력하게**.
 
 지금 바로 시작하세요! ✨
-
----
 
 <br>
 </br>
@@ -708,8 +703,6 @@ private fun setupLogging() {
 
 <br>
 </br>
-
----
 
 ## 🔐 권한 요구사항 (파일 저장 기능 사용 시)
 
@@ -758,8 +751,6 @@ Logx.configure {
 **장점**: 권한 불필요, 앱 삭제 시 자동 정리
 **단점**: 사용자가 직접 접근 불가
 
----
-
 <br>
 </br>
 
@@ -774,8 +765,6 @@ Logx.configure {
 ```
 **장점**: 권한 불필요, 파일 관리자로 접근 가능, 앱 삭제 시 자동 정리
 **단점**: 없음 **(대부분의 경우 최선의 선택)**
-
----
 
 <br>
 </br>

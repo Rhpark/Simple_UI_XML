@@ -28,10 +28,16 @@
 - **Lifecycle 안전**: 코루틴 스코프 연동으로 메모리 누수 방지
 - **이벤트 타입 분리**: Sealed Class로 타입 안전한 이벤트 처리
 
+<br>
+</br>
+
 ### 복잡한 설정 자동화
 - **BroadcastReceiver 자동 등록/해제**: Battery, Location Provider 변경 자동 감지
 - **SDK 버전 분기 자동 처리**: Display API (R 이상/이하), Fused Provider (S+) 자동 분기
 - **권한 처리 간소화**: 필수 권한 자동 체크 및 안전한 예외 처리
+
+<br>
+</br>
 
 ### 개발자 친화적 API
 - **직관적 메서드 이름**: `getCapacity()`, `getTemperature()`, `isGpsEnabled()`
@@ -514,8 +520,6 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 <br>
 </br>
 
----
-
 ## System Service Manager Info의 핵심 장점
 
 ### 1. **StateFlow 기반 반응형 구조**
@@ -523,17 +527,21 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 - Location: LocationListener → StateFlow
 - Sealed Class 타입 안전
 
+<br>
+</br>
+
 ### 2. **SDK 버전 자동 처리**
 - Display: Android R 자동 분기
 - Location: Fused Provider 자동 지원
 - 개발자는 신경 쓸 필요 없음!
 
+<br>
+</br>
+
 ### 3. **Lifecycle 자동 관리**
 - onDestroy() 자동 호출
 - 리소스 자동 정리
 - 메모리 누수 방지
-
----
 
 <br>
 </br>
@@ -562,6 +570,9 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 - **총 용량**: `getTotalCapacity()` - 배터리 총 용량 (mAh)
 - **BatteryStateEvent**: 12가지 이벤트 타입 (OnCapacity, OnTemperature, OnVoltage 등)
 
+<br>
+</br>
+
 ### **위치 Location State Info** - 위치 상태 정보
 - **실시간 업데이트**: `registerStart(scope, provider, minTime, minDistance)` - StateFlow 기반 위치 추적
 - **Provider 상태**: `isGpsEnabled()`, `isNetworkEnabled()`, `isPassiveEnabled()`, `isFusedEnabled()` (API 31+)
@@ -572,6 +583,9 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 - **위치 저장**: `saveApplyLocation()`, `loadLocation()` - SharedPreferences 저장/로드
 - **LocationStateEvent**: 5가지 이벤트 타입 (OnLocationChanged, OnGpsEnabled 등)
 
+<br>
+</br>
+
 ### **디스플레이 Display Info** - 디스플레이 정보
 - **전체 화면 크기**: `getFullScreenSize()` - 전체 화면 크기 (상태바, 네비게이션바 포함)
 - **사용 가능 화면**: `getScreen()` - 상태바, 네비게이션바 제외한 화면 크기
@@ -579,6 +593,9 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 - **상태바 높이**: `getStatusBarHeight()` - 상태바 높이
 - **네비게이션바 높이**: `getNavigationBarHeight()` - 네비게이션바 높이
 - **SDK 자동 분기**: Android R (API 30) 이상/이하 자동 처리
+
+<br>
+</br>
 
 ### **SIM 카드 Sim Info** - SIM 카드 정보
 - **기본 정보**: `isDualSim()`, `isSingleSim()`, `isMultiSim()` - SIM 타입 확인
@@ -592,6 +609,9 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 - **표시 정보**: `getDisplayNameFromDefaultUSim()`, `getCountryIsoFromDefaultUSim()` - 표시명, 국가 코드
 - **로밍 상태**: `isNetworkRoamingFromDefaultUSim()` - 로밍 여부 확인
 
+<br>
+</br>
+
 ### **통신 Telephony Info** - Telephony 정보
 - **통신사 정보**: `getCarrierName()`, `getMobileCountryCode()`, `getMobileNetworkCode()` - 통신사명, MCC/MNC
 - **SIM 상태**: `getSimState()`, `isSimReady()`, `getSimOperatorName()`, `getSimCountryIso()` - SIM 상태 확인
@@ -604,6 +624,9 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 - **실시간 콜백**: `registerCallback()` - StateFlow 기반 실시간 업데이트
 - **슬롯별 콜백**: `registerTelephonyCallBack(slotIndex)` - SIM 슬롯별 콜백 (API 31+)
 - **API 자동 호환**: TelephonyCallback (API 31+) vs PhoneStateListener 자동 분기
+
+<br>
+</br>
 
 ### **네트워크 Network Connectivity Info** - 네트워크 연결 정보
 - **기본 연결성**: `isNetworkConnected()` - 네트워크 연결 여부
@@ -639,7 +662,10 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 
 ### ⚙️ Info별 상세 권한 설정
 
----
+
+<br>
+</br>
+
 
 #### 1️⃣ **Battery State Info** - 권한 불필요 ✅
 
@@ -668,7 +694,10 @@ lifecycleScope.launch {
 
 > **참고**: 배터리 정보는 시스템 브로드캐스트로 제공되어 권한이 필요하지 않습니다.
 
----
+
+<br>
+</br>
+
 
 #### 2️⃣ **Display Info** - 권한 불필요 ✅
 
@@ -690,7 +719,9 @@ Log.d("Display", "상태바 높이: $statusBarHeight")
 
 > **참고**: 디스플레이 정보는 공개 API로 권한이 필요하지 않습니다.
 
----
+
+<br>
+</br>
 
 #### 3️⃣ **Location State Info** - 위치 권한 필수
 
@@ -744,7 +775,10 @@ onRequestPermissions(listOf(
 > - `ACCESS_COARSE_LOCATION` - 네트워크 위치 (대략적 위치)
 > - 두 권한 모두 **위험 권한**으로 런타임 요청 필수
 
----
+
+<br>
+</br>
+
 
 #### 4️⃣ **SIM Info** - 전화 상태 권한 필수
 
@@ -786,7 +820,10 @@ onRequestPermissions(listOf(
 > - `READ_PHONE_STATE`는 **위험 권한**으로 런타임 요청 필수
 > - Android 10+ (API 29+)부터 전화번호 읽기가 제한될 수 있음
 
----
+
+<br>
+</br>
+
 
 #### 5️⃣ **Telephony Info** - 전화 상태 + 선택적 권한
 
@@ -865,7 +902,10 @@ onRequestPermissions(listOf(
 > - `READ_PHONE_NUMBERS` - 선택 (전화번호 조회)
 > - `ACCESS_FINE_LOCATION` - 선택 (셀 타워 상세 위치)
 
----
+
+<br>
+</br>
+
 
 #### 6️⃣ **Network Connectivity Info** - 네트워크 상태 권한
 
@@ -909,8 +949,6 @@ lifecycleScope.launch {
 > **참고**:
 > - `ACCESS_NETWORK_STATE`는 **일반 권한**으로 런타임 요청 불필요
 > - `ACCESS_WIFI_STATE`는 **일반 권한**으로 런타임 요청 불필요
-
----
 
 <br>
 </br>

@@ -618,8 +618,6 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 <br>
 </br>
 
----
-
 ## 🚀 Simple UI MVVM의 핵심 장점
 
 
@@ -668,8 +666,6 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 - **Fragment 초기화**: 40-50줄 → 15줄 미만 **70% 단축**
 - **ViewModel 이벤트**: Channel 구성 10줄+ → sendEventVm() 한 줄
 
----
-
 <br>
 </br>
 
@@ -686,8 +682,6 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 > **"statusBarHeight를 프로퍼티로 바로 접근할 수 있어서 편해요!"**
 >
 > **"SystemBars 제어가 한 줄로 끝나니 UI 구현이 빨라졌어요!"**
-
----
 
 <br>
 </br>

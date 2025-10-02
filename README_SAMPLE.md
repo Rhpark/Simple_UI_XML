@@ -52,8 +52,6 @@
 - RecyclerView로 권한 요청 결과 표시
 - SnackBar 피드백
 
----
-
 <br>
 </br>
 
@@ -362,8 +360,6 @@ binding.root.snackBarShowShort("권한이 허용되었습니다!")
 **결과:** Builder 패턴 불필요, 스타일 자동 적용, 한 줄로 완성!
 </details>
 
----
-
 <br>
 </br>
 
@@ -398,8 +394,6 @@ binding.root.snackBarShowShort("권한이 허용되었습니다!")
 - **일관된 패턴**: 팀 전체 동일한 코드 스타일
 - **검증된 구현**: 수많은 프로젝트에서 검증된 안정성
 
----
-
 <br>
 </br>
 
@@ -412,8 +406,6 @@ binding.root.snackBarShowShort("권한이 허용되었습니다!")
 > **"BaseViewModelEvent로 이벤트 시스템이 표준화되어 코드가 깔끔해졌어요!"**
 >
 > **"SimpleRcvAdapter 덕분에 RecyclerView 설정이 정말 간단해졌습니다!"**
-
----
 
 <br>
 </br>
@@ -428,8 +420,6 @@ binding.root.snackBarShowShort("권한이 허용되었습니다!")
 
 **전통적인 복잡함은 이제 그만.**
 **Simple UI와 함께 생산적인 개발을 경험하세요!** 🚀
-
----
 
 <br>
 </br>

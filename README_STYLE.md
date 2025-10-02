@@ -163,8 +163,6 @@
 
 > 💬 **"XML Style 시스템 도입 후 레이아웃 작성 시간 반 토막. Layout.MatchWrap.Vertical.Center 한 줄이면 끝!"**
 
----
-
 <br>
 </br>
 
@@ -176,8 +174,6 @@
 
 **개발 속도를 높이고 싶다면,**
 **Style XML을 사용해 보세요!** 🚀
-
----
 
 <br>
 </br>

@@ -56,8 +56,6 @@
 - RadioButton으로 Adapter 동적 전환
 - Activity 기반 전체 로직 처리 (ViewModel 없음)
 
----
-
 <br>
 </br>
 
@@ -304,11 +302,6 @@ listDiffUtil = RcvListDiffUtilCallBack(
 <br>
 </br>
 
----
-
-<br>
-</br>
-
 ## 💡 개발자 후기
 
 > **"3가지 Adapter를 바로 비교할 수 있어서 최적 선택이 쉬워요!"**
@@ -318,8 +311,6 @@ listDiffUtil = RcvListDiffUtilCallBack(
 > **"DiffUtil 클래스 만들 필요 없이 바로 성능 최적화!"**
 >
 > **"통합 API로 모든 Adapter를 동일하게 다룰 수 있어 코드가 깔끔해졌어요!"**
-
----
 
 <br>
 </br>
@@ -334,8 +325,6 @@ listDiffUtil = RcvListDiffUtilCallBack(
 
 **전통적인 복잡함은 이제 그만.**
 **Simple UI와 함께 생산적인 개발을 경험하세요!** 🚀
-
----
 
 <br>
 </br>

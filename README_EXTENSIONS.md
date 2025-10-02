@@ -689,9 +689,6 @@ checkSdkVersion(Build.VERSION_CODES.S) {
 // 📦 Intent 데이터 안전하게 가져오기
 val userId = intent.extras?.getValue("user_id", -1) ?: -1
 ```
-
----
-
 <br>
 </br>
 
@@ -709,8 +706,6 @@ val userId = intent.extras?.getValue("user_id", -1) ?: -1
 
 > 💬 **"Bundle.getValue<T>()로 타입 안전하게 데이터 가져오니까 런타임 버그가 확실히 줄었어요"**
 
----
-
 <br>
 </br>
 
@@ -724,8 +719,6 @@ val userId = intent.extras?.getValue("user_id", -1) ?: -1
 
 **개발 속도를 높이고 싶다면,**
 **Simple UI를 사용해 보세요!** 🚀
-
----
 
 <br>
 </br>
@@ -750,8 +743,6 @@ val userId = intent.extras?.getValue("user_id", -1) ?: -1
 
 <br>
 </br>
-
----
 
 ## 📦 추가 Extensions 기능 (실제 코드에는 미포함, 라이브러리 내장)
 
