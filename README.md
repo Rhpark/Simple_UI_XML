@@ -112,7 +112,7 @@ dependencyResolutionManagement {
 #### 1-2. build.gradle.kts (Module level) 디펜던시 추가
 ```kotlin
 dependencies {
-    implementation("com.github.Rhpark:Simple_UI_XML:0.0.0")
+    implementation("com.github.Rhpark:Simple_UI_XML:0.1.0")
 }
 ```
 
