@@ -12,7 +12,6 @@ import android.widget.ImageView
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import kr.open.library.simple_ui.extensions.date.toLocalDateTime
-import kr.open.library.simple_ui.logcat.Logx
 import kr.open.library.simple_ui.presenter.extensions.view.setGone
 import kr.open.library.simple_ui.presenter.extensions.view.setVisible
 import kr.open.library.simple_ui.presenter.extensions.view.toastShort
@@ -20,6 +19,7 @@ import kr.open.library.simple_ui.presenter.ui.activity.BaseBindingActivity
 import kr.open.library.simple_ui.system_manager.controller.alarm.vo.AlarmVo
 import kr.open.library.simple_ui.system_manager.controller.window.FloatingViewController
 import kr.open.library.simple_ui.system_manager.controller.window.drag.FloatingDragView
+import kr.open.library.simple_ui.system_manager.controller.window.fixed.FloatingFixedView
 import kr.open.library.simple_ui.system_manager.controller.window.vo.FloatingViewCollisionsType
 import kr.open.library.simple_ui.system_manager.controller.window.vo.FloatingViewTouchType
 import kr.open.library.simple_ui.system_manager.extensions.getAlarmController
@@ -66,26 +66,40 @@ class ServiceManagerControllerActivity : BaseBindingActivity<ActivityServiceMana
                 onRequestPermissions(listOf(SYSTEM_ALERT_WINDOW)) { deniedPermissions ->
                     if(deniedPermissions.isEmpty()) {
 
-                        val dragView = getImageView(R.drawable.ic_launcher_foreground).apply { setBackgroundColor(Color.WHITE) }
+                        val icon = getImageView(R.drawable.ic_launcher_foreground).apply { setBackgroundColor(Color.WHITE) }
 
-                        floatingViewController.addFloatingDragView(FloatingDragView(dragView, 100, 100).apply {
+                        val dragView = FloatingDragView(icon, 100, 100).apply {
                             lifecycleScope.launch {
                                 sfCollisionStateFlow.collect { item ->
                                     when (item.first) {
                                         FloatingViewTouchType.TOUCH_DOWN -> { showFloatingView() }
-
                                         FloatingViewTouchType.TOUCH_MOVE -> { moveFloatingView(item) }
-
                                         FloatingViewTouchType.TOUCH_UP -> { upFloatingView(this@apply,item) }
                                     }
                                 }
                             }
-                        })
+                        }
+                        floatingViewController.addFloatingDragView(dragView)
                     } else {
                         toastShort("Permission Denied $deniedPermissions")
                     }
                 }
             }
+
+            btnFloatingViewFix.setOnClickListener {
+                onRequestPermissions(listOf(SYSTEM_ALERT_WINDOW)) { deniedPermissions ->
+                    if(deniedPermissions.isEmpty()) {
+
+                        val icon = getImageView(R.drawable.ic_launcher_foreground).apply { setBackgroundColor(Color.GREEN) }
+                        val fixedView = FloatingFixedView(icon, 200, 300) // or FloatingDragView(icon, 200, 300)
+                        floatingViewController.setFloatingFixedView(fixedView)
+                    } else {
+                        toastShort("Permission Denied $deniedPermissions")
+                    }
+                }
+            }
+
+            btnFloatingViewRemove.setOnClickListener { floatingViewController.removeAllFloatingView() }
         }
     }
 

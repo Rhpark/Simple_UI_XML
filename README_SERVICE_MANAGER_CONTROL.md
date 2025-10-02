@@ -462,37 +462,65 @@ private fun removeFloatingView() {
 
 ```kotlin
 // 간단한 Floating View 추가 - 자동 처리
+@RequiresPermission(Manifest.permission.SYSTEM_ALERT_WINDOW)
 private fun addFloatingView() {
     // 1. View 생성
-    val view = LayoutInflater.from(this).inflate(R.layout.floating_view, null)
-
+    val icon = getImageView(R.drawable.ic_launcher_foreground).apply { setBackgroundColor(Color.WHITE) }
     // 2. FloatingDragView 생성 (Touch 이벤트 자동화)
-    val floatingDragView = FloatingDragView(
-        view = view,
-        x = 100,
-        y = 100,
-        onCollisionStateChanged = { touchType, collisionType ->
-            // 충돌 상태 자동화 및 콜백 (선택적)
-            when (collisionType) {
-                FloatingViewCollisionsType.OCCURING -> {
-                    view.alpha = 0.5f // 충돌 시 투명도
-                }
-                FloatingViewCollisionsType.UNCOLLISIONS -> {
-                    view.alpha = 1.0f // 정상
+    val dragView = FloatingDragView(icon, 100, 100).apply {
+        lifecycleScope.launch {
+            sfCollisionStateFlow.collect { item ->
+                // 충돌 상태 자동화 및 콜백 (선택적)
+                when (item.first) {
+                    FloatingViewTouchType.TOUCH_DOWN -> { showFloatingView() }
+                    FloatingViewTouchType.TOUCH_MOVE -> { moveFloatingView(item) }
+                    FloatingViewTouchType.TOUCH_UP -> { upFloatingView(this@apply,item) }
                 }
             }
         }
-    )
+    }
+    floatingViewController.addFloatingDragView(dragView)
+}
 
-    // 3. Controller에 추가 - 끝!
-    getFloatingViewController().addFloatingDragView(floatingDragView)
+private fun showFloatingView() {
+    floatingViewController.getFloatingFixedView()?.view?.let {
+        it.setVisible()
+        showAnimScale(it, null)
+    }
+}
+
+private fun moveFloatingView(item: Pair<FloatingViewTouchType, FloatingViewCollisionsType>) {
+    floatingViewController.getFloatingFixedView()?.view?.let {
+        if (item.second == FloatingViewCollisionsType.OCCURING) {
+            val rotationAnim = ObjectAnimator.ofFloat(it, "rotation", 0.0f, 180.0f)
+            rotationAnim.duration = 300
+            rotationAnim.start()
+        }
+    }
+}
+
+private fun upFloatingView(floatingView:FloatingDragView,item: Pair<FloatingViewTouchType, FloatingViewCollisionsType>) {
+    floatingViewController.getFloatingFixedView()?.view?.let {
+        hideAnimScale(it, object : Animator.AnimatorListener {
+            override fun onAnimationStart(animation: Animator) {}
+            override fun onAnimationRepeat(animation: Animator) {}
+            override fun onAnimationCancel(animation: Animator) {}
+            override fun onAnimationEnd(animation: Animator) {
+                floatingViewController.getFloatingFixedView()?.let { it.view.setGone() }
+                if (item.second == FloatingViewCollisionsType.OCCURING) {
+                    floatingViewController.removeFloatingDragView(floatingView)
+                }
+            }
+        })
+    }
 }
 
 // 고정 Floating View 추가 (드래그 불가)
+@RequiresPermission(Manifest.permission.SYSTEM_ALERT_WINDOW)
 private fun addFixedFloatingView() {
-    val view = LayoutInflater.from(this).inflate(R.layout.fixed_floating_view, null)
-    val fixedView = FloatingFixedView(view, 500, 500)
-    getFloatingViewController().setFloatingFixedView(fixedView)
+    val icon = getImageView(R.drawable.ic_launcher_foreground).apply { setBackgroundColor(Color.GREEN) }
+    val fixedView = FloatingFixedView(icon, 200, 300) // or FloatingDragView(icon, 200, 300)
+    floatingViewController.setFloatingFixedView(fixedView)
 }
 
 // View 제거 - 한 줄
