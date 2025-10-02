@@ -625,6 +625,9 @@ Logx.configure {
 
 ---
 
+<br>
+</br>
+
 #### **APP_EXTERNAL (앱 전용 외부 저장소)** - 권한 불필요 ✅ 권장
 ```kotlin
 Logx.configure {
@@ -638,6 +641,9 @@ Logx.configure {
 **단점**: 없음 **(대부분의 경우 최선의 선택)**
 
 ---
+
+<br>
+</br>
 
 #### **PUBLIC_EXTERNAL (공용 외부 저장소)** - Android 9 이하 권한 필요
 ```kotlin
@@ -662,22 +668,23 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
         super.onCreate(savedInstanceState)
 
         // PUBLIC_EXTERNAL 사용 시 권한 확인 (Android 9 이하만)
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
-            onRequestPermissions(listOf(
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            )) { deniedPermissions ->
-                if (deniedPermissions.isEmpty()) {
-                    // 권한 허용됨
-                    setupLogxWithPublicStorage()
-                } else {
-                    // 권한 거부됨 - APP_EXTERNAL로 대체
-                    setupLogxWithAppExternalStorage()
+        checkSdkVersion(Build.VERSION_CODES.P,
+            positiveWork = {
+                // Android 10+ 권한 불필요
+                setupLogxWithPublicStorage()
+            },
+            negativeWork = {
+                onRequestPermissions(listOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)) { deniedPermissions ->
+                    if (deniedPermissions.isEmpty()) {
+                        // 권한 허용됨
+                        setupLogxWithPublicStorage()
+                    } else {
+                        // 권한 거부됨 - APP_EXTERNAL로 대체
+                        setupLogxWithAppExternalStorage()
+                    }
                 }
             }
-        } else {
-            // Android 10+ 권한 불필요
-            setupLogxWithPublicStorage()
-        }
+        )
     }
 
     private fun setupLogxWithPublicStorage() {

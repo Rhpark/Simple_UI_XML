@@ -106,6 +106,9 @@ dependencyResolutionManagement {
 }
 ```
 
+<br>
+</br>
+
 #### 1-2. build.gradle.kts (Module level) 디펜던시 추가
 ```kotlin
 dependencies {
@@ -129,6 +132,9 @@ android {
     }
 }
 ```
+
+<br>
+</br>
 
 #### 2-2. Java 버전 설정 확인
 ```kotlin
@@ -160,6 +166,9 @@ class MyApplication : Application() {
 }
 ```
 
+<br>
+</br>
+
 #### 3-2. AndroidManifest.xml에 Application 등록
 ```xml
 <application
@@ -187,6 +196,9 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 }
 ```
 
+<br>
+</br>
+
 #### 4-2. XML 레이아웃
 ```xml
 <LinearLayout style="@style/Layout.MatchWrap.Vertical">
@@ -199,14 +211,6 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 
 ✅ **완료! 이제 Simple UI의 모든 기능을 사용할 수 있습니다.**
 
-<br>
-</br>
-
-## 📄 **라이선스**
-
-MIT License - 자유롭게 사용하세요!
-
----
 
 <br>
 </br>
