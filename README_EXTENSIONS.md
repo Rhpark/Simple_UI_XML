@@ -880,11 +880,12 @@ isNetworkAvailable.ifTrue {
 
 **4. Null 체크 (firstNotNull)**
 ```kotlin
+// 기존 방식
+val finalValue = userInput ?: cachedValue ?: defaultValue
+
 // 여러 값 중 첫 번째 null이 아닌 값 반환
 val finalValue = firstNotNull(userInput, cachedValue, defaultValue)
 
-// 기존 방식
-val finalValue = userInput ?: cachedValue ?: defaultValue
 ```
 
 <br>

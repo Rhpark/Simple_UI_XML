@@ -129,13 +129,18 @@ Logx.t("Thread 정보")         // 스레드 정보
 </br>
 
 ### 3단계: 고급 설정 (선택사항)
+
+#### 📂 파일 저장 설정
+
+**기본 설정 (권한 불필요)**:
 ```kotlin
 Logx.configure {
     appName = "MyApp"
     debugMode = true
 
     fileConfig {
-        saveToFile = true
+        saveToFile = true  // 파일 저장 활성화
+        // filePath는 생략 시 기본값(INTERNAL) 사용
     }
 
     logTypes {
@@ -143,6 +148,136 @@ Logx.configure {
     }
 }
 ```
+
+<br>
+
+#### 🔐 저장소 타입별 권한 요구사항
+
+Logx의 **기본 로깅 기능(Logcat 출력)**은 **권한이 필요하지 않습니다**.
+**파일 저장 기능**을 사용할 때만 저장소 타입에 따라 권한이 필요할 수 있습니다.
+
+| 저장소 타입 | 경로 | 권한 필요 | 사용자 접근 |
+|:--|:--|:--:|:--:|
+| **INTERNAL** | `/data/data/[package]/files/AppLogs` | ❌ 불필요 | ❌ 불가 |
+| **APP_EXTERNAL** | `/Android/data/[package]/files/AppLogs` | ❌ 불필요 | ✅ 가능 |
+| **PUBLIC_EXTERNAL** | `/Documents/AppLogs` (API 29+)<br>`/storage/emulated/0/AppLogs` (API 28-) | ⚠️ Android 9 이하만 필요 | ✅ 쉽게 접근 |
+
+<br>
+
+#### 💡 저장소 타입 선택 가이드
+
+**1. INTERNAL (내부 저장소)** - 권한 불필요
+```kotlin
+Logx.configure {
+    fileConfig {
+        saveToFile = true
+        filePath = Logx.getInternalLogPath()  // 기본값
+    }
+}
+```
+✅ **장점**: 권한 불필요, 앱 삭제 시 자동 정리
+❌ **단점**: 사용자가 직접 접근 불가
+
+---
+
+**2. APP_EXTERNAL (앱 전용 외부 저장소)** - 권한 불필요 ✅ **권장**
+```kotlin
+Logx.configure {
+    fileConfig {
+        saveToFile = true
+        filePath = Logx.getAppExternalLogPath()
+    }
+}
+```
+✅ **장점**: 권한 불필요, 파일 관리자로 접근 가능, 앱 삭제 시 자동 정리
+✅ **추천**: 대부분의 경우 최선의 선택!
+
+---
+
+**3. PUBLIC_EXTERNAL (공용 외부 저장소)** - Android 9 이하 권한 필요
+```kotlin
+// AndroidManifest.xml에 권한 추가 (Android 9 이하만)
+// <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
+
+Logx.configure {
+    fileConfig {
+        saveToFile = true
+        filePath = Logx.getPublicExternalLogPath()
+    }
+}
+```
+✅ **장점**: 앱 삭제 후에도 로그 유지, 쉬운 접근
+❌ **단점**: Android 9 이하 권한 필요
+
+<br>
+
+#### 🛡️ 권한 요청 예시 (PUBLIC_EXTERNAL 사용 시)
+
+**AndroidManifest.xml**:
+```xml
+<!-- Android 9 이하에서만 필요 -->
+<uses-permission
+    android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+    android:maxSdkVersion="28" />
+```
+
+**런타임 권한 처리**:
+```kotlin
+class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        // PUBLIC_EXTERNAL 사용 시 권한 확인 (Android 9 이하만)
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
+            onRequestPermissions(listOf(
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            )) { deniedPermissions ->
+                if (deniedPermissions.isEmpty()) {
+                    // 권한 허용됨
+                    setupLogxWithPublicStorage()
+                } else {
+                    // 권한 거부됨 - APP_EXTERNAL로 대체
+                    setupLogxWithAppExternalStorage()
+                }
+            }
+        } else {
+            // Android 10+ 권한 불필요
+            setupLogxWithPublicStorage()
+        }
+    }
+
+    private fun setupLogxWithPublicStorage() {
+        Logx.configure {
+            fileConfig {
+                saveToFile = true
+                filePath = Logx.getPublicExternalLogPath()
+            }
+        }
+    }
+
+    private fun setupLogxWithAppExternalStorage() {
+        Logx.configure {
+            fileConfig {
+                saveToFile = true
+                filePath = Logx.getAppExternalLogPath()  // 권한 불필요!
+            }
+        }
+    }
+}
+```
+
+<br>
+
+#### 📊 권장 사항
+
+| 시나리오 | 권장 저장소 | 이유 |
+|:--|:--:|:--|
+| **일반 앱 로깅** | `APP_EXTERNAL` | 권한 불필요 + 사용자 접근 가능 |
+| **디버깅/개발** | `APP_EXTERNAL` | 권한 불필요 + 빠른 접근 |
+| **장기 보관** | `PUBLIC_EXTERNAL` | 앱 삭제 후에도 유지 |
+| **보안 중요** | `INTERNAL` | 사용자 접근 불가 |
+
+> **결론**: 대부분의 경우 **APP_EXTERNAL (권한 불필요)**를 사용하는 것이 가장 좋습니다! ✅
 
 ---
 

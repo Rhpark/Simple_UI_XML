@@ -41,77 +41,6 @@
 <br>
 </br>
 
-## 🎯 제공되는 Info 목록
-
-**System Service Manager Info**는 6가지 핵심 시스템 정보를 제공합니다:
-
-### **배터리 Battery State Info** - 배터리 상태 정보
-- **실시간 업데이트**: `registerStart(scope)` - StateFlow 기반 자동 업데이트
-- **용량 정보**: `getCapacity()` - 배터리 잔량 (0~100%)
-- **전류 정보**: `getCurrentAmpere()`, `getCurrentAverageAmpere()` - 순간/평균 전류
-- **충전 상태**: `isCharging()`, `isDischarging()`, `isFull()` - 충전 상태 확인
-- **충전 타입**: `isChargingUsb()`, `isChargingAc()`, `isChargingWireless()` - 충전 방식 확인
-- **배터리 건강**: `isHealthGood()`, `isHealthCold()`, `isHealthDead()` - 배터리 상태 확인
-- **온도/전압**: `getTemperature()`, `getVoltage()` - 배터리 온도 및 전압
-- **총 용량**: `getTotalCapacity()` - 배터리 총 용량 (mAh)
-- **BatteryStateEvent**: 12가지 이벤트 타입 (OnCapacity, OnTemperature, OnVoltage 등)
-
-### **위치 Location State Info** - 위치 상태 정보
-- **실시간 업데이트**: `registerStart(scope, provider, minTime, minDistance)` - StateFlow 기반 위치 추적
-- **Provider 상태**: `isGpsEnabled()`, `isNetworkEnabled()`, `isPassiveEnabled()`, `isFusedEnabled()` (API 31+)
-- **현재 위치**: `getLocation()` - 마지막으로 알려진 위치
-- **거리 계산**: `calculateDistance(from, to)` - 두 위치 간 거리
-- **방향 계산**: `calculateBearing(from, to)` - 두 위치 간 방향
-- **반경 확인**: `isLocationWithRadius(from, to, radius)` - 특정 반경 내 위치 확인
-- **위치 저장**: `saveApplyLocation()`, `loadLocation()` - SharedPreferences 저장/로드
-- **LocationStateEvent**: 5가지 이벤트 타입 (OnLocationChanged, OnGpsEnabled 등)
-
-### **디스플레이 Display Info** - 디스플레이 정보
-- **전체 화면 크기**: `getFullScreenSize()` - 전체 화면 크기 (상태바, 네비게이션바 포함)
-- **사용 가능 화면**: `getScreen()` - 상태바, 네비게이션바 제외한 화면 크기
-- **상태바 포함 화면**: `getScreenWithStatusBar()` - 상태바 포함, 네비게이션바 제외
-- **상태바 높이**: `getStatusBarHeight()` - 상태바 높이
-- **네비게이션바 높이**: `getNavigationBarHeight()` - 네비게이션바 높이
-- **SDK 자동 분기**: Android R (API 30) 이상/이하 자동 처리
-
-### **SIM 카드 Sim Info** - SIM 카드 정보
-- **기본 정보**: `isDualSim()`, `isSingleSim()`, `isMultiSim()` - SIM 타입 확인
-- **활성 SIM**: `getActiveSimCount()`, `getActiveSimSlotIndexList()` - 활성화된 SIM 정보
-- **구독 정보**: `getActiveSubscriptionInfoList()` - 모든 구독 정보 조회
-- **Subscription ID**: `getSubIdFromDefaultUSim()`, `getSubId(slotIndex)` - 구독 ID 조회
-- **MCC/MNC**: `getMccFromDefaultUSimString()`, `getMncFromDefaultUSimString()` - 통신사 코드
-- **전화번호**: `getPhoneNumberFromDefaultUSim()`, `getPhoneNumber(slotIndex)` - 전화번호 조회
-- **SIM 상태**: `getStatusFromDefaultUSim()`, `getActiveSimStatus(slotIndex)` - SIM 상태 확인
-- **eSIM 지원**: `isESimSupported()`, `isRegisterESim(slotIndex)` - eSIM 확인
-- **표시 정보**: `getDisplayNameFromDefaultUSim()`, `getCountryIsoFromDefaultUSim()` - 표시명, 국가 코드
-- **로밍 상태**: `isNetworkRoamingFromDefaultUSim()` - 로밍 여부 확인
-
-### **통신 Telephony Info** - Telephony 정보
-- **통신사 정보**: `getCarrierName()`, `getMobileCountryCode()`, `getMobileNetworkCode()` - 통신사명, MCC/MNC
-- **SIM 상태**: `getSimState()`, `isSimReady()`, `getSimOperatorName()`, `getSimCountryIso()` - SIM 상태 확인
-- **전화번호**: `getPhoneNumber()` - 전화번호 조회
-- **네트워크 타입**: `getNetworkType()`, `getDataNetworkType()`, `getNetworkTypeString()` - 네트워크 타입 확인
-- **로밍**: `isNetworkRoaming()` - 로밍 상태 확인
-- **신호 강도**: `getCurrentSignalStrength()` - StateFlow 기반 신호 강도
-- **서비스 상태**: `getCurrentServiceState()` - StateFlow 기반 서비스 상태
-- **멀티 SIM**: `getActiveSimCount()`, `getActiveSubscriptionInfoList()` - 멀티 SIM 지원
-- **실시간 콜백**: `registerCallback()` - StateFlow 기반 실시간 업데이트
-- **슬롯별 콜백**: `registerTelephonyCallBack(slotIndex)` - SIM 슬롯별 콜백 (API 31+)
-- **API 자동 호환**: TelephonyCallback (API 31+) vs PhoneStateListener 자동 분기
-
-### **네트워크 Network Connectivity Info** - 네트워크 연결 정보
-- **기본 연결성**: `isNetworkConnected()` - 네트워크 연결 여부
-- **Transport 타입**: `isConnectedWifi()`, `isConnectedMobile()`, `isConnectedVPN()` - 전송 타입별 확인
-- **다양한 Transport**: Bluetooth, WiFi Aware, Ethernet, LowPan, USB (API 31+)
-- **WiFi 상태**: `isWifiEnabled()` - WiFi 활성화 여부
-- **네트워크 능력**: `getNetworkCapabilities()` - NetworkCapabilities 객체 반환
-- **링크 속성**: `getLinkProperties()` - LinkProperties 객체 반환
-- **콜백 관리**: `registerNetworkCallback()`, `registerDefaultNetworkCallback()` - 네트워크 변경 감지
-- **요약 정보**: `getNetworkConnectivitySummary()` - 모든 연결 상태 한 번에 조회
-
-<br>
-</br>
-
 ## 실제 코드 비교
 
 <br>
@@ -265,6 +194,326 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 <br>
 </br>
 
+### 둘째: Location 위치 추적 비교
+
+<details>
+<summary><strong>순수 Android - Location 수동 추적</strong></summary>
+
+```kotlin
+// 기존의 Location 추적 방법
+class LocationTracker(private val context: Context) {
+
+    private var locationManager: LocationManager? = null
+    private var locationListener: LocationListener? = null
+    private var isGpsEnabled = false
+    private var isNetworkEnabled = false
+
+    // 1. LocationListener 수동 구현
+    fun startTracking() {
+        locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+
+        // 2. 권한 체크 (수동)
+        if (ActivityCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // 권한 없음 처리
+            return
+        }
+
+        // 3. LocationListener 구현
+        locationListener = object : LocationListener {
+            override fun onLocationChanged(location: Location) {
+                // 위치 업데이트 처리
+                val latitude = location.latitude
+                val longitude = location.longitude
+                updateLocation(latitude, longitude)
+            }
+
+            override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
+                // Provider 상태 변경 처리
+            }
+
+            override fun onProviderEnabled(provider: String) {
+                when (provider) {
+                    LocationManager.GPS_PROVIDER -> isGpsEnabled = true
+                    LocationManager.NETWORK_PROVIDER -> isNetworkEnabled = true
+                }
+            }
+
+            override fun onProviderDisabled(provider: String) {
+                when (provider) {
+                    LocationManager.GPS_PROVIDER -> isGpsEnabled = false
+                    LocationManager.NETWORK_PROVIDER -> isNetworkEnabled = false
+                }
+            }
+        }
+
+        // 4. 위치 업데이트 요청 (Provider 선택, 파라미터 설정)
+        try {
+            locationManager?.requestLocationUpdates(
+                LocationManager.GPS_PROVIDER,
+                1000L,  // minTime
+                10f,    // minDistance
+                locationListener!!
+            )
+        } catch (e: SecurityException) {
+            e.printStackTrace()
+        }
+    }
+
+    // 5. 마지막 위치 조회 (수동)
+    fun getLastLocation(): Location? {
+        if (ActivityCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            return null
+        }
+
+        return locationManager?.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+    }
+
+    // 6. 정리 작업 수동 처리
+    fun stopTracking() {
+        locationListener?.let {
+            locationManager?.removeUpdates(it)
+        }
+        locationListener = null
+        locationManager = null
+    }
+
+    private fun updateLocation(lat: Double, lng: Double) {
+        // UI 업데이트 로직 (각자 구현해야 함)
+    }
+}
+```
+**문제점:**
+- LocationListener 수동 구현 및 등록
+- 권한 체크 수동 반복
+- Provider 상태 변경 수동 처리
+- 위치 업데이트 파라미터 직접 설정
+- Lifecycle 관리 수동
+- 메모리 누수 위험
+</details>
+
+<details>
+<summary><strong>Simple UI - Location State Info</strong></summary>
+
+```kotlin
+// 간단한 Location 추적 - StateFlow 기반
+class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
+
+    private val locationInfo by lazy { LocationStateInfo(this) }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        // 권한 요청 (Simple UI 자동 처리)
+        onRequestPermissions(listOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        )) { deniedPermissions ->
+            if (deniedPermissions.isEmpty()) {
+                startLocationTracking()
+            }
+        }
+    }
+
+    private fun startLocationTracking() {
+        // 1. 위치 추적 시작 - 한 줄
+        locationInfo.registerStart(
+            scope = lifecycleScope,
+            provider = LocationManager.GPS_PROVIDER,
+            minTime = 1000L,
+            minDistance = 10f
+        )
+
+        // 2. 초기 값 조회 - 간단한 getter
+        val lastLocation = locationInfo.getLocation()
+        val isGpsEnabled = locationInfo.isGpsEnabled()
+
+        // 3. StateFlow 기반 실시간 업데이트 - 자동 collect
+        lifecycleScope.launch {
+            locationInfo.sfUpdate.collect { event ->
+                when (event) {
+                    is LocationStateEvent.OnLocationChanged -> {
+                        val location = event.location
+                        updateLocation(location?.latitude, location?.longitude)
+                    }
+                    is LocationStateEvent.OnGpsEnabled -> {
+                        updateGpsStatus(event.isEnabled)
+                    }
+                    is LocationStateEvent.OnNetworkEnabled -> {
+                        updateNetworkStatus(event.isEnabled)
+                    }
+                    is LocationStateEvent.OnFusedEnabled -> {
+                        // API 31+ Fused Provider 자동 지원
+                        updateFusedStatus(event.isEnabled)
+                    }
+                    else -> {}
+                }
+            }
+        }
+
+        // 4. 거리 계산 헬퍼 메서드
+        val distance = locationInfo.calculateDistance(fromLocation, toLocation)
+        val bearing = locationInfo.calculateBearing(fromLocation, toLocation)
+    }
+    // onDestroy()에서 자동 정리
+}
+```
+**장점:**
+- **대폭 간소화** (복잡한 Listener → 한 줄 등록)
+- LocationListener 자동 관리
+- StateFlow 기반 반응형 업데이트
+- 5가지 타입 안전한 이벤트 (위치, GPS, Network, Passive, Fused)
+- Provider 상태 자동 추적
+- 거리/방향 계산 헬퍼 제공
+- Lifecycle 자동 정리
+</details>
+
+<br>
+</br>
+
+### 셋째: Display 정보 조회 비교
+
+<details>
+<summary><strong>순수 Android - Display 수동 조회</strong></summary>
+
+```kotlin
+// 기존의 Display 정보 조회 방법
+class DisplayHelper(private val context: Context) {
+
+    // 1. SDK 버전별 분기 처리 (수동)
+    fun getFullScreenSize(): Point {
+        val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        val point = Point()
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            // Android R (API 30) 이상
+            val windowMetrics = windowManager.currentWindowMetrics
+            val bounds = windowMetrics.bounds
+            point.x = bounds.width()
+            point.y = bounds.height()
+        } else {
+            // Android R 미만
+            @Suppress("DEPRECATION")
+            val display = windowManager.defaultDisplay
+            @Suppress("DEPRECATION")
+            display.getRealSize(point)
+        }
+
+        return point
+    }
+
+    // 2. 사용 가능 화면 크기 (수동 계산)
+    fun getAvailableScreenSize(): Point {
+        val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        val point = Point()
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val windowMetrics = windowManager.currentWindowMetrics
+            val insets = windowMetrics.windowInsets
+                .getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
+            val bounds = windowMetrics.bounds
+            point.x = bounds.width()
+            point.y = bounds.height() - insets.top - insets.bottom
+        } else {
+            @Suppress("DEPRECATION")
+            val display = windowManager.defaultDisplay
+            @Suppress("DEPRECATION")
+            display.getSize(point)
+        }
+
+        return point
+    }
+
+    // 3. 상태바 높이 조회 (Resources 수동 접근)
+    fun getStatusBarHeight(): Int {
+        var result = 0
+        val resourceId = context.resources.getIdentifier(
+            "status_bar_height",
+            "dimen",
+            "android"
+        )
+        if (resourceId > 0) {
+            result = context.resources.getDimensionPixelSize(resourceId)
+        }
+        return result
+    }
+
+    // 4. 네비게이션바 높이 조회 (Resources 수동 접근)
+    fun getNavigationBarHeight(): Int {
+        var result = 0
+        val resourceId = context.resources.getIdentifier(
+            "navigation_bar_height",
+            "dimen",
+            "android"
+        )
+        if (resourceId > 0) {
+            result = context.resources.getDimensionPixelSize(resourceId)
+        }
+        return result
+    }
+}
+```
+**문제점:**
+- SDK 버전별 분기 수동 처리
+- Deprecated API 직접 사용
+- Resources ID 수동 조회
+- 복잡한 Insets 계산
+- 코드 중복 (버전별 분기 반복)
+</details>
+
+<details>
+<summary><strong>Simple UI - Display Info</strong></summary>
+
+```kotlin
+// 간단한 Display 정보 조회 - SDK 자동 처리
+class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
+
+    private val displayInfo by lazy { DisplayInfo(this) }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        // 1. 전체 화면 크기 (SDK 자동 분기)
+        val fullSize = displayInfo.getFullScreenSize()
+        Log.d("Display", "전체: ${fullSize.x} x ${fullSize.y}")
+
+        // 2. 사용 가능 화면 크기 (상태바, 네비게이션바 제외)
+        val availableSize = displayInfo.getScreen()
+        Log.d("Display", "사용 가능: ${availableSize.x} x ${availableSize.y}")
+
+        // 3. 상태바 포함 화면 크기 (네비게이션바만 제외)
+        val screenWithStatusBar = displayInfo.getScreenWithStatusBar()
+        Log.d("Display", "상태바 포함: ${screenWithStatusBar.x} x ${screenWithStatusBar.y}")
+
+        // 4. 상태바 높이
+        val statusBarHeight = displayInfo.getStatusBarHeight()
+        Log.d("Display", "상태바 높이: $statusBarHeight")
+
+        // 5. 네비게이션바 높이
+        val navBarHeight = displayInfo.getNavigationBarHeight()
+        Log.d("Display", "네비게이션바 높이: $navBarHeight")
+    }
+}
+```
+**장점:**
+- **대폭 간소화** (SDK 분기 자동 처리)
+- Android R (API 30) 자동 분기
+- Deprecated API 자동 회피
+- Resources 자동 조회
+- Insets 자동 계산
+- 간단한 getter 메서드
+</details>
+
+<br>
+</br>
+
 ---
 
 ## System Service Manager Info의 핵심 장점
@@ -295,7 +544,77 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 > - System Service Manager Info : [ServiceManagerInfoActivity.kt](app/src/main/java/kr/open/library/simpleui_xml/system_service_manager/info/ServiceManagerInfoActivity.kt)
 > - 실제로 앱을 구동 시켜서 실제 구현 예제를 확인해 보세요!
 
----
+<br>
+</br>
+
+## 🎯 제공되는 Info 목록
+
+**System Service Manager Info**는 6가지 핵심 시스템 정보를 제공합니다:
+
+### **배터리 Battery State Info** - 배터리 상태 정보
+- **실시간 업데이트**: `registerStart(scope)` - StateFlow 기반 자동 업데이트
+- **용량 정보**: `getCapacity()` - 배터리 잔량 (0~100%)
+- **전류 정보**: `getCurrentAmpere()`, `getCurrentAverageAmpere()` - 순간/평균 전류
+- **충전 상태**: `isCharging()`, `isDischarging()`, `isFull()` - 충전 상태 확인
+- **충전 타입**: `isChargingUsb()`, `isChargingAc()`, `isChargingWireless()` - 충전 방식 확인
+- **배터리 건강**: `isHealthGood()`, `isHealthCold()`, `isHealthDead()` - 배터리 상태 확인
+- **온도/전압**: `getTemperature()`, `getVoltage()` - 배터리 온도 및 전압
+- **총 용량**: `getTotalCapacity()` - 배터리 총 용량 (mAh)
+- **BatteryStateEvent**: 12가지 이벤트 타입 (OnCapacity, OnTemperature, OnVoltage 등)
+
+### **위치 Location State Info** - 위치 상태 정보
+- **실시간 업데이트**: `registerStart(scope, provider, minTime, minDistance)` - StateFlow 기반 위치 추적
+- **Provider 상태**: `isGpsEnabled()`, `isNetworkEnabled()`, `isPassiveEnabled()`, `isFusedEnabled()` (API 31+)
+- **현재 위치**: `getLocation()` - 마지막으로 알려진 위치
+- **거리 계산**: `calculateDistance(from, to)` - 두 위치 간 거리
+- **방향 계산**: `calculateBearing(from, to)` - 두 위치 간 방향
+- **반경 확인**: `isLocationWithRadius(from, to, radius)` - 특정 반경 내 위치 확인
+- **위치 저장**: `saveApplyLocation()`, `loadLocation()` - SharedPreferences 저장/로드
+- **LocationStateEvent**: 5가지 이벤트 타입 (OnLocationChanged, OnGpsEnabled 등)
+
+### **디스플레이 Display Info** - 디스플레이 정보
+- **전체 화면 크기**: `getFullScreenSize()` - 전체 화면 크기 (상태바, 네비게이션바 포함)
+- **사용 가능 화면**: `getScreen()` - 상태바, 네비게이션바 제외한 화면 크기
+- **상태바 포함 화면**: `getScreenWithStatusBar()` - 상태바 포함, 네비게이션바 제외
+- **상태바 높이**: `getStatusBarHeight()` - 상태바 높이
+- **네비게이션바 높이**: `getNavigationBarHeight()` - 네비게이션바 높이
+- **SDK 자동 분기**: Android R (API 30) 이상/이하 자동 처리
+
+### **SIM 카드 Sim Info** - SIM 카드 정보
+- **기본 정보**: `isDualSim()`, `isSingleSim()`, `isMultiSim()` - SIM 타입 확인
+- **활성 SIM**: `getActiveSimCount()`, `getActiveSimSlotIndexList()` - 활성화된 SIM 정보
+- **구독 정보**: `getActiveSubscriptionInfoList()` - 모든 구독 정보 조회
+- **Subscription ID**: `getSubIdFromDefaultUSim()`, `getSubId(slotIndex)` - 구독 ID 조회
+- **MCC/MNC**: `getMccFromDefaultUSimString()`, `getMncFromDefaultUSimString()` - 통신사 코드
+- **전화번호**: `getPhoneNumberFromDefaultUSim()`, `getPhoneNumber(slotIndex)` - 전화번호 조회
+- **SIM 상태**: `getStatusFromDefaultUSim()`, `getActiveSimStatus(slotIndex)` - SIM 상태 확인
+- **eSIM 지원**: `isESimSupported()`, `isRegisterESim(slotIndex)` - eSIM 확인
+- **표시 정보**: `getDisplayNameFromDefaultUSim()`, `getCountryIsoFromDefaultUSim()` - 표시명, 국가 코드
+- **로밍 상태**: `isNetworkRoamingFromDefaultUSim()` - 로밍 여부 확인
+
+### **통신 Telephony Info** - Telephony 정보
+- **통신사 정보**: `getCarrierName()`, `getMobileCountryCode()`, `getMobileNetworkCode()` - 통신사명, MCC/MNC
+- **SIM 상태**: `getSimState()`, `isSimReady()`, `getSimOperatorName()`, `getSimCountryIso()` - SIM 상태 확인
+- **전화번호**: `getPhoneNumber()` - 전화번호 조회
+- **네트워크 타입**: `getNetworkType()`, `getDataNetworkType()`, `getNetworkTypeString()` - 네트워크 타입 확인
+- **로밍**: `isNetworkRoaming()` - 로밍 상태 확인
+- **신호 강도**: `getCurrentSignalStrength()` - StateFlow 기반 신호 강도
+- **서비스 상태**: `getCurrentServiceState()` - StateFlow 기반 서비스 상태
+- **멀티 SIM**: `getActiveSimCount()`, `getActiveSubscriptionInfoList()` - 멀티 SIM 지원
+- **실시간 콜백**: `registerCallback()` - StateFlow 기반 실시간 업데이트
+- **슬롯별 콜백**: `registerTelephonyCallBack(slotIndex)` - SIM 슬롯별 콜백 (API 31+)
+- **API 자동 호환**: TelephonyCallback (API 31+) vs PhoneStateListener 자동 분기
+
+### **네트워크 Network Connectivity Info** - 네트워크 연결 정보
+- **기본 연결성**: `isNetworkConnected()` - 네트워크 연결 여부
+- **Transport 타입**: `isConnectedWifi()`, `isConnectedMobile()`, `isConnectedVPN()` - 전송 타입별 확인
+- **다양한 Transport**: Bluetooth, WiFi Aware, Ethernet, LowPan, USB (API 31+)
+- **WiFi 상태**: `isWifiEnabled()` - WiFi 활성화 여부
+- **네트워크 능력**: `getNetworkCapabilities()` - NetworkCapabilities 객체 반환
+- **링크 속성**: `getLinkProperties()` - LinkProperties 객체 반환
+- **콜백 관리**: `registerNetworkCallback()`, `registerDefaultNetworkCallback()` - 네트워크 변경 감지
+- **요약 정보**: `getNetworkConnectivitySummary()` - 모든 연결 상태 한 번에 조회
+
 
 <br>
 </br>

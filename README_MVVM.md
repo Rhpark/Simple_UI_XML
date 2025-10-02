@@ -92,10 +92,8 @@ DataBinding이 올바르게 설정되었는지 확인하려면:
             name="vm"
             type="com.example.MainViewModel" />
     </data>
-
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        style="@style/Layout.AllMatch.Vertical">
         <!-- UI 요소들 -->
     </LinearLayout>
 </layout>
@@ -124,18 +122,6 @@ Cannot find symbol class ActivityMainBinding
 DataBindingUtil not found
 ```
 **해결방법**: **File → Sync Project with Gradle Files** 실행
-
-<br>
-
-### 📌 BaseActivity vs BaseBindingActivity 비교
-
-| 항목 | BaseActivity | BaseBindingActivity |
-|:--|:--:|:--:|
-| **DataBinding 설정 필요** | ❌ 불필요 | ✅ **필수** |
-| **XML `<layout>` 태그** | ❌ 불필요 | ✅ **필수** |
-| **ViewModel 양방향 바인딩** | ❌ 불가 | ✅ 가능 |
-| **사용 난이도** | 쉬움 | 보통 |
-| **추천 용도** | 간단한 화면 | MVVM 패턴 |
 
 <br>
 </br>
@@ -785,9 +771,20 @@ class SettingsActivity : BaseActivity(R.layout.activity_settings) {
         super.onCreate(savedInstanceState)
 
         // findViewById로 직접 접근
-        val btnSave = findViewById<Button>(R.id.btnSave)
-        btnSave.setOnClickListener {
-            saveSettings()
+        val btnPermissions = findViewById<Button>(R.id.btnPermissions)
+        btnPermissions.setOnClickListener {
+            permissions(
+                listOf(
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.SYSTEM_ALERT_WINDOW
+                )
+            )
+        }
+    }
+
+    private fun permissions(permissions: List<String>) {
+        onRequestPermissions(permissions) { deniedPermissions ->
+            Logx.d("deniedPermissions $deniedPermissions")
         }
     }
 }

@@ -140,8 +140,9 @@
     android:padding="16dp">
 
     <TextView
+        style="@style/TextView.AllWrap"
         android:text="Centered Content" />
-    style="@style/TextView.AllWrap"
+    
 </LinearLayout>
 ```
 **결과:** Style 상속으로 자동, 방향 설정 간단, 반복 작성 제거!
@@ -278,7 +279,7 @@
     android:hint="이메일 입력" />
 
 <EditText
-    style="@style/View.MatchWrap.Number.Center"
+    style="@style/VEditText.MatchWrap.Number.Center"
     android:hint="숫자 입력"
     android:inputType="number" />
 ```
@@ -290,7 +291,7 @@
     android:src="@drawable/icon" />
 
 <ImageView
-    style="@style/View.MatchWrap.FitCenter"
+    style="@style/ImageView.MatchWrap.FitCenter"
     android:src="@drawable/banner" />
 ```
 

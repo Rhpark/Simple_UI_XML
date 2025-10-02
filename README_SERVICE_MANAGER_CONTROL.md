@@ -41,72 +41,6 @@
 <br>
 </br>
 
-## 🎯 제공되는 Controller 목록
-
-**System Service Manager Controller**는 6가지 핵심 시스템 서비스를 제공합니다:
-
-### **키보드 SoftKeyboard Controller** - 키보드 제어
-- **show()/hide()**: 키보드 표시/숨김
-- **showDelay()/hideDelay()**: 지연 실행 지원 (Coroutine/Runnable)
-- **setSoftInputMode()**: 윈도우 Input Mode 설정
-- **startStylusHandwriting()**: 스타일러스 펜 입력 시작 (API 33+)
-
-### **진동 Vibrator Controller** - 진동 제어
-- **vibrate()**: 단순 진동 (duration)
-- **vibratePattern()**: 패턴 진동 (timing array)
-- **createOneShot()**: 단발 진동 (duration + amplitude)
-- **createWaveform()**: 웨이브폼 진동 (커스텀 패턴)
-- **createPredefined()**: 시스템 정의 진동 (CLICK, DOUBLE_CLICK, TICK)
-- **cancel()**: 진동 중지
-- **hasVibrator()**: 진동 지원 여부 확인
-- **SDK 버전 자동 처리**: Vibrator (SDK < 31) 및 VibratorManager (SDK >= 31)
-
-### **알람 Alarm Controller** - 알람 관리
-- **registerAlarmClock()**: 알람 시계 등록 (상태바 표시)
-- **registerAlarmExactAndAllowWhileIdle()**: 정확한 알람 (Idle 모드에서도 실행)
-- **registerAlarmAndAllowWhileIdle()**: 일반 알람 (Idle 모드 허용)
-- **remove()**: 알람 삭제
-- **exists()**: 알람 존재 확인
-- **자동 Calendar 계산**: 오늘/내일 시간 자동 처리
-
-### **알림 Notification Controller** - 알림 관리
-- **showNotification()**: 알림 표시 (다양한 스타일 지원)
-- **createChannel()**: 알림 채널 생성 및 관리
-- **showProgressNotification()**: 진행률 알림 생성
-- **updateProgress()**: 진행률 업데이트 (0~100%)
-- **completeProgress()**: 진행률 완료 처리
-- **cancelNotification()**: 특정 알림 취소
-- **cancelAll()**: 모든 알림 취소
-- **다양한 스타일**: DEFAULT, BIG_PICTURE, BIG_TEXT, PROGRESS
-- **자동 채널 관리**: 기본 채널 자동 생성 및 관리
-- **메모리 관리**: 진행률 알림 자동 정리 (30분 후)
-
-### **WiFi Controller** - WiFi 정보 관리
-- **isWifiEnabled()**: WiFi 활성화 여부 확인
-- **getConnectionInfo()**: 현재 WiFi 연결 정보 조회
-- **getScanResults()**: WiFi 스캔 결과 조회
-- **getCurrentSsid()**: 현재 연결된 SSID 조회
-- **getCurrentRssi()**: 신호 강도 조회
-- **getCurrentLinkSpeed()**: 링크 속도 조회
-- **isConnectedWifi()**: WiFi 연결 상태 확인
-- **is5GHzBandSupported()**: 5GHz 대역 지원 여부
-- **is6GHzBandSupported()**: 6GHz 대역 지원 여부 (API 30+)
-- **reconnect()/disconnect()**: WiFi 재연결/연결 해제
-- **getModernNetworkDetails()**: 네트워크 상세 정보 (API 29+)
-- **SDK 버전 자동 처리**: 구형/신형 API 자동 분기
-
-### **플로팅 Floating View Controller** - 플로팅 뷰 관리
-- **addFloatingDragView()**: 드래그 가능한 플로팅 뷰 추가
-- **setFloatingFixedView()**: 고정 플로팅 뷰 설정
-- **removeFloatingDragView()**: 드래그 뷰 제거
-- **removeFloatingFixedView()**: 고정 뷰 제거
-- **removeAllFloatingView()**: 모든 플로팅 뷰 제거
-- **충돌 감지**: 드래그 뷰와 고정 뷰 간 충돌 자동 감지
-- **Touch 이벤트 자동화**: ACTION_DOWN/MOVE/UP 이벤트 처리
-
-<br>
-</br>
-
 ## 실제 코드 비교
 
 <br>
@@ -996,7 +930,83 @@ private fun checkWifiBands() {
 <br>
 </br>
 
----
+## 🎯 제공되는 Controller 목록
+
+**System Service Manager Controller**는 6가지 핵심 시스템 서비스를 제공합니다:
+
+### **키보드 SoftKeyboard Controller** - 키보드 제어
+- **show()/hide()**: 키보드 표시/숨김
+- **showDelay()/hideDelay()**: 지연 실행 지원 (Coroutine/Runnable)
+- **setSoftInputMode()**: 윈도우 Input Mode 설정
+- **startStylusHandwriting()**: 스타일러스 펜 입력 시작 (API 33+)
+
+<br>
+</br>
+
+### **진동 Vibrator Controller** - 진동 제어
+- **vibrate()**: 단순 진동 (duration)
+- **vibratePattern()**: 패턴 진동 (timing array)
+- **createOneShot()**: 단발 진동 (duration + amplitude)
+- **createWaveform()**: 웨이브폼 진동 (커스텀 패턴)
+- **createPredefined()**: 시스템 정의 진동 (CLICK, DOUBLE_CLICK, TICK)
+- **cancel()**: 진동 중지
+- **hasVibrator()**: 진동 지원 여부 확인
+- **SDK 버전 자동 처리**: Vibrator (SDK < 31) 및 VibratorManager (SDK >= 31)
+
+<br>
+</br>
+
+### **알람 Alarm Controller** - 알람 관리
+- **registerAlarmClock()**: 알람 시계 등록 (상태바 표시)
+- **registerAlarmExactAndAllowWhileIdle()**: 정확한 알람 (Idle 모드에서도 실행)
+- **registerAlarmAndAllowWhileIdle()**: 일반 알람 (Idle 모드 허용)
+- **remove()**: 알람 삭제
+- **exists()**: 알람 존재 확인
+- **자동 Calendar 계산**: 오늘/내일 시간 자동 처리
+
+<br>
+</br>
+
+### **알림 Notification Controller** - 알림 관리
+- **showNotification()**: 알림 표시 (다양한 스타일 지원)
+- **createChannel()**: 알림 채널 생성 및 관리
+- **showProgressNotification()**: 진행률 알림 생성
+- **updateProgress()**: 진행률 업데이트 (0~100%)
+- **completeProgress()**: 진행률 완료 처리
+- **cancelNotification()**: 특정 알림 취소
+- **cancelAll()**: 모든 알림 취소
+- **다양한 스타일**: DEFAULT, BIG_PICTURE, BIG_TEXT, PROGRESS
+- **자동 채널 관리**: 기본 채널 자동 생성 및 관리
+- **메모리 관리**: 진행률 알림 자동 정리 (30분 후)
+
+<br>
+</br>
+
+### **WiFi Controller** - WiFi 정보 관리
+- **isWifiEnabled()**: WiFi 활성화 여부 확인
+- **getConnectionInfo()**: 현재 WiFi 연결 정보 조회
+- **getScanResults()**: WiFi 스캔 결과 조회
+- **getCurrentSsid()**: 현재 연결된 SSID 조회
+- **getCurrentRssi()**: 신호 강도 조회
+- **getCurrentLinkSpeed()**: 링크 속도 조회
+- **isConnectedWifi()**: WiFi 연결 상태 확인
+- **is5GHzBandSupported()**: 5GHz 대역 지원 여부
+- **is6GHzBandSupported()**: 6GHz 대역 지원 여부 (API 30+)
+- **reconnect()/disconnect()**: WiFi 재연결/연결 해제
+- **getModernNetworkDetails()**: 네트워크 상세 정보 (API 29+)
+- **SDK 버전 자동 처리**: 구형/신형 API 자동 분기
+
+<br>
+</br>
+
+### **플로팅 Floating View Controller** - 플로팅 뷰 관리
+- **addFloatingDragView()**: 드래그 가능한 플로팅 뷰 추가
+- **setFloatingFixedView()**: 고정 플로팅 뷰 설정
+- **removeFloatingDragView()**: 드래그 뷰 제거
+- **removeFloatingFixedView()**: 고정 뷰 제거
+- **removeAllFloatingView()**: 모든 플로팅 뷰 제거
+- **충돌 감지**: 드래그 뷰와 고정 뷰 간 충돌 자동 감지
+- **Touch 이벤트 자동화**: ACTION_DOWN/MOVE/UP 이벤트 처리
 
 <br>
 </br>
@@ -1062,13 +1072,12 @@ getVibratorController().vibrate(200)
 **사용 예시**:
 ```kotlin
 // API 31+ 에서는 별도 권한 확인 필요
-if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+checkSdkVersion(Build.VERSION_CODES.S) {
     val alarmManager = getSystemService(AlarmManager::class.java)
     if (!alarmManager.canScheduleExactAlarms()) {
         // 설정 화면으로 이동
         val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
         startActivity(intent)
-        return
     }
 }
 
@@ -1091,22 +1100,23 @@ getAlarmController().registerAlarmClock(receiver, alarmVo)
 **런타임 권한 요청**:
 ```kotlin
 // Android 13+ 에서는 런타임 권한 요청 필요
-if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-    onRequestPermissions(listOf(
-        Manifest.permission.POST_NOTIFICATIONS
-    )) { deniedPermissions ->
-        if (deniedPermissions.isEmpty()) {
-            // 권한 허용됨
-            getNotificationController().showNotification(...)
-        } else {
-            // 권한 거부됨
-            toastShowShort("알림 권한이 필요합니다")
+checkSdkVersion(Build.VERSION_CODES.TIRAMISU,
+    positiveWork = {
+        onRequestPermissions(listOf(Manifest.permission.POST_NOTIFICATIONS)) { deniedPermissions ->
+            if (deniedPermissions.isEmpty()) {
+                // 권한 허용됨
+                getNotificationController().showNotification(...)
+            } else {
+                // 권한 거부됨
+                toastShowShort("알림 권한이 필요합니다")
+            }
         }
+    },
+    negativeWork = {
+        // Android 12 이하는 권한 불필요
+        getNotificationController().showNotification(...)
     }
-} else {
-    // Android 12 이하는 권한 불필요
-    getNotificationController().showNotification(...)
-}
+)
 ```
 
 > **참고**: Android 13+ (API 33+)부터는 **런타임 권한 요청 필수**
