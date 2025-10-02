@@ -996,15 +996,224 @@ private fun checkWifiBands() {
 <br>
 </br>
 
-**필수 권한 설정:**
+---
+
+<br>
+</br>
+
+## 🔐 **Controller별 필수 권한**
+
+각 Controller는 **사용하는 기능에 따라** 권한이 필요합니다. 필요한 Controller의 권한만 추가하세요.
+
+### 📋 권한 요구사항 요약
+
+| Controller | 필수 권한 | 특수 권한 | 권한 불필요 |
+|:--|:--|:--:|:--:|
+| **SoftKeyboardController** | - | - | ✅ |
+| **VibratorController** | `VIBRATE` | - | - |
+| **AlarmController** | `SCHEDULE_EXACT_ALARM` (API 31+) | - | - |
+| **NotificationController** | `POST_NOTIFICATIONS` (API 33+) | - | - |
+| **WifiController** | `ACCESS_WIFI_STATE`<br>`ACCESS_NETWORK_STATE`<br>`CHANGE_WIFI_STATE`<br>`ACCESS_FINE_LOCATION` | - | - |
+| **FloatingViewController** | - | `SYSTEM_ALERT_WINDOW` | - |
+
+<br>
+</br>
+
+### ⚙️ Controller별 상세 권한 설정
+
+---
+
+#### 1️⃣ **SoftKeyboard Controller** - 권한 불필요 ✅
+
+키보드 제어는 **권한이 필요하지 않습니다**.
+
+```kotlin
+// 바로 사용 가능
+getSoftKeyboardController().show(editText)
+```
+
+---
+
+#### 2️⃣ **Vibrator Controller** - VIBRATE 권한 필요
+
+**AndroidManifest.xml**:
 ```xml
-<!-- AndroidManifest.xml -->
 <uses-permission android:name="android.permission.VIBRATE" />
+```
+
+**사용 예시**:
+```kotlin
+// 권한 선언만으로 바로 사용 가능 (런타임 요청 불필요)
+getVibratorController().vibrate(200)
+```
+
+> **참고**: `VIBRATE`는 일반 권한으로 **런타임 요청 불필요**
+
+---
+
+#### 3️⃣ **Alarm Controller** - SCHEDULE_EXACT_ALARM 권한 (API 31+)
+
+**AndroidManifest.xml**:
+```xml
+<!-- Android 12+ (API 31+)에서 정확한 알람 등록 시 필수 -->
 <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+```
+
+**사용 예시**:
+```kotlin
+// API 31+ 에서는 별도 권한 확인 필요
+if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+    val alarmManager = getSystemService(AlarmManager::class.java)
+    if (!alarmManager.canScheduleExactAlarms()) {
+        // 설정 화면으로 이동
+        val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
+        startActivity(intent)
+        return
+    }
+}
+
+// 알람 등록
+getAlarmController().registerAlarmClock(receiver, alarmVo)
+```
+
+> **참고**: Android 12+ (API 31+)부터는 **사용자가 설정에서 직접 허용**해야 함
+
+---
+
+#### 4️⃣ **Notification Controller** - POST_NOTIFICATIONS 권한 (API 33+)
+
+**AndroidManifest.xml**:
+```xml
+<!-- Android 13+ (API 33+)에서 알림 표시 시 필수 -->
 <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-<uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+```
+
+**런타임 권한 요청**:
+```kotlin
+// Android 13+ 에서는 런타임 권한 요청 필요
+if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+    onRequestPermissions(listOf(
+        Manifest.permission.POST_NOTIFICATIONS
+    )) { deniedPermissions ->
+        if (deniedPermissions.isEmpty()) {
+            // 권한 허용됨
+            getNotificationController().showNotification(...)
+        } else {
+            // 권한 거부됨
+            toastShowShort("알림 권한이 필요합니다")
+        }
+    }
+} else {
+    // Android 12 이하는 권한 불필요
+    getNotificationController().showNotification(...)
+}
+```
+
+> **참고**: Android 13+ (API 33+)부터는 **런타임 권한 요청 필수**
+
+---
+
+#### 5️⃣ **WiFi Controller** - 다중 권한 필요
+
+**AndroidManifest.xml**:
+```xml
+<!-- 필수: WiFi 상태 조회 -->
 <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-<uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
 <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+<!-- 선택: WiFi 제어 (켜기/끄기) -->
+<uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+
+<!-- 선택: WiFi 스캔 결과 조회 (API 23+) -->
 <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+```
+
+**런타임 권한 요청 (WiFi 스캔 사용 시)**:
+```kotlin
+// WiFi 스캔 결과 조회 시 위치 권한 필요 (Android 6.0+)
+onRequestPermissions(listOf(
+    Manifest.permission.ACCESS_FINE_LOCATION
+)) { deniedPermissions ->
+    if (deniedPermissions.isEmpty()) {
+        // WiFi 스캔 가능
+        val scanResults = getWifiController().getScanResults()
+    } else {
+        // 기본 정보만 조회
+        val connectionInfo = getWifiController().getConnectionInfo()
+    }
+}
+```
+
+> **참고**:
+> - `ACCESS_WIFI_STATE`는 일반 권한 (런타임 요청 불필요)
+> - `ACCESS_FINE_LOCATION`은 위험 권한 (런타임 요청 필수)
+> - WiFi 켜기/끄기는 Android 10+ (API 29+)부터 **더 이상 지원되지 않음**
+
+---
+
+#### 6️⃣ **Floating View Controller** - SYSTEM_ALERT_WINDOW 특수 권한
+
+**AndroidManifest.xml**:
+```xml
+<uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+```
+
+**런타임 권한 요청 (특수 권한)**:
+```kotlin
+// SYSTEM_ALERT_WINDOW는 특수 권한으로 별도 처리 필요
+if (!Settings.canDrawOverlays(this)) {
+    // 설정 화면으로 이동
+    val intent = Intent(
+        Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+        Uri.parse("package:$packageName")
+    )
+    startActivityForResult(intent, REQUEST_OVERLAY_PERMISSION)
+} else {
+    // 권한 허용됨 - Floating View 추가
+    getFloatingViewController().addFloatingDragView(...)
+}
+
+// 결과 처리
+override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    super.onActivityResult(requestCode, resultCode, data)
+    if (requestCode == REQUEST_OVERLAY_PERMISSION) {
+        if (Settings.canDrawOverlays(this)) {
+            // 권한 허용됨
+            getFloatingViewController().addFloatingDragView(...)
+        } else {
+            // 권한 거부됨
+            toastShowShort("다른 앱 위에 표시 권한이 필요합니다")
+        }
+    }
+}
+```
+
+**Simple UI의 onRequestPermissions() 사용 (자동 처리)**:
+```kotlin
+// 일반 권한과 특수 권한을 동시에 처리 가능!
+onRequestPermissions(listOf(
+    Manifest.permission.CAMERA,
+    Manifest.permission.SYSTEM_ALERT_WINDOW  // 특수 권한 자동 처리!
+)) { deniedPermissions ->
+    if (deniedPermissions.isEmpty()) {
+        // 모든 권한 허용됨
+        getFloatingViewController().addFloatingDragView(...)
+    }
+}
+```
+
+> **참고**: `SYSTEM_ALERT_WINDOW`는 특수 권한으로 **별도 설정 화면**이 필요하지만, Simple UI의 `onRequestPermissions()`를 사용하면 **자동 처리** 가능!
+
+---
+
+<br>
+</br>
+
+### 📊 권한 타입별 정리
+
+| 권한 타입 | 권한 목록 | 요청 방법 |
+|:--|:--|:--|
+| **일반 권한** | `VIBRATE`<br>`ACCESS_WIFI_STATE`<br>`ACCESS_NETWORK_STATE`<br>`CHANGE_WIFI_STATE` | Manifest 선언만으로 자동 허용 |
+| **위험 권한** | `POST_NOTIFICATIONS` (API 33+)<br>`ACCESS_FINE_LOCATION` | 런타임 권한 요청 필수 |
+| **특수 권한** | `SYSTEM_ALERT_WINDOW`<br>`SCHEDULE_EXACT_ALARM` (API 31+) | 설정 화면 이동 필요<br>(Simple UI는 자동 처리)
 ```

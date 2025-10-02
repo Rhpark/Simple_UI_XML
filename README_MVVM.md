@@ -55,6 +55,91 @@
 <br>
 </br>
 
+## ⚙️ **필수 설정 (BaseBindingActivity/Fragment 사용 시)**
+
+Simple UI의 MVVM 기능 중 **BaseBindingActivity**와 **BaseBindingFragment**를 사용하려면 **DataBinding 활성화가 필수**입니다.
+
+> **참고**: `BaseActivity`와 `BaseFragment`는 DataBinding 없이도 사용 가능합니다.
+
+### 📦 build.gradle.kts 설정
+
+**Module-level build.gradle.kts**에 다음 설정을 추가하세요:
+
+```kotlin
+android {
+    buildFeatures {
+        dataBinding = true  // BaseBindingActivity/Fragment 사용 시 필수!
+    }
+}
+```
+
+<br>
+
+### ✅ 설정 확인 방법
+
+DataBinding이 올바르게 설정되었는지 확인하려면:
+
+1. **Sync Gradle** 실행
+2. **Rebuild Project** 실행
+3. 레이아웃 파일이 `<layout>` 태그로 감싸져 있는지 확인:
+
+```xml
+<!-- activity_main.xml -->
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+        <!-- ViewModel 바인딩 (선택사항) -->
+        <variable
+            name="vm"
+            type="com.example.MainViewModel" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <!-- UI 요소들 -->
+    </LinearLayout>
+</layout>
+```
+
+4. Build 성공 후 `ActivityMainBinding` 클래스가 자동 생성되는지 확인
+
+<br>
+
+### 🚨 자주 발생하는 오류
+
+#### ❌ DataBinding 미활성화
+```
+Unresolved reference: ActivityMainBinding
+```
+**해결방법**: `build.gradle.kts`에 `dataBinding = true` 추가 후 Sync Gradle
+
+#### ❌ 레이아웃 파일 `<layout>` 태그 누락
+```
+Cannot find symbol class ActivityMainBinding
+```
+**해결방법**: XML 파일을 `<layout>` 태그로 감싸기
+
+#### ❌ Gradle Sync 미실행
+```
+DataBindingUtil not found
+```
+**해결방법**: **File → Sync Project with Gradle Files** 실행
+
+<br>
+
+### 📌 BaseActivity vs BaseBindingActivity 비교
+
+| 항목 | BaseActivity | BaseBindingActivity |
+|:--|:--:|:--:|
+| **DataBinding 설정 필요** | ❌ 불필요 | ✅ **필수** |
+| **XML `<layout>` 태그** | ❌ 불필요 | ✅ **필수** |
+| **ViewModel 양방향 바인딩** | ❌ 불가 | ✅ 가능 |
+| **사용 난이도** | 쉬움 | 보통 |
+| **추천 용도** | 간단한 화면 | MVVM 패턴 |
+
+<br>
+</br>
+
 ## 🎯 비교 대상: MVVM 패턴 기반 Activity/Fragment 개발
 
 **구현 예제 기능:**

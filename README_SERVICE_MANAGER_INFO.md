@@ -295,11 +295,364 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 > - System Service Manager Info : [ServiceManagerInfoActivity.kt](app/src/main/java/kr/open/library/simpleui_xml/system_service_manager/info/ServiceManagerInfoActivity.kt)
 > - 실제로 앱을 구동 시켜서 실제 구현 예제를 확인해 보세요!
 
-**필수 권한 설정:**
+---
+
+<br>
+</br>
+
+## 🔐 **Info별 필수 권한**
+
+각 Info는 **사용하는 기능에 따라** 권한이 필요합니다. 필요한 Info의 권한만 추가하세요.
+
+### 📋 권한 요구사항 요약
+
+| Info | 필수 권한 | 런타임 권한 | 권한 불필요 |
+|:--|:--|:--:|:--:|
+| **BatteryStateInfo** | - | - | ✅ |
+| **DisplayInfo** | - | - | ✅ |
+| **LocationStateInfo** | `ACCESS_FINE_LOCATION`<br>`ACCESS_COARSE_LOCATION` | ✅ | - |
+| **SimInfo** | `READ_PHONE_STATE` | ✅ | - |
+| **TelephonyInfo** | `READ_PHONE_STATE`<br>`READ_PHONE_NUMBERS` (선택)<br>`ACCESS_FINE_LOCATION` (선택) | ✅ | - |
+| **NetworkConnectivityInfo** | `ACCESS_NETWORK_STATE`<br>`ACCESS_WIFI_STATE` (선택) | - | - |
+
+<br>
+</br>
+
+### ⚙️ Info별 상세 권한 설정
+
+---
+
+#### 1️⃣ **Battery State Info** - 권한 불필요 ✅
+
+배터리 정보 조회는 **권한이 필요하지 않습니다**.
+
+**사용 예시**:
+```kotlin
+// 바로 사용 가능
+val batteryInfo = BatteryStateInfo(context)
+batteryInfo.registerStart(lifecycleScope)
+
+// StateFlow로 배터리 상태 실시간 수신
+lifecycleScope.launch {
+    batteryInfo.sfUpdate.collect { event ->
+        when (event) {
+            is BatteryStateEvent.OnCapacity -> {
+                Log.d("Battery", "용량: ${event.capacity}%")
+            }
+            is BatteryStateEvent.OnCharging -> {
+                Log.d("Battery", "충전 중: ${event.isCharging}")
+            }
+        }
+    }
+}
+```
+
+> **참고**: 배터리 정보는 시스템 브로드캐스트로 제공되어 권한이 필요하지 않습니다.
+
+---
+
+#### 2️⃣ **Display Info** - 권한 불필요 ✅
+
+디스플레이 정보 조회는 **권한이 필요하지 않습니다**.
+
+**사용 예시**:
+```kotlin
+// 바로 사용 가능
+val displayInfo = DisplayInfo(context)
+
+// 전체 화면 크기 (상태바, 네비게이션바 포함)
+val fullSize = displayInfo.getFullScreenSize()
+Log.d("Display", "전체 화면: ${fullSize.x} x ${fullSize.y}")
+
+// 상태바 높이
+val statusBarHeight = displayInfo.getStatusBarHeight()
+Log.d("Display", "상태바 높이: $statusBarHeight")
+```
+
+> **참고**: 디스플레이 정보는 공개 API로 권한이 필요하지 않습니다.
+
+---
+
+#### 3️⃣ **Location State Info** - 위치 권한 필수
+
+**AndroidManifest.xml**:
 ```xml
-<!-- AndroidManifest.xml -->
-<uses-permission android:name="android.permission.BATTERY_STATS" />
+<!-- 필수: 위치 정보 조회 -->
 <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 ```
+
+**런타임 권한 요청**:
+```kotlin
+// 위치 권한 요청 (필수)
+onRequestPermissions(listOf(
+    Manifest.permission.ACCESS_FINE_LOCATION,
+    Manifest.permission.ACCESS_COARSE_LOCATION
+)) { deniedPermissions ->
+    if (deniedPermissions.isEmpty()) {
+        // 권한 허용됨 - 위치 추적 시작
+        val locationInfo = LocationStateInfo(context)
+        locationInfo.registerStart(
+            scope = lifecycleScope,
+            provider = LocationManager.GPS_PROVIDER,
+            minTime = 1000L,
+            minDistance = 10f
+        )
+
+        // StateFlow로 위치 변경 실시간 수신
+        lifecycleScope.launch {
+            locationInfo.sfUpdate.collect { event ->
+                when (event) {
+                    is LocationStateEvent.OnLocationChanged -> {
+                        val location = event.location
+                        Log.d("Location", "위도: ${location?.latitude}, 경도: ${location?.longitude}")
+                    }
+                    is LocationStateEvent.OnGpsEnabled -> {
+                        Log.d("Location", "GPS 활성화: ${event.isEnabled}")
+                    }
+                }
+            }
+        }
+    } else {
+        // 권한 거부됨
+        toastShowShort("위치 권한이 필요합니다")
+    }
+}
+```
+
+> **참고**:
+> - `ACCESS_FINE_LOCATION` - GPS 위치 (정확한 위치)
+> - `ACCESS_COARSE_LOCATION` - 네트워크 위치 (대략적 위치)
+> - 두 권한 모두 **위험 권한**으로 런타임 요청 필수
+
+---
+
+#### 4️⃣ **SIM Info** - 전화 상태 권한 필수
+
+**AndroidManifest.xml**:
+```xml
+<!-- 필수: 전화 상태 읽기 -->
+<uses-permission android:name="android.permission.READ_PHONE_STATE" />
+```
+
+**런타임 권한 요청**:
+```kotlin
+// 전화 상태 권한 요청 (필수)
+onRequestPermissions(listOf(
+    Manifest.permission.READ_PHONE_STATE
+)) { deniedPermissions ->
+    if (deniedPermissions.isEmpty()) {
+        // 권한 허용됨 - SIM 정보 조회
+        val simInfo = SimInfo(context)
+
+        // 듀얼 SIM 확인
+        val isDualSim = simInfo.isDualSim()
+        Log.d("SIM", "듀얼 SIM: $isDualSim")
+
+        // 활성 SIM 개수
+        val activeCount = simInfo.getActiveSimCount()
+        Log.d("SIM", "활성 SIM 개수: $activeCount")
+
+        // 전화번호 조회
+        val phoneNumber = simInfo.getPhoneNumberFromDefaultUSim()
+        Log.d("SIM", "전화번호: $phoneNumber")
+    } else {
+        // 권한 거부됨
+        toastShowShort("전화 상태 권한이 필요합니다")
+    }
+}
+```
+
+> **참고**:
+> - `READ_PHONE_STATE`는 **위험 권한**으로 런타임 요청 필수
+> - Android 10+ (API 29+)부터 전화번호 읽기가 제한될 수 있음
+
+---
+
+#### 5️⃣ **Telephony Info** - 전화 상태 + 선택적 권한
+
+**AndroidManifest.xml**:
+```xml
+<!-- 필수: 전화 상태 읽기 -->
+<uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
+<!-- 선택: 전화번호 읽기 (Android 8.0+) -->
+<uses-permission android:name="android.permission.READ_PHONE_NUMBERS" />
+
+<!-- 선택: 위치 기반 통신망 정보 (셀 타워 위치 등) -->
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+```
+
+**런타임 권한 요청 (기본)**:
+```kotlin
+// 기본 권한만 요청 (필수)
+onRequestPermissions(listOf(
+    Manifest.permission.READ_PHONE_STATE
+)) { deniedPermissions ->
+    if (deniedPermissions.isEmpty()) {
+        // 권한 허용됨 - 통신망 정보 조회
+        val telephonyInfo = TelephonyInfo(context)
+
+        // 통신사 정보
+        val carrierName = telephonyInfo.getCarrierName()
+        Log.d("Telephony", "통신사: $carrierName")
+
+        // 네트워크 타입
+        val networkType = telephonyInfo.getNetworkTypeString()
+        Log.d("Telephony", "네트워크: $networkType")
+
+        // SIM 상태
+        val isSimReady = telephonyInfo.isSimReady()
+        Log.d("Telephony", "SIM 준비: $isSimReady")
+
+        // StateFlow로 신호 강도 실시간 수신
+        telephonyInfo.registerCallback()
+        lifecycleScope.launch {
+            telephonyInfo.getCurrentSignalStrength().collect { signalStrength ->
+                Log.d("Telephony", "신호 강도: ${signalStrength?.level}")
+            }
+        }
+    }
+}
+```
+
+**런타임 권한 요청 (전체 - 전화번호 + 위치)**:
+```kotlin
+// 전체 기능 사용 시 (선택)
+onRequestPermissions(listOf(
+    Manifest.permission.READ_PHONE_STATE,
+    Manifest.permission.READ_PHONE_NUMBERS,
+    Manifest.permission.ACCESS_FINE_LOCATION
+)) { deniedPermissions ->
+    if (deniedPermissions.isEmpty()) {
+        // 모든 권한 허용됨 - 전체 정보 접근
+        val telephonyInfo = TelephonyInfo(context)
+
+        // 전화번호 조회 (READ_PHONE_NUMBERS 필요)
+        val phoneNumber = telephonyInfo.getPhoneNumber()
+        Log.d("Telephony", "전화번호: $phoneNumber")
+
+        // 셀 타워 위치 정보 (ACCESS_FINE_LOCATION 필요)
+        // ... 상세 셀 정보 조회 가능
+    } else {
+        // 일부 권한만 허용됨 - 기본 정보만 사용
+        Log.d("Telephony", "거부된 권한: $deniedPermissions")
+    }
+}
+```
+
+> **참고**:
+> - `READ_PHONE_STATE` - 필수 (통신사, 네트워크 타입 등)
+> - `READ_PHONE_NUMBERS` - 선택 (전화번호 조회)
+> - `ACCESS_FINE_LOCATION` - 선택 (셀 타워 상세 위치)
+
+---
+
+#### 6️⃣ **Network Connectivity Info** - 네트워크 상태 권한
+
+**AndroidManifest.xml**:
+```xml
+<!-- 필수: 네트워크 상태 조회 -->
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+<!-- 선택: WiFi 상태 조회 -->
+<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+```
+
+**사용 예시**:
+```kotlin
+// 권한 선언만으로 바로 사용 가능 (런타임 요청 불필요)
+val networkInfo = NetworkConnectivityInfo(context)
+
+// 네트워크 연결 여부
+val isConnected = networkInfo.isNetworkConnected()
+Log.d("Network", "네트워크 연결: $isConnected")
+
+// WiFi 연결 여부
+val isWifi = networkInfo.isConnectedWifi()
+Log.d("Network", "WiFi 연결: $isWifi")
+
+// 모바일 데이터 연결 여부
+val isMobile = networkInfo.isConnectedMobile()
+Log.d("Network", "모바일 연결: $isMobile")
+
+// 네트워크 요약 정보
+val summary = networkInfo.getNetworkConnectivitySummary()
+Log.d("Network", "요약: $summary")
+
+// StateFlow로 네트워크 변경 실시간 수신 (선택)
+networkInfo.registerDefaultNetworkCallback()
+lifecycleScope.launch {
+    // 네트워크 상태 변경 감지
+}
+```
+
+> **참고**:
+> - `ACCESS_NETWORK_STATE`는 **일반 권한**으로 런타임 요청 불필요
+> - `ACCESS_WIFI_STATE`는 **일반 권한**으로 런타임 요청 불필요
+
+---
+
+<br>
+</br>
+
+### 📊 권한 타입별 정리
+
+| 권한 타입 | 권한 목록 | 요청 방법 | 사용 Info |
+|:--|:--|:--|:--|
+| **일반 권한** | `ACCESS_NETWORK_STATE`<br>`ACCESS_WIFI_STATE` | Manifest 선언만으로 자동 허용 | NetworkConnectivityInfo |
+| **위험 권한** | `ACCESS_FINE_LOCATION`<br>`ACCESS_COARSE_LOCATION`<br>`READ_PHONE_STATE`<br>`READ_PHONE_NUMBERS` | 런타임 권한 요청 필수 | LocationStateInfo<br>SimInfo<br>TelephonyInfo |
+
+<br>
+</br>
+
+### 💡 권한 요청 팁
+
+#### **최소 권한으로 시작**
+```kotlin
+// LocationStateInfo 사용 예시 - 최소 권한
+onRequestPermissions(listOf(
+    Manifest.permission.ACCESS_COARSE_LOCATION  // 대략적 위치만
+)) { deniedPermissions ->
+    if (deniedPermissions.isEmpty()) {
+        // 네트워크 기반 위치만 사용
+        locationInfo.registerStart(provider = LocationManager.NETWORK_PROVIDER)
+    }
+}
+```
+
+#### **필요 시 추가 권한 요청**
+```kotlin
+// 더 정확한 위치가 필요할 때
+onRequestPermissions(listOf(
+    Manifest.permission.ACCESS_FINE_LOCATION  // 정확한 위치
+)) { deniedPermissions ->
+    if (deniedPermissions.isEmpty()) {
+        // GPS 기반 위치 사용
+        locationInfo.registerStart(provider = LocationManager.GPS_PROVIDER)
+    }
+}
+```
+
+#### **Simple UI의 자동 권한 처리**
+```kotlin
+// 여러 권한을 한 번에 요청
+onRequestPermissions(listOf(
+    Manifest.permission.ACCESS_FINE_LOCATION,
+    Manifest.permission.READ_PHONE_STATE
+)) { deniedPermissions ->
+    if (deniedPermissions.isEmpty()) {
+        // 모든 권한 허용됨
+        startLocationTracking()
+        loadSimInfo()
+    } else {
+        // 일부만 허용된 경우 처리
+        Log.d("Permission", "거부된 권한: $deniedPermissions")
+    }
+}
+```
+
+<br>
+</br>
+
+.
