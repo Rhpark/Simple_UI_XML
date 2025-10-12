@@ -1,4 +1,8 @@
-[![](https://jitpack.io/v/rhpark/Simple_UI_XML.svg)](https://jitpack.io/#rhpark/Simple_UI_XML)
+[image][![](https://jitpack.io/v/rhpark/Simple_UI_XML.svg)](https://jitpack.io/#rhpark/Simple_UI_XML)
 
-KOREA - [README_KR.md](README_KR.md)
-ENGLISH - [README_ENG.md](README_ENG.md)
+## KOREA - [README_KR.md](README_KR.md)
+
+<br>
+</br>
+
+## ENGLISH - [README_ENG.md](README_ENG.md)
