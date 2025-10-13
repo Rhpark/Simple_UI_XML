@@ -574,6 +574,14 @@ class PermissionsActivity : BaseBindingActivity<ActivityPermissionsBinding>(R.la
 **결과:** launcher 등록 불필요, 일반/특수 권한 자동 구분, 통합 콜백 제공!
 </details>
 
+### 권한 관리
+| 항목 | 순수 Android | Simple UI |
+|:--|:--:|:--:|
+| 권한 요청 방식 | ActivityResultContract 수동 등록 | onRequestPermissions() 한 줄 ✅ |
+| 특수 권한 처리 | 별도 분리 로직 (50줄+) | 자동 구분 처리 ✅ |
+| 권한 결과 처리 | 수동 콜백 구현 | 자동 콜백 제공 ✅ |
+| 개발자 경험 | 복잡한 보일러플레이트 | 간결한 라이브러리 호출 ✅ |
+
 <br>
 </br>
 
