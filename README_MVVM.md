@@ -488,7 +488,96 @@ sealed class MainEvent {
 <br>
 </br>
 
-### 넷째: RootActivity 추가 기능 (SystemBars 제어 & 높이 계산)
+### 넷째: 권한 요청 방식 비교
+
+<details>
+<summary><strong>순수 Android - ActivityResultContract 수동 등록</strong></summary>
+
+```kotlin
+class PermissionsActivityOrigin : AppCompatActivity() {
+
+    // 복잡한 Permission Launchers 직접 등록
+    private val requestMultiplePermissionsLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions -> handlePermissionResults(permissions) }
+
+    private val requestOverlayPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { handleOverlayPermissionResult() }
+
+    // 복잡한 권한 분리 로직 (일반 vs 특수)
+    private fun requestPermissions(permissions: List<String>) {
+        val normalPermissions = permissions.filter { it != Manifest.permission.SYSTEM_ALERT_WINDOW }
+        val hasOverlayPermission = permissions.contains(Manifest.permission.SYSTEM_ALERT_WINDOW)
+
+        // 일반 권한 처리
+        if (normalPermissions.isNotEmpty()) {
+            requestMultiplePermissionsLauncher.launch(normalPermissions.toTypedArray())
+        }
+
+        // 특수 권한 별도 처리
+        if (hasOverlayPermission) {
+            if (Settings.canDrawOverlays(this)) {
+                handleOverlayPermissionResult()
+            } else {
+                val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
+                requestOverlayPermissionLauncher.launch(intent)
+            }
+        }
+    }
+
+    // 권한 결과 처리도 직접 구현 (30줄+)
+    private fun handlePermissionResults(permissions: Map<String, Boolean>) {
+        // 복잡한 결과 처리 로직
+    }
+
+    private fun handleOverlayPermissionResult() {
+        // 특수 권한 결과 처리 로직
+    }
+}
+```
+**문제점:** 복잡한 launcher 등록, 일반/특수 권한 분리 로직, 개별 결과 처리 필요
+</details>
+
+<details>
+<summary><strong>Simple UI - onRequestPermissions() 한 줄</strong></summary>
+
+```kotlin
+class PermissionsActivity : BaseBindingActivity<ActivityPermissionsBinding>(R.layout.activity_permissions) {
+
+    // 권한 요청이 단 한 줄!
+    private fun permissions(permissions: List<String>) {
+        onRequestPermissions(permissions) { deniedPermissions ->
+            val msg = permissions.toString() + if (deniedPermissions.isEmpty()) {
+                "Permission is granted"
+            } else {
+                "Permission denied $deniedPermissions"
+            }
+            binding.btnCameraPermission.snackBarMakeShort(msg, SnackBarOption(actionText = "Ok")).show()
+            adapter.addItem(msg)
+        }
+    }
+
+    // 사용법: 일반권한과 특수권한을 동일하게 처리
+    private fun requestCamera() {
+        permissions(listOf(Manifest.permission.CAMERA))
+    }
+
+    private fun requestMultiplePermissions() {
+        permissions(listOf(
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.SYSTEM_ALERT_WINDOW  // 특수권한도 동일하게!
+        ))
+    }
+}
+```
+**결과:** launcher 등록 불필요, 일반/특수 권한 자동 구분, 통합 콜백 제공!
+</details>
+
+<br>
+</br>
+
+### 다섯째: RootActivity 추가 기능 (SystemBars 제어 & 높이 계산)
 
 <details>
 <summary><strong>순수 Android - StatusBar/NavigationBar 수동 처리</strong></summary>
@@ -637,7 +726,7 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 <br>
 </br>
 
-### 3. **🎨 RootActivity 시스템바 제어**
+### 3. **🎨 Activity 시스템바 제어**
 - **statusBarHeight/navigationBarHeight**: SDK 버전별 자동 계산
 - **SystemBars 제어**: 투명/색상/아이콘 모드 한 줄 설정
 - **beforeOnCreated()**: onCreate 전 초기화 훅 제공
@@ -665,6 +754,14 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 - **Activity 초기화**: 20-30줄 → 10줄 미만 **70% 단축**
 - **Fragment 초기화**: 40-50줄 → 15줄 미만 **70% 단축**
 - **ViewModel 이벤트**: Channel 구성 10줄+ → sendEventVm() 한 줄
+
+<br>
+</br>
+
+### 7. **복잡한 권한 관리 구현 자동화**
+- 권한별 복잡한 **보일러 플레이트 감소**
+- **onRequestPermissions(permissions: List<String>, onResult: (deniedPermissions: List<String>)** 사용으로 한 곳에서 간단한 요청/응답
+- **특수 권한**또한 추가 코드 없이 일관되게 요청/응답 관리
 
 <br>
 </br>
