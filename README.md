@@ -21,7 +21,7 @@ This library helps you make easy and more simple code for Android developers
 
 ## Gradle
 
-#### 1. settings.gradle.kts 설정
+#### 1. settings.gradle.kts
 ```kotlin
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
@@ -36,7 +36,7 @@ dependencyResolutionManagement {
 <br>
 </br>
 
-#### 2. build.gradle.kts (Module level) 디펜던시 추가
+#### 2. build.gradle.kts (Module level) 
 ```kotlin
 dependencies {
     implementation("com.github.Rhpark:Simple_UI_XML:0.1.2")
@@ -49,7 +49,9 @@ dependencies {
 ## More Information
 **Korea Ver [README_KR.md](README_KR.md)**
 
+**English ver [README_ENG.md](README_ENG.md)**
+
 <br>
 </br>
- 
-**English ver [README_ENG.md](README_ENG.md)**
+
+.
