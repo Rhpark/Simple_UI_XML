@@ -35,8 +35,26 @@ dependencyResolutionManagement {
 
 #### 2. build.gradle.kts (Module level) 
 ```kotlin
+android {
+    //..
+    buildFeatures {
+        dataBinding = true  // MVVM 패턴 사용 시 필수
+        // viewBinding = true  // ViewBinding만 사용할 경우
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
+    kotlinOptions {
+        jvmTarget = "11"
+    }
+    //..
+}
+//..
 dependencies {
+    //..
     implementation("com.github.Rhpark:Simple_UI_XML:0.1.2")
+    //..
 }
 ```
 
