@@ -3,10 +3,26 @@ description: Help us reproduce and fix the issue. / 재현 정보를 알려주�
 labels: ["bug", "needs-triage"]
 body:
   - type: input
-    id: version
     attributes:
-      label: Library version / 라이브러리 버전
-      placeholder: e.g., 0.2.1
+      label: Library Release version
+      placeholder: 0.2.1
+    id: version
+    validations:
+      required: true
+
+  - type: textarea
+    id: yourAppVersion
+    attributes:
+      label: Application build version
+      placeholder: kotlin version, min sdk, target sdk, compile sdk, AGP version.. etc version
+    validations:
+      required: true
+
+  - type: textarea
+    id: deviceInfo
+    attributes:
+      label: Testing device info
+      placeholder: device model name, OS version, device state,(wifi on/off, network connect/disconnect..etc)
     validations:
       required: true
 
@@ -30,16 +46,6 @@ body:
     attributes:
       label: Actual behavior / 실제 동작
       description: Include exact error messages if any. / 오류 메시지 있으면 그대로 붙여주세요.
-
-  - type: checkboxes
-    id: env
-    attributes:
-      label: Environment (check what applies) / 환경(해당 항목 체크)
-      options:
-        - label: AGP (e.g., 8.6.x)
-        - label: Kotlin (e.g., 2.x / 1.9)
-        - label: Compose / Views
-        - label: minSdk / targetSdk
 
   - type: textarea
     id: logs

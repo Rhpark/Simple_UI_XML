@@ -5,14 +5,20 @@ body:
   - type: input
     id: version
     attributes:
-      label: Library version
+      label: Library Release version
       placeholder: 0.2.1
 
   - type: textarea
-    id: AppVersion
+    id: yourAppVersion
     attributes:
       label: Application build version
-      placeholder: kotlin version, min sdk, target sdk, compile sdk..etc version
+      placeholder: kotlin version, min sdk, target sdk, compile sdk, AGP version.. etc version
+
+  - type: textarea
+    id: deviceInfo
+    attributes:
+      label: Testing device info
+      placeholder: device model name, OS version, device state,(wifi on/off, network connect/disconnect..etc)
 
   - type: textarea
     id: steps
