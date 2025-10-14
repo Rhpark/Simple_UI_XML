@@ -9,7 +9,7 @@ body:
       placeholder: 0.2.1
 
   - type: textarea
-    id: version
+    id: AppVersion
     attributes:
       label: Application build version
       placeholder: kotlin version, min sdk, target sdk, compile sdk..etc version
