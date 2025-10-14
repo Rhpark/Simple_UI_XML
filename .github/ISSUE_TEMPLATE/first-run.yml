@@ -5,8 +5,15 @@ body:
   - type: input
     id: version
     attributes:
-      label: Library version / 라이브러리 버전
-      placeholder: e.g., 0.2.1
+      label: Library version
+      placeholder:  0.2.1
+
+  - type: input
+    id: version
+    attributes:
+      label: Application build version
+      placeholder: kotlin version, min sdk, target sdk, compile sdk..etc version
+
   - type: textarea
     id: steps
     attributes:
@@ -14,29 +21,24 @@ body:
       placeholder: 1) ... 2) ...
     validations:
       required: true
+
   - type: textarea
     id: expected
     attributes:
       label: Expected vs Actual / 기대 vs 실제
     validations:
       required: true
-  - type: checkboxes
-    id: env
-    attributes:
-      label: Environment (optional) / 환경(선택)
-      options:
-        - label: AGP (e.g., 8.6.x)
-        - label: Kotlin (e.g., 2.x / 1.9)
-        - label: Compose? (Yes/No) / View System?
-        - label: minSdk / targetSdk
+
   - type: textarea
     id: logs
     attributes:
       label: Logs or screenshots (optional) / 로그·스크린샷(선택)
+
   - type: input
     id: ttfh
     attributes:
       label: Time To First Hello (mins, optional) / 첫 성공까지 분(선택)
+
   - type: textarea
     id: ideas
     attributes:
