@@ -18,6 +18,21 @@ body:
     validations:
       required: true
 
+  - type: checkboxes
+    id: part
+    attributes:
+      label: part / 부분
+      options:
+        - label: Logx
+        - label: Permissions
+        - label: Presenter
+        - label: System Manager Controller
+        - label: System Manager Info
+        - label: Extensions
+        - label : Etc
+    validations:
+      required: true
+
   - type: textarea
     id: deviceInfo
     attributes:
