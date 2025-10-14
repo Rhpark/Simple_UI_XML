@@ -1,0 +1,59 @@
+name: "API Design Feedback / API 설계 피드백"
+description: Propose API changes with concrete use-cases. / 사용 사례를 포함해 API 개선을 제안해주세요.
+labels: ["api", "discussion"]
+body:
+  - type: textarea
+    id: pain
+    attributes:
+      label: Pain point / 불편 지점
+      description: What is awkward or hard today? / 현재 무엇이 불편한가요?
+      placeholder: e.g., Too many steps to configure...
+    validations:
+      required: true
+
+  - type: textarea
+    id: usecase
+    attributes:
+      label: Use-case (code welcome) / 사용 사례(코드 환영)
+      description: 10~15줄 예시 코드가 있다면 붙여주세요.
+      placeholder: Before how you do it today / 현재 코드
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal (before → after) / 제안(이전 → 이후)
+      description: New API shape, names, defaults. / 새 API 형태, 이름, 기본값.
+      placeholder: After proposed API / 제안 API
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: compat
+    attributes:
+      label: Compatibility / 호환성
+      options:
+        - label: Source compatible / 소스 호환
+        - label: Binary compatible / 바이너리 호환
+        - label: Requires opt-in or new artifact / opt-in 또는 신규 아티팩트 필요
+
+  - type: dropdown
+    id: impact
+    attributes:
+      label: Impact scope / 영향 범위
+      options:
+        - Minor additive / 소규모 추가
+        - Moderate change / 중간 변경
+        - Breaking change / 호환성 파괴
+      multiple: false
+
+  - type: textarea
+    id: migration
+    attributes:
+      label: Migration notes (optional) / 마이그레이션 노트(선택)
+      placeholder: e.g., old API → new API mapping
+
+  - type: input
+    id: version
+    attributes:
+      label: Library version (optional) / 라이브러리 버전(선택)
+      placeholder: e.g., 0.2.1

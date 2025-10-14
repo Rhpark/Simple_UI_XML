@@ -1,0 +1,43 @@
+name: "First-Run Feedback / 첫 실행 피드백"
+description: Tell us where you got stuck. / 어디서 막혔는지 알려주세요.
+labels: ["first-run", "needs-triage"]
+body:
+  - type: input
+    id: version
+    attributes:
+      label: Library version / 라이브러리 버전
+      placeholder: e.g., 0.2.1
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps & Timestamp / 재현 단계와 시각
+      placeholder: 1) ... 2) ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected vs Actual / 기대 vs 실제
+    validations:
+      required: true
+  - type: checkboxes
+    id: env
+    attributes:
+      label: Environment (optional) / 환경(선택)
+      options:
+        - label: AGP (e.g., 8.6.x)
+        - label: Kotlin (e.g., 2.x / 1.9)
+        - label: Compose? (Yes/No) / View System?
+        - label: minSdk / targetSdk
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs or screenshots (optional) / 로그·스크린샷(선택)
+  - type: input
+    id: ttfh
+    attributes:
+      label: Time To First Hello (mins, optional) / 첫 성공까지 분(선택)
+  - type: textarea
+    id: ideas
+    attributes:
+      label: Quick win you wish existed (optional) / 바로 있었으면 하는 개선(선택)

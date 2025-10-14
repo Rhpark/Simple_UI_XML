@@ -1,0 +1,17 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Q&A · 사용법 질문
+    url: https://github.com/Rhpark/Simple_UI_XML/discussions/categories/q-a
+    about: 질문은 이슈 대신 Q&A에 남겨주세요.
+
+  - name: Open Discussion · API/기능 제안
+    url: https://github.com/Rhpark/Simple_UI_XML/discussions/categories/open-discussion
+    about: 사용사례 기반 제안을 환영합니다.
+
+  - name: Showcase · 사용 사례
+    url: https://github.com/Rhpark/Simple_UI_XML/discussions/categories/showcase
+    about: 코드 스니펫·GIF로 사례를 공유해 주세요.
+
+  - name: Announcements · 공지
+    url: https://github.com/Rhpark/Simple_UI_XML/discussions/categories/announcements
+    about: 릴리스 노트/로드맵(읽기 전용).

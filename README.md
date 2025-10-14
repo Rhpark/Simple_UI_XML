@@ -69,4 +69,19 @@ dependencies {
 <br>
 </br>
 
+
+[![Q&A](https://github.com/Rhpark/Simple_UI_XML/discussions/categories/q-a)](<Q&A URL>)
+[![OpenDiscussion](https://github.com/Rhpark/Simple_UI_XML/discussions/categories/open-discussion)](<OpenDiscussion URL>)
+[![Showcase](https://github.com/Rhpark/Simple_UI_XML/discussions/categories/showcase)](<Showcase URL>)
+[![First-Run Issue](https://github.com/Rhpark/Simple_UI_XML/new?template=first-run.yml)]()
+
+### Feedback / 피드백
+- Q&A: 사용법/오류 질문은 여기로 → <Q&A URL>
+- Ideas: API/기능 제안(사용사례 환영) → <Ideas URL>
+- Showcase: 사용 사례 공유 → <Showcase URL>
+- 첫 실행에서 막히면 **First-Run Issue**로 남겨주세요. 
+
+<br>
+</br>
+
 .
