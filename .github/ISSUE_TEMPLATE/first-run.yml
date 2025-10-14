@@ -1,14 +1,14 @@
 name: "First-Run Feedback / 첫 실행 피드백"
 description: Tell us where you got stuck. / 어디서 막혔는지 알려주세요.
-labels: ["first-run", "needs-triage"]
+labels: [ "first-run", "needs-triage" ]
 body:
   - type: input
     id: version
     attributes:
       label: Library version
-      placeholder:  0.2.1
+      placeholder: 0.2.1
 
-  - type: input
+  - type: textarea
     id: version
     attributes:
       label: Application build version
