@@ -70,10 +70,10 @@ dependencies {
 </br>
 
 ### Feedback / 피드백
-- Q&A: 사용법/오류 질문은 여기로 → <Q&A URL>(https://github.com/Rhpark/Simple_UI_XML/discussions/categories/q-a)
-- Ideas: API/기능 제안(사용사례 환영) → <Open Discussion>(https://github.com/Rhpark/Simple_UI_XML/discussions/categories/open-discussion)
-- Showcase: 사용 사례 공유 → <Showcase URL>(https://github.com/Rhpark/Simple_UI_XML/discussions/categories/showcase)
-- 첫 실행에서 막히면 **First-Run Issue**로 남겨주세요. (https://github.com/Rhpark/Simple_UI_XML/issues/new)
+- [Q&A: 사용법/오류 질문](https://github.com/Rhpark/Simple_UI_XML/discussions/categories/q-a)
+- [Open Discussion: API/기능 제안](https://github.com/Rhpark/Simple_UI_XML/discussions/categories/open-discussion)
+- [Showcase: 사용 사례 공유](https://github.com/Rhpark/Simple_UI_XML/discussions/categories/showcase)
+- [첫 실행에서 막히면 **First-Run Issue**로 남겨주세요.](https://github.com/Rhpark/Simple_UI_XML/issues/new)
 
 <br>
 </br>
