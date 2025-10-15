@@ -1,7 +1,8 @@
 package kr.open.library.simple_ui.system_manager.info.network.connectivity
 
+import android.Manifest
 import android.Manifest.permission.ACCESS_NETWORK_STATE
-import android.annotation.SuppressLint
+import android.Manifest.permission.ACCESS_WIFI_STATE
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.LinkProperties
@@ -11,6 +12,7 @@ import android.net.NetworkRequest
 import android.os.Build
 import android.os.Handler
 import androidx.annotation.RequiresApi
+import androidx.annotation.RequiresPermission
 import kr.open.library.simple_ui.extensions.trycatch.safeCatch
 import kr.open.library.simple_ui.logcat.Logx
 import kr.open.library.simple_ui.system_manager.base.BaseSystemService
@@ -18,6 +20,9 @@ import kr.open.library.simple_ui.system_manager.controller.wifi.WifiController
 import kr.open.library.simple_ui.system_manager.extensions.getConnectivityManager
 import kr.open.library.simple_ui.system_manager.info.network.connectivity.callback.NetworkStateCallback
 import kr.open.library.simple_ui.system_manager.info.network.connectivity.data.NetworkCapabilitiesData
+import kr.open.library.simple_ui.system_manager.info.network.connectivity.data.NetworkLinkPropertiesData
+import java.net.NetworkInterface
+import java.util.Collections
 
 /**
  * NetworkConnectivityInfo - 순수 네트워크 연결성 관리 클래스
@@ -60,9 +65,10 @@ import kr.open.library.simple_ui.system_manager.info.network.connectivity.data.N
  * )
  * ```
  */
-@SuppressLint("MissingPermission")
-public class NetworkConnectivityInfo(context: Context) :
-    BaseSystemService(context, listOf(ACCESS_NETWORK_STATE)) {
+public class NetworkConnectivityInfo(context: Context) : BaseSystemService(
+    context,
+    listOf(ACCESS_NETWORK_STATE, ACCESS_WIFI_STATE)
+) {
 
     // =================================================
     // Core System Services
@@ -106,11 +112,13 @@ public class NetworkConnectivityInfo(context: Context) :
      * 
      * @return Boolean - 네트워크가 연결되어 있으면 true
      */
-    public fun isNetworkConnected(): Boolean = safeCatch(defaultValue = false) {
+    @RequiresPermission(ACCESS_NETWORK_STATE)
+    public fun isNetworkConnected(): Boolean = safeCatch(false) {
         val caps = getNetworkCapabilities()
         val linkProperties = getLinkProperties()
         (caps != null) && (linkProperties != null)
     }
+
 
     // =================================================
     // Network Capabilities / 네트워크 능력
@@ -122,8 +130,8 @@ public class NetworkConnectivityInfo(context: Context) :
      * 
      * @return NetworkCapabilities? - 현재 활성 네트워크의 능력 또는 null
      */
-    
-    public fun getNetworkCapabilities(): NetworkCapabilities? = safeCatch(null) {
+    @RequiresPermission(ACCESS_NETWORK_STATE)
+    public fun getNetworkCapabilities(): NetworkCapabilities? = safeCatch(defaultValue = null) {
         connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
     }
 
@@ -133,8 +141,8 @@ public class NetworkConnectivityInfo(context: Context) :
      * 
      * @return LinkProperties? - 현재 활성 네트워크의 링크 속성 또는 null
      */
-    
-    public fun getLinkProperties(): LinkProperties? = safeCatch(null) {
+    @RequiresPermission(ACCESS_NETWORK_STATE)
+    public fun getLinkProperties(): LinkProperties? = safeCatch(defaultValue = null) {
         connectivityManager.getLinkProperties(connectivityManager.activeNetwork)
     }
 
@@ -146,7 +154,7 @@ public class NetworkConnectivityInfo(context: Context) :
      * WiFi 연결 여부 확인
      * Check if connected via WiFi
      */
-    
+    @RequiresPermission(ACCESS_NETWORK_STATE)
     public fun isConnectedWifi(): Boolean = 
         getNetworkCapabilities()?.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ?: false
 
@@ -154,7 +162,7 @@ public class NetworkConnectivityInfo(context: Context) :
      * 모바일 네트워크 연결 여부 확인
      * Check if connected via mobile network
      */
-    
+    @RequiresPermission(ACCESS_NETWORK_STATE)
     public fun isConnectedMobile(): Boolean = 
         getNetworkCapabilities()?.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ?: false
 
@@ -162,7 +170,7 @@ public class NetworkConnectivityInfo(context: Context) :
      * VPN 연결 여부 확인
      * Check if connected via VPN
      */
-    
+    @RequiresPermission(ACCESS_NETWORK_STATE)
     public fun isConnectedVPN(): Boolean = 
         getNetworkCapabilities()?.hasTransport(NetworkCapabilities.TRANSPORT_VPN) ?: false
 
@@ -170,7 +178,7 @@ public class NetworkConnectivityInfo(context: Context) :
      * 블루투스 연결 여부 확인
      * Check if connected via Bluetooth
      */
-    
+    @RequiresPermission(ACCESS_NETWORK_STATE)
     public fun isConnectedBluetooth(): Boolean = 
         getNetworkCapabilities()?.hasTransport(NetworkCapabilities.TRANSPORT_BLUETOOTH) ?: false
 
@@ -178,7 +186,7 @@ public class NetworkConnectivityInfo(context: Context) :
      * WiFi Aware 연결 여부 확인
      * Check if connected via WiFi Aware
      */
-    
+    @RequiresPermission(ACCESS_NETWORK_STATE)
     public fun isConnectedWifiAware(): Boolean = 
         getNetworkCapabilities()?.hasTransport(NetworkCapabilities.TRANSPORT_WIFI_AWARE) ?: false
 
@@ -186,7 +194,7 @@ public class NetworkConnectivityInfo(context: Context) :
      * 이더넷 연결 여부 확인
      * Check if connected via Ethernet
      */
-    
+    @RequiresPermission(ACCESS_NETWORK_STATE)
     public fun isConnectedEthernet(): Boolean = 
         getNetworkCapabilities()?.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) ?: false
 
@@ -194,7 +202,7 @@ public class NetworkConnectivityInfo(context: Context) :
      * LowPan 연결 여부 확인
      * Check if connected via LowPan
      */
-    
+    @RequiresPermission(ACCESS_NETWORK_STATE)
     public fun isConnectedLowPan(): Boolean = 
         getNetworkCapabilities()?.hasTransport(NetworkCapabilities.TRANSPORT_LOWPAN) ?: false
 
@@ -202,7 +210,7 @@ public class NetworkConnectivityInfo(context: Context) :
      * USB 연결 여부 확인 (API 31+)
      * Check if connected via USB (API 31+)
      */
-    
+    @RequiresPermission(ACCESS_NETWORK_STATE)
     @RequiresApi(Build.VERSION_CODES.S)
     public fun isConnectedUSB(): Boolean = 
         getNetworkCapabilities()?.hasTransport(NetworkCapabilities.TRANSPORT_USB) ?: false
@@ -215,6 +223,7 @@ public class NetworkConnectivityInfo(context: Context) :
      * WiFi 활성화 여부 확인
      * Check if WiFi is enabled
      */
+    @RequiresPermission(Manifest.permission.ACCESS_WIFI_STATE)
     public fun isWifiEnabled(): Boolean = wifiController.isWifiEnabled()
 
     // =================================================
@@ -234,7 +243,7 @@ public class NetworkConnectivityInfo(context: Context) :
      * @param onLinkPropertiesChanged 링크 속성 변경 시 호출
      * @param onBlockedStatusChanged 차단 상태 변경 시 호출
      */
-    
+    @RequiresPermission(ACCESS_NETWORK_STATE)
     public fun registerNetworkCallback(
         handler: Handler? = null,
         onNetworkAvailable: ((Network) -> Unit)? = null,
@@ -242,7 +251,7 @@ public class NetworkConnectivityInfo(context: Context) :
         onNetworkLost: ((Network) -> Unit)? = null,
         onUnavailable: (() -> Unit)? = null,
         onNetworkCapabilitiesChanged: ((Network, NetworkCapabilitiesData) -> Unit)? = null,
-        onLinkPropertiesChanged: ((Network, kr.open.library.simple_ui.system_manager.info.network.connectivity.data.NetworkLinkPropertiesData) -> Unit)? = null,
+        onLinkPropertiesChanged: ((Network, NetworkLinkPropertiesData) -> Unit)? = null,
         onBlockedStatusChanged: ((Network, Boolean) -> Unit)? = null,
     ) {
         unregisterNetworkCallback()
@@ -272,7 +281,7 @@ public class NetworkConnectivityInfo(context: Context) :
      * @param onLinkPropertiesChanged 링크 속성 변경 시 호출
      * @param onBlockedStatusChanged 차단 상태 변경 시 호출
      */
-    
+    @RequiresPermission(ACCESS_NETWORK_STATE)
     public fun registerDefaultNetworkCallback(
         handler: Handler? = null,
         onNetworkAvailable: ((Network) -> Unit)? = null,
@@ -280,7 +289,7 @@ public class NetworkConnectivityInfo(context: Context) :
         onNetworkLost: ((Network) -> Unit)? = null,
         onUnavailable: (() -> Unit)? = null,
         onNetworkCapabilitiesChanged: ((Network, NetworkCapabilitiesData) -> Unit)? = null,
-        onLinkPropertiesChanged: ((Network, kr.open.library.simple_ui.system_manager.info.network.connectivity.data.NetworkLinkPropertiesData) -> Unit)? = null,
+        onLinkPropertiesChanged: ((Network, NetworkLinkPropertiesData) -> Unit)? = null,
         onBlockedStatusChanged: ((Network, Boolean) -> Unit)? = null,
     ) {
         unregisterDefaultNetworkCallback()
@@ -327,7 +336,7 @@ public class NetworkConnectivityInfo(context: Context) :
      * 네트워크 연결 상태 요약 정보 반환
      * Get network connectivity summary
      */
-    
+    @RequiresPermission(allOf = [ACCESS_NETWORK_STATE, ACCESS_WIFI_STATE])
     public fun getNetworkConnectivitySummary(): NetworkConnectivitySummary {
         return NetworkConnectivitySummary(
             isNetworkConnected = isNetworkConnected(),
@@ -373,5 +382,44 @@ public class NetworkConnectivityInfo(context: Context) :
         } finally {
             super.onDestroy()
         }
+    }
+
+    /**
+     * 네트워크 타입별 IP 주소 가져오기
+     *
+     * 사용 법
+     *
+     * getIPAddressByNetworkType(NetworkCapabilities.TRANSPORT_ETHERNET)
+     * getIPAddressByNetworkType(NetworkCapabilities.TRANSPORT_WIFI)
+     * getIPAddressByNetworkType(NetworkCapabilities.TRANSPORT_CELLULAR)
+     */
+    @RequiresPermission(ACCESS_NETWORK_STATE)
+    fun getIPAddressByNetworkType(type:Int): String? {
+        val network = connectivityManager.activeNetwork
+        val capabilities = connectivityManager.getNetworkCapabilities(network)
+
+        capabilities?.let {
+            return if(it.hasTransport(type)) {
+                try {
+                    val interfaces = Collections.list(NetworkInterface.getNetworkInterfaces())
+                    for (intf in interfaces) {
+                        val addrs = Collections.list(intf.inetAddresses)
+                        for (addr in addrs) {
+                            if (!addr.isLoopbackAddress) {
+                                val hostAddress = addr.hostAddress
+                                // IPv4 주소만 반환
+                                val isIPv4 = hostAddress?.indexOf(':') ?: -1 < 0
+                                if (isIPv4) {
+                                    return hostAddress
+                                }
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+                return null
+            } else null
+        }?: return null
     }
 }
