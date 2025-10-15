@@ -33,7 +33,7 @@
 </br>
 
 ## Logx 출력 예시
-![logx_example.gif](example%2Flogx_example.gif)
+![logx.gif](example_gif%2Flogx.gif)
 
 <br>
 </br>

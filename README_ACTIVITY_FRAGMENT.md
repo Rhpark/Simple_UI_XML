@@ -8,11 +8,11 @@
 
 ## 🎬 사용 예제
 
-### Activity 초기 설정
+### BaseBindingActivity 초기 설정
 ![mvvm_activity_init_example.gif](example%2Fmvvm_activity_init_example.gif)
 
-### Activity 초기 사용
-![mvvm_activity_vm_init_2_example.gif](example%2Fmvvm_activity_vm_init_2_example.gif)
+## BaseActivity 초기 설정
+![baseActivity.gif](example_gif%2FbaseActivity.gif)
 
 <br>
 </br>

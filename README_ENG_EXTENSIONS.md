@@ -332,7 +332,7 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
                 .removeStrikeThrough()
         }
 
-        // Chaining example!
+        // Chaining example_gif!
         binding.tvSampleText.bold().underline()
     }
 }

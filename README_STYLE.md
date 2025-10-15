@@ -1,6 +1,6 @@
 # 📦 Simple Style vs 순수 Android - 완벽 비교 가이드
 
-
+![xml_style.png](example_gif%2Fxml_style.png)
 
 > **"더 간단한 Layout Style XML로!"** 순수 XML 대비  Style이 주는 체감 차이를 한눈에 확인하세요.
 

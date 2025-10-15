@@ -40,7 +40,7 @@
 
         <kr.open.library.simple_ui.presenter.ui.view.recyclerview.RecyclerScrollStateView
             android:id="@+id/rcvPermission"
-            style="@style/RecyclerView.MatchWeight.LinearLayoutManager" />
+            style="@style/RecyclerView.MatchWeight.LinearLayoutManager.Vertical" />
 
     </LinearLayout>
 </layout>
