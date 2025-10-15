@@ -684,23 +684,6 @@ class PermissionsActivity : BaseBindingActivity<ActivityPermissionsBinding>(
 <br>
 </br>
 
-### 🎯 지원하는 특수 권한
-
-Simple UI는 다음 특수 권한을 **자동으로** 처리합니다:
-
-| 특수 권한 | 설명 |
-|:--|:--|
-| **SYSTEM_ALERT_WINDOW** | 다른 앱 위에 그리기 권한 |
-| **WRITE_SETTINGS** | 시스템 설정 변경 권한 |
-| **MANAGE_EXTERNAL_STORAGE** | 모든 파일 액세스 권한 (Android 11+) |
-| **REQUEST_INSTALL_PACKAGES** | 알 수 없는 출처 앱 설치 권한 |
-| **SCHEDULE_EXACT_ALARM** | 정확한 알람 설정 권한 (Android 12+) |
-
-> **참고:** 위 특수 권한들은 일반 권한과 함께 요청해도 자동으로 구분 처리됩니다!
-
-<br>
-</br>
-
 ## 🎨 넷째: SystemBars 제어 (RootActivity)
 
 Simple UI의 **RootActivity**는 StatusBar와 NavigationBar를 쉽게 제어할 수 있는 기능을 제공합니다.
