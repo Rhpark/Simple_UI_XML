@@ -209,7 +209,7 @@ class SettingsActivity : AppCompatActivity() {
     }
 }
 ```
-**문제점:** 반복적인 setContentView, findViewById 보일러플레이트
+**문제점:** 반복적인 setContentView, 권한요청/승인 복잡
 </details>
 
 <details>
@@ -303,7 +303,7 @@ class SettingsFragment : Fragment() {
     }
 }
 ```
-**문제점:** 수동 inflate, findViewById 보일러플레이트
+**문제점:** 수동 inflate,  권한요청/승인 복잡
 </details>
 
 <details>
