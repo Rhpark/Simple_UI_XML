@@ -3,29 +3,72 @@ name: Android CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]   # KR: 기본 브랜치가 master라면 이렇게 / EN: Use master if that's your default
   pull_request:
-    branches: [ main ]
+    branches: [ master ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      # 0) Gradle Wrapper 무결성 검증 / Validate Gradle Wrapper
+      - name: Validate Gradle Wrapper
+        uses: gradle/wrapper-validation-action@v2
+
+      # 1) 체크아웃 / Checkout
+      - name: Checkout
         uses: actions/checkout@v4
 
+      # 2) JDK 17 / Set up JDK 17
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
-          java-version: '17'
+          distribution: temurin
+          java-version: 17
 
+      # 3) Android SDK (필요 플랫폼/빌드툴 설치) / Install Android SDK components
+      #    ↓ compileSdk / buildTools 에 맞춰 버전만 바꾸세요.
+      - name: Install Android SDK components
+        run: |
+          sdkmanager "platform-tools" \
+                     "platforms;android-34" \
+                     "build-tools;34.0.0"
+
+      # 4) Gradle 캐시/컨피그 / Gradle setup & caching
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Build project
-        run: ./gradlew assembleDebug
+      # 5) 권한 보장(윈도에서 커밋된 경우 대비) / Ensure wrapper is executable
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
 
-      - name: Run unit tests
-        run: ./gradlew test
+      # 6) 빌드 + 테스트 / Build + Unit tests
+      #    KR: 'build'는 assemble + test까지 포함합니다. / EN: 'build' includes assemble and test.
+      - name: Run build
+        run: ./gradlew build --stacktrace
+
+      # 7) 안드로이드 Lint (있다면) / Android Lint (if applicable)
+      - name: Run Android Lint
+        run: ./gradlew lint
+
+      # 8) 리포트/산출물 업로드(선택) / Upload reports & artifacts (optional)
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: |
+            **/build/reports/tests/**
+            **/build/test-results/**
+          if-no-files-found: ignore
+
+      - name: Upload APK/AAR (optional)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: outputs
+          path: |
+            **/build/outputs/apk/**
+            **/build/outputs/aar/**
+          if-no-files-found: ignore
