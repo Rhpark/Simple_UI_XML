@@ -1,18 +1,11 @@
 # 📱 Simple UI Activity & Fragment - 완벽 가이드
 
-
-> **"Activity/Fragment 초기화를 3줄로 끝내자!"** 기존 순수 Android 개발 대비 Simple UI가 주는 체감 차이를 한눈에 확인하세요.
-
-<br>
-</br>
-
-## 🎬 사용 예제
-
 ### BaseBindingActivity 초기 설정
-![mvvm_activity_init_example.gif](example%2Fmvvm_activity_init_example.gif)
+![mvvm_activity_init.gif](example_gif%2Fmvvm_activity_init.gif)
 
-## BaseActivity 초기 설정
+### BaseActivity 초기 설정
 ![baseActivity.gif](example_gif%2FbaseActivity.gif)
+> **"Activity/Fragment 초기화를 3줄로 끝내자!"** 기존 순수 Android 개발 대비 Simple UI가 주는 체감 차이를 한눈에 확인하세요.
 
 <br>
 </br>

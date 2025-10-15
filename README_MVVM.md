@@ -1,13 +1,5 @@
 # 📱 Simple UI MVVM 패턴 - 완벽 가이드
 
-
-> **"MVVM 세팅을 10줄로 끝내자!"** 기존 Activity/Fragment + ViewModel 개발 대비 Simple UI가 주는 체감 차이를 한눈에 확인하세요.
-
-<br>
-</br>
-
-## 🎬 사용 예제
-
 ### Activity + ViewModel 초기 설정
 ![mvvm_activity_init.gif](example_gif%2Fmvvm_activity_init.gif)
 
@@ -16,6 +8,8 @@
 
 ### ViewModel 이벤트 시스템
 ![mvvm_vm.png](example_gif%2Fmvvm_vm.png)![mvvm_vm_example.png](example%2Fmvvm_vm_example.png)
+
+> **"MVVM 세팅을 10줄로 끝내자!"** 기존 Activity/Fragment + ViewModel 개발 대비 Simple UI가 주는 체감 차이를 한눈에 확인하세요.
 
 <br>
 </br>
