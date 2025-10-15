@@ -11,7 +11,10 @@ import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 
-public abstract class BaseBindingDialogFragment<BINDING : ViewDataBinding>(@LayoutRes private val layoutRes: Int) :
+public abstract class BaseBindingDialogFragment<BINDING : ViewDataBinding>(
+    @LayoutRes private val layoutRes: Int,
+    private val isAttachToParent: Boolean = false
+) :
     RootDialogFragment() {
 
 
@@ -24,7 +27,7 @@ public abstract class BaseBindingDialogFragment<BINDING : ViewDataBinding>(@Layo
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        binding = DataBindingUtil.inflate(inflater, layoutRes, container, false)
+        binding = DataBindingUtil.inflate(inflater, layoutRes, container, isAttachToParent)
         afterOnCreateView(binding.root, savedInstanceState)
         return binding.root
     }

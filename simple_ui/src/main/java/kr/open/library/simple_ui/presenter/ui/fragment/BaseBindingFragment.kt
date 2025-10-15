@@ -31,7 +31,10 @@ import androidx.lifecycle.ViewModelProvider
  * @param BINDING 뷰 바인딩 클래스의 유형.
  * @param layoutRes 프래그먼트의 레이아웃 리소스 ID.
  */
-public abstract class BaseBindingFragment<BINDING : ViewDataBinding>(@LayoutRes private val layoutRes: Int) : RootFragment() {
+public abstract class BaseBindingFragment<BINDING : ViewDataBinding>(
+    @LayoutRes private val layoutRes: Int,
+    private val isAttachToParent: Boolean = false
+) : RootFragment() {
 
     /**
      * The View Binding object for the fragment.
@@ -43,7 +46,7 @@ public abstract class BaseBindingFragment<BINDING : ViewDataBinding>(@LayoutRes 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        binding = DataBindingUtil.inflate(inflater, layoutRes, container, false)
+        binding = DataBindingUtil.inflate(inflater, layoutRes, container, isAttachToParent)
         afterOnCrateView(binding.root, savedInstanceState)
         return binding.root
     }
