@@ -274,6 +274,7 @@ public open class CommonTelephonyCallback(private val telephonyManager: Telephon
         }
     }
 
+    @SuppressLint("SwitchIntDef")
     @RequiresPermission(allOf = [READ_PHONE_STATE])
     private fun getTelephonyManagerNetworkState():TelephonyNetworkState =  when (telephonyManager.dataNetworkType) {
         TelephonyManager.NETWORK_TYPE_GPRS -> {

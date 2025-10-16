@@ -6,8 +6,10 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
+import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.PRIORITY_LOW
+import kr.open.library.simple_ui.extensions.conditional.checkSdkVersion
 import kr.open.library.simple_ui.logcat.Logx
 import kr.open.library.simple_ui.system_manager.base.BaseSystemService
 import kr.open.library.simple_ui.system_manager.controller.notification.vo.NotificationStyle
@@ -33,8 +35,13 @@ import java.util.concurrent.TimeUnit
  * @param context 컨텍스트
  * @param showType 알림 클릭 시 동작 유형 (Activity, Service, Broadcast)
  */
-public open class SimpleNotificationController(context: Context, private val showType: SimpleNotificationType)
-    : BaseSystemService(context, listOf(POST_NOTIFICATIONS)) {
+public open class SimpleNotificationController(context: Context, private val showType: SimpleNotificationType) :
+    BaseSystemService(
+        context,
+        checkSdkVersion(Build.VERSION_CODES.TIRAMISU,
+            positiveWork = { listOf(POST_NOTIFICATIONS) },
+            negativeWork = { null })
+    ) {
 
     public val notificationManager: NotificationManager by lazy { context.getNotificationManager() }
     

@@ -19,19 +19,22 @@ internal object PermissionConstants {
                 PermissionSpecialType.SYSTEM_ALERT_WINDOW ->  put(it.permission, Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
                 PermissionSpecialType.WRITE_SETTINGS -> put(it.permission, Settings.ACTION_MANAGE_WRITE_SETTINGS)
                 PermissionSpecialType.PACKAGE_USAGE_STATS -> put(it.permission, Settings.ACTION_USAGE_ACCESS_SETTINGS)
-                PermissionSpecialType.MANAGE_EXTERNAL_STORAGE -> {
-                    checkSdkVersion(Build.VERSION_CODES.R) {
-                        put(Manifest.permission.MANAGE_EXTERNAL_STORAGE, Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
-                    }
-                }
                 PermissionSpecialType.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS -> put(it.permission, Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
-                PermissionSpecialType.SCHEDULE_EXACT_ALARM -> {
-                    checkSdkVersion(Build.VERSION_CODES.S) {
-                        put(Manifest.permission.SCHEDULE_EXACT_ALARM, Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
-                    }
-                }
                 PermissionSpecialType.BIND_ACCESSIBILITY_SERVICE -> put(it.permission, Settings.ACTION_ACCESSIBILITY_SETTINGS)
                 PermissionSpecialType.BIND_NOTIFICATION_LISTENER_SERVICE ->  put(it.permission, Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)
+                else -> {
+                    checkSdkVersion(Build.VERSION_CODES.S) {
+                        if(it == PermissionSpecialType.SCHEDULE_EXACT_ALARM) {
+                            put(Manifest.permission.SCHEDULE_EXACT_ALARM, Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
+                        }
+                    }
+
+                    checkSdkVersion(Build.VERSION_CODES.R) {
+                        if(it == PermissionSpecialType.MANAGE_EXTERNAL_STORAGE) {
+                            put(Manifest.permission.MANAGE_EXTERNAL_STORAGE, Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
+                        }
+                    }
+                }
             }
         }
     }
