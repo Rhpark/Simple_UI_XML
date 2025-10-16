@@ -109,7 +109,7 @@ public class SimInfo(context: Context) :
     @SuppressLint("MissingPermission")
     private fun initialization() {
         if (!context.hasPermissions(READ_PHONE_STATE)) {
-            Logx.e("SimInfo: Cannot read uSim Chip!")
+            Logx.e("SimInfo: Cannot read SimInfo!")
             return
         }
         getSubIdFromDefaultUSim()

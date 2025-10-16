@@ -3,6 +3,7 @@ package kr.open.library.simple_ui.system_manager.info.network.telephony
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.Manifest.permission.READ_PHONE_NUMBERS
 import android.Manifest.permission.READ_PHONE_STATE
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import android.os.Handler
@@ -22,6 +23,7 @@ import java.util.concurrent.Executor
 import androidx.core.util.forEach
 import kr.open.library.simple_ui.extensions.conditional.checkSdkVersion
 import kr.open.library.simple_ui.logcat.Logx
+import kr.open.library.simple_ui.permissions.extentions.hasPermissions
 import kr.open.library.simple_ui.system_manager.base.BaseSystemService
 import kr.open.library.simple_ui.system_manager.extensions.getTelephonyManager
 import kr.open.library.simple_ui.system_manager.info.network.telephony.callback.CommonTelephonyCallback
@@ -155,8 +157,12 @@ public class TelephonyInfo(context: Context) :
      * 멀티 SIM 지원 초기화
      * Initialize multi-SIM support
      */
-    @RequiresPermission(READ_PHONE_STATE)
+    @SuppressLint("MissingPermission")
     private fun initializeMultiSimSupport() {
+        if (!context.hasPermissions(READ_PHONE_STATE)) {
+            Logx.e("Permissions denied. Cannot read TelephonyInfo ")
+            return
+        }
         try {
             updateUSimTelephonyManagerList()
         } catch (e: SecurityException) {
@@ -696,7 +702,7 @@ public class TelephonyInfo(context: Context) :
      */
     @RequiresPermission(READ_PHONE_STATE)
     public fun setOnSignalStrength(simSlotIndex: Int, onSignalStrength: ((currentSignalStrength: CurrentSignalStrength) -> Unit)? = null) {
-        uSimTelephonyCallbackList[simSlotIndex]?.let { it.setOnSignalStrength(onSignalStrength) }
+        uSimTelephonyCallbackList[simSlotIndex]?.setOnSignalStrength(onSignalStrength)
             ?: Logx.w("TelephonyInfo: setOnSignalStrength telephonyCallbackList[$simSlotIndex] is null")
     }
     
@@ -706,7 +712,7 @@ public class TelephonyInfo(context: Context) :
      */
     @RequiresPermission(READ_PHONE_STATE)
     public fun setOnServiceState(simSlotIndex: Int, onServiceState: ((currentServiceState: CurrentServiceState) -> Unit)? = null) {
-        uSimTelephonyCallbackList[simSlotIndex]?.let { it.setOnServiceState(onServiceState) }
+        uSimTelephonyCallbackList[simSlotIndex]?.setOnServiceState(onServiceState)
             ?: Logx.w("TelephonyInfo: setOnServiceState telephonyCallbackList[$simSlotIndex] is null")
     }
     
@@ -716,7 +722,7 @@ public class TelephonyInfo(context: Context) :
      */
     @RequiresPermission(READ_PHONE_STATE)
     public fun setOnActiveDataSubId(simSlotIndex: Int, onActiveDataSubId: ((subId: Int) -> Unit)? = null) {
-        uSimTelephonyCallbackList[simSlotIndex]?.let { it.setOnActiveDataSubId(onActiveDataSubId) }
+        uSimTelephonyCallbackList[simSlotIndex]?.setOnActiveDataSubId(onActiveDataSubId)
             ?: Logx.w("TelephonyInfo: setOnActiveDataSubId telephonyCallbackList[$simSlotIndex] is null")
     }
     
@@ -726,7 +732,7 @@ public class TelephonyInfo(context: Context) :
      */
     @RequiresPermission(READ_PHONE_STATE)
     public fun setOnDataConnectionState(simSlotIndex: Int, onDataConnectionState: ((state: Int, networkType: Int) -> Unit)? = null) {
-        uSimTelephonyCallbackList[simSlotIndex]?.let { it.setOnDataConnectionState(onDataConnectionState) }
+        uSimTelephonyCallbackList[simSlotIndex]?.setOnDataConnectionState(onDataConnectionState)
             ?: Logx.w("TelephonyInfo: setOnDataConnectionState telephonyCallbackList[$simSlotIndex] is null")
     }
     
@@ -736,7 +742,7 @@ public class TelephonyInfo(context: Context) :
      */
     @RequiresPermission(READ_PHONE_STATE)
     public fun setOnCellInfo(simSlotIndex: Int, onCellInfo: ((currentCellInfo: CurrentCellInfo) -> Unit)? = null) {
-        uSimTelephonyCallbackList[simSlotIndex]?.let { it.setOnCellInfo(onCellInfo) }
+        uSimTelephonyCallbackList[simSlotIndex]?.setOnCellInfo(onCellInfo)
             ?: Logx.w("TelephonyInfo: setOnCellInfo telephonyCallbackList[$simSlotIndex] is null")
     }
     
@@ -746,7 +752,7 @@ public class TelephonyInfo(context: Context) :
      */
     @RequiresPermission(READ_PHONE_STATE)
     public fun setOnCallState(simSlotIndex: Int, onCallState: ((callState: Int, phoneNumber: String?) -> Unit)? = null) {
-        uSimTelephonyCallbackList[simSlotIndex]?.let { it.setOnCallState(onCallState) }
+        uSimTelephonyCallbackList[simSlotIndex]?.setOnCallState(onCallState)
             ?: Logx.w("TelephonyInfo: setOnCallState telephonyCallbackList[$simSlotIndex] is null")
     }
     
@@ -756,7 +762,7 @@ public class TelephonyInfo(context: Context) :
      */
     @RequiresPermission(READ_PHONE_STATE)
     public fun setOnDisplayState(simSlotIndex: Int, onDisplay: ((telephonyDisplayInfo: TelephonyDisplayInfo) -> Unit)? = null) {
-        uSimTelephonyCallbackList[simSlotIndex]?.let { it.setOnDisplay(onDisplay) }
+        uSimTelephonyCallbackList[simSlotIndex]?.setOnDisplay(onDisplay)
             ?: Logx.w("TelephonyInfo: setOnDisplayState telephonyCallbackList[$simSlotIndex] is null")
     }
     
@@ -765,7 +771,7 @@ public class TelephonyInfo(context: Context) :
      * Set telephony network type callback
      */
     public fun setOnTelephonyNetworkType(simSlotIndex: Int, onTelephonyNetworkType: ((telephonyNetworkState: TelephonyNetworkState) -> Unit)? = null) {
-        uSimTelephonyCallbackList[simSlotIndex]?.let { it.setOnTelephonyNetworkType(onTelephonyNetworkType) }
+        uSimTelephonyCallbackList[simSlotIndex]?.setOnTelephonyNetworkType(onTelephonyNetworkType)
             ?: Logx.w("TelephonyInfo: setOnTelephonyNetworkType telephonyCallbackList[$simSlotIndex] is null")
     }
     
