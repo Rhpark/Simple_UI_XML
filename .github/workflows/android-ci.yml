@@ -49,7 +49,7 @@ jobs: # CI에서 수행할 작업을 정의한다.
       # Lint는 보고서만 남기고 일단 실패로 간주하지 않도록(임시)
       - name: Android Lint (non-blocking)
         run: ./gradlew lint
-        continue-on-error: true
+        # continue-on-error: true
 
       - name: Upload reports
         if: always()
