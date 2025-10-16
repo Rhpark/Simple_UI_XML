@@ -2,12 +2,15 @@
 name: Android CI
 
 on:
-  push:        { branches: [ master ] }
-  pull_request:{ branches: [ master ] }
+  push:
+    branches: [ master ]      # 기본 브랜치가 master이면 그대로, main이면 main으로 변경
+  pull_request:
+    branches: [ master ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -21,7 +24,7 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      # ✅ 올바른 입력: packages 로 SDK 설치
+      # Android SDK 설치 — 이 액션은 'packages'만 받습니다.
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
         with:
@@ -30,17 +33,17 @@ jobs:
             build-tools;34.0.0
             platform-tools
 
-      - name: Setup Gradle
+      - name: Setup Gradle (cache)
         uses: gradle/actions/setup-gradle@v4
 
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
-      # 빌드만 먼저 (lint는 아래에서 별도 실행)
+      # assemble+test를 분리하면 원인 파악이 쉽습니다.
       - name: Assemble
         run: ./gradlew assemble --stacktrace
 
-      # Lint는 보고서만 남기고 실패로 처리하지 않기(임시)
+      # Lint는 보고서만 남기고 일단 실패로 간주하지 않도록(임시)
       - name: Android Lint (non-blocking)
         run: ./gradlew lint
         continue-on-error: true

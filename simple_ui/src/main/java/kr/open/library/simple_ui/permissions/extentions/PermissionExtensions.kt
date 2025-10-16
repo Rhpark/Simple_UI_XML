@@ -1,8 +1,8 @@
 package kr.open.library.simple_ui.permissions.extentions
 
 import android.Manifest
-import android.app.AppOpsManager
 import android.app.AlarmManager
+import android.app.AppOpsManager
 import android.content.Context
 import android.content.pm.PackageManager
 import android.content.pm.PermissionInfo
@@ -11,11 +11,14 @@ import android.os.Environment
 import android.os.PowerManager
 import android.os.Process
 import android.provider.Settings
-import androidx.core.content.ContextCompat
+import androidx.annotation.RequiresPermission
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
+import androidx.core.content.PermissionChecker.PermissionResult
 import kr.open.library.simple_ui.extensions.conditional.*
 import kr.open.library.simple_ui.extensions.trycatch.safeCatch
 import kr.open.library.simple_ui.permissions.vo.PermissionSpecialType
+
 
 
 public inline fun Context.hasPermission(permission: String): Boolean =

@@ -3,6 +3,7 @@ package kr.open.library.simple_ui.system_manager.info.network.sim
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.Manifest.permission.READ_PHONE_NUMBERS
 import android.Manifest.permission.READ_PHONE_STATE
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import android.telephony.SubscriptionInfo
@@ -105,14 +106,14 @@ public class SimInfo(context: Context) :
         initialization()
     }
 
-    @RequiresPermission(READ_PHONE_STATE)
+    @SuppressLint("MissingPermission")
     private fun initialization() {
         if (!context.hasPermissions(READ_PHONE_STATE)) {
             Logx.e("SimInfo: Cannot read uSim Chip!")
-        } else {
-            getSubIdFromDefaultUSim()
-            updateUSimTelephonyManagerList()
+            return
         }
+        getSubIdFromDefaultUSim()
+        updateUSimTelephonyManagerList()
     }
 
     // =================================================
