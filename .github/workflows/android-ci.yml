@@ -24,14 +24,15 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      # Android SDK 설치 — 이 액션은 'packages'만 받습니다.
-      - name: Set up Android SDK
+      # Android SDK 설치 (기본 설정만)
+      - name: Set up Android SDK (base)
         uses: android-actions/setup-android@v3
-        with:
-          packages: |
-            platforms;android-35
-            build-tools;35.0.0
-            platform-tools
+
+      - name: Accept SDK licenses
+        run: yes | sdkmanager --licenses
+
+      - name: Install SDK packages
+        run: sdkmanager "platforms;android-35" "build-tools;35.0.0" "platform-tools"
 
       - name: Setup Gradle (cache)
         uses: gradle/actions/setup-gradle@v4
