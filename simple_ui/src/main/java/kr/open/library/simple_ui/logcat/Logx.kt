@@ -1,5 +1,6 @@
 package kr.open.library.simple_ui.logcat
 
+import android.annotation.SuppressLint
 import android.content.Context
 import kr.open.library.simple_ui.logcat.config.LogxConfig
 import kr.open.library.simple_ui.logcat.config.LogxConfigManager
@@ -35,6 +36,8 @@ object Logx : ILogx {
     public const val DEFAULT_TAG = ""
 
     public val configManager = LogxConfigManager()
+
+    @SuppressLint("StaticFieldLeak")
     public var logWriter = LogxWriter(configManager.config)
 
     init {

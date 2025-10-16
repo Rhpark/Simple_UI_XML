@@ -14,6 +14,7 @@ import android.telephony.SubscriptionManager
 import android.telephony.TelephonyDisplayInfo
 import android.telephony.TelephonyManager
 import android.util.SparseArray
+import android.util.SparseBooleanArray
 import androidx.annotation.RequiresApi
 import androidx.annotation.RequiresPermission
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,6 +22,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import java.util.concurrent.Executor
 import androidx.core.util.forEach
+import androidx.core.util.set
 import kr.open.library.simple_ui.extensions.conditional.checkSdkVersion
 import kr.open.library.simple_ui.logcat.Logx
 import kr.open.library.simple_ui.permissions.extentions.hasPermissions
@@ -128,7 +130,8 @@ public class TelephonyInfo(context: Context) :
      * 슬롯별 콜백 등록 상태
      * Per-slot callback registration status
      */
-    private val isRegistered = SparseArray<Boolean>()
+
+    private val isRegistered = SparseBooleanArray()
     
     // =================================================
     // State Management
@@ -278,6 +281,7 @@ public class TelephonyInfo(context: Context) :
      * Note: This may return null or empty string depending on SIM configuration
      * 참고: SIM 구성에 따라 null이나 빈 문자열을 반환할 수 있습니다.
      */
+    @SuppressLint("HardwareIds")
     @RequiresPermission(anyOf = [READ_PHONE_STATE, READ_PHONE_NUMBERS])
     public fun getPhoneNumber(): String? = tryCatchSystemManager(null) {
         @Suppress("DEPRECATION")
@@ -471,7 +475,7 @@ public class TelephonyInfo(context: Context) :
      * Unregisters telephony callback.
      * telephony 콜백을 해제합니다.
      */
-    @RequiresPermission(READ_PHONE_STATE)
+    @SuppressLint("MissingPermission")
     public fun unregisterCallback(): Boolean = tryCatchSystemManager(false) {
         if (!isCallbackRegistered) {
             Logx.w("TelephonyInfo: No callback registered")
@@ -780,18 +784,18 @@ public class TelephonyInfo(context: Context) :
      * Check callback registration status
      */
     public fun isRegistered(simSlotIndex: Int): Boolean = isRegistered[simSlotIndex] ?: false
-    
+
     // =================================================
     // Cleanup / 정리
     // =================================================
-    
+
     override fun onDestroy() {
         try {
             // 기본 콜백 해제
             if (isCallbackRegistered) {
                 unregisterCallback()
             }
-            
+
             // 멀티 SIM 콜백들 해제
             uSimTelephonyCallbackList.forEach { key: Int, value: CommonTelephonyCallback ->
                 checkSdkVersion(Build.VERSION_CODES.S) {
@@ -799,7 +803,7 @@ public class TelephonyInfo(context: Context) :
                     catch (e: Exception) { Logx.w("TelephonyInfo: Error unregistering callback for slot $key", e) }
                 }
             }
-            
+
             Logx.d("TelephonyInfo destroyed")
         } catch (e: Exception) {
             Logx.e("Error during TelephonyInfo cleanup: ${e.message}")

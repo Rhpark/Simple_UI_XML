@@ -1,6 +1,7 @@
 package kr.open.library.simple_ui.system_manager.controller.alarm.vo
 
 import android.net.Uri
+import java.util.Locale
 
 /**
  * Constants for alarm functionality throughout the system
@@ -112,7 +113,7 @@ public data class AlarmVo(
      * Formats the alarm time as HH:MM:SS string.
      * 알람 시간을 HH:MM:SS 문자열로 형식화합니다.
      */
-    public fun getFormattedTime(): String = String.format("%02d:%02d:%02d", hour, minute, second)
+    public fun getFormattedTime(): String = String.format(Locale.US,"%02d:%02d:%02d", hour, minute, second)
 
     /**
      * Calculates total seconds since midnight for easy comparison.

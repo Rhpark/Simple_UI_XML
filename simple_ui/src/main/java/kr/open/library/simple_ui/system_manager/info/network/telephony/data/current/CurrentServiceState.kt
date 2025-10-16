@@ -2,6 +2,7 @@ package kr.open.library.simple_ui.system_manager.info.network.telephony.data.cur
 
 import android.os.Build
 import android.telephony.*
+import androidx.annotation.RequiresApi
 import kr.open.library.simple_ui.extensions.conditional.checkSdkVersion
 import kr.open.library.simple_ui.system_manager.info.network.telephony.data.cell.cdma.CellIdentityCdmaData
 import kr.open.library.simple_ui.system_manager.info.network.telephony.data.cell.gsm.CellIdentityGsmData
@@ -14,7 +15,7 @@ import kr.open.library.simple_ui.system_manager.info.network.telephony.data.cell
 /**
  * https://developer.android.com/reference/android/telephony/NetworkRegistrationInfo
  */
-//@RequiresApi(Build.VERSION_CODES.R)
+@RequiresApi(Build.VERSION_CODES.R)
 public data class CurrentServiceState(val serviceState: ServiceState?) {
     
     public val cellDataNrList : MutableList<CellIdentityNrData> = mutableListOf()

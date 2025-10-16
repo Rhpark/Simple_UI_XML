@@ -1,5 +1,6 @@
 package kr.open.library.simple_ui.logcat.config
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import android.os.Environment
@@ -23,6 +24,7 @@ object LogxPathUtils {
     /**
      * 안전한 기본 로그 경로 (Context 없을 때 fallback)
      */
+    @SuppressLint("SdCardPath")
     fun getDefaultLogPath(): String {
         return "/data/data/$LOG_DIR_NAME"
     }

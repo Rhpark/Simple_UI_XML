@@ -1,5 +1,6 @@
 package kr.open.library.simple_ui.logcat.runtime
 
+import android.content.Context
 import android.util.Log
 import kr.open.library.simple_ui.logcat.config.LogxConfig
 import kr.open.library.simple_ui.logcat.internal.file_writer.LogxFileWriterFactory
@@ -26,7 +27,7 @@ import kr.open.library.simple_ui.logcat.model.LogxType
  */
 class LogxWriter(
     private var config: LogxConfig,
-    private val context: android.content.Context? = null
+    private val context: Context? = null
 ) {
 
     private val stackTrace by lazy { LogxStackTrace() }

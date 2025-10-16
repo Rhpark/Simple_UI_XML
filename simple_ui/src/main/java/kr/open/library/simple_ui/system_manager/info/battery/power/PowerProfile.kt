@@ -1,5 +1,6 @@
 package kr.open.library.simple_ui.system_manager.info.battery.power
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.BatteryManager
 import android.os.Build
@@ -31,6 +32,7 @@ import java.lang.reflect.Method
  *
  * @see PowerProfileVO for available power metrics
  */
+@SuppressLint("PrivateApi")
 public class PowerProfile(private val context: Context) {
 
     private val classNamePowerProfile: String = CLASS_NAME_POWER_PROFILE
@@ -59,9 +61,7 @@ public class PowerProfile(private val context: Context) {
     // Lazy initialization to prevent app crash on init failure
     // 초기화 실패 시 앱 크래시를 방지하기 위한 지연 초기화
     private val powerProfileClass: Class<*>? by lazy {
-        safeCatch(defaultValue = null) {
-            Class.forName(classNamePowerProfile)
-        }
+        safeCatch(defaultValue = null) { Class.forName(classNamePowerProfile) }
     }
     
     private val getAveragePowerMethod: Method? by lazy {

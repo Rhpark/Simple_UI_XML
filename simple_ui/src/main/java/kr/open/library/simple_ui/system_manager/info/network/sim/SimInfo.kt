@@ -345,6 +345,7 @@ public class SimInfo(context: Context) :
      * 기본 SIM의 전화번호 반환
      * Get phone number from default SIM
      */
+    @SuppressLint("HardwareIds")
     @RequiresPermission(anyOf = [READ_PHONE_STATE, READ_PHONE_NUMBERS])
     public fun getPhoneNumberFromDefaultUSim(): String? =
         telephonyManager?.line1Number // Required SDK Version 1 ~ 33
@@ -354,6 +355,7 @@ public class SimInfo(context: Context) :
      * 특정 SIM 슬롯의 전화번호 반환
      * Get phone number for specific SIM slot
      */
+    @SuppressLint("HardwareIds")
     @RequiresPermission(anyOf = [READ_PHONE_STATE, READ_PHONE_NUMBERS])
     public fun getPhoneNumber(slotIndex: Int): String? =
         getTelephonyManagerFromUSim(slotIndex)?.line1Number // line1Number Required SDK Version 1 ~ 33

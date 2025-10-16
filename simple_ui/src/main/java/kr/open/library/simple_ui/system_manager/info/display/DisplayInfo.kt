@@ -1,5 +1,6 @@
 package kr.open.library.simple_ui.system_manager.info.display
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Resources
 import android.graphics.Point
@@ -130,6 +131,7 @@ public open class DisplayInfo(context: Context) : BaseSystemService(context, nul
      * @return The status bar height.
      * @return 상태 표시줄 높이.
      */
+    @SuppressLint("InternalInsetResource")
     public fun getStatusBarHeight(): Int = checkSdkVersion(Build.VERSION_CODES.R,
         positiveWork = {
             getCurrentWindowMetrics().windowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars()).top
@@ -148,6 +150,7 @@ public open class DisplayInfo(context: Context) : BaseSystemService(context, nul
      * @return The navigation bar height.
      * @return 탐색 표시줄 높이.
      */
+    @SuppressLint("InternalInsetResource")
     public fun getNavigationBarHeight(): Int = checkSdkVersion(Build.VERSION_CODES.R,
         positiveWork = {
             getCurrentWindowMetrics().windowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars()).bottom

@@ -1,6 +1,7 @@
 package kr.open.library.simple_ui.system_manager.info.network.telephony.callback
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.Manifest.permission.READ_PHONE_STATE
+import android.annotation.SuppressLint
 import android.os.Build
 import android.telephony.CellInfo
 import android.telephony.PhoneStateListener
@@ -192,6 +193,7 @@ public open class CommonTelephonyCallback(private val telephonyManager: Telephon
             onDataConnectionState?.invoke(state, networkType)
         }
 
+        @RequiresApi(Build.VERSION_CODES.R)
         @RequiresPermission(READ_PHONE_STATE)
         public override fun onServiceStateChanged(serviceState: ServiceState?) {
             super.onServiceStateChanged(serviceState)
@@ -271,6 +273,7 @@ public open class CommonTelephonyCallback(private val telephonyManager: Telephon
         }
     }
 
+    @SuppressLint("SwitchIntDef")
     @RequiresPermission(allOf = [READ_PHONE_STATE])
     private fun getTelephonyManagerNetworkState():TelephonyNetworkState =  when (telephonyManager.dataNetworkType) {
         TelephonyManager.NETWORK_TYPE_GPRS -> {
