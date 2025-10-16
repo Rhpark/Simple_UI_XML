@@ -134,6 +134,8 @@ class LogxLifecycleFlushManager private constructor() : DefaultLifecycleObserver
                 Log.w(TAG, "Critical memory situation - immediate flush")
                 flushLogs("CRITICAL")
             }
+
+            else-> {}
         }
     }
 

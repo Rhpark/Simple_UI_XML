@@ -30,15 +30,20 @@ public open class VibratorController(context: Context) : BaseSystemService(conte
      * Legacy vibrator instance for SDK versions below 31 (Android 12).
      * SDK 31 미만 (안드로이드 12 이하) 버전용 레거시 진동 인스턴스입니다.
      */
-    public val vibrator: Vibrator by lazy { context.getVibrator() }
+    private val vibrator: Vibrator by lazy { context.getVibrator() }
 
 
     /**
      * Modern vibrator manager for SDK 31+ (Android 12+) with enhanced capabilities.
      * SDK 31+ (안드로이드 12+) 버전용 향상된 기능을 제공하는 최신 진동 매니저입니다.
      */
-    @get:RequiresApi(Build.VERSION_CODES.S)
-    public val vibratorManager: VibratorManager by lazy { context.getVibratorManager() }
+
+    private val vibratorManager: VibratorManager by lazy {
+        checkSdkVersion(Build.VERSION_CODES.S,
+            positiveWork = { context.getVibratorManager() },
+            negativeWork = { throw Exception("SDK 31 이상이 필요합니다.")}
+        )
+    }
 
     /**
      * Creates a one-shot vibration with specified duration and amplitude.

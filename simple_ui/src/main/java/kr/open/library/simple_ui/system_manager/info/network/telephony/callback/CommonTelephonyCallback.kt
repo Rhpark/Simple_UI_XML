@@ -203,6 +203,7 @@ public open class CommonTelephonyCallback(private val telephonyManager: Telephon
             }
         }
 
+        @RequiresApi(Build.VERSION_CODES.Q)
         public override fun onSignalStrengthsChanged(signalStrength: SignalStrength?) {
             super.onSignalStrengthsChanged(signalStrength)
             signalStrength?.let { data -> onSignalStrength?.invoke(CurrentSignalStrength(data)) }
@@ -273,7 +274,6 @@ public open class CommonTelephonyCallback(private val telephonyManager: Telephon
         }
     }
 
-    @SuppressLint("SwitchIntDef")
     @RequiresPermission(allOf = [READ_PHONE_STATE])
     private fun getTelephonyManagerNetworkState():TelephonyNetworkState =  when (telephonyManager.dataNetworkType) {
         TelephonyManager.NETWORK_TYPE_GPRS -> {

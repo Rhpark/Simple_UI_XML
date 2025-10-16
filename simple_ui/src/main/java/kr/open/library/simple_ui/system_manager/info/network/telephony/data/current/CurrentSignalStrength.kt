@@ -2,18 +2,17 @@ package kr.open.library.simple_ui.system_manager.info.network.telephony.data.cur
 
 import android.os.Build
 import android.telephony.*
+import androidx.annotation.RequiresApi
 import kr.open.library.simple_ui.extensions.conditional.checkSdkVersion
 import kr.open.library.simple_ui.system_manager.info.network.telephony.data.cell.cdma.CellSignalStrengthCdmaData
 import kr.open.library.simple_ui.system_manager.info.network.telephony.data.cell.gsm.CellSignalStrengthGsmData
 import kr.open.library.simple_ui.system_manager.info.network.telephony.data.cell.lte.CellSignalStrengthLteData
-import kr.open.library.simple_ui.system_manager.info.network.telephony.data.cell.nr.CellInfoNrData
 import kr.open.library.simple_ui.system_manager.info.network.telephony.data.cell.nr.CellSignalStrengthNrData
-import kr.open.library.simple_ui.system_manager.info.network.telephony.data.cell.tdscdma.CellInfoTdscdmaData
 import kr.open.library.simple_ui.system_manager.info.network.telephony.data.cell.tdscdma.CellSignalStrengthDataTdscdma
 import kr.open.library.simple_ui.system_manager.info.network.telephony.data.cell.wcdma.CellSignalStrengthWcdmaData
 
 
-//@RequiresApi(Build.VERSION_CODES.Q)
+@RequiresApi(Build.VERSION_CODES.Q)
 public data class CurrentSignalStrength(
    public val signalStrength: SignalStrength?,
 ) {

@@ -55,21 +55,63 @@ public data class NetworkCapabilitiesData(public val networkCapabilities: Networ
                 "NOT_CONGESTED"-> NetworkCapabilities.NET_CAPABILITY_NOT_CONGESTED
                 "NOT_SUSPENDED"-> NetworkCapabilities.NET_CAPABILITY_NOT_SUSPENDED
                 "OEM_PAID"->    22 /*NetworkCapabilities.NET_CAPABILITY_OEM_PAID*/
-                "MCX"->     NetworkCapabilities.NET_CAPABILITY_MCX
+                "MCX"->   {
+                    checkSdkVersion(Build.VERSION_CODES.S,
+                        positiveWork = { NetworkCapabilities.NET_CAPABILITY_MCX },
+                        negativeWork = { 23 }
+                    )
+                }
                 "PARTIAL_CONNECTIVITY"->    24 /*NetworkCapabilities.NET_CAPABILITY_PARTIAL_CONNECTIVITY*/
-                "TEMPORARILY_NOT_METERED"-> NetworkCapabilities.NET_CAPABILITY_TEMPORARILY_NOT_METERED
+                "TEMPORARILY_NOT_METERED"-> {
+                    checkSdkVersion(Build.VERSION_CODES.R,
+                        positiveWork = { NetworkCapabilities.NET_CAPABILITY_TEMPORARILY_NOT_METERED },
+                        negativeWork = { 25 }
+                    )
+                }
                 "OEM_PRIVATE"-> 26 /*NetworkCapabilities.NET_CAPABILITY_OEM_PRIVATE*/
                 "VEHICLE_INTERNAL"->    27 /*NetworkCapabilities.NET_CAPABILITY_VEHICLE_INTERNAL*/
                 "NOT_VCN_MANAGED"->     28 /* NetworkCapabilities.NET_CAPABILITY_NOT_VCN_MANAGED */
-                "ENTERPRISE"-> NetworkCapabilities.NET_CAPABILITY_ENTERPRISE
+                "ENTERPRISE"-> {
+                    checkSdkVersion(Build.VERSION_CODES.S,
+                        positiveWork = { NetworkCapabilities.NET_CAPABILITY_ENTERPRISE },
+                        negativeWork = { 29 }
+                    )
+                }
                 "VSIM"->        30 /* NetworkCapabilities.NET_CAPABILITY_VSIM */
                 "BIP"->         31 /* NetworkCapabilities.NET_CAPABILITY_BIP */
-                "HEAD_UNIT"->   NetworkCapabilities.NET_CAPABILITY_HEAD_UNIT
-                "MMTEL"->       NetworkCapabilities.NET_CAPABILITY_MMTEL
-                "PRIORITIZE_LATENCY"->  NetworkCapabilities.NET_CAPABILITY_PRIORITIZE_LATENCY
-                "PRIORITIZE_BANDWIDTH"->    NetworkCapabilities.NET_CAPABILITY_PRIORITIZE_BANDWIDTH
-                "LOCAL_NETWORK"->   NetworkCapabilities.NET_CAPABILITY_LOCAL_NETWORK
-                else -> -1
+                "HEAD_UNIT"->   {
+                    checkSdkVersion(Build.VERSION_CODES.S,
+                        positiveWork = { NetworkCapabilities.NET_CAPABILITY_HEAD_UNIT },
+                        negativeWork = { 32 }
+                    )
+                }
+                "MMTEL"->       {
+                    checkSdkVersion(Build.VERSION_CODES.TIRAMISU,
+                        positiveWork = { NetworkCapabilities.NET_CAPABILITY_MMTEL },
+                        negativeWork = { 33 }
+                    )
+                }
+                "PRIORITIZE_LATENCY"->  {
+                    checkSdkVersion(Build.VERSION_CODES.TIRAMISU,
+                        positiveWork = { NetworkCapabilities.NET_CAPABILITY_PRIORITIZE_LATENCY },
+                        negativeWork = { 34 }
+                    )
+                }
+                "PRIORITIZE_BANDWIDTH"->    {
+                    checkSdkVersion(Build.VERSION_CODES.TIRAMISU,
+                        positiveWork = { NetworkCapabilities.NET_CAPABILITY_PRIORITIZE_BANDWIDTH },
+                        negativeWork = { 35 }
+                    )
+                }
+                "LOCAL_NETWORK"->   {
+                    checkSdkVersion(Build.VERSION_CODES.UPSIDE_DOWN_CAKE,
+                        positiveWork = { NetworkCapabilities.NET_CAPABILITY_LOCAL_NETWORK },
+                        negativeWork = { 36 }
+                    )
+                }
+                else -> {
+                    -1
+                }
             }
             res.add(data)
         }
