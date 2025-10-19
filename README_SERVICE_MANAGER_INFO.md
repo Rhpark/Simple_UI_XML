@@ -560,28 +560,49 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 **System Service Manager Info**는 6가지 핵심 시스템 정보를 제공합니다:
 
 ### **배터리 Battery State Info** - 배터리 상태 정보
-- **실시간 업데이트**: `registerStart(scope)` - StateFlow 기반 자동 업데이트
+- **실시간 업데이트**: `registerStart(scope, updateCycleTime)` - StateFlow 기반 자동 업데이트
+  - `updateCycleTime` - 업데이트 주기 (기본값: 1000ms)
+  - 자동 BroadcastReceiver 등록/해제
 - **용량 정보**: `getCapacity()` - 배터리 잔량 (0~100%)
-- **전류 정보**: `getCurrentAmpere()`, `getCurrentAverageAmpere()` - 순간/평균 전류
-- **충전 상태**: `isCharging()`, `isDischarging()`, `isFull()` - 충전 상태 확인
-- **충전 타입**: `isChargingUsb()`, `isChargingAc()`, `isChargingWireless()` - 충전 방식 확인
-- **배터리 건강**: `isHealthGood()`, `isHealthCold()`, `isHealthDead()` - 배터리 상태 확인
-- **온도/전압**: `getTemperature()`, `getVoltage()` - 배터리 온도 및 전압
+- **전류 정보**: `getCurrentAmpere()`, `getCurrentAverageAmpere()` - 순간/평균 전류 (마이크로암페어)
+- **충전 상태**: `isCharging()`, `isDischarging()`, `isFull()`, `isNotCharging()` - 충전 상태 확인
+- **충전 타입**: `isChargingUsb()`, `isChargingAc()`, `isChargingWireless()`, `isChargingDock()` (API 33+) - 충전 방식 확인
+- **충전 타입 문자열**: `getChargePlugStr()` - 충전 타입 문자열 반환 (USB, AC, WIRELESS, DOCK, UNKNOWN)
+- **배터리 건강**: `isHealthGood()`, `isHealthCold()`, `isHealthDead()`, `isHealthOverVoltage()` - 배터리 상태 확인
+- **건강 상태 문자열**: `getCurrentHealthStr()`, `getHealthStr(healthType)` - 배터리 상태 문자열 변환
+- **온도/전압**: `getTemperature()` - 배터리 온도 (섭씨), `getVoltage()` - 배터리 전압 (볼트)
 - **총 용량**: `getTotalCapacity()` - 배터리 총 용량 (mAh)
-- **BatteryStateEvent**: 12가지 이벤트 타입 (OnCapacity, OnTemperature, OnVoltage 등)
+- **배터리 기술**: `getTechnology()` - 배터리 기술 정보 (Li-ion, Li-poly 등)
+- **수동 제어**:
+  - `updateBatteryState()` - 일회성 배터리 상태 업데이트 트리거
+  - `unRegister()` - 수동 등록 해제 (BroadcastReceiver 및 업데이트 중지)
+- **에러 처리**: `BATTERY_ERROR_VALUE = Integer.MIN_VALUE` - 오류 시 반환값
+- **BatteryStateEvent**: 12가지 이벤트 타입 (OnCapacity, OnTemperature, OnVoltage, OnCurrentAmpere, OnCurrentAverageAmpere, OnChargeStatus, OnChargePlug, OnHealth, OnChargeCounter, OnEnergyCounter, OnPresent, OnTotalCapacity)
 
 <br>
 </br>
 
 ### **위치 Location State Info** - 위치 상태 정보
-- **실시간 업데이트**: `registerStart(scope, provider, minTime, minDistance)` - StateFlow 기반 위치 추적
+- **실시간 업데이트**: `registerStart(coroutineScope, locationProvider, minTimeMs, minDistanceM)` - StateFlow 기반 위치 추적
+  - `coroutineScope` - 코루틴 스코프 (Lifecycle과 연동)
+  - `locationProvider` - 위치 제공자 (GPS_PROVIDER, NETWORK_PROVIDER, PASSIVE_PROVIDER, FUSED_PROVIDER 등)
+  - `minTimeMs` - 최소 업데이트 시간 간격 (밀리초)
+  - `minDistanceM` - 최소 이동 거리 (미터)
+  - 자동 LocationListener 및 BroadcastReceiver 등록/해제
 - **Provider 상태**: `isGpsEnabled()`, `isNetworkEnabled()`, `isPassiveEnabled()`, `isFusedEnabled()` (API 31+)
-- **현재 위치**: `getLocation()` - 마지막으로 알려진 위치
-- **거리 계산**: `calculateDistance(from, to)` - 두 위치 간 거리
-- **방향 계산**: `calculateBearing(from, to)` - 두 위치 간 방향
+- **Provider 상태 확장**:
+  - `isLocationEnabled()` - GPS Provider 활성화 확인 (isGpsEnabled()와 동일)
+  - `isAnyEnabled()` - 모든 Provider 중 하나라도 활성화 확인 (API 31+에서는 Fused 포함)
+- **현재 위치**: `getLocation()` - 마지막으로 알려진 위치 (GPS Provider 우선)
+- **거리 계산**: `calculateDistance(from, to)` - 두 위치 간 거리 (미터)
+- **방향 계산**: `calculateBearing(from, to)` - 두 위치 간 방향 (도)
 - **반경 확인**: `isLocationWithRadius(from, to, radius)` - 특정 반경 내 위치 확인
-- **위치 저장**: `saveApplyLocation()`, `loadLocation()` - SharedPreferences 저장/로드
-- **LocationStateEvent**: 5가지 이벤트 타입 (OnLocationChanged, OnGpsEnabled 등)
+- **위치 저장/로드**:
+  - `saveApplyLocation(location)` - SharedPreferences에 위치 저장 (즉시 적용)
+  - `loadLocation()` - 저장된 위치 로드
+  - `removeLocation()` - 저장된 위치 삭제
+- **수동 제어**: `unregister()` - 위치 업데이트 중지 및 모든 리소스 해제
+- **LocationStateEvent**: 5가지 이벤트 타입 (OnLocationChanged, OnGpsEnabled, OnNetworkEnabled, OnPassiveEnabled, OnFusedEnabled)
 
 <br>
 </br>
@@ -600,14 +621,27 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 ### **SIM 카드 Sim Info** - SIM 카드 정보
 - **기본 정보**: `isDualSim()`, `isSingleSim()`, `isMultiSim()` - SIM 타입 확인
 - **활성 SIM**: `getActiveSimCount()`, `getActiveSimSlotIndexList()` - 활성화된 SIM 정보
+- **읽기 가능 여부**: `isCanReadSimInfo()` - SIM 정보 읽기 가능 여부 확인 (권한 및 초기화 상태)
 - **구독 정보**: `getActiveSubscriptionInfoList()` - 모든 구독 정보 조회
-- **Subscription ID**: `getSubIdFromDefaultUSim()`, `getSubId(slotIndex)` - 구독 ID 조회
-- **MCC/MNC**: `getMccFromDefaultUSimString()`, `getMncFromDefaultUSimString()` - 통신사 코드
+- **Subscription ID**:
+  - `getSubIdFromDefaultUSim()` - 기본 SIM의 구독 ID 조회
+  - `getSubId(slotIndex)` - 특정 SIM 슬롯의 구독 ID 조회
+  - `subIdToSimSlotIndex(currentSubId)` - Subscription ID를 SIM 슬롯 인덱스로 변환
+- **SubscriptionInfo 조회**:
+  - `getActiveSubscriptionInfoSubId(subId)` - 특정 SubID의 SubscriptionInfo 반환
+  - `getActiveSubscriptionInfoSimSlot(slotIndex)` - 특정 SIM 슬롯의 SubscriptionInfo 반환
+  - `getSubscriptionInfoSubIdFromDefaultUSim()` - 기본 SIM의 SubscriptionInfo 반환
+  - `getSubscriptionInfoSimSlotFromDefaultUSim()` - 기본 SIM 슬롯의 SubscriptionInfo 반환
+- **MCC/MNC (기본 SIM)**: `getMccFromDefaultUSimString()`, `getMncFromDefaultUSimString()` - 통신사 코드
+- **MCC/MNC (슬롯별)**: `getMcc(slotIndex)`, `getMnc(slotIndex)` - 특정 슬롯의 통신사 코드
 - **전화번호**: `getPhoneNumberFromDefaultUSim()`, `getPhoneNumber(slotIndex)` - 전화번호 조회
 - **SIM 상태**: `getStatusFromDefaultUSim()`, `getActiveSimStatus(slotIndex)` - SIM 상태 확인
 - **eSIM 지원**: `isESimSupported()`, `isRegisterESim(slotIndex)` - eSIM 확인
 - **표시 정보**: `getDisplayNameFromDefaultUSim()`, `getCountryIsoFromDefaultUSim()` - 표시명, 국가 코드
 - **로밍 상태**: `isNetworkRoamingFromDefaultUSim()` - 로밍 여부 확인
+- **TelephonyManager 관리**:
+  - `updateUSimTelephonyManagerList()` - SIM 슬롯별 TelephonyManager 목록 업데이트
+  - `getTelephonyManagerFromUSim(slotIndex)` - 특정 SIM 슬롯의 TelephonyManager 반환
 
 <br>
 </br>
@@ -615,28 +649,84 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 ### **통신 Telephony Info** - Telephony 정보
 - **통신사 정보**: `getCarrierName()`, `getMobileCountryCode()`, `getMobileNetworkCode()` - 통신사명, MCC/MNC
 - **SIM 상태**: `getSimState()`, `isSimReady()`, `getSimOperatorName()`, `getSimCountryIso()` - SIM 상태 확인
+- **SIM 상태 문자열**: `getSimStateString()` - SIM 상태를 문자열로 변환 (READY, ABSENT, PIN_REQUIRED 등)
 - **전화번호**: `getPhoneNumber()` - 전화번호 조회
-- **네트워크 타입**: `getNetworkType()`, `getDataNetworkType()`, `getNetworkTypeString()` - 네트워크 타입 확인
+- **통화 상태**: `getCallState()` - 통화 상태 확인 (IDLE, RINGING, OFFHOOK)
+- **네트워크 타입**: `getNetworkType()`, `getDataNetworkType()` - 네트워크 타입 확인
+- **네트워크 타입 문자열**: `getNetworkTypeString()` - 20가지 이상 네트워크 타입 문자열 변환
+  - 5G NR, LTE_CA, LTE, HSPA+, HSDPA, UMTS, EDGE, GPRS, CDMA, EVDO, GSM, TD_SCDMA, IWLAN 등
 - **로밍**: `isNetworkRoaming()` - 로밍 상태 확인
 - **신호 강도**: `getCurrentSignalStrength()` - StateFlow 기반 신호 강도
 - **서비스 상태**: `getCurrentServiceState()` - StateFlow 기반 서비스 상태
 - **멀티 SIM**: `getActiveSimCount()`, `getActiveSubscriptionInfoList()` - 멀티 SIM 지원
-- **실시간 콜백**: `registerCallback()` - StateFlow 기반 실시간 업데이트
-- **슬롯별 콜백**: `registerTelephonyCallBack(slotIndex)` - SIM 슬롯별 콜백 (API 31+)
+- **TelephonyManager 조회**: `getTelephonyManagerFromUSim(slotIndex)` - 특정 SIM 슬롯의 TelephonyManager 반환
+- **실시간 콜백 (기본)**: `registerCallback(handler, onSignalStrength, onServiceState, onNetworkState)` - StateFlow 기반 실시간 업데이트
+- **콜백 해제**: `unregisterCallback()` - 등록된 콜백 해제
 - **API 자동 호환**: TelephonyCallback (API 31+) vs PhoneStateListener 자동 분기
+
+**고급 멀티 SIM 슬롯별 콜백 시스템 (API 31+):**
+- **기본 SIM 콜백**: `registerTelephonyCallBackFromDefaultUSim(executor, isGpsOn, ...)` - 기본 SIM에 대한 전체 콜백
+- **슬롯별 콜백**: `registerTelephonyCallBack(simSlotIndex, executor, isGpsOn, ...)` - 특정 SIM 슬롯 전체 콜백
+  - `executor` - 콜백 실행을 위한 Executor
+  - `isGpsOn` - GPS 기반 셀 정보 콜백 활성화 여부 (위치 권한 필요)
+  - `onActiveDataSubId` - 활성 데이터 구독 ID 변경 콜백
+  - `onDataConnectionState` - 데이터 연결 상태 변경 콜백
+  - `onCellInfo` - 셀 타워 정보 변경 콜백 (CurrentCellInfo)
+  - `onSignalStrength` - 신호 강도 변경 콜백 (CurrentSignalStrength)
+  - `onServiceState` - 서비스 상태 변경 콜백 (CurrentServiceState)
+  - `onCallState` - 통화 상태 변경 콜백 (callState, phoneNumber)
+  - `onDisplayInfo` - 디스플레이 정보 변경 콜백 (TelephonyDisplayInfo - 5G 아이콘 등)
+  - `onTelephonyNetworkState` - 통신망 타입 변경 콜백 (TelephonyNetworkState)
+- **슬롯별 콜백 해제**: `unregisterCallBack(simSlotIndex)` - 특정 슬롯의 콜백 해제
+- **콜백 등록 상태 확인**: `isRegistered(simSlotIndex)` - 특정 슬롯의 콜백 등록 여부
+
+**개별 콜백 Setter (등록 후 동적 변경 가능):**
+- `setOnSignalStrength(slotIndex, callback)` - 신호 강도 콜백 설정
+- `setOnServiceState(slotIndex, callback)` - 서비스 상태 콜백 설정
+- `setOnActiveDataSubId(slotIndex, callback)` - 활성 데이터 SubID 콜백 설정
+- `setOnDataConnectionState(slotIndex, callback)` - 데이터 연결 상태 콜백 설정
+- `setOnCellInfo(slotIndex, callback)` - 셀 정보 콜백 설정
+- `setOnCallState(slotIndex, callback)` - 통화 상태 콜백 설정
+- `setOnDisplayState(slotIndex, callback)` - 디스플레이 정보 콜백 설정
+- `setOnTelephonyNetworkType(slotIndex, callback)` - 통신망 타입 콜백 설정
 
 <br>
 </br>
 
 ### **네트워크 Network Connectivity Info** - 네트워크 연결 정보
 - **기본 연결성**: `isNetworkConnected()` - 네트워크 연결 여부
-- **Transport 타입**: `isConnectedWifi()`, `isConnectedMobile()`, `isConnectedVPN()` - 전송 타입별 확인
-- **다양한 Transport**: Bluetooth, WiFi Aware, Ethernet, LowPan, USB (API 31+)
+- **Transport 타입별 연결 확인**:
+  - `isConnectedWifi()` - WiFi 연결 여부
+  - `isConnectedMobile()` - 모바일 데이터 연결 여부
+  - `isConnectedVPN()` - VPN 연결 여부
+  - `isConnectedBluetooth()` - 블루투스 연결 여부
+  - `isConnectedWifiAware()` - WiFi Aware 연결 여부
+  - `isConnectedEthernet()` - 이더넷 연결 여부
+  - `isConnectedLowPan()` - LowPan 연결 여부
+  - `isConnectedUSB()` - USB 연결 여부 (API 31+)
 - **WiFi 상태**: `isWifiEnabled()` - WiFi 활성화 여부
 - **네트워크 능력**: `getNetworkCapabilities()` - NetworkCapabilities 객체 반환
 - **링크 속성**: `getLinkProperties()` - LinkProperties 객체 반환
-- **콜백 관리**: `registerNetworkCallback()`, `registerDefaultNetworkCallback()` - 네트워크 변경 감지
-- **요약 정보**: `getNetworkConnectivitySummary()` - 모든 연결 상태 한 번에 조회
+- **IP 주소 조회**: `getIPAddressByNetworkType(type)` - 네트워크 타입별 IP 주소 조회 (IPv4 전용)
+  - `TRANSPORT_ETHERNET` - 이더넷 IP 주소
+  - `TRANSPORT_WIFI` - WiFi IP 주소
+  - `TRANSPORT_CELLULAR` - 모바일 데이터 IP 주소
+  - Loopback 주소 제외, IPv4만 반환
+  - NetworkInterface 직접 조회
+- **콜백 관리**:
+  - `registerNetworkCallback(handler, ...)` - 일반 네트워크 콜백 등록
+  - `registerDefaultNetworkCallback(handler, ...)` - 기본 네트워크 콜백 등록
+  - `unregisterNetworkCallback()` - 일반 네트워크 콜백 해제
+  - `unregisterDefaultNetworkCallback()` - 기본 네트워크 콜백 해제
+- **콜백 파라미터**:
+  - `onNetworkAvailable` - 네트워크 연결됨
+  - `onNetworkLosing` - 네트워크 끊어질 예정
+  - `onNetworkLost` - 네트워크 끊어짐
+  - `onUnavailable` - 네트워크 사용 불가
+  - `onNetworkCapabilitiesChanged` - 네트워크 능력 변경 (NetworkCapabilitiesData 타입)
+  - `onLinkPropertiesChanged` - 링크 속성 변경 (NetworkLinkPropertiesData 타입)
+  - `onBlockedStatusChanged` - 차단 상태 변경
+- **요약 정보**: `getNetworkConnectivitySummary()` - 모든 연결 상태 한 번에 조회 (NetworkConnectivitySummary 데이터 클래스)
 
 
 <br>

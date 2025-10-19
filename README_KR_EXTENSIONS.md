@@ -93,7 +93,7 @@
 
 #### **🎯 conditional/** - 조건부 실행 Extensions
 - **SDK 체크**: checkSdkVersion(S) { ... }
-- **숫자 비교**: score.ifGreaterThan(80) { ... }
+- **숫자 비교**: score.ifGreaterThan(80), age.ifGreaterThanOrEqual(18), value.ifEquals(100), errorCode.ifNotEquals(0)
 - **Boolean**: isLoggedIn.ifTrue { ... }.ifFalse { ... }
 - **Collection**: list.ifNotEmpty { }.filterIf(condition) { }
 
@@ -109,8 +109,11 @@
 
 #### **📝 string/** - 문자열 검증/가공 Extensions
 - **이메일 검증**: email.isEmailValid()
-- **숫자 검증**: text.isNumeric()
+- **전화번호 검증**: phone.isPhoneNumberValid()
+- **URL 검증**: url.isUrlValid()
+- **숫자/영문 검증**: text.isNumeric(), username.isAlphaNumeric()
 - **공백 제거**: text.removeWhitespace()
+- **HTML 태그 제거**: html.stripHtmlTags()
 
 <br>
 </br>
@@ -122,8 +125,9 @@
 </br>
 
 #### **⚠️ trycatch/** - 예외 처리 Extensions
-- **안전한 실행**: safeCatch(defaultValue) { ... }
-- **자동 로깅**: 예외 발생 시 Logx로 자동 기록
+- **3가지 오버로드**: safeCatch(block), safeCatch(defaultValue, block), safeCatch(block, onCatch)
+- **코루틴 안전**: CancellationException 자동 전파
+- **자동 로깅**: 예외 발생 시 자동 printStackTrace
 
 <br>
 </br>
@@ -652,7 +656,7 @@ kr.open.library.simple_ui.extensions/
 ├─ round_to/       → 숫자 반올림 (roundTo, roundUp, roundDown)
 ├─ conditional/    → 조건부 실행 (SDK 체크, ifTrue, ifGreaterThan)
 ├─ bundle/         → Bundle 타입 안전 접근
-├─ string/         → 문자열 검증 (isEmailValid, isNumeric)
+├─ string/         → 문자열 검증/가공 (isEmailValid, isPhoneNumberValid, isUrlValid, isNumeric, isAlphaNumeric, stripHtmlTags)
 ├─ date/           → 날짜 포맷팅
 ├─ trycatch/       → 예외 처리 (safeCatch)
 ├─ permissions/    → 권한 확인 통합
@@ -817,7 +821,7 @@ val result = checkSdkVersion(Build.VERSION_CODES.S,
 <br>
 </br>
 
-**2. 숫자 조건부 실행 (ifGreaterThan, ifEquals)**
+**2. 숫자 조건부 실행 (ifGreaterThan, ifGreaterThanOrEqual, ifEquals, ifNotEquals)**
 ```kotlin
 // 기존 방식
 val score = 85
@@ -825,9 +829,14 @@ if (score > 80) {
     showCongratulations()
 }
 
-// Simple UI
+// Simple UI - 초과 (>)
 score.ifGreaterThan(80) {
     showCongratulations()
+}
+
+// 이상 (>=)
+age.ifGreaterThanOrEqual(18) {
+    allowAccess()
 }
 
 // 분기 처리
@@ -836,11 +845,25 @@ val grade = score.ifGreaterThan(80,
     negativeWork = { "B" }
 )
 
+val accessLevel = age.ifGreaterThanOrEqual(18,
+    positiveWork = { "Adult" },
+    negativeWork = { "Minor" }
+)
+
 // 같은 값 체크
 value.ifEquals(100) {
     showPerfectScore()
 }
+
+// 다른 값 체크
+errorCode.ifNotEquals(0) {
+    handleError(errorCode)
+}
 ```
+
+**지원하는 숫자 타입:**
+- `ifGreaterThan`, `ifGreaterThanOrEqual`, `ifEquals`: `Int`, `Float`, `Double`, `Short`, `Long`
+- `ifNotEquals`: `Int`, `Float`, `Double`, `Long` (Short 제외)
 
 <br>
 </br>
@@ -957,6 +980,63 @@ val age = editText.textToInt() ?: 0
 val price = editText.textToFloat() ?: 0f
 val distance = editText.textToDouble() ?: 0.0
 ```
+
+<br>
+</br>
+
+#### **TextView Extensions**
+```kotlin
+// 텍스트 추출 헬퍼
+val text = textView.getString()  // TextView.text.toString() 단축
+
+// EditText는 별도 메서드 사용
+val inputText = editText.getTextToString()  // EditText 전용
+
+// 비어있는지 체크 (TextView, EditText 공통)
+if (textView.isTextEmpty()) {
+    textView.text = "기본값"
+}
+
+// Null 또는 Empty 체크 (TextView 전용)
+if (textView.isTextNullOrEmpty()) {
+    hideTextView()
+}
+
+// 타입 변환 (TextView, EditText 공통)
+val count = textView.textToInt() ?: 0
+val ratio = textView.textToFloat() ?: 0f
+val value = textView.textToDouble() ?: 0.0
+
+// 스타일 적용 (체이닝 가능)
+textView.bold()              // 굵게
+textView.italic()            // 기울임
+textView.boldItalic()        // 굵게 + 기울임
+textView.normal()            // 스타일 제거
+
+textView.underline()         // 밑줄
+textView.removeUnderline()   // 밑줄 제거
+
+textView.strikeThrough()     // 취소선
+textView.removeStrikeThrough()  // 취소선 제거
+
+// 색상 설정
+textView.setTextColorRes(R.color.primary)
+
+// 체이닝으로 여러 스타일 동시 적용
+textView.bold().underline().setTextColorRes(R.color.red)
+
+// 커스텀 스타일 블록
+textView.style {
+    bold()
+    underline()
+    setTextColorRes(R.color.accent)
+}
+```
+
+**특징:**
+- TextView와 EditText 모두에서 동작
+- 체이닝 가능한 fluent API
+- `style { }` 블록으로 여러 스타일 동시 적용
 
 <br>
 </br>
@@ -1100,6 +1180,65 @@ rootView.applyWindowInsetsAsPadding(
 viewGroup.forEachChild { child ->
     // 각 자식 View에 작업
 }
+
+// Lifecycle 관련 고급 기능
+// 1. View의 LifecycleOwner 찾기 (ViewTree 또는 Context에서)
+val lifecycleOwner = customView.findHostLifecycleOwner()
+
+// 2. LifecycleObserver 바인딩 (자동 메모리 관리)
+val observer = object : DefaultLifecycleObserver {
+    override fun onResume(owner: LifecycleOwner) {
+        // View가 속한 화면이 Resume될 때
+        startAnimation()
+    }
+
+    override fun onPause(owner: LifecycleOwner) {
+        // View가 속한 화면이 Pause될 때
+        stopAnimation()
+    }
+
+    override fun onDestroy(owner: LifecycleOwner) {
+        // 자동으로 정리됨
+    }
+}
+
+customView.bindLifecycleObserver(observer)
+
+// 3. LifecycleObserver 바인딩 해제 (필요시)
+customView.unbindLifecycleObserver(observer)
+```
+
+**Lifecycle 기능 특징:**
+- **자동 Owner 전환**: View가 다른 화면으로 이동하면 자동으로 새 LifecycleOwner에 바인딩
+- **중복 등록 방지**: 동일한 Observer를 여러 번 등록해도 안전
+- **메모리 누수 방지**: View Tag 시스템으로 자동 관리
+- **Fragment/Activity 감지**: ViewTree 또는 Context에서 LifecycleOwner 자동 추출
+
+**실용 예제:**
+```kotlin
+// 커스텀 View에서 애니메이션 자동 관리
+class AnimatedView(context: Context) : View(context) {
+
+    private val animationObserver = object : DefaultLifecycleObserver {
+        override fun onResume(owner: LifecycleOwner) {
+            startAnimation()  // 화면 보일 때 시작
+        }
+
+        override fun onPause(owner: LifecycleOwner) {
+            pauseAnimation()  // 화면 숨겨질 때 일시정지
+        }
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        bindLifecycleObserver(animationObserver)
+    }
+
+    override fun onDetachedFromWindow() {
+        unbindLifecycleObserver(animationObserver)
+        super.onDetachedFromWindow()
+    }
+}
 ```
 
 **장점:**
@@ -1107,6 +1246,219 @@ viewGroup.forEachChild { child ->
 - 애니메이션 코드 간소화
 - 체이닝 가능한 깔끔한 API
 - 메모리 누수 방지 (View Tag 시스템 활용)
+- Lifecycle 자동 관리로 안전한 리소스 해제
+
+<br>
+</br>
+
+### 📝 string/ 패키지 - 문자열 검증/가공 Extensions
+
+Simple UI는 다양한 문자열 검증 및 가공 Extensions를 제공합니다.
+
+#### **문자열 검증 Extensions**
+```kotlin
+// 이메일 검증 (Android Patterns.EMAIL_ADDRESS 사용)
+val email = "user@example.com"
+if (email.isEmailValid()) {
+    sendEmail(email)
+} else {
+    showError("유효하지 않은 이메일입니다")
+}
+
+// 전화번호 검증 (Android Patterns.PHONE 사용)
+val phone = "+82-10-1234-5678"
+if (phone.isPhoneNumberValid()) {
+    makeCall(phone)
+}
+
+// URL 검증 (Android Patterns.WEB_URL 사용)
+val url = "https://www.example.com"
+if (url.isUrlValid()) {
+    openBrowser(url)
+}
+
+// 숫자만 포함 체크 (0-9)
+val code = "12345"
+if (code.isNumeric()) {
+    processNumericCode(code)
+}
+
+// 영문자+숫자만 포함 체크 (a-z, A-Z, 0-9)
+val username = "User123"
+if (username.isAlphaNumeric()) {
+    createAccount(username)
+}
+```
+
+#### **문자열 가공 Extensions**
+```kotlin
+// 모든 공백 문자 제거 (스페이스, 탭, 개행 등)
+val input = "  Hello  World\n\t"
+val cleaned = input.removeWhitespace()  // "HelloWorld"
+
+// HTML 태그 제거 (기본적인 HTML 파싱)
+val html = "<p>Hello <b>World</b></p>"
+val plainText = html.stripHtmlTags()  // "Hello World"
+
+// 실용 예제: 사용자 입력 정제
+val userInput = " <script>alert('xss')</script> Hello "
+val safe = userInput.stripHtmlTags().trim()  // " Hello "
+```
+
+**장점:**
+- Android Patterns API 기반으로 검증 정확도 향상
+- Precompiled Regex로 성능 최적화
+- `@CheckResult` 어노테이션으로 결과 사용 강제
+- 체이닝 가능한 깔끔한 API
+
+**성능 최적화:**
+```kotlin
+// 내부 구현 - Precompiled Regex 패턴 재사용
+private val WHITESPACE_REGEX = "\\s".toRegex()
+private val HTML_TAG_REGEX = "<[^>]*>".toRegex()
+private val NUMERIC_REGEX = "^[0-9]*$".toRegex()
+private val ALPHANUMERIC_REGEX = "^[a-zA-Z0-9]*$".toRegex()
+
+// 매번 Regex 객체를 생성하지 않고 재사용하여 성능 향상
+```
+
+<br>
+</br>
+
+### ⚠️ trycatch/ 패키지 - 예외 처리 Extensions
+
+Simple UI는 안전한 예외 처리를 위한 3가지 `safeCatch` 오버로드를 제공합니다.
+
+#### **1. safeCatch(block) - Unit 반환형**
+반환값이 필요없는 단순 실행 보호
+```kotlin
+// 기존 방식
+try {
+    riskyOperation()
+} catch (e: Exception) {
+    e.printStackTrace()
+}
+
+// Simple UI
+safeCatch {
+    riskyOperation()
+}
+
+// 실용 예제: 파일 삭제
+safeCatch {
+    file.delete()
+}
+
+// 실용 예제: 리소스 해제
+safeCatch {
+    mediaPlayer.release()
+}
+```
+
+#### **2. safeCatch(defaultValue, block) - 기본값 반환형**
+예외 발생 시 기본값 반환
+```kotlin
+// 기존 방식
+val result = try {
+    parseJson(data)
+} catch (e: Exception) {
+    e.printStackTrace()
+    emptyList()
+}
+
+// Simple UI
+val result = safeCatch(emptyList()) {
+    parseJson(data)
+}
+
+// 실용 예제: 설정 값 읽기
+val timeout = safeCatch(5000) {
+    preferences.getString("timeout", "5000")?.toInt()
+}
+
+// 실용 예제: 네트워크 요청
+val userInfo = safeCatch(UserInfo.EMPTY) {
+    apiClient.getUserInfo()
+}
+```
+
+#### **3. safeCatch(block, onCatch) - 예외 핸들러 반환형**
+예외 객체를 받아서 커스텀 처리 후 값 반환
+```kotlin
+// 기존 방식
+val result = try {
+    database.query(sql)
+} catch (e: Exception) {
+    e.printStackTrace()
+    when (e) {
+        is SQLException -> emptyList()
+        is TimeoutException -> cachedData
+        else -> emptyList()
+    }
+}
+
+// Simple UI
+val result = safeCatch(
+    block = { database.query(sql) },
+    onCatch = { e ->
+        when (e) {
+            is SQLException -> {
+                showError("데이터베이스 오류: ${e.message}")
+                emptyList()
+            }
+            is TimeoutException -> {
+                showWarning("시간 초과, 캐시 데이터 사용")
+                cachedData
+            }
+            else -> emptyList()
+        }
+    }
+)
+
+// 실용 예제: API 오류 코드별 처리
+val response = safeCatch(
+    block = { apiClient.fetchData() },
+    onCatch = { e ->
+        logError("API Error", e)
+        ErrorResponse(message = e.message ?: "Unknown error")
+    }
+)
+```
+
+**안전성 보장:**
+```kotlin
+// 모든 safeCatch는 다음 예외를 자동으로 재전파합니다:
+// 1. CancellationException - 코루틴 취소는 반드시 전파
+// 2. Error (OutOfMemoryError 등) - 시스템 에러는 절대 삼키지 않음
+
+// 내부 구현 예시:
+public inline fun <T> safeCatch(defaultValue: T, block: () -> T): T {
+    return try {
+        block()
+    } catch (e: CancellationException) {
+        throw e  // 코루틴 취소는 반드시 전파
+    } catch (e: Error) {
+        throw e  // OOM 등은 절대 삼키지 않음
+    } catch (e: Exception) {
+        e.printStackTrace()
+        defaultValue
+    }
+}
+```
+
+**장점:**
+- try-catch 보일러플레이트 제거
+- 코루틴 취소 및 시스템 에러 안전하게 처리
+- 자동 예외 로깅 (printStackTrace)
+- 3가지 오버로드로 모든 상황 커버
+- 간결하고 읽기 쉬운 코드
+
+**비교표:**
+| 오버로드 | 사용 시기 | 예외 시 동작 |
+|---------|----------|------------|
+| `safeCatch(block)` | 반환값 불필요 | 예외 무시 (로깅만) |
+| `safeCatch(defaultValue, block)` | 기본값 반환 필요 | defaultValue 반환 |
+| `safeCatch(block, onCatch)` | 예외별 처리 필요 | onCatch 람다 실행 |
 
 <br>
 </br>

@@ -961,23 +961,30 @@ private fun checkWifiBands() {
 **System Service Manager Controller**는 6가지 핵심 시스템 서비스를 제공합니다:
 
 ### **키보드 SoftKeyboard Controller** - 키보드 제어
-- **show()/hide()**: 키보드 표시/숨김
-- **showDelay()/hideDelay()**: 지연 실행 지원 (Coroutine/Runnable)
-- **setSoftInputMode()**: 윈도우 Input Mode 설정
-- **startStylusHandwriting()**: 스타일러스 펜 입력 시작 (API 33+)
+- **show(view, flag)**: 키보드 즉시 표시 (Focus 자동 처리)
+- **hide(view, flag)**: 키보드 즉시 숨김
+- **showDelay(view, delay, flag)**: 지연 후 키보드 표시 (Runnable 기반)
+- **showDelay(view, delay, flag, coroutineScope)**: 지연 후 키보드 표시 (Coroutine 기반)
+- **hideDelay(view, delay, flag)**: 지연 후 키보드 숨김 (Runnable 기반)
+- **hideDelay(view, delay, flag, coroutineScope)**: 지연 후 키보드 숨김 (Coroutine 기반)
+- **setAdjustPan(window)**: 윈도우 Input Mode를 adjustPan으로 설정
+- **setSoftInputMode(window, types)**: 윈도우 Input Mode 커스텀 설정
+- **startStylusHandwriting(view)**: 스타일러스 펜 입력 시작 (API 33+)
+- **startStylusHandwriting(view, delay)**: 지연 후 스타일러스 펜 입력 시작 (API 33+)
+- **편리한 오버로딩**: Runnable/Coroutine 방식 모두 지원
 
 <br>
 </br>
 
 ### **진동 Vibrator Controller** - 진동 제어
-- **vibrate()**: 단순 진동 (duration)
-- **vibratePattern()**: 패턴 진동 (timing array)
-- **createOneShot()**: 단발 진동 (duration + amplitude)
-- **createWaveform()**: 웨이브폼 진동 (커스텀 패턴)
-- **createPredefined()**: 시스템 정의 진동 (CLICK, DOUBLE_CLICK, TICK)
-- **cancel()**: 진동 중지
+- **vibrate(milliseconds)**: 단순 진동 (지속 시간만 지정, 간편 메서드)
+- **vibratePattern(pattern, repeat)**: 패턴 진동 (타이밍 배열만 지정, 간편 메서드)
+- **createOneShot(timer, effect)**: 단발 진동 (duration + amplitude 세밀 제어)
+- **createWaveform(times, amplitudes, repeat)**: 웨이브폼 진동 (커스텀 패턴, 강도 배열)
+- **createPredefined(effectType)**: 시스템 정의 진동 (EFFECT_CLICK, EFFECT_DOUBLE_CLICK, EFFECT_TICK)
+- **cancel()**: 진동 즉시 중지
 - **hasVibrator()**: 진동 지원 여부 확인
-- **SDK 버전 자동 처리**: Vibrator (SDK < 31) 및 VibratorManager (SDK >= 31)
+- **SDK 버전 자동 처리**: Vibrator (SDK < 31) 및 VibratorManager (SDK >= 31) 자동 분기
 
 <br>
 </br>
@@ -994,45 +1001,77 @@ private fun checkWifiBands() {
 </br>
 
 ### **알림 Notification Controller** - 알림 관리
-- **showNotification()**: 알림 표시 (다양한 스타일 지원)
-- **createChannel()**: 알림 채널 생성 및 관리
-- **showProgressNotification()**: 진행률 알림 생성
-- **updateProgress()**: 진행률 업데이트 (0~100%)
-- **completeProgress()**: 진행률 완료 처리
-- **cancelNotification()**: 특정 알림 취소
-- **cancelAll()**: 모든 알림 취소
+- **showNotification(option)**: 알림 표시 (다양한 스타일 지원)
+- **createChannel(channel)**: 알림 채널 생성 및 관리 (NotificationChannel 객체)
+- **createChannel(id, name, importance, description)**: 알림 채널 간편 생성 (파라미터 방식)
+- **showProgressNotification(option)**: 진행률 알림 생성 (0~100%)
+- **updateProgress(id, percent)**: 진행률 실시간 업데이트
+- **completeProgress(id, message)**: 진행률 완료 처리 (진행률 바 제거)
+- **cancelNotification(tag, id)**: 특정 알림 취소
+- **cancelAll()**: 모든 알림 일괄 취소
+- **cleanup()**: 리소스 정리 (Activity/Service 종료 시 필수 호출)
+- **getBuilder(option)**: 커스텀 빌더 직접 접근 (고급 사용자용)
+- **getProgressBuilder(option)**: 진행률 빌더 직접 접근 (고급 사용자용)
 - **다양한 스타일**: DEFAULT, BIG_PICTURE, BIG_TEXT, PROGRESS
-- **자동 채널 관리**: 기본 채널 자동 생성 및 관리
-- **메모리 관리**: 진행률 알림 자동 정리 (30분 후)
+- **자동 채널 관리**: 기본 채널 자동 생성 (최초 사용 시)
+- **메모리 관리**:
+  - Thread-safe ConcurrentHashMap 사용
+  - 진행률 알림 자동 정리 (30분 후 미사용 빌더 제거)
+  - 스케줄러를 통한 주기적 메모리 정리 (5분마다 실행)
 
 <br>
 </br>
 
 ### **WiFi Controller** - WiFi 정보 관리
 - **isWifiEnabled()**: WiFi 활성화 여부 확인
+- **getWifiState()**: WiFi 상태 코드 조회 (DISABLED, ENABLING, ENABLED, DISABLING, UNKNOWN)
+- **setWifiEnabled()**: WiFi 켜기/끄기 (API 29 이하, 그 이상은 deprecated)
 - **getConnectionInfo()**: 현재 WiFi 연결 정보 조회
+- **getDhcpInfo()**: DHCP 정보 조회 (IP, Gateway, DNS 등)
+- **startScan()**: WiFi 스캔 시작
 - **getScanResults()**: WiFi 스캔 결과 조회
-- **getCurrentSsid()**: 현재 연결된 SSID 조회
-- **getCurrentRssi()**: 신호 강도 조회
-- **getCurrentLinkSpeed()**: 링크 속도 조회
+- **getConfiguredNetworks()**: 설정된 네트워크 목록 조회 (API 29 이하)
+- **getCurrentSsid()**: 현재 연결된 SSID 조회 (따옴표 자동 제거)
+- **getCurrentBssid()**: 현재 연결된 BSSID 조회
+- **getCurrentRssi()**: 신호 강도 조회 (dBm)
+- **getCurrentLinkSpeed()**: 링크 속도 조회 (Mbps)
 - **isConnectedWifi()**: WiFi 연결 상태 확인
+- **calculateSignalLevel()**: 신호 강도를 레벨로 변환 (0~numLevels-1)
+- **compareSignalLevel()**: 두 신호 강도 비교 (-1, 0, 1)
 - **is5GHzBandSupported()**: 5GHz 대역 지원 여부
 - **is6GHzBandSupported()**: 6GHz 대역 지원 여부 (API 30+)
-- **reconnect()/disconnect()**: WiFi 재연결/연결 해제
+- **isWpa3SaeSupported()**: WPA3 SAE 지원 여부 (API 30+)
+- **isEnhancedOpenSupported()**: Enhanced Open 지원 여부 (API 29+)
+- **reconnect()**: WiFi 재연결 시도
+- **reassociate()**: WiFi 재결합 시도
+- **disconnect()**: WiFi 연결 해제
 - **getModernNetworkDetails()**: 네트워크 상세 정보 (API 29+)
+  - 연결 상태, 인터넷 여부, 검증 상태
+  - 다운로드/업로드 속도 (Kbps)
+  - 인터페이스명, DNS 서버 목록
 - **SDK 버전 자동 처리**: 구형/신형 API 자동 분기
 
 <br>
 </br>
 
 ### **플로팅 Floating View Controller** - 플로팅 뷰 관리
-- **addFloatingDragView()**: 드래그 가능한 플로팅 뷰 추가
-- **setFloatingFixedView()**: 고정 플로팅 뷰 설정
-- **removeFloatingDragView()**: 드래그 뷰 제거
+- **addFloatingDragView(view)**: 드래그 가능한 플로팅 뷰 추가
+- **setFloatingFixedView(view)**: 고정 플로팅 뷰 설정 (삭제 영역으로 활용 가능)
+- **getFloatingFixedView()**: 현재 설정된 고정 뷰 조회
+- **removeFloatingDragView(view)**: 특정 드래그 뷰 제거
 - **removeFloatingFixedView()**: 고정 뷰 제거
-- **removeAllFloatingView()**: 모든 플로팅 뷰 제거
-- **충돌 감지**: 드래그 뷰와 고정 뷰 간 충돌 자동 감지
-- **Touch 이벤트 자동화**: ACTION_DOWN/MOVE/UP 이벤트 처리
+- **removeAllFloatingView()**: 모든 플로팅 뷰 일괄 제거
+- **updateView(view, params)**: 뷰 레이아웃 실시간 업데이트
+- **충돌 감지 자동화**: 드래그 뷰와 고정 뷰 간 충돌 실시간 감지
+- **Touch 이벤트 자동화**: ACTION_DOWN/MOVE/UP 완전 자동 처리
+- **드래그 경계 처리**: 화면 밖으로 나가지 않도록 자동 보정
+- **FloatingDragView 고급 기능**:
+  - **sfCollisionStateFlow**: StateFlow를 통한 반응형 충돌 상태 구독
+  - **collisionsWhileTouchDown**: 터치 다운 시 충돌 콜백
+  - **collisionsWhileDrag**: 드래그 중 충돌 콜백 (실시간)
+  - **collisionsWhileTouchUp**: 터치 업 시 충돌 콜백
+  - 두 가지 방식 선택 가능: StateFlow 구독 또는 콜백 함수
+- **Lifecycle 연동**: onDestroy() 시 모든 리소스 자동 정리
 
 <br>
 </br>
