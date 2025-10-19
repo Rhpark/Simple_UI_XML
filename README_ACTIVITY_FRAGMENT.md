@@ -867,7 +867,7 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 | **binding** | DataBinding 자동 초기화 및 제공 |
 | **lifecycleOwner 자동 설정** | Activity: onCreate에서, Fragment: onViewCreated에서 |
 | **onCreateView()** | Activity만 - binding 초기화 직후 콜백 |
-| **afterOnCrateView()** | Fragment만 - binding 초기화 직후 콜백 |
+| **afterOnCreateView()** | Fragment만 - binding 초기화 직후 콜백 |
 | **getViewModel()** | ViewModel 간편 생성 메서드 |
 | **eventVmCollect()** | ViewModel 이벤트 구독 전용 메서드 |
 
@@ -986,11 +986,11 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 <br>
 </br>
 
-### 📌 **BaseBindingFragment - afterOnCrateView()**
+### 📌 **BaseBindingFragment - afterOnCreateView()**
 
-BaseBindingFragment는 `afterOnCrateView(rootView, savedInstanceState)` 콜백을 제공합니다.
+BaseBindingFragment는 `afterOnCreateView(rootView, savedInstanceState)` 콜백을 제공합니다.
 
-⚠️ **오타 주의:** 메서드명이 `afterOnCrateView` (Crate)입니다. Create가 아님!
+⚠️ **오타 주의:** 메서드명이 `afterOnCreateView` (Create)입니다. Create가 아님!
 
 #### **호출 시점**
 ```kotlin
@@ -998,7 +998,7 @@ override fun onCreateView(
     inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
 ): View {
     binding = DataBindingUtil.inflate(inflater, layoutRes, container, isAttachToParent)
-    afterOnCrateView(binding.root, savedInstanceState)  // ⬅️ 여기서 호출!
+    afterOnCreateView(binding.root, savedInstanceState)  // ⬅️ 여기서 호출!
     return binding.root
 }
 
@@ -1012,8 +1012,8 @@ override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 ```kotlin
 class MainFragment : BaseBindingFragment<FragmentMainBinding>(R.layout.fragment_main) {
 
-    override fun afterOnCrateView(rootView: View, savedInstanceState: Bundle?) {
-        super.afterOnCrateView(rootView, savedInstanceState)
+    override fun afterOnCreateView(rootView: View, savedInstanceState: Bundle?) {
+        super.afterOnCreateView(rootView, savedInstanceState)
 
         // Binding 초기화 직후, onViewCreated 전에 실행
         // lifecycleOwner 설정 전에 뷰 준비 가능
@@ -1023,7 +1023,7 @@ class MainFragment : BaseBindingFragment<FragmentMainBinding>(R.layout.fragment_
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 이 시점에는 이미 afterOnCrateView()와 lifecycleOwner 설정이 완료됨
+        // 이 시점에는 이미 afterOnCreateView()와 lifecycleOwner 설정이 완료됨
         binding.btnAction.setOnClickListener {
             // 클릭 이벤트 처리
         }
@@ -1062,7 +1062,7 @@ class MainFragment : BaseBindingFragment<FragmentMainBinding>(R.layout.fragment_
 ```
 1. onCreateView() 시작
 2. binding 초기화
-3. afterOnCrateView(binding.root, savedInstanceState)  ⬅️ 커스텀 훅
+3. afterOnCreateView(binding.root, savedInstanceState)  ⬅️ 커스텀 훅
 4. binding.root 반환
 5. onViewCreated() 시작
 6. binding.lifecycleOwner = this
