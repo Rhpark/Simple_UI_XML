@@ -500,12 +500,13 @@ class MainFragment : Fragment() {
 class MainFragment : BaseBindingFragment<FragmentMainBinding>(R.layout.fragment_main) {
 
     // DataBinding 자동 설정! ✅
-    // LifecycleOwner 자동 연결! ✅
-    // nullable binding 자동 처리! ✅
-    // 메모리 누수 방지 자동! ✅
+    // binding.lifecycleOwner = this 자동! ✅ (onViewCreated에서)
+    // lateinit binding으로 null 체크 불필요! ✅
+    // onDestroyView 처리 불필요! ✅
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        // 이 시점에 이미 binding.lifecycleOwner = this 완료됨
 
         // 핵심 로직만 집중!
         initViews()
@@ -518,7 +519,26 @@ class MainFragment : BaseBindingFragment<FragmentMainBinding>(R.layout.fragment_
     }
 }
 ```
-**결과:** DataBinding 자동, LifecycleOwner 자동, nullable 처리 자동, 메모리 누수 방지 자동, 코드 70% 감소!
+**결과:** DataBinding 자동, lifecycleOwner 자동 연결 (onViewCreated에서 this로 설정), lateinit으로 null 체크 불필요, 코드 70% 감소!
+
+**💡 lifecycleOwner 설정 상세:**
+- BaseBindingFragment는 `onViewCreated()`에서 `binding.lifecycleOwner = this`를 자동으로 설정합니다
+- `this`는 Fragment 자체를 가리킵니다
+- LiveData 옵저버가 Fragment의 생명주기를 따라갑니다
+
+**💡 nullable vs lateinit 비교:**
+
+| 구분 | 순수 Android | Simple UI |
+|:--|:--|:--|
+| **binding 선언** | `private var _binding: Type? = null`<br>`private val binding get() = _binding!!` | `protected lateinit var binding: Type` |
+| **null 체크** | 필요 (`_binding?.` 또는 `!!`) | 불필요 (lateinit 보장) |
+| **onDestroyView** | `_binding = null` 필수 | 불필요 (자동 관리) |
+| **메모리 관리** | 수동 null 할당 필요 | 자동 처리 |
+| **코드량** | 3줄 (선언 + getter + null 처리) | 1줄 (선언만) |
+
+**⚠️ 중요한 차이점:**
+- **순수 Android**: nullable binding (`_binding?`) 패턴으로 `onDestroyView()`에서 수동으로 null 처리
+- **Simple UI**: `lateinit var` 패턴으로 null 체크 불필요, onDestroyView 오버라이드 불필요
 </details>
 
 <br>
@@ -816,10 +836,14 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 <br>
 </br>
 
-### 🎯 RootActivity 제공 기능
+### 🎯 Base 클래스 제공 기능 정리
 
-BaseActivity/BaseBindingActivity는 모두 RootActivity를 상속하므로 다음 기능을 사용할 수 있습니다:
+#### **RootActivity/RootFragment 공통 기능**
+| 기능 | 설명 |
+|:--|:--|
+| **onRequestPermissions()** | 통합 권한 요청 (일반/특수 권한 자동 구분) |
 
+#### **RootActivity 전용 기능 (Activity만 사용 가능)**
 | 기능 | 설명 |
 |:--|:--|
 | **statusBarHeight** | StatusBar 높이 자동 계산 (SDK 버전별 자동 분기) |
@@ -829,8 +853,23 @@ BaseActivity/BaseBindingActivity는 모두 RootActivity를 상속하므로 다�
 | **setNavigationBarColor()** | NavigationBar 색상 및 아이콘 모드 설정 |
 | **setSystemBarsColor()** | SystemBars 동시 색상 설정 |
 | **setSystemBarsAppearance()** | SystemBars 아이콘 라이트/다크 모드 설정 |
-| **onRequestPermissions()** | 통합 권한 요청 (일반/특수 권한 자동 구분) |
 | **beforeOnCreated()** | onCreate 전 초기화 훅 |
+
+#### **BaseActivity/BaseFragment 기능**
+| 기능 | 설명 |
+|:--|:--|
+| **자동 inflate** | 레이아웃 자동 설정 (Activity: setContentView, Fragment: inflate) |
+| **rootView** | Fragment만 - 루트 뷰 접근 프로퍼티 |
+
+#### **BaseBindingActivity/BaseBindingFragment 기능**
+| 기능 | 설명 |
+|:--|:--|
+| **binding** | DataBinding 자동 초기화 및 제공 |
+| **lifecycleOwner 자동 설정** | Activity: onCreate에서, Fragment: onViewCreated에서 |
+| **onCreateView()** | Activity만 - binding 초기화 직후 콜백 |
+| **afterOnCrateView()** | Fragment만 - binding 초기화 직후 콜백 |
+| **getViewModel()** | ViewModel 간편 생성 메서드 |
+| **eventVmCollect()** | ViewModel 이벤트 구독 전용 메서드 |
 
 <br>
 </br>
