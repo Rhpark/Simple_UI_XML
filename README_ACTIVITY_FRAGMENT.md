@@ -1277,7 +1277,7 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 
     // ViewModel 생성 - 한 줄로 끝!
     private val viewModel: MainViewModel by lazy { getViewModel<MainViewModel>() }
-
+    ///private val vm :MainViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -1325,7 +1325,7 @@ BaseBindingActivity와 BaseBindingFragment는 `eventVmCollect()` 메서드를 �
 class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
 
     private val viewModel: MainViewModel by lazy { getViewModel<MainViewModel>() }
-
+    ///private val vm :MainViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding.vm = viewModel
