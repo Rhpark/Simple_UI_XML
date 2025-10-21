@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout
+        style="@style/Layout.AllMatch.Vertical"
+        android:padding="24dp"
+        android:background="#FFFFFF">
+
+        <TextView
+            android:id="@+id/tvDialogTitle"
+            style="@style/TextView.MatchWrap.Bold.Center"
+            android:text="Dialog Title"
+            android:textSize="22sp"
+            android:paddingBottom="16dp" />
+
+        <TextView
+            android:id="@+id/tvDialogContent"
+            style="@style/TextView.MatchWrap.Normal.Center"
+            android:text="Dialog Content"
+            android:textSize="16sp"
+            android:paddingBottom="24dp" />
+
+        <LinearLayout
+            style="@style/Layout.MatchWrap.Horizontal">
+
+            <Button
+                android:id="@+id/btnCancel"
+                style="@style/Button.WeightWrap"
+                android:text="Cancel" />
+
+            <Button
+                android:id="@+id/btnOk"
+                style="@style/Button.WeightWrap"
+                android:text="OK" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+</layout>

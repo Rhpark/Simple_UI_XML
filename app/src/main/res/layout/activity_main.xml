@@ -67,6 +67,11 @@
                     android:id="@+id/btnSystemServiceManagerInfo"
                     style="@style/Button.MatchWrap"
                     android:text="Go to New Service Manager Info Activity" />
+
+                <Button
+                    android:id="@+id/btnActivityFragmentExample"
+                    style="@style/Button.MatchWrap"
+                    android:text="Go to Activity/Fragment Example" />
             </LinearLayout>
         </ScrollView>
 

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+        <variable
+            name="vm"
+            type="kr.open.library.simpleui_xml.activity_fragment.fragment.BaseBindingFragmentExampleVm" />
+    </data>
+
+    <LinearLayout
+        style="@style/Layout.AllMatch.Vertical.Center"
+        android:padding="32dp"
+        android:background="#E8F5E9">
+
+        <TextView
+            style="@style/TextView.MatchWrap.Bold.Center"
+            android:text="BaseBindingFragment Example"
+            android:textSize="28sp"
+            android:paddingBottom="16dp" />
+
+        <TextView
+            style="@style/TextView.MatchWrap.Normal.Center"
+            android:text="DataBinding + ViewModel Counter"
+            android:textSize="16sp"
+            android:paddingBottom="24dp" />
+
+        <TextView
+            android:id="@+id/tvCounter"
+            style="@style/TextView.AllWrap"
+            android:text="Count: 0"
+            android:textSize="48sp"
+            android:textStyle="bold"
+            android:paddingTop="24dp"
+            android:paddingBottom="24dp" />
+
+        <LinearLayout
+            style="@style/Layout.MatchWrap.Horizontal">
+
+            <Button
+                android:id="@+id/btnDecrement"
+                style="@style/Button.WeightWrap"
+                android:onClick="@{v -> vm.decrement()}"
+                android:text="-" />
+
+            <Button
+                android:id="@+id/btnReset"
+                style="@style/Button.WeightWrap"
+                android:onClick="@{v -> vm.reset()}"
+                android:text="Reset" />
+
+            <Button
+                android:id="@+id/btnIncrement"
+                style="@style/Button.WeightWrap"
+                android:onClick="@{v -> vm.increment()}"
+                android:text="+" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+</layout>

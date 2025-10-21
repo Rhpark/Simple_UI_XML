@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/Layout.AllMatch.Vertical.Center"
+    android:padding="32dp"
+    android:background="#FFEBEE">
+
+    <TextView
+        style="@style/TextView.MatchWrap.Bold.Center"
+        android:text="BaseFragment Example"
+        android:textSize="28sp"
+        android:paddingBottom="16dp" />
+
+    <TextView
+        style="@style/TextView.MatchWrap.Normal.Center"
+        android:text="Click anywhere to change background color!"
+        android:textSize="16sp"
+        android:paddingBottom="24dp" />
+
+    <TextView
+        style="@style/TextView.MatchWrap.Normal.Center"
+        android:text="✓ Uses rootView property\n✓ Fragment lifecycle logging\n✓ Click listener on rootView"
+        android:textSize="14sp"
+        android:lineSpacingExtra="4dp" />
+
+</LinearLayout>

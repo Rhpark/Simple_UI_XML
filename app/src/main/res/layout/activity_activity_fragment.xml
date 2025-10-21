@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+        <variable
+            name="vm"
+            type="kr.open.library.simpleui_xml.activity_fragment.ActivityFragmentActivityVm" />
+    </data>
+
+    <LinearLayout
+        style="@style/Layout.AllMatch.Vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/tvTitle"
+            style="@style/TextView.MatchWrap.Bold.Center"
+            android:layout_height="60dp"
+            android:text="Activity/Fragment Examples"
+            android:textSize="24sp" />
+
+        <ScrollView
+            style="@style/View.MatchWeight">
+
+            <LinearLayout
+                style="@style/Layout.MatchWrap.Vertical"
+                android:padding="8dp">
+
+                <TextView
+                    style="@style/TextView.MatchWrap.Bold"
+                    android:text="Activity Examples"
+                    android:textSize="18sp"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp" />
+
+                <Button
+                    android:id="@+id/btnBaseActivity"
+                    style="@style/Button.MatchWrap"
+                    android:onClick="@{v -> vm.onClickBaseActivity()}"
+                    android:text="BaseActivity Example" />
+
+                <Button
+                    android:id="@+id/btnBaseBindingActivity"
+                    style="@style/Button.MatchWrap"
+                    android:onClick="@{v -> vm.onClickBaseBindingActivity()}"
+                    android:text="BaseBindingActivity Example" />
+
+                <TextView
+                    style="@style/TextView.MatchWrap.Bold"
+                    android:text="Fragment Examples"
+                    android:textSize="18sp"
+                    android:paddingTop="16dp"
+                    android:paddingBottom="8dp" />
+
+                <Button
+                    android:id="@+id/btnBaseFragment"
+                    style="@style/Button.MatchWrap"
+                    android:onClick="@{v -> vm.onClickBaseFragment()}"
+                    android:text="BaseFragment Example" />
+
+                <Button
+                    android:id="@+id/btnBaseBindingFragment"
+                    style="@style/Button.MatchWrap"
+                    android:onClick="@{v -> vm.onClickBaseBindingFragment()}"
+                    android:text="BaseBindingFragment Example" />
+
+                <TextView
+                    style="@style/TextView.MatchWrap.Bold"
+                    android:text="DialogFragment Examples"
+                    android:textSize="18sp"
+                    android:paddingTop="16dp"
+                    android:paddingBottom="8dp" />
+
+                <Button
+                    android:id="@+id/btnBaseDialogFragment"
+                    style="@style/Button.MatchWrap"
+                    android:onClick="@{v -> vm.onClickBaseDialogFragment()}"
+                    android:text="BaseDialogFragment Example" />
+
+                <Button
+                    android:id="@+id/btnBaseBindingDialogFragment"
+                    style="@style/Button.MatchWrap"
+                    android:onClick="@{v -> vm.onClickBaseBindingDialogFragment()}"
+                    android:text="BaseBindingDialogFragment Example" />
+
+            </LinearLayout>
+
+        </ScrollView>
+
+    </LinearLayout>
+</layout>

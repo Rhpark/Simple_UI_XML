@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/Layout.AllMatch.Vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/tvTitle"
+        style="@style/TextView.MatchWrap.Bold.Center"
+        android:layout_height="60dp"
+        android:text="BaseActivity Example"
+        android:textSize="24sp" />
+
+    <TextView
+        android:id="@+id/tvStatusBarHeight"
+        style="@style/TextView.MatchWrap"
+        android:text="StatusBar Height: 0 px"
+        android:textSize="16sp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp" />
+
+    <TextView
+        android:id="@+id/tvNavigationBarHeight"
+        style="@style/TextView.MatchWrap"
+        android:text="NavigationBar Height: 0 px"
+        android:textSize="16sp"
+        android:paddingBottom="16dp" />
+
+    <TextView
+        style="@style/TextView.MatchWrap.Bold"
+        android:text="StatusBar Color Control"
+        android:textSize="18sp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp" />
+
+    <LinearLayout
+        style="@style/Layout.MatchWrap.Horizontal">
+
+        <Button
+            android:id="@+id/btnStatusBarRed"
+            style="@style/Button.WeightWrap"
+            android:text="Red" />
+
+        <Button
+            android:id="@+id/btnStatusBarBlue"
+            style="@style/Button.WeightWrap"
+            android:text="Blue" />
+
+        <Button
+            android:id="@+id/btnStatusBarGreen"
+            style="@style/Button.WeightWrap"
+            android:text="Green" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnStatusBarTransparent"
+        style="@style/Button.MatchWrap"
+        android:text="Transparent" />
+
+    <TextView
+        style="@style/TextView.MatchWrap.Bold"
+        android:text="NavigationBar Color Control"
+        android:textSize="18sp"
+        android:paddingTop="16dp"
+        android:paddingBottom="8dp" />
+
+    <LinearLayout
+        style="@style/Layout.MatchWrap.Horizontal">
+
+        <Button
+            android:id="@+id/btnNavigationBarRed"
+            style="@style/Button.WeightWrap"
+            android:text="Red" />
+
+        <Button
+            android:id="@+id/btnNavigationBarBlue"
+            style="@style/Button.WeightWrap"
+            android:text="Blue" />
+
+        <Button
+            android:id="@+id/btnNavigationBarGreen"
+            style="@style/Button.WeightWrap"
+            android:text="Green" />
+
+    </LinearLayout>
+
+</LinearLayout>

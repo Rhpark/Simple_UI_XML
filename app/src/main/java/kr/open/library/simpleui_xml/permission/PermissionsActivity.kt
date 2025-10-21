@@ -17,7 +17,7 @@ import kr.open.library.simpleui_xml.databinding.ActivityPermissionsBinding
 
 class PermissionsActivity : BaseBindingActivity<ActivityPermissionsBinding>(R.layout.activity_permissions) {
 
-    private val vm :PermissionsActivityVm by viewModels()
+    private val vm :PermissionsActivityVm by lazy { getViewModel<PermissionsActivityVm>() }
 
     private val adapter = SimpleRcvAdapter<String>(R.layout.item_rcv_textview) {
         holder, item, position -> holder.findViewById<TextView>(R.id.tvTitle).text = item

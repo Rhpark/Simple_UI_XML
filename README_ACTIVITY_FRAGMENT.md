@@ -990,8 +990,6 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 
 BaseBindingFragment는 `afterOnCreateView(rootView, savedInstanceState)` 콜백을 제공합니다.
 
-⚠️ **오타 주의:** 메서드명이 `afterOnCreateView` (Create)입니다. Create가 아님!
-
 #### **호출 시점**
 ```kotlin
 override fun onCreateView(
@@ -1004,7 +1002,7 @@ override fun onCreateView(
 
 override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
-    binding.lifecycleOwner = this  // lifecycleOwner는 onViewCreated에서 설정
+    binding.lifecycleOwner = viewLifecycleOwner  // lifecycleOwner는 onViewCreated에서 설정
 }
 ```
 

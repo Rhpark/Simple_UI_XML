@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+        <variable
+            name="vm"
+            type="kr.open.library.simpleui_xml.activity_fragment.activity.BaseBindingActivityExampleVm" />
+    </data>
+
+    <LinearLayout
+        style="@style/Layout.AllMatch.Vertical.Center"
+        android:padding="16dp">
+
+        <TextView
+            style="@style/TextView.MatchWrap.Bold.Center"
+            android:layout_height="60dp"
+            android:text="BaseBindingActivity Example"
+            android:textSize="24sp" />
+
+        <TextView
+            style="@style/TextView.AllWrap"
+            android:text="DataBinding + ViewModel + Counter"
+            android:textSize="16sp"
+            android:paddingBottom="24dp" />
+
+        <TextView
+            android:id="@+id/tvCounter"
+            style="@style/TextView.AllWrap"
+            android:text="Count: 0"
+            android:textSize="48sp"
+            android:textStyle="bold"
+            android:paddingTop="24dp"
+            android:paddingBottom="24dp" />
+
+        <LinearLayout
+            style="@style/Layout.MatchWrap.Horizontal">
+
+            <Button
+                android:id="@+id/btnDecrement"
+                style="@style/Button.WeightWrap"
+                android:onClick="@{v -> vm.decrement()}"
+                android:text="-" />
+
+            <Button
+                android:id="@+id/btnReset"
+                style="@style/Button.WeightWrap"
+                android:onClick="@{v -> vm.reset()}"
+                android:text="Reset" />
+
+            <Button
+                android:id="@+id/btnIncrement"
+                style="@style/Button.WeightWrap"
+                android:onClick="@{v -> vm.increment()}"
+                android:text="+" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+</layout>

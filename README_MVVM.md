@@ -7,7 +7,7 @@
 ![mvvm_activity_vm_init_2.gif](example_gif%2Fmvvm_activity_vm_init_2.gif)![mvvm_activity_vm_init_2_example.gif](example%2Fmvvm_activity_vm_init_2_example.gif)
 
 ### ViewModel 이벤트 시스템
-![mvvm_vm.png](example_gif%2Fmvvm_vm.png)![mvvm_vm_example.png](example%2Fmvvm_vm_example.png)
+![mvvm_vm.png](example_gif%2Fmvvm_vm.png)
 
 > **"MVVM 세팅을 10줄로 끝내자!"** 기존 Activity/Fragment + ViewModel 개발 대비 Simple UI가 주는 체감 차이를 한눈에 확인하세요.
 
