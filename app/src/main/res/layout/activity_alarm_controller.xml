@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp">
+
+        <LinearLayout
+            style="@style/Layout.MatchWrap.Vertical">
+
+            <TextView
+                style="@style/TextView.MatchWrap.Bold.Center"
+                android:layout_height="60dp"
+                android:text="Alarm Controller"
+                android:textSize="20sp"
+                android:gravity="center" />
+
+            <TextView
+                style="@style/TextView.MatchWrap.Bold"
+                android:layout_marginTop="16dp"
+                android:text="Select Alarm Time"
+                android:textSize="16sp" />
+
+            <TimePicker
+                android:id="@+id/timePicker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:timePickerMode="spinner" />
+
+            <TextView
+                style="@style/TextView.MatchWrap.Bold"
+                android:layout_marginTop="16dp"
+                android:text="Register Alarm"
+                android:textSize="16sp" />
+
+            <Button
+                android:id="@+id/btnRegisterAlarmClock"
+                style="@style/Button.MatchWrap.Normal"
+                android:text="Register AlarmClock" />
+
+            <Button
+                android:id="@+id/btnRegisterExactAlarm"
+                style="@style/Button.MatchWrap.Normal"
+                android:text="Register Exact Alarm (Idle)" />
+
+            <Button
+                android:id="@+id/btnRegisterAllowWhileIdle"
+                style="@style/Button.MatchWrap.Normal"
+                android:text="Register Allow While Idle" />
+
+            <TextView
+                style="@style/TextView.MatchWrap.Bold"
+                android:layout_marginTop="16dp"
+                android:text="Manage Alarm"
+                android:textSize="16sp" />
+
+            <LinearLayout
+                style="@style/Layout.MatchWrap.Horizontal">
+
+                <EditText
+                    android:id="@+id/edtAlarmKey"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Alarm Key (e.g. 1)"
+                    android:inputType="number"
+                    android:text="1" />
+
+                <Button
+                    android:id="@+id/btnRemoveAlarm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Remove" />
+
+                <Button
+                    android:id="@+id/btnCheckExists"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Exists?" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvResult"
+                style="@style/TextView.MatchWrap.Bold.Center"
+                android:layout_marginTop="16dp"
+                android:text="Result will appear here"
+                android:textSize="14sp"
+                android:padding="8dp" />
+
+        </LinearLayout>
+    </ScrollView>
+</layout>

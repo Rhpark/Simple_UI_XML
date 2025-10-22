@@ -582,8 +582,7 @@ sealed class MainEvent {
 ## 🚀 실제 구현 예제 보기
 
 **라이브 예제 코드:**
-> - Simple UI 예제: `app/src/main/java/kr/open/library/simpleui_xml/mvvm/new_/`
-> - 순수 Android 예제: `app/src/main/java/kr/open/library/simpleui_xml/mvvm/origin/`
+> - Simple UI 예제: `app/src/main/java/kr/open/library/simpleui_xml/activity_fragment/`
 > - 실제로 앱을 구동시켜서 실제 구현 예제를 확인해 보세요!
 
 <br>

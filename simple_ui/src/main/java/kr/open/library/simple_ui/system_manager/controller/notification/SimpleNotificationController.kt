@@ -319,7 +319,7 @@ public open class SimpleNotificationController(context: Context, private val sho
      * @param notificationId 알림 ID
      * @return 취소 성공 여부
      */
-    public fun cancelNotification(tag: String?, notificationId: Int): Boolean =
+    public fun cancelNotification(tag: String? = null, notificationId: Int): Boolean =
         tryCatchSystemManager( false) {
             tag?.let { notificationManager.cancel(tag, notificationId) }
                 ?: notificationManager.cancel(notificationId)

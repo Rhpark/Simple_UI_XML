@@ -4,9 +4,11 @@ import android.content.Context
 import android.os.Build
 import android.view.View
 import android.view.Window
+import android.view.WindowInsetsController
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import androidx.annotation.RequiresApi
+import androidx.core.view.WindowCompat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -153,19 +155,31 @@ public open class SoftKeyboardController(context: Context) : BaseSystemService(c
      */
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     public fun startStylusHandwriting(v: View): Boolean = tryCatchSystemManager(false) {
-        checkSdkVersion(Build.VERSION_CODES.TIRAMISU,
+        if (v.requestFocus()) {
+            imm.startStylusHandwriting(v)
+            true
+        } else {
+            Logx.e("[ERROR]view requestFocus() is false!!")
+            false
+        }
+    }
+
+    public fun setAdjustResize(window: Window) {
+        checkSdkVersion(Build.VERSION_CODES.R,
             positiveWork = {
-                if (v.requestFocus()) {
-                    imm.startStylusHandwriting(v)
-                    true
+                // Android 11+: WindowInsetsController 사용
+                val controller = window.insetsController
+                if (controller != null) {
+                    // IME 표시 시 자동으로 레이아웃 조정
+                    controller.systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
                 } else {
-                    Logx.e("[ERROR]view requestFocus() is false!!")
-                    false
+                    // 또는 WindowCompat 사용 (AndroidX 권장)
+                    WindowCompat.setDecorFitsSystemWindows(window, true)
                 }
             },
             negativeWork = {
-                Logx.e("startStylusHandwriting requires API 33 or higher")
-                false
+                @Suppress("DEPRECATION")
+                window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
             }
         )
     }
@@ -176,15 +190,7 @@ public open class SoftKeyboardController(context: Context) : BaseSystemService(c
      */
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     public fun startStylusHandwriting(v: View, delay: Long): Boolean = tryCatchSystemManager(false) {
-        checkSdkVersion(Build.VERSION_CODES.TIRAMISU,
-            positiveWork = {
-                v.postDelayed(Runnable { startStylusHandwriting(v) }, delay)
-            },
-            negativeWork = {
-                Logx.e("startStylusHandwriting requires API 33 or higher")
-                false
-            }
-        )
+        v.postDelayed(Runnable { startStylusHandwriting(v) }, delay)
     }
 
 }

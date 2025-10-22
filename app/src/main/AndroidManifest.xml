@@ -20,6 +20,11 @@
     <uses-permission android:name="android.permission.BATTERY_STATS"
         tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"
+        android:minSdkVersion="31"/>
 
     <application
         android:allowBackup="true"
@@ -32,6 +37,18 @@
         android:theme="@style/Theme.SimpleUI_XML"
         tools:targetApi="31">
         <activity
+            android:name=".activity_fragment.ActivityFragmentActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity_fragment.activity.BaseActivityExample"
+            android:exported="false" />
+        <activity
+            android:name=".activity_fragment.activity.BaseBindingActivityExample"
+            android:exported="false" />
+        <activity
+            android:name=".activity_fragment.fragment.FragmentContainerActivity"
+            android:exported="false" />
+        <activity
             android:name=".extenstions_style.ExtensionsStyleActivity"
             android:exported="false" />
         <activity
@@ -39,6 +56,24 @@
             android:exported="false" />
         <activity
             android:name=".system_service_manager.controller.ServiceManagerControllerActivity"
+            android:exported="false" />
+        <activity
+            android:name=".system_service_manager.controller.softkeyboard.SoftKeyboardControllerActivity"
+            android:exported="false" />
+        <activity
+            android:name=".system_service_manager.controller.vibrator.VibratorControllerActivity"
+            android:exported="false" />
+        <activity
+            android:name=".system_service_manager.controller.alarm.AlarmControllerActivity"
+            android:exported="false" />
+        <activity
+            android:name=".system_service_manager.controller.notification.NotificationControllerActivity"
+            android:exported="false" />
+        <activity
+            android:name=".system_service_manager.controller.wifi.WifiControllerActivity"
+            android:exported="false" />
+        <activity
+            android:name=".system_service_manager.controller.floating.FloatingViewControllerActivity"
             android:exported="false" />
         <activity
             android:name=".recyclerview.origin.RecyclerViewActivityOrigin"
@@ -66,7 +101,7 @@
         </activity>
 
         <receiver
-            android:name=".system_service_manager.controller.alarm.AlarmReceiver"
+            android:name=".system_service_manager.controller.receiver.AlarmReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>

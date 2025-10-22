@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            style="@style/TextView.MatchWrap.Bold.Center"
+            android:layout_height="60dp"
+            android:text="Floating View Controller"
+            android:textSize="20sp"
+            android:gravity="center" />
+
+        <TextView
+            style="@style/TextView.MatchWrap.Bold"
+            android:layout_marginTop="16dp"
+            android:text="Drag View (movable floating view)"
+            android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/btnFloatingViewDrag"
+            style="@style/Button.MatchWrap.Normal"
+            android:text="Add Drag View" />
+
+        <TextView
+            style="@style/TextView.MatchWrap.Bold"
+            android:layout_marginTop="16dp"
+            android:text="Fixed View (collision detection target)"
+            android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/btnFloatingViewFix"
+            style="@style/Button.MatchWrap.Normal"
+            android:text="Set Fixed View" />
+
+        <TextView
+            style="@style/TextView.MatchWrap.Bold"
+            android:layout_marginTop="16dp"
+            android:text="Management"
+            android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/btnFloatingViewRemove"
+            style="@style/Button.MatchWrap.Normal"
+            android:text="Remove All Floating Views" />
+
+        <TextView
+            style="@style/TextView.MatchWrap.Bold"
+            android:layout_marginTop="16dp"
+            android:text="Instructions"
+            android:textSize="16sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="1. Add a Fixed View (green icon)\n2. Add a Drag View (white icon)\n3. Drag the white icon to the green icon\n4. When collision occurs, it will rotate\n5. Release on the green icon to remove the drag view"
+            android:textSize="12sp"
+            android:padding="8dp"
+            android:background="#F0F0F0" />
+
+    </LinearLayout>
+</layout>

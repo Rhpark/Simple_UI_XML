@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp">
+
+        <LinearLayout
+            style="@style/Layout.MatchWrap.Vertical">
+
+            <TextView
+                style="@style/TextView.MatchWrap.Bold.Center"
+                android:layout_height="60dp"
+                android:text="Vibrator Controller"
+                android:textSize="20sp"
+                android:gravity="center" />
+
+            <TextView
+                style="@style/TextView.MatchWrap.Bold"
+                android:layout_marginTop="16dp"
+                android:text="Simple Vibration"
+                android:textSize="16sp" />
+
+            <Button
+                android:id="@+id/btnVibrate"
+                style="@style/Button.MatchWrap.Normal"
+                android:text="Vibrate (1000ms)" />
+
+            <TextView
+                style="@style/TextView.MatchWrap.Bold"
+                android:layout_marginTop="16dp"
+                android:text="Pattern Vibration"
+                android:textSize="16sp" />
+
+            <Button
+                android:id="@+id/btnPattern1"
+                style="@style/Button.MatchWrap.Normal"
+                android:text="Pattern 1 (Short-Long-Short)" />
+
+            <Button
+                android:id="@+id/btnPattern2"
+                style="@style/Button.MatchWrap.Normal"
+                android:text="Pattern 2 (SOS: ...---...)" />
+
+            <Button
+                android:id="@+id/btnPattern3"
+                style="@style/Button.MatchWrap.Normal"
+                android:text="Pattern 3 (Wave)" />
+
+            <TextView
+                style="@style/TextView.MatchWrap.Bold"
+                android:layout_marginTop="16dp"
+                android:text="Predefined Effects"
+                android:textSize="16sp" />
+
+            <Button
+                android:id="@+id/btnClickEffect"
+                style="@style/Button.MatchWrap.Normal"
+                android:text="Click Effect" />
+
+            <Button
+                android:id="@+id/btnDoubleClickEffect"
+                style="@style/Button.MatchWrap.Normal"
+                android:text="Double Click Effect" />
+
+            <Button
+                android:id="@+id/btnHeavyClickEffect"
+                style="@style/Button.MatchWrap.Normal"
+                android:text="Heavy Click Effect" />
+
+            <TextView
+                style="@style/TextView.MatchWrap.Bold"
+                android:layout_marginTop="16dp"
+                android:text="Controls"
+                android:textSize="16sp" />
+
+            <Button
+                android:id="@+id/btnCancel"
+                style="@style/Button.MatchWrap.Normal"
+                android:text="Cancel Vibration" />
+
+            <Button
+                android:id="@+id/btnCheckHasVibrator"
+                style="@style/Button.MatchWrap.Normal"
+                android:text="Check Has Vibrator" />
+
+        </LinearLayout>
+    </ScrollView>
+</layout>

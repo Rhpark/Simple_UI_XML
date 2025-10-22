@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp">
+
+        <LinearLayout
+            style="@style/Layout.MatchWrap.Vertical">
+
+            <TextView
+                style="@style/TextView.MatchWrap.Bold.Center"
+                android:layout_height="60dp"
+                android:text="SoftKeyboard Controller"
+                android:textSize="20sp"
+                android:gravity="center" />
+
+            <EditText
+                android:id="@+id/edtTest"
+                style="@style/EditText.MatchWrap.Number"
+                android:hint="Focus here to test keyboard" />
+
+            <TextView
+                style="@style/TextView.MatchWrap.Bold"
+                android:layout_marginTop="16dp"
+                android:text="Basic Controls"
+                android:textSize="16sp" />
+
+            <Button
+                android:id="@+id/btnShow"
+                style="@style/Button.MatchWrap.Normal"
+                android:text="Show Keyboard" />
+
+            <Button
+                android:id="@+id/btnHide"
+                style="@style/Button.MatchWrap.Normal"
+                android:text="Hide Keyboard" />
+
+            <TextView
+                style="@style/TextView.MatchWrap.Bold"
+                android:layout_marginTop="16dp"
+                android:text="Window Settings"
+                android:textSize="16sp" />
+
+            <Button
+                android:id="@+id/btnSetAdjustPan"
+                style="@style/Button.MatchWrap.Normal"
+                android:text="Set Adjust Pan Mode" />
+
+            <Button
+                android:id="@+id/btnSetAdjustResize"
+                style="@style/Button.MatchWrap.Normal"
+                android:text="Set Adjust Resize Mode" />
+
+            <TextView
+                style="@style/TextView.MatchWrap.Bold"
+                android:layout_marginTop="16dp"
+                android:text="Delay Controls"
+                android:textSize="16sp" />
+
+            <Button
+                android:id="@+id/btnShowDelay"
+                style="@style/Button.MatchWrap.Normal"
+                android:text="Show with Delay (300ms)" />
+
+            <Button
+                android:id="@+id/btnHideDelay"
+                style="@style/Button.MatchWrap.Normal"
+                android:text="Hide with Delay (300ms)" />
+
+
+
+        </LinearLayout>
+    </ScrollView>
+</layout>

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+        <variable
+            name="vm"
+            type="kr.open.library.simpleui_xml.system_service_manager.controller.wifi.WifiControllerActivityVm" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            style="@style/TextView.MatchWrap.Bold.Center"
+            android:layout_height="60dp"
+            android:text="WiFi Controller"
+            android:textSize="20sp"
+            android:gravity="center" />
+
+        <TextView
+            style="@style/TextView.MatchWrap.Bold"
+            android:layout_marginTop="16dp"
+            android:text="WiFi Information"
+            android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/btnGetWifiInfo"
+            style="@style/Button.MatchWrap.Normal"
+            android:text="Get WiFi Connection Info"
+            android:onClick="@{() -> vm.onClickGetWifiInfo()}" />
+
+        <Button
+            android:id="@+id/btnCheckStatus"
+            style="@style/Button.MatchWrap.Normal"
+            android:text="Check WiFi Status"
+            android:onClick="@{() -> vm.onClickCheckStatus()}" />
+
+        <TextView
+            style="@style/TextView.MatchWrap.Bold"
+            android:layout_marginTop="16dp"
+            android:text="WiFi Scan"
+            android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/btnScanWifi"
+            style="@style/Button.MatchWrap.Normal"
+            android:text="Scan WiFi Networks"
+            android:onClick="@{() -> vm.onClickScanWifi()}" />
+
+        <TextView
+            style="@style/TextView.MatchWrap.Bold"
+            android:layout_marginTop="16dp"
+            android:text="Advanced Info"
+            android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/btnCheckBands"
+            style="@style/Button.MatchWrap.Normal"
+            android:text="Check WiFi Bands Support"
+            android:onClick="@{() -> vm.onClickCheckBands()}" />
+
+        <TextView
+            style="@style/TextView.MatchWrap.Bold"
+            android:layout_marginTop="16dp"
+            android:text="Results"
+            android:textSize="16sp" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="#F0F0F0"
+            android:padding="8dp">
+
+            <TextView
+                android:id="@+id/tvResult"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Results will appear here"
+                android:textSize="12sp"
+                android:fontFamily="monospace" />
+
+        </ScrollView>
+
+    </LinearLayout>
+</layout>

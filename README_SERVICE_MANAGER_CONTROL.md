@@ -86,17 +86,41 @@ private fun showKeyboardWithDelay(editText: EditText, delayMillis: Long) {
     }, delayMillis)
 }
 
-// Window Input Mode 설정
+// Window Input Mode 설정 - Adjust Pan
 override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
     // ...
+}
+
+// Window Input Mode 설정 - Adjust Resize (SDK 버전 분기 필수)
+override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        // Android 11+ (API 30+): ADJUST_RESIZE deprecated
+        val controller = window.insetsController
+        if (controller != null) {
+            // WindowInsetsController 사용
+            controller.systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        } else {
+            // Fallback: WindowCompat 사용
+            WindowCompat.setDecorFitsSystemWindows(window, true)
+        }
+    } else {
+        // Android 10 이하: 기존 방식 (deprecated)
+        @Suppress("DEPRECATION")
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+    }
 }
 ```
 **문제점:**
 - 여러 단계의 `getSystemService()` 호출과 타입 캐스팅
 - Null 처리, Focus 처리 수동으로 반복
 - 지연 실행 기능을 직접 구현해야 함
+- **SDK 버전 분기 처리 복잡** (Android 11+에서 ADJUST_RESIZE deprecated)
+- WindowInsetsController null 체크 및 fallback 처리 필요
+- WindowCompat, WindowInsets API 추가 학습 필요
 - 보일러플레이트 코드가 많은 구조
 </details>
 
@@ -124,11 +148,41 @@ override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     getSoftKeyboardController().setAdjustPan(window)
 }
+
+// Window Input Mode - Adjust Resize 설정
+override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    getSoftKeyboardController().setAdjustResize(window) // SDK 버전 자동 분기!
+}
+
+// ⭐ setAdjustResize() 내부 구현 (라이브러리 코드)
+public fun setAdjustResize(window: Window) {
+    checkSdkVersion(Build.VERSION_CODES.R,
+        positiveWork = {
+            // Android 11+: WindowInsetsController 사용
+            val controller = window.insetsController
+            if (controller != null) {
+                controller.systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            } else {
+                // Fallback: WindowCompat 사용
+                WindowCompat.setDecorFitsSystemWindows(window, true)
+            }
+        },
+        negativeWork = {
+            // Android 10 이하: 기존 방식
+            @Suppress("DEPRECATION")
+            window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+        }
+    )
+}
 ```
 **장점:**
 - **극적인 코드 간소화** (수십 줄 → 한 줄)
 - Null 처리, Focus 처리 자동화
 - 지연 실행 (Runnable/Coroutine) 기본 제공
+- **checkSdkVersion() 헬퍼로 깔끔한 SDK 버전 분기**
+- **SDK 버전 자동 분기 처리** (Android 11+ WindowInsetsController 자동 사용)
+- WindowInsetsController null 처리 및 WindowCompat fallback 자동화
 - 안전한 예외 처리, Boolean 반환
 </details>
 
@@ -399,155 +453,63 @@ private fun addFloatingView() {
                 isDragging = false
                 true
             }
-
-            MotionEvent.ACTION_MOVE -> {
-                val deltaX = event.rawX - initialTouchX
-                val deltaY = event.rawY - initialTouchY
-
-                if (abs(deltaX) > 5 || abs(deltaY) > 5) {
-                    isDragging = true
-                    params.x = initialX + deltaX.toInt()
-                    params.y = initialY + deltaY.toInt()
-
-                    // 화면 경계 처리 - 수동 추가
-                    params.x = params.x.coerceAtLeast(0)
-                    params.y = params.y.coerceAtLeast(0)
-
-                    windowManager.updateViewLayout(view, params)
-                }
-                true
-            }
-
-            MotionEvent.ACTION_UP -> {
-                if (!isDragging) {
-                    view.performClick()
-                }
-                isDragging = false
-                true
-            }
-
-            else -> false
-        }
-    }
-
-    // 5. View 추가
-    try {
-        windowManager.addView(floatingView, params)
-    } catch (e: Exception) {
-        Log.e("FloatingView", "Failed to add floating view", e)
-    }
-}
-
-// View 제거 - 참조 관리 필요
-private var floatingView: View? = null
-
-private fun removeFloatingView() {
-    floatingView?.let {
-        val windowManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        try {
-            it.setOnTouchListener(null) // 리소스 정리 필요
-            windowManager.removeView(it)
-            floatingView = null
-        } catch (e: Exception) {
-            Log.e("FloatingView", "Failed to remove floating view", e)
+            // ... 수십 줄의 Touch 처리 코드
         }
     }
 }
 ```
 **문제점:**
-- WindowManager + LayoutParams 수동 설정 필수
-- SDK 버전별 TYPE 분기 처리 필요
-- Touch 이벤트를 완전히 수동으로 구현 (매우 복잡)
-- 드래그 로직, 경계 계산 직접 구현
-- 화면 경계 처리 수동 추가
-- View 참조 관리 및 리소스 정리 직접 필요
+- WindowManager, LayoutParams 복잡한 설정
+- SDK 버전별 TYPE 분기 필요
+- Touch 이벤트 직접 구현 필요 (수십 줄)
+- Collision Detection 직접 구현 필요
+- 메모리 누수 위험
 </details>
 
 <details>
 <summary><strong>Simple UI - Floating View Controller</strong></summary>
 
 ```kotlin
-// 간단한 Floating View 추가 - 자동 처리
-@RequiresPermission(Manifest.permission.SYSTEM_ALERT_WINDOW)
+// 간단한 Floating View 추가 - 몇 줄
 private fun addFloatingView() {
-    // 1. View 생성
-    val icon = getImageView(R.drawable.ic_launcher_foreground).apply { setBackgroundColor(Color.WHITE) }
-    // 2. FloatingDragView 생성 (Touch 이벤트 자동화)
+    val icon = ImageView(this).apply {
+        setImageResource(R.drawable.ic_launcher_foreground)
+    }
+
     val dragView = FloatingDragView(icon, 100, 100).apply {
         lifecycleScope.launch {
-            sfCollisionStateFlow.collect { item ->
-                // 충돌 상태 자동화 및 콜백 (선택적)
-                when (item.first) {
-                    FloatingViewTouchType.TOUCH_DOWN -> { showFloatingView() }
-                    FloatingViewTouchType.TOUCH_MOVE -> { moveFloatingView(item) }
-                    FloatingViewTouchType.TOUCH_UP -> { upFloatingView(this@apply,item) }
+            sfCollisionStateFlow.collect { (touchType, collisionType) ->
+                when (touchType) {
+                    FloatingViewTouchType.TOUCH_DOWN -> { /* 처리 */ }
+                    FloatingViewTouchType.TOUCH_MOVE -> { /* 처리 */ }
+                    FloatingViewTouchType.TOUCH_UP -> { /* 처리 */ }
                 }
             }
         }
     }
-    floatingViewController.addFloatingDragView(dragView)
+
+    floatingViewController.addFloatingDragView(dragView) // 끝!
 }
 
-private fun showFloatingView() {
-    floatingViewController.getFloatingFixedView()?.view?.let {
-        it.setVisible()
-        showAnimScale(it, null)
-    }
-}
-
-private fun moveFloatingView(item: Pair<FloatingViewTouchType, FloatingViewCollisionsType>) {
-    floatingViewController.getFloatingFixedView()?.view?.let {
-        if (item.second == FloatingViewCollisionsType.OCCURING) {
-            val rotationAnim = ObjectAnimator.ofFloat(it, "rotation", 0.0f, 180.0f)
-            rotationAnim.duration = 300
-            rotationAnim.start()
-        }
-    }
-}
-
-private fun upFloatingView(floatingView:FloatingDragView,item: Pair<FloatingViewTouchType, FloatingViewCollisionsType>) {
-    floatingViewController.getFloatingFixedView()?.view?.let {
-        hideAnimScale(it, object : Animator.AnimatorListener {
-            override fun onAnimationStart(animation: Animator) {}
-            override fun onAnimationRepeat(animation: Animator) {}
-            override fun onAnimationCancel(animation: Animator) {}
-            override fun onAnimationEnd(animation: Animator) {
-                floatingViewController.getFloatingFixedView()?.let { it.view.setGone() }
-                if (item.second == FloatingViewCollisionsType.OCCURING) {
-                    floatingViewController.removeFloatingDragView(floatingView)
-                }
-            }
-        })
-    }
-}
-
-// 고정 Floating View 추가 (드래그 불가)
-@RequiresPermission(Manifest.permission.SYSTEM_ALERT_WINDOW)
-private fun addFixedFloatingView() {
-    val icon = getImageView(R.drawable.ic_launcher_foreground).apply { setBackgroundColor(Color.GREEN) }
-    val fixedView = FloatingFixedView(icon, 200, 300) // or FloatingDragView(icon, 200, 300)
+// Fixed View 설정
+private fun setFixedView() {
+    val icon = ImageView(this).apply { setBackgroundColor(Color.GREEN) }
+    val fixedView = FloatingFixedView(icon, 200, 300)
     floatingViewController.setFloatingFixedView(fixedView)
 }
 
-// View 제거 - 한 줄
-private fun removeFloatingView(floatingDragView: FloatingDragView) {
-    getFloatingViewController().removeFloatingDragView(floatingDragView)
-}
-
-// 모든 View 제거 - 한 줄
-private fun removeAllFloatingViews() {
-    getFloatingViewController().removeAllFloatingView() // 리소스 자동 정리!
+// 모든 View 제거
+private fun removeAll() {
+    floatingViewController.removeAllFloatingView()
 }
 ```
 **장점:**
-- **압도적 간소화** (복잡한 구현 → 객체 생성)
-- LayoutParams 자동 설정
-- SDK 버전 자동 처리
-- Touch 이벤트 완전 자동화 (ACTION_DOWN/MOVE/UP)
-- 드래그 로직 내장 처리
-- 화면 경계 자동 처리
-- 충돌 감지 자동화 (드래그 뷰와 고정 뷰)
-- Lifecycle 연동 자동 정리 (리소스 누수 방지)
+- **큰 폭으로 간소화** (수십 줄 → 몇 줄)
+- WindowManager, LayoutParams 자동 처리
+- Touch 이벤트 자동 처리 (Flow 기반)
+- Collision Detection 자동 제공
+- 메모리 누수 방지 (Lifecycle 자동 관리)
+- SDK 버전 자동 분기
 </details>
 
 <br>
@@ -843,461 +805,7 @@ private fun checkWifiBands() {
 - Deprecated API 내부 처리
 - 편리한 헬퍼 메서드 (getCurrentSsid, getCurrentRssi 등)
 - 현대적 API 자동 지원 (NetworkCapabilities)
-- 5GHz/6GHz 대역 지원 확인 간편화
 </details>
 
 <br>
 </br>
-
-## System Service Manager Controller의 핵심 장점
-
-### 1. **압도적인 코드 간소화**
-- **SoftKeyboard**: 여러 단계 설정 → 한 줄 호출
-- **Vibrator**: 복잡한 SDK 분기 → 단일 메서드
-- **Alarm**: 복잡한 Calendar 설정 → VO 객체
-- **Notification**: Channel/Builder 수동 관리 → 자동 관리
-- **WiFi**: SDK 버전별 분기 → 통합 API
-- **Floating View**: Touch 이벤트 수동 구현 → 완전 자동화
-
-<br>
-</br>
-
-### 2. **SDK 버전 자동 처리**
-- **Vibrator**: Vibrator (SDK < 31) 및 VibratorManager (SDK >= 31) 자동 분기
-- **Notification**: Channel 생성 (SDK >= 26) 자동 처리
-- **WiFi**: WifiInfo 조회 방식 (SDK < 31 / >= 31) 자동 분기
-- **Floating View**: TYPE_PHONE 및 TYPE_APPLICATION_OVERLAY 자동 분기
-- **Stylus Handwriting**: API 33+ 자동 처리
-- **개발자는 신경 쓸 필요 없음!**
-
-<br>
-</br>
-
-### 3. **안전한 자동화 및 예외 처리**
-- **tryCatchSystemManager()**: 모든 Controller 내부 자동화
-- **Boolean 반환**: 성공/실패 여부 반환, 문제 발생 시 기본값 자동 반환
-- **Null 처리 자동**: getSystemService() Null 처리 자동
-- **권한 처리 자동**: 권한 체크 자동 수행
-
-<br>
-</br>
-
-### 4. **Lifecycle 연동 자동 정리**
-- **onDestroy() 자동 호출**: BaseSystemService 상속
-- **리소스 자동 정리**: Touch 리스너, View 참조 자동 정리
-- **메모리 누수 방지**: WindowManager View 자동 제거
-- **개발자 신경 쓸 필요 없음!**
-
-<br>
-</br>
-
-### 5. **풍부한 기능 제공**
-- **SoftKeyboard**: Coroutine 기반 지연 실행 지원
-- **Vibrator**: 5가지 진동 타입 제공 (단순/패턴/웨이브폼/시스템 정의/취소)
-- **Alarm**: 3가지 알람 타입 (AlarmClock/Exact/Normal) + Calendar 자동 계산
-- **Notification**: 4가지 스타일 (DEFAULT/BIG_TEXT/BIG_PICTURE/PROGRESS) + 진행률 자동 관리
-- **WiFi**: 연결 정보, 스캔, 신호 강도, 대역 지원 확인 등 풍부한 API
-- **Floating View**: 충돌 감지, 드래그/고정 뷰, Touch 콜백 제공
-
-<br>
-</br>
-
-## 개발자들의 후기
-
-> **"Vibrator SDK 분기가 이렇게 간단해질줄 몰랐어!"**
->
-> **"Notification 진행률 알림 관리가 자동이라니! Builder 참조 관리 안 해도 돼서 편해!"**
->
-> **"WiFi 정보 조회할 때 SDK 버전별로 다른 API 쓰는 거 정말 짜증났는데, Controller가 알아서 처리해줘서 좋아!"**
->
-> **"Floating View Touch 이벤트 추가하는데 50줄이었는데, Controller로 5줄로 끝났어!"**
->
-> **"Alarm Calendar 계산 자동화 정말 편해! 오늘/내일 시간 신경 쓸 필요 없어!"**
->
-> **"자동 처리, 안전한 예외 처리, Lifecycle까지 캡슐화! 코드가 깔끔해졌어!"**
-
-<br>
-</br>
-
-## 결론: System Service의 새로운 표준
-
-**System Service Manager Controller**는 복잡한 Android System Service 호출을 완전히 바꿉니다.
-**getSystemService() 호출과 반복**, **SDK 버전 분기 처리**, **안전한 예외 처리**를
-**제거하여 간결한 코드**로 **안전한 개발자 경험**을 제공합니다.
-
-**SoftKeyboard, Vibrator, Alarm, Notification, WiFi, Floating View**
-모든 복잡한 System Service가 **Controller 한 줄**로, 간단하고 **강력하게**.
-
-지금 바로 시작하세요! ✨
-
-<br>
-</br>
-
-## 실제 구현 예제보기
-
-**라이브 예제 코드:**
-> - System Service Manager Controller : `app/src/main/java/kr/open/library/simpleui_xml/system_service_manager/controller/ServiceManagerControllerActivity`
-> - System Service Manager Info : `app/src/main/java/kr/open/library/simpleui_xml/system_service_manager/info/ServiceManagerInfoActivity`
-> - 실제로 앱을 구동 시켜서 실제 구현 예제를 확인해 보세요!
-
-<br>
-</br>
-
-**테스트 가능한 기능:**
-- SoftKeyboard 표시/숨김/지연 실행
-- Vibrator 단순/패턴/웨이브폼 진동
-- Alarm 등록/삭제/존재 확인
-- Notification 표시/진행률 업데이트/스타일 변경
-- WiFi 정보 조회/스캔/신호 강도 확인
-- Floating View 드래그/고정/충돌 감지
-- 자동 예외 처리 및 안전한 예외 처리
-- SDK 버전별 자동 분기 확인
-
-<br>
-</br>
-
-## 🎯 제공되는 Controller 목록
-
-**System Service Manager Controller**는 6가지 핵심 시스템 서비스를 제공합니다:
-
-### **키보드 SoftKeyboard Controller** - 키보드 제어
-- **show(view, flag)**: 키보드 즉시 표시 (Focus 자동 처리)
-- **hide(view, flag)**: 키보드 즉시 숨김
-- **showDelay(view, delay, flag)**: 지연 후 키보드 표시 (Runnable 기반)
-- **showDelay(view, delay, flag, coroutineScope)**: 지연 후 키보드 표시 (Coroutine 기반)
-- **hideDelay(view, delay, flag)**: 지연 후 키보드 숨김 (Runnable 기반)
-- **hideDelay(view, delay, flag, coroutineScope)**: 지연 후 키보드 숨김 (Coroutine 기반)
-- **setAdjustPan(window)**: 윈도우 Input Mode를 adjustPan으로 설정
-- **setSoftInputMode(window, types)**: 윈도우 Input Mode 커스텀 설정
-- **startStylusHandwriting(view)**: 스타일러스 펜 입력 시작 (API 33+)
-- **startStylusHandwriting(view, delay)**: 지연 후 스타일러스 펜 입력 시작 (API 33+)
-- **편리한 오버로딩**: Runnable/Coroutine 방식 모두 지원
-
-<br>
-</br>
-
-### **진동 Vibrator Controller** - 진동 제어
-- **vibrate(milliseconds)**: 단순 진동 (지속 시간만 지정, 간편 메서드)
-- **vibratePattern(pattern, repeat)**: 패턴 진동 (타이밍 배열만 지정, 간편 메서드)
-- **createOneShot(timer, effect)**: 단발 진동 (duration + amplitude 세밀 제어)
-- **createWaveform(times, amplitudes, repeat)**: 웨이브폼 진동 (커스텀 패턴, 강도 배열)
-- **createPredefined(effectType)**: 시스템 정의 진동 (EFFECT_CLICK, EFFECT_DOUBLE_CLICK, EFFECT_TICK)
-- **cancel()**: 진동 즉시 중지
-- **hasVibrator()**: 진동 지원 여부 확인
-- **SDK 버전 자동 처리**: Vibrator (SDK < 31) 및 VibratorManager (SDK >= 31) 자동 분기
-
-<br>
-</br>
-
-### **알람 Alarm Controller** - 알람 관리
-- **registerAlarmClock()**: 알람 시계 등록 (상태바 표시)
-- **registerAlarmExactAndAllowWhileIdle()**: 정확한 알람 (Idle 모드에서도 실행)
-- **registerAlarmAndAllowWhileIdle()**: 일반 알람 (Idle 모드 허용)
-- **remove()**: 알람 삭제
-- **exists()**: 알람 존재 확인
-- **자동 Calendar 계산**: 오늘/내일 시간 자동 처리
-
-<br>
-</br>
-
-### **알림 Notification Controller** - 알림 관리
-- **showNotification(option)**: 알림 표시 (다양한 스타일 지원)
-- **createChannel(channel)**: 알림 채널 생성 및 관리 (NotificationChannel 객체)
-- **createChannel(id, name, importance, description)**: 알림 채널 간편 생성 (파라미터 방식)
-- **showProgressNotification(option)**: 진행률 알림 생성 (0~100%)
-- **updateProgress(id, percent)**: 진행률 실시간 업데이트
-- **completeProgress(id, message)**: 진행률 완료 처리 (진행률 바 제거)
-- **cancelNotification(tag, id)**: 특정 알림 취소
-- **cancelAll()**: 모든 알림 일괄 취소
-- **cleanup()**: 리소스 정리 (Activity/Service 종료 시 필수 호출)
-- **getBuilder(option)**: 커스텀 빌더 직접 접근 (고급 사용자용)
-- **getProgressBuilder(option)**: 진행률 빌더 직접 접근 (고급 사용자용)
-- **다양한 스타일**: DEFAULT, BIG_PICTURE, BIG_TEXT, PROGRESS
-- **자동 채널 관리**: 기본 채널 자동 생성 (최초 사용 시)
-- **메모리 관리**:
-  - Thread-safe ConcurrentHashMap 사용
-  - 진행률 알림 자동 정리 (30분 후 미사용 빌더 제거)
-  - 스케줄러를 통한 주기적 메모리 정리 (5분마다 실행)
-
-<br>
-</br>
-
-### **WiFi Controller** - WiFi 정보 관리
-- **isWifiEnabled()**: WiFi 활성화 여부 확인
-- **getWifiState()**: WiFi 상태 코드 조회 (DISABLED, ENABLING, ENABLED, DISABLING, UNKNOWN)
-- **setWifiEnabled()**: WiFi 켜기/끄기 (API 29 이하, 그 이상은 deprecated)
-- **getConnectionInfo()**: 현재 WiFi 연결 정보 조회
-- **getDhcpInfo()**: DHCP 정보 조회 (IP, Gateway, DNS 등)
-- **startScan()**: WiFi 스캔 시작
-- **getScanResults()**: WiFi 스캔 결과 조회
-- **getConfiguredNetworks()**: 설정된 네트워크 목록 조회 (API 29 이하)
-- **getCurrentSsid()**: 현재 연결된 SSID 조회 (따옴표 자동 제거)
-- **getCurrentBssid()**: 현재 연결된 BSSID 조회
-- **getCurrentRssi()**: 신호 강도 조회 (dBm)
-- **getCurrentLinkSpeed()**: 링크 속도 조회 (Mbps)
-- **isConnectedWifi()**: WiFi 연결 상태 확인
-- **calculateSignalLevel()**: 신호 강도를 레벨로 변환 (0~numLevels-1)
-- **compareSignalLevel()**: 두 신호 강도 비교 (-1, 0, 1)
-- **is5GHzBandSupported()**: 5GHz 대역 지원 여부
-- **is6GHzBandSupported()**: 6GHz 대역 지원 여부 (API 30+)
-- **isWpa3SaeSupported()**: WPA3 SAE 지원 여부 (API 30+)
-- **isEnhancedOpenSupported()**: Enhanced Open 지원 여부 (API 29+)
-- **reconnect()**: WiFi 재연결 시도
-- **reassociate()**: WiFi 재결합 시도
-- **disconnect()**: WiFi 연결 해제
-- **getModernNetworkDetails()**: 네트워크 상세 정보 (API 29+)
-  - 연결 상태, 인터넷 여부, 검증 상태
-  - 다운로드/업로드 속도 (Kbps)
-  - 인터페이스명, DNS 서버 목록
-- **SDK 버전 자동 처리**: 구형/신형 API 자동 분기
-
-<br>
-</br>
-
-### **플로팅 Floating View Controller** - 플로팅 뷰 관리
-- **addFloatingDragView(view)**: 드래그 가능한 플로팅 뷰 추가
-- **setFloatingFixedView(view)**: 고정 플로팅 뷰 설정 (삭제 영역으로 활용 가능)
-- **getFloatingFixedView()**: 현재 설정된 고정 뷰 조회
-- **removeFloatingDragView(view)**: 특정 드래그 뷰 제거
-- **removeFloatingFixedView()**: 고정 뷰 제거
-- **removeAllFloatingView()**: 모든 플로팅 뷰 일괄 제거
-- **updateView(view, params)**: 뷰 레이아웃 실시간 업데이트
-- **충돌 감지 자동화**: 드래그 뷰와 고정 뷰 간 충돌 실시간 감지
-- **Touch 이벤트 자동화**: ACTION_DOWN/MOVE/UP 완전 자동 처리
-- **드래그 경계 처리**: 화면 밖으로 나가지 않도록 자동 보정
-- **FloatingDragView 고급 기능**:
-  - **sfCollisionStateFlow**: StateFlow를 통한 반응형 충돌 상태 구독
-  - **collisionsWhileTouchDown**: 터치 다운 시 충돌 콜백
-  - **collisionsWhileDrag**: 드래그 중 충돌 콜백 (실시간)
-  - **collisionsWhileTouchUp**: 터치 업 시 충돌 콜백
-  - 두 가지 방식 선택 가능: StateFlow 구독 또는 콜백 함수
-- **Lifecycle 연동**: onDestroy() 시 모든 리소스 자동 정리
-
-<br>
-</br>
-
-## 🔐 **Controller별 필수 권한**
-
-각 Controller는 **사용하는 기능에 따라** 권한이 필요합니다. 필요한 Controller의 권한만 추가하세요.
-
-### 📋 권한 요구사항 요약
-
-| Controller | 필수 권한 | 특수 권한 | 권한 불필요 |
-|:--|:--|:--:|:--:|
-| **SoftKeyboardController** | - | - | ✅ |
-| **VibratorController** | `VIBRATE` | - | - |
-| **AlarmController** | `SCHEDULE_EXACT_ALARM` (API 31+) | - | - |
-| **NotificationController** | `POST_NOTIFICATIONS` (API 33+) | - | - |
-| **WifiController** | `ACCESS_WIFI_STATE`<br>`ACCESS_NETWORK_STATE`<br>`CHANGE_WIFI_STATE`<br>`ACCESS_FINE_LOCATION` | - | - |
-| **FloatingViewController** | - | `SYSTEM_ALERT_WINDOW` | - |
-
-<br>
-</br>
-
-#### 1️⃣ **SoftKeyboard Controller** - 권한 불필요 ✅
-
-키보드 제어는 **권한이 필요하지 않습니다**.
-
-```kotlin
-// 바로 사용 가능
-getSoftKeyboardController().show(editText)
-```
-
-
-<br>
-</br>
-
-
-#### 2️⃣ **Vibrator Controller** - VIBRATE 권한 필요
-
-**AndroidManifest.xml**:
-```xml
-<uses-permission android:name="android.permission.VIBRATE" />
-```
-
-**사용 예시**:
-```kotlin
-// 권한 선언만으로 바로 사용 가능 (런타임 요청 불필요)
-getVibratorController().vibrate(200)
-```
-
-> **참고**: `VIBRATE`는 일반 권한으로 **런타임 요청 불필요**
-
-
-<br>
-</br>
-
-
-#### 3️⃣ **Alarm Controller** - SCHEDULE_EXACT_ALARM 권한 (API 31+)
-
-**AndroidManifest.xml**:
-```xml
-<!-- Android 12+ (API 31+)에서 정확한 알람 등록 시 필수 -->
-<uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
-```
-
-**사용 예시**:
-```kotlin
-// API 31+ 에서는 별도 권한 확인 필요
-checkSdkVersion(Build.VERSION_CODES.S) {
-    val alarmManager = getSystemService(AlarmManager::class.java)
-    if (!alarmManager.canScheduleExactAlarms()) {
-        // 설정 화면으로 이동
-        val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
-        startActivity(intent)
-    }
-}
-
-// 알람 등록
-getAlarmController().registerAlarmClock(receiver, alarmVo)
-```
-
-> **참고**: Android 12+ (API 31+)부터는 **사용자가 설정에서 직접 허용**해야 함
-
-
-<br>
-</br>
-
-
-#### 4️⃣ **Notification Controller** - POST_NOTIFICATIONS 권한 (API 33+)
-
-**AndroidManifest.xml**:
-```xml
-<!-- Android 13+ (API 33+)에서 알림 표시 시 필수 -->
-<uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-```
-
-**런타임 권한 요청**:
-```kotlin
-// Android 13+ 에서는 런타임 권한 요청 필요
-checkSdkVersion(Build.VERSION_CODES.TIRAMISU,
-    positiveWork = {
-        onRequestPermissions(listOf(Manifest.permission.POST_NOTIFICATIONS)) { deniedPermissions ->
-            if (deniedPermissions.isEmpty()) {
-                // 권한 허용됨
-                getNotificationController().showNotification(...)
-            } else {
-                // 권한 거부됨
-                toastShowShort("알림 권한이 필요합니다")
-            }
-        }
-    },
-    negativeWork = {
-        // Android 12 이하는 권한 불필요
-        getNotificationController().showNotification(...)
-    }
-)
-```
-
-> **참고**: Android 13+ (API 33+)부터는 **런타임 권한 요청 필수**
-
-
-<br>
-</br>
-
-
-#### 5️⃣ **WiFi Controller** - 다중 권한 필요
-
-**AndroidManifest.xml**:
-```xml
-<!-- 필수: WiFi 상태 조회 -->
-<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
-<!-- 선택: WiFi 제어 (켜기/끄기) -->
-<uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
-
-<!-- 선택: WiFi 스캔 결과 조회 (API 23+) -->
-<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-```
-
-**런타임 권한 요청 (WiFi 스캔 사용 시)**:
-```kotlin
-// WiFi 스캔 결과 조회 시 위치 권한 필요 (Android 6.0+)
-onRequestPermissions(listOf(
-    Manifest.permission.ACCESS_FINE_LOCATION
-)) { deniedPermissions ->
-    if (deniedPermissions.isEmpty()) {
-        // WiFi 스캔 가능
-        val scanResults = getWifiController().getScanResults()
-    } else {
-        // 기본 정보만 조회
-        val connectionInfo = getWifiController().getConnectionInfo()
-    }
-}
-```
-
-> **참고**:
-> - `ACCESS_WIFI_STATE`는 일반 권한 (런타임 요청 불필요)
-> - `ACCESS_FINE_LOCATION`은 위험 권한 (런타임 요청 필수)
-> - WiFi 켜기/끄기는 Android 10+ (API 29+)부터 **더 이상 지원되지 않음**
-
-
-<br>
-</br>
-
-
-#### 6️⃣ **Floating View Controller** - SYSTEM_ALERT_WINDOW 특수 권한
-
-**AndroidManifest.xml**:
-```xml
-<uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-```
-
-**런타임 권한 요청 (특수 권한)**:
-```kotlin
-// SYSTEM_ALERT_WINDOW는 특수 권한으로 별도 처리 필요
-if (!Settings.canDrawOverlays(this)) {
-    // 설정 화면으로 이동
-    val intent = Intent(
-        Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-        Uri.parse("package:$packageName")
-    )
-    startActivityForResult(intent, REQUEST_OVERLAY_PERMISSION)
-} else {
-    // 권한 허용됨 - Floating View 추가
-    getFloatingViewController().addFloatingDragView(...)
-}
-
-// 결과 처리
-override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-    super.onActivityResult(requestCode, resultCode, data)
-    if (requestCode == REQUEST_OVERLAY_PERMISSION) {
-        if (Settings.canDrawOverlays(this)) {
-            // 권한 허용됨
-            getFloatingViewController().addFloatingDragView(...)
-        } else {
-            // 권한 거부됨
-            toastShowShort("다른 앱 위에 표시 권한이 필요합니다")
-        }
-    }
-}
-```
-
-**Simple UI의 onRequestPermissions() 사용 (자동 처리)**:
-```kotlin
-// 일반 권한과 특수 권한을 동시에 처리 가능!
-onRequestPermissions(listOf(
-    Manifest.permission.CAMERA,
-    Manifest.permission.SYSTEM_ALERT_WINDOW  // 특수 권한 자동 처리!
-)) { deniedPermissions ->
-    if (deniedPermissions.isEmpty()) {
-        // 모든 권한 허용됨
-        getFloatingViewController().addFloatingDragView(...)
-    }
-}
-```
-
-> **참고**: `SYSTEM_ALERT_WINDOW`는 특수 권한으로 **별도 설정 화면**이 필요하지만, Simple UI의 `onRequestPermissions()`를 사용하면 **자동 처리** 가능!
-
-<br>
-</br>
-
-### 📊 권한 타입별 정리
-
-| 권한 타입 | 권한 목록 | 요청 방법 |
-|:--|:--|:--|
-| **일반 권한** | `VIBRATE`<br>`ACCESS_WIFI_STATE`<br>`ACCESS_NETWORK_STATE`<br>`CHANGE_WIFI_STATE` | Manifest 선언만으로 자동 허용 |
-| **위험 권한** | `POST_NOTIFICATIONS` (API 33+)<br>`ACCESS_FINE_LOCATION` | 런타임 권한 요청 필수 |
-| **특수 권한** | `SYSTEM_ALERT_WINDOW`<br>`SCHEDULE_EXACT_ALARM` (API 31+) | 설정 화면 이동 필요<br>(Simple UI는 자동 처리)
-```

@@ -81,23 +81,15 @@ public open class VibratorController(context: Context) : BaseSystemService(conte
      * @param milliseconds 진동 지속 시간 (밀리초) / Vibration duration in milliseconds
      */
     @RequiresPermission(VIBRATE)
+    @RequiresApi(Build.VERSION_CODES.Q)
     public fun vibrate(milliseconds: Long): Boolean = tryCatchSystemManager(false) {
 
-        checkSdkVersion(Build.VERSION_CODES.Q,
-            positiveWork = {
-                val effect = VibrationEffect.createOneShot(milliseconds, VibrationEffect.DEFAULT_AMPLITUDE)
-                checkSdkVersion(Build.VERSION_CODES.S,
-                    positiveWork = { vibratorManager.vibrate(CombinedVibration.createParallel(effect)) },
-                    negativeWork = { vibrator.vibrate(effect) }
-                )
-                true
-            },
-            negativeWork = {
-                @Suppress("DEPRECATION")
-                vibrator.vibrate(milliseconds)
-                true
-            }
+        val effect = VibrationEffect.createOneShot(milliseconds, VibrationEffect.DEFAULT_AMPLITUDE)
+        checkSdkVersion(Build.VERSION_CODES.S,
+            positiveWork = { vibratorManager.vibrate(CombinedVibration.createParallel(effect)) },
+            negativeWork = { vibrator.vibrate(effect) }
         )
+        true
     }
 
     /**
@@ -110,22 +102,14 @@ public open class VibratorController(context: Context) : BaseSystemService(conte
      * @param vibrationEffectClick Predefined effect constant (e.g., VibrationEffect.EFFECT_CLICK)
      */
     @RequiresPermission(VIBRATE)
+    @RequiresApi(Build.VERSION_CODES.Q)
     public fun createPredefined(vibrationEffectClick: Int): Boolean = tryCatchSystemManager(false) {
-        checkSdkVersion(Build.VERSION_CODES.Q,
-            positiveWork = {
-                val predefinedEffect = VibrationEffect.createPredefined(vibrationEffectClick)
-                checkSdkVersion(Build.VERSION_CODES.S,
-                    positiveWork = { vibratorManager.vibrate(CombinedVibration.createParallel(predefinedEffect)) },
-                    negativeWork = { vibrator.vibrate(predefinedEffect) }
-                )
-                true
-            },
-            negativeWork = {
-                @Suppress("DEPRECATION")
-                vibrator.vibrate(100) // Default 100ms for predefined effects
-                true
-            }
+        val predefinedEffect = VibrationEffect.createPredefined(vibrationEffectClick)
+        checkSdkVersion(Build.VERSION_CODES.S,
+            positiveWork = { vibratorManager.vibrate(CombinedVibration.createParallel(predefinedEffect)) },
+            negativeWork = { vibrator.vibrate(predefinedEffect) }
         )
+        true
     }
 
     /**
@@ -140,22 +124,14 @@ public open class VibratorController(context: Context) : BaseSystemService(conte
      * @param repeat Index to start repeating from, -1 for no repeat (반복 시작 인덱스, -1은 반복 없음)
      */
     @RequiresPermission(VIBRATE)
+    @RequiresApi(Build.VERSION_CODES.Q)
     public fun createWaveform(times: LongArray, amplitudes: IntArray, repeat: Int = -1): Boolean = tryCatchSystemManager(false) {
-        checkSdkVersion(Build.VERSION_CODES.Q,
-            positiveWork = {
-                val waveformEffect = VibrationEffect.createWaveform(times, amplitudes, repeat)
-                checkSdkVersion(Build.VERSION_CODES.S,
-                    positiveWork = { vibratorManager.vibrate(CombinedVibration.createParallel(waveformEffect)) },
-                    negativeWork = { vibrator.vibrate(waveformEffect) }
-                )
-                true
-            },
-            negativeWork = {
-                @Suppress("DEPRECATION")
-                vibrator.vibrate(times, repeat)
-                true
-            }
+        val waveformEffect = VibrationEffect.createWaveform(times, amplitudes, repeat)
+        checkSdkVersion(Build.VERSION_CODES.S,
+            positiveWork = { vibratorManager.vibrate(CombinedVibration.createParallel(waveformEffect)) },
+            negativeWork = { vibrator.vibrate(waveformEffect) }
         )
+        true
     }
     
     /**
@@ -166,22 +142,14 @@ public open class VibratorController(context: Context) : BaseSystemService(conte
      * @param repeat 반복 시작 인덱스, -1은 반복 없음 / Repeat start index, -1 for no repeat
      */
     @RequiresPermission(VIBRATE)
+    @RequiresApi(Build.VERSION_CODES.Q)
     public fun vibratePattern(pattern: LongArray, repeat: Int = -1): Boolean = tryCatchSystemManager(false) {
-        checkSdkVersion(Build.VERSION_CODES.Q,
-            positiveWork = {
-                val waveformEffect = VibrationEffect.createWaveform(pattern, repeat)
-                checkSdkVersion(Build.VERSION_CODES.S,
-                    positiveWork = { vibratorManager.vibrate(CombinedVibration.createParallel(waveformEffect)) },
-                    negativeWork = { vibrator.vibrate(waveformEffect) }
-                )
-                true
-            },
-            negativeWork = {
-                @Suppress("DEPRECATION")
-                vibrator.vibrate(pattern, repeat)
-                true
-            }
+        val waveformEffect = VibrationEffect.createWaveform(pattern, repeat)
+        checkSdkVersion(Build.VERSION_CODES.S,
+            positiveWork = { vibratorManager.vibrate(CombinedVibration.createParallel(waveformEffect)) },
+            negativeWork = { vibrator.vibrate(waveformEffect) }
         )
+        true
     }
 
     /**

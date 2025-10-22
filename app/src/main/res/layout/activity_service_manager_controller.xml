@@ -1,61 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <LinearLayout style="@style/Layout.AllMatch.Vertical"
-        android:padding="12dp">
+    <LinearLayout
+        style="@style/Layout.AllMatch.Vertical"
+        android:padding="16dp">
 
         <TextView
             style="@style/TextView.MatchWrap.Bold.Center"
-            android:layout_height="64dp"
-            android:text="Controller"
-            android:textSize="24sp" />
-
-        <EditText
-            android:id="@+id/edtTest01"
-            style="@style/EditText.MatchWrap.Number" />
+            android:layout_height="80dp"
+            android:text="System Service Manager\nController Menu"
+            android:textSize="22sp"
+            android:gravity="center" />
 
         <Button
-            android:id="@+id/btnSoftKeyboard"
+            android:id="@+id/btnSoftKeyboardController"
             style="@style/Button.MatchWrap.Normal"
-            android:text="SoftKeyboard" />
+            android:text="SoftKeyboard Controller" />
 
         <Button
-            android:id="@+id/btnVibrator"
+            android:id="@+id/btnVibratorController"
             style="@style/Button.MatchWrap.Normal"
-            android:text="Vibrator" />
+            android:text="Vibrator Controller" />
 
         <Button
-            android:id="@+id/btnAlarm"
+            android:id="@+id/btnAlarmController"
             style="@style/Button.MatchWrap.Normal"
-            android:text="Alarm" />
+            android:text="Alarm Controller" />
 
-        <TextView
-            android:layout_marginTop="16dp"
-            style="@style/TextView.MatchWrap.Bold"
-            android:text="Floating View Test"/>
+        <Button
+            android:id="@+id/btnNotificationController"
+            style="@style/Button.MatchWrap.Normal"
+            android:text="Notification Controller" />
 
-        <LinearLayout
-            style="@style/Layout.MatchWrap.Horizontal">
-            <Button
-                android:id="@+id/btnFloatingViewDrag"
-                style="@style/Button.WeightWrap.Normal"
-                android:text="Drag" />
-            <Button
-                android:id="@+id/btnFloatingViewFix"
-                style="@style/Button.WeightWrap.Normal"
-                android:text="Fix" />
+        <Button
+            android:id="@+id/btnWifiController"
+            style="@style/Button.MatchWrap.Normal"
+            android:text="WiFi Controller" />
 
-            <Button
-                android:id="@+id/btnFloatingViewRemove"
-                style="@style/Button.WeightWrap.Normal"
-                android:text="Clear" />
-        </LinearLayout>
-        <TextView
-            android:id="@+id/rcvResult"
-            android:text="result"
-            style="@style/TextView.MatchWeight.Bold.Center"/>
+        <Button
+            android:id="@+id/btnFloatingViewController"
+            style="@style/Button.MatchWrap.Normal"
+            android:text="Floating View Controller" />
 
     </LinearLayout>
 </layout>
