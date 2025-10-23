@@ -3,20 +3,66 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <LinearLayout
+    <androidx.core.widget.NestedScrollView
         style="@style/Layout.AllMatch.Vertical"
-        android:padding="12dp">
+        android:fillViewport="true">
+
+        <LinearLayout
+            style="@style/Layout.MatchWrap.Vertical"
+            android:padding="12dp">
 
         <TextView
             style="@style/TextView.MatchWrap.Bold.Center"
-            android:layout_height="64dp"
             android:text="Info"
             android:textSize="24sp" />
 
         <Button
             android:id="@+id/btnDisplay"
             style="@style/Button.MatchWrap.Normal"
-            android:text="Display" />
+            android:text="Display Info" />
+
+        <Button
+            android:id="@+id/btnSim"
+            style="@style/Button.MatchWrap.Normal"
+            android:text="SIM Info" />
+
+        <Button
+            android:id="@+id/btnTelephonyInfo"
+            style="@style/Button.MatchWrap.Normal"
+            android:text="Telephony Basic Info" />
+
+        <LinearLayout style="@style/Layout.MatchWrap.Horizontal">
+
+            <Button
+                android:id="@+id/btnTelephonyRegister"
+                style="@style/Button.WeightWrap.Normal"
+                android:text="Telephony Register" />
+
+            <Button
+                android:id="@+id/btnTelephonyUnregister"
+                style="@style/Button.WeightWrap.Normal"
+                android:text="Telephony Unregister" />
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnNetworkInfo"
+            style="@style/Button.MatchWrap.Normal"
+            android:text="Network Basic Info" />
+
+        <LinearLayout style="@style/Layout.MatchWrap.Horizontal">
+
+            <Button
+                android:id="@+id/btnNetworkRegister"
+                style="@style/Button.WeightWrap.Normal"
+                android:text="Network Register" />
+
+            <Button
+                android:id="@+id/btnNetworkUnregister"
+                style="@style/Button.WeightWrap.Normal"
+                android:text="Network Unregister" />
+
+        </LinearLayout>
 
         <LinearLayout style="@style/Layout.MatchWrap.Horizontal">
 
@@ -47,11 +93,38 @@
 
         </LinearLayout>
 
+        <Button
+            android:id="@+id/btnLocationGetLocation"
+            style="@style/Button.MatchWrap.Normal"
+            android:text="Location Get Last Location" />
+
+        <LinearLayout style="@style/Layout.MatchWrap.Horizontal">
+
+            <Button
+                android:id="@+id/btnLocationCalculateDistance"
+                style="@style/Button.WeightWrap.Normal"
+                android:text="Location Calculate Distance" />
+
+            <Button
+                android:id="@+id/btnLocationCalculateBearing"
+                style="@style/Button.WeightWrap.Normal"
+                android:text="Location Calculate Bearing" />
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnLocationCheckRadius"
+            style="@style/Button.MatchWrap.Normal"
+            android:text="Location Check Within Radius" />
+
 
         <kr.open.library.simple_ui.presenter.ui.view.recyclerview.RecyclerScrollStateView
             android:id="@+id/rcvResult"
-            style="@style/RecyclerView.MatchWeight.LinearLayoutManager"
+            style="@style/RecyclerView.AllMatch.LinearLayoutManager.Vertical"
+            android:nestedScrollingEnabled="false"
             android:text="result" />
 
-    </LinearLayout>
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
 </layout>
