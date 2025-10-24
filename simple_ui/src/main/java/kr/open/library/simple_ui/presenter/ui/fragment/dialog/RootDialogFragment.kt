@@ -8,7 +8,6 @@ import android.view.Gravity
 import android.view.View
 import androidx.annotation.StyleRes
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import kr.open.library.simple_ui.logcat.Logx
 import kr.open.library.simple_ui.permissions.register.PermissionRequester

@@ -522,9 +522,7 @@ class MainFragment : BaseBindingFragment<FragmentMainBinding>(R.layout.fragment_
 **결과:** DataBinding 자동, lifecycleOwner 자동 연결 (onViewCreated에서 this로 설정), lateinit으로 null 체크 불필요, 코드 70% 감소!
 
 **💡 lifecycleOwner 설정 상세:**
-- BaseBindingFragment는 `onViewCreated()`에서 `binding.lifecycleOwner = this`를 자동으로 설정합니다
-- `this`는 Fragment 자체를 가리킵니다
-- LiveData 옵저버가 Fragment의 생명주기를 따라갑니다
+- BaseBindingFragment는 `onViewCreated()`에서 `binding.lifecycleOwner = viewLifecycleOwner`를 자동으로 설정합니다
 
 **💡 nullable vs lateinit 비교:**
 
