@@ -56,30 +56,33 @@ class VibratorControllerActivity : BaseActivity(R.layout.activity_vibrator_contr
             }
 
             btnClickEffect.setOnClickListener {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    vibratorController.createPredefined(VibrationEffect.EFFECT_CLICK)
-                    toastShort("Click Effect")
-                } else {
-                    toastShort("Requires Android 10+")
-                }
+                checkSdkVersion(Build.VERSION_CODES.Q,
+                    positiveWork = {
+                        vibratorController.createPredefined(VibrationEffect.EFFECT_CLICK)
+                        toastShort("Click Effect")
+                    },
+                    negativeWork = {toastShort("Requires Android 10+")}
+                )
             }
 
             btnDoubleClickEffect.setOnClickListener {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    vibratorController.createPredefined(VibrationEffect.EFFECT_DOUBLE_CLICK)
-                    toastShort("Double Click Effect")
-                } else {
-                    toastShort("Requires Android 10+")
-                }
+                checkSdkVersion(Build.VERSION_CODES.Q,
+                    positiveWork = {
+                        vibratorController.createPredefined(VibrationEffect.EFFECT_DOUBLE_CLICK)
+                        toastShort("Double Click Effect")
+                    },
+                    negativeWork = { toastShort("Requires Android 10+")}
+                )
             }
 
             btnHeavyClickEffect.setOnClickListener {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    vibratorController.createPredefined(VibrationEffect.EFFECT_HEAVY_CLICK)
-                    toastShort("Heavy Click Effect")
-                } else {
-                    toastShort("Requires Android 10+")
-                }
+                checkSdkVersion(Build.VERSION_CODES.Q,
+                    positiveWork = {
+                        vibratorController.createPredefined(VibrationEffect.EFFECT_HEAVY_CLICK)
+                        toastShort("Heavy Click Effect")
+                    },
+                    negativeWork = { toastShort("Requires Android 10+") }
+                )
             }
 
             btnCancel.setOnClickListener {
