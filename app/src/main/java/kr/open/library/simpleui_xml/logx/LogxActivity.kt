@@ -37,11 +37,11 @@ class LogxActivity : BaseBindingActivity<ActivityLogxBinding>(R.layout.activity_
         lifecycleScope.launch {
             vm.mEventVm.collect { event ->
                 when (event) {
-                    is LogxActivityVmEvent.OnClickBasicLogging -> demonstrateBasicLogging()
-                    is LogxActivityVmEvent.OnClickJsonLogging -> demonstrateJsonLogging()
+                    is LogxActivityVmEvent.OnClickBasicLogging  -> demonstrateBasicLogging()
+                    is LogxActivityVmEvent.OnClickJsonLogging   -> demonstrateJsonLogging()
                     is LogxActivityVmEvent.OnClickParentTracking -> parentMethodExample()
                     is LogxActivityVmEvent.OnClickThreadTracking -> demonstrateThreadTracking()
-                    is LogxActivityVmEvent.OnClickFileLogging -> demonstrateFileLogging()
+                    is LogxActivityVmEvent.OnClickFileLogging   -> demonstrateFileLogging()
                     is LogxActivityVmEvent.OnClickStorageConfig -> demonstrateStorageConfig()
                     is LogxActivityVmEvent.OnClickAdvancedConfig -> demonstrateAdvancedConfig()
                     is LogxActivityVmEvent.OnClickLogFiltering -> demonstrateLogFiltering()

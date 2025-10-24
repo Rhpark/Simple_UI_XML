@@ -33,8 +33,6 @@ class LogxWriter(
     private val stackTrace by lazy { LogxStackTrace() }
 
     // 스택 트레이스 캐싱
-    private val stackInfoCache = mutableMapOf<String, String>()
-    private var lastStackFrameHash = 0
 
     // 초기화 (Context를 FileWriter에 전달)
     private var logFilter: LogFilterImp = DefaultLogFilter(config)
@@ -62,11 +60,7 @@ class LogxWriter(
         // 캐시 업데이트 (성능 최적화)
         cachedIsDebug = newConfig.isDebug
         cachedDebugLogTypes = newConfig.debugLogTypeList.toSet()
-        
-        // 스택 정보 캐시 초기화
-        stackInfoCache.clear()
-        lastStackFrameHash = 0
-        
+
         // 기존 리소스 정리
         fileWriter.cleanup()
         

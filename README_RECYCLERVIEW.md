@@ -77,11 +77,13 @@ Simple UI는 다양한 상황에 맞는 **4가지 RecyclerView Adapter**를 제�
 **🥉 3순위: SimpleBindingRcvAdapter**
 - ⚠️ DiffUtil 수동 설정 필요 (setDiffUtilItemSame 등)
 - ✅ DataBinding 지원
+- 🚀 `AsyncListDiffer` 기반으로 DiffUtil 계산이 **백그라운드에서 실행**되어 대용량 리스트도 부드럽게 처리
 - 📌 **DiffUtil이 불필요한 정적 리스트**에 적합
 
 **4순위: SimpleRcvAdapter**
 - ⚠️ DiffUtil 수동 설정 필요
 - ❌ DataBinding 없음
+- 🚀 `AsyncListDiffer` 기반 → 메인 스레드 블로킹 없이 Diff 계산
 - 📌 **최소 종속성**이 필요한 경우
 
 <br>
@@ -447,6 +449,9 @@ class MyAdapter : BaseRcvListAdapter<Item, VH>(diffUtil) {
 </br>
 
 ### 일반 Adapter 계열 고급 메서드 (SimpleBindingRcvAdapter, SimpleRcvAdapter)
+
+> ✅ 내부적으로 `AsyncListDiffer`를 사용하므로 DiffUtil 계산이 **백그라운드 스레드**에서 수행됩니다.  
+>    메인 스레드에서는 결과만 반영되기 때문에 대용량 리스트에서도 jank 없이 업데이트됩니다.
 
 **기본 메서드:**
 - `setItems(list)` - 리스트 설정 (DiffUtil 자동 적용)
