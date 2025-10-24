@@ -53,6 +53,7 @@ abstract class RootActivity : AppCompatActivity(), PermissionRequester {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         permissionDelegate = PermissionDelegate(this)
+        permissionDelegate.onRestoreInstanceState(savedInstanceState)
         beforeOnCreated(savedInstanceState)
     }
 
@@ -61,6 +62,10 @@ abstract class RootActivity : AppCompatActivity(), PermissionRequester {
      */
     protected open fun beforeOnCreated(savedInstanceState: Bundle?) {}
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        permissionDelegate.onSaveInstanceState(outState)
+    }
 
     /**
      * Sets the status bar to transparent.

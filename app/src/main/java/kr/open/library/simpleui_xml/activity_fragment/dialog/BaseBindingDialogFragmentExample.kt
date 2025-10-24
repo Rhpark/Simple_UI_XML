@@ -11,8 +11,8 @@ class BaseBindingDialogFragmentExample : BaseBindingDialogFragment<DialogBaseBin
 
     override fun afterOnCreateView(rootView: View, savedInstanceState: Bundle?) {
         super.afterOnCreateView(rootView, savedInstanceState)
-        // 주의: 메서드명 오타 (afterOnCrateView - Crate not Create)
-        Logx.d("BaseBindingDialogFragmentExample - afterOnCrateView() called (typo: Crate not Create)")
+        // 주의: 메서드명 오타 (afterOnCreateView - Crate not Create)
+        Logx.d("BaseBindingDialogFragmentExample - afterOnCreateView() called (typo: Crate not Create)")
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

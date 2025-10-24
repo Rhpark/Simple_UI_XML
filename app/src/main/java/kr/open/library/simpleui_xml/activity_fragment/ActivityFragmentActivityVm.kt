@@ -1,5 +1,7 @@
 package kr.open.library.simpleui_xml.activity_fragment
 
+import androidx.lifecycle.LifecycleOwner
+import kr.open.library.simple_ui.logcat.Logx
 import kr.open.library.simple_ui.presenter.viewmodel.BaseViewModelEvent
 
 class ActivityFragmentActivityVm : BaseViewModelEvent<ActivityFragmentActivityVmEvent>() {
@@ -15,4 +17,34 @@ class ActivityFragmentActivityVm : BaseViewModelEvent<ActivityFragmentActivityVm
     fun onClickBaseDialogFragment() = sendEventVm(ActivityFragmentActivityVmEvent.OnClickBaseDialogFragment)
 
     fun onClickBaseBindingDialogFragment() = sendEventVm(ActivityFragmentActivityVmEvent.OnClickBaseBindingDialogFragment)
+
+    override fun onCreate(owner: LifecycleOwner) {
+        super.onCreate(owner)
+        Logx.d()
+    }
+
+    override fun onStart(owner: LifecycleOwner) {
+        super.onStart(owner)
+        Logx.d()
+    }
+
+    override fun onResume(owner: LifecycleOwner) {
+        super.onResume(owner)
+        Logx.d()
+    }
+
+    override fun onPause(owner: LifecycleOwner) {
+        super.onPause(owner)
+        Logx.d()
+    }
+
+    override fun onStop(owner: LifecycleOwner) {
+        super.onStop(owner)
+        Logx.d()
+    }
+
+    override fun onDestroy(owner: LifecycleOwner) {
+        super.onDestroy(owner)
+        Logx.d()
+    }
 }

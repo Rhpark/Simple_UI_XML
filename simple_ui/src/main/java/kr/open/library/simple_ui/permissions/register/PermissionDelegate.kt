@@ -1,6 +1,7 @@
 package kr.open.library.simple_ui.permissions.register
 
 import android.content.Intent
+import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -16,7 +17,7 @@ public class PermissionDelegate<T: Any>(private val contextProvider: T) {
 
     protected val permissionManager = PermissionManager.getInstance()
     private var currentRequestId: String? = null
-
+    private val KEY_REQUEST_ID = "KEY_PERMISSIONS_REQUEST_ID"
 
     private val specialPermissionLauncher = buildMap<String, ActivityResultLauncher<Intent>> {
         PermissionSpecialType.entries.forEach { put(it.permission, createSpecialLauncher(it.permission)) }
@@ -55,8 +56,28 @@ public class PermissionDelegate<T: Any>(private val contextProvider: T) {
      * 리소스 정리
      */
     protected open fun cleanup() {
-        currentRequestId = null
-        // 필요시 추가 정리 작업
+        if (shouldClearRequestId()) {
+            currentRequestId?.let { permissionManager.cancelRequest(it) }
+            currentRequestId = null
+        }
+    }
+
+    private fun shouldClearRequestId(): Boolean = when (contextProvider) {
+        is ComponentActivity -> contextProvider.isFinishing && !contextProvider.isChangingConfigurations
+        is Fragment -> {
+            val hostActivity = contextProvider.activity
+            val isChanging = hostActivity?.isChangingConfigurations ?: false
+            contextProvider.isRemoving && !isChanging
+        }
+        else -> true
+    }
+
+    fun onSaveInstanceState(outState: Bundle) {
+        currentRequestId?.let { outState.putString(KEY_REQUEST_ID, it) }
+    }
+
+    fun onRestoreInstanceState(savedState: Bundle?) {
+        currentRequestId = savedState?.getString(KEY_REQUEST_ID)
     }
 
     /**

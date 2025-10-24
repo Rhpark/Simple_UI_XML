@@ -16,7 +16,7 @@ class BaseBindingFragmentExample : BaseBindingFragment<FragmentBaseBindingExampl
 
     override fun afterOnCreateView(rootView: View, savedInstanceState: Bundle?) {
         super.afterOnCreateView(rootView, savedInstanceState)
-        Logx.d("BaseBindingFragmentExample - afterOnCrateView() called (typo: Crate not Create)")
+        Logx.d("BaseBindingFragmentExample - afterOnCreateView() called (typo: Crate not Create)")
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

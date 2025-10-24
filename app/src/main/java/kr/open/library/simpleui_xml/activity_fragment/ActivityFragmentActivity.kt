@@ -18,6 +18,11 @@ class ActivityFragmentActivity : BaseBindingActivity<ActivityActivityFragmentBin
 
     private val vm: ActivityFragmentActivityVm by viewModels()
 
+    companion object {
+        const val BASE_FRAGMENT = 1
+        const val BASE_BINDING_FRAGMENT = 2
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding.vm = vm
@@ -37,12 +42,12 @@ class ActivityFragmentActivity : BaseBindingActivity<ActivityActivityFragmentBin
                     }
                     is ActivityFragmentActivityVmEvent.OnClickBaseFragment -> {
                         val intent = Intent(this@ActivityFragmentActivity, FragmentContainerActivity::class.java)
-                        intent.putExtra("FRAGMENT_TYPE", 1)
+                        intent.putExtra("FRAGMENT_TYPE", BASE_FRAGMENT)
                         startActivity(intent)
                     }
                     is ActivityFragmentActivityVmEvent.OnClickBaseBindingFragment -> {
                         val intent = Intent(this@ActivityFragmentActivity, FragmentContainerActivity::class.java)
-                        intent.putExtra("FRAGMENT_TYPE", 2)
+                        intent.putExtra("FRAGMENT_TYPE", BASE_BINDING_FRAGMENT)
                         startActivity(intent)
                     }
                     is ActivityFragmentActivityVmEvent.OnClickBaseDialogFragment -> {

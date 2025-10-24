@@ -29,13 +29,20 @@ public abstract class RootDialogFragment() : DialogFragment(), PermissionRequest
     /************************
      *   Permission Check   *
      ************************/
-    private val permissionDelegate : PermissionDelegate<Fragment> by lazy { PermissionDelegate(this) }
+    protected lateinit var permissionDelegate : PermissionDelegate<DialogFragment>
 
     public interface OnItemClick {
         public fun onItemClickListener(v: View)
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        permissionDelegate = PermissionDelegate(this)
+        permissionDelegate.onRestoreInstanceState(savedInstanceState)
+    }
+
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+
         return super.onCreateDialog(savedInstanceState).apply {
             window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             setCancelable(dialogCancelable)
@@ -50,6 +57,11 @@ public abstract class RootDialogFragment() : DialogFragment(), PermissionRequest
                 window?.setGravity(dialogGravity)
             }
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        permissionDelegate.onSaveInstanceState(outState)
     }
 
     protected fun resizeDialog(widthRatio: Float, heightRatio: Float) {

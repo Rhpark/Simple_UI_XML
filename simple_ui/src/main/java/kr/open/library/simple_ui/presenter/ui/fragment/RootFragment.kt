@@ -1,5 +1,6 @@
 package kr.open.library.simple_ui.presenter.ui.fragment
 
+import android.os.Bundle
 import androidx.fragment.app.Fragment
 import kr.open.library.simple_ui.permissions.register.PermissionRequester
 import kr.open.library.simple_ui.permissions.register.PermissionDelegate
@@ -9,7 +10,18 @@ abstract class RootFragment: Fragment(), PermissionRequester {
     /************************
      *   Permission Check   *
      ************************/
-    private val permissionDelegate : PermissionDelegate<Fragment> by lazy { PermissionDelegate(this) }
+    protected lateinit var permissionDelegate : PermissionDelegate<Fragment>
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        permissionDelegate = PermissionDelegate(this)
+        permissionDelegate.onRestoreInstanceState(savedInstanceState)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        permissionDelegate.onSaveInstanceState(outState)
+    }
 
 
 

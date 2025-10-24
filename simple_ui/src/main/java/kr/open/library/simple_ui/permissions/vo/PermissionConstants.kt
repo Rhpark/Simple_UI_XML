@@ -13,15 +13,19 @@ internal object PermissionConstants {
     /**
      * 특수 권한과 해당 Settings Action의 매핑
      */
+
     val SPECIAL_PERMISSION_ACTIONS: Map<String, String> = buildMap {
         PermissionSpecialType.entries.forEach {
             when(it) {
-                PermissionSpecialType.SYSTEM_ALERT_WINDOW ->  put(it.permission, Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
-                PermissionSpecialType.WRITE_SETTINGS -> put(it.permission, Settings.ACTION_MANAGE_WRITE_SETTINGS)
-                PermissionSpecialType.PACKAGE_USAGE_STATS -> put(it.permission, Settings.ACTION_USAGE_ACCESS_SETTINGS)
-                PermissionSpecialType.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS -> put(it.permission, Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
-                PermissionSpecialType.BIND_ACCESSIBILITY_SERVICE -> put(it.permission, Settings.ACTION_ACCESSIBILITY_SETTINGS)
-                PermissionSpecialType.BIND_NOTIFICATION_LISTENER_SERVICE ->  put(it.permission, Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)
+                PermissionSpecialType.SYSTEM_ALERT_WINDOW           -> put(it.permission, Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
+                PermissionSpecialType.WRITE_SETTINGS                -> put(it.permission, Settings.ACTION_MANAGE_WRITE_SETTINGS)
+                PermissionSpecialType.PACKAGE_USAGE_STATS           -> put(it.permission, Settings.ACTION_USAGE_ACCESS_SETTINGS)
+                PermissionSpecialType.BIND_ACCESSIBILITY_SERVICE    -> put(it.permission, Settings.ACTION_ACCESSIBILITY_SETTINGS)
+                PermissionSpecialType.REQUEST_INSTALL_PACKAGES      -> put(it.permission, Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES)
+                PermissionSpecialType.ACCESS_NOTIFICATION_POLICY    -> put(it.permission, Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
+                PermissionSpecialType.BIND_NOTIFICATION_LISTENER_SERVICE    -> put(it.permission, Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)
+                PermissionSpecialType.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS  -> put(it.permission, Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
+
                 else -> {
                     checkSdkVersion(Build.VERSION_CODES.S) {
                         if(it == PermissionSpecialType.SCHEDULE_EXACT_ALARM) {
@@ -45,10 +49,11 @@ internal object PermissionConstants {
     val PERMISSIONS_REQUIRING_PACKAGE_URI = buildSet<String> {
         add(Manifest.permission.SYSTEM_ALERT_WINDOW)
         add(Manifest.permission.WRITE_SETTINGS)
+        add(Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
+        add(Manifest.permission.REQUEST_INSTALL_PACKAGES)
         checkSdkVersion(Build.VERSION_CODES.R) {
             add(Manifest.permission.MANAGE_EXTERNAL_STORAGE)
         }
-        add(Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
     }
     
     /**

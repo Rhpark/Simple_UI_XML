@@ -4,6 +4,8 @@ import android.os.Bundle
 import kr.open.library.simple_ui.logcat.Logx
 import kr.open.library.simple_ui.presenter.ui.activity.BaseBindingActivity
 import kr.open.library.simpleui_xml.R
+import kr.open.library.simpleui_xml.activity_fragment.ActivityFragmentActivity.Companion.BASE_BINDING_FRAGMENT
+import kr.open.library.simpleui_xml.activity_fragment.ActivityFragmentActivity.Companion.BASE_FRAGMENT
 import kr.open.library.simpleui_xml.databinding.ActivityFragmentContainerBinding
 
 class FragmentContainerActivity : BaseBindingActivity<ActivityFragmentContainerBinding>(R.layout.activity_fragment_container) {
@@ -15,11 +17,11 @@ class FragmentContainerActivity : BaseBindingActivity<ActivityFragmentContainerB
         Logx.d("FragmentContainerActivity - fragmentType: $fragmentType")
 
         val fragment = when (fragmentType) {
-            1 -> {
+            BASE_FRAGMENT -> {
                 Logx.d("Loading BaseFragmentExample")
                 BaseFragmentExample()
             }
-            2 -> {
+            BASE_BINDING_FRAGMENT -> {
                 Logx.d("Loading BaseBindingFragmentExample")
                 BaseBindingFragmentExample()
             }
@@ -35,8 +37,8 @@ class FragmentContainerActivity : BaseBindingActivity<ActivityFragmentContainerB
 
         // Title 설정
         val title = when (fragmentType) {
-            1 -> "BaseFragment Example"
-            2 -> "BaseBindingFragment Example"
+            BASE_FRAGMENT -> "BaseFragment Example"
+            BASE_BINDING_FRAGMENT -> "BaseBindingFragment Example"
             else -> "Fragment Example"
         }
         binding.tvTitle.text = title

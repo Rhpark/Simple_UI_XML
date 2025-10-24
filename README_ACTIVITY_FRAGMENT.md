@@ -558,11 +558,29 @@ BaseBindingActivity/Fragment와 함께 **ViewModel**을 연동하여 MVVM 패턴
 
 Simple UI는 복잡한 권한 요청 시스템을 **한 줄로** 처리할 수 있는 통합 권한 관리 시스템을 제공합니다.
 
-**특징:**
-- ✅ 일반 권한과 특수 권한 자동 구분
-- ✅ ActivityResultContract 자동 등록
-- ✅ 통합 콜백으로 결과 처리
-- ✅ 복잡한 보일러플레이트 제거
+**특징**
+- 일반 권한과 특수 권한 자동 구분
+- ActivityResultContract 등록/관리 코드 제거
+- 통합 콜백 하나로 결과 처리
+- 복잡한 보일러플레이트 제거
+
+**Simple UI가 기본 제공하는 특수 권한**
+
+| 권한 (Manifest) | 역할 | 이동 Settings Action |
+| --- | --- | --- |
+| `SYSTEM_ALERT_WINDOW` | 오버레이 표시 | `Settings.ACTION_MANAGE_OVERLAY_PERMISSION` |
+| `WRITE_SETTINGS` | 시스템 설정 변경 | `Settings.ACTION_MANAGE_WRITE_SETTINGS` |
+| `PACKAGE_USAGE_STATS` | 사용량 액세스 | `Settings.ACTION_USAGE_ACCESS_SETTINGS` |
+| `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` | 배터리 최적화 제외 | `Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` |
+| `REQUEST_INSTALL_PACKAGES` | 알 수 없는 앱 설치 허용 | `Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES` |
+| `ACCESS_NOTIFICATION_POLICY` | 방해 금지(DND) 제어 | `Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS` |
+| `BIND_ACCESSIBILITY_SERVICE` | 접근성 서비스 연결 | `Settings.ACTION_ACCESSIBILITY_SETTINGS` |
+| `BIND_NOTIFICATION_LISTENER_SERVICE` | 알림 리스너 연결 | `Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS` |
+| `MANAGE_EXTERNAL_STORAGE` (R 이상) | 전체 파일 접근 | `Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION` |
+| `SCHEDULE_EXACT_ALARM` (S 이상) | 정밀 알람 예약 | `Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM` |
+
+> 구성 변경이나 설정 화면 왕복 후에도 `PermissionManager`가 요청 ID를 복원해 흐름이 끊기지 않습니다.
+> 추가 권한이 필요하면 `PermissionSpecialType`·`PermissionConstants`에 등록해 동일 흐름으로 확장할 수 있습니다.
 
 <br>
 </br>

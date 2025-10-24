@@ -3,6 +3,7 @@ package kr.open.library.simple_ui.permissions.extentions
 import android.Manifest
 import android.app.AlarmManager
 import android.app.AppOpsManager
+import android.app.NotificationManager
 import android.content.Context
 import android.content.pm.PackageManager
 import android.content.pm.PermissionInfo
@@ -28,6 +29,10 @@ public inline fun Context.hasPermission(permission: String): Boolean =
         Manifest.permission.WRITE_SETTINGS -> Settings.System.canWrite(this)
 
         Manifest.permission.PACKAGE_USAGE_STATS -> hasUsageStatsPermission()
+
+        Manifest.permission.BIND_ACCESSIBILITY_SERVICE -> hasAccessibilityServicePermission()
+
+        Manifest.permission.BIND_NOTIFICATION_LISTENER_SERVICE -> hasNotificationListenerPermission()
 
         Manifest.permission.MANAGE_EXTERNAL_STORAGE -> {
             checkSdkVersion(Build.VERSION_CODES.R,
@@ -62,9 +67,18 @@ public inline fun Context.hasPermission(permission: String): Boolean =
             )
         }
 
-        Manifest.permission.BIND_ACCESSIBILITY_SERVICE -> hasAccessibilityServicePermission()
 
-        Manifest.permission.BIND_NOTIFICATION_LISTENER_SERVICE -> hasNotificationListenerPermission()
+        Manifest.permission.REQUEST_INSTALL_PACKAGES -> {
+            checkSdkVersion(Build.VERSION_CODES.O,
+                positiveWork = { packageManager.canRequestPackageInstalls() },
+                negativeWork = { true }
+            )
+        }
+
+        Manifest.permission.ACCESS_NOTIFICATION_POLICY -> {
+            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
+            notificationManager?.isNotificationPolicyAccessGranted ?: false
+        }
 
         else -> {
             if(getPermissionProtectionLevel(permission) == PermissionInfo.PROTECTION_DANGEROUS) {
@@ -117,12 +131,10 @@ public inline fun Context.hasNotificationListenerPermission(): Boolean = safeCat
 }
 
 public inline fun Context.isSpecialPermission(permission: String): Boolean {
-
-    var isContain = false
     PermissionSpecialType.entries.forEach {
         if (permission == it.permission) return true
     }
-    return isContain
+    return false
 }
 
 public inline fun Context.getPermissionProtectionLevel(permission: String): Int =

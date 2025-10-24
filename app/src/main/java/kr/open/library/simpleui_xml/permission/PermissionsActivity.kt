@@ -59,8 +59,9 @@ class PermissionsActivity : BaseBindingActivity<ActivityPermissionsBinding>(R.la
     private fun permissions(permissions: List<String>) {
         onRequestPermissions(permissions) { deniedPermissions ->
             Logx.d("deniedPermissions $deniedPermissions")
-            val msg = permissions.toString() + (if (deniedPermissions.isEmpty()) { "Permission is granted" }
-                                                 else { "Permission denied $deniedPermissions" })
+            val msg = permissions.toString() +
+                        if (deniedPermissions.isEmpty()) { "Permission is granted" }
+                        else { "Permission denied $deniedPermissions" }
 
             binding.btnCameraPermission.snackBarMakeShort(msg,SnackBarOption(actionText = "Ok", action = {})).show()
             adapter.addItem(msg)

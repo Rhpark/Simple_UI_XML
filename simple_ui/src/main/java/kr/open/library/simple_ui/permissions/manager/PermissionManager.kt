@@ -11,7 +11,6 @@ import androidx.activity.result.ActivityResultLauncher
 import kr.open.library.simple_ui.logcat.Logx
 import kr.open.library.simple_ui.permissions.vo.PermissionConstants
 import kr.open.library.simple_ui.permissions.extentions.*
-import java.lang.ref.WeakReference
 import java.util.UUID
 
 /**
@@ -48,7 +47,6 @@ class PermissionManager private constructor() {
     
     // 내부 요청 정보
     private data class PendingRequest(
-        val contextRef: WeakReference<Context>,
         val callback: (List<String>) -> Unit,
         val requestTime: Long = System.currentTimeMillis(),
         val originalPermissions: List<String> = emptyList(),
@@ -95,7 +93,6 @@ class PermissionManager private constructor() {
         
         val requestId = UUID.randomUUID().toString()
         val request = PendingRequest(
-            contextRef = WeakReference(context),
             callback = callback,
             originalPermissions = permissions,
             specialPermissionLaunchers = specialPermissionLaunchers
@@ -130,7 +127,7 @@ class PermissionManager private constructor() {
                 launchSpecialPermissionWithRetry(context, firstSpecialPermission, launcher, requestId)
             } else {
                 Logx.e("No launcher found for special permission: $firstSpecialPermission")
-                handleSpecialPermissionFailure(requestId, firstSpecialPermission)
+                handleSpecialPermissionFailure(context, requestId, firstSpecialPermission)
             }
         }
         
@@ -143,11 +140,10 @@ class PermissionManager private constructor() {
      */
     fun result(context: Context, permissions: Map<String, Boolean>, requestId: String?) {
         if (requestId == null) return
-        
+
+        if (isContextDestroyed(context)) return
+
         val request = pendingRequests[requestId] ?: return
-        val contextRef = request.contextRef.get() ?: return
-        
-        if (isContextDestroyed(contextRef)) return
         
         val deniedPermissions = permissions.filterNot { (permission, granted) ->
             granted || context.hasPermission(permission)
@@ -167,10 +163,9 @@ class PermissionManager private constructor() {
     fun resultSpecialPermission(context: Context, permission: String, requestId: String?) {
         if (requestId == null) return
         
+        if (isContextDestroyed(context)) return
+
         val request = pendingRequests[requestId] ?: return
-        val contextRef = request.contextRef.get() ?: return
-        
-        if (isContextDestroyed(contextRef)) return
         
         // 현재 특수 권한 승인 상태 확인 및 로깅
         val isGranted = context.hasPermission(permission)
@@ -188,7 +183,7 @@ class PermissionManager private constructor() {
                 return
             } else {
                 Logx.e("No launcher found for special permission: $nextPermission")
-                handleSpecialPermissionFailure(requestId, nextPermission)
+                handleSpecialPermissionFailure(context, requestId, nextPermission)
                 return
             }
         }
@@ -275,40 +270,39 @@ class PermissionManager private constructor() {
                             launchSpecialPermissionWithRetry(context, permission, launcher, requestId, retryCount + 1)
                         } catch (retryException: Exception) {
                             Logx.e("Retry failed for special permission request $retryException" )
-                            handleSpecialPermissionFailure(requestId, permission)
+                            handleSpecialPermissionFailure(context, requestId, permission)
                         }
                     }, 50)
                 } else {
-                    handleSpecialPermissionFailure(requestId, permission)
+                    handleSpecialPermissionFailure(context, requestId, permission)
                 }
             }
         } else {
             Logx.e("Cannot create intent for special permission: $permission")
-            handleSpecialPermissionFailure(requestId, permission)
+            handleSpecialPermissionFailure(context, requestId, permission)
         }
     }
     
-    private fun handleSpecialPermissionFailure(requestId: String, permission: String) {
+    private fun handleSpecialPermissionFailure(context: Context?, requestId: String, permission: String) {
         val request = pendingRequests[requestId] ?: return
-        
-        // 실패한 권한을 원래 권한 목록에서 거부된 것으로 처리
-        val deniedPermissions = listOf(permission) + request.remainingSpecialPermissions
-        
-        // 남은 특수 권한이 있으면 다음 권한 처리
-        if (request.remainingSpecialPermissions.isNotEmpty()) {
-            val nextPermission = request.remainingSpecialPermissions.first()
-            request.remainingSpecialPermissions = request.remainingSpecialPermissions.drop(1)
-            
+
+        val nextPermission = request.remainingSpecialPermissions.firstOrNull()
+        if (nextPermission != null && context != null) {
             val launcher = request.specialPermissionLaunchers[nextPermission]
             if (launcher != null) {
-                request.contextRef.get()?.let { context ->
-                    launchSpecialPermissionWithRetry(context, nextPermission, launcher, requestId)
-                    return
-                }
+                request.remainingSpecialPermissions = request.remainingSpecialPermissions.drop(1)
+                launchSpecialPermissionWithRetry(context, nextPermission, launcher, requestId)
+                return
+            } else {
+                Logx.e("No launcher found for special permission: $nextPermission")
             }
         }
-        
-        // 모든 특수 권한 처리 완료 또는 실패
+
+        val deniedPermissions = buildList {
+            add(permission)
+            addAll(request.remainingSpecialPermissions)
+        }
+
         pendingRequests.remove(requestId)
         try {
             request.callback(deniedPermissions)
