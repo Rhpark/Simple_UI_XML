@@ -48,7 +48,8 @@ class BaseRcvAdapterTest {
     // ========== 1. 기본 동작 테스트 ==========
 
     @Test
-    fun `초기_아이템_개수는_0이다`() {
+    fun initialItemCount_isZero() {
+        // 어댑터 초기 상태에서 아이템 개수가 0인지 확인
         // Given & When
         val count = adapter.itemCount
 
@@ -57,7 +58,8 @@ class BaseRcvAdapterTest {
     }
 
     @Test
-    fun `빈_리스트를_가져올_수_있다`() {
+    fun emptyList_canBeRetrieved() {
+        // 초기 아이템 리스트가 비어 있는지 확인
         // Given & When
         val items = adapter.getItems()
 
@@ -69,7 +71,8 @@ class BaseRcvAdapterTest {
     // ========== 2. 아이템 추가 테스트 ==========
 
     @Test
-    fun `단일_아이템을_추가할_수_있다`() {
+    fun singleItem_canBeAdded() {
+        // 단일 아이템 추가 시 리스트 크기가 증가하는지 확인
         // Given
         val item = TestItem(1, "Item 1")
         val initialSize = adapter.itemCount
@@ -83,7 +86,8 @@ class BaseRcvAdapterTest {
     }
 
     @Test
-    fun `여러_아이템을_추가하면_개수가_증가한다`() {
+    fun addingMultipleItems_increasesCount() {
+        // 여러 아이템을 순차 추가했을 때 개수가 정상 증가하는지 확인
         // Given
         val item1 = TestItem(1, "Item 1")
         val item2 = TestItem(2, "Item 2")
@@ -97,7 +101,8 @@ class BaseRcvAdapterTest {
     }
 
     @Test
-    fun `리스트로_여러_아이템을_한번에_추가할_수_있다`() {
+    fun multipleItems_canBeAddedInBatch() {
+        // 리스트로 여러 아이템을 한 번에 추가할 수 있는지 확인
         // Given
         val items = listOf(
             TestItem(1, "Item 1"),
@@ -114,7 +119,8 @@ class BaseRcvAdapterTest {
     }
 
     @Test
-    fun `빈_리스트를_추가해도_성공한다`() {
+    fun addingEmptyList_succeeds() {
+        // 빈 리스트 추가 시에도 메서드가 성공으로 처리되는지 확인
         // Given
         val emptyList = emptyList<TestItem>()
 
@@ -127,7 +133,8 @@ class BaseRcvAdapterTest {
     }
 
     @Test
-    fun `특정_위치에_아이템을_추가할_수_있다`() {
+    fun item_canBeInsertedAtPosition() {
+        // 지정한 인덱스에 아이템을 삽입할 수 있는지 확인
         // Given
         adapter.addItem(TestItem(1, "Item 1"))
         adapter.addItem(TestItem(3, "Item 3"))
@@ -143,7 +150,8 @@ class BaseRcvAdapterTest {
     }
 
     @Test
-    fun `맨_앞에_아이템을_추가할_수_있다`() {
+    fun item_canBeInsertedAtFront() {
+        // 리스트 맨 앞에 아이템을 삽입하는 경우를 확인
         // Given
         adapter.addItem(TestItem(2, "Item 2"))
         val newItem = TestItem(1, "Item 1")
@@ -157,7 +165,8 @@ class BaseRcvAdapterTest {
     }
 
     @Test
-    fun `잘못된_위치에_아이템을_추가하면_실패한다`() {
+    fun addingItemToInvalidPosition_fails() {
+        // 잘못된 위치 삽입 시 실패 처리되는지 확인
         // Given
         adapter.addItem(TestItem(1, "Item 1"))
 
@@ -171,7 +180,8 @@ class BaseRcvAdapterTest {
     // ========== 3. 아이템 가져오기 테스트 ==========
 
     @Test
-    fun `추가한_아이템을_가져올_수_있다`() {
+    fun addedItem_canBeRetrieved() {
+        // 추가한 아이템을 올바르게 조회할 수 있는지 확인
         // Given
         val item = TestItem(1, "Item 1")
         adapter.addItem(item)
@@ -184,7 +194,8 @@ class BaseRcvAdapterTest {
     }
 
     @Test(expected = IndexOutOfBoundsException::class)
-    fun `잘못된_위치의_아이템을_가져오면_예외가_발생한다`() {
+    fun gettingItemWithInvalidPosition_throws() {
+        // 잘못된 위치 조회 시 예외가 발생하는지 확인
         // Given
         adapter.addItem(TestItem(1, "Item 1"))
 
@@ -193,7 +204,8 @@ class BaseRcvAdapterTest {
     }
 
     @Test
-    fun `전체_아이템_리스트를_가져올_수_있다`() {
+    fun allItems_canBeRetrieved() {
+        // 전체 아이템 리스트를 가져올 수 있는지 확인
         // Given
         val items = listOf(
             TestItem(1, "Item 1"),
@@ -213,7 +225,8 @@ class BaseRcvAdapterTest {
     // ========== 4. 아이템 삭제 테스트 ==========
 
     @Test
-    fun `특정_위치의_아이템을_삭제할_수_있다`() {
+    fun item_canBeRemovedAtPosition() {
+        // 특정 위치의 아이템을 삭제할 수 있는지 확인
         // Given
         adapter.addItem(TestItem(1, "Item 1"))
         adapter.addItem(TestItem(2, "Item 2"))
@@ -227,7 +240,8 @@ class BaseRcvAdapterTest {
     }
 
     @Test
-    fun `잘못된_위치의_아이템을_삭제하면_실패한다`() {
+    fun removingItemWithInvalidPosition_fails() {
+        // 잘못된 위치 삭제가 실패로 처리되는지 확인
         // Given
         adapter.addItem(TestItem(1, "Item 1"))
 
@@ -240,7 +254,8 @@ class BaseRcvAdapterTest {
     }
 
     @Test
-    fun `특정_아이템을_삭제할_수_있다`() {
+    fun specificItem_canBeRemoved() {
+        // 특정 아이템 객체를 삭제할 수 있는지 확인
         // Given
         val item1 = TestItem(1, "Item 1")
         val item2 = TestItem(2, "Item 2")
@@ -257,7 +272,8 @@ class BaseRcvAdapterTest {
     }
 
     @Test
-    fun `존재하지_않는_아이템을_삭제하면_실패한다`() {
+    fun removingMissingItem_fails() {
+        // 존재하지 않는 아이템 삭제 시 실패하는지 확인
         // Given
         adapter.addItem(TestItem(1, "Item 1"))
         val nonExistentItem = TestItem(999, "Non-existent")
@@ -270,7 +286,8 @@ class BaseRcvAdapterTest {
     }
 
     @Test
-    fun `모든_아이템을_삭제할_수_있다`() {
+    fun allItems_canBeCleared() {
+        // 전체 제거 시 리스트가 비워지는지 확인
         // Given
         adapter.addItem(TestItem(1, "Item 1"))
         adapter.addItem(TestItem(2, "Item 2"))
@@ -285,7 +302,8 @@ class BaseRcvAdapterTest {
     }
 
     @Test
-    fun `빈_리스트에서_전체_삭제를_해도_성공한다`() {
+    fun clearOnEmptyList_succeeds() {
+        // 비어 있는 리스트에서 전체 삭제를 호출해도 성공하는지 확인
         // Given - 아무것도 추가하지 않음
 
         // When
@@ -299,7 +317,8 @@ class BaseRcvAdapterTest {
     // ========== 5. 아이템 설정 테스트 ==========
 
     @Test
-    fun `새_아이템_리스트로_교체할_수_있다`() {
+    fun items_canBeReplaced() {
+        // 새 리스트로 교체했을 때 기존 데이터가 대체되는지 확인
         // Given
         adapter.addItem(TestItem(1, "Old Item"))
         val newItems = listOf(
@@ -316,7 +335,8 @@ class BaseRcvAdapterTest {
     }
 
     @Test
-    fun `빈_리스트로_교체할_수_있다`() {
+    fun items_canBeReplacedWithEmpty() {
+        // 빈 리스트로 교체하면 모든 데이터가 제거되는지 확인
         // Given
         adapter.addItem(TestItem(1, "Item 1"))
 
@@ -330,7 +350,8 @@ class BaseRcvAdapterTest {
     // ========== 6. DiffUtil 설정 테스트 ==========
 
     @Test
-    fun `DiffUtil_아이템_비교_로직을_설정할_수_있다`() {
+    fun diffUtilItemComparison_canBeConfigured() {
+        // DiffUtil 아이템 동일성 비교 로직이 호출되는지 확인
         // Given
         var compareCallCount = 0
         adapter.setDiffUtilItemSame { oldItem, newItem ->
@@ -347,7 +368,8 @@ class BaseRcvAdapterTest {
     }
 
     @Test
-    fun `DiffUtil_내용_비교_로직을_설정할_수_있다`() {
+    fun diffUtilContentComparison_canBeConfigured() {
+        // DiffUtil 내용 비교 로직이 작동하는지 확인
         // Given
         var compareCallCount = 0
         adapter.setDiffUtilContentsSame { oldItem, newItem ->
@@ -364,7 +386,8 @@ class BaseRcvAdapterTest {
     }
 
     @Test
-    fun `detectMoves_플래그를_설정할_수_있다`() {
+    fun detectMovesFlag_canBeSet() {
+        // detectMoves 플래그를 true로 설정할 수 있는지 확인
         // Given & When
         adapter.detectMoves = true
 
@@ -375,7 +398,8 @@ class BaseRcvAdapterTest {
     // ========== 7. 클릭 리스너 테스트 ==========
 
     @Test
-    fun `아이템_클릭_리스너를_설정할_수_있다`() {
+    fun itemClickListener_canBeConfigured() {
+        // 아이템 클릭 리스너 설정이 가능한지 확인
         // Given
         var clickedPosition = -1
         var clickedItem: TestItem? = null
@@ -394,7 +418,8 @@ class BaseRcvAdapterTest {
     }
 
     @Test
-    fun `아이템_롱클릭_리스너를_설정할_수_있다`() {
+    fun itemLongClickListener_canBeConfigured() {
+        // 아이템 롱클릭 리스너 설정이 가능한지 확인
         // Given
         var longClickedPosition = -1
         var longClickedItem: TestItem? = null
@@ -415,7 +440,8 @@ class BaseRcvAdapterTest {
     // ========== 8. 실제 사용 시나리오 테스트 ==========
 
     @Test
-    fun `채팅_메시지_추가_시나리오`() {
+    fun chatMessageScenario_behavesAsExpected() {
+        // 채팅 메시지가 순차적으로 추가될 때 상태가 유지되는지 확인
         // Given - 채팅방에 메시지가 계속 추가되는 상황
         val message1 = TestItem(1, "안녕하세요")
         val message2 = TestItem(2, "반갑습니다")
@@ -432,7 +458,8 @@ class BaseRcvAdapterTest {
     }
 
     @Test
-    fun `할일_목록_완료_후_삭제_시나리오`() {
+    fun todoRemovalScenario_behavesAsExpected() {
+        // 할 일 완료 후 삭제 흐름이 정상 동작하는지 확인
         // Given - 할일 목록에서 완료된 항목을 삭제
         val todo1 = TestItem(1, "장보기")
         val todo2 = TestItem(2, "청소하기")
@@ -451,7 +478,8 @@ class BaseRcvAdapterTest {
     }
 
     @Test
-    fun `검색_결과_업데이트_시나리오`() {
+    fun searchResultUpdateScenario_behavesAsExpected() {
+        // 검색 결과를 새 리스트로 교체했을 때 상태가 갱신되는지 확인
         // Given - 검색어 변경에 따라 결과 업데이트
         val initialResults = listOf(
             TestItem(1, "Apple"),

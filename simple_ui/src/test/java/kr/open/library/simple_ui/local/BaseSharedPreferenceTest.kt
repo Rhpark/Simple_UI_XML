@@ -71,8 +71,11 @@ class BaseSharedPreferenceTest {
 
     // ========== 1. String 타입 테스트 ==========
 
+    /**
+     * 문자열을 저장하고 불러올 수 있다
+     */
     @Test
-    fun `문자열을_저장하고_불러올_수_있다`() {
+    fun testSaveAndLoadString() {
         // Given
         val key = "test_key"
         val value = "test_value"
@@ -89,8 +92,11 @@ class BaseSharedPreferenceTest {
         assertEquals("저장한 값과 불러온 값이 같아야 합니다", value, result)
     }
 
+    /**
+     * 문자열 기본값을 반환할 수 있다
+     */
     @Test
-    fun `문자열_기본값을_반환할_수_있다`() {
+    fun testStringReturnsDefaultValue() {
         // Given
         val key = "non_existent_key"
         val defaultValue = "default"
@@ -105,8 +111,11 @@ class BaseSharedPreferenceTest {
         assertEquals("기본값이 반환되어야 합니다", defaultValue, result)
     }
 
+    /**
+     * null 문자열을 저장할 수 있다
+     */
     @Test
-    fun `null_문자열을_저장할_수_있다`() {
+    fun testSaveNullStringRemovesKey() {
         // Given
         val key = "nullable_key"
         val preference = TestPreference(mockContext)
@@ -120,8 +129,11 @@ class BaseSharedPreferenceTest {
 
     // ========== 2. Int 타입 테스트 ==========
 
+    /**
+     * 정수를 저장하고 불러올 수 있다
+     */
     @Test
-    fun `정수를_저장하고_불러올_수_있다`() {
+    fun testSaveAndLoadInteger() {
         // Given
         val key = "age_key"
         val value = 25
@@ -138,8 +150,11 @@ class BaseSharedPreferenceTest {
         assertEquals("저장한 정수값과 불러온 값이 같아야 합니다", value, result)
     }
 
+    /**
+     * 정수 기본값을 반환할 수 있다
+     */
     @Test
-    fun `정수_기본값을_반환할_수_있다`() {
+    fun testIntegerReturnsDefaultValue() {
         // Given
         val key = "missing_int"
         val defaultValue = 100
@@ -154,8 +169,11 @@ class BaseSharedPreferenceTest {
         assertEquals("기본값이 반환되어야 합니다", defaultValue, result)
     }
 
+    /**
+     * 음수 정수를 저장할 수 있다
+     */
     @Test
-    fun `음수_정수를_저장할_수_있다`() {
+    fun testSaveNegativeInteger() {
         // Given
         val key = "negative_key"
         val value = -42
@@ -173,8 +191,11 @@ class BaseSharedPreferenceTest {
 
     // ========== 3. Boolean 타입 테스트 ==========
 
+    /**
+     * true 값을 저장하고 불러올 수 있다
+     */
     @Test
-    fun `true_값을_저장하고_불러올_수_있다`() {
+    fun testSaveAndLoadTrueValue() {
         // Given
         val key = "premium_key"
         val value = true
@@ -191,8 +212,11 @@ class BaseSharedPreferenceTest {
         assertTrue("true 값이 저장되어야 합니다", result)
     }
 
+    /**
+     * false 값을 저장하고 불러올 수 있다
+     */
     @Test
-    fun `false_값을_저장하고_불러올_수_있다`() {
+    fun testSaveAndLoadFalseValue() {
         // Given
         val key = "enabled_key"
         val value = false
@@ -210,8 +234,11 @@ class BaseSharedPreferenceTest {
 
     // ========== 4. Long 타입 테스트 ==========
 
+    /**
+     * Long 값을 저장하고 불러올 수 있다
+     */
     @Test
-    fun `Long_값을_저장하고_불러올_수_있다`() {
+    fun testSaveAndLoadLongValue() {
         // Given
         val key = "timestamp_key"
         val value = 1234567890123L
@@ -230,8 +257,11 @@ class BaseSharedPreferenceTest {
 
     // ========== 5. Float 타입 테스트 ==========
 
+    /**
+     * Float 값을 저장하고 불러올 수 있다
+     */
     @Test
-    fun `Float_값을_저장하고_불러올_수_있다`() {
+    fun testSaveAndLoadFloatValue() {
         // Given
         val key = "rating_key"
         val value = 4.5f
@@ -250,8 +280,11 @@ class BaseSharedPreferenceTest {
 
     // ========== 6. Double 타입 테스트 ==========
 
+    /**
+     * Double 값을 저장하고 불러올 수 있다
+     */
     @Test
-    fun `Double_값을_저장하고_불러올_수_있다`() {
+    fun testSaveAndLoadDoubleValue() {
         // Given
         val key = "balance_key"
         val value = 12345.67890
@@ -271,8 +304,11 @@ class BaseSharedPreferenceTest {
 
     // ========== 7. Property Delegation 테스트 ==========
 
+    /**
+     * Property delegation으로 문자열을 사용할 수 있다
+     */
     @Test
-    fun `Property_delegation으로_문자열을_사용할_수_있다`() {
+    fun testPropertyDelegationForString() {
         // Given
         val userName = "홍길동"
         `when`(mockSharedPreferences.getString("user_name", "")).thenReturn(userName)
@@ -287,8 +323,11 @@ class BaseSharedPreferenceTest {
         assertEquals("Property delegation으로 값을 읽을 수 있어야 합니다", userName, result)
     }
 
+    /**
+     * Property delegation으로 정수를 사용할 수 있다
+     */
     @Test
-    fun `Property_delegation으로_정수를_사용할_수_있다`() {
+    fun testPropertyDelegationForInteger() {
         // Given
         val age = 30
         `when`(mockSharedPreferences.getInt("user_age", 0)).thenReturn(age)
@@ -303,8 +342,11 @@ class BaseSharedPreferenceTest {
         assertEquals("Property delegation으로 정수를 읽을 수 있어야 합니다", age, result)
     }
 
+    /**
+     * Property delegation으로 Boolean을 사용할 수 있다
+     */
     @Test
-    fun `Property_delegation으로_Boolean을_사용할_수_있다`() {
+    fun testPropertyDelegationForBoolean() {
         // Given
         `when`(mockSharedPreferences.getBoolean("is_premium", false)).thenReturn(true)
 
@@ -320,8 +362,11 @@ class BaseSharedPreferenceTest {
 
     // ========== 8. Commit (Coroutine) 테스트 ==========
 
+    /**
+     * Commit으로 저장하면 true를 반환한다
+     */
     @Test
-    fun `Commit으로_저장하면_true를_반환한다`() = runBlocking {
+    fun testCommitReturnsTrue() = runBlocking {
         // Given
         `when`(mockEditor.commit()).thenReturn(true)
 
@@ -335,8 +380,11 @@ class BaseSharedPreferenceTest {
         verify(mockEditor).commit()
     }
 
+    /**
+     * Commit이 실패하면 false를 반환한다
+     */
     @Test
-    fun `Commit이_실패하면_false를_반환한다`() = runBlocking {
+    fun testCommitReturnsFalse() = runBlocking {
         // Given
         `when`(mockEditor.commit()).thenReturn(false)
 
@@ -351,8 +399,11 @@ class BaseSharedPreferenceTest {
 
     // ========== 9. 실제 사용 시나리오 테스트 ==========
 
+    /**
+     * 로그인 정보를 저장하는 시나리오
+     */
     @Test
-    fun `로그인_정보를_저장하는_시나리오`() {
+    fun testLoginInformationScenario() {
         // Given - 사용자가 로그인할 때
         val userId = 12345L
         val userName = "user@example.com"
@@ -375,8 +426,11 @@ class BaseSharedPreferenceTest {
         assertTrue("프리미엄 상태가 저장되어야 합니다", preference.isPremium)
     }
 
+    /**
+     * 앱 설정을 저장하는 시나리오
+     */
     @Test
-    fun `앱_설정을_저장하는_시나리오`() {
+    fun testAppSettingsScenario() {
         // Given - 앱 설정 변경
         val fontSize = 16
         val isDarkMode = true
@@ -402,8 +456,11 @@ class BaseSharedPreferenceTest {
             preference.testGetBoolean("notification", true))
     }
 
+    /**
+     * 게임 점수를 저장하는 시나리오
+     */
     @Test
-    fun `게임_점수를_저장하는_시나리오`() {
+    fun testGameScoreScenario() {
         // Given - 게임에서 최고 점수 저장
         val highScore = 9999
         val lastPlayTime = System.currentTimeMillis()
@@ -431,8 +488,11 @@ class BaseSharedPreferenceTest {
 
     // ========== 10. 기본값 처리 테스트 ==========
 
+    /**
+     * 모든 타입의 기본값이 올바르게 동작한다
+     */
     @Test
-    fun `모든_타입의_기본값이_올바르게_동작한다`() {
+    fun testDefaultValuesForAllTypes() {
         // Given
         `when`(mockSharedPreferences.getString("str", "default")).thenReturn("default")
         `when`(mockSharedPreferences.getInt("int", -1)).thenReturn(-1)

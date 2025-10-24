@@ -30,7 +30,8 @@ class LogxConfigTest {
     // ========== 1. 기본 설정 테스트 ==========
 
     @Test
-    fun `기본_설정이_올바르게_초기화된다`() {
+    fun basicConfig_initializesCorrectly() {
+        // 기본 설정 값이 기대치에 맞게 초기화되는지 확인
         // Given & When
         val config = configManager.config
 
@@ -42,7 +43,8 @@ class LogxConfigTest {
     // ========== 2. 디버그 모드 설정 테스트 ==========
 
     @Test
-    fun `디버그_모드를_false로_설정할_수_있다`() {
+    fun debugMode_canBeDisabled() {
+        // 디버그 모드를 false로 변경할 수 있는지 확인
         // Given
         configManager.setDebugMode(true)
 
@@ -54,7 +56,8 @@ class LogxConfigTest {
     }
 
     @Test
-    fun `디버그_모드를_true로_설정할_수_있다`() {
+    fun debugMode_canBeEnabled() {
+        // 디버그 모드를 true로 변경할 수 있는지 확인
         // Given
         configManager.setDebugMode(false)
 
@@ -68,7 +71,8 @@ class LogxConfigTest {
     // ========== 3. 파일 저장 설정 테스트 ==========
 
     @Test
-    fun `파일_저장_설정을_변경할_수_있다`() {
+    fun saveToFile_canBeToggled() {
+        // 로그 파일 저장 여부를 토글할 수 있는지 확인
         // Given
         val initialSaveToFile = configManager.config.isDebugSave
 
@@ -84,7 +88,8 @@ class LogxConfigTest {
     // ========== 4. 앱 이름 설정 테스트 ==========
 
     @Test
-    fun `앱_이름을_설정할_수_있다`() {
+    fun appName_canBeUpdated() {
+        // 지정한 앱 이름이 설정에 반영되는지 확인
         // Given
         val appName = "TestApp"
 
@@ -96,7 +101,8 @@ class LogxConfigTest {
     }
 
     @Test
-    fun `빈_문자열로_앱_이름을_설정할_수_있다`() {
+    fun appName_canBeBlank() {
+        // 빈 문자열도 앱 이름으로 허용되는지 확인
         // Given
         val appName = ""
 
@@ -110,7 +116,8 @@ class LogxConfigTest {
     // ========== 5. 로그 타입 필터링 테스트 ==========
 
     @Test
-    fun `로그_타입을_설정할_수_있다`() {
+    fun logTypes_canBeConfigured() {
+        // 로그 타입 필터 목록을 원하는 값으로 변경할 수 있는지 확인
         // Given
         val logTypes = EnumSet.of(LogxType.ERROR, LogxType.WARN)
 
@@ -128,7 +135,8 @@ class LogxConfigTest {
     }
 
     @Test
-    fun `모든_로그_타입을_허용할_수_있다`() {
+    fun allLogTypes_canBeAllowed() {
+        // 모든 로그 타입을 허용하도록 설정할 수 있는지 확인
         // Given
         val allTypes = EnumSet.allOf(LogxType::class.java)
 
@@ -152,7 +160,8 @@ class LogxConfigTest {
     // ========== 6. 디버그 필터 설정 테스트 ==========
 
     @Test
-    fun `디버그_필터를_설정할_수_있다`() {
+    fun debugFilterFlag_canBeEnabled() {
+        // 디버그 필터 플래그를 활성화할 수 있는지 확인
         // Given
         configManager.setDebugFilter(false)
 
@@ -164,7 +173,8 @@ class LogxConfigTest {
     }
 
     @Test
-    fun `디버그_필터_태그_리스트를_설정할_수_있다`() {
+    fun filterTags_canBeConfigured() {
+        // 디버그 필터 태그 목록이 정상적으로 설정되는지 확인
         // Given
         val filterTags = listOf("MainActivity", "NetworkManager", "DatabaseHelper")
 
@@ -180,7 +190,8 @@ class LogxConfigTest {
     }
 
     @Test
-    fun `빈_필터_리스트를_설정할_수_있다`() {
+    fun filterTags_canBeCleared() {
+        // 필터 태그를 빈 리스트로 초기화할 수 있는지 확인
         // Given
         val emptyList = emptyList<String>()
 
@@ -194,7 +205,8 @@ class LogxConfigTest {
     // ========== 7. 설정 변경 리스너 테스트 ==========
 
     @Test
-    fun `설정_변경_시_리스너가_호출된다`() {
+    fun configChange_notifiesListeners() {
+        // 설정 변경 시 등록된 리스너가 호출되는지 확인
         // Given
         var listenerCalled = false
         var receivedConfig: LogxConfig? = null
@@ -216,7 +228,8 @@ class LogxConfigTest {
     }
 
     @Test
-    fun `여러_리스너를_등록할_수_있다`() {
+    fun multipleListeners_canBeRegistered() {
+        // 여러 리스너를 등록한 뒤 모두 호출되는지 확인
         // Given
         var listener1Called = false
         var listener2Called = false
@@ -242,7 +255,8 @@ class LogxConfigTest {
     }
 
     @Test
-    fun `모든_리스너를_제거할_수_있다`() {
+    fun listeners_canBeRemoved() {
+        // 모든 리스너 제거 후에는 콜백이 실행되지 않는지 확인
         // Given
         var listenerCalled = false
 
@@ -263,7 +277,8 @@ class LogxConfigTest {
     // ========== 8. 통합 설정 업데이트 테스트 ==========
 
     @Test
-    fun `전체_설정을_한번에_업데이트할_수_있다`() {
+    fun config_canBeUpdatedAtOnce() {
+        // 새로운 설정 객체로 전체 구성이 갱신되는지 확인
         // Given
         val newConfig = LogxConfig(
             isDebug = false,

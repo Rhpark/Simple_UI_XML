@@ -17,8 +17,11 @@ class TryCatchExtensionsTest {
 
     // ========== 1. safeCatch(block) 테스트 ==========
 
+    /**
+     * 정상 실행되면 예외가 발생하지 않는다
+     */
     @Test
-    fun `정상_실행되면_예외가_발생하지_않는다`() {
+    fun testSafeCatchExecutesNormallyWithoutException() {
         // Given
         var executed = false
 
@@ -31,8 +34,11 @@ class TryCatchExtensionsTest {
         assertTrue("코드가 실행되어야 합니다", executed)
     }
 
+    /**
+     * 예외가 발생해도 프로그램이 멈추지 않는다
+     */
     @Test
-    fun `예외가_발생해도_프로그램이_멈추지_않는다`() {
+    fun testSafeCatchContinuesExecutionAfterException() {
         // Given
         var continueExecution = false
 
@@ -46,8 +52,11 @@ class TryCatchExtensionsTest {
         assertTrue("예외 후에도 코드가 계속 실행되어야 합니다", continueExecution)
     }
 
+    /**
+     * CancellationException은 다시 던져진다
+     */
     @Test(expected = CancellationException::class)
-    fun `CancellationException은_다시_던져진다`() {
+    fun testSafeCatchRethrowsCancellationException() {
         // Given & When & Then
         // CancellationException은 코루틴 취소를 위해 반드시 전파되어야 함
         safeCatch {
@@ -55,8 +64,11 @@ class TryCatchExtensionsTest {
         }
     }
 
+    /**
+     * Error는 다시 던져진다
+     */
     @Test(expected = OutOfMemoryError::class)
-    fun `Error는_다시_던져진다`() {
+    fun testSafeCatchRethrowsError() {
         // Given & When & Then
         // OOM 같은 심각한 에러는 반드시 전파되어야 함
         safeCatch {
@@ -66,8 +78,11 @@ class TryCatchExtensionsTest {
 
     // ========== 2. safeCatch(defaultValue, block) 테스트 ==========
 
+    /**
+     * 정상 실행되면 결과값을 반환한다
+     */
     @Test
-    fun `정상_실행되면_결과값을_반환한다`() {
+    fun testSafeCatchWithDefaultValueReturnsResultOnSuccess() {
         // Given
         val expectedValue = 42
 
@@ -80,8 +95,11 @@ class TryCatchExtensionsTest {
         assertEquals("정상 실행 시 결과값을 반환해야 합니다", expectedValue, result)
     }
 
+    /**
+     * 예외가 발생하면 기본값을 반환한다
+     */
     @Test
-    fun `예외가_발생하면_기본값을_반환한다`() {
+    fun testSafeCatchReturnsDefaultValueOnException() {
         // Given
         val defaultValue = "기본값"
 
@@ -94,8 +112,11 @@ class TryCatchExtensionsTest {
         assertEquals("예외 발생 시 기본값을 반환해야 합니다", defaultValue, result)
     }
 
+    /**
+     * null 기본값도 정상 처리된다
+     */
     @Test
-    fun `null_기본값도_정상_처리된다`() {
+    fun testSafeCatchHandlesNullDefaultValue() {
         // Given
         val defaultValue: String? = null
 
@@ -108,8 +129,11 @@ class TryCatchExtensionsTest {
         assertNull("null 기본값이 반환되어야 합니다", result)
     }
 
+    /**
+     * 숫자 계산 예외 시 기본값을 반환한다
+     */
     @Test
-    fun `숫자_계산_예외_시_기본값을_반환한다`() {
+    fun testSafeCatchReturnsDefaultValueOnNumberFormatException() {
         // Given
         val defaultValue = -1
 
@@ -122,8 +146,11 @@ class TryCatchExtensionsTest {
         assertEquals("NumberFormatException 발생 시 기본값 반환", defaultValue, result)
     }
 
+    /**
+     * 기본값이 있어도 CancellationException은 전파된다
+     */
     @Test(expected = CancellationException::class)
-    fun `기본값이_있어도_CancellationException은_전파된다`() {
+    fun testSafeCatchWithDefaultValueRethrowsCancellationException() {
         // Given & When & Then
         safeCatch(defaultValue = "기본값") {
             throw CancellationException("코루틴 취소")
@@ -132,8 +159,11 @@ class TryCatchExtensionsTest {
 
     // ========== 3. safeCatch(block, onCatch) 테스트 ==========
 
+    /**
+     * 정상 실행되면 결과값을 반환하고 onCatch는 실행안됨
+     */
     @Test
-    fun `정상_실행되면_결과값을_반환하고_onCatch는_실행안됨`() {
+    fun testSafeCatchWithOnCatchReturnsResultAndSkipsHandler() {
         // Given
         var catchCalled = false
         val expectedValue = "성공"
@@ -152,8 +182,11 @@ class TryCatchExtensionsTest {
         assertFalse("onCatch가 호출되지 않아야 합니다", catchCalled)
     }
 
+    /**
+     * 예외가 발생하면 onCatch 핸들러가 실행된다
+     */
     @Test
-    fun `예외가_발생하면_onCatch_핸들러가_실행된다`() {
+    fun testSafeCatchExecutesOnCatchHandlerOnException() {
         // Given
         var catchCalled = false
         val exceptionMessage = "테스트 에러"
@@ -174,8 +207,11 @@ class TryCatchExtensionsTest {
         assertEquals("onCatch 결과를 반환해야 합니다", "에러 처리됨: $exceptionMessage", result)
     }
 
+    /**
+     * onCatch에서 예외 정보를 받을 수 있다
+     */
     @Test
-    fun `onCatch에서_예외_정보를_받을_수_있다`() {
+    fun testOnCatchReceivesExceptionInformation() {
         // Given
         var caughtException: Exception? = null
 
@@ -198,8 +234,11 @@ class TryCatchExtensionsTest {
             "잘못된 인자", caughtException?.message)
     }
 
+    /**
+     * onCatch에서 다른 타입을 반환할 수 있다
+     */
     @Test
-    fun `onCatch에서_다른_타입을_반환할_수_있다`() {
+    fun testOnCatchCanReturnDifferentType() {
         // Given & When
         val result = safeCatch(
             block = {
@@ -214,8 +253,11 @@ class TryCatchExtensionsTest {
         assertEquals("onCatch에서 반환한 값이 결과가 되어야 합니다", 999, result)
     }
 
+    /**
+     * onCatch가 있어도 CancellationException은 전파된다
+     */
     @Test(expected = CancellationException::class)
-    fun `onCatch가_있어도_CancellationException은_전파된다`() {
+    fun testSafeCatchWithOnCatchRethrowsCancellationException() {
         // Given & When & Then
         safeCatch(
             block = {
@@ -227,8 +269,11 @@ class TryCatchExtensionsTest {
 
     // ========== 4. 실제 사용 시나리오 테스트 ==========
 
+    /**
+     * 파일 읽기 실패 시 빈 문자열 반환
+     */
     @Test
-    fun `파일_읽기_실패_시_빈_문자열_반환`() {
+    fun testFileReadReturnsEmptyStringOnFailure() {
         // 실제 사용 예시: 파일 읽기 실패 시 빈 문자열 반환
         val fileContent = safeCatch(defaultValue = "") {
             // 실제로는 파일을 읽지만, 테스트에서는 예외 발생
@@ -238,8 +283,11 @@ class TryCatchExtensionsTest {
         assertEquals("파일 읽기 실패 시 빈 문자열", "", fileContent)
     }
 
+    /**
+     * JSON 파싱 실패 시 로그 남기고 기본 객체 반환
+     */
     @Test
-    fun `JSON_파싱_실패_시_로그_남기고_기본_객체_반환`() {
+    fun testJsonParsingReturnsDefaultObjectAndLogsError() {
         // 실제 사용 예시: JSON 파싱 실패 시 기본 객체 반환
         data class User(val name: String, val age: Int)
 
@@ -262,8 +310,11 @@ class TryCatchExtensionsTest {
         assertTrue("에러가 로깅되어야 합니다", errorLogged)
     }
 
+    /**
+     * 네트워크 요청 실패 시 재시도 로직
+     */
     @Test
-    fun `네트워크_요청_실패_시_재시도_로직`() {
+    fun testNetworkRequestFailureWithRetryLogic() {
         // 실제 사용 예시: 네트워크 요청 실패 시 재시도
         var attemptCount = 0
 
