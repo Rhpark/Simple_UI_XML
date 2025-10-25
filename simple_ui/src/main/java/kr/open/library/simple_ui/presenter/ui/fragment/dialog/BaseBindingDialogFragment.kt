@@ -22,14 +22,16 @@ public abstract class BaseBindingDialogFragment<BINDING : ViewDataBinding>(
      * The View Binding object for the fragment.
      * 프래그먼트에 대한 뷰 바인딩 객체.
      **********************************************/
-    protected lateinit var binding: BINDING
+    private var _binding: BINDING? = null
+    protected val binding: BINDING
+        get() = _binding
+            ?: throw IllegalStateException("Binding accessed after onDestroyView()")
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        binding = DataBindingUtil.inflate(inflater, layoutRes, container, isAttachToParent)
-        afterOnCreateView(binding.root, savedInstanceState)
-        return binding.root
+        _binding = DataBindingUtil.inflate(inflater, layoutRes, container, isAttachToParent)
+        return binding.root.also { afterOnCreateView(it, savedInstanceState) }
     }
 
 
@@ -61,9 +63,9 @@ public abstract class BaseBindingDialogFragment<BINDING : ViewDataBinding>(
 
     override fun onDestroyView() {
         super.onDestroyView()
-        if (::binding.isInitialized) {
-            binding.lifecycleOwner = null
-        }
+        binding.lifecycleOwner = null
+        binding.unbind()
+        _binding = null
     }
 
     /**
