@@ -331,4 +331,166 @@ class TryCatchExtensionsTest {
         assertEquals("시도 횟수가 1이어야 합니다", 1, attemptCount)
         assertTrue("재시도 메시지를 포함해야 합니다", result.contains("재시도 필요"))
     }
+
+    // ========== 5. 추가 고급 테스트 케이스 ==========
+
+    /**
+     * 중첩된 safeCatch 호출이 정상 동작한다
+     */
+    @Test
+    fun testNestedSafeCatchHandlesCorrectly() {
+        // Given
+        var outerCalled = false
+        var innerCalled = false
+        var afterInnerCalled = false
+
+        // When
+        safeCatch {
+            outerCalled = true
+            safeCatch {
+                innerCalled = true
+                throw RuntimeException("Inner exception")
+            }
+            afterInnerCalled = true // 내부에서 예외가 발생해도 외부는 계속 실행
+        }
+
+        // Then
+        assertTrue("외부 블록이 실행되어야 합니다", outerCalled)
+        assertTrue("내부 블록이 실행되어야 합니다", innerCalled)
+        assertTrue("내부 예외 후에도 외부 블록은 계속 실행되어야 합니다", afterInnerCalled)
+    }
+
+    /**
+     * StackOverflowError도 다시 던져진다
+     */
+    @Test(expected = StackOverflowError::class)
+    fun testSafeCatchRethrowsStackOverflowError() {
+        // Given & When & Then
+        safeCatch {
+            throw StackOverflowError("스택 오버플로우")
+        }
+    }
+
+    /**
+     * 예외 메시지가 null이어도 정상 처리된다
+     */
+    @Test
+    fun testSafeCatchHandlesNullExceptionMessage() {
+        // Given
+        var caughtMessage: String? = "not_null"
+
+        // When
+        safeCatch(
+            block = { throw RuntimeException(null as String?) },
+            onCatch = { e ->
+                caughtMessage = e.message
+                "OK"
+            }
+        )
+
+        // Then
+        assertNull("예외 메시지가 null이어야 합니다", caughtMessage)
+    }
+
+    /**
+     * 여러 타입의 예외를 연속으로 처리한다
+     */
+    @Test
+    fun testSafeCatchHandlesMultipleExceptionTypes() {
+        // Given
+        val exceptions = listOf<Exception>(
+            IllegalArgumentException("잘못된 인자"),
+            IllegalStateException("잘못된 상태"),
+            NullPointerException("null"),
+            IndexOutOfBoundsException("인덱스 오류")
+        )
+
+        // When & Then
+        exceptions.forEach { exception ->
+            var handled = false
+            safeCatch(
+                block = { throw exception },
+                onCatch = {
+                    handled = true
+                    "처리됨"
+                }
+            )
+            assertTrue("${exception::class.simpleName}이 처리되어야 합니다", handled)
+        }
+    }
+
+    /**
+     * 예외 스택 트레이스가 보존된다
+     */
+    @Test
+    fun testSafeCatchPreservesStackTrace() {
+        // Given
+        var caughtException: Exception? = null
+
+        // When
+        safeCatch(
+            block = {
+                throw RuntimeException("테스트 예외")
+            },
+            onCatch = { e ->
+                caughtException = e
+                "OK"
+            }
+        )
+
+        // Then
+        assertNotNull("예외가 전달되어야 합니다", caughtException)
+        assertNotNull("스택 트레이스가 있어야 합니다", caughtException?.stackTrace)
+        assertTrue("스택 트레이스가 비어있지 않아야 합니다",
+            caughtException?.stackTrace?.isNotEmpty() == true)
+    }
+
+    /**
+     * Throwable의 cause가 보존된다
+     */
+    @Test
+    fun testSafeCatchPreservesCause() {
+        // Given
+        val rootCause = IllegalStateException("근본 원인")
+        val wrappedException = RuntimeException("래핑된 예외", rootCause)
+        var caughtCause: Throwable? = null
+
+        // When
+        safeCatch(
+            block = { throw wrappedException },
+            onCatch = { e ->
+                caughtCause = e.cause
+                "OK"
+            }
+        )
+
+        // Then
+        assertNotNull("cause가 보존되어야 합니다", caughtCause)
+        assertTrue("cause가 IllegalStateException이어야 합니다",
+            caughtCause is IllegalStateException)
+        assertEquals("cause 메시지가 일치해야 합니다", "근본 원인", caughtCause?.message)
+    }
+
+    /**
+     * 다양한 타입의 반환값을 처리한다
+     */
+    @Test
+    fun testSafeCatchWithVariousReturnTypes() {
+        // When & Then - String
+        val stringResult = safeCatch(defaultValue = "default") { "success" }
+        assertEquals("success", stringResult)
+
+        // When & Then - Int
+        val intResult = safeCatch(defaultValue = 0) { 42 }
+        assertEquals(42, intResult)
+
+        // When & Then - Boolean
+        val boolResult = safeCatch(defaultValue = false) { true }
+        assertTrue(boolResult)
+
+        // When & Then - Custom object
+        data class User(val name: String)
+        val userResult = safeCatch(defaultValue = User("default")) { User("actual") }
+        assertEquals("actual", userResult.name)
+    }
 }
