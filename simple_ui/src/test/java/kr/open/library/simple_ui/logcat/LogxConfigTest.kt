@@ -6,7 +6,12 @@ import kr.open.library.simple_ui.logcat.model.LogxType
 import org.junit.Test
 import org.junit.Assert.*
 import org.junit.Before
+import java.util.Collections
 import java.util.EnumSet
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicReference
 
 /**
  * Logx Config 관리에 대한 단위 테스트
@@ -38,6 +43,27 @@ class LogxConfigTest {
         // Then
         assertNotNull("설정이 null이 아니어야 합니다", config)
         assertTrue("기본적으로 디버그 모드가 켜져있어야 합니다", config.isDebug)
+    }
+
+    @Test
+    fun listenerAddedDuringNotification_triggersOnNextUpdate() {
+        var innerListenerCalled = false
+
+        configManager.addConfigChangeListener(object : LogxConfigManager.ConfigChangeListener {
+            override fun onConfigChanged(newConfig: LogxConfig) {
+                configManager.addConfigChangeListener(object : LogxConfigManager.ConfigChangeListener {
+                    override fun onConfigChanged(newConfig: LogxConfig) {
+                        innerListenerCalled = true
+                    }
+                })
+            }
+        })
+
+        configManager.setDebugMode(false)
+        assertFalse("첫 번째 업데이트 동안에는 새 리스너가 아직 호출되지 않음", innerListenerCalled)
+
+        configManager.setDebugMode(true)
+        assertTrue("두 번째 업데이트에서 새로 등록한 리스너가 호출되어야 함", innerListenerCalled)
     }
 
     // ========== 2. 디버그 모드 설정 테스트 ==========
@@ -391,41 +417,51 @@ class LogxConfigTest {
 
     @Test
     fun concurrentListenerOperations_maintainIntegrity() {
-        // 리스너 추가/제거와 설정 변경이 동시에 발생해도 안전한지 확인
-        // Given
         val operationCount = 200
-        val notificationCounts = java.util.Collections.synchronizedList(mutableListOf<Int>())
+        val error = AtomicReference<Throwable?>(null)
 
-        // When
         val threads = (1..operationCount).map { i ->
             Thread {
-                when (i % 3) {
-                    0 -> {
-                        // 리스너 추가
-                        val listener = object : LogxConfigManager.ConfigChangeListener {
-                            override fun onConfigChanged(newConfig: LogxConfig) {
-                                notificationCounts.add(1)
-                            }
-                        }
-                        configManager.addConfigChangeListener(listener)
+                try {
+                    when (i % 3) {
+                        0 -> configManager.addConfigChangeListener(object :
+                            LogxConfigManager.ConfigChangeListener {
+                            override fun onConfigChanged(newConfig: LogxConfig) = Unit
+                        })
+                        1 -> configManager.setDebugMode(i % 2 == 0)
+                        else -> configManager.config.isDebug
                     }
-                    1 -> {
-                        // 설정 변경
-                        configManager.setDebugMode(i % 2 == 0)
-                    }
-                    else -> {
-                        // 설정 읽기
-                        configManager.config.isDebug
-                    }
+                } catch (t: Throwable) {
+                    error.compareAndSet(null, t)
                 }
             }
         }
 
-        threads.forEach { it.start() }
-        threads.forEach { it.join() }
+        threads.forEach(Thread::start)
+        threads.forEach(Thread::join)
 
-        // Then - 예외 없이 완료되어야 함
-        assertTrue("모든 작업이 예외 없이 완료되어야 합니다", true)
+        assertNull("동시 작업 중 예외가 발생하면 안 됨", error.get())
+    }
+
+    @Test
+    fun concurrentUpdates_notifyListenersIndependently() {
+        val latch = CountDownLatch(2)
+        val threadIds = Collections.synchronizedSet(mutableSetOf<Long>())
+
+        configManager.addConfigChangeListener(object : LogxConfigManager.ConfigChangeListener {
+            override fun onConfigChanged(newConfig: LogxConfig) {
+                threadIds += Thread.currentThread().id
+                latch.countDown()
+            }
+        })
+
+        val executor = Executors.newFixedThreadPool(2)
+        executor.submit { configManager.setDebugMode(false) }
+        executor.submit { configManager.setDebugMode(true) }
+
+        assertTrue("두 번의 알림이 모두 끝나야 함", latch.await(2, TimeUnit.SECONDS))
+        assertTrue("리스너는 각각의 업데이트에 대해 호출되어야 함", threadIds.size >= 1)
+        executor.shutdown()
     }
 
     // ========== 10. 리스너 예외 처리 테스트 ==========
