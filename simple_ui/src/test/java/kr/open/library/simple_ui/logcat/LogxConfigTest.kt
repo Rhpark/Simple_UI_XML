@@ -457,73 +457,73 @@ class LogxConfigTest {
 
     // ========== 10. 리스너 예외 처리 테스트 ==========
 
-    // TODO: Android 프레임워크(Log) 의존성 때문에 Instrumentation 테스트 전환 검토 중.
-    @Ignore("Android Log 의존성 때문에 Instrumentation 테스트 전환 검토 중")
-    @Test
-    fun listenerException_doesNotAffectOtherListeners() {
-        // 한 리스너에서 예외가 발생해도 다른 리스너는 정상 동작하는지 확인
-        // Given
-        var listener1Called = false
-        var listener2Called = false
-        var listener3Called = false
-
-        configManager.addConfigChangeListener(object : LogxConfigManager.ConfigChangeListener {
-            override fun onConfigChanged(newConfig: LogxConfig) {
-                listener1Called = true
-                throw RuntimeException("리스너 1 에러")
-            }
-        })
-
-        configManager.addConfigChangeListener(object : LogxConfigManager.ConfigChangeListener {
-            override fun onConfigChanged(newConfig: LogxConfig) {
-                listener2Called = true
-            }
-        })
-
-        configManager.addConfigChangeListener(object : LogxConfigManager.ConfigChangeListener {
-            override fun onConfigChanged(newConfig: LogxConfig) {
-                listener3Called = true
-                throw IllegalStateException("리스너 3 에러")
-            }
-        })
-
-        // When
-        configManager.setDebugMode(false)
-
-        // Then - 모든 리스너가 호출되어야 함 (예외와 무관하게)
-        assertTrue("첫 번째 리스너가 호출되어야 합니다", listener1Called)
-        assertTrue("두 번째 리스너가 호출되어야 합니다", listener2Called)
-        assertTrue("세 번째 리스너가 호출되어야 합니다", listener3Called)
-    }
-
-    // TODO: Android 프레임워크(Log) 의존성 때문에 Instrumentation 테스트 전환 검토 중.
-    @Ignore("Android Log 의존성 때문에 Instrumentation 테스트 전환 검토 중")
-    @Test
-    fun listenerWithNullPointerException_isHandled() {
-        // NPE가 발생하는 리스너도 안전하게 처리되는지 확인
-        // Given
-        var safeListenerCalled = false
-
-        configManager.addConfigChangeListener(object : LogxConfigManager.ConfigChangeListener {
-            override fun onConfigChanged(newConfig: LogxConfig) {
-                @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
-                val nullable: String? = null
-                nullable!!.length // NPE 발생
-            }
-        })
-
-        configManager.addConfigChangeListener(object : LogxConfigManager.ConfigChangeListener {
-            override fun onConfigChanged(newConfig: LogxConfig) {
-                safeListenerCalled = true
-            }
-        })
-
-        // When
-        configManager.setAppName("Test")
-
-        // Then
-        assertTrue("안전한 리스너는 호출되어야 합니다", safeListenerCalled)
-    }
+//    // TODO: Android 프레임워크(Log) 의존성 때문에 Instrumentation 테스트 전환 검토 중.
+//    @Ignore("Android Log 의존성 때문에 Instrumentation 테스트 전환 검토 중")
+//    @Test
+//    fun listenerException_doesNotAffectOtherListeners() {
+//        // 한 리스너에서 예외가 발생해도 다른 리스너는 정상 동작하는지 확인
+//        // Given
+//        var listener1Called = false
+//        var listener2Called = false
+//        var listener3Called = false
+//
+//        configManager.addConfigChangeListener(object : LogxConfigManager.ConfigChangeListener {
+//            override fun onConfigChanged(newConfig: LogxConfig) {
+//                listener1Called = true
+//                throw RuntimeException("리스너 1 에러")
+//            }
+//        })
+//
+//        configManager.addConfigChangeListener(object : LogxConfigManager.ConfigChangeListener {
+//            override fun onConfigChanged(newConfig: LogxConfig) {
+//                listener2Called = true
+//            }
+//        })
+//
+//        configManager.addConfigChangeListener(object : LogxConfigManager.ConfigChangeListener {
+//            override fun onConfigChanged(newConfig: LogxConfig) {
+//                listener3Called = true
+//                throw IllegalStateException("리스너 3 에러")
+//            }
+//        })
+//
+//        // When
+//        configManager.setDebugMode(false)
+//
+//        // Then - 모든 리스너가 호출되어야 함 (예외와 무관하게)
+//        assertTrue("첫 번째 리스너가 호출되어야 합니다", listener1Called)
+//        assertTrue("두 번째 리스너가 호출되어야 합니다", listener2Called)
+//        assertTrue("세 번째 리스너가 호출되어야 합니다", listener3Called)
+//    }
+//
+//    // TODO: Android 프레임워크(Log) 의존성 때문에 Instrumentation 테스트 전환 검토 중.
+//    @Ignore("Android Log 의존성 때문에 Instrumentation 테스트 전환 검토 중")
+//    @Test
+//    fun listenerWithNullPointerException_isHandled() {
+//        // NPE가 발생하는 리스너도 안전하게 처리되는지 확인
+//        // Given
+//        var safeListenerCalled = false
+//
+//        configManager.addConfigChangeListener(object : LogxConfigManager.ConfigChangeListener {
+//            override fun onConfigChanged(newConfig: LogxConfig) {
+//                @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
+//                val nullable: String? = null
+//                nullable!!.length // NPE 발생
+//            }
+//        })
+//
+//        configManager.addConfigChangeListener(object : LogxConfigManager.ConfigChangeListener {
+//            override fun onConfigChanged(newConfig: LogxConfig) {
+//                safeListenerCalled = true
+//            }
+//        })
+//
+//        // When
+//        configManager.setAppName("Test")
+//
+//        // Then
+//        assertTrue("안전한 리스너는 호출되어야 합니다", safeListenerCalled)
+//    }
 
     // ========== 11. 엣지 케이스 테스트 ==========
 
