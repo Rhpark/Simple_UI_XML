@@ -49,11 +49,6 @@ public inline fun <T> List<T>.ifEmpty(action: () -> Unit): List<T> {
     return this
 }
 
-public inline fun <T> List<T>.ifNotEmpty(action: () -> Unit): List<T> {
-    if (isNotEmpty()) action()
-    return this
-}
-
 /**
  * Executes the given action if the map is not empty and returns the map for chaining
  *
