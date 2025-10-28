@@ -81,7 +81,6 @@ public open class VibratorController(context: Context) : BaseSystemService(conte
      * @param milliseconds 진동 지속 시간 (밀리초) / Vibration duration in milliseconds
      */
     @RequiresPermission(VIBRATE)
-    @RequiresApi(Build.VERSION_CODES.Q)
     public fun vibrate(milliseconds: Long): Boolean = tryCatchSystemManager(false) {
 
         val effect = VibrationEffect.createOneShot(milliseconds, VibrationEffect.DEFAULT_AMPLITUDE)
@@ -124,7 +123,6 @@ public open class VibratorController(context: Context) : BaseSystemService(conte
      * @param repeat Index to start repeating from, -1 for no repeat (반복 시작 인덱스, -1은 반복 없음)
      */
     @RequiresPermission(VIBRATE)
-    @RequiresApi(Build.VERSION_CODES.Q)
     public fun createWaveform(times: LongArray, amplitudes: IntArray, repeat: Int = -1): Boolean = tryCatchSystemManager(false) {
         val waveformEffect = VibrationEffect.createWaveform(times, amplitudes, repeat)
         checkSdkVersion(Build.VERSION_CODES.S,
@@ -142,7 +140,6 @@ public open class VibratorController(context: Context) : BaseSystemService(conte
      * @param repeat 반복 시작 인덱스, -1은 반복 없음 / Repeat start index, -1 for no repeat
      */
     @RequiresPermission(VIBRATE)
-    @RequiresApi(Build.VERSION_CODES.Q)
     public fun vibratePattern(pattern: LongArray, repeat: Int = -1): Boolean = tryCatchSystemManager(false) {
         val waveformEffect = VibrationEffect.createWaveform(pattern, repeat)
         checkSdkVersion(Build.VERSION_CODES.S,

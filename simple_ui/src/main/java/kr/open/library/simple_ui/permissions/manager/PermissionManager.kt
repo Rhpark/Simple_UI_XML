@@ -64,6 +64,7 @@ class PermissionManager private constructor() {
      * @param callback 결과 콜백 (거부된 권한 목록)
      * @return 요청 ID (취소 시 사용)
      */
+    @Synchronized
     fun request(
         context: Context,
         requestPermissionLauncher: ActivityResultLauncher<Array<String>>,

@@ -62,9 +62,17 @@ class LogxConfigManager(initialConfig: LogxConfig = LogxConfig()) {
      * 전체 설정을 업데이트
      */
     fun updateConfig(newConfig: LogxConfig) {
-        lock.write {
+        val snapshot = lock.write {
             _config = newConfig
-            notifyListeners(newConfig)
+            listeners.toList()  // 스냅샷
+        }
+
+        snapshot.forEach { listener ->
+            try {
+                listener.onConfigChanged(newConfig)
+            } catch (e: Exception) {
+                Log.e("LogxConfigManager", "Error notifying listener", e)
+            }
         }
     }
     

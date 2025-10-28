@@ -65,6 +65,7 @@ public abstract class BaseSystemService(
         val deniedPermissions = getDeniedPermissionList()
         if(deniedPermissions.isNotEmpty()) {
             Logx.w("${this::class.simpleName}: Missing permissions!!! - $deniedPermissions")
+            return defaultValue
         }
         return safeCatch(
             block = block,

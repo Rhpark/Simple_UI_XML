@@ -2,7 +2,9 @@ package kr.open.library.simpleui_xml.activity_fragment.fragment
 
 import android.os.Bundle
 import android.view.View
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.launch
 import kr.open.library.simple_ui.logcat.Logx
 import kr.open.library.simple_ui.presenter.extensions.view.snackBarShowShort
@@ -38,11 +40,13 @@ class BaseBindingFragmentExample : BaseBindingFragment<FragmentBaseBindingExampl
 
     override fun eventVmCollect() {
         viewLifecycleOwner.lifecycleScope.launch {
-            vm.mEventVm.collect { event ->
-                when (event) {
-                    is BaseBindingFragmentExampleVmEvent.ShowMessage -> {
-                        binding.root.snackBarShowShort(event.message)
-                        Logx.d("Fragment Event: ${event.message}")
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                vm.mEventVm.collect { event ->
+                    when (event) {
+                        is BaseBindingFragmentExampleVmEvent.ShowMessage -> {
+                            binding.root.snackBarShowShort(event.message)
+                            Logx.d("Fragment Event: ${event.message}")
+                        }
                     }
                 }
             }

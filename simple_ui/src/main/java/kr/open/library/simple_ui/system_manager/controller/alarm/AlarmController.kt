@@ -176,7 +176,6 @@ public open class AlarmController(context: Context) :
             intent,
             PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
         )
-        pendingIntent != null
-        true
+        return pendingIntent != null
     }
 }

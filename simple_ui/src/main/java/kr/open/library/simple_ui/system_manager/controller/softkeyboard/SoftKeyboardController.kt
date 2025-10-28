@@ -65,7 +65,7 @@ public open class SoftKeyboardController(context: Context) : BaseSystemService(c
      * 기본 플래그 옵션: SHOW_IMPLICIT, SHOW_FORCED (API 33에서 deprecated)
      */
     public fun show(v: View, flag: Int = InputMethodManager.SHOW_IMPLICIT): Boolean = tryCatchSystemManager(false) {
-        if (v.requestFocus()) {
+        return if (v.requestFocus()) {
             imm.showSoftInput(v, flag)
         } else {
             Logx.e("view requestFocus() is false!!")
@@ -84,7 +84,7 @@ public open class SoftKeyboardController(context: Context) : BaseSystemService(c
      * @return Boolean true if Runnable was placed in message queue
      */
     public fun showDelay(v: View, delay: Long, flag: Int = InputMethodManager.SHOW_IMPLICIT): Boolean = tryCatchSystemManager(false) {
-        v.postDelayed(Runnable { show(v, flag) }, delay)
+        return v.postDelayed(Runnable { show(v, flag) }, delay)
     }
 
     /**
@@ -112,7 +112,7 @@ public open class SoftKeyboardController(context: Context) : BaseSystemService(c
      * 기본 플래그 옵션: HIDE_IMPLICIT_ONLY, HIDE_NOT_ALWAYS
      */
     public fun hide(v: View, flag: Int = 0): Boolean = tryCatchSystemManager(false) {
-        if (v.requestFocus()) {
+        return if (v.requestFocus()) {
             imm.hideSoftInputFromWindow(v.windowToken, flag)
         } else {
             Logx.e("view requestFocus() is false!!")
@@ -131,7 +131,7 @@ public open class SoftKeyboardController(context: Context) : BaseSystemService(c
      * @return Boolean true if Runnable was placed in message queue
      */
     public fun hideDelay(v: View, delay: Long, flag: Int = 0): Boolean = tryCatchSystemManager(false) {
-        v.postDelayed(Runnable { hide(v, flag) }, delay)
+        return v.postDelayed(Runnable { hide(v, flag) }, delay)
     }
 
     /**
@@ -190,7 +190,7 @@ public open class SoftKeyboardController(context: Context) : BaseSystemService(c
      */
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     public fun startStylusHandwriting(v: View, delay: Long): Boolean = tryCatchSystemManager(false) {
-        v.postDelayed(Runnable { startStylusHandwriting(v) }, delay)
+        return v.postDelayed(Runnable { startStylusHandwriting(v) }, delay)
     }
 
 }
