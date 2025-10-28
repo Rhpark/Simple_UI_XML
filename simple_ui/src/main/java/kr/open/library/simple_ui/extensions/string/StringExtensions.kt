@@ -3,7 +3,7 @@ package kr.open.library.simple_ui.extensions.string
 import androidx.annotation.CheckResult
 
 // Precompiled regex patterns for better performance
-private val WHITESPACE_REGEX = "\\s".toRegex()
+private val WHITESPACE_REGEX = "[\\s\\p{Z}]".toRegex()
 private val HTML_TAG_REGEX = "<[^>]*>".toRegex()
 private val NUMERIC_REGEX = "^[0-9]*$".toRegex()
 private val ALPHANUMERIC_REGEX = "^[a-zA-Z0-9]*$".toRegex()
