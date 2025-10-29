@@ -2,11 +2,8 @@
 
 ### Logx Output Preview (Logx 출력 예시)
 ![logx.gif](example_gif%2Flogx.gif)
-> **"Premium logging finished in a single line."** See at a glance how Logx feels compared to the classic `Log` API.
-
-<br>
-</br>
-
+> **"Premium logging done in a single line."** See at a glance how Logx feels compared to the classic `Log` API.
+>
 > **“단 한 줄로 끝내는 고급 로깅.”** 기존 `Log` 대비 Logx가 주는 체감 차이를 한눈에 확인하세요.
 
 <br>
@@ -14,21 +11,18 @@
 
 ## 🔎 At a Glance (한눈 비교)
 
-| Category (항목) | Android Log | Logx |
-|:--|:--:|:--:|
-| Output format (출력 포맷) | `D/TAG: message` | `[앱] [패키지] [레벨] (파일:라인).메서드 - message` |
-| Auto annotate file/line (파일/라인 자동 표기) | ❌ | ✅ |
-| Auto annotate caller method (호출 메서드 자동 표기) | ❌ | ✅ |
-| Auto annotate thread ID (스레드 ID 자동 표기) | △(manual handling) | ✅ |
-| JSON pretty print (JSON 예쁘게 출력) | △(manual formatting) | ✅ |
-| File archive (파일 저장/로그 아카이브) | △(custom implementation) | ✅ |
-| DSL-based configuration/filter (DSL 기반 구성/필터) | ❌ | ✅ |
+| Category (항목) | Android Log |                            Logx                             |
+|:--|:--:|:-----------------------------------------------------------:|
+| Output format (출력 포맷) | `D/TAG: message` | `[Ap] [Package] [Level] (File:LineNumber).Method - message` |
+| Auto annotate file/line (파일/라인 자동 표기) | ❌ |                              ✅                              |
+| Auto annotate caller method (호출 메서드 자동 표기) | ❌ |                              ✅                              |
+| Auto annotate thread ID (스레드 ID 자동 표기) | △(manual handling) |                              ✅                              |
+| JSON pretty print (JSON 예쁘게 출력) | △(manual formatting) |                              ✅                              |
+| File archive (파일 저장/로그 아카이브) | △(custom implementation) |                              ✅                              |
+| DSL-based configuration/filter (DSL 기반 구성/필터) | ❌ |                              ✅                              |
 
 > **Key point:** Logx automatically attaches the metadata you care about, dramatically accelerating debugging.
-
-<br>
-</br>
-
+>
 > **핵심:** Logx는 “알고 싶은 메타정보”를 **자동**으로 붙여 줍니다. 디버깅 속도가 달라집니다.
 
 <br>
@@ -36,7 +30,7 @@
 
 ## 💡 Why It Matters (왜 중요한가)
 
-- Shrink the time to reach the problem area: no more hunting for files, lines, or methods.
+- Reduce the time to reach the problem area: no more hunting for files, lines, or methods.
 - Improve reproducibility: thread and context metadata make root-cause discovery faster.
 - Produce readable logs: auto-formatted JSON exposes the data structure instantly.
 - Gain operational convenience: file archiving, filtering, and level control benefit both development and operations.
@@ -64,6 +58,7 @@ RhPark[]  kr.open.library.simpleui_xml  E  (LogxActivity.kt:60).demonstrateBasic
 
 **Analyze the output structure (출력 구조 분석):**
 ```
+[AppName] [PackagePath] [Level] (FileName:LineNumber).Method - Message
 [앱이름] [패키지명] [레벨] (파일명:라인번호).메서드명 - 메시지
 ```
 
@@ -92,14 +87,13 @@ RhPark[]  kr.open.library.simpleui_xml  E  (LogxActivity.kt:60).demonstrateBasic
 **🎯 Core advantages (🎯 핵심 장점):**
 - Standard Android Log: `D/TAG: message`
 - **Logx**: `(File:Line).Method - message`
+
+**Debugging becomes radically easier!** Instantly see which file, line, and method produced the log.
   <br>
   </br>
 - 기존 Android Log: `D/TAG: message`
 - **Logx**: `(파일명:라인).메서드명 - message`
 
-**Debugging becomes radically easier!** Instantly see which file, line, and method produced the log.
-<br>
-</br>
 **디버깅이 혁신적으로 쉬워집니다!** 어느 파일의 몇 번째 줄, 어떤 메서드에서 호출했는지 한눈에 확인 가능!
 
 <br>
@@ -136,7 +130,7 @@ RhPark[]  kr.open.library.simpleui_xml  E  (LogxActivity.kt:60).demonstrateBasic
 override fun onCreate() {
     super.onCreate()
 
-    // Logx 초기화 (필수)
+    // Logx Initialization required 초기화 (필수)
     Logx.init(this)
 }
 ```
@@ -215,7 +209,7 @@ Logx.configure {
     }
 }
 ```
-✅ **Pros:** No permission required, automatically cleaned when the app is removed  
+✅ **Pros:** No permission required, automatically cleaned up when the app is removed
 ❌ **Cons:** Users cannot access directly
 <br>
 </br>
@@ -234,7 +228,7 @@ Logx.configure {
     }
 }
 ```
-✅ **Pros:** No permission required, accessible via file manager, automatically cleaned when the app is removed  
+✅ **Pros:** No permission required, accessible through file manager, automatically cleaned up when the app is removed
 ✅ **Recommendation:** Best option in most situations!
 <br>
 </br>
@@ -256,7 +250,7 @@ Logx.configure {
     }
 }
 ```
-✅ **Pros:** Logs persist even after uninstall, easy access  
+✅ **Pros:** Logs remain even after uninstall, easy access
 ❌ **Cons:** Requires permission on Android 9 or lower
 <br>
 </br>
@@ -344,7 +338,7 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 <br>
 </br>
 
-### 1. Caller tracing comparison (첫째: 호출자 추적 비교)
+### 1. Caller tracing comparison (호출자 추적 비교)
 
 <details>
 <summary><strong>Legacy Android Log - Stack tracing (기존 Android Log - Stack 추적)</strong></summary>
@@ -397,14 +391,14 @@ private fun childMethod() {
     Logx.d("일반 로그: 호출 위치가 표시되지 않음")
 }
 ```
-**Result (결과):** Automatic caller tracing with file name, line number, and class all filled in  
+**Result (결과):** Automatic caller tracing with file name, line number, and class automatically included
 **결과:** 자동 호출자 추적, 파일명/라인번호, 클래스명 모두 자동!
 </details>
 
 <br>
 </br>
 
-### 2. JSON formatting comparison (둘째: JSON 포맷팅 비교)
+### 2. JSON formatting comparison (JSON 포맷팅 비교)
 
 <details>
 <summary><strong>Legacy Android Log - JSON formatting (기존 Android Log - JSON 포맷팅)</strong></summary>
@@ -453,7 +447,7 @@ private fun logJsonData() {
 <br>
 </br>
 
-### 3. Thread ID tracing (셋째: Thread ID 추적)
+### 3. Thread ID tracing (Thread ID 추적)
 
 <details>
 <summary><strong>Legacy Android Log - Thread tracing (기존 Android Log - Thread 추적)</strong></summary>
@@ -506,7 +500,7 @@ private fun demonstrateThreadTracking() {
 <br>
 </br>
 
-### 4. File saving feature (넷째: 파일 저장 기능)
+### 4. File saving feature (파일 저장 기능)
 
 <details>
 <summary><strong>Legacy Android Log - File saving (기존 Android Log - 파일 저장)</strong></summary>
@@ -597,7 +591,7 @@ private fun logWithFile(tag: String, message: String) {
 <br>
 </br>
 
-### 5. Configuration management (다섯째: 설정 관리 기능)
+### 5. Configuration management (설정 관리 기능)
 
 <details>
 <summary><strong>Legacy Android Log - Configuration management (기존 Android Log - 설정 관리)</strong></summary>
@@ -761,7 +755,7 @@ private fun setupLogging() {
 <br>
 </br>
 
-## Conclusion: A New Standard for Logging (결론: 로깅의 새로운 표준)
+## Conclusion: A New Standard for Logging (로깅의 새로운 표준)
 
 **Simple UI Logx** completely transforms traditional logging.  
 It **shortens complex logging code**, **dramatically improves developer productivity**, and delivers an **intuitive logging experience**.
@@ -818,7 +812,7 @@ Start now! ✨
 - 실시간 로그 파일 저장
 - 실시간 저장소 및 경로 변경
 - 고급 DSL 기반 설정
-- 로그 필터링 및 레ベル 도구
+- 로그 필터링 및 레벨 도구
 
 
 <br>
@@ -878,7 +872,7 @@ Logx.configure {
     }
 }
 ```
-**Pros:** No permission required, automatically cleaned when the app is removed  
+**Pros:** No permission required, automatically cleaned up when the app is removed
 **Cons:** Users cannot access directly
 <br>
 </br>
@@ -897,7 +891,7 @@ Logx.configure {
     }
 }
 ```
-**Pros:** No permission required, accessible via file manager, automatically cleaned when the app is removed  
+**Pros:** No permission required, accessible through file manager, automatically cleaned up when the app is removed
 **Cons:** None — the best option in most scenarios
 <br>
 </br>
@@ -916,7 +910,7 @@ Logx.configure {
     }
 }
 ```
-**Pros:** Logs remain even after uninstall, easy access for users  
+**Pros:** Logs remain even after uninstall, easy access for users
 **Cons:** Requires permission on Android 9 or lower
 <br>
 </br>

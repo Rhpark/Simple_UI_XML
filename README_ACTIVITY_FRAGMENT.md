@@ -1,60 +1,76 @@
-# 📱 Simple UI Activity & Fragment - 완벽 가이드
+# 📱 Simple UI Activity & Fragment - Complete Guide (📱 Simple UI Activity & Fragment - 완벽 가이드)
 
-### BaseBindingActivity 초기 설정
+### BaseBindingActivity Quick Setup (BaseBindingActivity 초기 설정)
 ![mvvm_activity_init.gif](example_gif%2Fmvvm_activity_init.gif)
 
-### BaseActivity 초기 설정
+### BaseActivity Quick Setup (BaseActivity 초기 설정)
 ![baseActivity.gif](example_gif%2FbaseActivity.gif)
+> **"Finish Activity/Fragment initialization in just three lines!"** See how Simple UI compares with plain Android development in seconds.
+>
 > **"Activity/Fragment 초기화를 3줄로 끝내자!"** 기존 순수 Android 개발 대비 Simple UI가 주는 체감 차이를 한눈에 확인하세요.
 
 <br>
 </br>
 
-## 🔎 한눈 비교 (At a glance)
+## 🔎 At a Glance (한눈 비교)
 
 <br>
 </br>
 
-### Activity/Fragment 초기화
+### Activity/Fragment Initialization (Activity/Fragment 초기화)
 
-| 항목 | 순수 Android | Simple UI |
+| Category (항목) | Plain Android (순수 Android) | Simple UI |
 |:--|:--:|:--:|
-| setContentView 설정 | 수동 설정 (3줄+) | 생성자 파라미터로 자동 ✅ |
-| DataBinding 설정 | 수동 inflate + setContentView (7줄+) | 생성자 파라미터로 자동 ✅ |
-| LifecycleOwner 설정 | 수동 binding.lifecycleOwner 설정 | 자동 연동 ✅ |
-| Fragment nullable binding | 수동 처리 (_binding?, onDestroyView) | 자동 관리 ✅ |
-| onCreate 보일러플레이트 | 복잡한 초기화 코드 | 최소화된 코드 ✅ |
+| setContentView setup (setContentView 설정) | Manual setup (3+ lines) | Automatic via constructor parameters ✅ |
+| DataBinding setup (DataBinding 설정) | Manual inflate + setContentView (7+ lines) | Automatic via constructor parameters ✅ |
+| LifecycleOwner assignment (LifecycleOwner 설정) | Manually set `binding.lifecycleOwner` | Automatically wired ✅ |
+| Nullable Fragment binding (Fragment nullable binding) | Manual handling (`_binding?`, `onDestroyView`) | Managed automatically ✅ |
+| `onCreate` boilerplate (onCreate 보일러플레이트) | Complex initialization code | Minimal code ✅ |
 
 <br>
 </br>
 
-### 권한 관리
-| 항목 | 순수 Android | Simple UI |
+### Permission Management (권한 관리)
+| Category (항목) | Plain Android (순수 Android) | Simple UI |
 |:--|:--:|:--:|
-| 권한 요청 방식 | ActivityResultContract 수동 등록 | onRequestPermissions() 한 줄 ✅ |
-| 특수 권한 처리 | 별도 분리 로직 (50줄+) | 자동 구분 처리 ✅ |
-| 권한 결과 처리 | 수동 콜백 구현 | 통합 콜백 제공 ✅ |
-| 개발자 경험 | 복잡한 보일러플레이트 | 간결한 라이브러리 호출 ✅ |
+| Permission request flow (권한 요청 방식) | Manual `ActivityResultContract` registration | Single-line `onRequestPermissions()` ✅ |
+| Special permission handling (특수 권한 처리) | Separate branches (50+ lines) | Automatic differentiation ✅ |
+| Handling permission results (권한 결과 처리) | Manual callback implementation | Unified callback provided ✅ |
+| Developer experience (개발자 경험) | Boilerplate-heavy | Concise library calls ✅ |
 
 <br>
 </br>
 
-### SystemBars 제어
-| 항목 | 순수 Android | Simple UI |
+### SystemBars Control (SystemBars 제어)
+| Category (항목) | Plain Android (순수 Android) | Simple UI |
 |:--|:--:|:--:|
-| StatusBar 높이 계산 | 수동 계산 (SDK 분기 필요) | statusBarHeight 프로퍼티로 자동 ✅ |
-| NavigationBar 높이 계산 | 수동 계산 (복잡한 로직) | navigationBarHeight 프로퍼티로 자동 ✅ |
-| StatusBar 투명 설정 | WindowManager 수동 설정 (10줄+) | setStatusBarTransparent() 한 줄 ✅ |
-| StatusBar 색상 설정 | WindowCompat 수동 처리 | setStatusBarColor() 한 줄 ✅ |
-| NavigationBar 색상 설정 | WindowCompat 수동 처리 | setNavigationBarColor() 한 줄 ✅ |
-| SystemBars 동시 설정 | 개별 설정 필요 | setSystemBarsColor() 한 줄 ✅ |
+| Status bar height calculation (StatusBar 높이 계산) | Manual computation (requires SDK branching) | Automatic via `statusBarHeight` ✅ |
+| Navigation bar height calculation (NavigationBar 높이 계산) | Manual computation (complex logic) | Automatic via `navigationBarHeight` ✅ |
+| Transparent status bar (StatusBar 투명 설정) | Manual `WindowManager` setup (10+ lines) | `setStatusBarTransparent()` one-liner ✅ |
+| Status bar color (StatusBar 색상 설정) | Manual `WindowCompat` logic | `setStatusBarColor()` one-liner ✅ |
+| Navigation bar color (NavigationBar 색상 설정) | Manual `WindowCompat` logic | `setNavigationBarColor()` one-liner ✅ |
+| Simultaneous SystemBars control (SystemBars 동시 설정) | Configure individually | `setSystemBarsColor()` one-liner ✅ |
+
+> **Key takeaway:** Simple UI accelerates development by **automating complex Activity/Fragment boilerplate**.
+
+<br>
+</br>
 
 > **핵심:** Simple UI는 "복잡한 Activity/Fragment 보일러플레이트"를 **자동화**를 통해 개발 속도를 향상시킵니다.
 
 <br>
 </br>
 
-## 💡 왜 중요한가:
+## 💡 Why It Matters (왜 중요한가)
+
+- **Shorter development time:** Remove Activity/Fragment initialization boilerplate and focus on core logic.
+- **Fewer mistakes:** Prevent bugs around DataBinding configuration and nullable binding handling.
+- **Consistent patterns:** Ensure the whole team uses the same Activity/Fragment structure.
+- **Better maintainability:** Standardized base classes simplify upkeep.
+- **Rapid prototyping:** Turn ideas into prototypes immediately.
+
+<br>
+</br>
 
 - **개발 시간 단축**: Activity/Fragment 초기화 보일러플레이트 제거로 핵심 로직에 집중 가능
 - **실수 방지**: DataBinding 설정, nullable binding 처리 등에서 발생하는 버그 예방
@@ -65,27 +81,116 @@
 <br>
 </br>
 
-## ⚙️ **필수 설정**
+## ⚙️ Required Setup (필수 설정)
 
-Simple UI의 Activity/Fragment를 사용하려면 기본 설정이 필요합니다.
+Simple UI’s Activity and Fragment classes need a minimal configuration beforehand.
 
-### 📦 build.gradle.kts 설정
+<br>
+</br>
 
-**BaseBindingActivity**와 **BaseBindingFragment**를 사용하려면 **DataBinding 활성화가 필수**입니다.
+Simple UI의 Activity/Fragment를 사용하려면 사전 설정이 필요합니다.
 
-> **참고**: `BaseActivity`와 `BaseFragment`는 DataBinding 없이도 사용 가능합니다.
+### 📦 `build.gradle.kts` configuration (`build.gradle.kts` 설정)
 
-**Module-level build.gradle.kts**에 다음 설정을 추가하세요:
+**BaseBindingActivity** and **BaseBindingFragment** require **DataBinding** to be enabled.
+
+<br>
+</br>
+
+**BaseBindingActivity**와 **BaseBindingFragment**를 사용하려면 **DataBinding 활성화**가 필수입니다.
+
+> **Note:** `BaseActivity` and `BaseFragment` can be used without DataBinding.
+>
+> **참고:** `BaseActivity`와 `BaseFragment`는 DataBinding 없이도 사용할 수 있습니다.
+
+Add the following to your **module-level `build.gradle.kts`**:
 
 ```kotlin
 android {
     buildFeatures {
-        dataBinding = true  // BaseBindingActivity/Fragment 사용 시 필수!
+        dataBinding = true  // Required when using BaseBindingActivity/Fragment!
     }
 }
 ```
 
 <br>
+</br>
+
+### ✅ How to verify the setup (설정 확인 방법)
+
+To make sure DataBinding is configured correctly:
+
+1. Run **Sync Gradle**.
+2. Run **Rebuild Project**.
+3. Ensure your layout file is wrapped in a `<layout>` tag:
+
+```xml
+<!-- activity_main.xml -->
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+        <!-- Optional ViewModel binding -->
+        <variable
+            name="vm"
+            type="com.example.MainViewModel" />
+    </data>
+    <LinearLayout
+        style="@style/Layout.AllMatch.Vertical">
+        <!-- UI elements -->
+    </LinearLayout>
+</layout>
+```
+
+4. After a successful build, confirm that the `ActivityMainBinding` class is generated.
+
+<br>
+</br>
+
+DataBinding이 올바르게 설정되었는지 확인하려면:
+
+1. **Sync Gradle**을 실행합니다.
+2. **Rebuild Project**를 실행합니다.
+3. 레이아웃 파일이 `<layout>` 태그로 감싸져 있는지 확인합니다:
+
+```xml
+<!-- activity_main.xml -->
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+        <!-- ViewModel 바인딩 (선택사항) -->
+        <variable
+            name="vm"
+            type="com.example.MainViewModel" />
+    </data>
+    <LinearLayout
+        style="@style/Layout.AllMatch.Vertical">
+        <!-- UI 요소들 -->
+    </LinearLayout>
+</layout>
+```
+
+4. 빌드 성공 후 `ActivityMainBinding` 클래스가 자동 생성되는지 확인합니다.
+
+<br>
+</br>
+
+### 🚨 Common pitfalls (자주 발생하는 오류)
+
+#### ❌ DataBinding not enabled (DataBinding 미활성화)
+```
+Unresolved reference: ActivityMainBinding
+```
+**Fix:** Add `dataBinding = true` to `build.gradle.kts`, then sync Gradle.
+
+<br>
+</br>
+
+**해결방법:** `build.gradle.kts`에 `dataBinding = true`를 추가하고 Gradle Sync를 실행하세요.
+
+<br>
+</br>
+
+#### ❌ Missing `<layout>` tag in the layout file (레이아웃 파일 `<layout>` 태그 누락)
+```
+Cannot find symbol class ActivityMainBinding
 
 ### ✅ 설정 확인 방법
 
@@ -115,46 +220,90 @@ DataBinding이 올바르게 설정되었는지 확인하려면:
 
 <br>
 
-### 🚨 자주 발생하는 오류
+### 🚨 Common pitfalls (자주 발생하는 오류)
 
-#### ❌ DataBinding 미활성화
+#### ❌ DataBinding not enabled (DataBinding 미활성화)
 ```
 Unresolved reference: ActivityMainBinding
 ```
-**해결방법**: `build.gradle.kts`에 `dataBinding = true` 추가 후 Sync Gradle
-
-#### ❌ 레이아웃 파일 `<layout>` 태그 누락
-```
-Cannot find symbol class ActivityMainBinding
-```
-**해결방법**: XML 파일을 `<layout>` 태그로 감싸기
-
-#### ❌ Gradle Sync 미실행
-```
-DataBindingUtil not found
-```
-**해결방법**: **File → Sync Project with Gradle Files** 실행
+**Fix:** Add `dataBinding = true` to `build.gradle.kts`, then sync Gradle.
 
 <br>
 </br>
 
-## 🎯 첫째: BaseActivity/BaseFragment (간단한 화면용)
+**해결방법:** `build.gradle.kts`에 `dataBinding = true`를 추가하고 Gradle Sync를 실행하세요.
+
+<br>
+</br>
+
+#### ❌ Missing `<layout>` tag in the layout file (레이아웃 파일 `<layout>` 태그 누락)
+```
+Cannot find symbol class ActivityMainBinding
+```
+**Fix:** Wrap your XML file inside a `<layout>` tag.
+
+<br>
+</br>
+
+**해결방법:** XML 파일을 `<layout>` 태그로 감싸세요.
+
+<br>
+</br>
+
+#### ❌ Gradle sync not executed (Gradle Sync 미실행)
+```
+DataBindingUtil not found
+```
+**Fix:** Run **File → Sync Project with Gradle Files**.
+
+<br>
+</br>
+
+**해결방법:** **File → Sync Project with Gradle Files**를 실행하세요.
+
+<br>
+</br>
+
+## 🎯 Tier 1: BaseActivity / BaseFragment (간단한 화면용)
+
+**BaseActivity** and **BaseFragment** are ideal for straightforward screens that do not require DataBinding.
+
+<br>
+</br>
 
 **BaseActivity**와 **BaseFragment**는 DataBinding이 필요 없는 간단한 화면에 적합합니다.
 
 <br>
 
-### 💡 **특징**
+### 💡 Key traits (특징)
+- ✅ Automatically calls `setContentView()` when only a layout is provided (Activity)
+- ✅ Automatically inflates the layout when only the resource ID is provided (Fragment)
+- ✅ Exposes a `rootView` property for Fragments out of the box
+- ✅ Extremely lightweight with minimal overhead
+- ✅ Works seamlessly with `findViewById()` or manual ViewBinding
+- ✅ No DataBinding requirement
+
+<br>
+</br>
+
 - ✅ 레이아웃만 지정하면 자동으로 `setContentView()` 처리 (Activity)
 - ✅ 레이아웃만 지정하면 자동으로 inflate 처리 (Fragment)
-- ✅ Fragment는 `rootView` 프로퍼티 자동 제공
-- ✅ 매우 가벼움 (오버헤드 최소)
-- ✅ findViewById() 또는 ViewBinding 직접 사용
+- ✅ Fragment는 `rootView` 프로퍼티를 자동 제공
+- ✅ 매우 가벼운 구조로 오버헤드 최소
+- ✅ `findViewById()` 또는 ViewBinding 직접 사용 가능
 - ✅ DataBinding 불필요
 
 <br>
 
-### 📌 **언제 사용하나요?**
+### 📌 When to use (언제 사용하나요?)
+- ✅ Simple information display screens
+- ✅ Settings screens
+- ✅ Static content pages
+- ✅ When DataBinding would be overkill
+
+<br>
+</br>
+
 - ✅ 간단한 정보 표시 화면
 - ✅ 설정(Settings) 화면
 - ✅ 정적 컨텐츠 페이지
@@ -163,10 +312,10 @@ DataBindingUtil not found
 <br>
 </br>
 
-### Activity 초기화 비교
+### Activity initialization comparison (Activity 초기화 비교)
 
 <details>
-<summary><strong>순수 Android - Activity 수동 초기화</strong></summary>
+<summary><strong>Plain Android — manual Activity setup (순수 Android - Activity 수동 초기화)</strong></summary>
 
 ```kotlin
 class SettingsActivity : AppCompatActivity() {
@@ -204,11 +353,16 @@ class SettingsActivity : AppCompatActivity() {
     }
 }
 ```
-**문제점:** 반복적인 setContentView, 권한요청/승인 복잡
+**Issues:** Repetitive `setContentView` calls and complex permission request/approval flow.
+
+<br>
+</br>
+
+**문제점:** 반복적인 `setContentView` 호출과 권한 요청/승인 로직이 복잡합니다.
 </details>
 
 <details>
-<summary><strong>Simple UI - Activity 자동 초기화</strong></summary>
+<summary><strong>Simple UI — automatic Activity setup (Simple UI - Activity 자동 초기화)</strong></summary>
 
 ```kotlin
 class SettingsActivity : BaseActivity(R.layout.activity_settings) {
@@ -245,16 +399,21 @@ class SettingsActivity : BaseActivity(R.layout.activity_settings) {
     }
 }
 ```
-**결과:** setContentView 자동 처리로 한 줄 감소!
+**Result:** `setContentView` handled automatically, reducing boilerplate.
+
+<br>
+</br>
+
+**결과:** `setContentView`가 자동 처리되어 보일러플레이트가 줄어듭니다.
 </details>
 
 <br>
 </br>
 
-### Fragment 초기화 비교
+### Fragment initialization comparison (Fragment 초기화 비교)
 
 <details>
-<summary><strong>순수 Android - Fragment 수동 초기화</strong></summary>
+<summary><strong>Plain Android — manual Fragment setup (순수 Android - Fragment 수동 초기화)</strong></summary>
 
 ```kotlin
 class SettingsFragment : Fragment() {
@@ -298,11 +457,16 @@ class SettingsFragment : Fragment() {
     }
 }
 ```
-**문제점:** 수동 inflate,  권한요청/승인 복잡
+**Issues:** Manual inflate and complex permission request/approval logic.
+
+<br>
+</br>
+
+**문제점:** 수동 inflate와 권한 요청/승인 절차가 번거롭습니다.
 </details>
 
 <details>
-<summary><strong>Simple UI - Fragment 자동 초기화</strong></summary>
+<summary><strong>Simple UI — automatic Fragment setup (Simple UI - Fragment 자동 초기화)</strong></summary>
 
 ```kotlin
 class SettingsFragment : BaseFragment(R.layout.fragment_settings) {
@@ -342,18 +506,38 @@ class SettingsFragment : BaseFragment(R.layout.fragment_settings) {
     }
 }
 ```
-**결과:** onCreateView 자동 처리로 inflate 코드 제거!
+**Result:** `onCreateView` is handled automatically, so the manual inflate code disappears.
 
-**💡 rootView 프로퍼티:**
-- BaseFragment는 `protected lateinit var rootView: View` 프로퍼티를 제공합니다
-- `onViewCreated()`의 `view` 파라미터와 동일한 참조입니다
-- 클래스 내부 어디서든 `rootView`로 루트 뷰에 접근 가능합니다
+<br>
+</br>
+
+**결과:** `onCreateView`가 자동 처리되어 수동 inflate 코드가 사라집니다.
+
+<br>
+</br>
+
+**💡 `rootView` property (rootView 프로퍼티)**
+- BaseFragment exposes a `protected lateinit var rootView: View` property.
+- It shares the same reference as the `view` parameter in `onViewCreated()`.
+- Access the root view from anywhere in the class via `rootView`.
+
+<br>
+</br>
+
+- BaseFragment는 `protected lateinit var rootView: View` 프로퍼티를 제공합니다.
+- `onViewCreated()`의 `view` 파라미터와 동일한 참조입니다.
+- 클래스 내부 어디서든 `rootView`로 루트 뷰에 접근할 수 있습니다.
 </details>
 
 <br>
 </br>
 
-## 🎨 둘째: BaseBindingActivity/BaseBindingFragment (DataBinding용)
+## 🎨 Tier 2: BaseBindingActivity / BaseBindingFragment (DataBinding용)
+
+**BaseBindingActivity** and **BaseBindingFragment** are tailored for screens that rely on DataBinding.
+
+<br>
+</br>
 
 **BaseBindingActivity**와 **BaseBindingFragment**는 DataBinding을 사용하는 화면에 적합합니다.
 
