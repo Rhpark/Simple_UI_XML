@@ -32,7 +32,8 @@ jobs:
         run: chmod +x gradlew
 
       - name: Run simple_ui module unit tests
-        run: ./gradlew :simple_ui:testDebugUnitTest --info --stacktrace
+        run: ./gradlew :simple_ui:testDebugUnitTest
+#        run: ./gradlew :simple_ui:testDebugUnitTest --info --stacktrace
 
       - name: Publish test results
         uses: EnricoMi/publish-unit-test-result-action@v2
