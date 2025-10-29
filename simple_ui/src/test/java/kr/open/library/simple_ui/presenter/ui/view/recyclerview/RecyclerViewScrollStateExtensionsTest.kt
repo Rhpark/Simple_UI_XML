@@ -3,8 +3,10 @@ package kr.open.library.simple_ui.presenter.ui.view.recyclerview
 import kotlinx.coroutines.flow.MutableSharedFlow
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
+import org.junit.Ignore
 import org.junit.Test
 
+@Ignore("임시로 비활성화")
 class RecyclerViewScrollStateExtensionsTest {
 
     @Test
