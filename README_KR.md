@@ -1,7 +1,7 @@
-# 🚀 Simple UI XML — We handle the complexity, you keep the speed (복잡함은 우리가, 속도는 당신에게)
+# 🚀 Simple UI XML — We handle the complexity, you keep your speed (복잡함은 우리가, 속도는 당신에게)
 
-> **Repetitive Activity/Fragment setups**, **never-ending permission handling**, and the swelling boilerplate...  
-> We built **Simple UI XML** to give that time back to you.
+> **Repetitive Activity/Fragment setups**, **never-ending permission handling**, and the swelling boilerplate...
+> We built **Simple UI XML** to give you that time back.
 >
 > **반복되는 Activity/Fragment 세팅**, **끝나지 않는 권한 처리**, 그리고 불어나는 보일러플레이트...  
 > 그 시간을 돌려주기 위해 **Simple UI XML**을 만들었다.
@@ -13,7 +13,7 @@
 
 - **250 lines → 87 lines / 4–5h → 2–3h (≈50% faster)** — Removes boilerplate so only the core flow remains.
 - **Turn complex Android APIs into "one liners"** — Automates boilerplate like activity setup and permission handling.
-- **Ships with the features teams wanted every day** — Feel the speed boost the moment you adopt it.
+- **Ships with the features teams want every day** — Feel the speed boost the moment you adopt it.
 - **Less repetitive coding → More focus on core features** — Boosts both lead time and quality for the entire team.
 
 > **One-line takeaway:** Give the complexity to **Simple UI XML** and keep the speed for **yourself**.
@@ -33,7 +33,7 @@
 
 ### 👥 **Team Development Productivity Boost (팀 개발 생산성 혁신)**
 
-- Ensure code consistency: Every teammate uses the same base classes and extensions → maximizes efficiency in bug tracking and maintenance.
+- Ensure code consistency: Every teammate uses the same base classes and extensions → maximizes efficiency for bug tracking and maintenance.
 - Accelerate onboarding for new members: No need to master complex Android APIs → shortens the ramp-up period.
 - Cut code review time by 70%: Standardized patterns clarify review points → lets reviewers focus on the core logic.
 - Minimize collaboration conflicts: Integrated systems like PermissionManager and Logx prevent duplicate implementations.
@@ -109,9 +109,9 @@
 ### ⚙️ **Effortless System Control (System Manager) (간단히 사용가능한 시스템 제어 (System Manager))**
 
 - **Notification system**: Control alarms and notifications
-- **Network suite**: Detailed management for Wi-Fi, connectivity, and SIM info
+- **Network tools**: Detailed management for Wi-Fi, connectivity, and SIM info
 - **Carrier information**: Telephony support for GSM/LTE/5G NR/CDMA/WCDMA
-- **Device insights**: Real-time monitoring for battery, display, and location
+- **Device monitoring**: Real-time monitoring for battery, display, and location
 - **UI controls**: SoftKeyboard, Vibrator, FloatingView (Drag/Fixed)
   <br>
   </br>
@@ -139,8 +139,6 @@
 
 
 > **Note:** Check [JitPack Releases](https://jitpack.io/#Rhpark/Simple_UI_XML) for the latest version.
->
-> **참고**: 버전은 [JitPack Releases](https://jitpack.io/#Rhpark/Simple_UI_XML)에서 최신 버전을 확인하세요.
 
 <br>
 </br>
