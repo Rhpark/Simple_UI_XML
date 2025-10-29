@@ -93,14 +93,11 @@ Simple UI의 Activity/Fragment를 사용하려면 사전 설정이 필요합니�
 ### 📦 `build.gradle.kts` configuration (`build.gradle.kts` 설정)
 
 **BaseBindingActivity** and **BaseBindingFragment** require **DataBinding** to be enabled.
-
+> **Note:** `BaseActivity` and `BaseFragment` can be used without DataBinding.
 <br>
 </br>
 
 **BaseBindingActivity**와 **BaseBindingFragment**를 사용하려면 **DataBinding 활성화**가 필수입니다.
-
-> **Note:** `BaseActivity` and `BaseFragment` can be used without DataBinding.
->
 > **참고:** `BaseActivity`와 `BaseFragment`는 DataBinding 없이도 사용할 수 있습니다.
 
 Add the following to your **module-level `build.gradle.kts`**:
@@ -118,11 +115,17 @@ android {
 
 ### ✅ How to verify the setup (설정 확인 방법)
 
-To make sure DataBinding is configured correctly:
+To make sure DataBinding is configured correctly(DataBinding이 올바르게 설정되었는지 확인하려면)
 
 1. Run **Sync Gradle**.
 2. Run **Rebuild Project**.
 3. Ensure your layout file is wrapped in a `<layout>` tag:
+
+<br>
+</br>
+1. **Sync Gradle**을 실행합니다.
+2. **Rebuild Project**를 실행합니다.
+3. 레이아웃 파일이 `<layout>` 태그로 감싸져 있는지 확인합니다:
 
 ```xml
 <!-- activity_main.xml -->
@@ -144,28 +147,6 @@ To make sure DataBinding is configured correctly:
 
 <br>
 </br>
-
-DataBinding이 올바르게 설정되었는지 확인하려면:
-
-1. **Sync Gradle**을 실행합니다.
-2. **Rebuild Project**를 실행합니다.
-3. 레이아웃 파일이 `<layout>` 태그로 감싸져 있는지 확인합니다:
-
-```xml
-<!-- activity_main.xml -->
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
-    <data>
-        <!-- ViewModel 바인딩 (선택사항) -->
-        <variable
-            name="vm"
-            type="com.example.MainViewModel" />
-    </data>
-    <LinearLayout
-        style="@style/Layout.AllMatch.Vertical">
-        <!-- UI 요소들 -->
-    </LinearLayout>
-</layout>
-```
 
 4. 빌드 성공 후 `ActivityMainBinding` 클래스가 자동 생성되는지 확인합니다.
 
