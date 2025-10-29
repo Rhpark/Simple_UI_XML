@@ -5,7 +5,7 @@ import org.junit.Assert.assertNull
 import org.junit.Ignore
 import org.junit.Test
 
-@Ignore("임시로 비활성화")
+//@Ignore("임시로 비활성화")
 class IfInlineTest {
 
     @Test
