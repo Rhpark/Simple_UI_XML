@@ -12,11 +12,11 @@ class RecyclerViewScrollStateExtensionsTest {
         val flow = MutableSharedFlow<String>(replay = 0, extraBufferCapacity = 1)
         var failureCalled = false
 
-        flow.safeEmit("value") { failureCalled = true }
+        val emitted = flow.safeEmit("value") { failureCalled = true }
+        val secondAttempt = flow.tryEmit("second") // 버퍼가 남아 있으면 true
 
-        val secondAttemptSucceeded = flow.tryEmit("second")
-
-        assertFalse(secondAttemptSucceeded)
+        assertTrue(emitted)
+        assertTrue(secondAttempt) // SharedFlow는 여전히 수용 가능
         assertFalse(failureCalled)
     }
 
@@ -25,8 +25,9 @@ class RecyclerViewScrollStateExtensionsTest {
         val flow = MutableSharedFlow<String>(replay = 0, extraBufferCapacity = 0)
         var failureCalled = false
 
-        flow.safeEmit("value") { failureCalled = true }
+        val emitted = flow.safeEmit("value") { failureCalled = true }
 
+        assertFalse(emitted)
         assertTrue(failureCalled)
     }
 }

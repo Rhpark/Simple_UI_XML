@@ -11,8 +11,11 @@ public interface OnEdgeReachedListener {
 }
 
 // MutableSharedFlow에 안전하게 이벤트 발행하는 확장 함수
-public inline fun <T> MutableSharedFlow<T>.safeEmit(value: T, failure: () -> Unit) {
-    if (!tryEmit(value)) {
+public inline fun <T> MutableSharedFlow<T>.safeEmit(value: T, failure: () -> Unit): Boolean {
+    return if (tryEmit(value)) {
+        true
+    } else {
         failure()
+        false
     }
 }

@@ -71,7 +71,7 @@ class IfInlineTest {
     fun nullableChain_allowsFluentUsage() {
         val builder = mutableListOf<String>()
 
-        listOf("a", "b").ifNotEmpty { builder += "list-not-empty" }
+        listOf("a", "b").ifNotEmpty { _: List<String> -> builder += "list-not-empty" }
         true.ifTrue { builder += "boolean-true" }
 
         assertEquals(listOf("list-not-empty", "boolean-true"), builder)
@@ -436,14 +436,16 @@ class IfInlineTest {
     @Test
     fun firstNotNull_stopsAtFirstMatch() {
         var counter = 0
-        val result = firstNotNull(
-            null,
-            run { counter++; "first" },
-            run { counter++; "second" } // Should not evaluate
+        val values = sequenceOf(
+            { null },
+            { counter++; "first" },
+            { counter++; "second" }
         )
 
+        val result = firstNotNull(*values.map { it() }.toList().toTypedArray())
+
         assertEquals("first", result)
-        assertEquals(1, counter) // Only incremented once
+        assertEquals(1, counter)
     }
 
     @Test

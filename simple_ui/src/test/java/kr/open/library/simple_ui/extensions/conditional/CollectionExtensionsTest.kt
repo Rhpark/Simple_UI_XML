@@ -30,7 +30,7 @@ class CollectionExtensionsTest {
         val source = listOf("a", "b")
         var called = false
 
-        val result = source.ifNotEmpty { called = true }
+        val result = source.ifNotEmpty { _: List<String> -> called = true }
 
         assertTrue(called)
         assertSame(source, result)
@@ -53,8 +53,8 @@ class CollectionExtensionsTest {
         var notEmptyCalled = false
         var emptyCalled = false
 
-        val notEmptyResult = map.ifNotEmpty { notEmptyCalled = true }
-        val emptyResult = emptyMap<String, Int>().ifEmpty { emptyCalled = true }
+        val notEmptyResult = map.ifNotEmpty { _: Map<String, Int> -> notEmptyCalled = true }
+        val emptyResult = emptyMap<String, Int>().ifEmpty { _: Map<String, Int> -> emptyCalled = true }
 
         assertTrue(notEmptyCalled)
         assertSame(map, notEmptyResult)
@@ -106,7 +106,7 @@ class CollectionExtensionsTest {
         val source = listOf(1, 2, 3)
         var executed = false
 
-        val result = source.ifNotEmpty {
+        val result = source.ifNotEmpty { _: List<Int> ->
             executed = true
         }
 
@@ -129,7 +129,7 @@ class CollectionExtensionsTest {
         val empty = emptyList<Int>()
         var called = false
 
-        empty.ifNotEmpty { called = true }
+        empty.ifNotEmpty { _: List<Int> -> called = true }
 
         assertEquals(false, called)
     }
@@ -141,7 +141,7 @@ class CollectionExtensionsTest {
 
         numbers
             .filterIf(condition = true) { it > 2 }
-            .ifNotEmpty { log += "has-items" }
+            .ifNotEmpty { _: List<Int> -> log += "has-items" }
             .ifEmpty { log += "empty" }
 
         assertEquals(listOf("has-items"), log)
@@ -178,7 +178,7 @@ class CollectionExtensionsTest {
         val empty = emptyMap<String, Int>()
         var called = false
 
-        empty.ifNotEmpty { called = true }
+        empty.ifNotEmpty { _: Map<String, Int> -> called = true }
 
         assertEquals(false, called)
     }
@@ -188,7 +188,7 @@ class CollectionExtensionsTest {
         val map = mapOf("key" to "value")
         var called = false
 
-        map.ifEmpty { called = true }
+        map.ifEmpty { _: Map<String, String> -> called = true }
 
         assertEquals(false, called)
     }

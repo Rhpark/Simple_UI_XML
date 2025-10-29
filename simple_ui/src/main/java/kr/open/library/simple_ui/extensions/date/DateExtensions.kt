@@ -26,19 +26,18 @@ public fun Long.timeDateToString(
  * locale = Locale.US
  * return milliseconds
  */
-public fun String.timeDateToLong(
-    format: String,
-    locale: Locale = Locale.US,
-): Long =
+public fun String.timeDateToLong(format: String, locale: Locale = Locale.US): Long = try {
     SimpleDateFormat(format, locale).parse(this)?.time
         ?: throw IllegalArgumentException("Invalid time string")
+} catch (e: Exception) {
+    throw IllegalArgumentException("Invalid time string",e)
+}
 
-public fun String.timeDateToDate(
-    format: String,
-    locale: Locale = Locale.US,
-): Date? {
-    val dateFormat = SimpleDateFormat(format, locale)
-    return dateFormat.parse(this)
+
+public fun String.timeDateToDate(format: String, locale: Locale = Locale.US): Date? = try {
+    SimpleDateFormat(format, locale).parse(this)
+} catch (e: Exception) {
+    null
 }
 
 /**
