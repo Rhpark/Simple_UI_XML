@@ -5,7 +5,7 @@
 
 ### BaseActivity Quick Setup (BaseActivity 초기 설정)
 ![baseActivity.gif](example_gif%2FbaseActivity.gif)
-> **"Finish Activity/Fragment initialization in just three lines!"** See how Simple UI compares with plain Android development in seconds.
+> **"Complete Activity/Fragment initialization in just three lines!"** See how Simple UI compares with plain Android development in seconds.
 >
 > **"Activity/Fragment 초기화를 3줄로 끝내자!"** 기존 순수 Android 개발 대비 Simple UI가 주는 체감 차이를 한눈에 확인하세요.
 
@@ -191,54 +191,6 @@ Unresolved reference: ActivityMainBinding
 #### ❌ Missing `<layout>` tag in the layout file (레이아웃 파일 `<layout>` 태그 누락)
 ```
 Cannot find symbol class ActivityMainBinding
-
-### ✅ 설정 확인 방법
-
-DataBinding이 올바르게 설정되었는지 확인하려면:
-
-1. **Sync Gradle** 실행
-2. **Rebuild Project** 실행
-3. 레이아웃 파일이 `<layout>` 태그로 감싸져 있는지 확인:
-
-```xml
-<!-- activity_main.xml -->
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
-    <data>
-        <!-- ViewModel 바인딩 (선택사항) -->
-        <variable
-            name="vm"
-            type="com.example.MainViewModel" />
-    </data>
-    <LinearLayout
-        style="@style/Layout.AllMatch.Vertical">
-        <!-- UI 요소들 -->
-    </LinearLayout>
-</layout>
-```
-
-4. Build 성공 후 `ActivityMainBinding` 클래스가 자동 생성되는지 확인
-
-<br>
-
-### 🚨 Common pitfalls (자주 발생하는 오류)
-
-#### ❌ DataBinding not enabled (DataBinding 미활성화)
-```
-Unresolved reference: ActivityMainBinding
-```
-**Fix:** Add `dataBinding = true` to `build.gradle.kts`, then sync Gradle.
-
-<br>
-</br>
-
-**해결방법:** `build.gradle.kts`에 `dataBinding = true`를 추가하고 Gradle Sync를 실행하세요.
-
-<br>
-</br>
-
-#### ❌ Missing `<layout>` tag in the layout file (레이아웃 파일 `<layout>` 태그 누락)
-```
-Cannot find symbol class ActivityMainBinding
 ```
 **Fix:** Wrap your XML file inside a `<layout>` tag.
 
@@ -353,7 +305,7 @@ class SettingsActivity : AppCompatActivity() {
     }
 }
 ```
-**Issues:** Repetitive `setContentView` calls and complex permission request/approval flow.
+**Issues:** Repetitive `setContentView` calls and complex permission request and approval flow.
 
 <br>
 </br>
@@ -457,7 +409,7 @@ class SettingsFragment : Fragment() {
     }
 }
 ```
-**Issues:** Manual inflate and complex permission request/approval logic.
+**Issues:** Manual inflate and complex permission request and approval logic.
 
 <br>
 </br>
@@ -506,7 +458,7 @@ class SettingsFragment : BaseFragment(R.layout.fragment_settings) {
     }
 }
 ```
-**Result:** `onCreateView` is handled automatically, so the manual inflate code disappears.
+**Result:** `onCreateView` is handled automatically, so the manual inflate code is no longer needed.
 
 <br>
 </br>
@@ -848,6 +800,11 @@ class PermissionsActivity : AppCompatActivity() {
     }
 }
 ```
+**Issues:** Complex launcher registration, normal/special permission separation logic, individual result handling required, 50+ lines of boilerplate
+
+<br>
+</br>
+
 **문제점:** 복잡한 launcher 등록, 일반/특수 권한 분리 로직, 개별 결과 처리 필요, 50줄 이상의 보일러플레이트
 </details>
 
@@ -901,6 +858,11 @@ class PermissionsActivity : BaseBindingActivity<ActivityPermissionsBinding>(
     }
 }
 ```
+**Result:** No launcher registration needed, automatic normal/special permission differentiation, unified callback provided, 80% code reduction!
+
+<br>
+</br>
+
 **결과:** launcher 등록 불필요, 일반/특수 권한 자동 구분, 통합 콜백 제공, 코드 80% 감소!
 </details>
 
@@ -997,6 +959,11 @@ class MainActivity : AppCompatActivity() {
     }
 }
 ```
+**Issues:** Complex SDK version branching, lengthy code, repetitive WindowInsets handling, 60+ lines of boilerplate
+
+<br>
+</br>
+
 **문제점:** 복잡한 SDK 버전 분기, 긴 코드, 반복적인 WindowInsets 처리, 60줄 이상의 보일러플레이트
 </details>
 
@@ -1030,6 +997,11 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
     }
 }
 ```
+**Result:** Automatic SDK version branching, easy access via properties, immediate use with protected methods, 90% code reduction!
+
+<br>
+</br>
+
 **결과:** SDK 버전 분기 자동, 프로퍼티로 간편 접근, protected 메서드로 즉시 사용, 코드 90% 감소!
 </details>
 
