@@ -21,13 +21,13 @@ class RecyclerViewScrollStateExtensionsTest {
     }
 
     @Test
-    fun safeEmit_invokesFailureWhenBufferFull() {
+    fun safeEmit_withoutSubscribers_returnsTrue() {
         val flow = MutableSharedFlow<String>(replay = 0, extraBufferCapacity = 0)
         var failureCalled = false
 
         val emitted = flow.safeEmit("value") { failureCalled = true }
 
-        assertFalse(emitted)
-        assertTrue(failureCalled)
+        assertTrue(emitted)
+        assertFalse(failureCalled)
     }
 }

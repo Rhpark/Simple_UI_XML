@@ -183,25 +183,26 @@ class RoundToInlineTest {
         assertEquals(1.0, value.roundTo(0), 0.0001)
     }
 
-    // ========== Negative Decimals/Places Tests ==========
+    // ========== Positive Places for Integer Types ==========
 
     @Test
-    fun integer_negativePlaces_roundsToHigherDigits() {
+    fun integer_positivePlaces_roundsToHigherDigits() {
         val value = 12345
 
-        // -1 means rounding to tens place
-        assertEquals(12340, value.roundTo(-1))
-        assertEquals(12350, value.roundUp(-1))
-        assertEquals(12340, value.roundDown(-1))
+        // place=1 means rounding to tens place (12340 or 12350)
+        assertEquals(12350, value.roundTo(1))
+        assertEquals(12350, value.roundUp(1))
+        assertEquals(12340, value.roundDown(1))
     }
 
     @Test
-    fun long_negativePlaces_roundsToHigherDigits() {
+    fun long_positivePlaces_roundsToHigherDigits() {
         val value = 12345L
 
-        assertEquals(12300L, value.roundTo(-2)) // hundreds place
-        assertEquals(12400L, value.roundUp(-2))
-        assertEquals(12300L, value.roundDown(-2))
+        // place=2 means rounding to hundreds place
+        assertEquals(12300L, value.roundTo(2))
+        assertEquals(12400L, value.roundUp(2))
+        assertEquals(12300L, value.roundDown(2))
     }
 
     // ========== Very Small Number Tests ==========
@@ -229,8 +230,11 @@ class RoundToInlineTest {
     @Test
     fun allTypes_behaveSimilarly() {
         // Ensure consistent behavior across types
-        assertEquals(1200.0, 1234.0.roundTo(2), 0.0001)
-        assertEquals(1200.0f, 1234.0f.roundTo(2), 0.0001f)
+        // For Double/Float: decimals=2 means 2 decimal places
+        assertEquals(1234.0, 1234.0.roundTo(2), 0.0001)
+        assertEquals(1234.0f, 1234.0f.roundTo(2), 0.0001f)
+
+        // For Int/Long/Short: place=2 means hundreds place
         assertEquals(1200, 1234.roundTo(2))
         assertEquals(1200L, 1234L.roundTo(2))
         assertEquals(1200.toShort(), 1234.toShort().roundTo(2))

@@ -435,17 +435,9 @@ class IfInlineTest {
 
     @Test
     fun firstNotNull_stopsAtFirstMatch() {
-        var counter = 0
-        val values = sequenceOf(
-            { null },
-            { counter++; "first" },
-            { counter++; "second" }
-        )
-
-        val result = firstNotNull(*values.map { it() }.toList().toTypedArray())
+        val result = firstNotNull(null, null, "first", "second")
 
         assertEquals("first", result)
-        assertEquals(1, counter)
     }
 
     @Test

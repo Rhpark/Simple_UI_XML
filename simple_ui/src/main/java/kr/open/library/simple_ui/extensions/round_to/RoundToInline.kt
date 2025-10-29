@@ -55,12 +55,17 @@ public inline fun Float.roundDown(decimals: Int): Float {
     return floor(this * factor) / factor
 }
 
+public fun roundHalfUp(value: Double): Double =
+    if (value >= 0.0) floor(value + 0.5) else ceil(value - 0.5)
+
 /**
  * 1234.roundTo(2) -> 1200
  */
 public inline fun Int.roundTo(place: Int): Int {
     val factor = 10.0.pow(place.toDouble())
-    return ((this.toDouble() / factor).roundToInt()) * factor.toInt()
+    val scaled = this.toDouble() / factor
+    val rounded = roundHalfUp(scaled)
+    return (rounded * factor).toInt()
 }
 
 /**
@@ -84,7 +89,9 @@ public inline fun Int.roundDown(place: Int): Int {
  */
 public inline fun Long.roundTo(place: Int): Long {
     val factor = 10.0.pow(place.toDouble())
-    return ((this.toDouble() / factor).roundToLong()) * factor.toLong()
+    val scaled = this.toDouble() / factor
+    val rounded = roundHalfUp(scaled)
+    return (rounded * factor).roundToLong()
 }
 
 /**
