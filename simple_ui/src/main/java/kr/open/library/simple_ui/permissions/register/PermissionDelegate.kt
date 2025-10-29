@@ -12,6 +12,7 @@ import androidx.lifecycle.LifecycleOwner
 import kr.open.library.simple_ui.logcat.Logx
 import kr.open.library.simple_ui.permissions.manager.PermissionManager
 import kr.open.library.simple_ui.permissions.extentions.hasPermission
+import kr.open.library.simple_ui.permissions.manager.CallbackAddResult
 import kr.open.library.simple_ui.permissions.vo.PermissionSpecialType
 
 public class PermissionDelegate<T: Any>(private val contextProvider: T) {
@@ -149,18 +150,18 @@ public class PermissionDelegate<T: Any>(private val contextProvider: T) {
             )
 
             when (result) {
-                kr.open.library.simple_ui.permissions.manager.CallbackAddResult.SUCCESS -> {
+                CallbackAddResult.SUCCESS -> {
                     Logx.d("Added callback to existing request: $currentRequestId (same permissions)")
                     return
                 }
-                kr.open.library.simple_ui.permissions.manager.CallbackAddResult.PERMISSION_MISMATCH -> {
+                CallbackAddResult.PERMISSION_MISMATCH -> {
                     // 다른 권한 요청 → 무시 (더 안전함)
                     val existingPermissions = permissionManager.getRequestPermissions(currentRequestId!!)
                     Logx.w("Cannot add callback: permission mismatch. Existing: $existingPermissions, Requested: ${permissions.toSet()}")
                     Logx.w("Ignoring duplicate request with different permissions. Please wait for current request to complete.")
                     return
                 }
-                kr.open.library.simple_ui.permissions.manager.CallbackAddResult.REQUEST_NOT_FOUND -> {
+                CallbackAddResult.REQUEST_NOT_FOUND -> {
                     // 레이스 컨디션 감지: 요청이 막 완료됨
                     Logx.d("Race condition detected: request $currentRequestId just completed. Starting new request.")
                     currentRequestId = null
