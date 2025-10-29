@@ -14,7 +14,6 @@ import org.junit.Ignore
  * - safeCatch(defaultValue, block) - 예외 발생 시 기본값 반환
  * - safeCatch(block, onCatch) - 예외 발생 시 커스텀 핸들러 실행
  */
-@Ignore("임시로 비활성화")
 class TryCatchExtensionsTest {
 
     // ========== 1. safeCatch(block) 테스트 ==========

@@ -18,7 +18,6 @@ import org.junit.Ignore
  *       JVM Unit Test에서 실행 불가능하므로 제외되었습니다.
  *       해당 기능은 androidTest/ 폴더에서 테스트 가능합니다.
  */
-@Ignore("임시로 비활성화")
 class StringExtensionsTest {
 
     // ========== 1. 숫자 검증 테스트 ==========

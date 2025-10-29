@@ -7,7 +7,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Ignore
 import org.junit.Test
 import java.util.EnumSet
-@Ignore("임시로 비활성화")
+
 class LogxConfigBuildersTest {
 
     @Test
