@@ -11,7 +11,7 @@ import java.time.ZoneId
 import java.util.Date
 import java.util.Locale
 
-@Ignore("임시로 비활성화")
+//@Ignore("임시로 비활성화")
 class DateExtensionsTest {
 
     @Test
