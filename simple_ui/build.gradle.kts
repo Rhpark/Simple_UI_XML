@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     id ("maven-publish")
+    id("org.jetbrains.kotlinx.kover") version "0.9.3"
 }
 
 publishing {
@@ -81,4 +82,35 @@ dependencies {
     implementation(libs.androidx.lifecycle.process)
     implementation(libs.androidx.lifecycle.common)
 
+}
+
+//Kover로 UnitTest
+kover {
+    reports {
+        // HTML 리포트 설정 (로컬에서 확인용)
+        filters {
+            excludes {
+                // 1. Android 자동생성 파일
+                classes("**/BuildConfig")
+                classes("**/R")
+                classes("**/R\\$*")
+                classes("**/databinding/**")
+                classes("**/BR")
+
+                // 2. 베이스 컴포넌트(단위 테스트 어려움)
+                classes("**/RootActivity")
+                classes("**/RootFragment")
+                classes("**/RootDialogFragment")
+                classes("**/BaseActivity")
+                classes("**/BaseBindingActivity")
+                classes("**/BaseFragment")
+                classes("**/BaseBindingFragment")
+                classes("**/BaseDialogFragment")
+                classes("**/BaseBindingDialogFragment")
+
+                // 3. Lifecycle 커스텀 Layout
+                classes("**/BaseLifeCycle*Layout")
+            }
+        }
+    }
 }
