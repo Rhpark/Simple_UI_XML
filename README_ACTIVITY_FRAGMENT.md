@@ -1027,40 +1027,50 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 <br>
 </br>
 
-## 🎨 다섯째: 고급 기능 - 초기화 콜백
+## 🎨 Fifth: Advanced Features — Initialization Callbacks (다섯째: 고급 기능 - 초기화 콜백)
+
+Simple UI provides advanced callbacks for controlling the initialization timing of Activities and Fragments.
+
+<br>
+</br>
 
 Simple UI는 Activity와 Fragment의 초기화 시점을 제어할 수 있는 고급 콜백을 제공합니다.
 
-**특징:**
-- ✅ Lifecycle의 특정 시점에 커스텀 로직 삽입 가능
-- ✅ Binding 초기화 전후 시점 제어
-- ✅ 유연한 초기화 흐름
+**Features (특징):**
+- ✅ Insert custom logic at specific Lifecycle points (Lifecycle의 특정 시점에 커스텀 로직 삽입 가능)
+- ✅ Control timing before and after Binding initialization (Binding 초기화 전후 시점 제어)
+- ✅ Flexible initialization flow (유연한 초기화 흐름)
 
 <br>
 </br>
 
 ### 📌 **RootActivity - beforeOnCreated()**
 
+Every Activity inherits from RootActivity, which provides the `beforeOnCreated()` callback.
+
+<br>
+</br>
+
 모든 Activity가 상속하는 RootActivity는 `beforeOnCreated()` 콜백을 제공합니다.
 
-#### **호출 시점**
+#### **Call timing (호출 시점)**
 ```kotlin
 override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     permissionDelegate = PermissionDelegate(this)
-    beforeOnCreated(savedInstanceState)  // ⬅️ 여기서 호출!
+    beforeOnCreated(savedInstanceState)  // ⬅️ Called here! (여기서 호출!)
 }
 ```
 
-#### **사용 예시**
+#### **Usage example (사용 예시)**
 ```kotlin
 class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
 
     override fun beforeOnCreated(savedInstanceState: Bundle?) {
         super.beforeOnCreated(savedInstanceState)
 
-        // onCreate 전에 실행되는 로직
-        // 예: 전역 설정, 테마 설정, 초기화 준비
+        // Logic executed before onCreate (onCreate 전에 실행되는 로직)
+        // Example: global settings, theme setup, initialization preparation (예: 전역 설정, 테마 설정, 초기화 준비)
         setupTheme()
         initializeGlobalSettings()
     }
@@ -1068,413 +1078,457 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // 일반적인 onCreate 로직
-        // 이 시점에는 이미 beforeOnCreated()가 실행됨
+        // Normal onCreate logic (일반적인 onCreate 로직)
+        // At this point, beforeOnCreated() has already been executed (이 시점에는 이미 beforeOnCreated()가 실행됨)
         initViews()
     }
 
     private fun setupTheme() {
-        // 테마 설정 로직
+        // Theme setup logic (테마 설정 로직)
     }
 
     private fun initializeGlobalSettings() {
-        // 전역 설정 초기화
+        // Global settings initialization (전역 설정 초기화)
     }
 }
 ```
 
-**언제 사용하나요?**
-- ✅ Activity 생성 전 전역 설정이 필요한 경우
-- ✅ 테마나 스타일을 동적으로 변경해야 하는 경우
-- ✅ onCreate 전에 실행되어야 하는 초기화 로직
+**When to use (언제 사용하나요)?**
+- ✅ When global settings are needed before Activity creation (Activity 생성 전 전역 설정이 필요한 경우)
+- ✅ When theme or style needs to be changed dynamically (테마나 스타일을 동적으로 변경해야 하는 경우)
+- ✅ Initialization logic that must run before onCreate (onCreate 전에 실행되어야 하는 초기화 로직)
 
 <br>
 </br>
 
 ### 📌 **BaseBindingActivity - onCreateView()**
 
+BaseBindingActivity provides the `onCreateView(rootView, savedInstanceState)` callback.
+
+<br>
+</br>
+
 BaseBindingActivity는 `onCreateView(rootView, savedInstanceState)` 콜백을 제공합니다.
 
-#### **호출 시점**
+#### **Call timing (호출 시점)**
 ```kotlin
 override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     binding = DataBindingUtil.setContentView(this, layoutRes)
-    onCreateView(binding.root, savedInstanceState)  // ⬅️ 여기서 호출!
+    onCreateView(binding.root, savedInstanceState)  // ⬅️ Called here! (여기서 호출!)
     binding.lifecycleOwner = this
 }
 ```
 
-#### **사용 예시**
+#### **Usage example (사용 예시)**
 ```kotlin
 class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
 
     override fun onCreateView(rootView: View, savedInstanceState: Bundle?) {
         super.onCreateView(rootView, savedInstanceState)
 
-        // Binding 초기화 직후, lifecycleOwner 설정 전에 실행
-        // rootView로 직접 접근 가능
+        // Executed immediately after Binding initialization, before lifecycleOwner is set (Binding 초기화 직후, lifecycleOwner 설정 전에 실행)
+        // Direct access to rootView is available (rootView로 직접 접근 가능)
         setupViewBeforeLifecycle(rootView)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // 이 시점에는 이미 onCreateView()와 lifecycleOwner 설정이 완료됨
+        // At this point, onCreateView() and lifecycleOwner setup are already complete (이 시점에는 이미 onCreateView()와 lifecycleOwner 설정이 완료됨)
         binding.tvTitle.text = "Hello World"
     }
 
     private fun setupViewBeforeLifecycle(rootView: View) {
-        // Lifecycle 설정 전 뷰 초기화
+        // View initialization before Lifecycle setup (Lifecycle 설정 전 뷰 초기화)
         rootView.setBackgroundColor(Color.WHITE)
     }
 }
 ```
 
-**언제 사용하나요?**
-- ✅ Binding 초기화 직후 작업이 필요한 경우
-- ✅ lifecycleOwner 설정 전에 뷰를 조작해야 하는 경우
-- ✅ rootView에 직접 접근해야 하는 경우
+**When to use (언제 사용하나요)?**
+- ✅ When work is needed immediately after Binding initialization (Binding 초기화 직후 작업이 필요한 경우)
+- ✅ When views need to be manipulated before lifecycleOwner is set (lifecycleOwner 설정 전에 뷰를 조작해야 하는 경우)
+- ✅ When direct access to rootView is required (rootView에 직접 접근해야 하는 경우)
 
 <br>
 </br>
 
 ### 📌 **BaseBindingFragment - afterOnCreateView()**
 
+BaseBindingFragment provides the `afterOnCreateView(rootView, savedInstanceState)` callback.
+
+<br>
+</br>
+
 BaseBindingFragment는 `afterOnCreateView(rootView, savedInstanceState)` 콜백을 제공합니다.
 
-#### **호출 시점**
+#### **Call timing (호출 시점)**
 ```kotlin
 override fun onCreateView(
     inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
 ): View {
     binding = DataBindingUtil.inflate(inflater, layoutRes, container, isAttachToParent)
-    afterOnCreateView(binding.root, savedInstanceState)  // ⬅️ 여기서 호출!
+    afterOnCreateView(binding.root, savedInstanceState)  // ⬅️ Called here! (여기서 호출!)
     return binding.root
 }
 
 override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
-    binding.lifecycleOwner = viewLifecycleOwner  // lifecycleOwner는 onViewCreated에서 설정
+    binding.lifecycleOwner = viewLifecycleOwner  // lifecycleOwner is set in onViewCreated (lifecycleOwner는 onViewCreated에서 설정)
 }
 ```
 
-#### **사용 예시**
+#### **Usage example (사용 예시)**
 ```kotlin
 class MainFragment : BaseBindingFragment<FragmentMainBinding>(R.layout.fragment_main) {
 
     override fun afterOnCreateView(rootView: View, savedInstanceState: Bundle?) {
         super.afterOnCreateView(rootView, savedInstanceState)
 
-        // Binding 초기화 직후, onViewCreated 전에 실행
-        // lifecycleOwner 설정 전에 뷰 준비 가능
+        // Executed immediately after Binding initialization, before onViewCreated (Binding 초기화 직후, onViewCreated 전에 실행)
+        // View can be prepared before lifecycleOwner is set (lifecycleOwner 설정 전에 뷰 준비 가능)
         prepareView(rootView)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 이 시점에는 이미 afterOnCreateView()와 lifecycleOwner 설정이 완료됨
+        // At this point, afterOnCreateView() and lifecycleOwner setup are already complete (이 시점에는 이미 afterOnCreateView()와 lifecycleOwner 설정이 완료됨)
         binding.btnAction.setOnClickListener {
-            // 클릭 이벤트 처리
+            // Handle click event (클릭 이벤트 처리)
         }
     }
 
     private fun prepareView(rootView: View) {
-        // onViewCreated 전 뷰 준비
+        // Prepare view before onViewCreated (onViewCreated 전 뷰 준비)
         rootView.alpha = 0f
         rootView.animate().alpha(1f).setDuration(300).start()
     }
 }
 ```
 
-**언제 사용하나요?**
-- ✅ onCreateView와 onViewCreated 사이에 실행되어야 하는 로직
-- ✅ Binding 초기화 직후, lifecycleOwner 설정 전 작업
-- ✅ Fragment의 View가 생성된 직후 초기 설정이 필요한 경우
+**When to use (언제 사용하나요)?**
+- ✅ Logic that must execute between onCreateView and onViewCreated (onCreateView와 onViewCreated 사이에 실행되어야 하는 로직)
+- ✅ Work immediately after Binding initialization, before lifecycleOwner is set (Binding 초기화 직후, lifecycleOwner 설정 전 작업)
+- ✅ When initial setup is needed right after Fragment's View is created (Fragment의 View가 생성된 직후 초기 설정이 필요한 경우)
 
 <br>
 </br>
 
-### 🔄 **초기화 흐름 정리**
+### 🔄 **Initialization Flow Summary (초기화 흐름 정리)**
 
-#### **Activity 초기화 흐름**
+#### **Activity Initialization Flow (Activity 초기화 흐름)**
 ```
-1. onCreate() 시작
+1. onCreate() starts (onCreate() 시작)
 2. super.onCreate()
-3. beforeOnCreated(savedInstanceState)      ⬅️ 커스텀 훅 #1
-4. binding 초기화
-5. onCreateView(binding.root, savedInstanceState)  ⬅️ 커스텀 훅 #2
+3. beforeOnCreated(savedInstanceState)      ⬅️ Custom hook #1 (커스텀 훅 #1)
+4. binding initialization (binding 초기화)
+5. onCreateView(binding.root, savedInstanceState)  ⬅️ Custom hook #2 (커스텀 훅 #2)
 6. binding.lifecycleOwner = this
-7. onCreate() 나머지 로직
+7. Remaining onCreate() logic (onCreate() 나머지 로직)
 ```
 
-#### **Fragment 초기화 흐름**
+#### **Fragment Initialization Flow (Fragment 초기화 흐름)**
 ```
-1. onCreateView() 시작
-2. binding 초기화
-3. afterOnCreateView(binding.root, savedInstanceState)  ⬅️ 커스텀 훅
-4. binding.root 반환
-5. onViewCreated() 시작
+1. onCreateView() starts (onCreateView() 시작)
+2. binding initialization (binding 초기화)
+3. afterOnCreateView(binding.root, savedInstanceState)  ⬅️ Custom hook (커스텀 훅)
+4. Return binding.root (binding.root 반환)
+5. onViewCreated() starts (onViewCreated() 시작)
 6. binding.lifecycleOwner = this
-7. onViewCreated() 나머지 로직
+7. Remaining onViewCreated() logic (onViewCreated() 나머지 로직)
 ```
 
 <br>
 </br>
 
-## 🚀 Simple UI Activity/Fragment의 핵심 장점
+## 🚀 Core Advantages of Simple UI Activity/Fragment (Simple UI Activity/Fragment의 핵심 장점)
 
 
-### 1. **⚡ 압도적인 코드 간소화**
-- **Activity 초기화**: 20-30줄 → 5-10줄 **70% 단축**
-- **Fragment 초기화**: 40-50줄 → 10-15줄 **70% 단축**
-- **권한 요청**: 50줄+ → 5줄 **90% 단축**
-- **SystemBars 제어**: 60줄+ → 1줄 **95% 단축**
-
-<br>
-</br>
-
-### 2. **🛠️ 자동화된 보일러플레이트 처리**
-- **setContentView**: 자동 처리
-- **DataBinding 초기화**: 자동 처리
-- **LifecycleOwner 연결**: 자동 처리
-- **nullable binding 관리**: 자동 처리
-- **메모리 누수 방지**: 자동 처리
+### 1. **⚡ Overwhelming Code Simplification (압도적인 코드 간소화)**
+- **Activity initialization (Activity 초기화)**: 20-30 lines → 5-10 lines **70% reduction (70% 단축)**
+- **Fragment initialization (Fragment 초기화)**: 40-50 lines → 10-15 lines **70% reduction (70% 단축)**
+- **Permission requests (권한 요청)**: 50+ lines → 5 lines **90% reduction (90% 단축)**
+- **SystemBars control (SystemBars 제어)**: 60+ lines → 1 line **95% reduction (95% 단축)**
 
 <br>
 </br>
 
-### 3. **🔐 통합 권한 관리 시스템**
-- **일반/특수 권한 자동 구분**: 개발자가 권한 타입 구분 불필요
-- **통합 콜백**: 모든 권한 결과를 한 곳에서 처리
-- **보일러플레이트 제거**: ActivityResultContract 등록 불필요
+### 2. **🛠️ Automated Boilerplate Handling (자동화된 보일러플레이트 처리)**
+- **setContentView**: Handled automatically (자동 처리)
+- **DataBinding initialization (DataBinding 초기화)**: Handled automatically (자동 처리)
+- **LifecycleOwner connection (LifecycleOwner 연결)**: Handled automatically (자동 처리)
+- **nullable binding management (nullable binding 관리)**: Handled automatically (자동 처리)
+- **Memory leak prevention (메모리 누수 방지)**: Handled automatically (자동 처리)
 
 <br>
 </br>
 
-### 4. **🎨 간편한 SystemBars 제어**
-- **높이 계산 자동화**: SDK 버전별 분기 자동 처리
-- **한 줄 설정**: 투명/색상/아이콘 모드 한 줄로 설정
-- **프로퍼티 접근**: statusBarHeight/navigationBarHeight 즉시 사용
+### 3. **🔐 Unified Permission Management System (통합 권한 관리 시스템)**
+- **Automatic normal/special permission differentiation (일반/특수 권한 자동 구분)**: No need for developers to distinguish permission types (개발자가 권한 타입 구분 불필요)
+- **Unified callback (통합 콜백)**: Handle all permission results in one place (모든 권한 결과를 한 곳에서 처리)
+- **Boilerplate removal (보일러플레이트 제거)**: No need to register ActivityResultContract (ActivityResultContract 등록 불필요)
 
 <br>
 </br>
 
-### 5. **🎯 개발자 경험 최적화**
-- **타입 안전성**: 컴파일 타임 오류 방지
-- **일관된 패턴**: 팀 전체 동일한 Activity/Fragment 구조
-- **빠른 개발**: 보일러플레이트 제거로 생산성 향상
+### 4. **🎨 Easy SystemBars Control (간편한 SystemBars 제어)**
+- **Automated height calculation (높이 계산 자동화)**: Automatic SDK version branching (SDK 버전별 분기 자동 처리)
+- **One-line setup (한 줄 설정)**: Configure transparent/color/icon mode in one line (투명/색상/아이콘 모드 한 줄로 설정)
+- **Property access (프로퍼티 접근)**: Instant access to statusBarHeight/navigationBarHeight (statusBarHeight/navigationBarHeight 즉시 사용)
 
 <br>
 </br>
 
-### 6. **🔧 실수 방지**
-- **LifecycleOwner 누락**: 자동 연결로 방지
-- **메모리 누수**: Fragment nullable binding 자동 처리
-- **권한 요청 오류**: 통합 시스템으로 예외 처리 자동
+### 5. **🎯 Optimized Developer Experience (개발자 경험 최적화)**
+- **Type safety (타입 안전성)**: Prevent compile-time errors (컴파일 타임 오류 방지)
+- **Consistent patterns (일관된 패턴)**: Same Activity/Fragment structure across the entire team (팀 전체 동일한 Activity/Fragment 구조)
+- **Rapid development (빠른 개발)**: Improved productivity through boilerplate removal (보일러플레이트 제거로 생산성 향상)
 
 <br>
 </br>
 
-## 💡 개발자 후기
+### 6. **🔧 Mistake Prevention (실수 방지)**
+- **Missing LifecycleOwner (LifecycleOwner 누락)**: Prevented through automatic connection (자동 연결로 방지)
+- **Memory leaks (메모리 누수)**: Fragment nullable binding handled automatically (Fragment nullable binding 자동 처리)
+- **Permission request errors (권한 요청 오류)**: Automatic exception handling through unified system (통합 시스템으로 예외 처리 자동)
 
-> **"Activity 초기화 코드가 5줄로 끝나요!"**
+<br>
+</br>
+
+## 💡 Developer Reviews (개발자 후기)
+
+> **"Activity initialization code finishes in just 5 lines!" ("Activity 초기화 코드가 5줄로 끝나요!")**
 >
-> **"Fragment nullable binding 처리를 더 이상 신경 쓸 필요가 없어요!"**
+> **"No need to worry about Fragment nullable binding handling anymore!" ("Fragment nullable binding 처리를 더 이상 신경 쓸 필요가 없어요!")**
 >
-> **"권한 요청이 정말 간단해졌어요! 일반 권한과 특수 권한을 구분할 필요도 없고요!"**
+> **"Permission requests have become really simple! No need to distinguish between normal and special permissions!" ("권한 요청이 정말 간단해졌어요! 일반 권한과 특수 권한을 구분할 필요도 없고요!")**
 >
-> **"SystemBars 제어가 한 줄로 끝나니 UI 구현이 빨라졌어요!"**
+> **"UI implementation has sped up since SystemBars control finishes in one line!" ("SystemBars 제어가 한 줄로 끝나니 UI 구현이 빨라졌어요!")**
 >
-> **"statusBarHeight를 프로퍼티로 바로 접근할 수 있어서 편해요!"**
+> **"It's convenient to access statusBarHeight directly as a property!" ("statusBarHeight를 프로퍼티로 바로 접근할 수 있어서 편해요!")**
 >
-> **"팀 전체가 동일한 베이스 클래스를 사용하니 코드 리뷰가 쉬워졌어요!"**
+> **"Code reviews have become easier since the entire team uses the same base classes!" ("팀 전체가 동일한 베이스 클래스를 사용하니 코드 리뷰가 쉬워졌어요!")**
 
 <br>
 </br>
 
-## 🎉 결론: Activity/Fragment 개발의 새로운 표준
+## 🎉 Conclusion: A New Standard for Activity/Fragment Development (결론: Activity/Fragment 개발의 새로운 표준)
+
+**Simple UI** is an innovative library that makes complex Activity/Fragment initialization **simple and powerful**.
 
 **Simple UI**는 복잡한 Activity/Fragment 초기화를 **단순하고 강력하게** 만드는 혁신적인 라이브러리입니다.
 
-✅ **보일러플레이트 제거** - setContentView, DataBinding, LifecycleOwner 자동화!
-✅ **메모리 관리 자동화** - Fragment nullable binding, 메모리 누수 방지 자동!
-✅ **통합 권한 시스템** - 일반/특수 권한 자동 구분, 한 줄로 요청!
-✅ **SystemBars 제어 간소화** - 높이 계산, 투명/색상 설정 한 줄로!
-✅ **70~95% 코드 간소화** - 핵심 로직에만 집중!
+✅ **Boilerplate removal (보일러플레이트 제거)** - Automates setContentView, DataBinding, LifecycleOwner! (setContentView, DataBinding, LifecycleOwner 자동화!)
+✅ **Automated memory management (메모리 관리 자동화)** - Automatic Fragment nullable binding and memory leak prevention! (Fragment nullable binding, 메모리 누수 방지 자동!)
+✅ **Unified permission system (통합 권한 시스템)** - Automatic normal/special permission differentiation, request in one line! (일반/특수 권한 자동 구분, 한 줄로 요청!)
+✅ **Simplified SystemBars control (SystemBars 제어 간소화)** - Height calculation, transparent/color settings in one line! (높이 계산, 투명/색상 설정 한 줄로!)
+✅ **70~95% code simplification (70~95% 코드 간소화)** - Focus only on core logic! (핵심 로직에만 집중!)
 
-**전통적인 복잡함은 이제 그만.**
-**Simple UI와 함께 생산적인 개발을 경험하세요!** 🚀
+**No more traditional complexity. (전통적인 복잡함은 이제 그만.)**
+**Experience productive development with Simple UI! (Simple UI와 함께 생산적인 개발을 경험하세요!)** 🚀
 
 ---
 
 <br>
 </br>
 
-## 📚 선택 가이드: 어떤 Base 클래스를 사용할까?
+## 📚 Selection Guide: Which Base Class Should I Use? (선택 가이드: 어떤 Base 클래스를 사용할까?)
+
+Simple UI provides **four Base classes**. Choose according to your project situation.
+
+<br>
+</br>
 
 Simple UI는 **네 가지 Base 클래스**를 제공합니다. 프로젝트 상황에 맞춰 선택하세요.
 
 <br>
 </br>
 
-### 🎯 **선택 가이드**
+### 🎯 **Selection Guide (선택 가이드)**
 
-| 구분 | BaseActivity | BaseBindingActivity |
+| Category (구분) | BaseActivity | BaseBindingActivity |
 |:--|:--|:--|
-| **사용 시기** | 간단한 화면, DataBinding 불필요 | DataBinding 필요, 복잡한 UI |
-| **View 접근** | `findViewById()` 또는 ViewBinding | DataBinding (양방향 바인딩 가능) |
-| **코드량** | 매우 간결 (레이아웃만 지정) | 간결 (Binding 자동 처리) |
-| **ViewModel 연동** | 수동 연결 필요 | 자동 lifecycleOwner 설정 |
-| **추천 용도** | 단순 UI, 설정 화면, 정적 페이지 | 데이터 기반 UI, MVVM 패턴 |
+| **When to use (사용 시기)** | Simple screens, DataBinding not needed (간단한 화면, DataBinding 불필요) | DataBinding required, complex UI (DataBinding 필요, 복잡한 UI) |
+| **View access (View 접근)** | `findViewById()` or ViewBinding | DataBinding (two-way binding available / 양방향 바인딩 가능) |
+| **Code amount (코드량)** | Very concise (layout only / 매우 간결 - 레이아웃만 지정) | Concise (Binding handled automatically / 간결 - Binding 자동 처리) |
+| **ViewModel integration (ViewModel 연동)** | Manual connection needed (수동 연결 필요) | Automatic lifecycleOwner setup (자동 lifecycleOwner 설정) |
+| **Recommended use (추천 용도)** | Simple UI, settings screen, static pages (단순 UI, 설정 화면, 정적 페이지) | Data-driven UI, MVVM pattern (데이터 기반 UI, MVVM 패턴) |
 
 <br>
 
-| 구분 | BaseFragment | BaseBindingFragment |
+| Category (구분) | BaseFragment | BaseBindingFragment |
 |:--|:--|:--|
-| **사용 시기** | 간단한 화면, DataBinding 불필요 | DataBinding 필요, 복잡한 UI |
-| **View 접근** | `findViewById()` 또는 ViewBinding | DataBinding (양방향 바인딩 가능) |
-| **코드량** | 매우 간결 (레이아웃만 지정) | 간결 (Binding 자동 처리) |
-| **ViewModel 연동** | 수동 연결 필요 | 자동 lifecycleOwner 설정 |
-| **메모리 관리** | 자동 (inflate만) | 자동 (nullable binding 처리) |
-| **추천 용도** | 단순 UI, 정적 페이지 | 데이터 기반 UI, MVVM 패턴 |
+| **When to use (사용 시기)** | Simple screens, DataBinding not needed (간단한 화면, DataBinding 불필요) | DataBinding required, complex UI (DataBinding 필요, 복잡한 UI) |
+| **View access (View 접근)** | `findViewById()` or ViewBinding | DataBinding (two-way binding available / 양방향 바인딩 가능) |
+| **Code amount (코드량)** | Very concise (layout only / 매우 간결 - 레이아웃만 지정) | Concise (Binding handled automatically / 간결 - Binding 자동 처리) |
+| **ViewModel integration (ViewModel 연동)** | Manual connection needed (수동 연결 필요) | Automatic lifecycleOwner setup (자동 lifecycleOwner 설정) |
+| **Memory management (메모리 관리)** | Automatic (inflate only / 자동 - inflate만) | Automatic (nullable binding handling / 자동 - nullable binding 처리) |
+| **Recommended use (추천 용도)** | Simple UI, static pages (단순 UI, 정적 페이지) | Data-driven UI, MVVM pattern (데이터 기반 UI, MVVM 패턴) |
 
 <br>
 </br>
 
-### 🤔 **어떤 걸 선택해야 할까?**
+### 🤔 **Which One Should I Choose? (어떤 걸 선택해야 할까?)**
 
-#### **BaseActivity/BaseFragment를 선택하세요 👉**
-- ✅ 간단한 정보 표시 화면
-- ✅ 설정(Settings) 화면
-- ✅ 정적 컨텐츠 페이지
-- ✅ DataBinding이 과한 경우
+#### **Choose BaseActivity/BaseFragment 👉 (BaseActivity/BaseFragment를 선택하세요 👉)**
+- ✅ Simple information display screens (간단한 정보 표시 화면)
+- ✅ Settings screens (설정(Settings) 화면)
+- ✅ Static content pages (정적 컨텐츠 페이지)
+- ✅ When DataBinding is overkill (DataBinding이 과한 경우)
 
-#### **BaseBindingActivity/BaseBindingFragment를 선택하세요 👉**
-- ✅ DataBinding이 필요한 화면
-- ✅ XML에서 직접 데이터 바인딩
-- ✅ 복잡한 UI 상태 관리
-- ✅ MVVM 패턴 (ViewModel 연동 시)
+#### **Choose BaseBindingActivity/BaseBindingFragment 👉 (BaseBindingActivity/BaseBindingFragment를 선택하세요 👉)**
+- ✅ Screens that require DataBinding (DataBinding이 필요한 화면)
+- ✅ Direct data binding in XML (XML에서 직접 데이터 바인딩)
+- ✅ Complex UI state management (복잡한 UI 상태 관리)
+- ✅ MVVM pattern (when integrating ViewModel / MVVM 패턴 - ViewModel 연동 시)
 
 <br>
 </br>
 
-### ⚙️ **고급 파라미터: isAttachToParent**
+### ⚙️ **Advanced Parameter: isAttachToParent (고급 파라미터: isAttachToParent)**
+
+BaseFragment and BaseBindingFragment optionally support the `isAttachToParent` parameter.
+
+<br>
+</br>
 
 BaseFragment와 BaseBindingFragment는 선택적으로 `isAttachToParent` 파라미터를 지원합니다.
 
-#### **생성자 시그니처**
+#### **Constructor Signature (생성자 시그니처)**
 ```kotlin
 // BaseFragment
 abstract class BaseFragment(
     @LayoutRes private val layoutRes: Int,
-    private val isAttachToParent: Boolean = false  // 기본값: false
+    private val isAttachToParent: Boolean = false  // Default: false (기본값: false)
 ) : RootFragment()
 
 // BaseBindingFragment
 abstract class BaseBindingFragment<BINDING : ViewDataBinding>(
     @LayoutRes private val layoutRes: Int,
-    private val isAttachToParent: Boolean = false  // 기본값: false
+    private val isAttachToParent: Boolean = false  // Default: false (기본값: false)
 ) : RootFragment()
 ```
 
-#### **isAttachToParent란?**
-- **`false` (기본값)**: inflate된 뷰를 container에 즉시 붙이지 않음 (일반적인 Fragment 동작)
-- **`true`**: inflate된 뷰를 container에 즉시 부착
+#### **What is isAttachToParent? (isAttachToParent란?)**
+- **`false` (default / 기본값)**: Don't immediately attach the inflated view to the container (normal Fragment behavior / inflate된 뷰를 container에 즉시 붙이지 않음 - 일반적인 Fragment 동작)
+- **`true`**: Immediately attach the inflated view to the container (inflate된 뷰를 container에 즉시 부착)
 
-#### **언제 true를 사용하나요?**
+#### **When to use true? (언제 true를 사용하나요?)**
+In most cases, **use the default value `false`**. Use `true` only in the following special cases:
+
 대부분의 경우 **기본값 `false`를 사용**하면 됩니다. `true`는 다음과 같은 특수한 경우에만 사용합니다:
 
-❌ **일반적으로 사용하지 마세요:**
-- 일반적인 Fragment 화면
-- FragmentManager가 자동으로 뷰를 관리하는 경우
+❌ **Don't use generally (일반적으로 사용하지 마세요):**
+- Normal Fragment screens (일반적인 Fragment 화면)
+- When FragmentManager automatically manages views (FragmentManager가 자동으로 뷰를 관리하는 경우)
 
-✅ **다음과 같은 특수한 경우에만 사용:**
-- 커스텀 뷰 그룹 내부에서 수동으로 Fragment를 관리
-- ViewGroup에 직접 추가해야 하는 경우
+✅ **Use only in special cases (다음과 같은 특수한 경우에만 사용):**
+- When manually managing Fragments inside custom view groups (커스텀 뷰 그룹 내부에서 수동으로 Fragment를 관리)
+- When directly adding to ViewGroup (ViewGroup에 직접 추가해야 하는 경우)
 
-#### **사용 예시**
+#### **Usage example (사용 예시)**
 ```kotlin
-// 일반적인 사용 (대부분의 경우)
+// Normal use (most cases / 일반적인 사용 - 대부분의 경우)
 class NormalFragment : BaseFragment(R.layout.fragment_normal)
-// isAttachToParent 생략 시 기본값 false 사용
+// Default value false is used when isAttachToParent is omitted (isAttachToParent 생략 시 기본값 false 사용)
 
-// 특수한 경우 (거의 사용하지 않음)
+// Special case (rarely used / 특수한 경우 - 거의 사용하지 않음)
 class CustomFragment : BaseFragment(
     layoutRes = R.layout.fragment_custom,
-    isAttachToParent = true  // 명시적으로 true 지정
+    isAttachToParent = true  // Explicitly specify true (명시적으로 true 지정)
 )
 ```
 
-**⚠️ 주의사항:**
-- `isAttachToParent = true`를 잘못 사용하면 "The specified child already has a parent" 예외가 발생할 수 있습니다
-- 대부분의 Fragment는 기본값 `false`를 사용해야 합니다
+**⚠️ Caution (주의사항):**
+- Incorrect use of `isAttachToParent = true` may cause "The specified child already has a parent" exception (`isAttachToParent = true`를 잘못 사용하면 "The specified child already has a parent" 예외가 발생할 수 있습니다)
+- Most Fragments should use the default value `false` (대부분의 Fragment는 기본값 `false`를 사용해야 합니다)
 
 <br>
 </br>
 
-### 💡 **MVVM 패턴을 사용하시나요?**
+### 💡 **Are You Using MVVM Pattern? (MVVM 패턴을 사용하시나요?)**
+
+Integrate **ViewModel** with BaseBindingActivity/Fragment to implement a complete MVVM pattern!
+
+<br>
+</br>
 
 BaseBindingActivity/Fragment와 함께 **ViewModel**을 연동하여 완전한 MVVM 패턴을 구현하세요!
 
 <br>
 
-#### **getViewModel() - ViewModel 간편 생성**
+#### **getViewModel() - Easy ViewModel Creation (getViewModel() - ViewModel 간편 생성)**
+
+BaseBindingActivity and BaseBindingFragment provide the `getViewModel<T>()` method.
+
+<br>
+</br>
 
 BaseBindingActivity와 BaseBindingFragment는 `getViewModel<T>()` 메서드를 제공합니다.
 
 ```kotlin
-// Activity에서 사용
+// Use in Activity (Activity에서 사용)
 class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
 
-    // ViewModel 생성 - 한 줄로 끝!
+    // ViewModel creation - finished in one line! (ViewModel 생성 - 한 줄로 끝!)
     private val viewModel: MainViewModel by lazy { getViewModel<MainViewModel>() }
     ///private val vm :MainViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // ViewModel 사용
+        // Use ViewModel (ViewModel 사용)
         viewModel.loadData()
-        binding.vm = viewModel  // DataBinding에 ViewModel 연결
+        binding.vm = viewModel  // Connect ViewModel to DataBinding (DataBinding에 ViewModel 연결)
     }
 }
 
-// Fragment에서 사용 (확장 함수 형태)
+// Use in Fragment (extension function form / Fragment에서 사용 - 확장 함수 형태)
 class MainFragment : BaseBindingFragment<FragmentMainBinding>(R.layout.fragment_main) {
 
-    // Fragment.getViewModel() - 확장 함수로 제공
+    // Fragment.getViewModel() - provided as extension function (Fragment.getViewModel() - 확장 함수로 제공)
     private val viewModel: MainViewModel by lazy { getViewModel<MainViewModel>() }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // ViewModel 사용
+        // Use ViewModel (ViewModel 사용)
         viewModel.loadData()
-        binding.vm = viewModel  // DataBinding에 ViewModel 연결
+        binding.vm = viewModel  // Connect ViewModel to DataBinding (DataBinding에 ViewModel 연결)
     }
 }
 ```
 
-**특징:**
-- ✅ Reified Type으로 타입 자동 추론
-- ✅ ViewModelProvider 보일러플레이트 제거
-- ✅ Activity와 Fragment 모두 동일한 API
+**Features (특징):**
+- ✅ Automatic type inference with Reified Type (Reified Type으로 타입 자동 추론)
+- ✅ ViewModelProvider boilerplate removal (ViewModelProvider 보일러플레이트 제거)
+- ✅ Same API for both Activity and Fragment (Activity와 Fragment 모두 동일한 API)
 
-**⚠️ 차이점:**
+**⚠️ Differences (차이점):**
 - **Activity**: `getViewModel<T>()`
-- **Fragment**: `Fragment.getViewModel<T>()` (확장 함수)
+- **Fragment**: `Fragment.getViewModel<T>()` (extension function / 확장 함수)
 
 <br>
 
-#### **eventVmCollect() - ViewModel 이벤트 구독 전용 메서드**
+#### **eventVmCollect() - Dedicated Method for ViewModel Event Subscription (eventVmCollect() - ViewModel 이벤트 구독 전용 메서드)**
+
+BaseBindingActivity and BaseBindingFragment provide the `eventVmCollect()` method.
+
+<br>
+</br>
 
 BaseBindingActivity와 BaseBindingFragment는 `eventVmCollect()` 메서드를 제공합니다.
+
+This method is a **dedicated initialization point** for subscribing to ViewModel events (StateFlow, SharedFlow, etc.).
+
+<br>
+</br>
 
 이 메서드는 ViewModel의 이벤트(StateFlow, SharedFlow 등)를 구독하기 위한 **전용 초기화 지점**입니다.
 
 ```kotlin
-// Activity에서 사용
+// Use in Activity (Activity에서 사용)
 class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
 
     private val viewModel: MainViewModel by lazy { getViewModel<MainViewModel>() }
@@ -1483,12 +1537,12 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
         super.onCreate(savedInstanceState)
         binding.vm = viewModel
 
-        // ViewModel 이벤트 구독
+        // Subscribe to ViewModel events (ViewModel 이벤트 구독)
         eventVmCollect()
     }
 
     override fun eventVmCollect() {
-        // ViewModel의 이벤트 Flow를 구독
+        // Subscribe to ViewModel's event Flow (ViewModel의 이벤트 Flow를 구독)
         lifecycleScope.launch {
             viewModel.uiState.collect { state ->
                 when (state) {
@@ -1510,7 +1564,7 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
     }
 }
 
-// Fragment에서 사용
+// Use in Fragment (Fragment에서 사용)
 class MainFragment : BaseBindingFragment<FragmentMainBinding>(R.layout.fragment_main) {
 
     private val viewModel: MainViewModel by lazy { getViewModel<MainViewModel>() }
@@ -1519,15 +1573,15 @@ class MainFragment : BaseBindingFragment<FragmentMainBinding>(R.layout.fragment_
         super.onViewCreated(view, savedInstanceState)
         binding.vm = viewModel
 
-        // ViewModel 이벤트 구독
+        // Subscribe to ViewModel events (ViewModel 이벤트 구독)
         eventVmCollect()
     }
 
     override fun eventVmCollect() {
-        // Fragment의 viewLifecycleOwner.lifecycleScope 사용 권장
+        // Recommended to use Fragment's viewLifecycleOwner.lifecycleScope (Fragment의 viewLifecycleOwner.lifecycleScope 사용 권장)
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.uiState.collect { state ->
-                // UI 상태 처리
+                // Handle UI state (UI 상태 처리)
                 updateUI(state)
             }
         }
@@ -1535,45 +1589,45 @@ class MainFragment : BaseBindingFragment<FragmentMainBinding>(R.layout.fragment_
 }
 ```
 
-**언제 사용하나요?**
-- ✅ ViewModel의 StateFlow/SharedFlow 구독
-- ✅ UI 상태 관리 (로딩, 성공, 에러)
-- ✅ 일회성 이벤트 처리 (네비게이션, 토스트 등)
-- ✅ 이벤트 구독 로직을 한 곳에 모아 관리
+**When to use (언제 사용하나요)?**
+- ✅ Subscribe to ViewModel's StateFlow/SharedFlow (ViewModel의 StateFlow/SharedFlow 구독)
+- ✅ UI state management (loading, success, error / UI 상태 관리 - 로딩, 성공, 에러)
+- ✅ One-time event handling (navigation, toast, etc. / 일회성 이벤트 처리 - 네비게이션, 토스트 등)
+- ✅ Manage event subscription logic in one place (이벤트 구독 로직을 한 곳에 모아 관리)
 
-**장점:**
-- ✅ 이벤트 구독 코드를 별도 메서드로 분리하여 가독성 향상
-- ✅ onCreate/onViewCreated가 복잡해지는 것을 방지
-- ✅ 일관된 패턴으로 팀 전체 코드 통일
-
-<br>
-
-🚀 **더 자세한 MVVM 연동 방법과 이벤트 시스템**은 다음 문서를 참고하세요:
-- 📖 [README_MVVM.md](README_MVVM.md) - MVVM 패턴 완벽 가이드
+**Advantages (장점):**
+- ✅ Improved readability by separating event subscription code into a separate method (이벤트 구독 코드를 별도 메서드로 분리하여 가독성 향상)
+- ✅ Prevent onCreate/onViewCreated from becoming complex (onCreate/onViewCreated가 복잡해지는 것을 방지)
+- ✅ Unified code across the entire team with consistent patterns (일관된 패턴으로 팀 전체 코드 통일)
 
 <br>
-</br>
 
-## 🚀 실제 구현 예제 보기
-
-**라이브 예제 코드:**
-> - Simple UI 예제: `app/src/main/java/kr/open/library/simpleui_xml/mvvm/new_/`
-> - 순수 Android 예제: `app/src/main/java/kr/open/library/simpleui_xml/mvvm/origin/`
-> - 실제로 앱을 구동시켜서 실제 구현 예제를 확인해 보세요!
+🚀 **For more detailed MVVM integration methods and event systems (더 자세한 MVVM 연동 방법과 이벤트 시스템)**, refer to the following document:
+- 📖 [README_MVVM.md](README_MVVM.md) - Complete MVVM Pattern Guide (MVVM 패턴 완벽 가이드)
 
 <br>
 </br>
 
-**테스트 가능한 기능:**
-- BaseActivity 자동 초기화
-- BaseFragment 자동 초기화
-- BaseBindingActivity DataBinding 자동 연동
-- BaseBindingFragment DataBinding 자동 연동
-- nullable binding 자동 처리
-- 통합 권한 요청 시스템
-- 일반/특수 권한 자동 구분
-- statusBarHeight/navigationBarHeight 자동 계산
-- SystemBars 제어 (투명/색상/아이콘 모드)
+## 🚀 View Real Implementation Examples (실제 구현 예제 보기)
+
+**Live Example Code (라이브 예제 코드):**
+> - Simple UI examples (Simple UI 예제): `app/src/main/java/kr/open/library/simpleui_xml/mvvm/new_/`
+> - Plain Android examples (순수 Android 예제): `app/src/main/java/kr/open/library/simpleui_xml/mvvm/origin/`
+> - Run the app to see real implementation examples! (실제로 앱을 구동시켜서 실제 구현 예제를 확인해 보세요!)
+
+<br>
+</br>
+
+**Testable Features (테스트 가능한 기능):**
+- BaseActivity automatic initialization (BaseActivity 자동 초기화)
+- BaseFragment automatic initialization (BaseFragment 자동 초기화)
+- BaseBindingActivity DataBinding automatic integration (BaseBindingActivity DataBinding 자동 연동)
+- BaseBindingFragment DataBinding automatic integration (BaseBindingFragment DataBinding 자동 연동)
+- Automatic nullable binding handling (nullable binding 자동 처리)
+- Unified permission request system (통합 권한 요청 시스템)
+- Automatic normal/special permission differentiation (일반/특수 권한 자동 구분)
+- Automatic statusBarHeight/navigationBarHeight calculation (statusBarHeight/navigationBarHeight 자동 계산)
+- SystemBars control (transparent/color/icon mode / SystemBars 제어 - 투명/색상/아이콘 모드)
 
 <br>
 </br>
