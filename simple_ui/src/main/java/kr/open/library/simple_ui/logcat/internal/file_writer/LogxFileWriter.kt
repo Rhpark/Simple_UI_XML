@@ -28,8 +28,8 @@ class LogxFileWriter(
 ) : LogxFileWriterImp {
 
     private val lock = ReentrantReadWriteLock()
-    private val dateFormatter = SimpleDateFormat("yy-MM-dd, HH:mm:ss.SSS", Locale.US)
-    private val fileNameFormatter = SimpleDateFormat("yy-MM-dd", Locale.US)
+    private val dateFormatter = SimpleDateFormat("yy-MM-dd, HH:mm:ss.SSS", Locale.getDefault())
+    private val fileNameFormatter = SimpleDateFormat("yy-MM-dd", Locale.getDefault())
 
     private companion object {
         private val logWriterScope = CoroutineScope(Dispatchers.IO + Job()) // Singleton

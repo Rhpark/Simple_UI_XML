@@ -10,8 +10,10 @@ public open class NetworkBase(res: Any) {
 
     protected fun String.split(start: String, end: String): String? = if (contains(start)) {
         val splitRes = split(start)
-        if(splitRes.size > 1) {
-            splitRes[1].split(end)[0]
+        // contains(start)==true이면 splitRes.size는 항상 >= 2
+        val afterStart = splitRes[1]
+        if (afterStart.contains(end)) {
+            afterStart.split(end)[0]
         } else null
     } else {
         null

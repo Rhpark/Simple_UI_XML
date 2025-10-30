@@ -62,6 +62,24 @@ class CollectionExtensionsTest {
         assertSame(emptyMap<String, Int>(), emptyResult)
     }
 
+    @Test
+    fun filterIf_runtimeCondition_coverBothBranches() {
+        val numbers = listOf(1, 2, 3, 4)
+        val predicate: (Int) -> Boolean = { it % 2 == 0 }
+
+        var conditionFlag = false
+        val conditionProvider = { conditionFlag }
+
+        // 첫 호출: condition=false 경로
+        val resultFalse = numbers.filterIf(conditionProvider()) { predicate(it) }
+        assertSame(numbers, resultFalse)
+
+        // 동일 호출 지점에서 condition=true 경로 실행
+        conditionFlag = true
+        val resultTrue = numbers.filterIf(conditionProvider()) { predicate(it) }
+        assertEquals(listOf(2, 4), resultTrue)
+    }
+
     // ========== Extended Tests ==========
 
     @Test

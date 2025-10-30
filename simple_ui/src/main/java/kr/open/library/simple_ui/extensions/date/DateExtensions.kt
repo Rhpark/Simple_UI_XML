@@ -1,5 +1,6 @@
 package kr.open.library.simple_ui.extensions.date
 
+import java.text.ParsePosition
 import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.LocalDate
@@ -13,28 +14,35 @@ import java.util.Locale
 /**
  * ex)
  * format = "HH:mm:ss dd/MM/yyyy"
- * locale = Locale.US
+ * locale = Locale.getDefault
  */
 public fun Long.timeDateToString(
     format: String,
-    locale: Locale = Locale.US,
+    locale: Locale = Locale.getDefault(),
 ): String = SimpleDateFormat(format, locale).format(Date(this))
 
 /**
  * ex)
  * format = "HH:mm:ss dd/MM/yyyy"
- * locale = Locale.US
+ * locale = Locale.getDefault
  * return milliseconds
  */
-public fun String.timeDateToLong(format: String, locale: Locale = Locale.US): Long = try {
-    SimpleDateFormat(format, locale).parse(this)?.time
+public fun String.timeDateToLong(format: String, locale: Locale = Locale.getDefault()): Long  {
+    val formatter = SimpleDateFormat(format, locale)
+    val parsePosition = ParsePosition(0)
+
+    val parsedDate = formatter.parse(this, parsePosition)
         ?: throw IllegalArgumentException("Invalid time string")
-} catch (e: Exception) {
-    throw IllegalArgumentException("Invalid time string",e)
+
+    if (parsePosition.index != length) {
+        throw IllegalArgumentException("Invalid time string")
+    }
+
+    return parsedDate.time
 }
 
 
-public fun String.timeDateToDate(format: String, locale: Locale = Locale.US): Date? = try {
+public fun String.timeDateToDate(format: String, locale: Locale = Locale.getDefault()): Date? = try {
     SimpleDateFormat(format, locale).parse(this)
 } catch (e: Exception) {
     null
@@ -44,7 +52,7 @@ public fun String.timeDateToDate(format: String, locale: Locale = Locale.US): Da
  * if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
  *     val nowMillis = System.currentTimeMillis()
  *     val localDateTime = nowMillis.toLocalDateTime()
- *     val formatted = localDateTime.format("HH:mm:ss dd/MM/yyyy", Locale.US)
+ *     val formatted = localDateTime.format("HH:mm:ss dd/MM/yyyy", Locale.getDefault)
  *     Logx.d("Formatted LocalDateTime: $formatted")
  * }
  */
@@ -76,11 +84,11 @@ public fun Date.formatToString(
 /**
  * ex)
  * format = "HH:mm:ss dd/MM/yyyy"
- * locale = Locale.US
+ * locale = Locale.getDefault()
  */
 public fun Date.formattedToString(
     format: String,
-    locale: Locale = Locale.US,
+    locale: Locale = Locale.getDefault(),
 ): String = SimpleDateFormat(format, locale).format(this)
 
 /**

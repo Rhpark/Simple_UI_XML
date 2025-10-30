@@ -41,6 +41,16 @@ class LogxConfigBuildersTest {
     }
 
     @Test
+    fun logTypeConfigBuilder_allAddsEveryType() {
+        val builder = LogxTypeConfigBuilder().apply {
+            LogxType.entries.forEach { -it }
+            all()
+        }
+
+        assertEquals(EnumSet.copyOf(LogxType.entries), builder.types)
+    }
+
+    @Test
     fun filterConfigBuilder_managesFilters() {
         val builder = LogxFilterConfigBuilder().apply {
             +"Tag1"

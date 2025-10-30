@@ -70,6 +70,13 @@ class DateExtensionsTest {
         "invalid-date".timeDateToLong("yyyy-MM-dd")
     }
 
+    @Test(expected = IllegalArgumentException::class)
+    fun timeDateToLong_throwsExceptionWhenParsingIncomplete() {
+        // SimpleDateFormat이 "2024-01-15"까지만 파싱하고 나머지 " extra text"는 무시
+        // parsePosition.index != length 조건을 만족하여 예외 발생
+        "2024-01-15 extra text".timeDateToLong("yyyy-MM-dd", Locale.US)
+    }
+
     @Test
     fun timeDateToDate_returnsNullForInvalidFormat() {
         val result = "invalid-date".timeDateToDate("yyyy-MM-dd")
@@ -254,6 +261,57 @@ class DateExtensionsTest {
         assertTrue(formattedUS.contains("Mar"))
         // French locale may vary by system, just check it's not empty
         assertTrue(formattedFR.isNotEmpty())
+    }
+
+    @Test
+    fun timeDateToString_usesDefaultLocaleWhenOmitted() {
+        val original = Locale.getDefault()
+        try {
+            Locale.setDefault(Locale.US)
+            val millis = LocalDateTime.of(2024, Month.JULY, 4, 12, 0)
+                .atZone(ZoneId.systemDefault())
+                .toInstant()
+                .toEpochMilli()
+
+            val withoutLocale = millis.timeDateToString("yyyy-MM-dd HH:mm")
+            val withLocale = millis.timeDateToString("yyyy-MM-dd HH:mm", Locale.US)
+
+            assertEquals(withLocale, withoutLocale)
+        } finally {
+            Locale.setDefault(original)
+        }
+    }
+
+    @Test
+    fun localDateTimeFormat_usesDefaultLocaleWhenOmitted() {
+        val original = Locale.getDefault()
+        try {
+            Locale.setDefault(Locale.US)
+            val dateTime = LocalDateTime.of(2023, Month.DECEMBER, 25, 8, 45)
+
+            val withoutLocale = dateTime.format("yyyy-MM-dd HH:mm:ss")
+            val withLocale = dateTime.format("yyyy-MM-dd HH:mm:ss", Locale.US)
+
+            assertEquals(withLocale, withoutLocale)
+        } finally {
+            Locale.setDefault(original)
+        }
+    }
+
+    @Test
+    fun dateFormattedToString_usesDefaultLocaleWhenOmitted() {
+        val original = Locale.getDefault()
+        try {
+            Locale.setDefault(Locale.US)
+            val date = Date(0L)
+
+            val withoutLocale = date.formattedToString("yyyy-MM-dd")
+            val withLocale = date.formattedToString("yyyy-MM-dd", Locale.US)
+
+            assertEquals(withLocale, withoutLocale)
+        } finally {
+            Locale.setDefault(original)
+        }
     }
 
     // ========== Edge Cases ==========

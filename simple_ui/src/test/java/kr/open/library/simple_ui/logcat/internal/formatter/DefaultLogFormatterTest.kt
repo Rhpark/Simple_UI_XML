@@ -62,4 +62,78 @@ class DefaultLogFormatterTest {
 
         assertNull(formatted)
     }
+
+    @Test
+    fun format_allowsStandardLogTypes() {
+        val formatter = DefaultLogFormatter(baseConfig)
+        val stackInfo = "[Stack] "
+        val tag = "TAG"
+
+        listOf(
+            LogxType.VERBOSE,
+            LogxType.DEBUG,
+            LogxType.INFO,
+            LogxType.WARN,
+            LogxType.ERROR
+        ).forEachIndexed { index, type ->
+            val message = "message-$index"
+            val data = formatter.format(
+                tag = tag,
+                message = message,
+                logType = type,
+                stackInfo = stackInfo
+            )
+
+            requireNotNull(data)
+            assertEquals("SampleApp[$tag]", data.tag)
+            assertEquals(stackInfo + message, data.message)
+            assertEquals(type, data.logType)
+        }
+    }
+
+    @Test
+    fun format_returnsNullForNonDefaultLogTypes() {
+        val formatter = DefaultLogFormatter(
+            baseConfig.copy(debugLogTypeList = EnumSet.allOf(LogxType::class.java))
+        )
+
+        listOf(LogxType.PARENT, LogxType.JSON, LogxType.THREAD_ID).forEach { type ->
+            val formatted = formatter.format(
+                tag = "TAG",
+                message = "ignored",
+                logType = type,
+                stackInfo = "[stack]"
+            )
+            assertNull(formatted)
+        }
+    }
+
+    @Test
+    fun format_handlesNullMessageGracefully() {
+        val formatter = DefaultLogFormatter(baseConfig)
+
+        val formatted = formatter.format(
+            tag = "TAG",
+            message = null,
+            logType = LogxType.INFO,
+            stackInfo = "[stack]"
+        )
+
+        requireNotNull(formatted)
+        assertEquals("[stack]", formatted.message)
+    }
+
+    @Test
+    fun format_usesDefaultStackInfoWhenOmitted() {
+        val formatter = DefaultLogFormatter(baseConfig)
+
+        val formatted = formatter.format(
+            tag = "TAG",
+            message = "hello",
+            logType = LogxType.DEBUG
+        )
+
+        requireNotNull(formatted)
+        assertEquals("hello", formatted.message)
+    }
 }

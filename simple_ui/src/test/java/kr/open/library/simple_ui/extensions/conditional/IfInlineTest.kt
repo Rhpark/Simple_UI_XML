@@ -1,7 +1,9 @@
 package kr.open.library.simple_ui.extensions.conditional
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Ignore
 import org.junit.Test
 
@@ -446,5 +448,362 @@ class IfInlineTest {
         val result = firstNotNull<String>()
 
         assertNull(result)
+    }
+
+    @Test
+    fun int_ifGreaterThan_runtimeToggle_coversBothBranches() {
+        var conditionFlag = false
+        val threshold = 5
+        val hitLog = mutableListOf<String>()
+
+        fun subject(): Int = if (conditionFlag) 8 else 3
+
+        // 1차 호출: false 경로
+        conditionFlag = false
+        val first = subject().ifGreaterThan(threshold) {
+            hitLog += "hit-true"
+            "hit-true"
+        }
+        assertNull(first)
+
+        // 2차 호출: 같은 호출 지점에서 true 경로
+        conditionFlag = true
+        val second = subject().ifGreaterThan(threshold) {
+            hitLog += "hit-false"
+            "hit-false"
+        }
+        assertEquals("hit-false", second)
+        assertEquals(listOf("hit-false"), hitLog)
+    }
+
+    // ========== Branch Coverage Enhancements ==========
+
+    @Test
+    fun branch_ifGreaterThan_singleLambda_allTypes() {
+        assertSingleConditionalBranches(
+            falseInput = 2,
+            trueInput = 7,
+            expectedTrueResult = "int-gt-single"
+        ) { value, action -> value.ifGreaterThan(5) { action() } }
+
+        assertSingleConditionalBranches(
+            falseInput = 2.5f,
+            trueInput = 7.5f,
+            expectedTrueResult = "float-gt-single"
+        ) { value, action -> value.ifGreaterThan(5.0f) { action() } }
+
+        assertSingleConditionalBranches(
+            falseInput = 1.0,
+            trueInput = 6.0,
+            expectedTrueResult = "double-gt-single"
+        ) { value, action -> value.ifGreaterThan(3.0) { action() } }
+
+        assertSingleConditionalBranches(
+            falseInput = 2L,
+            trueInput = 9L,
+            expectedTrueResult = "long-gt-single"
+        ) { value, action -> value.ifGreaterThan(5L) { action() } }
+
+        assertSingleConditionalBranches(
+            falseInput = 1.toShort(),
+            trueInput = 6.toShort(),
+            expectedTrueResult = "short-gt-single"
+        ) { value, action -> value.ifGreaterThan(4.toShort()) { action() } }
+    }
+
+    @Test
+    fun branch_ifGreaterThan_dualLambda_allTypes() {
+        assertDualConditionalBranches(
+            falseInput = 2,
+            trueInput = 8,
+            expectedNegative = "int-gt-neg",
+            expectedPositive = "int-gt-pos"
+        ) { value, pos, neg -> value.ifGreaterThan(5, { pos() }, { neg() }) }
+
+        assertDualConditionalBranches(
+            falseInput = 2.5f,
+            trueInput = 8.5f,
+            expectedNegative = "float-gt-neg",
+            expectedPositive = "float-gt-pos"
+        ) { value, pos, neg -> value.ifGreaterThan(5.0f, { pos() }, { neg() }) }
+
+        assertDualConditionalBranches(
+            falseInput = 1.0,
+            trueInput = 7.0,
+            expectedNegative = "double-gt-neg",
+            expectedPositive = "double-gt-pos"
+        ) { value, pos, neg -> value.ifGreaterThan(3.5, { pos() }, { neg() }) }
+
+        assertDualConditionalBranches(
+            falseInput = 3L,
+            trueInput = 11L,
+            expectedNegative = "long-gt-neg",
+            expectedPositive = "long-gt-pos"
+        ) { value, pos, neg -> value.ifGreaterThan(6L, { pos() }, { neg() }) }
+
+        assertDualConditionalBranches(
+            falseInput = 3.toShort(),
+            trueInput = 9.toShort(),
+            expectedNegative = "short-gt-neg",
+            expectedPositive = "short-gt-pos"
+        ) { value, pos, neg -> value.ifGreaterThan(5.toShort(), { pos() }, { neg() }) }
+    }
+
+    @Test
+    fun branch_ifGreaterThanOrEqual_singleLambda_allTypes() {
+        assertSingleConditionalBranches(
+            falseInput = 3,
+            trueInput = 5,
+            expectedTrueResult = "int-gte-single"
+        ) { value, action -> value.ifGreaterThanOrEqual(5) { action() } }
+
+        assertSingleConditionalBranches(
+            falseInput = 3.5f,
+            trueInput = 5.0f,
+            expectedTrueResult = "float-gte-single"
+        ) { value, action -> value.ifGreaterThanOrEqual(5.0f) { action() } }
+
+        assertSingleConditionalBranches(
+            falseInput = 2.0,
+            trueInput = 2.5,
+            expectedTrueResult = "double-gte-single"
+        ) { value, action -> value.ifGreaterThanOrEqual(2.5) { action() } }
+
+        assertSingleConditionalBranches(
+            falseInput = 4L,
+            trueInput = 7L,
+            expectedTrueResult = "long-gte-single"
+        ) { value, action -> value.ifGreaterThanOrEqual(7L) { action() } }
+
+        assertSingleConditionalBranches(
+            falseInput = 10.toShort(),
+            trueInput = 12.toShort(),
+            expectedTrueResult = "short-gte-single"
+        ) { value, action -> value.ifGreaterThanOrEqual(12.toShort()) { action() } }
+    }
+
+    @Test
+    fun branch_ifGreaterThanOrEqual_dualLambda_allTypes() {
+        assertDualConditionalBranches(
+            falseInput = 4,
+            trueInput = 6,
+            expectedNegative = "int-gte-neg",
+            expectedPositive = "int-gte-pos"
+        ) { value, pos, neg -> value.ifGreaterThanOrEqual(6, { pos() }, { neg() }) }
+
+        assertDualConditionalBranches(
+            falseInput = 4.5f,
+            trueInput = 7.0f,
+            expectedNegative = "float-gte-neg",
+            expectedPositive = "float-gte-pos"
+        ) { value, pos, neg -> value.ifGreaterThanOrEqual(7.0f, { pos() }, { neg() }) }
+
+        assertDualConditionalBranches(
+            falseInput = 1.0,
+            trueInput = 1.5,
+            expectedNegative = "double-gte-neg",
+            expectedPositive = "double-gte-pos"
+        ) { value, pos, neg -> value.ifGreaterThanOrEqual(1.5, { pos() }, { neg() }) }
+
+        assertDualConditionalBranches(
+            falseInput = 8L,
+            trueInput = 10L,
+            expectedNegative = "long-gte-neg",
+            expectedPositive = "long-gte-pos"
+        ) { value, pos, neg -> value.ifGreaterThanOrEqual(10L, { pos() }, { neg() }) }
+
+        assertDualConditionalBranches(
+            falseInput = 5.toShort(),
+            trueInput = 7.toShort(),
+            expectedNegative = "short-gte-neg",
+            expectedPositive = "short-gte-pos"
+        ) { value, pos, neg -> value.ifGreaterThanOrEqual(7.toShort(), { pos() }, { neg() }) }
+    }
+
+    @Test
+    fun branch_ifEquals_singleLambda_allTypes() {
+        assertSingleConditionalBranches(
+            falseInput = 4,
+            trueInput = 6,
+            expectedTrueResult = "int-eq-single"
+        ) { value, action -> value.ifEquals(6) { action() } }
+
+        assertSingleConditionalBranches(
+            falseInput = 4.1f,
+            trueInput = 3.3f,
+            expectedTrueResult = "float-eq-single"
+        ) { value, action -> value.ifEquals(3.3f) { action() } }
+
+        assertSingleConditionalBranches(
+            falseInput = 2.7,
+            trueInput = 2.2,
+            expectedTrueResult = "double-eq-single"
+        ) { value, action -> value.ifEquals(2.2) { action() } }
+
+        assertSingleConditionalBranches(
+            falseInput = 9L,
+            trueInput = 11L,
+            expectedTrueResult = "long-eq-single"
+        ) { value, action -> value.ifEquals(11L) { action() } }
+
+        assertSingleConditionalBranches(
+            falseInput = 3.toShort(),
+            trueInput = 5.toShort(),
+            expectedTrueResult = "short-eq-single"
+        ) { value, action -> value.ifEquals(5.toShort()) { action() } }
+    }
+
+    @Test
+    fun branch_ifEquals_dualLambda_allTypes() {
+        assertDualConditionalBranches(
+            falseInput = 8,
+            trueInput = 10,
+            expectedNegative = "int-eq-neg",
+            expectedPositive = "int-eq-pos"
+        ) { value, pos, neg -> value.ifEquals(10, { pos() }, { neg() }) }
+
+        assertDualConditionalBranches(
+            falseInput = 6.1f,
+            trueInput = 6.0f,
+            expectedNegative = "float-eq-neg",
+            expectedPositive = "float-eq-pos"
+        ) { value, pos, neg -> value.ifEquals(6.0f, { pos() }, { neg() }) }
+
+        assertDualConditionalBranches(
+            falseInput = 2.2,
+            trueInput = 1.1,
+            expectedNegative = "double-eq-neg",
+            expectedPositive = "double-eq-pos"
+        ) { value, pos, neg -> value.ifEquals(1.1, { pos() }, { neg() }) }
+
+        assertDualConditionalBranches(
+            falseInput = 15L,
+            trueInput = 12L,
+            expectedNegative = "long-eq-neg",
+            expectedPositive = "long-eq-pos"
+        ) { value, pos, neg -> value.ifEquals(12L, { pos() }, { neg() }) }
+
+        assertDualConditionalBranches(
+            falseInput = 20.toShort(),
+            trueInput = 18.toShort(),
+            expectedNegative = "short-eq-neg",
+            expectedPositive = "short-eq-pos"
+        ) { value, pos, neg -> value.ifEquals(18.toShort(), { pos() }, { neg() }) }
+    }
+
+    @Test
+    fun branch_ifNotEquals_singleLambda_allTypes() {
+        assertSingleConditionalBranches(
+            falseInput = 9,
+            trueInput = 11,
+            expectedTrueResult = "int-neq-single"
+        ) { value, action -> value.ifNotEquals(9) { action() } }
+
+        assertSingleConditionalBranches(
+            falseInput = 4.4f,
+            trueInput = 5.5f,
+            expectedTrueResult = "float-neq-single"
+        ) { value, action -> value.ifNotEquals(4.4f) { action() } }
+
+        assertSingleConditionalBranches(
+            falseInput = 3.3,
+            trueInput = 1.1,
+            expectedTrueResult = "double-neq-single"
+        ) { value, action -> value.ifNotEquals(3.3) { action() } }
+
+        assertSingleConditionalBranches(
+            falseInput = 7L,
+            trueInput = 9L,
+            expectedTrueResult = "long-neq-single"
+        ) { value, action -> value.ifNotEquals(7L) { action() } }
+    }
+
+    @Test
+    fun branch_boolean_conditionals_coverBothBranches() {
+        assertSingleConditionalBranches(
+            falseInput = false,
+            trueInput = true,
+            expectedTrueResult = "bool-ifTrue-single"
+        ) { value, action -> value.ifTrue { action() } }
+
+        assertDualConditionalBranches(
+            falseInput = false,
+            trueInput = true,
+            expectedNegative = "bool-ifTrue-neg",
+            expectedPositive = "bool-ifTrue-pos"
+        ) { value, pos, neg -> value.ifTrue({ pos() }, { neg() }) }
+
+        assertSingleConditionalBranches(
+            falseInput = true,
+            trueInput = false,
+            expectedTrueResult = "bool-ifFalse-single"
+        ) { value, action -> value.ifFalse { action() } }
+    }
+
+    // ========== Helpers ==========
+
+    private fun <I, R> assertSingleConditionalBranches(
+        falseInput: I,
+        trueInput: I,
+        expectedTrueResult: R,
+        invocation: (I, () -> R) -> R?
+    ) {
+        var lambdaCalled = false
+
+        val falseResult = invocation(falseInput) {
+            lambdaCalled = true
+            expectedTrueResult
+        }
+        assertNull(falseResult)
+        assertFalse(lambdaCalled)
+
+        lambdaCalled = false
+        val trueResult = invocation(trueInput) {
+            lambdaCalled = true
+            expectedTrueResult
+        }
+        assertEquals(expectedTrueResult, trueResult)
+        assertTrue(lambdaCalled)
+    }
+
+    private fun <I, R> assertDualConditionalBranches(
+        falseInput: I,
+        trueInput: I,
+        expectedNegative: R,
+        expectedPositive: R,
+        invocation: (I, () -> R, () -> R) -> R?
+    ) {
+        var positiveCalls = 0
+        var negativeCalls = 0
+
+        val negativeResult = invocation(
+            falseInput,
+            {
+                positiveCalls++
+                expectedPositive
+            },
+            {
+                negativeCalls++
+                expectedNegative
+            }
+        )
+        assertEquals(expectedNegative, negativeResult)
+        assertEquals(0, positiveCalls)
+        assertEquals(1, negativeCalls)
+
+        val positiveResult = invocation(
+            trueInput,
+            {
+                positiveCalls++
+                expectedPositive
+            },
+            {
+                negativeCalls++
+                expectedNegative
+            }
+        )
+        assertEquals(expectedPositive, positiveResult)
+        assertEquals(1, positiveCalls)
+        assertEquals(1, negativeCalls)
     }
 }
