@@ -1,3 +1,5 @@
+import org.gradle.api.tasks.testing.Test
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
@@ -62,26 +64,36 @@ android {
         dataBinding = true
 //        viewBinding = true
     }
+
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+    }
 }
 
 dependencies {
 
+    //Base
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
 
-    // Unit Test를 위한 추가 의존성
+    //Test
+    testImplementation(libs.junit)
+    testImplementation("org.robolectric:robolectric:4.13")
+    testImplementation("androidx.test:core:1.6.1")  // ApplicationProvider 등을 위해 필요
     testImplementation("org.mockito:mockito-core:5.7.0")
     testImplementation("org.mockito:mockito-inline:5.2.0")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1")
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
 
+
+    //AAC LifeCycle
     implementation(libs.androidx.lifecycle.viewmodel)
     implementation(libs.androidx.lifecycle.process)
     implementation(libs.androidx.lifecycle.common)
-
 }
 
 //Kover로 UnitTest
@@ -154,7 +166,6 @@ kover {
                 classes("kr.open.library.simple_ui.presenter.extensions.view.SnackBarExtensionsKt*")
                 classes("kr.open.library.simple_ui.presenter.extensions.view.TextViewExtensionsKt*")
                 classes("kr.open.library.simple_ui.presenter.extensions.view.ToastExtensionsKt*")
-                classes("kr.open.library.simple_ui.presenter.extensions.view.ViewExtensionsKt*")
 
                 classes("kr.open.library.simple_ui.presenter.ui.adapter.list.base.BaseRcvListAdapter*")
                 classes("kr.open.library.simple_ui.presenter.ui.adapter.list.diffutil.RcvListDiffUtilCallBack*")
@@ -221,4 +232,43 @@ kover {
             }
         }
     }
+}
+
+// 테스트 태스크 분리: Unit Test와 Robolectric Test
+tasks.register<Test>("testUnit") {
+    description = "Runs pure unit tests only (no Android dependencies)"
+    group = "verification"
+
+    // Lazy하게 참조 - 실제 실행 시점에 testDebugUnitTest 찾음
+    val testDebugTask = tasks.named<Test>("testDebugUnitTest")
+    testClassesDirs = testDebugTask.get().testClassesDirs
+    classpath = testDebugTask.get().classpath
+
+    include("**/unit/**")
+
+    // 실패 시 즉시 중단
+    failFast = true
+}
+
+tasks.register<Test>("testRobolectric") {
+    description = "Runs Robolectric tests only (Android framework simulation)"
+    group = "verification"
+
+    val testDebugTask = tasks.named<Test>("testDebugUnitTest")
+    testClassesDirs = testDebugTask.get().testClassesDirs
+    classpath = testDebugTask.get().classpath
+
+    include("**/robolectric/**")
+
+    // 실패 시 즉시 중단
+    failFast = true
+
+    mustRunAfter("testUnit")
+}
+
+tasks.register("testAll") {
+    description = "Runs unit tests first, then robolectric tests if unit tests pass"
+    group = "verification"
+
+    dependsOn("testUnit", "testRobolectric")
 }
