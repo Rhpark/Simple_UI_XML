@@ -1,50 +1,69 @@
-# 📱 Simple UI MVVM 패턴 - 완벽 가이드
+# 📱 Simple UI MVVM Pattern – Complete Guide (📱 Simple UI MVVM 패턴 - 완벽 가이드)
 
-### Activity + ViewModel 초기 설정
+### Activity + ViewModel Quick Setup (Activity + ViewModel 초기 설정)
 ![mvvm_activity_init.gif](example_gif%2Fmvvm_activity_init.gif)
 
-### Activity + ViewModel 초기 사용
+### Activity + ViewModel Immediate Usage (Activity + ViewModel 초기 사용)
 ![mvvm_activity_vm_init_2.gif](example_gif%2Fmvvm_activity_vm_init_2.gif)![mvvm_activity_vm_init_2_example.gif](example%2Fmvvm_activity_vm_init_2_example.gif)
 
-### ViewModel 이벤트 시스템
+### ViewModel Event System (ViewModel 이벤트 시스템)
 ![mvvm_vm.png](example_gif%2Fmvvm_vm.png)
+
+> **"Wrap up your MVVM setup in just 10 lines!"** Experience the difference Simple UI delivers compared to classic Activity/Fragment + ViewModel development.
+
+<br>
+</br>
 
 > **"MVVM 세팅을 10줄로 끝내자!"** 기존 Activity/Fragment + ViewModel 개발 대비 Simple UI가 주는 체감 차이를 한눈에 확인하세요.
 
 <br>
 </br>
 
-## 🔎 한눈 비교 (At a glance)
+## 🔎 At a Glance (한눈 비교)
 
 <br>
 </br>
 
-### Activity/Fragment + ViewModel 초기화
+### Activity/Fragment + ViewModel Initialization (Activity/Fragment + ViewModel 초기화)
 
-| 항목 | 순수 Android | Simple UI |
+| Category (항목) | Pure Android (순수 Android) | Simple UI |
 |:--|:--:|:--:|
-| DataBinding 설정 | 수동 inflate + setContentView (7줄+) | 생성자 파라미터로 자동 ✅ |
-| LifecycleOwner 설정 | 수동 binding.lifecycleOwner 설정 | 자동 연동 ✅ |
-| ViewModel 바인딩 | 수동 binding.viewModel 설정 | 선택적 간단 사용 ✅ |
-| onCreate 보일러플레이트 | 복잡한 초기화 코드 | 최소화된 코드 ✅ |
+| DataBinding setup (DataBinding 설정) | Manual inflate + setContentView (7+ lines) | Automatic via constructor parameters ✅ |
+| LifecycleOwner assignment (LifecycleOwner 설정) | Manually set `binding.lifecycleOwner` | Automatically wired ✅ |
+| ViewModel binding (ViewModel 바인딩) | Manually assign `binding.viewModel` | Optional, streamlined usage ✅ |
+| `onCreate` boilerplate (`onCreate` 보일러플레이트) | Complex initialization code | Minimal code ✅ |
 
 <br>
 </br>
 
-### ViewModel 이벤트 시스템
-| 항목 | 순수 Android | Simple UI |
+### ViewModel Event System (ViewModel 이벤트 시스템)
+| Category (항목) | Pure Android (순수 Android) | Simple UI |
 |:--|:--:|:--:|
-| 이벤트 채널 구성 | Flow/Channel 수동 구성 (10줄+) | BaseViewModelEvent Channel 자동 ✅ |
-| 이벤트 전송 | viewModelScope.launch + send | sendEventVm() 한 줄 ✅ |
-| 채널 리소스 관리 | 수동 close() 필요 | 자동 관리 ✅ |
-| 이벤트 수집 | 수동 lifecycleScope.launch | eventVmCollect() 오버라이드 ✅ |
+| Event channel setup (이벤트 채널 구성) | Manually wire Flow/Channel (10+ lines) | Automatically handled by `BaseViewModelEvent` ✅ |
+| Event dispatch (이벤트 전송) | `viewModelScope.launch` + `send` | Single-line `sendEventVm()` ✅ |
+| Channel resource management (채널 리소스 관리) | Manually call `close()` | Managed automatically ✅ |
+| Event collection (이벤트 수집) | Manually launch with `lifecycleScope` | Override `eventVmCollect()` ✅ |
 
-> **핵심:** Simple UI는 "복잡한 MVVM 보일러플레이트"를 **자동화**를 통해 개발 속도를 향상시킵니다.
+> **Key takeaway:** Simple UI boosts development speed through **automation of complex MVVM boilerplate**.
 
 <br>
 </br>
 
-## 💡 왜 Simple UI MVVM이 중요한가:
+> **핵심:** Simple UI는 "복잡한 MVVM 보일러플레이트"의 **자동화**를 통해 개발 속도를 향상시킵니다.
+
+<br>
+</br>
+
+## 💡 Why Simple UI MVVM Matters (왜 Simple UI MVVM이 중요한가)
+
+- **Shorter development time:** Remove ViewModel boilerplate so you can focus on core logic.
+- **Fewer mistakes:** Prevent bugs around ViewModel binding and event-channel setup.
+- **Consistent patterns:** Keep the entire team aligned on the same MVVM structure.
+- **Maintainability:** Standardize events through `BaseViewModelEvent`.
+- **Rapid prototyping:** Turn ideas into working tests immediately.
+
+<br>
+</br>
 
 - **개발 시간 단축**: ViewModel 연동 보일러플레이트 제거로 핵심 로직에 집중 가능
 - **실수 방지**: ViewModel 바인딩, 이벤트 채널 구성 등에서 발생하는 버그 예방
@@ -55,15 +74,29 @@
 <br>
 </br>
 
-## 📦 시작하기 전에
+## 📦 Before You Begin (시작하기 전에)
+
+To leverage Simple UI’s MVVM features, you must **enable DataBinding and understand the base classes**.
+
+<br>
+</br>
 
 Simple UI의 MVVM 기능을 사용하려면 **DataBinding 설정과 Base 클래스 이해**가 필요합니다.
 
 <br>
 
-### ✅ **먼저 확인하세요!**
+### ✅ **Check This First! (먼저 확인하세요!)**
 
-📌 **Activity/Fragment 기본 사용법을 모르시나요?**
+📌 **Unsure about the basic Activity/Fragment flow?**  
+Visit [README_ACTIVITY_FRAGMENT.md](README_ACTIVITY_FRAGMENT.md) and review:
+- Required setup (enable DataBinding)
+- Basics of `BaseBindingActivity` / `BaseBindingFragment`
+- Common troubleshooting steps
+
+<br>
+</br>
+
+📌 **Activity/Fragment 기본 사용법을 모르시나요?**  
 → [README_ACTIVITY_FRAGMENT.md](README_ACTIVITY_FRAGMENT.md)에서 다음 내용을 먼저 확인하세요:
 - 필수 설정 (DataBinding 활성화)
 - BaseBindingActivity/BaseBindingFragment 기본 사용법
@@ -71,7 +104,35 @@ Simple UI의 MVVM 기능을 사용하려면 **DataBinding 설정과 Base 클래�
 
 <br>
 
-### 📌 **빠른 요약**
+### 📌 **Quick Summary (빠른 요약)**
+
+To adopt MVVM with Simple UI:
+
+1. Enable DataBinding in **build.gradle.kts**:
+```kotlin
+android {
+    buildFeatures {
+        dataBinding = true
+    }
+}
+```
+
+2. Wrap your **layout file** with a `<layout>` tag:
+```xml
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+        <variable
+            name="vm"
+            type="com.example.MainViewModel" />
+    </data>
+    <!-- UI 요소들 -->
+</layout>
+```
+
+3. Use **BaseBindingActivity** or **BaseBindingFragment**
+
+<br>
+</br>
 
 MVVM 패턴을 사용하려면:
 
@@ -101,7 +162,17 @@ android {
 <br>
 </br>
 
-## 🎯 비교 대상: MVVM 패턴 기반 Activity/Fragment 개발
+## 🎯 Scope: Activity/Fragment Development with MVVM (비교 대상: MVVM 패턴 기반 Activity/Fragment 개발)
+
+**Sample capabilities showcased:**
+- Activity + ViewModel combinations
+- Fragment + ViewModel combinations
+- Automated DataBinding wiring
+- Event system (button clicks, data updates)
+- Automated lifecycle management
+
+<br>
+</br>
 
 **구현 예제 기능:**
 - Activity + ViewModel 조합
@@ -113,13 +184,13 @@ android {
 <br>
 </br>
 
-## 실제 코드 비교
+## 🧩 Real Code Comparisons (실제 코드 비교)
 
 
-### 첫째: Activity + ViewModel 연동
+### 1. Activity + ViewModel Integration (첫째: Activity + ViewModel 연동)
 
 <details>
-<summary><strong>순수 Android - Activity + ViewModel 수동 초기화</strong></summary>
+<summary><strong>Pure Android — manual Activity + ViewModel setup (순수 Android - Activity + ViewModel 수동 초기화)</strong></summary>
 
 ```kotlin
 class MainActivity : AppCompatActivity() {
@@ -181,11 +252,16 @@ class MainActivity : AppCompatActivity() {
     }
 }
 ```
+**Issues:** Complex DataBinding setup, manual LifecycleOwner wiring, verbose event collection boilerplate, and no standardized function names.
+
+<br>
+</br>
+
 **문제점:** 복잡한 DataBinding 설정, 수동 LifecycleOwner 연결, 이벤트 수집 보일러플레이트, 함수명 표준화 없음
 </details>
 
 <details>
-<summary><strong>Simple UI - Activity + ViewModel 자동 초기화</strong></summary>
+<summary><strong>Simple UI — automatic Activity + ViewModel setup (Simple UI - Activity + ViewModel 자동 초기화)</strong></summary>
 
 ```kotlin
 class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
@@ -237,16 +313,21 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
     }
 }
 ```
+**Result:** Automatic DataBinding, automatic LifecycleOwner wiring, streamlined event collection, and a standardized `eventVmCollect()`!
+
+<br>
+</br>
+
 **결과:** DataBinding 자동, LifecycleOwner 자동, 이벤트 수집 간소화, 표준화된 eventVmCollect()!
 </details>
 
 <br>
 </br>
 
-### 둘째: Fragment + ViewModel 연동
+### 2. Fragment + ViewModel Integration (둘째: Fragment + ViewModel 연동)
 
 <details>
-<summary><strong>순수 Android - Fragment + ViewModel 수동 초기화</strong></summary>
+<summary><strong>Pure Android — manual Fragment + ViewModel setup (순수 Android - Fragment + ViewModel 수동 초기화)</strong></summary>
 
 ```kotlin
 class MainFragment : Fragment() {
@@ -328,11 +409,16 @@ class MainFragment : Fragment() {
     }
 }
 ```
+**Issues:** Complicated inflate logic, manual nullable-binding handling, manual LifecycleOwner wiring, memory-leak safeguards, and no standardized function names.
+
+<br>
+</br>
+
 **문제점:** 복잡한 inflate, nullable binding 처리, 수동 LifecycleOwner, 메모리 누수 방지 코드, 함수명 표준화 없음
 </details>
 
 <details>
-<summary><strong>Simple UI - Fragment + ViewModel 자동 초기화</strong></summary>
+<summary><strong>Simple UI — automatic Fragment + ViewModel setup (Simple UI - Fragment + ViewModel 자동 초기화)</strong></summary>
 
 ```kotlin
 class MainFragment : BaseBindingFragment<FragmentMainBinding>(R.layout.fragment_main) {
@@ -385,16 +471,21 @@ class MainFragment : BaseBindingFragment<FragmentMainBinding>(R.layout.fragment_
     }
 }
 ```
+**Result:** DataBinding handled automatically, LifecycleOwner wired, nullable bindings managed safely, memory leaks prevented, and `eventVmCollect()` standardized!
+
+<br>
+</br>
+
 **결과:** DataBinding 자동, LifecycleOwner 자동, nullable 처리 자동, 메모리 누수 방지 자동, 표준화된 eventVmCollect()!
 </details>
 
 <br>
 </br>
 
-### 셋째: ViewModel 이벤트 시스템 비교
+### 3. ViewModel Event System Comparison (셋째: ViewModel 이벤트 시스템 비교)
 
 <details>
-<summary><strong>순수 Android - Flow/Channel 수동 구성</strong></summary>
+<summary><strong>Pure Android — manual Flow/Channel wiring (순수 Android - Flow/Channel 수동 구성)</strong></summary>
 
 ```kotlin
 class MainViewModel : ViewModel() {
@@ -449,11 +540,16 @@ sealed class MainEvent {
     data class UpdateData(val data: String) : MainEvent()
 }
 ```
+**Issues:** Complex channel setup, manual event dispatch, and resource cleanup you must handle yourself.
+
+<br>
+</br>
+
 **문제점:** 복잡한 채널 구성, 수동 이벤트 전송, 리소스 해제 직접 관리
 </details>
 
 <details>
-<summary><strong>Simple UI - BaseViewModelEvent 자동</strong></summary>
+<summary><strong>Simple UI — automatic BaseViewModelEvent (Simple UI - BaseViewModelEvent 자동)</strong></summary>
 
 ```kotlin
 class MainViewModel : BaseViewModelEvent<MainEvent>() {
@@ -495,16 +591,28 @@ sealed class MainEvent {
     data class UpdateData(val data: String) : MainEvent()
 }
 ```
+**Result:** Channels are created automatically, event dispatch stays simple, and resources are managed for you!
+
+<br>
+</br>
+
 **결과:** 채널 자동 구성, 이벤트 전송 간단, 리소스 관리 자동!
 </details>
 
 <br>
 </br>
 
-## 🚀 Simple UI MVVM의 핵심 장점
+## 🚀 Core Advantages of Simple UI MVVM (Simple UI MVVM의 핵심 장점)
 
 
-### 1. **⚡ 사용이 편한 DataBinding**
+### 1. **⚡ Effortless DataBinding (사용이 편한 DataBinding)**
+- **Automatic inflate:** Constructor parameters handle layout wiring.
+- **Automatic LifecycleOwner:** No manual hookups necessary.
+- **Memory management:** Nullable bindings are handled for you.
+
+<br>
+</br>
+
 - **자동 inflate**: 생성자 파라미터로 레이아웃 자동 설정
 - **자동 LifecycleOwner**: 수동 연결 불필요
 - **메모리 관리**: nullable binding 처리 자동
@@ -512,7 +620,15 @@ sealed class MainEvent {
 <br>
 </br>
 
-### 2. **🛠️ 표준화된 이벤트 시스템**
+### 2. **🛠️ Standardized Event System (표준화된 이벤트 시스템)**
+- **`BaseViewModelEvent`:** Flow/Channel automatically prepared.
+- **`sendEventVm()`:** Dispatch events in one line.
+- **`eventVmCollect()`:** Unified entry point for event collection.
+- **Resource management:** Channels are released automatically.
+
+<br>
+</br>
+
 - **BaseViewModelEvent**: Flow/Channel 자동 구성
 - **sendEventVm()**: 이벤트 전송 한 줄
 - **eventVmCollect()**: 표준화된 이벤트 수집 함수
@@ -521,7 +637,14 @@ sealed class MainEvent {
 <br>
 </br>
 
-### 3. **🎯 개발자 경험 최적화**
+### 3. **🎯 Optimized Developer Experience (개발자 경험 최적화)**
+- **Type safety:** Prevent errors at compile time.
+- **Consistent patterns:** Align the whole team on the same MVVM structure.
+- **Faster development:** Remove boilerplate and boost productivity.
+
+<br>
+</br>
+
 - **타입 안전성**: 컴파일 타임 오류 방지
 - **일관된 패턴**: 팀 전체 동일한 MVVM 구조
 - **빠른 개발**: 보일러플레이트 제거로 생산성 향상
@@ -529,7 +652,14 @@ sealed class MainEvent {
 <br>
 </br>
 
-### 4. **🔧 실수 방지**
+### 4. **🔧 Mistake-Proofing (실수 방지)**
+- **LifecycleOwner omissions:** Automatically wired to prevent mistakes.
+- **Memory leaks:** Fragment nullable bindings handled safely.
+- **Channel cleanup:** `BaseViewModelEvent` manages teardown for you.
+
+<br>
+</br>
+
 - **LifecycleOwner 누락**: 자동 연결로 방지
 - **메모리 누수**: Fragment nullable binding 자동 처리
 - **채널 해제**: BaseViewModelEvent가 자동 관리
@@ -537,7 +667,14 @@ sealed class MainEvent {
 <br>
 </br>
 
-### 5. **📉 압도적인 코드 간소화**
+### 5. **📉 Dramatically Less Code (압도적인 코드 간소화)**
+- **Activity + ViewModel:** 30–40 lines → under 15 (**60% reduction**)
+- **Fragment + ViewModel:** 50–60 lines → under 20 (**65% reduction**)
+- **ViewModel events:** Channel setup 10+ lines → single-line `sendEventVm()`
+
+<br>
+</br>
+
 - **Activity + ViewModel**: 30-40줄 → 15줄 미만 **60% 단축**
 - **Fragment + ViewModel**: 50-60줄 → 20줄 미만 **65% 단축**
 - **ViewModel 이벤트**: Channel 구성 10줄+ → sendEventVm() 한 줄
@@ -545,7 +682,22 @@ sealed class MainEvent {
 <br>
 </br>
 
-## 💡 개발자 후기
+## 💡 Developer Feedback (개발자 후기)
+
+> **"I never worry about DataBinding configuration anymore!"**
+>
+> **"Automatic nullable binding in fragments is a lifesaver!"**
+>
+> **"BaseViewModelEvent standardized our event system and cleaned up the code!"**
+>
+> **"`eventVmCollect()` keeps event collection consistent—love it!"**
+>
+> **"Activity/Fragment + ViewModel init code shrank by 60%!"**
+>
+> **"`sendEventVm()` lets me dispatch events in a single line!"**
+
+<br>
+</br>
 
 > **"DataBinding 설정을 더 이상 고민할 필요가 없어요!"**
 >
@@ -562,16 +714,29 @@ sealed class MainEvent {
 <br>
 </br>
 
-## 🎉 결론: MVVM 개발의 새로운 표준
+## 🎉 Conclusion: A New Standard for MVVM Development (결론: MVVM 개발의 새로운 표준)
+
+**Simple UI MVVM** is the innovative library that turns complex Activity/Fragment + ViewModel initialization into something **simple yet powerful**.
+
+✅ **Automated DataBinding** — constructor parameters handle the heavy lifting.  
+✅ **Complete event system** — Flow/Channel wiring happens automatically.  
+✅ **Standardized function names** — `eventVmCollect()`, `sendEventVm()` stay consistent.  
+✅ **Boilerplate elimination** — achieve a 60–65% reduction in setup code.
+
+Leave the old complexity behind.  
+**Experience productive MVVM development with Simple UI!** 🚀
+
+<br>
+</br>
 
 **Simple UI MVVM**은 복잡한 Activity/Fragment + ViewModel 초기화를 **단순하고 강력하게** 만드는 혁신적인 라이브러리입니다.
 
-✅ **DataBinding 자동화** - 복잡한 초기화를 생성자 파라미터로!
-✅ **이벤트 시스템 완성** - Flow/Channel 구성을 자동으로!
-✅ **표준화된 함수명** - eventVmCollect(), sendEventVm() 통일!
+✅ **DataBinding 자동화** - 복잡한 초기화를 생성자 파라미터로!  
+✅ **이벤트 시스템 완성** - Flow/Channel 구성을 자동으로!  
+✅ **표준화된 함수명** - eventVmCollect(), sendEventVm() 통일!  
 ✅ **보일러플레이트 제거** - 60-65% 코드 간소화!
 
-**전통적인 복잡함은 이제 그만.**
+**전통적인 복잡함은 이제 그만.**  
 **Simple UI와 함께 생산적인 MVVM 개발을 경험하세요!** 🚀
 
 ---
@@ -579,11 +744,32 @@ sealed class MainEvent {
 <br>
 </br>
 
-## 🚀 실제 구현 예제 보기
+## 🚀 Explore Real Implementations (실제 구현 예제 보기)
+
+**Live sample code:**
+> - Simple UI sample: `app/src/main/java/kr/open/library/simpleui_xml/activity_fragment/`
+> - Launch the app to see the implementation in action!
+
+<br>
+</br>
 
 **라이브 예제 코드:**
 > - Simple UI 예제: `app/src/main/java/kr/open/library/simpleui_xml/activity_fragment/`
 > - 실제로 앱을 구동시켜서 실제 구현 예제를 확인해 보세요!
+
+<br>
+</br>
+
+**Try these features:**
+- Activity + ViewModel automatic initialization
+- Fragment + ViewModel automatic initialization
+- DialogFragment + ViewModel automatic initialization
+- `BaseViewModelEvent` event system
+- Event dispatch via `sendEventVm()`
+- Event collection via `eventVmCollect()`
+- Automatic DataBinding wiring
+- Automated lifecycle management
+- Automatic nullable binding handling
 
 <br>
 </br>

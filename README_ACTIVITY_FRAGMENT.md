@@ -476,27 +476,27 @@ class SettingsFragment : BaseFragment(R.layout.fragment_settings) {
 
 <br>
 
-### 💡 **특징**
-- ✅ DataBinding 자동 설정 (inflate + setContentView + lifecycleOwner)
-- ✅ ViewModel과 양방향 바인딩 가능
-- ✅ XML에서 직접 데이터 표시 및 이벤트 처리
-- ✅ Fragment nullable binding 자동 관리
+### 💡 **Key Features (특징)**
+- ✅ Automatic DataBinding setup (inflate + setContentView + lifecycleOwner) (DataBinding 자동 설정)
+- ✅ Two-way binding with ViewModel (ViewModel과 양방향 바인딩 가능)
+- ✅ Direct data display and event handling in XML (XML에서 직접 데이터 표시 및 이벤트 처리)
+- ✅ Automatic Fragment nullable binding management (Fragment nullable binding 자동 관리)
 
 <br>
 
-### 📌 **언제 사용하나요?**
-- ✅ DataBinding이 필요한 화면
-- ✅ XML에서 직접 데이터 바인딩
-- ✅ 복잡한 UI 상태 관리
-- ✅ MVVM 패턴 (ViewModel 연동 시)
+### 📌 **When to use (언제 사용하나요)?**
+- ✅ Screens that require DataBinding (DataBinding이 필요한 화면)
+- ✅ Direct data binding in XML (XML에서 직접 데이터 바인딩)
+- ✅ Complex UI state management (복잡한 UI 상태 관리)
+- ✅ MVVM pattern (with ViewModel integration) (MVVM 패턴, ViewModel 연동 시)
 
 <br>
 </br>
 
-### Activity 초기화 비교
+### Activity Initialization Comparison (Activity 초기화 비교)
 
 <details>
-<summary><strong>순수 Android - Activity 수동 초기화</strong></summary>
+<summary><strong>Pure Android — manual Activity initialization (순수 Android - Activity 수동 초기화)</strong></summary>
 
 ```kotlin
 class MainActivity : AppCompatActivity() {
@@ -525,11 +525,16 @@ class MainActivity : AppCompatActivity() {
     }
 }
 ```
+**Issues:** Complex DataBinding setup, manual LifecycleOwner connection
+
+<br>
+</br>
+
 **문제점:** 복잡한 DataBinding 설정, 수동 LifecycleOwner 연결
 </details>
 
 <details>
-<summary><strong>Simple UI - Activity 자동 초기화</strong></summary>
+<summary><strong>Simple UI — automatic Activity initialization (Simple UI - Activity 자동 초기화)</strong></summary>
 
 ```kotlin
 class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
@@ -552,16 +557,21 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
     }
 }
 ```
+**Result:** Automatic DataBinding, automatic LifecycleOwner, 50% code reduction!
+
+<br>
+</br>
+
 **결과:** DataBinding 자동, LifecycleOwner 자동, 코드 50% 감소!
 </details>
 
 <br>
 </br>
 
-### Fragment 초기화 비교
+### Fragment Initialization Comparison (Fragment 초기화 비교)
 
 <details>
-<summary><strong>순수 Android - Fragment 수동 초기화</strong></summary>
+<summary><strong>Pure Android — manual Fragment initialization (순수 Android - Fragment 수동 초기화)</strong></summary>
 
 ```kotlin
 class MainFragment : Fragment() {
@@ -607,11 +617,16 @@ class MainFragment : Fragment() {
     }
 }
 ```
+**Issues:** Complex inflate, nullable binding handling, manual LifecycleOwner, memory leak prevention code
+
+<br>
+</br>
+
 **문제점:** 복잡한 inflate, nullable binding 처리, 수동 LifecycleOwner, 메모리 누수 방지 코드
 </details>
 
 <details>
-<summary><strong>Simple UI - Fragment 자동 초기화</strong></summary>
+<summary><strong>Simple UI — automatic Fragment initialization (Simple UI - Fragment 자동 초기화)</strong></summary>
 
 ```kotlin
 class MainFragment : BaseBindingFragment<FragmentMainBinding>(R.layout.fragment_main) {
@@ -636,24 +651,29 @@ class MainFragment : BaseBindingFragment<FragmentMainBinding>(R.layout.fragment_
     }
 }
 ```
+**Result:** Automatic DataBinding, automatic lifecycleOwner connection (set in onViewCreated), no null checks needed with lateinit, 70% code reduction!
+
+<br>
+</br>
+
 **결과:** DataBinding 자동, lifecycleOwner 자동 연결 (onViewCreated에서 this로 설정), lateinit으로 null 체크 불필요, 코드 70% 감소!
 
-**💡 lifecycleOwner 설정 상세:**
-- BaseBindingFragment는 `onViewCreated()`에서 `binding.lifecycleOwner = viewLifecycleOwner`를 자동으로 설정합니다
+**💡 lifecycleOwner setup details (lifecycleOwner 설정 상세):**
+- BaseBindingFragment automatically sets `binding.lifecycleOwner = viewLifecycleOwner` in `onViewCreated()` (BaseBindingFragment는 `onViewCreated()`에서 `binding.lifecycleOwner = viewLifecycleOwner`를 자동으로 설정합니다)
 
-**💡 nullable vs lateinit 비교:**
+**💡 nullable vs lateinit comparison (nullable vs lateinit 비교):**
 
-| 구분 | 순수 Android | Simple UI |
+| Category (구분) | Pure Android (순수 Android) | Simple UI |
 |:--|:--|:--|
-| **binding 선언** | `private var _binding: Type? = null`<br>`private val binding get() = _binding!!` | `protected lateinit var binding: Type` |
-| **null 체크** | 필요 (`_binding?.` 또는 `!!`) | 불필요 (lateinit 보장) |
-| **onDestroyView** | `_binding = null` 필수 | 불필요 (자동 관리) |
-| **메모리 관리** | 수동 null 할당 필요 | 자동 처리 |
-| **코드량** | 3줄 (선언 + getter + null 처리) | 1줄 (선언만) |
+| **binding declaration (binding 선언)** | `private var _binding: Type? = null`<br>`private val binding get() = _binding!!` | `protected lateinit var binding: Type` |
+| **null checks (null 체크)** | Required (`_binding?.` or `!!`) (필요, `_binding?.` 또는 `!!`) | Not needed (lateinit guaranteed) (불필요, lateinit 보장) |
+| **onDestroyView** | `_binding = null` required (`_binding = null` 필수) | Not needed (automatic) (불필요, 자동 관리) |
+| **memory management (메모리 관리)** | Manual null assignment (수동 null 할당 필요) | Automatic (자동 처리) |
+| **code lines (코드량)** | 3 lines (declaration + getter + null handling) (3줄: 선언 + getter + null 처리) | 1 line (declaration only) (1줄: 선언만) |
 
-**⚠️ 중요한 차이점:**
-- **순수 Android**: nullable binding (`_binding?`) 패턴으로 `onDestroyView()`에서 수동으로 null 처리
-- **Simple UI**: `lateinit var` 패턴으로 null 체크 불필요, onDestroyView 오버라이드 불필요
+**⚠️ Key differences (중요한 차이점):**
+- **Pure Android (순수 Android)**: nullable binding (`_binding?`) pattern with manual null handling in `onDestroyView()` (nullable binding (`_binding?`) 패턴으로 `onDestroyView()`에서 수동으로 null 처리)
+- **Simple UI**: `lateinit var` pattern with no null checks needed, no onDestroyView override required (`lateinit var` 패턴으로 null 체크 불필요, onDestroyView 오버라이드 불필요)
 </details>
 
 <br>
@@ -669,30 +689,41 @@ BaseBindingActivity/Fragment와 함께 **ViewModel**을 연동하여 MVVM 패턴
 <br>
 </br>
 
-## 🔐 셋째: 권한 요청 시스템 (공통)
+## 🔐 Third: Permission Request System (Common) (셋째: 권한 요청 시스템, 공통)
+
+Simple UI provides a unified permission management system that handles complex permission requests **in a single line**.
+
+<br>
+</br>
 
 Simple UI는 복잡한 권한 요청 시스템을 **한 줄로** 처리할 수 있는 통합 권한 관리 시스템을 제공합니다.
 
-**특징**
-- 일반 권한과 특수 권한 자동 구분
-- ActivityResultContract 등록/관리 코드 제거
-- 통합 콜백 하나로 결과 처리
-- 복잡한 보일러플레이트 제거
+**Features (특징)**
+- Automatic differentiation between normal and special permissions (일반 권한과 특수 권한 자동 구분)
+- Removes ActivityResultContract registration/management code (ActivityResultContract 등록/관리 코드 제거)
+- Single unified callback for result handling (통합 콜백 하나로 결과 처리)
+- Eliminates complex boilerplate (복잡한 보일러플레이트 제거)
 
-**Simple UI가 기본 제공하는 특수 권한**
+**Special permissions provided by Simple UI (Simple UI가 기본 제공하는 특수 권한)**
 
-| 권한 (Manifest) | 역할 | 이동 Settings Action |
+| Permission (Manifest) (권한) | Role (역할) | Settings Action (이동 Settings Action) |
 | --- | --- | --- |
-| `SYSTEM_ALERT_WINDOW` | 오버레이 표시 | `Settings.ACTION_MANAGE_OVERLAY_PERMISSION` |
-| `WRITE_SETTINGS` | 시스템 설정 변경 | `Settings.ACTION_MANAGE_WRITE_SETTINGS` |
-| `PACKAGE_USAGE_STATS` | 사용량 액세스 | `Settings.ACTION_USAGE_ACCESS_SETTINGS` |
-| `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` | 배터리 최적화 제외 | `Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` |
-| `REQUEST_INSTALL_PACKAGES` | 알 수 없는 앱 설치 허용 | `Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES` |
-| `ACCESS_NOTIFICATION_POLICY` | 방해 금지(DND) 제어 | `Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS` |
-| `BIND_ACCESSIBILITY_SERVICE` | 접근성 서비스 연결 | `Settings.ACTION_ACCESSIBILITY_SETTINGS` |
-| `BIND_NOTIFICATION_LISTENER_SERVICE` | 알림 리스너 연결 | `Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS` |
-| `MANAGE_EXTERNAL_STORAGE` (R 이상) | 전체 파일 접근 | `Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION` |
-| `SCHEDULE_EXACT_ALARM` (S 이상) | 정밀 알람 예약 | `Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM` |
+| `SYSTEM_ALERT_WINDOW` | Display overlays (오버레이 표시) | `Settings.ACTION_MANAGE_OVERLAY_PERMISSION` |
+| `WRITE_SETTINGS` | Modify system settings (시스템 설정 변경) | `Settings.ACTION_MANAGE_WRITE_SETTINGS` |
+| `PACKAGE_USAGE_STATS` | Usage access (사용량 액세스) | `Settings.ACTION_USAGE_ACCESS_SETTINGS` |
+| `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` | Ignore battery optimization (배터리 최적화 제외) | `Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` |
+| `REQUEST_INSTALL_PACKAGES` | Install unknown apps (알 수 없는 앱 설치 허용) | `Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES` |
+| `ACCESS_NOTIFICATION_POLICY` | Do Not Disturb control (방해 금지/DND 제어) | `Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS` |
+| `BIND_ACCESSIBILITY_SERVICE` | Bind accessibility service (접근성 서비스 연결) | `Settings.ACTION_ACCESSIBILITY_SETTINGS` |
+| `BIND_NOTIFICATION_LISTENER_SERVICE` | Bind notification listener (알림 리스너 연결) | `Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS` |
+| `MANAGE_EXTERNAL_STORAGE` (R+) | All files access (전체 파일 접근, R 이상) | `Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION` |
+| `SCHEDULE_EXACT_ALARM` (S+) | Schedule exact alarms (정밀 알람 예약, S 이상) | `Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM` |
+
+> `PermissionManager` restores request IDs even after configuration changes or Settings screen round-trips, so the flow never breaks.
+> If additional permissions are needed, register them in `PermissionSpecialType`·`PermissionConstants` to extend with the same flow.
+
+<br>
+</br>
 
 > 구성 변경이나 설정 화면 왕복 후에도 `PermissionManager`가 요청 ID를 복원해 흐름이 끊기지 않습니다.
 > 추가 권한이 필요하면 `PermissionSpecialType`·`PermissionConstants`에 등록해 동일 흐름으로 확장할 수 있습니다.
@@ -700,10 +731,10 @@ Simple UI는 복잡한 권한 요청 시스템을 **한 줄로** 처리할 수 �
 <br>
 </br>
 
-### 권한 요청 방식 비교
+### Permission Request Method Comparison (권한 요청 방식 비교)
 
 <details>
-<summary><strong>순수 Android - ActivityResultContract 수동 등록</strong></summary>
+<summary><strong>Pure Android — manual ActivityResultContract registration (순수 Android - ActivityResultContract 수동 등록)</strong></summary>
 
 ```kotlin
 class PermissionsActivity : AppCompatActivity() {
@@ -850,23 +881,28 @@ class PermissionsActivity : BaseBindingActivity<ActivityPermissionsBinding>(
 <br>
 </br>
 
-## 🎨 넷째: SystemBars 제어 (RootActivity)
+## 🎨 Fourth: SystemBars Control (RootActivity) (넷째: SystemBars 제어, RootActivity)
 
-Simple UI의 **RootActivity**는 StatusBar와 NavigationBar를 쉽게 제어할 수 있는 기능을 제공합니다.
-
-**특징:**
-- ✅ StatusBar/NavigationBar 높이 자동 계산 (SDK 버전별 자동 분기)
-- ✅ 투명도 설정 한 줄
-- ✅ 색상 설정 한 줄
-- ✅ 아이콘 라이트/다크 모드 한 줄
+Simple UI's **RootActivity** provides features to easily control the StatusBar and NavigationBar.
 
 <br>
 </br>
 
-### SystemBars 제어 비교
+Simple UI의 **RootActivity**는 StatusBar와 NavigationBar를 쉽게 제어할 수 있는 기능을 제공합니다.
+
+**Features (특징):**
+- ✅ Automatic StatusBar/NavigationBar height calculation (SDK version branching) (StatusBar/NavigationBar 높이 자동 계산, SDK 버전별 자동 분기)
+- ✅ Transparency setting in one line (투명도 설정 한 줄)
+- ✅ Color setting in one line (색상 설정 한 줄)
+- ✅ Light/Dark icon mode in one line (아이콘 라이트/다크 모드 한 줄)
+
+<br>
+</br>
+
+### SystemBars Control Comparison (SystemBars 제어 비교)
 
 <details>
-<summary><strong>순수 Android - StatusBar/NavigationBar 수동 처리</strong></summary>
+<summary><strong>Pure Android — manual StatusBar/NavigationBar handling (순수 Android - StatusBar/NavigationBar 수동 처리)</strong></summary>
 
 ```kotlin
 class MainActivity : AppCompatActivity() {
@@ -989,40 +1025,40 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 <br>
 </br>
 
-### 🎯 Base 클래스 제공 기능 정리
+### 🎯 Base Class Features Summary (Base 클래스 제공 기능 정리)
 
-#### **RootActivity/RootFragment 공통 기능**
-| 기능 | 설명 |
+#### **RootActivity/RootFragment Common Features (공통 기능)**
+| Feature (기능) | Description (설명) |
 |:--|:--|
-| **onRequestPermissions()** | 통합 권한 요청 (일반/특수 권한 자동 구분) |
+| **onRequestPermissions()** | Unified permission request (automatic normal/special differentiation) (통합 권한 요청, 일반/특수 권한 자동 구분) |
 
-#### **RootActivity 전용 기능 (Activity만 사용 가능)**
-| 기능 | 설명 |
+#### **RootActivity Exclusive Features (Activity-only) (RootActivity 전용 기능, Activity만 사용 가능)**
+| Feature (기능) | Description (설명) |
 |:--|:--|
-| **statusBarHeight** | StatusBar 높이 자동 계산 (SDK 버전별 자동 분기) |
-| **navigationBarHeight** | NavigationBar 높이 자동 계산 |
-| **setStatusBarTransparent()** | StatusBar를 투명하게 설정 |
-| **setStatusBarColor()** | StatusBar 색상 및 아이콘 모드 설정 |
-| **setNavigationBarColor()** | NavigationBar 색상 및 아이콘 모드 설정 |
-| **setSystemBarsColor()** | SystemBars 동시 색상 설정 |
-| **setSystemBarsAppearance()** | SystemBars 아이콘 라이트/다크 모드 설정 |
-| **beforeOnCreated()** | onCreate 전 초기화 훅 |
+| **statusBarHeight** | Automatic StatusBar height calculation (SDK version branching) (StatusBar 높이 자동 계산, SDK 버전별 자동 분기) |
+| **navigationBarHeight** | Automatic NavigationBar height calculation (NavigationBar 높이 자동 계산) |
+| **setStatusBarTransparent()** | Set StatusBar to transparent (StatusBar를 투명하게 설정) |
+| **setStatusBarColor()** | Set StatusBar color and icon mode (StatusBar 색상 및 아이콘 모드 설정) |
+| **setNavigationBarColor()** | Set NavigationBar color and icon mode (NavigationBar 색상 및 아이콘 모드 설정) |
+| **setSystemBarsColor()** | Set SystemBars colors simultaneously (SystemBars 동시 색상 설정) |
+| **setSystemBarsAppearance()** | Set SystemBars icon light/dark mode (SystemBars 아이콘 라이트/다크 모드 설정) |
+| **beforeOnCreated()** | Initialization hook before onCreate (onCreate 전 초기화 훅) |
 
-#### **BaseActivity/BaseFragment 기능**
-| 기능 | 설명 |
+#### **BaseActivity/BaseFragment Features (기능)**
+| Feature (기능) | Description (설명) |
 |:--|:--|
-| **자동 inflate** | 레이아웃 자동 설정 (Activity: setContentView, Fragment: inflate) |
-| **rootView** | Fragment만 - 루트 뷰 접근 프로퍼티 |
+| **Auto inflate (자동 inflate)** | Automatic layout setup (Activity: setContentView, Fragment: inflate) (레이아웃 자동 설정) |
+| **rootView** | Fragment-only - root view access property (Fragment만, 루트 뷰 접근 프로퍼티) |
 
-#### **BaseBindingActivity/BaseBindingFragment 기능**
-| 기능 | 설명 |
+#### **BaseBindingActivity/BaseBindingFragment Features (기능)**
+| Feature (기능) | Description (설명) |
 |:--|:--|
-| **binding** | DataBinding 자동 초기화 및 제공 |
-| **lifecycleOwner 자동 설정** | Activity: onCreate에서, Fragment: onViewCreated에서 |
-| **onCreateView()** | Activity만 - binding 초기화 직후 콜백 |
-| **afterOnCreateView()** | Fragment만 - binding 초기화 직후 콜백 |
-| **getViewModel()** | ViewModel 간편 생성 메서드 |
-| **eventVmCollect()** | ViewModel 이벤트 구독 전용 메서드 |
+| **binding** | Automatic DataBinding initialization and provision (DataBinding 자동 초기화 및 제공) |
+| **Auto lifecycleOwner setup (lifecycleOwner 자동 설정)** | Activity: in onCreate, Fragment: in onViewCreated (Activity: onCreate에서, Fragment: onViewCreated에서) |
+| **onCreateView()** | Activity-only - callback right after binding initialization (Activity만, binding 초기화 직후 콜백) |
+| **afterOnCreateView()** | Fragment-only - callback right after binding initialization (Fragment만, binding 초기화 직후 콜백) |
+| **getViewModel()** | Easy ViewModel creation method (ViewModel 간편 생성 메서드) |
+| **eventVmCollect()** | Dedicated method for ViewModel event subscription (ViewModel 이벤트 구독 전용 메서드) |
 
 <br>
 </br>
