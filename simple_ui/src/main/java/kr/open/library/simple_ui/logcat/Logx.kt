@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import kr.open.library.simple_ui.logcat.config.LogxConfig
 import kr.open.library.simple_ui.logcat.config.LogxConfigManager
+import kr.open.library.simple_ui.logcat.config.LogxConfigFactory
 import kr.open.library.simple_ui.logcat.config.LogxDslBuilder
 import kr.open.library.simple_ui.logcat.config.LogxPathUtils
 import kr.open.library.simple_ui.logcat.config.LogxStorageType
@@ -62,7 +63,7 @@ object Logx : ILogx {
         logWriter = LogxWriter(configManager.config, appContext)
 
         // Context 기반 최적 설정으로 업데이트
-        val contextConfig = LogxConfig.createDefault(context)
+        val contextConfig = LogxConfigFactory.createDefault(context)
         configManager.updateConfig(contextConfig)
     }
 
@@ -72,7 +73,7 @@ object Logx : ILogx {
      */
     fun setStorageType(storageType: LogxStorageType) {
         appContext?.let { context ->
-            val newConfig = LogxConfig.create(context, storageType)
+            val newConfig = LogxConfigFactory.create(context, storageType)
             configManager.updateConfig(newConfig)
         }
     }
