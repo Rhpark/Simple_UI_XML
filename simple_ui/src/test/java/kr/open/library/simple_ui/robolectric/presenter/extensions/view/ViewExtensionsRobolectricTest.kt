@@ -55,6 +55,46 @@ class ViewExtensionsRobolectricTest {
         assertEquals(View.INVISIBLE, view.visibility)
     }
 
+    @Test
+    fun setVisibleWhenAlreadyVisibleLeavesStateUnchanged() {
+        val view = View(context)
+        view.visibility = View.VISIBLE
+
+        view.setVisible()
+
+        assertEquals(View.VISIBLE, view.visibility)
+    }
+
+    @Test
+    fun setVisibleFromGoneUpdatesToVisible() {
+        val view = View(context)
+        view.visibility = View.GONE
+
+        view.setVisible()
+
+        assertEquals(View.VISIBLE, view.visibility)
+    }
+
+    @Test
+    fun setGoneWhenAlreadyGoneLeavesStateUnchanged() {
+        val view = View(context)
+        view.visibility = View.GONE
+
+        view.setGone()
+
+        assertEquals(View.GONE, view.visibility)
+    }
+
+    @Test
+    fun setInvisibleWhenAlreadyInvisibleLeavesStateUnchanged() {
+        val view = View(context)
+        view.visibility = View.INVISIBLE
+
+        view.setInvisible()
+
+        assertEquals(View.INVISIBLE, view.visibility)
+    }
+
     // 디바운스 클릭 리스너가 빠른 중복 클릭을 막는지 검증
     @Test
     fun setOnDebouncedClickListenerBlocksRapidClicks() {
@@ -82,6 +122,27 @@ class ViewExtensionsRobolectricTest {
         assertEquals(2, clickCount)
     }
 
+    @Test
+    fun setOnDebouncedClickListenerUsesDefaultDebounceTime() {
+        ShadowSystemClock.advanceBy(Duration.ofMillis(1000))
+
+        val view = View(context)
+        var clickCount = 0
+
+        view.setOnDebouncedClickListener {
+            clickCount += 1
+        }
+
+        view.performClick()
+        ShadowSystemClock.advanceBy(Duration.ofMillis(100))
+        view.performClick()
+        assertEquals(1, clickCount)
+
+        ShadowSystemClock.advanceBy(Duration.ofMillis(600))
+        view.performClick()
+        assertEquals(2, clickCount)
+    }
+
     // forEachChild 확장 함수가 모든 자식 View를 순회하는지 확인
     @Test
     fun forEachChildVisitsAllChildren() {
@@ -97,6 +158,16 @@ class ViewExtensionsRobolectricTest {
         layout.forEachChild { visited += it }
 
         assertEquals(setOf(childA, childB, childC), visited)
+    }
+
+    @Test
+    fun forEachChildOnEmptyViewGroupDoesNothing() {
+        val layout = LinearLayout(context)
+        var invoked = false
+
+        layout.forEachChild { invoked = true }
+
+        assertEquals(false, invoked)
     }
 
     // setMargins 확장 함수가 LayoutParams의 마진을 정상적으로 반영하는지 검증
@@ -135,6 +206,15 @@ class ViewExtensionsRobolectricTest {
         assertEquals(20, params.bottomMargin)
     }
 
+    @Test
+    fun setMarginsWithoutLayoutParamsLeavesLayoutParamsNull() {
+        val view = View(context)
+
+        view.setMargins(left = 10, top = 20, right = 30, bottom = 40)
+
+        assertEquals(null, view.layoutParams)
+    }
+
     // setPadding 확장 함수로 네 방향 패딩이 동일하게 적용되는지 확인
     @Test
     fun setPaddingAppliesUniformPadding() {
@@ -161,6 +241,15 @@ class ViewExtensionsRobolectricTest {
         assertEquals(180, view.layoutParams.width)
     }
 
+    @Test
+    fun setWidthWithoutLayoutParamsKeepsLayoutParamsNull() {
+        val view = View(context)
+
+        view.setWidth(200)
+
+        assertEquals(null, view.layoutParams)
+    }
+
     // setHeight 확장 함수가 LayoutParams.height를 변경하는지 확인
     @Test
     fun setHeightUpdatesLayoutParams() {
@@ -173,6 +262,15 @@ class ViewExtensionsRobolectricTest {
         view.setHeight(220)
 
         assertEquals(220, view.layoutParams.height)
+    }
+
+    @Test
+    fun setHeightWithoutLayoutParamsKeepsLayoutParamsNull() {
+        val view = View(context)
+
+        view.setHeight(220)
+
+        assertEquals(null, view.layoutParams)
     }
 
     // setSize 확장 함수가 폭과 높이를 동시에 설정하는지 확인
@@ -188,6 +286,15 @@ class ViewExtensionsRobolectricTest {
 
         assertEquals(160, view.layoutParams.width)
         assertEquals(140, view.layoutParams.height)
+    }
+
+    @Test
+    fun setSizeWithoutLayoutParamsKeepsLayoutParamsNull() {
+        val view = View(context)
+
+        view.setSize(width = 160, height = 140)
+
+        assertEquals(null, view.layoutParams)
     }
 
     // setWidthMatchParent 확장 함수가 MATCH_PARENT로 설정되는지 확인

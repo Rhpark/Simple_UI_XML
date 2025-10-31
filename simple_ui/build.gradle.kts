@@ -162,6 +162,8 @@ kover {
                 classes("kr.open.library.simple_ui.presenter.extensions.display.DisplayUnitExtensionsKt*")
                 classes("kr.open.library.simple_ui.presenter.extensions.resource.ResourceExtensionsKt*")
                 classes("kr.open.library.simple_ui.presenter.extensions.view.EditTextExtensionsKt*")
+                classes("kr.open.library.simple_ui.presenter.extensions.view.ViewAnimExtensionsKt*")
+                classes("kr.open.library.simple_ui.presenter.extensions.view.ViewLayoutExtensionsKt*")
                 classes("kr.open.library.simple_ui.presenter.extensions.view.ImageViewExtensionsKt*")
                 classes("kr.open.library.simple_ui.presenter.extensions.view.SnackBarExtensionsKt*")
                 classes("kr.open.library.simple_ui.presenter.extensions.view.TextViewExtensionsKt*")

@@ -77,19 +77,6 @@ public fun ImageView.removeGrayscale(): ImageView = apply {
     colorFilter = null
 }
 
-/**
- * Sets alpha transparency to ImageView
- *
- * @param alpha Alpha value (0.0f - 1.0f)
- *
- * Example:
- * ```
- * imageView.setAlpha(0.5f)
- * ```
- */
-public fun ImageView.setAlpha(alpha: Float): ImageView = apply {
-    imageAlpha = (alpha * 255).toInt().coerceIn(0, 255)
-}
 
 /**
  * Sets ScaleType to CENTER_CROP
