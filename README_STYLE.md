@@ -1,46 +1,50 @@
-# 📦 Simple Style vs 순수 Android - 완벽 비교 가이드
+# 📦 Simple Style vs Pure Android - Complete Comparison Guide (📦 Simple Style vs 순수 Android - 완벽 비교 가이드)
 
-### style 출력 예시
+### Style Output Example (style 출력 예시)
 ![xml_style.png](example_gif%2Fxml_style.png)
 
-> **"더 간단한 Layout Style XML로!"** 순수 XML 대비  Style이 주는 체감 차이를 한눈에 확인하세요.
+> **"Achieve Simpler Layouts with Style XML!"** See the tangible difference that Style provides compared to pure XML at a glance.
+<br></br>
+> **"더 간단한 Layout Style XML로!"** 순수 XML 대비 Style이 주는 체감 차이를 한눈에 확인하세요.
 
 <br>
 </br>
 
-## 🔎 한눈 비교 (At a glance)
+## 🔎 At a Glance Comparison (한눈 비교)
 
-### XML Style 시스템
-| 항목 | 순수 Android                                                                                                        | Simple UI                                         | 효과 |
+### XML Style System (XML Style 시스템)
+| Category (항목) | Pure Android (순수 Android)                                                                                                        | Simple UI                                         | Impact (효과) |
 |:--|:------------------------------------------------------------------------------------------------------------------|:--------------------------------------------------|:--|
-| **기본 레이아웃** | `layout_width="match_parent"`<br>`layout_height="wrap_content"`<br>`orientation="vertical"`<br>`gravity="center"` | `style="@style/Layout.MatchWrap.Vertical.Center"` | **4속성→1줄** |
-| **Weight 균등 분할** | `layout_width="0dp"`<br>`layout_weight="1"`<br>`layout_height="wrap_content"`                                     | `style="@style/View.WeightWrap"`                  | **3속성→1줄** |
-| **View 크기** | `layout_width="match_parent"`<br>`layout_height="wrap_content"`                                                   | `style="@style/View.MatchWrap"`                   | **2속성→1줄** |
-| **중첩 속성** | orientation + gravity + width + height + etc..매번 작성                                                               | Style 다양한 스타일로 체이닝으로 조합                           | **반복 제거** |
+| **Basic Layout (기본 레이아웃)** | `layout_width="match_parent"`<br>`layout_height="wrap_content"`<br>`orientation="vertical"`<br>`gravity="center"` | `style="@style/Layout.MatchWrap.Vertical.Center"` | **4 attrs→1 line (4속성→1줄)** |
+| **Weight Equal Distribution (Weight 균등 분할)** | `layout_width="0dp"`<br>`layout_weight="1"`<br>`layout_height="wrap_content"`                                     | `style="@style/View.WeightWrap"`                  | **3 attrs→1 line (3속성→1줄)** |
+| **View Size (View 크기)** | `layout_width="match_parent"`<br>`layout_height="wrap_content"`                                                   | `style="@style/View.MatchWrap"`                   | **2 attrs→1 line (2속성→1줄)** |
+| **Nested Properties (중첩 속성)** | orientation + gravity + width + height + etc.. written every time (매번 작성)                                                               | Combine various styles through chaining (다양한 스타일로 체이닝으로 조합)                           | **Remove Repetition (반복 제거)** |
 
+> **Key Point:** Style XML solves "repetitive code" in one line. Development speed changes dramatically.
+<br></br>
 > **핵심:** Style XML은 "반복 코드"를 한줄로 해결합니다. 개발 속도가 달라집니다.
 
 <br>
 </br>
 
-## 💡 왜 Style XML이 필수인가?
+## 💡 Why Simple Style XML Matters (왜 Style XML이 필수인가?)
 
-### ⚡ **XML도 간결하게**
-- **Style 상속**: `Layout.MatchWrap.Vertical.Center` - 4개 속성을 1줄로
-- **Weight 자동화**: `View.WeightWrap` - width=0dp + weight=10 자동 설정
-- **실수 방지**: width/height 누락 불가능
+### ⚡ **Concise XML Too (XML도 간결하게)**
+- **Style Inheritance (Style 상속)**: `Layout.MatchWrap.Vertical.Center` - 4 properties in 1 line (4개 속성을 1줄로)
+- **Weight Automation (Weight 자동화)**: `View.WeightWrap` - automatically sets width=0dp + weight=10 (width=0dp + weight=10 자동 설정)
+- **Error Prevention (실수 방지)**: width/height cannot be omitted (width/height 누락 불가능)
 
 <br>
 </br>
 
-## 📦 완벽 비교 목록: Style vs 순수 XML
+## 📦 Complete Comparison List: Style vs Pure XML (완벽 비교 목록: Style vs 순수 XML)
 
 
 <details>
-<summary><strong>순수 Android - 매번 속성 작성</strong></summary>
+<summary><strong>Pure Android - Write Properties Every Time (순수 Android - 매번 속성 작성)</strong></summary>
 
 ```xml
-<!-- 매번 width/height 작성 -->
+<!-- Write width/height every time (매번 width/height 작성) -->
 <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -57,7 +61,7 @@
         android:text="Content" />
 </LinearLayout>
 
-<!-- Weight 설정 - 반복 작성 -->
+<!-- Weight setting - repetitive writing (Weight 설정 - 반복 작성) -->
 <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -76,7 +80,7 @@
         android:text="Button 2" />
 </LinearLayout>
 
-<!-- Gravity 방향 - 조합 작성 -->
+<!-- Gravity direction - combined writing (Gravity 방향 - 조합 작성) -->
 <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -89,14 +93,16 @@
         android:text="Centered" />
 </LinearLayout>
 ```
+**Issues:** Write width/height every time, repeat weight + width=0dp, combine orientation + gravity direction
+<br></br>
 **문제점:** 매번 width/height 작성, weight + width=0dp 반복, orientation + gravity 방향 조합
 </details>
 
 <details>
-<summary><strong>Simple UI - Style 상속으로 자동</strong></summary>
+<summary><strong>Simple UI - Automatic Through Style Inheritance (Simple UI - Style 상속으로 자동)</strong></summary>
 
 ```xml
-<!-- Layout.MatchWrap.Vertical - 방향 설정! -->
+<!-- Layout.MatchWrap.Vertical - Set direction! (방향 설정!) -->
 <LinearLayout
     style="@style/Layout.MatchWrap.Vertical">
 
@@ -109,7 +115,7 @@
         android:text="Content" />
 </LinearLayout>
 
-<!-- View.WeightWrap - Weight 가능! -->
+<!-- View.WeightWrap - Weight enabled! (Weight 가능!) -->
 <LinearLayout
     style="@style/Layout.MatchWrap.Horizontal">
 
@@ -122,7 +128,7 @@
         android:text="Button 2" />
 </LinearLayout>
 
-<!-- Layout.MatchWrap.Horizontal.Center - Gravity 방향! -->
+<!-- Layout.MatchWrap.Horizontal.Center - Gravity direction! (Gravity 방향!) -->
 <LinearLayout
     style="@style/Layout.MatchWrap.Horizontal.Center">
 
@@ -131,7 +137,7 @@
         android:text="Centered" />
 </LinearLayout>
 
-<!-- 다중 방향 예시! -->
+<!-- Multiple direction example! (다중 방향 예시!) -->
 <LinearLayout
     style="@style/Layout.MatchWrap.Vertical.CenterHorizontal"
     android:background="#E8EAF6"
@@ -140,70 +146,81 @@
     <TextView
         style="@style/TextView.AllWrap"
         android:text="Centered Content" />
-    
+
 </LinearLayout>
 ```
+**Result:** Automatically handled via Style inheritance, simple direction setting, eliminate repetitive writing!
+<br></br>
 **결과:** Style 상속으로 자동, 방향 설정 간단, 반복 작성 제거!
 </details>
 
 <br>
 </br>
 
-## 🎯 Style의 주요 장점
+## 🎯 Key Advantages of Style (Style의 주요 장점)
 
-### 📝 **압도적 코드 단축** - XML 속성 **4줄→1줄 (75% 단축)** + width/height 누락 실수 방지
+### 📝 **Dramatic Code Reduction (압도적 코드 단축)** - XML properties **4 lines→1 line (75% reduction)** + prevent width/height omission errors (XML 속성 **4줄→1줄 (75% 단축)** + width/height 누락 실수 방지)
 
 <br>
 </br>
 
 
-## 📣 실제 사용 후기
+## 📣 Real User Reviews (실제 사용 후기)
 
+> 💬 **"After introducing the XML Style system, layout writing time was cut in half. Just one line of Layout.MatchWrap.Vertical.Center and it's done!"**
+<br></br>
 > 💬 **"XML Style 시스템 도입 후 레이아웃 작성 시간 반 토막. Layout.MatchWrap.Vertical.Center 한 줄이면 끝!"**
 
 <br>
 </br>
 
-## 🎯 결론: Android 개발자를 위한 필수 도구
+## 🎯 Conclusion: Essential Tool for Android Developers (결론: Android 개발자를 위한 필수 도구)
 
+**Style XML** was created to solve the **repetition and inconvenience** of Layout Style configuration in pure Android.
+<br></br>
 **Style XML**은 순수 Android에서 Layout Style 설정의 **반복과 불편함**을 해결하기 위해 만들어졌습니다.
 
-✅ **XML Style 시스템** - 레이아웃 기본 속성을 단 한줄로!
+✅ **XML Style System** - Layout basic properties in just one line! (레이아웃 기본 속성을 단 한줄로!)
 
+**If you want to increase development speed,**
+<br></br>
+**Try using Style XML!** 🚀
+<br></br>
 **개발 속도를 높이고 싶다면,**
+<br></br>
 **Style XML을 사용해 보세요!** 🚀
 
 <br>
 </br>
 
-## 📂 실제 코드 확인
+## 📂 Check Real Code (실제 코드 확인)
 
-**실제 예시 파일:**
+**Real Example Files (실제 예시 파일):**
 > - 🎨 Layout: `app/src/main/res/layout/activity_extensions_style.xml`
 
 <br>
 </br>
 
-**구현된 예제 기능:**
-- 🎨 XML Style - 다양한 Layout 방향 설정 예시
+**Implemented Example Features (구현된 예제 기능):**
+- 🎨 XML Style - Various Layout direction setting examples (다양한 Layout 방향 설정 예시)
 
 <br>
 </br>
 
-### 🎯 지원 가능한 Style 패턴
+### 🎯 Supported Style Patterns (지원 가능한 Style 패턴)
 
 ### 📐 View.WidthHeight.
 
-모든 View에서 사용 가능한 기본 크기 조합:
+Basic size combinations available for all Views (모든 View에서 사용 가능한 기본 크기 조합):
 
 ```xml
-<!-- Width x Height 조합 -->
+<!-- Width x Height combinations (Width x Height 조합) -->
 <View style="@style/View.MatchWrap" />      <!-- match_parent x wrap_content -->
 <View style="@style/View.WrapMatch" />      <!-- wrap_content x match_parent -->
 <View style="@style/View.AllMatch" />       <!-- match_parent x match_parent -->
 <View style="@style/View.AllWrap" />        <!-- wrap_content x wrap_content -->
 
-<!-- Weight 조합 (LinearLayout 내부) -->
+<!-- Weight combinations (inside LinearLayout) (Weight 조합 (LinearLayout 내부)) -->
 <View style="@style/View.WeightWrap" />     <!-- 0dp(weight=10) x wrap_content -->
 <View style="@style/View.WeightMatch" />    <!-- 0dp(weight=10) x match_parent -->
 <View style="@style/View.WrapWeight" />     <!-- wrap_content x 0dp(weight=10) -->
@@ -213,13 +230,15 @@
 <br>
 </br>
 
-### 🎯 지원 가능한 Style 조합
+### 🎯 Supported Style Combinations (지원 가능한 Style 조합)
 
+The following lists applicable Style patterns organized by View type.
+<br></br>
 각 View 타입별로 적용 가능한 Style 패턴을 정리했습니다.
 
 #### **1️⃣ View.WidthHeight**
 ```xml
-<!-- 패턴:  -->
+<!-- Pattern (패턴) -->
 <View style="@style/View.MatchWrap" />
 <View style="@style/View.WrapMatch" />
 <View style="@style/View.AllMatch" />
@@ -235,22 +254,22 @@
 <LinearLayout style="@style/Layout.WeightWrap.Vertical.CenterHorizontal" />
 <LinearLayout style="@style/Layout.AllMatch.Horizontal.CenterVertical" />
 
-<!-- FrameLayout/RelativeLayout도 동일 -->
+<!-- Same for FrameLayout/RelativeLayout (FrameLayout/RelativeLayout도 동일) -->
 <FrameLayout style="@style/Layout.MatchWrap" />
 <RelativeLayout style="@style/Layout.AllMatch" />
 ```
 
 #### **3️⃣ TextView.WidthHeight.TextStyle.Gravity**
 ```xml
-<!-- 패턴:  사용 -->
+<!-- Pattern usage (패턴 사용) -->
 <TextView
     style="@style/TextView.MatchWrap.Bold.Center"
-    android:text="제목" />
+    android:text="Title (제목)" />
 
-<!-- 추가 속성은 개별 지정 -->
+<!-- Additional properties specified individually (추가 속성은 개별 지정) -->
 <TextView
     style="@style/TextView.AllWrap.Normal"
-    android:text="내용"
+    android:text="Content (내용)"
     android:textColor="@color/black"
     android:textSize="16sp" />
 ```
@@ -259,22 +278,22 @@
 ```xml
 <Button
     style="@style/Button.MatchWrap.Bold"
-    android:text="확인" />
+    android:text="OK (확인)" />
 
 <Button
     style="@style/Button.AllWrap"
-    android:text="취소" />
+    android:text="Cancel (취소)" />
 ```
 
 #### **5️⃣ EditText.WidthHeight.InputType.Gravity**
 ```xml
 <EditText
     style="@style/EditText.MatchWrap.TextEmailAddress"
-    android:hint="이메일 입력" />
+    android:hint="Enter email (이메일 입력)" />
 
 <EditText
     style="@style/VEditText.MatchWrap.Number.Center"
-    android:hint="숫자 입력"
+    android:hint="Enter number (숫자 입력)"
     android:inputType="number" />
 ```
 
@@ -293,16 +312,16 @@
 ```xml
 <CheckBox
     style="@style/CheckBox.WidthHeight.Checked"
-    android:text="동의합니다"
+    android:text="I agree (동의합니다)"
     android:checked="false" />
 
 <RadioButton
     style="@style/RadioButton.WidthHeight.Unchecked"
-    android:text="옵션 1" />
+    android:text="Option 1 (옵션 1)" />
 
 <Switch
     style="@style/Switch.WidthHeight.Checked"
-    android:text="알림 받기" />
+    android:text="Receive notifications (알림 받기)" />
 ```
 
 #### **8️⃣ RadioGroup.WidthHeight.Orientation**
@@ -312,14 +331,14 @@
 
     <RadioButton
         style="@style/RadioButton.MatchWrap.Check"
-        android:text="옵션 1" />
+        android:text="Option 1 (옵션 1)" />
 
     <RadioButton
         style="@style/RadioButton.MatchWrap.Uncheck"
-        android:text="옵션 2" />
+        android:text="Option 2 (옵션 2)" />
 </RadioGroup>
 
-<!-- Horizontal도 가능 -->
+<!-- Horizontal also possible (Horizontal도 가능) -->
 <RadioGroup
     style="@style/Layout.MatchWrap.Horizontal">
     <!-- ... -->
@@ -340,22 +359,22 @@
     style="@style/RecyclerView.MatchWrap.LinearLayoutManager.Vertical"
     android:id="@+id/rcvList" />
 
-<!-- LayoutManager는 코드에서 설정 -->
+<!-- LayoutManager is set in code (LayoutManager는 코드에서 설정) -->
 ```
 
 <br>
 </br>
 
-### 💡 Style 시스템 활용 팁
+### 💡 Style System Tips (Style 시스템 활용 팁)
 
-**1. 일관된 네이밍 패턴**
+**1. Consistent Naming Pattern (일관된 네이밍 패턴)**
 ```
-[ViewType].[WidthHeight].[추가속성].[추가속성]
+[ViewType].[WidthHeight].[Additional Property (추가속성)].[Additional Property (추가속성)]
 ```
 
-**2. 체계적 조합**
+**2. Systematic Combination (체계적 조합)**
 ```xml
-<!-- 나쁜 예 - 매번 반복 -->
+<!-- Bad example - repetitive every time (나쁜 예 - 매번 반복) -->
 <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -364,36 +383,36 @@
     <!-- ... -->
 </LinearLayout>
 
-<!-- 좋은 예 - Style로 간결화 -->
+<!-- Good example - simplified with Style (좋은 예 - Style로 간결화) -->
 <LinearLayout style="@style/Layout.MatchWrap.Vertical.Center">
     <!-- ... -->
 </LinearLayout>
 ```
 
-**3. 커스텀 확장**
+**3. Custom Extension (커스텀 확장)**
 ```xml
-<!-- styles.xml에서 Simple UI Style을 상속하여 확장 -->
+<!-- Extend Simple UI Style by inheriting in styles.xml (styles.xml에서 Simple UI Style을 상속하여 확장) -->
 <style name="MyButton" parent="View.MatchWrap">
     <item name="android:textColor">@color/white</item>
     <item name="android:background">@drawable/button_bg</item>
 </style>
 ```
 
-**4. Weight 활용**
+**4. Weight Utilization (Weight 활용)**
 ```xml
-<!-- Weight 기반 균등 분할 -->
+<!-- Weight-based equal distribution (Weight 기반 균등 분할) -->
 <LinearLayout style="@style/Layout.MatchWrap.Horizontal">
-    <Button style="@style/View.WeightWrap" android:text="버튼1" />
-    <Button style="@style/View.WeightWrap" android:text="버튼2" />
-    <Button style="@style/View.WeightWrap" android:text="버튼3" />
+    <Button style="@style/View.WeightWrap" android:text="Button1 (버튼1)" />
+    <Button style="@style/View.WeightWrap" android:text="Button2 (버튼2)" />
+    <Button style="@style/View.WeightWrap" android:text="Button3 (버튼3)" />
 </LinearLayout>
 ```
 
-**장점:**
-- XML 코드 50% 이상 단축
-- 실수 방지 (width/height 누락 등)
-- 유지보수 용이
-- 프로젝트 전체 일관성 유지
+**Advantages (장점):**
+- Reduce XML code by 50% or more (XML 코드 50% 이상 단축)
+- Error prevention (width/height omission, etc.) (실수 방지 (width/height 누락 등))
+- Easy maintenance (유지보수 용이)
+- Maintain consistency across the entire project (프로젝트 전체 일관성 유지)
 
 <br>
 </br>
