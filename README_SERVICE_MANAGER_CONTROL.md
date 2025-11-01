@@ -1,29 +1,40 @@
-# System Service Manager Controller vs 순수 Android - 완벽 비교 가이드
+# System Service Manager Controller vs Pure Android - Complete Comparison Guide (System Service Manager Controller vs 순수 Android - 완벽 비교 가이드)
 
+> **"Simplify complex System Services into a single line!"** See the immediate difference Simple UI Controller makes compared to traditional Android System Service usage.
+>
 > **"복잡한 System Service를 한 줄로 끝내자!"** 기존 Android System Service 사용 대비 Simple UI Controller가 주는 체감 차이를 한눈에 확인하세요.
 
 <br>
 </br>
 
-## 🔎 한눈 비교 (At a glance)
+## 🔎 At a Glance (한눈 비교)
 
-| 항목 | 순수 Android | Simple UI Controller | 개선 효과 |
+| Category (항목) | Pure Android (순수 Android) | Simple UI Controller | Impact (개선 효과) |
 |:--|:--:|:--:|:--:|
-| **키보드 SoftKeyboard 제어** | `getSystemService()`<br>`showSoftInput()` 호출 | `getSoftKeyboardController().show()` | **수십 줄 → 한 줄** |
-| **진동 Vibrator 제어** | SDK 버전 분기 + 3가지 API | `getVibratorController().vibrate()` | **SDK 자동 처리** |
-| **알람 Alarm 등록** | `AlarmManager` + `PendingIntent` + `Calendar` 설정 | `getAlarmController().registerAlarmClock()` | **복잡한 설정 → 간단 호출** |
-| **알림 Notification 표시** | `NotificationManager` + Channel + Builder 설정 | `getNotificationController().showNotification()` | **채널 자동 관리** |
-| **WiFi 정보 조회** | `WifiManager` + SDK 분기 + 권한 처리 | `getWifiController().getConnectionInfo()` | **SDK 자동 처리** |
-| **플로팅 Floating View 관리** | `WindowManager` + `LayoutParams` + Touch 처리 | `getFloatingViewController().addFloatingDragView()` | **Touch 자동화** |
+| **SoftKeyboard Control (키보드 제어)** | `getSystemService()`<br>`showSoftInput()` calls (호출) | `getSoftKeyboardController().show()` | **Dozens of lines → One line (수십 줄 → 한 줄)** |
+| **Vibrator Control (진동 제어)** | SDK version branching + 3 APIs (SDK 버전 분기 + 3가지 API) | `getVibratorController().vibrate()` | **Auto SDK handling (SDK 자동 처리)** |
+| **Alarm Registration (알람 등록)** | `AlarmManager` + `PendingIntent` + `Calendar` setup (설정) | `getAlarmController().registerAlarmClock()` | **Complex setup → Simple call (복잡한 설정 → 간단 호출)** |
+| **Notification Display (알림 표시)** | `NotificationManager` + Channel + Builder setup (설정) | `getNotificationController().showNotification()` | **Auto channel management (채널 자동 관리)** |
+| **WiFi Info Query (WiFi 정보 조회)** | `WifiManager` + SDK branching + Permission handling (SDK 분기 + 권한 처리) | `getWifiController().getConnectionInfo()` | **Auto SDK handling (SDK 자동 처리)** |
+| **Floating View Management (플로팅 View 관리)** | `WindowManager` + `LayoutParams` + Touch handling (Touch 처리) | `getFloatingViewController().addFloatingDragView()` | **Auto Touch handling (Touch 자동화)** |
 
+> **Key takeaway:** System Service Manager Controller simplifies complex system service calls with **Extension functions**.
+>
 > **핵심:** System Service Manager Controller는 복잡한 시스템 서비스 호출을 **Extension 함수**로 단순화합니다.
 
 <br>
 </br>
 
-## 💡 왜 중요한가:
+## 💡 Why It Matters (왜 중요한가)
 
-### 반복 코드 제거
+### Eliminate Repetitive Code (반복 코드 제거)
+- **System Service Acquisition:** Simplify `getSystemService()` calls with Extension functions
+- **Auto SDK Version Handling:** Automatically handle Vibrator/VibratorManager version branching internally
+- **Hide Complex Configuration:** Encapsulate Alarm Calendar calculations, Floating View Touch handling, etc.
+
+<br>
+</br>
+
 - **시스템 서비스 획득**: `getSystemService()` 호출과 Extension 함수로 간단하게
 - **SDK 버전 처리 자동화**: Vibrator/VibratorManager 버전 분기를 내부에서 자동 처리
 - **복잡한 설정 숨김**: Alarm Calendar 계산, Floating View Touch 처리 등을 캡슐화
@@ -31,7 +42,14 @@
 <br>
 </br>
 
-### 안전한 에러 처리
+### Safe Error Handling (안전한 에러 처리)
+- **Automatic Exception Handling:** Controller automatically handles exceptions and returns Runtime results
+- **Return Result Values:** Return safe Boolean via `tryCatchSystemManager()`
+- **Lifecycle Integration:** Automatically cleanup all resources on `onDestroy()`
+
+<br>
+</br>
+
 - **자동 예외 처리**: Controller 내부에서 자동 예외 처리 후 Runtime 결과 반환
 - **결과 값 리턴**: `tryCatchSystemManager()` 통해 안전한 Boolean 반환
 - **Lifecycle 연동**: `onDestroy()` 시 모든 리소스 자동 정리
@@ -39,7 +57,14 @@
 <br>
 </br>
 
-### 개발자 친화적 인터페이스
+### Developer-Friendly Interface (개발자 친화적 인터페이스)
+- **Unified API:** Intuitive methods like `show()`, `vibrate()`, `registerAlarmClock()`
+- **Consistent Code Style:** Unify all services with Controller pattern
+- **Type Safety:** Compile-time error checking support
+
+<br>
+</br>
+
 - **통합 API 제공**: `show()`, `vibrate()`, `registerAlarmClock()` 등 직관적 메서드
 - **일관된 코드 스타일**: Controller 패턴으로 모든 서비스 통일
 - **타입 안전성**: Compile-time 오류 체크 지원
@@ -47,26 +72,26 @@
 <br>
 </br>
 
-## 실제 코드 비교
+## Real Code Comparison (실제 코드 비교)
 
 <br>
 </br>
 
-### 첫째: SoftKeyboard 제어 비교
+### First: SoftKeyboard Control Comparison (첫째: SoftKeyboard 제어 비교)
 
 <details>
-<summary><strong>순수 Android - SoftKeyboard 표시</strong></summary>
+<summary><strong>Pure Android - SoftKeyboard Display (순수 Android - SoftKeyboard 표시)</strong></summary>
 
 ```kotlin
-// 기존의 SoftKeyboard 표시 방법
+// Traditional SoftKeyboard display method (기존의 SoftKeyboard 표시 방법)
 private fun showKeyboard(editText: EditText) {
-    // 1. InputMethodManager 획득
+    // 1. Acquire InputMethodManager (InputMethodManager 획득)
     val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
 
     if (imm != null) {
-        // 2. Focus 처리
+        // 2. Handle Focus (Focus 처리)
         if (editText.requestFocus()) {
-            // 3. 키보드 표시
+            // 3. Show keyboard (키보드 표시)
             imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT)
         } else {
             Log.e("Keyboard", "Failed to request focus")
@@ -76,7 +101,7 @@ private fun showKeyboard(editText: EditText) {
     }
 }
 
-// 지연 표시 - 별도 구현
+// Delayed display - Separate implementation (지연 표시 - 별도 구현)
 private fun showKeyboardWithDelay(editText: EditText, delayMillis: Long) {
     editText.postDelayed({
         val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
@@ -86,14 +111,15 @@ private fun showKeyboardWithDelay(editText: EditText, delayMillis: Long) {
     }, delayMillis)
 }
 
-// Window Input Mode 설정 - Adjust Pan
+// Window Input Mode setup - Adjust Pan (Window Input Mode 설정 - Adjust Pan)
 override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
     // ...
 }
 
-// Window Input Mode 설정 - Adjust Resize (SDK 버전 분기 필수)
+// Window Input Mode setup - Adjust Resize (SDK version branching required)
+// (Window Input Mode 설정 - Adjust Resize (SDK 버전 분기 필수))
 override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
@@ -101,19 +127,32 @@ override fun onCreate(savedInstanceState: Bundle?) {
         // Android 11+ (API 30+): ADJUST_RESIZE deprecated
         val controller = window.insetsController
         if (controller != null) {
-            // WindowInsetsController 사용
+            // Use WindowInsetsController (WindowInsetsController 사용)
             controller.systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
         } else {
-            // Fallback: WindowCompat 사용
+            // Fallback: Use WindowCompat (Fallback: WindowCompat 사용)
             WindowCompat.setDecorFitsSystemWindows(window, true)
         }
     } else {
-        // Android 10 이하: 기존 방식 (deprecated)
+        // Android 10 and below: Traditional method (deprecated)
+        // (Android 10 이하: 기존 방식 (deprecated))
         @Suppress("DEPRECATION")
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
     }
 }
 ```
+**Issues (문제점):**
+- Multiple `getSystemService()` calls and type casting
+- Manual null handling and focus handling repeated
+- Must implement delayed execution manually
+- **Complex SDK version branching** (ADJUST_RESIZE deprecated in Android 11+)
+- WindowInsetsController null check and fallback handling required
+- Additional learning needed for WindowCompat and WindowInsets API
+- Boilerplate-heavy structure
+
+<br>
+</br>
+
 **문제점:**
 - 여러 단계의 `getSystemService()` 호출과 타입 캐스팅
 - Null 처리, Focus 처리 수동으로 반복
@@ -128,54 +167,67 @@ override fun onCreate(savedInstanceState: Bundle?) {
 <summary><strong>Simple UI - SoftKeyboard Controller</strong></summary>
 
 ```kotlin
-// 간단한 키보드 표시 - 한 줄
+// Simple keyboard display - One line (간단한 키보드 표시 - 한 줄)
 private fun showKeyboard(editText: EditText) {
-    getSoftKeyboardController().show(editText) // 끝!
+    getSoftKeyboardController().show(editText) // Done! (끝!)
 }
 
-// 지연 표시 - 한 줄
+// Delayed display - One line (지연 표시 - 한 줄)
 private fun showKeyboardWithDelay(editText: EditText, delayMillis: Long) {
-    getSoftKeyboardController().showDelay(editText, delayMillis) // 끝!
+    getSoftKeyboardController().showDelay(editText, delayMillis) // Done! (끝!)
 }
 
-// Coroutine 지원
+// Coroutine support (Coroutine 지원)
 private fun showKeyboardWithCoroutine(editText: EditText) {
     getSoftKeyboardController().showDelay(editText, 300, lifecycleScope)
 }
 
-// Window Input Mode 설정
+// Window Input Mode setup (Window Input Mode 설정)
 override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     getSoftKeyboardController().setAdjustPan(window)
 }
 
-// Window Input Mode - Adjust Resize 설정
+// Window Input Mode - Adjust Resize setup (Window Input Mode - Adjust Resize 설정)
 override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    getSoftKeyboardController().setAdjustResize(window) // SDK 버전 자동 분기!
+    getSoftKeyboardController().setAdjustResize(window) // Auto SDK version branching! (SDK 버전 자동 분기!)
 }
 
-// ⭐ setAdjustResize() 내부 구현 (라이브러리 코드)
+// ⭐ setAdjustResize() internal implementation (Library code)
+// (⭐ setAdjustResize() 내부 구현 (라이브러리 코드))
 public fun setAdjustResize(window: Window) {
     checkSdkVersion(Build.VERSION_CODES.R,
         positiveWork = {
-            // Android 11+: WindowInsetsController 사용
+            // Android 11+: Use WindowInsetsController (WindowInsetsController 사용)
             val controller = window.insetsController
             if (controller != null) {
                 controller.systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
             } else {
-                // Fallback: WindowCompat 사용
+                // Fallback: Use WindowCompat (Fallback: WindowCompat 사용)
                 WindowCompat.setDecorFitsSystemWindows(window, true)
             }
         },
         negativeWork = {
-            // Android 10 이하: 기존 방식
+            // Android 10 and below: Traditional method (Android 10 이하: 기존 방식)
             @Suppress("DEPRECATION")
             window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
         }
     )
 }
 ```
+**Advantages (장점):**
+- **Dramatically simplified** (Dozens of lines → One line)
+- Automated null handling and focus handling
+- Built-in delayed execution (Runnable/Coroutine)
+- **Clean SDK version branching with checkSdkVersion() helper**
+- **Automatic SDK version branching** (Android 11+ WindowInsetsController auto-used)
+- Automated WindowInsetsController null handling and WindowCompat fallback
+- Safe exception handling, Boolean return
+
+<br>
+</br>
+
 **장점:**
 - **극적인 코드 간소화** (수십 줄 → 한 줄)
 - Null 처리, Focus 처리 자동화
@@ -189,17 +241,17 @@ public fun setAdjustResize(window: Window) {
 <br>
 </br>
 
-### 둘째: Vibrator 제어 비교
+### Second: Vibrator Control Comparison (둘째: Vibrator 제어 비교)
 
 <details>
-<summary><strong>순수 Android - Vibrator 제어</strong></summary>
+<summary><strong>Pure Android - Vibrator Control (순수 Android - Vibrator 제어)</strong></summary>
 
 ```kotlin
-// 기존의 SDK 버전 분기 처리
+// Traditional SDK version branching (기존의 SDK 버전 분기 처리)
 @RequiresPermission(Manifest.permission.VIBRATE)
 private fun vibrate(milliseconds: Long) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-        // Android 12+ (API 31+) - VibratorManager 사용
+        // Android 12+ (API 31+) - Use VibratorManager (VibratorManager 사용)
         val vibratorManager = getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
         val vibrator = vibratorManager.defaultVibrator
 
@@ -207,20 +259,20 @@ private fun vibrate(milliseconds: Long) {
         vibratorManager.vibrate(CombinedVibration.createParallel(effect))
 
     } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        // Android 8+ (API 26+) - VibrationEffect 사용
+        // Android 8+ (API 26+) - Use VibrationEffect (VibrationEffect 사용)
         val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         val effect = VibrationEffect.createOneShot(milliseconds, VibrationEffect.DEFAULT_AMPLITUDE)
         vibrator.vibrate(effect)
 
     } else {
-        // Android 7 이하 - Deprecated API 사용
+        // Android 7 and below - Use Deprecated API (Android 7 이하 - Deprecated API 사용)
         val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         @Suppress("DEPRECATION")
         vibrator.vibrate(milliseconds)
     }
 }
 
-// 패턴 진동 - 복잡한 분기
+// Pattern vibration - Complex branching (패턴 진동 - 복잡한 분기)
 @RequiresPermission(Manifest.permission.VIBRATE)
 private fun vibratePattern(pattern: LongArray, repeat: Int = -1) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -240,6 +292,15 @@ private fun vibratePattern(pattern: LongArray, repeat: Int = -1) {
     }
 }
 ```
+**Issues (문제점):**
+- Required branching for 3 SDK versions
+- Repeated `getSystemService()` calls and type casting
+- Manual suppression of Deprecated API
+- Difficult to maintain with complex structure
+
+<br>
+</br>
+
 **문제점:**
 - 3가지 SDK 버전별 분기 처리 필수
 - `getSystemService()` 반복 호출과 타입 캐스팅
@@ -251,33 +312,43 @@ private fun vibratePattern(pattern: LongArray, repeat: Int = -1) {
 <summary><strong>Simple UI - Vibrator Controller</strong></summary>
 
 ```kotlin
-// 단순 진동 - 한 줄
+// Simple vibration - One line (단순 진동 - 한 줄)
 private fun vibrate(milliseconds: Long) {
-    getVibratorController().vibrate(milliseconds) // SDK 자동 처리!
+    getVibratorController().vibrate(milliseconds) // Auto SDK handling! (SDK 자동 처리!)
 }
 
-// 패턴 진동 - 한 줄
+// Pattern vibration - One line (패턴 진동 - 한 줄)
 private fun vibratePattern(pattern: LongArray, repeat: Int = -1) {
-    getVibratorController().vibratePattern(pattern, repeat) // 끝!
+    getVibratorController().vibratePattern(pattern, repeat) // Done! (끝!)
 }
 
-// 웨이브폼 진동 (커스텀 패턴)
+// Waveform vibration (Custom pattern) (웨이브폼 진동 (커스텀 패턴))
 private fun vibrateWaveform() {
     val times = longArrayOf(0, 100, 50, 200, 50, 100)
     val amplitudes = intArrayOf(0, 128, 0, 255, 0, 128)
     getVibratorController().createWaveform(times, amplitudes, -1)
 }
 
-// 시스템 정의 진동
+// System-defined vibration (시스템 정의 진동)
 private fun vibrateClick() {
     getVibratorController().createPredefined(VibrationEffect.EFFECT_CLICK)
 }
 
-// 진동 취소
+// Cancel vibration (진동 취소)
 private fun cancelVibrate() {
     getVibratorController().cancel()
 }
 ```
+**Advantages (장점):**
+- **Dramatically simplified** (Complex branching → Single call)
+- Complete automatic SDK version branching (Vibrator/VibratorManager)
+- Automatic exception handling
+- Deprecated API handled internally
+- Safe exception handling, Boolean return
+
+<br>
+</br>
+
 **장점:**
 - **대폭 간소화** (복잡한 분기 → 단일 호출)
 - SDK 버전 분기 완전 자동 (Vibrator/VibratorManager)
@@ -289,33 +360,34 @@ private fun cancelVibrate() {
 <br>
 </br>
 
-### 셋째: Alarm 등록 비교
+### Third: Alarm Registration Comparison (셋째: Alarm 등록 비교)
 
 <details>
-<summary><strong>순수 Android - Alarm 등록</strong></summary>
+<summary><strong>Pure Android - Alarm Registration (순수 Android - Alarm 등록)</strong></summary>
 
 ```kotlin
-// 기존의 Alarm 등록 방법
+// Traditional Alarm registration method (기존의 Alarm 등록 방법)
 @RequiresApi(Build.VERSION_CODES.S)
 @RequiresPermission(Manifest.permission.SCHEDULE_EXACT_ALARM)
 private fun registerAlarm(hour: Int, minute: Int) {
-    // 1. AlarmManager 획득
+    // 1. Acquire AlarmManager (AlarmManager 획득)
     val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-    // 2. Calendar 설정 - 시간 계산
+    // 2. Calendar setup - Time calculation (Calendar 설정 - 시간 계산)
     val calendar = Calendar.getInstance().apply {
         set(Calendar.HOUR_OF_DAY, hour)
         set(Calendar.MINUTE, minute)
         set(Calendar.SECOND, 0)
         set(Calendar.MILLISECOND, 0)
 
-        // 오늘 시간 지났으면 내일로 설정 (수동 처리)
+        // If time passed today, set to tomorrow (Manual handling)
+        // (오늘 시간 지났으면 내일로 설정 (수동 처리))
         if (before(Calendar.getInstance())) {
             add(Calendar.DATE, 1)
         }
     }
 
-    // 3. PendingIntent 생성 - 복잡한 플래그
+    // 3. Create PendingIntent - Complex flags (PendingIntent 생성 - 복잡한 플래그)
     val intent = Intent(this, AlarmReceiver::class.java).apply {
         putExtra("ALARM_KEY", 1)
     }
@@ -326,12 +398,12 @@ private fun registerAlarm(hour: Int, minute: Int) {
         PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
     )
 
-    // 4. AlarmClockInfo 생성 및 등록
+    // 4. Create and register AlarmClockInfo (AlarmClockInfo 생성 및 등록)
     val alarmClockInfo = AlarmManager.AlarmClockInfo(calendar.timeInMillis, pendingIntent)
     alarmManager.setAlarmClock(alarmClockInfo, pendingIntent)
 }
 
-// Alarm 삭제 - 복잡한 처리
+// Alarm removal - Complex handling (Alarm 삭제 - 복잡한 처리)
 private fun removeAlarm(key: Int) {
     val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
@@ -351,6 +423,16 @@ private fun removeAlarm(key: Int) {
     }
 }
 ```
+**Issues (문제점):**
+- Manual Calendar setup and today/tomorrow calculation
+- PendingIntent flags must be set manually
+- Must create AlarmClockInfo directly
+- Need to manage Receiver Class
+- Repeated manual null handling
+
+<br>
+</br>
+
 **문제점:**
 - Calendar 설정 및 오늘/내일 계산 수동 처리
 - PendingIntent 플래그 수동 설정 필수
@@ -363,36 +445,47 @@ private fun removeAlarm(key: Int) {
 <summary><strong>Simple UI - Alarm Controller</strong></summary>
 
 ```kotlin
-// 간단한 Alarm 등록 - 한 줄
+// Simple Alarm registration - One line (간단한 Alarm 등록 - 한 줄)
 private fun registerAlarm(hour: Int, minute: Int) {
     val alarmVo = AlarmVo(
         key = 1,
-        title = "알람 제목",
+        title = "Alarm Title", // (알람 제목)
         hour = hour,
         minute = minute,
         second = 0
     )
-    getAlarmController().registerAlarmClock(AlarmReceiver::class.java, alarmVo) // 끝!
+    getAlarmController().registerAlarmClock(AlarmReceiver::class.java, alarmVo) // Done! (끝!)
 }
 
-// 정확한 Alarm (Idle 모드에서도 실행)
+// Exact Alarm (Runs even in Idle mode) (정확한 Alarm (Idle 모드에서도 실행))
 private fun registerExactAlarm(hour: Int, minute: Int) {
-    val alarmVo = AlarmVo(key = 2, title = "정확한 알람", hour = hour, minute = minute)
+    val alarmVo = AlarmVo(key = 2, title = "Exact Alarm", hour = hour, minute = minute) // (정확한 알람)
     getAlarmController().registerAlarmExactAndAllowWhileIdle(AlarmReceiver::class.java, alarmVo)
 }
 
-// Alarm 삭제 - 한 줄
+// Alarm removal - One line (Alarm 삭제 - 한 줄)
 private fun removeAlarm(key: Int) {
     getAlarmController().remove(key, AlarmReceiver::class.java)
 }
 
-// Alarm 존재 확인 - 한 줄
+// Check Alarm exists - One line (Alarm 존재 확인 - 한 줄)
 private fun checkAlarmExists(key: Int): Boolean {
     return getAlarmController().exists(key, AlarmReceiver::class.java)
 }
 ```
+**Advantages (장점):**
+- **Dramatically simplified** (Complex setup → VO object)
+- Automatic Calendar calculation (Auto today/tomorrow determination)
+- Automatic PendingIntent creation (Built-in flags)
+- Automatic AlarmClockInfo creation
+- Automatic exception handling, automatic SDK version handling
+- Safe exception handling, Boolean return
+
+<br>
+</br>
+
 **장점:**
-- **큰 폭으로 간소화** (복잡한 설정 → VO 객체)
+- **대폭 간소화** (복잡한 설정 → VO 객체)
 - Calendar 자동 계산 (오늘/내일 자동 판단)
 - PendingIntent 자동 생성 (플래그 내장)
 - AlarmClockInfo 자동 생성
@@ -403,19 +496,19 @@ private fun checkAlarmExists(key: Int): Boolean {
 <br>
 </br>
 
-### 넷째: Floating View 관리 비교
+### Fourth: Floating View Management Comparison (넷째: Floating View 관리 비교)
 
 <details>
-<summary><strong>순수 Android - Floating View 관리</strong></summary>
+<summary><strong>Pure Android - Floating View Management (순수 Android - Floating View 관리)</strong></summary>
 
 ```kotlin
-// 기존의 Floating View 추가
+// Traditional Floating View addition (기존의 Floating View 추가)
 @RequiresPermission(Manifest.permission.SYSTEM_ALERT_WINDOW)
 private fun addFloatingView() {
-    // 1. WindowManager 획득
+    // 1. Acquire WindowManager (WindowManager 획득)
     val windowManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
 
-    // 2. LayoutParams 설정 - 복잡한 옵션
+    // 2. LayoutParams setup - Complex options (LayoutParams 설정 - 복잡한 옵션)
     val params = WindowManager.LayoutParams(
         WindowManager.LayoutParams.WRAP_CONTENT,
         WindowManager.LayoutParams.WRAP_CONTENT,
@@ -433,10 +526,10 @@ private fun addFloatingView() {
         y = 100
     }
 
-    // 3. View 생성
+    // 3. Create View (View 생성)
     val floatingView = LayoutInflater.from(this).inflate(R.layout.floating_view, null)
 
-    // 4. Touch 이벤트 수동 추가 - 매우 복잡
+    // 4. Manually add Touch event - Very complex (Touch 이벤트 수동 추가 - 매우 복잡)
     var initialX = 0
     var initialY = 0
     var initialTouchX = 0f
@@ -453,11 +546,21 @@ private fun addFloatingView() {
                 isDragging = false
                 true
             }
-            // ... 수십 줄의 Touch 처리 코드
+            // ... Dozens of lines of Touch handling code (수십 줄의 Touch 처리 코드)
         }
     }
 }
 ```
+**Issues (문제점):**
+- Complex WindowManager and LayoutParams setup
+- SDK version-specific TYPE branching required
+- Must implement Touch events directly (dozens of lines)
+- Must implement Collision Detection directly
+- Memory leak risk
+
+<br>
+</br>
+
 **문제점:**
 - WindowManager, LayoutParams 복잡한 설정
 - SDK 버전별 TYPE 분기 필요
@@ -470,7 +573,7 @@ private fun addFloatingView() {
 <summary><strong>Simple UI - Floating View Controller</strong></summary>
 
 ```kotlin
-// 간단한 Floating View 추가 - 몇 줄
+// Simple Floating View addition - Few lines (간단한 Floating View 추가 - 몇 줄)
 private fun addFloatingView() {
     val icon = ImageView(this).apply {
         setImageResource(R.drawable.ic_launcher_foreground)
@@ -480,29 +583,40 @@ private fun addFloatingView() {
         lifecycleScope.launch {
             sfCollisionStateFlow.collect { (touchType, collisionType) ->
                 when (touchType) {
-                    FloatingViewTouchType.TOUCH_DOWN -> { /* 처리 */ }
-                    FloatingViewTouchType.TOUCH_MOVE -> { /* 처리 */ }
-                    FloatingViewTouchType.TOUCH_UP -> { /* 처리 */ }
+                    FloatingViewTouchType.TOUCH_DOWN -> { /* Handle (처리) */ }
+                    FloatingViewTouchType.TOUCH_MOVE -> { /* Handle (처리) */ }
+                    FloatingViewTouchType.TOUCH_UP -> { /* Handle (처리) */ }
                 }
             }
         }
     }
 
-    floatingViewController.addFloatingDragView(dragView) // 끝!
+    floatingViewController.addFloatingDragView(dragView) // Done! (끝!)
 }
 
-// Fixed View 설정
+// Fixed View setup (Fixed View 설정)
 private fun setFixedView() {
     val icon = ImageView(this).apply { setBackgroundColor(Color.GREEN) }
     val fixedView = FloatingFixedView(icon, 200, 300)
     floatingViewController.setFloatingFixedView(fixedView)
 }
 
-// 모든 View 제거
+// Remove all Views (모든 View 제거)
 private fun removeAll() {
     floatingViewController.removeAllFloatingView()
 }
 ```
+**Advantages (장점):**
+- **Dramatically simplified** (Dozens of lines → Few lines)
+- Automatic WindowManager and LayoutParams handling
+- Automatic Touch event handling (Flow-based)
+- Automatic Collision Detection provided
+- Memory leak prevention (Automatic Lifecycle management)
+- Automatic SDK version branching
+
+<br>
+</br>
+
 **장점:**
 - **큰 폭으로 간소화** (수십 줄 → 몇 줄)
 - WindowManager, LayoutParams 자동 처리
@@ -515,19 +629,19 @@ private fun removeAll() {
 <br>
 </br>
 
-### 다섯째: Notification 표시 비교
+### Fifth: Notification Display Comparison (다섯째: Notification 표시 비교)
 
 <details>
-<summary><strong>순수 Android - Notification 표시</strong></summary>
+<summary><strong>Pure Android - Notification Display (순수 Android - Notification 표시)</strong></summary>
 
 ```kotlin
-// 기존의 Notification 표시 방법
+// Traditional Notification display method (기존의 Notification 표시 방법)
 @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
 private fun showNotification() {
-    // 1. NotificationManager 획득
+    // 1. Acquire NotificationManager (NotificationManager 획득)
     val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-    // 2. Notification Channel 생성 (Android 8.0+)
+    // 2. Create Notification Channel (Android 8.0+) (Notification Channel 생성 (Android 8.0+))
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         val channel = NotificationChannel(
             "channel_id",
@@ -539,7 +653,7 @@ private fun showNotification() {
         notificationManager.createNotificationChannel(channel)
     }
 
-    // 3. PendingIntent 생성
+    // 3. Create PendingIntent (PendingIntent 생성)
     val intent = Intent(this, MainActivity::class.java)
     val pendingIntent = PendingIntent.getActivity(
         this,
@@ -548,20 +662,20 @@ private fun showNotification() {
         PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
     )
 
-    // 4. Notification Builder 생성
+    // 4. Create Notification Builder (Notification Builder 생성)
     val builder = NotificationCompat.Builder(this, "channel_id").apply {
-        setContentTitle("제목")
-        setContentText("내용")
+        setContentTitle("Title") // (제목)
+        setContentText("Content") // (내용)
         setSmallIcon(R.drawable.ic_notification)
         setAutoCancel(true)
         setContentIntent(pendingIntent)
     }
 
-    // 5. Notification 표시
+    // 5. Display Notification (Notification 표시)
     notificationManager.notify(1, builder.build())
 }
 
-// 진행률 알림 - 복잡한 구현
+// Progress notification - Complex implementation (진행률 알림 - 복잡한 구현)
 private var progressBuilder: NotificationCompat.Builder? = null
 
 @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
@@ -570,8 +684,8 @@ private fun showProgressNotification(progress: Int) {
 
     if (progressBuilder == null) {
         progressBuilder = NotificationCompat.Builder(this, "channel_id").apply {
-            setContentTitle("다운로드 중")
-            setContentText("파일 다운로드")
+            setContentTitle("Downloading") // (다운로드 중)
+            setContentText("File Download") // (파일 다운로드)
             setSmallIcon(R.drawable.ic_download)
             setOngoing(true)
             setPriority(NotificationCompat.PRIORITY_LOW)
@@ -582,6 +696,15 @@ private fun showProgressNotification(progress: Int) {
     notificationManager.notify(2, progressBuilder!!.build())
 }
 ```
+**Issues (문제점):**
+- Manual Channel creation, Builder setup, and PendingIntent
+- SDK version branching required (Android 8.0+)
+- Must manage Builder reference directly for progress notifications
+- Memory leak risk (Storing Builder reference)
+
+<br>
+</br>
+
 **문제점:**
 - Channel 생성, Builder 설정, PendingIntent 모두 수동
 - SDK 버전 분기 필요 (Android 8.0+)
@@ -593,25 +716,25 @@ private fun showProgressNotification(progress: Int) {
 <summary><strong>Simple UI - Notification Controller</strong></summary>
 
 ```kotlin
-// 간단한 Notification 표시 - 한 줄
+// Simple Notification display - One line (간단한 Notification 표시 - 한 줄)
 private fun showNotification() {
     val notificationOption = SimpleNotificationOptionVo(
         notificationId = 1,
-        title = "제목",
-        content = "내용",
+        title = "Title", // (제목)
+        content = "Content", // (내용)
         smallIcon = R.drawable.ic_notification,
         isAutoCancel = true,
         clickIntent = Intent(this, MainActivity::class.java)
     )
-    getNotificationController(SimpleNotificationType.ACTIVITY).showNotification(notificationOption) // 끝!
+    getNotificationController(SimpleNotificationType.ACTIVITY).showNotification(notificationOption) // Done! (끝!)
 }
 
-// 진행률 알림 - 간단한 생성 및 업데이트
+// Progress notification - Simple creation and update (진행률 알림 - 간단한 생성 및 업데이트)
 private fun showProgressNotification() {
     val progressOption = SimpleProgressNotificationOptionVo(
         notificationId = 2,
-        title = "다운로드 중",
-        content = "파일 다운로드",
+        title = "Downloading", // (다운로드 중)
+        content = "File Download", // (파일 다운로드)
         smallIcon = R.drawable.ic_download,
         progressPercent = 0,
         onGoing = true
@@ -619,32 +742,43 @@ private fun showProgressNotification() {
     getNotificationController(SimpleNotificationType.ACTIVITY).showProgressNotification(progressOption)
 }
 
-// 진행률 업데이트 - 한 줄
+// Progress update - One line (진행률 업데이트 - 한 줄)
 private fun updateProgress(progress: Int) {
     getNotificationController(SimpleNotificationType.ACTIVITY).updateProgress(2, progress)
 }
 
-// 진행률 완료 - 한 줄
+// Progress completion - One line (진행률 완료 - 한 줄)
 private fun completeProgress() {
-    getNotificationController(SimpleNotificationType.ACTIVITY).completeProgress(2, "다운로드 완료")
+    getNotificationController(SimpleNotificationType.ACTIVITY).completeProgress(2, "Download Complete") // (다운로드 완료)
 }
 
-// BigText 스타일 알림
+// BigText style notification (BigText 스타일 알림)
 private fun showBigTextNotification() {
     val option = SimpleNotificationOptionVo(
         notificationId = 3,
-        title = "긴 텍스트 알림",
-        content = "요약 내용",
-        snippet = "매우 긴 텍스트가 여기에 표시됩니다. " +
-                 "확장하면 전체 내용을 볼 수 있습니다.",
+        title = "Long Text Notification", // (긴 텍스트 알림)
+        content = "Summary", // (요약 내용)
+        snippet = "Very long text will be displayed here. " + // (매우 긴 텍스트가 여기에 표시됩니다.)
+                 "You can see the full content when expanded.", // (확장하면 전체 내용을 볼 수 있습니다.)
         smallIcon = R.drawable.ic_notification,
         style = NotificationStyle.BIG_TEXT
     )
     getNotificationController(SimpleNotificationType.ACTIVITY).showNotification(option)
 }
 ```
+**Advantages (장점):**
+- **Dramatically simplified** (Complex setup → VO object)
+- Automatic Channel creation and management
+- Automatic PendingIntent creation (Type-specific)
+- Automatic Builder reference management (Memory leak prevention)
+- Automatic progress notification cleanup (After 30 minutes)
+- Easy support for various styles (DEFAULT, BIG_TEXT, BIG_PICTURE, PROGRESS)
+
+<br>
+</br>
+
 **장점:**
-- **큰 폭으로 간소화** (복잡한 설정 → VO 객체)
+- **대폭 간소화** (복잡한 설정 → VO 객체)
 - Channel 자동 생성 및 관리
 - PendingIntent 자동 생성 (타입별 구분)
 - Builder 참조 자동 관리 (메모리 누수 방지)
@@ -655,21 +789,21 @@ private fun showBigTextNotification() {
 <br>
 </br>
 
-### 여섯째: WiFi 정보 조회 비교
+### Sixth: WiFi Information Query Comparison (여섯째: WiFi 정보 조회 비교)
 
 <details>
-<summary><strong>순수 Android - WiFi 정보 조회</strong></summary>
+<summary><strong>Pure Android - WiFi Information Query (순수 Android - WiFi 정보 조회)</strong></summary>
 
 ```kotlin
-// 기존의 WiFi 정보 조회 방법
+// Traditional WiFi information query method (기존의 WiFi 정보 조회 방법)
 @RequiresPermission(allOf = [Manifest.permission.ACCESS_WIFI_STATE, Manifest.permission.ACCESS_NETWORK_STATE])
 private fun getWifiInfo() {
-    // 1. WifiManager 획득
+    // 1. Acquire WifiManager (WifiManager 획득)
     val wifiManager = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
 
-    // 2. SDK 버전별 분기 처리
+    // 2. SDK version-specific branching (SDK 버전별 분기 처리)
     val wifiInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-        // Android 12+ - NetworkCapabilities 사용
+        // Android 12+ - Use NetworkCapabilities (NetworkCapabilities 사용)
         val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val network = connectivityManager.activeNetwork
         val capabilities = connectivityManager.getNetworkCapabilities(network)
@@ -680,12 +814,12 @@ private fun getWifiInfo() {
             null
         }
     } else {
-        // Android 11 이하 - 구형 API
+        // Android 11 and below - Legacy API (Android 11 이하 - 구형 API)
         @Suppress("DEPRECATION")
         wifiManager.connectionInfo
     }
 
-    // 3. 정보 추출
+    // 3. Extract information (정보 추출)
     wifiInfo?.let { info ->
         val ssid = info.ssid.removeSurrounding("\"")
         val bssid = info.bssid
@@ -696,7 +830,7 @@ private fun getWifiInfo() {
     }
 }
 
-// WiFi 스캔 - 복잡한 권한 및 처리
+// WiFi scan - Complex permissions and handling (WiFi 스캔 - 복잡한 권한 및 처리)
 @RequiresPermission(allOf = [
     Manifest.permission.CHANGE_WIFI_STATE,
     Manifest.permission.ACCESS_WIFI_STATE,
@@ -705,12 +839,12 @@ private fun getWifiInfo() {
 private fun scanWifi() {
     val wifiManager = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
 
-    // 스캔 시작
+    // Start scan (스캔 시작)
     @Suppress("DEPRECATION")
     val success = wifiManager.startScan()
 
     if (success) {
-        // 스캔 결과 조회
+        // Query scan results (스캔 결과 조회)
         val results = wifiManager.scanResults
         results.forEach { result ->
             Log.d("WiFi", "SSID: ${result.SSID}, Level: ${result.level}")
@@ -718,11 +852,21 @@ private fun scanWifi() {
     }
 }
 
-// 신호 강도 레벨 계산
+// Calculate signal strength level (신호 강도 레벨 계산)
 private fun calculateSignalLevel(rssi: Int): Int {
     return WifiManager.calculateSignalLevel(rssi, 5)
 }
 ```
+**Issues (문제점):**
+- Complex SDK version-specific branching
+- Need to use both ConnectivityManager and WifiManager
+- Manual SSID quote removal
+- Manual Deprecated API suppression
+- Complex permission handling (Multiple permission combinations)
+
+<br>
+</br>
+
 **문제점:**
 - SDK 버전별 분기 처리 복잡
 - ConnectivityManager, WifiManager 모두 사용 필요
@@ -735,13 +879,13 @@ private fun calculateSignalLevel(rssi: Int): Int {
 <summary><strong>Simple UI - WiFi Controller</strong></summary>
 
 ```kotlin
-// 간단한 WiFi 정보 조회 - 한 줄
+// Simple WiFi information query - One line (간단한 WiFi 정보 조회 - 한 줄)
 @RequiresPermission(Manifest.permission.ACCESS_NETWORK_STATE)
 private fun getWifiInfo() {
-    val wifiInfo = getWifiController().getConnectionInfo() // SDK 자동 분기!
+    val wifiInfo = getWifiController().getConnectionInfo() // Auto SDK branching! (SDK 자동 분기!)
 
     wifiInfo?.let {
-        val ssid = getWifiController().getCurrentSsid() // 따옴표 자동 제거
+        val ssid = getWifiController().getCurrentSsid() // Auto quote removal (따옴표 자동 제거)
         val rssi = getWifiController().getCurrentRssi()
         val linkSpeed = getWifiController().getCurrentLinkSpeed()
 
@@ -749,7 +893,7 @@ private fun getWifiInfo() {
     }
 }
 
-// WiFi 스캔 - 간단한 호출
+// WiFi scan - Simple call (WiFi 스캔 - 간단한 호출)
 @RequiresPermission(allOf = [
     Manifest.permission.CHANGE_WIFI_STATE,
     Manifest.permission.ACCESS_WIFI_STATE,
@@ -764,7 +908,7 @@ private fun scanWifi() {
     }
 }
 
-// 신호 강도 및 연결 상태 확인
+// Check signal strength and connection status (신호 강도 및 연결 상태 확인)
 private fun checkWifiStatus() {
     val isConnected = getWifiController().isConnectedWifi()
     val isEnabled = getWifiController().isWifiEnabled()
@@ -774,23 +918,23 @@ private fun checkWifiStatus() {
     Log.d("WiFi", "Connected: $isConnected, Enabled: $isEnabled, Signal: $signalLevel/5")
 }
 
-// 현대적 네트워크 상세 정보 (API 29+)
+// Modern network detailed information (API 29+) (현대적 네트워크 상세 정보 (API 29+))
 @RequiresPermission(Manifest.permission.ACCESS_NETWORK_STATE)
 private fun getNetworkDetails() {
     val details = getWifiController().getModernNetworkDetails()
 
     details?.let {
         Log.d("WiFi", """
-            연결: ${it.isConnected}
-            인터넷: ${it.hasInternet}
-            검증됨: ${it.isValidated}
-            다운로드 속도: ${it.linkDownstreamBandwidthKbps} Kbps
-            업로드 속도: ${it.linkUpstreamBandwidthKbps} Kbps
+            Connected (연결): ${it.isConnected}
+            Internet (인터넷): ${it.hasInternet}
+            Validated (검증됨): ${it.isValidated}
+            Download Speed (다운로드 속도): ${it.linkDownstreamBandwidthKbps} Kbps
+            Upload Speed (업로드 속도): ${it.linkUpstreamBandwidthKbps} Kbps
         """.trimIndent())
     }
 }
 
-// WiFi 대역 지원 확인
+// Check WiFi band support (WiFi 대역 지원 확인)
 private fun checkWifiBands() {
     val is5GHz = getWifiController().is5GHzBandSupported()
     val is6GHz = getWifiController().is6GHzBandSupported() // API 30+
@@ -798,6 +942,17 @@ private fun checkWifiBands() {
     Log.d("WiFi", "5GHz: $is5GHz, 6GHz: $is6GHz")
 }
 ```
+**Advantages (장점):**
+- **Dramatically simplified** (Complex branching → Single call)
+- Automatic SDK version branching (Android 12+ / 11 and below)
+- Automatic SSID quote removal
+- Deprecated API handled internally
+- Convenient helper methods (getCurrentSsid, getCurrentRssi, etc.)
+- Automatic modern API support (NetworkCapabilities)
+
+<br>
+</br>
+
 **장점:**
 - **대폭 간소화** (복잡한 분기 → 단일 호출)
 - SDK 버전 자동 분기 (Android 12+ / 11 이하)
