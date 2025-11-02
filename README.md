@@ -62,7 +62,7 @@ dependencies {
 </br>
 
 ## More Information (더 많은 정보 보기)
-**[README_KR.md](README_KR.md)**
+**[README_START.md](README_START.md)**
 
 
 <br>
