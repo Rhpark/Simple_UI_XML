@@ -10,10 +10,10 @@ import androidx.lifecycle.ViewModelProvider
 
 
 /**
- * A base activityclass that uses View Binding and provides common functionality for activities with data binding.
- * Binding을 사용하하는 액티비티에 대한 공통 기능을 제공하는 기본 액티비티 클래스.
+ * A base activity class that uses View Binding and provides common functionality for activities with data binding.
+ * Binding을 사용하는 액티비티에 대한 공통 기능을 제공하는 기본 액티비티 클래스.
  *
- * This class handles thefollowing tasks:
+ * This class handles the following tasks:
  * - Inflates the layout and sets up View Binding.
  * - Sets the lifecycle owner for the binding.
  * - Provides a convenient method to obtain a ViewModel.
