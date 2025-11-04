@@ -19,9 +19,18 @@ internal class WifiConnectionInfoProvider(
 
     @RequiresPermission(ACCESS_NETWORK_STATE)
     fun getConnectionInfo(): WifiInfo? = guard.run(null) {
-        checkSdkVersion(Build.VERSION_CODES.S,
+        checkSdkVersion(Build.VERSION_CODES.Q,
             positiveWork = {
                 getConnectionInfoFromNetworkCapabilities()
+                    ?: run {
+                        checkSdkVersion(Build.VERSION_CODES.S,
+                            positiveWork = { null },
+                            negativeWork = {
+                                @Suppress("DEPRECATION")
+                                wifiManager.connectionInfo?.takeUnless { it.ssid == WifiManager.UNKNOWN_SSID }
+                            }
+                        )
+                    }
             },
             negativeWork = {
                 @Suppress("DEPRECATION")
@@ -31,7 +40,7 @@ internal class WifiConnectionInfoProvider(
     }
 
     @RequiresPermission(ACCESS_NETWORK_STATE)
-    private fun getConnectionInfoFromNetworkCapabilities(): WifiInfo? = guard.run(null) {
+    public fun getConnectionInfoFromNetworkCapabilities(): WifiInfo? = guard.run(null) {
         val network = connectivityManager.activeNetwork ?: return@run null
         val caps = connectivityManager.getNetworkCapabilities(network) ?: return@run null
         if (!caps.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) return@run null
@@ -46,26 +55,6 @@ internal class WifiConnectionInfoProvider(
                 wifiManager.connectionInfo?.takeUnless { it.ssid == WifiManager.UNKNOWN_SSID }
             }
         )
-    }
-
-    @RequiresPermission(ACCESS_NETWORK_STATE)
-    fun getCurrentSsid(): String? = guard.run(null) {
-        getConnectionInfo()?.ssid?.removeSurrounding("\"")
-    }
-
-    @RequiresPermission(ACCESS_NETWORK_STATE)
-    fun getCurrentBssid(): String? = guard.run(null) {
-        getConnectionInfo()?.bssid
-    }
-
-    @RequiresPermission(ACCESS_NETWORK_STATE)
-    fun getCurrentRssi(): Int = guard.run(-127) {
-        getConnectionInfo()?.rssi ?: -127
-    }
-
-    @RequiresPermission(ACCESS_NETWORK_STATE)
-    fun getCurrentLinkSpeed(): Int = guard.run(0) {
-        getConnectionInfo()?.linkSpeed ?: 0
     }
 
     @RequiresPermission(ACCESS_NETWORK_STATE)
@@ -96,11 +85,5 @@ internal class WifiConnectionInfoProvider(
             },
             negativeWork = { null }
         )
-    }
-
-    @RequiresPermission(ACCESS_NETWORK_STATE)
-    fun isConnectedWifi(): Boolean = guard.run(false) {
-        val networkCapabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
-        networkCapabilities?.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ?: false
     }
 }

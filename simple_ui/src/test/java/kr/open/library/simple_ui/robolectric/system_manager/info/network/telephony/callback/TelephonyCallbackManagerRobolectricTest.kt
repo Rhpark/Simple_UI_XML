@@ -1,255 +1,272 @@
 package kr.open.library.simple_ui.robolectric.system_manager.info.network.telephony.callback
 
+import android.Manifest
+import android.app.Application
 import android.content.Context
+import android.os.Build
+import android.telephony.PhoneStateListener
+import android.telephony.ServiceState
+import android.telephony.SignalStrength
+import android.telephony.SubscriptionInfo
+import android.telephony.SubscriptionManager
+import android.telephony.TelephonyCallback
+import android.telephony.TelephonyManager
 import androidx.test.core.app.ApplicationProvider
+import kr.open.library.simple_ui.system_manager.info.network.telephony.callback.CommonTelephonyCallback
 import kr.open.library.simple_ui.system_manager.info.network.telephony.callback.TelephonyCallbackManager
-import org.junit.Assert.assertNotNull
+import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.ArgumentCaptor
+import org.mockito.ArgumentMatchers.eq
+import org.mockito.Mockito.doReturn
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.verify
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.Shadows
 import org.robolectric.annotation.Config
+import java.util.concurrent.Executor
 
-/**
- * Robolectric test for TelephonyCallbackManager
- *
- * Purpose: 콜백 관리 기능 테스트
- * Test callback management functions
- */
 @RunWith(RobolectricTestRunner::class)
-@Config(sdk = [33])
+@Config(sdk = [Build.VERSION_CODES.S])
 class TelephonyCallbackManagerRobolectricTest {
 
+    private lateinit var application: Application
     private lateinit var context: Context
+    private lateinit var telephonyManager: TelephonyManager
+    private lateinit var subscriptionManager: SubscriptionManager
     private lateinit var callbackManager: TelephonyCallbackManager
 
     @Before
     fun setUp() {
-        context = ApplicationProvider.getApplicationContext()
-        callbackManager = TelephonyCallbackManager(context)
-    }
+        application = ApplicationProvider.getApplicationContext()
+        context = application
+        telephonyManager = mock(TelephonyManager::class.java)
+        subscriptionManager = mock(SubscriptionManager::class.java)
 
-    // =================================================
-    // Public Fields Tests
-    // =================================================
-
-    @Test
-    fun telephonyManager_isAccessible() {
-        // When
-        val manager = callbackManager.telephonyManager
-
-        // Then: TelephonyManager 객체 존재
-        assertNotNull(manager)
-    }
-
-    @Test
-    fun subscriptionManager_isAccessible() {
-        // When
-        val manager = callbackManager.subscriptionManager
-
-        // Then: SubscriptionManager 객체 존재
-        assertNotNull(manager)
-    }
-
-    @Test
-    fun currentSignalStrength_stateFlowExists() {
-        // When
-        val stateFlow = callbackManager.currentSignalStrength
-
-        // Then: StateFlow 객체 존재
-        assertNotNull(stateFlow)
-    }
-
-    @Test
-    fun currentServiceState_stateFlowExists() {
-        // When
-        val stateFlow = callbackManager.currentServiceState
-
-        // Then: StateFlow 객체 존재
-        assertNotNull(stateFlow)
-    }
-
-    @Test
-    fun currentNetworkState_stateFlowExists() {
-        // When
-        val stateFlow = callbackManager.currentNetworkState
-
-        // Then: StateFlow 객체 존재
-        assertNotNull(stateFlow)
-    }
-
-    // =================================================
-    // Simple Callback API Tests
-    // =================================================
-
-    @Test
-    fun registerSimpleCallback_doesNotCrash() {
-        // When
-        val result = callbackManager.registerSimpleCallback(
-            handler = null,
-            onSignalStrengthChanged = {},
-            onServiceStateChanged = {},
-            onNetworkStateChanged = {}
+        val shadowApp = Shadows.shadowOf(application)
+        shadowApp.grantPermissions(
+            Manifest.permission.READ_PHONE_STATE,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.READ_PHONE_NUMBERS
         )
+        shadowApp.setSystemService(Context.TELEPHONY_SERVICE, telephonyManager)
+        shadowApp.setSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE, subscriptionManager)
 
-        // Then: 등록 성공 또는 권한 없음
-        // Cleanup
-        callbackManager.unregisterSimpleCallback()
+        callbackManager = TelephonyCallbackManager(context)
+        callbackManager.refreshPermissions()
     }
 
     @Test
-    fun unregisterSimpleCallback_doesNotCrash() {
-        // Given: 콜백 등록
+    fun registerSimpleCallback_onS_updatesStateFlowsAndInvokesLambda() {
+        val signal = mock(SignalStrength::class.java)
+        val serviceState = ServiceState()
+        var emittedSignal: SignalStrength? = null
+        var emittedService: ServiceState? = null
+
+        val registered = callbackManager.registerSimpleCallback(
+            onSignalStrengthChanged = { emittedSignal = it },
+            onServiceStateChanged = { emittedService = it }
+        )
+        assertTrue(registered)
+
+        val executorCaptor = ArgumentCaptor.forClass(Executor::class.java)
+        val callbackCaptor = ArgumentCaptor.forClass(TelephonyCallback::class.java)
+        verify(telephonyManager).registerTelephonyCallback(executorCaptor.capture(), callbackCaptor.capture())
+
+        val telephonyCallback = callbackCaptor.value as CommonTelephonyCallback.BaseTelephonyCallback
+        telephonyCallback.onSignalStrengthsChanged(signal)
+        telephonyCallback.onServiceStateChanged(serviceState)
+
+        assertSame(signal, emittedSignal)
+        assertSame(signal, callbackManager.currentSignalStrength.value)
+        assertSame(serviceState, emittedService)
+        assertSame(serviceState, callbackManager.currentServiceState.value)
+    }
+
+    @Test
+    @Config(sdk = [Build.VERSION_CODES.P])
+    fun registerSimpleCallback_onPreS_usesLegacyPhoneStateListener() {
+        // Re-run setup under pre-S configuration
+        setUp()
+
+        val registered = callbackManager.registerSimpleCallback()
+        assertTrue(registered)
+
+        val listenerCaptor = ArgumentCaptor.forClass(PhoneStateListener::class.java)
+        val eventsCaptor = ArgumentCaptor.forClass(Int::class.java)
+        verify(telephonyManager).listen(listenerCaptor.capture(), eventsCaptor.capture())
+
+        val expectedEvents =
+            PhoneStateListener.LISTEN_SIGNAL_STRENGTHS or
+                    PhoneStateListener.LISTEN_SERVICE_STATE or
+                    PhoneStateListener.LISTEN_DATA_CONNECTION_STATE
+        assertEquals(expectedEvents, eventsCaptor.value.toInt())
+        assertTrue(listenerCaptor.value is PhoneStateListener)
+    }
+
+    @Test
+    fun unregisterSimpleCallback_withoutRegistration_returnsFalse() {
+        assertFalse(callbackManager.unregisterSimpleCallback())
+    }
+
+    @Test
+    fun unregisterSimpleCallback_onS_callsTelephonyManagerUnregister() {
         callbackManager.registerSimpleCallback()
 
-        // When
         val result = callbackManager.unregisterSimpleCallback()
 
-        // Then: 크래시 없이 실행됨
+        assertTrue(result)
+        assertFalse(callbackManager.unregisterSimpleCallback())
     }
 
     @Test
-    fun unregisterSimpleCallback_withoutRegistration_doesNotCrash() {
-        // When: 등록 없이 해제
-        val result = callbackManager.unregisterSimpleCallback()
+    fun registerAdvancedCallbackFromDefaultUSim_registersSlotManagers() {
+        val subscriptionInfo = mock(SubscriptionInfo::class.java)
+        val slotTelephonyManager = mock(TelephonyManager::class.java)
+        doReturn(0).`when`(subscriptionInfo).simSlotIndex
+        doReturn(5).`when`(subscriptionInfo).subscriptionId
+        doReturn(listOf(subscriptionInfo)).`when`(subscriptionManager).activeSubscriptionInfoList
+        doReturn(slotTelephonyManager).`when`(telephonyManager).createForSubscriptionId(5)
 
-        // Then: false 반환 또는 크래시 없음
-    }
+        var collectedSubId = -1
+        val executor = Executor { runnable -> runnable.run() }
 
-    // =================================================
-    // Signal/Service State Getters Tests
-    // =================================================
+        callbackManager.clearMultiSimState()
+        callbackManager.forceUpdateMultiSimData()
 
-    @Test
-    fun getCurrentSignalStrength_doesNotCrash() {
-        // When
-        val result = callbackManager.getCurrentSignalStrength()
+        val registered = callbackManager.registerAdvancedCallbackFromDefaultUSim(
+            executor = executor,
+            isGpsOn = false,
+            onActiveDataSubId = { collectedSubId = it }
+        )
+        assertTrue(registered)
 
-        // Then: null이거나 SignalStrength 객체
-    }
+        val callbackCaptor = ArgumentCaptor.forClass(TelephonyCallback::class.java)
+        verify(slotTelephonyManager).registerTelephonyCallback(eq(executor), callbackCaptor.capture())
 
-    @Test
-    fun getCurrentServiceState_doesNotCrash() {
-        // When
-        val result = callbackManager.getCurrentServiceState()
+        val slotCallback = callbackCaptor.value as CommonTelephonyCallback.BaseTelephonyCallback
+        slotCallback.onActiveDataSubscriptionIdChanged(7)
+        assertEquals(7, collectedSubId)
 
-        // Then: null이거나 ServiceState 객체
-    }
+        assertTrue(callbackManager.isRegistered(0))
+        assertSame(slotTelephonyManager, callbackManager.getTelephonyManagerFromUSim(0))
 
-    // =================================================
-    // Advanced Callback API Tests (API 31+ required)
-    // =================================================
-
-    @Test
-    fun registerAdvancedCallbackFromDefaultUSim_doesNotCrash() {
-        // API 31+ 테스트는 Robolectric 환경에 따라 다를 수 있음
-        // 크래시 없이 실행되는지만 확인
-    }
-
-    @Test
-    fun registerAdvancedCallback_doesNotCrash() {
-        // API 31+ 테스트는 Robolectric 환경에 따라 다를 수 있음
-        // 크래시 없이 실행되는지만 확인
+        callbackManager.unregisterAdvancedCallback(0)
+        assertFalse(callbackManager.isRegistered(0))
     }
 
     @Test
-    fun unregisterAdvancedCallback_doesNotCrash() {
-        // When: 슬롯 0번 콜백 해제
-        // API 31+ 필요하므로 try-catch 처리
-        try {
-            callbackManager.unregisterAdvancedCallback(0)
-        } catch (e: Exception) {
-            // API 버전 문제로 실패 가능
-        }
+    fun registerAdvancedCallbackFromDefaultUSim_withGps_usesGpsCallback() {
+        val subscriptionInfo = mock(SubscriptionInfo::class.java)
+        val slotTelephonyManager = mock(TelephonyManager::class.java)
+        doReturn(0).`when`(subscriptionInfo).simSlotIndex
+        doReturn(9).`when`(subscriptionInfo).subscriptionId
+        doReturn(listOf(subscriptionInfo)).`when`(subscriptionManager).activeSubscriptionInfoList
+        doReturn(slotTelephonyManager).`when`(telephonyManager).createForSubscriptionId(9)
 
-        // Then: 크래시 없이 실행됨
-    }
+        val executor = Executor { it.run() }
+        callbackManager.clearMultiSimState()
+        callbackManager.forceUpdateMultiSimData()
 
-    // =================================================
-    // Individual Callback Setters Tests
-    // =================================================
+        val registered = callbackManager.registerAdvancedCallbackFromDefaultUSim(
+            executor = executor,
+            isGpsOn = true
+        )
+        assertTrue(registered)
 
-    @Test
-    fun setOnSignalStrength_doesNotCrash() {
-        // When
-        callbackManager.setOnSignalStrength(0) { }
-
-        // Then: 크래시 없이 실행됨
-    }
-
-    @Test
-    fun setOnServiceState_doesNotCrash() {
-        // When
-        callbackManager.setOnServiceState(0) { }
-
-        // Then: 크래시 없이 실행됨
+        val callbackCaptor = ArgumentCaptor.forClass(TelephonyCallback::class.java)
+        verify(slotTelephonyManager).registerTelephonyCallback(eq(executor), callbackCaptor.capture())
+        val callbackClass = callbackCaptor.value::class.qualifiedName
+        assertTrue(callbackClass?.contains("BaseGpsTelephonyCallback") == true)
     }
 
     @Test
-    fun setOnActiveDataSubId_doesNotCrash() {
-        // When
-        callbackManager.setOnActiveDataSubId(0) { }
+    fun registerAdvancedCallbackFromDefaultUSim_whenNoSim_returnsFalse() {
+        doReturn(emptyList<SubscriptionInfo>()).`when`(subscriptionManager).activeSubscriptionInfoList
+        callbackManager.clearMultiSimState()
+        callbackManager.forceUpdateMultiSimData()
+        assertFalse(
+            callbackManager.registerAdvancedCallbackFromDefaultUSim(
+                executor = Executor { it.run() },
+                isGpsOn = false
+            )
+        )
+    }
 
-        // Then: 크래시 없이 실행됨
+    @Test(expected = IllegalStateException::class)
+    fun registerAdvancedCallback_whenSlotMissing_throws() {
+        callbackManager.clearMultiSimState()
+        callbackManager.registerAdvancedCallback(
+            simSlotIndex = 10,
+            executor = Executor { it.run() },
+            isGpsOn = false
+        )
     }
 
     @Test
-    fun setOnDataConnectionState_doesNotCrash() {
-        // When
-        callbackManager.setOnDataConnectionState(0) { _, _ -> }
-
-        // Then: 크래시 없이 실행됨
+    fun unregisterAdvancedCallback_whenSlotMissing_doesNotThrow() {
+        callbackManager.unregisterAdvancedCallback(99)
     }
 
     @Test
-    fun setOnCellInfo_doesNotCrash() {
-        // When
-        callbackManager.setOnCellInfo(0) { }
-
-        // Then: 크래시 없이 실행됨
+    fun setCallbacks_whenSlotMissing_doesNothing() {
+        callbackManager.setOnSignalStrength(42) { }
+        callbackManager.setOnServiceState(42) { }
+        callbackManager.setOnActiveDataSubId(42) { }
+        callbackManager.setOnDataConnectionState(42) { _, _ -> }
+        callbackManager.setOnCellInfo(42) { }
+        callbackManager.setOnCallState(42) { _, _ -> }
+        callbackManager.setOnDisplayState(42) { }
+        callbackManager.setOnTelephonyNetworkType(42) { }
     }
 
     @Test
-    fun setOnCallState_doesNotCrash() {
-        // When
-        callbackManager.setOnCallState(0) { _, _ -> }
+    fun onDestroy_unregistersCallbacksSafely() {
+        val subscriptionInfo = mock(SubscriptionInfo::class.java)
+        val slotTelephonyManager = mock(TelephonyManager::class.java)
+        doReturn(0).`when`(subscriptionInfo).simSlotIndex
+        doReturn(11).`when`(subscriptionInfo).subscriptionId
+        doReturn(listOf(subscriptionInfo)).`when`(subscriptionManager).activeSubscriptionInfoList
+        doReturn(slotTelephonyManager).`when`(telephonyManager).createForSubscriptionId(11)
 
-        // Then: 크래시 없이 실행됨
+        callbackManager.forceUpdateMultiSimData()
+        callbackManager.registerSimpleCallback()
+        callbackManager.registerAdvancedCallbackFromDefaultUSim(Executor { it.run() }, isGpsOn = false)
+
+        callbackManager.onDestroy()
+        assertFalse(callbackManager.isRegistered(0))
     }
 
     @Test
-    fun setOnDisplayState_doesNotCrash() {
-        // When
-        callbackManager.setOnDisplayState(0) { }
+    fun initializeMultiSimSupport_withoutPermission_doesNotPopulate() {
+        val shadowApp = Shadows.shadowOf(application)
+        shadowApp.denyPermissions(Manifest.permission.READ_PHONE_STATE)
 
-        // Then: 크래시 없이 실행됨
+        val manager = TelephonyCallbackManager(application)
+        manager.refreshPermissions()
+        assertFalse(manager.isRegistered(0))
+
+        shadowApp.grantPermissions(Manifest.permission.READ_PHONE_STATE)
     }
 
-    @Test
-    fun setOnTelephonyNetworkType_doesNotCrash() {
-        // When
-        callbackManager.setOnTelephonyNetworkType(0) { }
-
-        // Then: 크래시 없이 실행됨
+    private fun TelephonyCallbackManager.forceUpdateMultiSimData() {
+        val method = TelephonyCallbackManager::class.java.getDeclaredMethod("updateUSimTelephonyManagerList")
+        method.isAccessible = true
+        method.invoke(this)
     }
 
-    // =================================================
-    // Utility Tests
-    // =================================================
+    private fun TelephonyCallbackManager.clearMultiSimState() {
+        val managerField = TelephonyCallbackManager::class.java.getDeclaredField("uSimTelephonyManagerList")
+        managerField.isAccessible = true
+        val callbackField = TelephonyCallbackManager::class.java.getDeclaredField("uSimTelephonyCallbackList")
+        callbackField.isAccessible = true
+        val registeredField = TelephonyCallbackManager::class.java.getDeclaredField("isRegistered")
+        registeredField.isAccessible = true
 
-    @Test
-    fun isRegistered_doesNotCrash() {
-        // When
-        val result = callbackManager.isRegistered(0)
-
-        // Then: boolean 반환
-    }
-
-    @Test
-    fun getTelephonyManagerFromUSim_doesNotCrash() {
-        // When
-        val result = callbackManager.getTelephonyManagerFromUSim(0)
-
-        // Then: null이거나 TelephonyManager 객체
+        (managerField.get(this) as android.util.SparseArray<*>).clear()
+        (callbackField.get(this) as android.util.SparseArray<*>).clear()
+        (registeredField.get(this) as android.util.SparseBooleanArray).clear()
     }
 }

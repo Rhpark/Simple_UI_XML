@@ -10,7 +10,7 @@ public fun TextView.getString(): String = this.text.toString()
 
 public fun TextView.isTextEmpty(): Boolean = this.getString().isEmpty()
 
-public fun TextView.isTextNullOrEmpty(): Boolean = this.getString().isNullOrEmpty()
+public fun TextView.isTextNullOrEmpty(): Boolean = this.getString().isEmpty()
 
 public fun TextView.textToInt(): Int? = this.text.toString().toIntOrNull()
 

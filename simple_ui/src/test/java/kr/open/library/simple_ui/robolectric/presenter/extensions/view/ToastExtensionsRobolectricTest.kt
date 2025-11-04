@@ -3,6 +3,7 @@ package kr.open.library.simple_ui.robolectric.presenter.extensions.view
 import android.content.Context
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.test.core.app.ApplicationProvider
 import kr.open.library.simple_ui.presenter.extensions.view.toastLong
 import kr.open.library.simple_ui.presenter.extensions.view.toastShort
@@ -120,28 +121,28 @@ class ToastExtensionsRobolectricTest {
 
     @Test
     fun fragment_toastShowShort_withContext_showsToast() {
+        val activity = Robolectric.buildActivity(FragmentActivity::class.java).create().start().resume().get()
         val fragment = Fragment()
-        // Fragment의 context를 직접 설정 (Robolectric FragmentScenario 대신 간단한 방법)
-        // Fragment.requireContext()를 모킹하는 대신, context가 있는 상태를 가정
+        activity.supportFragmentManager.beginTransaction()
+            .add(fragment, "test")
+            .commitNow()
 
         val message = "Fragment Short"
-
-        // Fragment context가 null이 아닐 때는 정상 동작
-        // 실제 테스트는 Context 기반 함수로 대체 가능
-        context.toastShowShort(message)
+        fragment.toastShowShort(message)
 
         assertEquals(message, ShadowToast.getTextOfLatestToast())
     }
 
     @Test
     fun fragment_toastShowLong_withContext_showsToast() {
+        val activity = Robolectric.buildActivity(FragmentActivity::class.java).create().start().resume().get()
         val fragment = Fragment()
+        activity.supportFragmentManager.beginTransaction()
+            .add(fragment, "test")
+            .commitNow()
 
         val message = "Fragment Long"
-
-        // Fragment context가 null이 아닐 때는 정상 동작
-        // 실제 테스트는 Context 기반 함수로 대체 가능
-        context.toastShowLong(message)
+        fragment.toastShowLong(message)
 
         assertEquals(message, ShadowToast.getTextOfLatestToast())
     }

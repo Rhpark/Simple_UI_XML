@@ -10,8 +10,10 @@ import kr.open.library.simple_ui.presenter.extensions.view.centerInside
 import kr.open.library.simple_ui.presenter.extensions.view.clearTint
 import kr.open.library.simple_ui.presenter.extensions.view.fitCenter
 import kr.open.library.simple_ui.presenter.extensions.view.fitXY
+import kr.open.library.simple_ui.presenter.extensions.view.load
 import kr.open.library.simple_ui.presenter.extensions.view.makeGrayscale
 import kr.open.library.simple_ui.presenter.extensions.view.removeGrayscale
+import kr.open.library.simple_ui.presenter.extensions.view.setImageDrawableRes
 import kr.open.library.simple_ui.presenter.extensions.view.setTint
 import kr.open.library.simple_ui.presenter.extensions.view.style
 import org.junit.Assert.assertEquals
@@ -35,6 +37,21 @@ class ImageViewExtensionsRobolectricTest {
     fun setUp() {
         context = ApplicationProvider.getApplicationContext()
         imageView = ImageView(context)
+    }
+
+    // setImageDrawableRes() 테스트
+    @Test
+    fun setImageDrawableRes_withValidResource_setsDrawable() {
+        imageView.setImageDrawableRes(android.R.drawable.ic_delete)
+
+        assertNotNull(imageView.drawable)
+    }
+
+    @Test
+    fun setImageDrawableRes_returnsImageView() {
+        val result = imageView.setImageDrawableRes(android.R.drawable.ic_delete)
+
+        assertEquals(imageView, result)
     }
 
     // setTint() 테스트 - 시스템 리소스 사용
@@ -203,5 +220,51 @@ class ImageViewExtensionsRobolectricTest {
 
         assertEquals(ImageView.ScaleType.FIT_CENTER, imageView.scaleType)
         assertNotNull(imageView.colorFilter)
+    }
+
+    // load() 테스트
+    @Test
+    fun load_withDrawableOnly_setsDrawable() {
+        imageView.load(android.R.drawable.ic_menu_search)
+
+        assertNotNull(imageView.drawable)
+    }
+
+    @Test
+    fun load_withBlock_appliesTransformations() {
+        imageView.load(android.R.drawable.ic_delete) {
+            setTint(android.R.color.black)
+            centerCrop()
+        }
+
+        assertNotNull(imageView.drawable)
+        assertNotNull(imageView.colorFilter)
+        assertEquals(ImageView.ScaleType.CENTER_CROP, imageView.scaleType)
+    }
+
+    @Test
+    fun load_withNullBlock_onlySetsDrawable() {
+        imageView.load(android.R.drawable.ic_delete, null)
+
+        assertNotNull(imageView.drawable)
+    }
+
+    @Test
+    fun load_returnsImageView() {
+        val result = imageView.load(android.R.drawable.ic_delete)
+
+        assertEquals(imageView, result)
+    }
+
+    @Test
+    fun load_chainingWorks() {
+        imageView.load(android.R.drawable.ic_delete) {
+            centerCrop()
+        }.load(android.R.drawable.ic_menu_search) {
+            fitCenter()
+        }
+
+        assertEquals(ImageView.ScaleType.FIT_CENTER, imageView.scaleType)
+        assertNotNull(imageView.drawable)
     }
 }

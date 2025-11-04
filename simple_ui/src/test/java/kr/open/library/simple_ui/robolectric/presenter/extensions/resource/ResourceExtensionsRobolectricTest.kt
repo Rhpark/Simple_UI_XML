@@ -5,9 +5,12 @@ import android.graphics.Color
 import androidx.test.core.app.ApplicationProvider
 import kr.open.library.simple_ui.presenter.extensions.resource.getColorCompat
 import kr.open.library.simple_ui.presenter.extensions.resource.getColorSafe
+import kr.open.library.simple_ui.presenter.extensions.resource.getDimensionPixelOffset
+import kr.open.library.simple_ui.presenter.extensions.resource.getDimensionPixelSize
 import kr.open.library.simple_ui.presenter.extensions.resource.getDrawableCompat
 import kr.open.library.simple_ui.presenter.extensions.resource.getDrawableSafe
 import kr.open.library.simple_ui.presenter.extensions.resource.getInteger
+import kr.open.library.simple_ui.presenter.extensions.resource.getStringArray
 import kr.open.library.simple_ui.presenter.extensions.resource.getStringFormatted
 import kr.open.library.simple_ui.presenter.extensions.resource.getStringSafe
 import org.junit.Assert.assertEquals
@@ -79,6 +82,42 @@ class ResourceExtensionsRobolectricTest {
 
         // White color should have high alpha
         assertTrue(Color.alpha(color) > 0)
+    }
+
+    // ========================================
+    // getDimensionPixelSize Tests
+    // ========================================
+
+    @Test
+    fun getDimensionPixelSize_withSystemResource_returnsSize() {
+        // Using system dimen resources
+        val size = context.getDimensionPixelSize(android.R.dimen.app_icon_size)
+
+        assertTrue(size > 0)
+    }
+
+    // ========================================
+    // getDimensionPixelOffset Tests
+    // ========================================
+
+    @Test
+    fun getDimensionPixelOffset_withSystemResource_returnsOffset() {
+        val offset = context.getDimensionPixelOffset(android.R.dimen.app_icon_size)
+
+        assertTrue(offset > 0)
+    }
+
+    // ========================================
+    // getStringArray Tests
+    // ========================================
+
+    @Test
+    fun getStringArray_withSystemResource_returnsArray() {
+        // Using Android system string array
+        val array = context.getStringArray(android.R.array.emailAddressTypes)
+
+        assertNotNull(array)
+        assertTrue(array.isNotEmpty())
     }
 
     // ========================================
