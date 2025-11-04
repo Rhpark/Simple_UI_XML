@@ -50,7 +50,7 @@ public open class WifiController(context: Context) : BaseSystemService(
     private val connectivityManager by lazy { context.getConnectivityManager() }
 
     private val operationGuard = WifiOperationGuard { defaultValue, block ->
-        guard(defaultValue, block)
+        guardAny(defaultValue, block)
     }
     private val stateController by lazy { WifiStateController(wifiManager, operationGuard) }
     private val connectionCommander by lazy { WifiConnectionCommander(wifiManager, operationGuard) }
@@ -59,8 +59,8 @@ public open class WifiController(context: Context) : BaseSystemService(
     }
     private val capabilityChecker by lazy { WifiCapabilityChecker(wifiManager, operationGuard) }
 
-    private fun <T> guard(defaultValue: T, block: () -> T): T =
-        tryCatchSystemManager(defaultValue, block)
+    private fun guardAny(defaultValue: Any?, block: () -> Any?): Any? =
+        tryCatchSystemManager(defaultValue) { block() }
 
     /**
      * WiFi 활성화 여부를 확인합니다.
