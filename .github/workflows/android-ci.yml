@@ -8,7 +8,7 @@ on:
       - 'v*.*.*'        # 태그 푸시 시 배포 파이프라인도 돌 수 있게
   pull_request:
     branches: [ master ]
-    release:
+  release:
     types: [ published ] # Release Published 이벤트에도 배포
   workflow_dispatch:
 
