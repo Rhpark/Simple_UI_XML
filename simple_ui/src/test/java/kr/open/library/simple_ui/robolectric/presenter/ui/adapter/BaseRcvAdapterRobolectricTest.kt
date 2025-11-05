@@ -15,6 +15,7 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
+import java.util.concurrent.Executor
 
 /**
  * Robolectric tests for BaseRcvAdapter
@@ -37,8 +38,10 @@ class BaseRcvAdapterRobolectricTest {
     // Test data class
     data class TestItem(val id: Int, val name: String)
 
-    // Test adapter implementation
-    private class TestAdapter : BaseRcvAdapter<TestItem, TestViewHolder>() {
+    // Test adapter implementation with synchronous executor for deterministic testing
+    private class TestAdapter(
+        testExecutor: Executor = Executor { it.run() }
+    ) : BaseRcvAdapter<TestItem, TestViewHolder>(testExecutor) {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TestViewHolder {
             val view = View(parent.context)
             return TestViewHolder(view)
@@ -177,15 +180,20 @@ class BaseRcvAdapterRobolectricTest {
         // Given
         adapter.addItem(TestItem(2, "Item 2"))
         shadowOf(Looper.getMainLooper()).idle()
+        shadowOf(Looper.getMainLooper()).idle()
+
         val newItem = TestItem(1, "Item 1")
 
         // When
         val result = adapter.addItemAt(0, newItem)
         shadowOf(Looper.getMainLooper()).idle()
+        shadowOf(Looper.getMainLooper()).idle()
 
         // Then
         assertTrue(result)
+        assertEquals(2, adapter.itemCount)
         assertEquals(newItem, adapter.getItem(0))
+        assertEquals(TestItem(2, "Item 2"), adapter.getItem(1))
     }
 
     @Test
@@ -572,6 +580,7 @@ class BaseRcvAdapterRobolectricTest {
         )
         adapter.setItems(initialResults)
         shadowOf(Looper.getMainLooper()).idle()
+        shadowOf(Looper.getMainLooper()).idle()
 
         // When - New search query
         val newResults = listOf(
@@ -580,10 +589,12 @@ class BaseRcvAdapterRobolectricTest {
         )
         adapter.setItems(newResults)
         shadowOf(Looper.getMainLooper()).idle()
+        shadowOf(Looper.getMainLooper()).idle()
 
         // Then
         assertEquals(2, adapter.itemCount)
         assertEquals(newResults[0], adapter.getItem(0))
+        assertEquals(newResults[1], adapter.getItem(1))
     }
 
     // ==============================================

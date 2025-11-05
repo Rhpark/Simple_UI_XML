@@ -102,7 +102,11 @@ kover {
         // HTML 리포트 설정 (로컬에서 확인용)
         filters {
             excludes {
-                // 1. Android 자동생성 파일
+
+                /****************
+                 * 자동 파일 생성 *
+                 *  테스트 금지   *
+                 ****************/
                 classes("**.BuildConfig")
                 classes("**.R")
                 classes("**.R$*")
@@ -153,31 +157,18 @@ kover {
                 classes("kr.open.library.simple_ui.logcat.internal.stacktrace.LogxStackTraceMetaData*")
                 classes("kr.open.library.simple_ui.logcat.runtime.LogxWriter*")
 
-                classes("kr.open.library.simple_ui.permissions.extentions.PermissionExtensionsKt*")
-                classes("kr.open.library.simple_ui.permissions.manager.PermissionManager*")
-                classes("kr.open.library.simple_ui.permissions.register.PermissionDelegate*")
                 classes("kr.open.library.simple_ui.permissions.vo.PermissionConstants*")
                 classes("kr.open.library.simple_ui.permissions.vo.PermissionSpecialType*")
 
-//                classes("kr.open.library.simple_ui.presenter.extensions.display.DisplayUnitExtensionsKt*")
-//                classes("kr.open.library.simple_ui.presenter.extensions.resource.ResourceExtensionsKt*")
-//                classes("kr.open.library.simple_ui.presenter.extensions.view.EditTextExtensionsKt*")
                 classes("kr.open.library.simple_ui.presenter.extensions.view.ViewAnimExtensionsKt*")
                 classes("kr.open.library.simple_ui.presenter.extensions.view.ViewLayoutExtensionsKt*")
-//                classes("kr.open.library.simple_ui.presenter.extensions.view.ImageViewExtensionsKt*")
                 classes("kr.open.library.simple_ui.presenter.extensions.view.SnackBarExtensionsKt*")
-//                classes("kr.open.library.simple_ui.presenter.extensions.view.TextViewExtensionsKt*")
-//                classes("kr.open.library.simple_ui.presenter.extensions.view.ToastExtensionsKt*")
 
-                classes("kr.open.library.simple_ui.presenter.ui.adapter.list.base.BaseRcvListAdapter*")
-                classes("kr.open.library.simple_ui.presenter.ui.adapter.list.diffutil.RcvListDiffUtilCallBack*")
                 classes("kr.open.library.simple_ui.presenter.ui.adapter.list.simple.SimpleBindingRcvListAdapter*")
                 classes("kr.open.library.simple_ui.presenter.ui.adapter.list.simple.SimpleRcvListAdapter*")
-                classes("kr.open.library.simple_ui.presenter.ui.adapter.normal.base.BaseRcvAdapter*")
                 classes("kr.open.library.simple_ui.presenter.ui.adapter.normal.simple.SimpleBindingRcvAdapter*")
                 classes("kr.open.library.simple_ui.presenter.ui.adapter.normal.simple.SimpleRcvAdapter*")
-                classes("kr.open.library.simple_ui.presenter.ui.adapter.viewholder.BaseBindingRcvViewHolder*")
-                classes("kr.open.library.simple_ui.presenter.ui.adapter.viewholder.BaseRcvViewHolder*")
+
                 classes("kr.open.library.simple_ui.presenter.ui.fragment.dialog.RootDialogFragment*")
                 classes("kr.open.library.simple_ui.presenter.ui.view.recyclerview.RecyclerScrollStateView*")
                 classes("kr.open.library.simple_ui.presenter.viewmodel.BaseViewModel*")

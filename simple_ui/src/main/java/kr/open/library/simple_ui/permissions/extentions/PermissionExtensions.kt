@@ -12,10 +12,8 @@ import android.os.Environment
 import android.os.PowerManager
 import android.os.Process
 import android.provider.Settings
-import androidx.annotation.RequiresPermission
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
-import androidx.core.content.PermissionChecker.PermissionResult
 import kr.open.library.simple_ui.extensions.conditional.*
 import kr.open.library.simple_ui.extensions.trycatch.safeCatch
 import kr.open.library.simple_ui.permissions.vo.PermissionSpecialType

@@ -8,15 +8,18 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import kr.open.library.simple_ui.logcat.Logx
 import kr.open.library.simple_ui.presenter.ui.adapter.viewholder.BaseRcvViewHolder
+import java.util.concurrent.Executor
 
 /**
  * RecyclerView Base Adapter backed by [AsyncListDiffer] for background DiffUtil calculation.
  *
  * @param ITEM Type of items in the adapter
  * @param VH ViewHolder type for the adapter
+ * @param testExecutor Optional executor for testing (synchronous execution in tests)
  */
-public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder> :
-    RecyclerView.Adapter<VH>() {
+public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder>(
+    private val testExecutor: Executor? = null
+) : RecyclerView.Adapter<VH>() {
 
     private var onItemClickListener: ((Int, ITEM, View) -> Unit)? = null
     private var onItemLongClickListener: ((Int, ITEM, View) -> Unit)? = null
@@ -115,8 +118,8 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder> :
     /**
      * Sets new items using AsyncListDiffer for efficient updates.
      */
-    public fun setItems(newItems: List<ITEM>) {
-        differ.submitList(newItems.toList())
+    public fun setItems(newItems: List<ITEM>, commitCallback: (() -> Unit)? = null) {
+        differ.submitList(newItems.toList()) { commitCallback?.invoke() }
     }
 
     /**
@@ -124,14 +127,14 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder> :
      *
      * @return true if items were added successfully
      */
-    public open fun addItems(items: List<ITEM>): Boolean {
+    public open fun addItems(items: List<ITEM>, commitCallback: (() -> Unit)? = null): Boolean {
         return try {
             if (items.isEmpty()) {
                 Logx.d("addItems() items is empty")
                 return true
             }
             val updatedList = getMutableItemList().apply { addAll(items) }
-            differ.submitList(updatedList.toList())
+            differ.submitList(updatedList.toList()) { commitCallback?.invoke() }
             true
         } catch (e: Exception) {
             Logx.e("Failed to add items to list", e)
@@ -149,10 +152,10 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder> :
      *
      * @return true if the item was added successfully
      */
-    public open fun addItem(item: ITEM): Boolean {
+    public open fun addItem(item: ITEM, commitCallback: (() -> Unit)? = null): Boolean {
         return try {
             val updatedList = getMutableItemList().apply { add(item) }
-            differ.submitList(updatedList.toList())
+            differ.submitList(updatedList.toList()) { commitCallback?.invoke() }
             true
         } catch (e: Exception) {
             Logx.e("Failed to add item to list", e)
@@ -163,14 +166,14 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder> :
     /**
      * Adds a single item at the specified position.
      */
-    public fun addItemAt(position: Int, item: ITEM): Boolean {
+    public fun addItemAt(position: Int, item: ITEM, commitCallback: (() -> Unit)? = null): Boolean {
         return try {
             if (position < 0 || position > itemCount) {
                 throw IndexOutOfBoundsException("Cannot add item at position $position. Valid range: 0..$itemCount")
             }
 
             val updatedList = getMutableItemList().apply { add(position, item) }
-            differ.submitList(updatedList.toList())
+            differ.submitList(updatedList.toList()) { commitCallback?.invoke() }
             true
         } catch (e: IndexOutOfBoundsException) {
             Logx.e("Failed to add item at position $position: ${e.message}")
@@ -186,12 +189,12 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder> :
      *
      * @return true if items were removed successfully
      */
-    public open fun removeAll(): Boolean {
+    public open fun removeAll(commitCallback: (() -> Unit)? = null): Boolean {
         return try {
             if (differ.currentList.isEmpty()) {
                 return true
             }
-            differ.submitList(emptyList())
+            differ.submitList(emptyList()) { commitCallback?.invoke() }
             true
         } catch (e: Exception) {
             Logx.e("Failed to remove all items", e)
@@ -204,7 +207,7 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder> :
      *
      * @return true if the item was removed successfully
      */
-    public open fun removeAt(position: Int): Boolean {
+    public open fun removeAt(position: Int, commitCallback: (() -> Unit)? = null): Boolean {
         return try {
             if (!isPositionValid(position)) {
                 throw IndexOutOfBoundsException(
@@ -213,7 +216,7 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder> :
             }
 
             val updatedList = getMutableItemList().apply { removeAt(position) }
-            differ.submitList(updatedList.toList())
+            differ.submitList(updatedList.toList()) { commitCallback?.invoke() }
             true
         } catch (e: IndexOutOfBoundsException) {
             Logx.e("Failed to remove item at position $position: ${e.message}")
@@ -229,10 +232,10 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder> :
      *
      * @return true if the item was found and removed successfully
      */
-    public open fun removeItem(item: ITEM): Boolean {
+    public open fun removeItem(item: ITEM, commitCallback: (() -> Unit)? = null): Boolean {
         val position = differ.currentList.indexOf(item)
         return if (position != -1) {
-            removeAt(position)
+            removeAt(position, commitCallback)
         } else {
             Logx.w("Item not found in list for removal")
             false
@@ -301,6 +304,21 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder> :
 
     private fun buildDifferConfig(): AsyncDifferConfig<ITEM> =
         AsyncDifferConfig.Builder(createDiffCallback()).apply {
+            // Set test executor for synchronous execution in tests
+            testExecutor?.let { executor ->
+                try {
+                    val method = AsyncDifferConfig.Builder::class.java.getMethod(
+                        "setBackgroundThreadExecutor",
+                        Executor::class.java
+                    )
+                    method.invoke(this, executor)
+                } catch (_: NoSuchMethodException) {
+                    Logx.w("AsyncListDiffer", "setBackgroundThreadExecutor not available")
+                } catch (e: Exception) {
+                    Logx.w("AsyncListDiffer", "Failed to set test executor: ${e.message}")
+                }
+            }
+
             try {
                 val method = AsyncDifferConfig.Builder::class.java.getMethod(
                     "setDetectMoves",
@@ -316,10 +334,10 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder> :
             }
         }.build()
 
-    private fun recreateDiffer() {
+    private fun recreateDiffer(commitCallback: (() -> Unit)? = null) {
         val snapshot = differ.currentList.toList()
         differ = AsyncListDiffer(AdapterListUpdateCallback(this), buildDifferConfig())
-        differ.submitList(snapshot)
+        differ.submitList(snapshot) { commitCallback?.invoke() }
     }
 
     public fun setOnItemClickListener(listener: (Int, ITEM, View) -> Unit) {

@@ -21,7 +21,8 @@ public open class BaseRcvViewHolder(
     LayoutInflater.from(parent.context).inflate(xmlRes, parent, attachToRoot)
 ) {
 
-    private val viewCache = mutableMapOf<Int, View>()
+    @PublishedApi
+    internal val viewCache = mutableMapOf<Int, View>()
 
     /**
      * Find view by ID with type casting and caching
@@ -29,11 +30,20 @@ public open class BaseRcvViewHolder(
      * @param id View ID
      * @return Found view with type T
      */
-    public fun <T : View> findViewById(id: Int): T {
+    public inline fun <reified T : View> findViewById(id: Int): T {
         @Suppress("UNCHECKED_CAST")
-        return viewCache.getOrPut(id) { 
-            itemView.findViewById<T>(id) ?: throw IllegalArgumentException("View with id $id not found in layout")
-        } as T
+        val cached = viewCache[id]
+        if (cached != null && cached is T) return cached
+
+        val view = itemView.findViewById<View>(id)
+            ?: throw IllegalArgumentException("View with id $id not found in layout")
+
+        if (view !is T) {
+            throw ClassCastException("View with id $id is ${view::class.java.simpleName}, not ${T::class.java.simpleName}")
+        }
+
+        viewCache[id] = view
+        return view
     }
 
     /**
@@ -42,11 +52,23 @@ public open class BaseRcvViewHolder(
      * @param id View ID
      * @return Found view with type T or null
      */
-    public fun <T : View> findViewByIdOrNull(id: Int): T? {
-        @Suppress("UNCHECKED_CAST")
-        return viewCache.getOrPut(id) { 
-            itemView.findViewById<T>(id) 
-        } as? T
+    public inline fun <reified T : View> findViewByIdOrNull(id: Int): T? {
+        // Check cache first
+        val cached = viewCache[id]
+        if (cached != null) {
+            return if (cached is T) cached else null
+        }
+
+        // Find view
+        val view = itemView.findViewById<View>(id) ?: return null
+
+        // Check type
+        return if (view is T) {
+            viewCache[id] = view
+            view
+        } else {
+            null
+        }
     }
 
     /**

@@ -68,9 +68,7 @@ public abstract class BaseRcvListAdapter<ITEM, VH : RecyclerView.ViewHolder>(lis
      * @param commitCallback 리스트 갱신 완료 후 호출될 콜백 (null 가능)
      */
     public fun addItem(item: ITEM, commitCallback: (() -> Unit)? = null) {
-        val updatedList = getMutableItemList().apply {
-            add(item)
-        }
+        val updatedList = getMutableItemList().apply { add(item) }
         submitList(updatedList, commitCallback)
     }
 
@@ -126,11 +124,7 @@ public abstract class BaseRcvListAdapter<ITEM, VH : RecyclerView.ViewHolder>(lis
      * @param commitCallback 리스트 갱신 완료 후 호출될 콜백 (null 가능)
      * @return 추가 성공 여부
      */
-    public fun addItems(
-        position: Int,
-        itemList: List<ITEM>,
-        commitCallback: (() -> Unit)? = null
-    ): Boolean {
+    public fun addItems(position: Int, itemList: List<ITEM>, commitCallback: (() -> Unit)? = null): Boolean {
         return try {
             if (itemList.isEmpty()) return true
             if (position < 0 || position > itemCount) {
@@ -139,9 +133,7 @@ public abstract class BaseRcvListAdapter<ITEM, VH : RecyclerView.ViewHolder>(lis
                 )
             }
 
-            val updatedList = getMutableItemList().apply {
-                addAll(position, itemList)
-            }
+            val updatedList = getMutableItemList().apply { addAll(position, itemList) }
             submitList(updatedList, commitCallback)
             true
         } catch (e: IndexOutOfBoundsException) {
@@ -218,11 +210,7 @@ public abstract class BaseRcvListAdapter<ITEM, VH : RecyclerView.ViewHolder>(lis
      * @param commitCallback 리스트 갱신 완료 후 호출될 콜백 (null 가능)
      * @return 이동 성공 여부
      */
-    public fun moveItem(
-        fromPosition: Int,
-        toPosition: Int,
-        commitCallback: (() -> Unit)? = null
-    ): Boolean {
+    public fun moveItem(fromPosition: Int, toPosition: Int, commitCallback: (() -> Unit)? = null): Boolean {
         return try {
             if (fromPosition < 0 || fromPosition >= itemCount) {
                 throw IndexOutOfBoundsException(
@@ -260,11 +248,7 @@ public abstract class BaseRcvListAdapter<ITEM, VH : RecyclerView.ViewHolder>(lis
      * @param commitCallback 리스트 갱신 완료 후 호출될 콜백 (null 가능)
      * @return 교체 성공 여부
      */
-    public fun replaceItemAt(
-        position: Int,
-        item: ITEM,
-        commitCallback: (() -> Unit)? = null
-    ): Boolean {
+    public fun replaceItemAt(position: Int, item: ITEM, commitCallback: (() -> Unit)? = null): Boolean {
         if (!isPositionValid(position)) {
             Logx.e("Invalid position: $position, item count: $itemCount")
             return false

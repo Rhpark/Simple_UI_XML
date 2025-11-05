@@ -72,6 +72,25 @@ class BaseRcvViewHolderRobolectricTest {
     }
 
     @Test
+    fun viewHolder_createsWithAttachToRootTrue() {
+        // Given
+        val layout = createSimpleLayout()
+
+        // When
+        val viewHolder = TestViewHolder(layout, parent, attachToRoot = true)
+
+        // Then
+        assertNotNull(viewHolder)
+        assertNotNull(viewHolder.itemView)
+        if (viewHolder.itemView === parent) {
+            // Some layouts attach directly and return the parent instance when attachToRoot = true
+            assertTrue(parent.childCount > 0)
+        } else {
+            assertSame(parent, viewHolder.itemView.parent)
+        }
+    }
+
+    @Test
     fun viewHolder_itemViewIsCorrectType() {
         // Given
         val layout = createSimpleLayout()
@@ -80,7 +99,8 @@ class BaseRcvViewHolderRobolectricTest {
         val viewHolder = TestViewHolder(layout, parent)
 
         // Then
-        assertTrue(viewHolder.itemView is FrameLayout)
+        // simple_list_item_1 has TextView as root
+        assertTrue(viewHolder.itemView is TextView)
     }
 
     // ==============================================
@@ -223,6 +243,30 @@ class BaseRcvViewHolderRobolectricTest {
 
         // Then - Should return null due to type mismatch
         assertNull(foundView)
+    }
+
+    @Test
+    fun findViewByIdOrNull_recoversAfterWrongTypeLookup() {
+        // Given
+        val layout = createLayoutWithTextView()
+        val viewHolder = TestViewHolder(layout, parent)
+        val textViewId = View.generateViewId()
+        val textView = TextView(context)
+        textView.id = textViewId
+        (viewHolder.itemView as ViewGroup).addView(textView)
+
+        // When - cache the correct type once
+        val initialLookup = viewHolder.findViewByIdOrNull<TextView>(textViewId)
+        assertNotNull(initialLookup)
+
+        // And request the wrong type to trigger cache eviction
+        val wrongTypeLookup = viewHolder.findViewByIdOrNull<FrameLayout>(textViewId)
+
+        // Then - wrong type returns null, cache is rebuilt on next correct lookup
+        assertNull(wrongTypeLookup)
+        val rebuiltLookup = viewHolder.findViewByIdOrNull<TextView>(textViewId)
+        assertNotNull(rebuiltLookup)
+        assertSame(textView, rebuiltLookup)
     }
 
     // ==============================================
@@ -425,7 +469,8 @@ class BaseRcvViewHolderRobolectricTest {
     }
 
     private fun createLayoutWithTextView(): Int {
-        return android.R.layout.simple_list_item_1
+        // simple_list_item_2 has a ViewGroup root so we can safely add child views for caching tests
+        return android.R.layout.simple_list_item_2
     }
 
     private fun createLayoutWithMultipleViews(): Int {
