@@ -162,56 +162,105 @@ jobs:
             **/build/test-results/**
           if-no-files-found: ignore
 
-  jitpack:
-    name: JitPack Deploy
+  release:
+    name: Auto Release from Commit Message
     runs-on: ubuntu-latest
-    needs: build                   # build 성공 후에만
-    if: github.event_name == 'release' || startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    permissions:
+      contents: write
+    outputs:
+      should_release: ${{ steps.check_release.outputs.should_release }}
+      release_tag: ${{ steps.check_release.outputs.tag }}
+      release_title: ${{ steps.check_release.outputs.title }}
+      release_body: ${{ steps.check_release.outputs.body }}
     steps:
-      - name: Compute variables
-        id: vars
-        run: |
-          IFS='/' read -r OWNER REPO <<< "${GITHUB_REPOSITORY}"
-          echo "OWNER=$OWNER" >> $GITHUB_ENV
-          echo "REPO=$REPO" >> $GITHUB_ENV
-          # 릴리스 이벤트면 릴리스 태그, 그렇지 않으면 푸시된 태그
-          if [ "${{ github.event_name }}" = "release" ]; then
-            echo "VERSION=${{ github.event.release.tag_name }}" >> $GITHUB_ENV
-          else
-            echo "VERSION=${GITHUB_REF##*/}" >> $GITHUB_ENV
-          fi
-          echo "GROUP_ID=com.github.${OWNER}" >> $GITHUB_ENV
-
-      - name: Trigger JitPack build
-        run: |
-          # build.log 첫 조회가 해당 버전 빌드를 트리거함
-          set -x
-          curl -sL "https://jitpack.io/com/github/${OWNER}/${REPO}/${VERSION}/build.log" || true
-
-      - name: Wait for JitPack build to finish
-        run: |
-          sudo apt-get update && sudo apt-get install -y jq
-          ATTEMPTS=60
-          for i in $(seq 1 $ATTEMPTS); do
-            JSON=$(curl -s "https://jitpack.io/api/builds/${GROUP_ID}/${REPO}/${VERSION}" || true)
-            STATUS=$(echo "${JSON}" | jq -r --arg gid "${GROUP_ID}" --arg repo "${REPO}" --arg ver "${VERSION}" '.[$gid][$repo][$ver] // empty')
-           echo "[$i/$ATTEMPTS] JitPack status: ${STATUS:-unknown}"
-            if [ "$STATUS" = "ok" ]; then
-              echo "JitPack build OK ✅"
-              break
-            fi
-            if [ "$STATUS" = "Error" ]; then
-              echo "JitPack build failed ❌"
-              exit 1
-            fi
-            sleep 10
-          done
-          # 마지막으로 build.log를 받아 아카이브
-          curl -sL "https://jitpack.io/com/github/${OWNER}/${REPO}/${VERSION}/build.log" -o build.log || true
-
-      - name: Upload JitPack build.log
-        uses: actions/upload-artifact@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
         with:
-          name: jitpack-build-log
-          path: build.log
-          retention-days: 7
+          fetch-depth: 2
+
+      - name: Parse commit message and validate version
+        id: check_release
+        run: |
+          # Get latest commit message
+          COMMIT_MSG=$(git log -1 --pretty=%B)
+          echo "=== Commit Message ==="
+          echo "$COMMIT_MSG"
+          echo "====================="
+
+          # Check if [release] tag exists
+          if ! echo "$COMMIT_MSG" | grep -q "\[release\]"; then
+            echo "should_release=false" >> $GITHUB_OUTPUT
+            echo "No [release] tag found in commit message. Skipping release."
+            exit 0
+          fi
+
+          echo "[release] tag found! Parsing release information..."
+
+          # Extract Tag, Title, Describe
+          TAG=$(echo "$COMMIT_MSG" | grep -oP '(?<=Tag:\s).*' | head -1 | xargs)
+          TITLE=$(echo "$COMMIT_MSG" | grep -oP '(?<=Title:\s).*' | head -1)
+
+          # Extract Describe (can be multiline)
+          DESCRIBE=$(echo "$COMMIT_MSG" | awk '/Describe:/,0' | tail -n +1 | sed '1s/Describe:\s*//')
+
+          echo "Extracted Tag: $TAG"
+          echo "Extracted Title: $TITLE"
+          echo "Extracted Describe: $DESCRIBE"
+
+          # Validate tag format (x.x.x)
+          if ! echo "$TAG" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "Error: Tag format is invalid. Expected format: x.x.x (e.g., 0.2.2)"
+            echo "Found: $TAG"
+            exit 1
+          fi
+
+          # Extract version from build.gradle.kts
+          GRADLE_VERSION=$(grep -oP '(?<=version = ")[^"]+' simple_ui/build.gradle.kts | head -1)
+          echo "Version in build.gradle.kts: $GRADLE_VERSION"
+
+          # Validate version match
+          if [ "$TAG" != "$GRADLE_VERSION" ]; then
+            echo "Error: Version mismatch!"
+            echo "  Commit message Tag: $TAG"
+            echo "  build.gradle.kts version: $GRADLE_VERSION"
+            echo "Please ensure both versions match before releasing."
+            exit 1
+          fi
+
+          echo "✅ Version validation passed!"
+
+          # Set outputs
+          echo "should_release=true" >> $GITHUB_OUTPUT
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+          echo "title=$TITLE" >> $GITHUB_OUTPUT
+
+          # Handle multiline describe
+          {
+            echo "body<<EOF"
+            echo "$DESCRIBE"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
+
+      - name: Create Git Tag
+        if: steps.check_release.outputs.should_release == 'true'
+        run: |
+          TAG="${{ steps.check_release.outputs.tag }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "$TAG" -m "Release $TAG"
+          git push origin "$TAG"
+
+      - name: Create GitHub Release
+        if: steps.check_release.outputs.should_release == 'true'
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.check_release.outputs.tag }}
+          release_name: ${{ steps.check_release.outputs.title }}
+          body: ${{ steps.check_release.outputs.body }}
+          draft: false
+          prerelease: false
+
