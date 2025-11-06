@@ -198,12 +198,16 @@ jobs:
 
           echo "[release] tag found! Parsing release information..."
 
-          # Extract Tag, Title, Describe
-          TAG=$(echo "$COMMIT_MSG" | grep -oP '(?<=Tag:\s).*' | head -1 | xargs)
-          TITLE=$(echo "$COMMIT_MSG" | grep -oP '(?<=Title:\s).*' | head -1)
+          # Extract Tag, Title, Describe (flexible with spaces before/after colon)
+          TAG=$(echo "$COMMIT_MSG" | grep -oP '(?<=Tag)\s*:\s*.*' | head -1 | sed 's/^[[:space:]]*:[[:space:]]*//' | xargs)
+          TITLE=$(echo "$COMMIT_MSG" | grep -oP '(?<=Title)\s*:\s*.*' | head -1 | sed 's/^[[:space:]]*:[[:space:]]*//' | xargs)
 
-          # Extract Describe (can be multiline)
-          DESCRIBE=$(echo "$COMMIT_MSG" | awk '/Describe:/,0' | tail -n +1 | sed '1s/Describe:\s*//')
+          # Extract Describe (can be multiline, flexible spelling and spacing)
+          DESCRIBE=$(echo "$COMMIT_MSG" | awk '/Describe\s*:/,0' | tail -n +1 | sed '1s/Describe\s*:\s*//')
+          # Fallback for common typo "Descrbe"
+          if [ -z "$DESCRIBE" ]; then
+            DESCRIBE=$(echo "$COMMIT_MSG" | awk '/Descrbe\s*:/,0' | tail -n +1 | sed '1s/Descrbe\s*:\s*//')
+          fi
 
           echo "Extracted Tag: $TAG"
           echo "Extracted Title: $TITLE"
