@@ -178,25 +178,44 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 2
+          fetch-depth: 10
 
       - name: Parse commit message and validate version
         id: check_release
         run: |
-          # Get latest commit message
-          COMMIT_MSG=$(git log -1 --pretty=%B)
-          echo "=== Commit Message ==="
-          echo "$COMMIT_MSG"
-          echo "====================="
+          # Search recent 5 commits for [release] tag
+          echo "Searching for [release] tag in recent 5 commits..."
+          COMMIT_MSG=""
+          FOUND=false
 
-          # Check if [release] tag exists
-          if ! echo "$COMMIT_MSG" | grep -q "\[release\]"; then
+          for i in {0..4}; do
+            CURRENT_MSG=$(git log -1 --skip=$i --pretty=%B 2>/dev/null || echo "")
+            if [ -z "$CURRENT_MSG" ]; then
+              break
+            fi
+
+            echo "--- Commit $((i+1)) ---"
+            echo "$CURRENT_MSG"
+            echo "---"
+
+            if echo "$CURRENT_MSG" | grep -q "\[release\]"; then
+              COMMIT_MSG="$CURRENT_MSG"
+              FOUND=true
+              echo "[release] tag found in commit $((i+1))!"
+              break
+            fi
+          done
+
+          if [ "$FOUND" = false ]; then
             echo "should_release=false" >> $GITHUB_OUTPUT
-            echo "No [release] tag found in commit message. Skipping release."
+            echo "No [release] tag found in recent 5 commits. Skipping release."
             exit 0
           fi
 
-          echo "[release] tag found! Parsing release information..."
+          echo ""
+          echo "=== Processing Release Commit ==="
+          echo "$COMMIT_MSG"
+          echo "================================="
 
           # Extract Tag, Title, Describe (flexible with spaces before/after colon)
           TAG=$(echo "$COMMIT_MSG" | grep -oP '(?<=Tag)\s*:\s*.*' | head -1 | sed 's/^[[:space:]]*:[[:space:]]*//' | xargs)
@@ -218,6 +237,14 @@ jobs:
             echo "Error: Tag format is invalid. Expected format: x.x.x (e.g., 0.2.2)"
             echo "Found: $TAG"
             exit 1
+          fi
+
+          # Check if tag already exists (prevent duplicate releases)
+          git fetch --tags
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "should_release=false" >> $GITHUB_OUTPUT
+            echo "Tag $TAG already exists. Skipping release to prevent duplicate."
+            exit 0
           fi
 
           # Extract version from build.gradle.kts
