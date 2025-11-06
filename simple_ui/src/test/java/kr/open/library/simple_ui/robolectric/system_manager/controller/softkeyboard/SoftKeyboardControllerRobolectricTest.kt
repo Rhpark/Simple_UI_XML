@@ -1,4 +1,4 @@
-package kr.open.library.simple_ui.robolectric.system_manager.softkeyboard
+package kr.open.library.simple_ui.robolectric.system_manager.controller.softkeyboard
 
 import android.graphics.Rect
 import android.os.Build
