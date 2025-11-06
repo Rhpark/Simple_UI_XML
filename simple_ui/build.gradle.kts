@@ -12,22 +12,23 @@ publishing {
         register("release", MavenPublication::class) { // MavenPublication::class 사용 가능
             groupId = "com.github.Rhpark"
             artifactId = "Simple_UI_XML"
-            version = "0.2.2"
+            version = "0.2.3"
 
             afterEvaluate {
                 from(components.findByName("release"))
             }
         }
 
-        register("debug", MavenPublication::class) { // MavenPublication::class 사용 가능
-            groupId = "com.github.Rhpark"
-            artifactId = "Simple_UI_XML"
-            version = "0.2.2" // 동일 버전 사용 시 주의 (이전 답변 참고)test
-
-            afterEvaluate {
-                from(components.findByName("debug"))
-            }
-        }
+//        JitPack Debug 불필요,(내부 개발용이기 때문)
+//        register("debug", MavenPublication::class) { // MavenPublication::class 사용 가능
+//            groupId = "com.github.Rhpark"
+//            artifactId = "Simple_UI_XML"
+//            version = "0.2.3" // 동일 버전 사용 시 주의 (이전 답변 참고)test
+//
+//            afterEvaluate {
+//                from(components.findByName("debug"))
+//            }
+//        }
     }
 }
 
