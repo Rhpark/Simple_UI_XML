@@ -183,8 +183,6 @@ kover {
                 classes("kr.open.library.simple_ui.system_manager.controller.alarm.AlarmController*")
                 classes("kr.open.library.simple_ui.system_manager.controller.alarm.receiver.BaseAlarmReceiver*")
                 classes("kr.open.library.simple_ui.system_manager.controller.alarm.vo.AlarmVo*")
-//                classes("kr.open.library.simple_ui.system_manager.controller.notification.SimpleNotificationController*")
-//                classes("kr.open.library.simple_ui.system_manager.controller.vibrator.VibratorController*")
                 classes("kr.open.library.simple_ui.system_manager.controller.wifi.WifiController*")
                 classes("kr.open.library.simple_ui.system_manager.controller.window.FloatingViewController*")
                 classes("kr.open.library.simple_ui.system_manager.controller.window.drag.FloatingDragView*")
