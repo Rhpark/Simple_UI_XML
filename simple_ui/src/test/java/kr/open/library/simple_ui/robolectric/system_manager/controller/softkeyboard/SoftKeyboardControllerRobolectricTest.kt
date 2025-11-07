@@ -1,8 +1,9 @@
-package kr.open.library.simple_ui.robolectric.system_manager.softkeyboard
+package kr.open.library.simple_ui.robolectric.system_manager.controller.softkeyboard
 
 import android.graphics.Rect
 import android.os.Build
 import android.view.View
+import android.view.Window
 import android.view.WindowInsetsController
 import android.view.WindowManager
 import android.widget.EditText
@@ -22,6 +23,10 @@ import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
+import org.mockito.Mockito.doReturn
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.spy
+import org.mockito.Mockito.`when`
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.LooperMode
 import org.robolectric.android.controller.ActivityController
@@ -174,6 +179,20 @@ class SoftKeyboardControllerRobolectricTest {
     }
 
     @Test
+    @Config(sdk = [Build.VERSION_CODES.R])
+    fun setAdjustResize_onR_fallsBackToWindowCompat_whenControllerIsNull() {
+        // Spy를 사용하여 insetsController가 null을 반환하도록 만듦
+        val window = spy(activity.window)
+        doReturn(null).`when`(window).insetsController
+
+        // controller가 null일 때 WindowCompat.setDecorFitsSystemWindows가 호출됨
+        controller.setAdjustResize(window)
+
+        // 예외가 발생하지 않으면 성공
+        // WindowCompat.setDecorFitsSystemWindows는 내부적으로 안전하게 처리됨
+    }
+
+    @Test
     @Config(sdk = [Build.VERSION_CODES.TIRAMISU])
     fun startStylusHandwriting_returnsTrue_whenFocusSucceeds() {
         val view = attachEditText()
@@ -185,6 +204,16 @@ class SoftKeyboardControllerRobolectricTest {
     fun startStylusHandwriting_returnsFalse_whenFocusFails() {
         val view = attachViewWithFocusResult(false)
         assertFalse(controller.startStylusHandwriting(view))
+    }
+
+    @Test
+    @Config(sdk = [Build.VERSION_CODES.TIRAMISU])
+    fun startStylusHandwriting_withDelay_postsRunnableAndStartsHandwriting() {
+        val view = attachEditText()
+        assertTrue(controller.startStylusHandwriting(view, 50L))
+        ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
+        // Robolectric에서 스타일러스 핸드라이팅 상태를 직접 검증하기 어려우므로
+        // Runnable이 정상적으로 실행되었는지 확인 (예외가 발생하지 않음)
     }
 
     @Test

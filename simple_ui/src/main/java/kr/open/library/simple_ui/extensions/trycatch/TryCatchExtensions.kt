@@ -1,6 +1,7 @@
 package kr.open.library.simple_ui.extensions.trycatch
 
 import kotlinx.coroutines.CancellationException
+import kr.open.library.simple_ui.logcat.Logx
 
 
 public inline fun safeCatch(block: () -> Unit) {
@@ -11,7 +12,7 @@ public inline fun safeCatch(block: () -> Unit) {
     } catch (e: Error) { // OOM 등은 절대 삼키지 않음
         throw e
     } catch (e: Exception) {
-        e.printStackTrace()
+        Logx.e("safeCatch: ${e.message}", e)
     }
 }
 
@@ -24,7 +25,7 @@ public inline fun <T> safeCatch(defaultValue: T, block: () -> T): T {
     } catch (e: Error) { // OOM 등은 절대 삼키지 않음
         throw e
     } catch (e: Exception) {
-        e.printStackTrace()
+        Logx.e("safeCatch: ${e.message}", e)
         defaultValue
     }
 }
@@ -38,7 +39,7 @@ public inline fun <T> safeCatch(block: () -> T, onCatch: ((Exception) -> T)): T 
     } catch (e: Error) { // OOM 등은 절대 삼키지 않음
         throw e
     } catch (e: Exception) {
-        e.printStackTrace()
+        Logx.e("safeCatch: ${e.message}", e)
         onCatch(e)
     }
 }

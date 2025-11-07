@@ -1,10 +1,16 @@
 package kr.open.library.simple_ui.unit.extensions
 
+import android.util.Log
 import kr.open.library.simple_ui.extensions.trycatch.*
 import kotlinx.coroutines.CancellationException
+import org.junit.After
+import org.junit.Before
 import org.junit.Test
 import org.junit.Assert.*
 import org.junit.Ignore
+import org.mockito.MockedStatic
+import org.mockito.Mockito
+import org.mockito.Mockito.mockStatic
 
 /**
  * Try-Catch Extensions에 대한 단위 테스트
@@ -15,6 +21,38 @@ import org.junit.Ignore
  * - safeCatch(block, onCatch) - 예외 발생 시 커스텀 핸들러 실행
  */
 class TryCatchExtensionsTest {
+
+    private lateinit var logMock: MockedStatic<Log>
+
+    @Before
+    fun setUpLogMock() {
+        logMock = mockStatic(Log::class.java)
+        stubAndroidLog()
+    }
+
+    @After
+    fun tearDownLogMock() {
+        if (this::logMock.isInitialized) {
+            logMock.close()
+        }
+    }
+
+    private fun stubAndroidLog() {
+        logMock.`when`<Int> { Log.v(Mockito.anyString(), Mockito.anyString()) }.thenReturn(0)
+        logMock.`when`<Int> { Log.v(Mockito.anyString(), Mockito.anyString(), Mockito.any(Throwable::class.java)) }.thenReturn(0)
+
+        logMock.`when`<Int> { Log.d(Mockito.anyString(), Mockito.anyString()) }.thenReturn(0)
+        logMock.`when`<Int> { Log.d(Mockito.anyString(), Mockito.anyString(), Mockito.any(Throwable::class.java)) }.thenReturn(0)
+
+        logMock.`when`<Int> { Log.i(Mockito.anyString(), Mockito.anyString()) }.thenReturn(0)
+        logMock.`when`<Int> { Log.i(Mockito.anyString(), Mockito.anyString(), Mockito.any(Throwable::class.java)) }.thenReturn(0)
+
+        logMock.`when`<Int> { Log.w(Mockito.anyString(), Mockito.anyString()) }.thenReturn(0)
+        logMock.`when`<Int> { Log.w(Mockito.anyString(), Mockito.anyString(), Mockito.any(Throwable::class.java)) }.thenReturn(0)
+
+        logMock.`when`<Int> { Log.e(Mockito.anyString(), Mockito.anyString()) }.thenReturn(0)
+        logMock.`when`<Int> { Log.e(Mockito.anyString(), Mockito.anyString(), Mockito.any(Throwable::class.java)) }.thenReturn(0)
+    }
 
     // ========== 1. safeCatch(block) 테스트 ==========
 
