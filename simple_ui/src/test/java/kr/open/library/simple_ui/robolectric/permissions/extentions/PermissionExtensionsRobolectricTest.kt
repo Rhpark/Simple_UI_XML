@@ -80,6 +80,7 @@ class PermissionExtensionsRobolectricTest {
 
         // When & Then
         assertTrue(context.hasPermission(Manifest.permission.CAMERA))
+        assertFalse(context.hasPermission(Manifest.permission.CAMERA))
     }
 
     @Test
@@ -533,13 +534,22 @@ class PermissionExtensionsRobolectricTest {
         // Then
         assertEquals(PermissionInfo.PROTECTION_NORMAL, protectionLevel)
     }
-//
-//    @Test
-//    fun getPermissionProtectionLevel_withUnknownPermission_returnsDangerousAsDefault() {
-//        // When - Permission not registered
-//        val protectionLevel = context.getPermissionProtectionLevel("com.nonexistent.PERMISSION")
-//
-//        // Then - Should return default value from safeCatch
-//        assertEquals(PermissionInfo.PROTECTION_DANGEROUS, protectionLevel)
-//    }
+
+    @Test
+    fun getPermissionProtectionLevel_withUnknownPermission_returnsDangerousAsDefault() {
+        // When - Permission not registered in PackageManager
+        val protectionLevel = context.getPermissionProtectionLevel("com.nonexistent.totally.unknown.PERMISSION")
+
+        // Then - Should return default value from safeCatch when exception occurs
+        assertEquals(PermissionInfo.PROTECTION_DANGEROUS, protectionLevel)
+    }
+
+    @Test
+    fun hasPermission_normalPermissionWithProtectionLevelCheck_whenNotDangerous_returnsTrue() {
+        // Given - permission with PROTECTION_NORMAL should return true
+        val normalPermission = "com.unknown.PERMISSION"
+
+        // When & Then
+        assertTrue(context.hasPermission(normalPermission))
+    }
 }

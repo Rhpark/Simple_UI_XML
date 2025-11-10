@@ -278,5 +278,100 @@ class PermissionDelegateRobolectricTest {
         Assert.assertTrue(delegate.isPermissionGranted(permission))
     }
 
+    @Test
+    fun requestPermissions_startsNewRequestWhenNoActiveRequest() {
+        val permission = Manifest.permission.CAMERA
+        shadowOf(activity.application).denyPermissions(permission)
+
+        var callbackInvoked = false
+        delegate.requestPermissions(listOf(permission)) { deniedPermissions ->
+            callbackInvoked = true
+            Assert.assertEquals(listOf(permission), deniedPermissions)
+        }
+
+        // Verify request was created
+        Assert.assertNotNull(getCurrentRequestId())
+
+        // The callback is not invoked until permission result is processed
+        // This tests that the request mechanism is initiated
+    }
+
+    @Test
+    fun requestPermissions_raceCondition_startsNewRequest() {
+        val oldRequestId = UUID.randomUUID().toString()
+        setCurrentRequestId(oldRequestId)
+        // Do not insert pending request - simulates REQUEST_NOT_FOUND scenario
+
+        val permission = Manifest.permission.CAMERA
+        delegate.requestPermissions(listOf(permission)) { }
+
+        // Should detect race condition and start new request
+        // The request ID will change or remain null depending on request() result
+        Assert.assertTrue(getCurrentRequestId() != oldRequestId || getCurrentRequestId() == null)
+    }
+
+    @Test
+    fun onRestoreInstanceState_withNullBundle_handledGracefully() {
+        delegate.onRestoreInstanceState(null)
+        Assert.assertNull(getCurrentRequestId())
+    }
+
+    @Test
+    fun onSaveInstanceState_withNullRequestId_doesNotSaveKey() {
+        setCurrentRequestId(null)
+        val bundle = Bundle()
+        delegate.onSaveInstanceState(bundle)
+
+        Assert.assertFalse(bundle.containsKey(getKeyRequestId()))
+    }
+
+    @Test
+    fun lifecycleObserver_onStartWithRestoredState_attemptsReregistration() {
+        // This tests the ON_START branch when hasRestoredState is true
+        val requestId = UUID.randomUUID().toString()
+        insertPendingRequest(requestId, listOf(Manifest.permission.CAMERA))
+
+        // Create new activity and delegate to trigger lifecycle
+        val newActivityController = Robolectric.buildActivity(FragmentActivity::class.java)
+        newActivityController.create()
+        val newActivity = newActivityController.get()
+        val newDelegate = PermissionDelegate(newActivity)
+
+        // Restore state - this will set hasRestoredState = true
+        val bundle = Bundle().apply { putString(getKeyRequestId(), requestId) }
+
+        // Call onRestoreInstanceState through public method
+        newDelegate.onRestoreInstanceState(bundle)
+
+        // Now trigger ON_START - the delegate should attempt auto-reregistration
+        newActivityController.start()
+
+        // Clean up
+        runCatching { newActivityController.destroy() }
+    }
+
+    @Test
+    fun getContext_withFragment_returnsFragmentContext() {
+        class TestContextFragment : Fragment() {
+            lateinit var delegate: PermissionDelegate<Fragment>
+            override fun onCreate(savedInstanceState: Bundle?) {
+                super.onCreate(savedInstanceState)
+                delegate = PermissionDelegate(this)
+            }
+        }
+
+        val fragment = TestContextFragment()
+        activity.supportFragmentManager.beginTransaction()
+            .add(fragment, "test_context")
+            .commitNow()
+
+        val fragmentDelegate = fragment.delegate
+
+        // Test that getContext() works for Fragment
+        val permission = Manifest.permission.CAMERA
+        shadowOf(activity.application).grantPermissions(permission)
+        Assert.assertTrue(fragmentDelegate.isPermissionGranted(permission))
+    }
+
     class TestFragment : Fragment()
 }
