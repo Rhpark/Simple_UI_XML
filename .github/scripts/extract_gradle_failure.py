@@ -19,29 +19,36 @@ ansi_re = re.compile(r"\x1B\[[0-9;]*[A-Za-z]")
 raw_lines = input_path.read_text(encoding="utf-8", errors="ignore").splitlines()
 clean_lines = [ansi_re.sub("", line) for line in raw_lines]
 
-def last_failed_block(max_lines=100):
-    failed_pattern = re.compile(r"failed,", re.IGNORECASE)
-    last_idx = None
+def slice_from(index, max_lines=100):
+    end = min(len(clean_lines), index + max_lines)
+    return clean_lines[index:end]
 
+def find_last_index(matchers):
+    last = None
     for idx, line in enumerate(clean_lines):
-        if failed_pattern.search(line):
-            last_idx = idx
+        for matcher in matchers:
+            if matcher(line):
+                last = idx
+    return last
 
-    if last_idx is None:
-        return []
+matchers_priority = [
+    [lambda line: "failed," in line.lower()],
+    [lambda line: "> Task" in line and "FAILED" in line],
+    [lambda line: "FAILED" in line],
+    [lambda line: "FAILURE:" in line],
+    [lambda line: "BUILD FAILED" in line],
+]
 
-    end = min(len(clean_lines), last_idx + max_lines)
-    block = clean_lines[last_idx:end]
-    return block
+result_lines = []
+for matcher_group in matchers_priority:
+    idx = find_last_index(matcher_group)
+    if idx is not None:
+        result_lines = slice_from(idx)
+        break
 
-result_lines = last_failed_block()
 if not result_lines:
-    failure_block = []
-    for idx, line in enumerate(clean_lines):
-        if "FAILURE:" in line or "BUILD FAILED" in line:
-            failure_block = clean_lines[idx: idx + 200]
-            break
-    result_lines = failure_block or clean_lines[-200:]
+    start = max(0, len(clean_lines) - 100)
+    result_lines = clean_lines[start:]
 
 exclude_substrings = (
     "Run with --stacktrace",
