@@ -48,8 +48,6 @@ object Logx : ILogx {
                 logWriter.updateConfig(newConfig)
             }
         })
-        val s :String = null
-        s!!.toString()
     }
 
     /**
