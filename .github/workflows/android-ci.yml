@@ -37,7 +37,18 @@ jobs:
         run: chmod +x gradlew
 
       - name: Run pure unit tests only
-        run: ./gradlew :simple_ui:testUnit
+        run: ./gradlew :simple_ui:testUnit | tee unit-test.log
+
+      - name: Capture failure snippet (Unit Tests)
+        if: failure()
+        id: unit_test_failure_snippet
+        run: |
+          python3 .github/scripts/extract_gradle_failure.py unit-test.log unit-test-failure-snippet.log || true
+          {
+            echo "snippet<<EOF"
+            cat unit-test-failure-snippet.log
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Publish test results
         uses: EnricoMi/publish-unit-test-result-action@v2
@@ -61,7 +72,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           STAGE_NAME: "Unit Tests"
           FAILURE_MESSAGE: "Unit Tests job failed. Please inspect Gradle task :simple_ui:testUnit."
-          FAILURE_LOG: "Refer to the Unit Tests workflow logs or the uploaded unit-test-report artifact."
+          FAILURE_LOG: ${{ steps.unit_test_failure_snippet.outputs.snippet }}
           FAILURE_ENVIRONMENT: |
             Runner: ${{ runner.os }}
             Event: ${{ github.event_name }}
@@ -92,7 +103,18 @@ jobs:
         run: chmod +x gradlew
 
       - name: Run Robolectric tests
-        run: ./gradlew :simple_ui:testRobolectric
+        run: ./gradlew :simple_ui:testRobolectric | tee robolectric-test.log
+
+      - name: Capture failure snippet (Robolectric Tests)
+        if: failure()
+        id: robolectric_failure_snippet
+        run: |
+          python3 .github/scripts/extract_gradle_failure.py robolectric-test.log robolectric-failure-snippet.log || true
+          {
+            echo "snippet<<EOF"
+            cat robolectric-failure-snippet.log
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Publish test results
         uses: EnricoMi/publish-unit-test-result-action@v2
@@ -116,7 +138,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           STAGE_NAME: "Robolectric Tests"
           FAILURE_MESSAGE: "Robolectric Tests job failed. Check Gradle task :simple_ui:testRobolectric."
-          FAILURE_LOG: "Refer to the Robolectric Tests workflow logs or the uploaded robolectric-test-report artifact."
+          FAILURE_LOG: ${{ steps.robolectric_failure_snippet.outputs.snippet }}
           FAILURE_ENVIRONMENT: |
             Runner: ${{ runner.os }}
             Event: ${{ github.event_name }}
