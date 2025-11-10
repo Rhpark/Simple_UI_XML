@@ -13,8 +13,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  release-check:
-    name: Release Check
+  initialize-check:
+    name: Initialize Check
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -113,13 +113,13 @@ jobs:
             echo "EOF"
           } >> "$GITHUB_OUTPUT"
 
-      - name: Report failure (Release Check)
+      - name: Report failure (Initialize Check)
         if: failure()
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          STAGE_NAME: "Release Check"
+          STAGE_NAME: "Initialize Check"
           FAILURE_MESSAGE: "Release block validation failed. Please inspect release metadata."
-          RELEASE_CHECK_LOG: ${{ github.workspace }}/release-check.log
+          RELEASE_CHECK_LOG: ${{ github.workspace }}/initialize-check.log
           FAILURE_ENVIRONMENT: |
             Runner: ${{ runner.os }}
             Event: ${{ github.event_name }}
@@ -139,7 +139,7 @@ jobs:
   unit-test:
     name: Unit Tests
     runs-on: ubuntu-latest
-    needs: release-check
+    needs: initialize-check
     permissions:
       contents: read
       checks: write
@@ -428,8 +428,8 @@ jobs:
   release:
     name: Release from Commit Message
     runs-on: ubuntu-latest
-    needs: [build, release-check]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master' && needs.release-check.outputs.should_release == 'true'
+    needs: [build, initialize-check]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master' && needs.initialize-check.outputs.should_release == 'true'
     permissions:
       contents: write
       issues: write
@@ -441,7 +441,7 @@ jobs:
 
       - name: Create Git Tag
         run: |
-          TAG="${{ needs.release-check.outputs.tag }}"
+          TAG="${{ needs.initialize-check.outputs.tag }}"
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           bash -o pipefail -c "git tag -a \"$TAG\" -m \"Release $TAG\" | tee -a release-tag.log"
@@ -452,9 +452,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ needs.release-check.outputs.tag }}
-          release_name: ${{ needs.release-check.outputs.title }}
-          body: ${{ needs.release-check.outputs.body }}
+          tag_name: ${{ needs.initialize-check.outputs.tag }}
+          release_name: ${{ needs.initialize-check.outputs.title }}
+          body: ${{ needs.initialize-check.outputs.body }}
           draft: false
           prerelease: false
 
