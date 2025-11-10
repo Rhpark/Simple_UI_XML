@@ -97,14 +97,16 @@ EOF
 
 export ISSUE_BODY
 LIST_URL="${API_URL}/repos/${REPO}/issues?state=open&per_page=100"
-ISSUE_NUMBER=$(curl -sSf \
+LIST_RESPONSE=$(curl -sSf \
   -H "Authorization: Bearer ${GITHUB_TOKEN}" \
   -H "Accept: application/vnd.github+json" \
-  "${LIST_URL}" | python3 - <<'PY'
+  "${LIST_URL}")
+export LIST_RESPONSE
+ISSUE_NUMBER=$(python3 - <<'PY'
 import json, os, sys
 title = os.environ["ISSUE_TITLE"]
 try:
-    issues = json.load(sys.stdin)
+    issues = json.loads(os.environ["LIST_RESPONSE"])
     for issue in issues:
         if issue.get("title") == title:
             print(issue.get("number"))
