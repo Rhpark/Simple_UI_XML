@@ -57,23 +57,9 @@ if not result_lines:
     start = max(0, len(clean_lines) - 100)
     result_lines = clean_lines[start:]
 
-exclude_substrings = (
-    "Run with --stacktrace",
-    "--info or --debug option",
-    "--debug option",
-    "* Get more help",
-)
+while result_lines and result_lines[0] == "":
+    result_lines = result_lines[1:]
+while result_lines and result_lines[-1] == "":
+    result_lines = result_lines[:-1]
 
-filtered = []
-for line in result_lines:
-    stripped = line.strip()
-    if stripped and any(sub in stripped for sub in exclude_substrings):
-        continue
-    filtered.append(line)
-
-while filtered and filtered[0] == "":
-    filtered = filtered[1:]
-while filtered and filtered[-1] == "":
-    filtered = filtered[:-1]
-
-output_path.write_text("\n".join(filtered), encoding="utf-8", errors="ignore")
+output_path.write_text("\n".join(result_lines), encoding="utf-8", errors="ignore")
