@@ -37,7 +37,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Run pure unit tests only
-        run: ./gradlew :simple_ui:testUnit | tee unit-test.log
+        run: bash -o pipefail -c "./gradlew :simple_ui:testUnit | tee unit-test.log"
 
       - name: Capture failure snippet (Unit Tests)
         if: failure()
@@ -103,7 +103,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Run Robolectric tests
-        run: ./gradlew :simple_ui:testRobolectric | tee robolectric-test.log
+        run: bash -o pipefail -c "./gradlew :simple_ui:testRobolectric | tee robolectric-test.log"
 
       - name: Capture failure snippet (Robolectric Tests)
         if: failure()
