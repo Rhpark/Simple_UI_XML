@@ -41,7 +41,11 @@ fi
 FAILURE_ATTEMPTS_INPUT="${FAILURE_ATTEMPTS:-_Not provided_}"
 FAILURE_ENVIRONMENT_INPUT="${FAILURE_ENVIRONMENT:-Runner: ${RUNNER_NAME:-unknown} | Event: ${EVENT_NAME}}"
 
-ISSUE_TITLE="[CI][${STAGE_NAME_INPUT}] Failure @ ${SHORT_SHA}"
+issue_suffix="${FAILURE_MESSAGE_INPUT}"
+if [[ -n "${SHORT_SHA}" && "${SHORT_SHA}" != "unknown" ]]; then
+    issue_suffix="${issue_suffix} · ${SHORT_SHA}"
+fi
+ISSUE_TITLE="[CI][${STAGE_NAME_INPUT}] ${issue_suffix}"
 
 export REPO ISSUE_TITLE
 ISSUE_BODY=$(cat <<EOF

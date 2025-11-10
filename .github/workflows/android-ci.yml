@@ -194,18 +194,82 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Run all tests for coverage
-        run: ./gradlew :simple_ui:testAll
+        run: bash -o pipefail -c "./gradlew :simple_ui:testAll | tee build-testAll.log"
+
+      - name: Capture failure snippet (testAll)
+        if: failure()
+        run: |
+          python3 .github/scripts/extract_gradle_failure.py build-testAll.log build-testAll-failure.log || true
+          SUMMARY="$(head -n 1 build-testAll-failure.log | tr -d '\r')"
+          if [ -z "$SUMMARY" ]; then
+            SUMMARY="Build job failed while running :simple_ui:testAll."
+          fi
+          {
+            echo "BUILD_FAILURE_SUMMARY<<EOF"
+            echo "$SUMMARY"
+            echo "EOF"
+            echo "BUILD_FAILURE_LOG_PATH=$(pwd)/build-testAll-failure.log"
+            echo "BUILD_FAILURE_SOURCE=:simple_ui:testAll"
+          } >> "$GITHUB_ENV"
 
       - name: Generate Kover coverage report
-        run: ./gradlew :simple_ui:koverHtmlReport
+        run: bash -o pipefail -c "./gradlew :simple_ui:koverHtmlReport | tee build-kover.log"
         if: always()
 
+      - name: Capture failure snippet (kover)
+        if: failure()
+        run: |
+          python3 .github/scripts/extract_gradle_failure.py build-kover.log build-kover-failure.log || true
+          SUMMARY="$(head -n 1 build-kover-failure.log | tr -d '\r')"
+          if [ -z "$SUMMARY" ]; then
+            SUMMARY="Build job failed while running :simple_ui:koverHtmlReport."
+          fi
+          {
+            echo "BUILD_FAILURE_SUMMARY<<EOF"
+            echo "$SUMMARY"
+            echo "EOF"
+            echo "BUILD_FAILURE_LOG_PATH=$(pwd)/build-kover-failure.log"
+            echo "BUILD_FAILURE_SOURCE=:simple_ui:koverHtmlReport"
+          } >> "$GITHUB_ENV"
+
       - name: Assemble
-        run: ./gradlew assemble --stacktrace
+        run: bash -o pipefail -c "./gradlew assemble --stacktrace | tee build-assemble.log"
+
+      - name: Capture failure snippet (assemble)
+        if: failure()
+        run: |
+          python3 .github/scripts/extract_gradle_failure.py build-assemble.log build-assemble-failure.log || true
+          SUMMARY="$(head -n 1 build-assemble-failure.log | tr -d '\r')"
+          if [ -z "$SUMMARY" ]; then
+            SUMMARY="Build job failed while assembling artifacts."
+          fi
+          {
+            echo "BUILD_FAILURE_SUMMARY<<EOF"
+            echo "$SUMMARY"
+            echo "EOF"
+            echo "BUILD_FAILURE_LOG_PATH=$(pwd)/build-assemble-failure.log"
+            echo "BUILD_FAILURE_SOURCE=assemble"
+          } >> "$GITHUB_ENV"
 
       - name: Android Lint (non-blocking)
-        run: ./gradlew lint
+        run: bash -o pipefail -c "./gradlew lint | tee build-lint.log"
         # continue-on-error: true
+
+      - name: Capture failure snippet (lint)
+        if: failure()
+        run: |
+          python3 .github/scripts/extract_gradle_failure.py build-lint.log build-lint-failure.log || true
+          SUMMARY="$(head -n 1 build-lint-failure.log | tr -d '\r')"
+          if [ -z "$SUMMARY" ]; then
+            SUMMARY="Build job failed while running lint."
+          fi
+          {
+            echo "BUILD_FAILURE_SUMMARY<<EOF"
+            echo "$SUMMARY"
+            echo "EOF"
+            echo "BUILD_FAILURE_LOG_PATH=$(pwd)/build-lint-failure.log"
+            echo "BUILD_FAILURE_SOURCE=lint"
+          } >> "$GITHUB_ENV"
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
@@ -230,8 +294,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           STAGE_NAME: "Build and Lint Check"
-          FAILURE_MESSAGE: "Build and Lint Check job failed (tests, coverage, assemble, or lint)."
-          FAILURE_LOG: "Inspect workflow logs and uploaded coverage/build artifacts for exact Gradle failures."
+          FAILURE_MESSAGE: ${{ env.BUILD_FAILURE_SUMMARY || 'Build and Lint Check job failed (tests, coverage, assemble, or lint).' }}
+          FAILURE_LOG_PATH: ${{ env.BUILD_FAILURE_LOG_PATH }}
           FAILURE_ENVIRONMENT: |
             Runner: ${{ runner.os }}
             Event: ${{ github.event_name }}
@@ -356,8 +420,8 @@ jobs:
           TAG="${{ steps.check_release.outputs.tag }}"
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git tag -a "$TAG" -m "Release $TAG"
-          git push origin "$TAG"
+          bash -o pipefail -c "git tag -a \"$TAG\" -m \"Release $TAG\" | tee -a release-tag.log"
+          bash -o pipefail -c "git push origin \"$TAG\" | tee -a release-tag.log"
 
       - name: Create GitHub Release
         if: steps.check_release.outputs.should_release == 'true'
@@ -376,10 +440,53 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           STAGE_NAME: "Release from Commit Message"
-          FAILURE_MESSAGE: "Release job failed. Verify [release] commit parsing, tagging, or release publication."
-          FAILURE_LOG: "See workflow logs for tag parsing output or release API errors."
+          FAILURE_MESSAGE: ${{ env.RELEASE_FAILURE_SUMMARY || 'Release job failed. Verify [release] commit parsing, tagging, or release publication.' }}
+          FAILURE_LOG_PATH: ${{ env.RELEASE_FAILURE_LOG_PATH }}
           FAILURE_ENVIRONMENT: |
             Runner: ${{ runner.os }}
             Event: ${{ github.event_name }}
         run: bash .github/scripts/report_action_error.sh
 
+      - name: Capture failure snippet (Release)
+        if: failure()
+        run: |
+          LOG_FILE="release-job.log"
+          SUMMARY="Release job failed. Verify tagging or GitHub release steps."
+          if [ -f "$LOG_FILE" ]; then
+            python3 .github/scripts/extract_gradle_failure.py "$LOG_FILE" release-failure.log || true
+            SUMMARY="$(head -n 1 release-failure.log | tr -d '\r')"
+            {
+              echo "RELEASE_FAILURE_SUMMARY<<EOF"
+              echo "$SUMMARY"
+              echo "EOF"
+              echo "RELEASE_FAILURE_LOG_PATH=$(pwd)/release-failure.log"
+            } >> "$GITHUB_ENV"
+          else
+            {
+              echo "RELEASE_FAILURE_SUMMARY<<EOF"
+              echo "$SUMMARY"
+              echo "EOF"
+            } >> "$GITHUB_ENV"
+      - name: Capture failure snippet (Release)
+        if: failure()
+        run: |
+          LOG_FILE="release-tag.log"
+          if [ ! -f "$LOG_FILE" ] && [ -f "release-job.log" ]; then
+            LOG_FILE="release-job.log"
+          fi
+          SUMMARY="Release job failed. Verify tagging or GitHub release steps."
+          if [ -f "$LOG_FILE" ]; then
+            python3 .github/scripts/extract_gradle_failure.py "$LOG_FILE" release-failure.log || true
+            SUMMARY="$(head -n 1 release-failure.log | tr -d '\r')"
+            {
+              echo "RELEASE_FAILURE_SUMMARY<<EOF"
+              echo "$SUMMARY"
+              echo "EOF"
+              echo "RELEASE_FAILURE_LOG_PATH=$(pwd)/release-failure.log"
+            } >> "$GITHUB_ENV"
+          else
+            {
+              echo "RELEASE_FAILURE_SUMMARY<<EOF"
+              echo "$SUMMARY"
+              echo "EOF"
+            } >> "$GITHUB_ENV"
