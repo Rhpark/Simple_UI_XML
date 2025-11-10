@@ -43,22 +43,16 @@ jobs:
           TITLE=""
           DESCRIBE=""
 
-          echo "Checking for [release] tag in recent commits..."
-          FOUND=false
-          for i in {0..4}; do
-            CURRENT_MSG=$(git log -1 --skip=$i --pretty=%B 2>/dev/null || echo "")
-            if [ -z "$CURRENT_MSG" ]; then
-              break
-            fi
-            if echo "$CURRENT_MSG" | grep -q "\[release\]"; then
-              COMMIT_MSG="$CURRENT_MSG"
-              FOUND=true
-              break
-            fi
-          done
+          echo "Checking [release] tag in HEAD commit..."
+          COMMIT_MSG=$(git log -1 --pretty=%B 2>/dev/null || echo "")
+          if echo "$COMMIT_MSG" | grep -q "\[release\]"; then
+            FOUND=true
+          else
+            FOUND=false
+          fi
 
           if [ "$FOUND" = false ]; then
-            echo "No [release] block found. Skipping release."
+            echo "No [release] block found in HEAD commit. Skipping release."
             {
               echo "should_release=false"
               echo "tag="
