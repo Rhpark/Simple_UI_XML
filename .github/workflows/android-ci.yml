@@ -34,7 +34,7 @@ jobs:
         id: determine
         run: |
           set -euo pipefail
-          LOG_FILE="${GITHUB_WORKSPACE}/release-check.log"
+          LOG_FILE="${GITHUB_WORKSPACE}/initialize-check.log"
           exec > >(tee "$LOG_FILE")
           exec 2>&1
 
@@ -124,8 +124,8 @@ jobs:
             Runner: ${{ runner.os }}
             Event: ${{ github.event_name }}
         run: |
-          FAILURE_LOG_PATH="${GITHUB_WORKSPACE}/release-check-failure.log"
-          SUMMARY="Release Check failed. See logs above for details."
+          FAILURE_LOG_PATH="${GITHUB_WORKSPACE}/initialize-check-failure.log"
+          SUMMARY="Initialize Check failed. See logs above for details."
           if [ -f "$RELEASE_CHECK_LOG" ]; then
             python3 .github/scripts/extract_gradle_failure.py "$RELEASE_CHECK_LOG" "$FAILURE_LOG_PATH" || true
             SUMMARY="$(head -n 1 "$FAILURE_LOG_PATH" | tr -d '\r')"
