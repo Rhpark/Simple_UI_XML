@@ -109,6 +109,22 @@ jobs:
             echo "EOF"
           } >> "$GITHUB_OUTPUT"
 
+      - name: Report failure (Release Check)
+        if: failure()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          STAGE_NAME: "Release Check"
+          FAILURE_MESSAGE: "Release block validation failed. Please inspect release metadata."
+          FAILURE_LOG_PATH: ${{ github.workspace }}/release-check-failure.log
+          FAILURE_ENVIRONMENT: |
+            Runner: ${{ runner.os }}
+            Event: ${{ github.event_name }}
+        run: |
+          {
+            echo "Release Check failed. See logs above for details."
+          } > "$FAILURE_LOG_PATH"
+          bash .github/scripts/report_action_error.sh
+
   unit-test:
     name: Unit Tests
     runs-on: ubuntu-latest

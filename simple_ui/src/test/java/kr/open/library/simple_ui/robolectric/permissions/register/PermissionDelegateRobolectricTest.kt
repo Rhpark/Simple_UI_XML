@@ -254,5 +254,29 @@ class PermissionDelegateRobolectricTest {
         (activeDelegatesField.get(permissionManager) as MutableMap<*, *>).clear()
     }
 
+    @Test
+    fun getCurrentRequestId_returnsCurrentId() {
+        val requestId = UUID.randomUUID().toString()
+        setCurrentRequestId(requestId)
+
+        Assert.assertEquals(requestId, delegate.getCurrentRequestId())
+    }
+
+    @Test
+    fun getCurrentRequestId_returnsNullWhenNoRequest() {
+        Assert.assertNull(delegate.getCurrentRequestId())
+    }
+
+    @Test
+    fun isPermissionGranted_checksPermissionState() {
+        val permission = Manifest.permission.CAMERA
+        shadowOf(activity.application).denyPermissions(permission)
+
+        Assert.assertFalse(delegate.isPermissionGranted(permission))
+
+        shadowOf(activity.application).grantPermissions(permission)
+        Assert.assertTrue(delegate.isPermissionGranted(permission))
+    }
+
     class TestFragment : Fragment()
 }
