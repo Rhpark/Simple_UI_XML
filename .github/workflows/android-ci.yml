@@ -18,6 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      issues: write
     outputs:
       should_release: ${{ steps.determine.outputs.should_release }}
       tag: ${{ steps.determine.outputs.tag }}
@@ -33,6 +34,9 @@ jobs:
         id: determine
         run: |
           set -euo pipefail
+          LOG_FILE="${GITHUB_WORKSPACE}/release-check.log"
+          exec > >(tee "$LOG_FILE")
+          exec 2>&1
 
           SHOULD_RELEASE=false
           TAG=""
@@ -115,14 +119,21 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           STAGE_NAME: "Release Check"
           FAILURE_MESSAGE: "Release block validation failed. Please inspect release metadata."
-          FAILURE_LOG_PATH: ${{ github.workspace }}/release-check-failure.log
+          RELEASE_CHECK_LOG: ${{ github.workspace }}/release-check.log
           FAILURE_ENVIRONMENT: |
             Runner: ${{ runner.os }}
             Event: ${{ github.event_name }}
         run: |
-          {
-            echo "Release Check failed. See logs above for details."
-          } > "$FAILURE_LOG_PATH"
+          FAILURE_LOG_PATH="${GITHUB_WORKSPACE}/release-check-failure.log"
+          SUMMARY="Release Check failed. See logs above for details."
+          if [ -f "$RELEASE_CHECK_LOG" ]; then
+            python3 .github/scripts/extract_gradle_failure.py "$RELEASE_CHECK_LOG" "$FAILURE_LOG_PATH" || true
+            SUMMARY="$(head -n 1 "$FAILURE_LOG_PATH" | tr -d '\r')"
+          else
+            echo "$SUMMARY" > "$FAILURE_LOG_PATH"
+          fi
+          export FAILURE_LOG_PATH
+          export FAILURE_MESSAGE="$SUMMARY"
           bash .github/scripts/report_action_error.sh
 
   unit-test:
