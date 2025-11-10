@@ -96,31 +96,23 @@ EOF
 )
 
 export ISSUE_BODY
-SEARCH_QUERY=$(python3 - <<'PY'
-import os, urllib.parse
-repo = os.environ["REPO"]
-title = os.environ["ISSUE_TITLE"]
-query = f'repo:{repo} state:open in:title "{title}"'
-print(urllib.parse.quote(query, safe=''))
-PY
-)
-
-SEARCH_URL="${API_URL}/search/issues?q=${SEARCH_QUERY}"
-SEARCH_RESPONSE=$(curl -sSf \
+LIST_URL="${API_URL}/repos/${REPO}/issues?state=open&per_page=100"
+ISSUE_NUMBER=$(curl -sSf \
   -H "Authorization: Bearer ${GITHUB_TOKEN}" \
   -H "Accept: application/vnd.github+json" \
-  "${SEARCH_URL}")
-
-ISSUE_NUMBER=$(python3 - <<'PY'
-import json, sys
+  "${LIST_URL}" | python3 - <<'PY'
+import json, os, sys
+title = os.environ["ISSUE_TITLE"]
 try:
-    data = json.load(sys.stdin)
-    items = data.get("items") or []
-    if items:
-        print(items[0]["number"])
+    issues = json.load(sys.stdin)
+    for issue in issues:
+        if issue.get("title") == title:
+            print(issue.get("number"))
+            break
 except Exception:
     pass
-PY <<< "${SEARCH_RESPONSE}" || true)
+PY
+)
 
 create_issue() {
   export ISSUE_PAYLOAD
