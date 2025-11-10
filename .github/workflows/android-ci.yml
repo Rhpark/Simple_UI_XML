@@ -484,6 +484,3 @@ jobs:
             Runner: ${{ runner.os }}
             Event: ${{ github.event_name }}
         run: bash .github/scripts/report_action_error.sh
-
-
-

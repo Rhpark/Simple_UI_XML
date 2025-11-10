@@ -23,28 +23,38 @@ def slice_from(index, max_lines=100):
     end = min(len(clean_lines), index + max_lines)
     return clean_lines[index:end]
 
-def find_last_index(matchers):
+def find_last_index(predicate):
     last = None
     for idx, line in enumerate(clean_lines):
-        for matcher in matchers:
-            if matcher(line):
-                last = idx
+        if predicate(line):
+            last = idx
     return last
 
-matchers_priority = [
-    [lambda line: "failed," in line.lower()],
-    [lambda line: "> Task" in line and "FAILED" in line],
-    [lambda line: "FAILED" in line],
-    [lambda line: "FAILURE:" in line],
-    [lambda line: "BUILD FAILED" in line],
-]
-
 result_lines = []
-for matcher_group in matchers_priority:
-    idx = find_last_index(matcher_group)
+
+idx = find_last_index(lambda line: "failed," in line.lower())
+if idx is not None:
+    result_lines = slice_from(idx)
+
+if not result_lines:
+    idx = find_last_index(lambda line: "> Task" in line and "FAILED" in line)
     if idx is not None:
         result_lines = slice_from(idx)
-        break
+
+if not result_lines:
+    idx = find_last_index(lambda line: "FAILED" in line)
+    if idx is not None:
+        result_lines = slice_from(idx)
+
+if not result_lines:
+    idx = find_last_index(lambda line: "FAILURE:" in line)
+    if idx is not None:
+        result_lines = slice_from(idx)
+
+if not result_lines:
+    idx = find_last_index(lambda line: "BUILD FAILED" in line)
+    if idx is not None:
+        result_lines = slice_from(idx)
 
 if not result_lines:
     start = max(0, len(clean_lines) - 100)
