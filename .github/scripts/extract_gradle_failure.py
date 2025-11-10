@@ -13,8 +13,16 @@ if not input_path.exists():
     print(f"[extract_gradle_failure] Input log not found: {input_path}", file=sys.stderr)
     sys.exit(0)
 
-patterns_start = ("FAILURE:", "FAILURE: Build failed", "BUILD FAILED in", "Execution failed for task")
-patterns_end = ("Error:", "BUILD FAILED", "FAILURE:", "Caused by:")
+patterns_start = (
+    "FAILURE:",
+    "FAILURE: Build failed",
+    "BUILD FAILED in",
+    "Execution failed for task",
+)
+patterns_alt = (
+    "> Task :",
+)
+patterns_end = ("Error:", "BUILD FAILED", "FAILURE:", "Caused by:", "BUILD SUCCESSFUL")
 
 lines = input_path.read_text(encoding="utf-8", errors="ignore").splitlines()
 
@@ -22,7 +30,7 @@ snippet_lines = []
 capture = False
 
 for line in lines:
-    if not capture and any(pat in line for pat in patterns_start):
+    if not capture and (any(pat in line for pat in patterns_start) or (snippet_lines == [] and any(pat in line for pat in patterns_alt))):
         capture = True
 
     if capture:
