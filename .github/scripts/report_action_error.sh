@@ -31,7 +31,13 @@ ACTOR="${GITHUB_ACTOR:-unknown}"
 API_URL="${GITHUB_API_URL:-https://api.github.com}"
 
 FAILURE_MESSAGE_INPUT="${FAILURE_MESSAGE:-No additional summary provided.}"
-FAILURE_LOG_INPUT="${FAILURE_LOG:-Logs available at ${RUN_URL}}"
+FAILURE_LOG_INPUT="${FAILURE_LOG:-}"
+if [[ -z "${FAILURE_LOG_INPUT}" && -n "${FAILURE_LOG_PATH:-}" && -f "${FAILURE_LOG_PATH}" ]]; then
+    FAILURE_LOG_INPUT="$(cat "${FAILURE_LOG_PATH}")"
+fi
+if [[ -z "${FAILURE_LOG_INPUT}" ]]; then
+    FAILURE_LOG_INPUT="Logs available at ${RUN_URL}"
+fi
 FAILURE_ATTEMPTS_INPUT="${FAILURE_ATTEMPTS:-_Not provided_}"
 FAILURE_ENVIRONMENT_INPUT="${FAILURE_ENVIRONMENT:-Runner: ${RUNNER_NAME:-unknown} | Event: ${EVENT_NAME}}"
 
