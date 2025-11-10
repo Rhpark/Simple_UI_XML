@@ -144,6 +144,7 @@ comment_issue() {
 Another failure detected for this stage.
 - Workflow run: ${RUN_URL}
 - Job: ${WORKFLOW_NAME} / ${JOB_NAME}
+- Commit: ${SHA}
 
 Summary:
 ${FAILURE_MESSAGE_INPUT}
