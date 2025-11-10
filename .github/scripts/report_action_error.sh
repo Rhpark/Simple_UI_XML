@@ -118,6 +118,11 @@ Another failure detected for this stage.
 
 Summary:
 ${FAILURE_MESSAGE_INPUT}
+
+Logs:
+```
+${FAILURE_LOG_INPUT}
+```
 EOF
 )
 

@@ -51,10 +51,11 @@ jobs:
           SUMMARY_ESCAPED="${SUMMARY//'%'/'%25'}"
           SUMMARY_ESCAPED="${SUMMARY_ESCAPED//$'\n'/'%0A'}"
           SUMMARY_ESCAPED="${SUMMARY_ESCAPED//$'\r'/'%0D'}"
+          DELIM="UNIT_TEST_SNIPPET_$(date +%s%N)"
           {
-            echo "snippet<<UNIT_TEST_SNIPPET"
+            echo "snippet<<${DELIM}"
             cat unit-test-failure-snippet.log
-            echo "UNIT_TEST_SNIPPET"
+            echo "${DELIM}"
           } >> "$GITHUB_OUTPUT"
           echo "summary=${SUMMARY_ESCAPED}" >> "$GITHUB_OUTPUT"
 
@@ -125,10 +126,11 @@ jobs:
           SUMMARY_ESCAPED="${SUMMARY//'%'/'%25'}"
           SUMMARY_ESCAPED="${SUMMARY_ESCAPED//$'\n'/'%0A'}"
           SUMMARY_ESCAPED="${SUMMARY_ESCAPED//$'\r'/'%0D'}"
+          DELIM="ROBOLECTRIC_SNIPPET_$(date +%s%N)"
           {
-            echo "snippet<<ROBOLECTRIC_SNIPPET"
+            echo "snippet<<${DELIM}"
             cat robolectric-failure-snippet.log
-            echo "ROBOLECTRIC_SNIPPET"
+            echo "${DELIM}"
           } >> "$GITHUB_OUTPUT"
           echo "summary=${SUMMARY_ESCAPED}" >> "$GITHUB_OUTPUT"
 
