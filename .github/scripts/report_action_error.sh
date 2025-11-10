@@ -41,11 +41,36 @@ fi
 FAILURE_ATTEMPTS_INPUT="${FAILURE_ATTEMPTS:-_Not provided_}"
 FAILURE_ENVIRONMENT_INPUT="${FAILURE_ENVIRONMENT:-Runner: ${RUNNER_NAME:-unknown} | Event: ${EVENT_NAME}}"
 
-issue_suffix="${FAILURE_MESSAGE_INPUT}"
-if [[ -n "${SHORT_SHA}" && "${SHORT_SHA}" != "unknown" ]]; then
-    issue_suffix="${issue_suffix} · ${SHORT_SHA}"
-fi
-ISSUE_TITLE="[CI][${STAGE_NAME_INPUT}] ${issue_suffix}"
+extract_title() {
+    python3 - "$FAILURE_MESSAGE_INPUT" "$FAILURE_LOG_INPUT" <<'PY'
+import sys, re
+
+message = sys.argv[1]
+log = sys.argv[2]
+
+def find_line_with_extension(text):
+    for line in text.splitlines():
+        if "." in line and ":" in line:
+            return line.strip()
+    for line in text.splitlines():
+        if "." in line:
+            return line.strip()
+    return None
+
+for source in (log, message):
+    if not source:
+        continue
+    line = find_line_with_extension(source)
+    if line:
+        print(line)
+        sys.exit(0)
+
+fallback = (log or message or "Failure detected").splitlines()
+print(fallback[0].strip() if fallback else "Failure detected")
+PY
+}
+TITLE_SUFFIX="$(extract_title)"
+ISSUE_TITLE="[CI][${STAGE_NAME_INPUT}] ${TITLE_SUFFIX}"
 
 export REPO ISSUE_TITLE
 ISSUE_BODY=$(cat <<EOF
