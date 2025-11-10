@@ -56,7 +56,7 @@ class ServiceManagerInfoActivity : BaseBindingActivity<ActivityServiceManagerInf
                 addItem("Available Screen: ${displayInfo.getScreen()}")
                 addItem("Screen With StatusBar: ${displayInfo.getScreenWithStatusBar()}")
                 addItem("StatusBar Height: ${displayInfo.getStatusBarHeight()}")
-                addItem("NavigationBar Height: ${displayInfo.getNavigationBarHeight()}")
+                addItem("NavigationBar Size: ${displayInfo.getNavigationBarSize()}")
             }
 
             btnSim.setOnClickListener {
