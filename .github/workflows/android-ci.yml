@@ -155,7 +155,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Run pure unit tests only
-        run: bash -o pipefail -c "./gradlew :simple_ui:testUnit | tee unit-test.log"
+        run: bash -o pipefail -c "./gradlew :simple_ui:testUnit |& tee unit-test.log"
 
       - name: Capture failure snippet (Unit Tests)
         if: failure()
@@ -226,7 +226,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Run Robolectric tests
-        run: bash -o pipefail -c "./gradlew :simple_ui:testRobolectric | tee robolectric-test.log"
+        run: bash -o pipefail -c "./gradlew :simple_ui:testRobolectric |& tee robolectric-test.log"
 
       - name: Capture failure snippet (Robolectric Tests)
         if: failure()
@@ -312,7 +312,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Run all tests for coverage
-        run: bash -o pipefail -c "./gradlew :simple_ui:testAll | tee build-testAll.log"
+        run: bash -o pipefail -c "./gradlew :simple_ui:testAll |& tee build-testAll.log"
 
       - name: Capture failure snippet (testAll)
         if: failure()
@@ -331,7 +331,7 @@ jobs:
           } >> "$GITHUB_ENV"
 
       - name: Generate Kover coverage report
-        run: bash -o pipefail -c "./gradlew :simple_ui:koverHtmlReport | tee build-kover.log"
+        run: bash -o pipefail -c "./gradlew :simple_ui:koverHtmlReport |& tee build-kover.log"
         if: always()
 
       - name: Capture failure snippet (kover)
@@ -351,7 +351,7 @@ jobs:
           } >> "$GITHUB_ENV"
 
       - name: Assemble
-        run: bash -o pipefail -c "./gradlew assemble --stacktrace | tee build-assemble.log"
+        run: bash -o pipefail -c "./gradlew assemble --stacktrace |& tee build-assemble.log"
 
       - name: Capture failure snippet (assemble)
         if: failure()
@@ -370,7 +370,7 @@ jobs:
           } >> "$GITHUB_ENV"
 
       - name: Android Lint (non-blocking)
-        run: bash -o pipefail -c "./gradlew lint | tee build-lint.log"
+        run: bash -o pipefail -c "./gradlew lint |& tee build-lint.log"
         # continue-on-error: true
 
       - name: Capture failure snippet (lint)
