@@ -19,45 +19,29 @@ ansi_re = re.compile(r"\x1B\[[0-9;]*[A-Za-z]")
 raw_lines = input_path.read_text(encoding="utf-8", errors="ignore").splitlines()
 clean_lines = [ansi_re.sub("", line) for line in raw_lines]
 
-def find_index(pred):
+def last_failed_block(max_lines=100):
+    failed_pattern = re.compile(r"failed,", re.IGNORECASE)
+    last_idx = None
+
     for idx, line in enumerate(clean_lines):
-        if pred(line):
-            return idx
-    return -1
+        if failed_pattern.search(line):
+            last_idx = idx
 
-failure_block = []
-start_idx = find_index(lambda s: "FAILURE:" in s)
-if start_idx == -1:
-    start_idx = find_index(lambda s: "BUILD FAILED" in s)
+    if last_idx is None:
+        return []
 
-if start_idx != -1:
-    i = start_idx
-    while i < len(clean_lines):
-        failure_block.append(clean_lines[i])
-        if "BUILD FAILED" in clean_lines[i]:
-            if i + 1 < len(clean_lines) and "actionable tasks" in clean_lines[i + 1]:
-                failure_block.append(clean_lines[i + 1])
-            break
-        i += 1
+    end = min(len(clean_lines), last_idx + max_lines)
+    block = clean_lines[last_idx:end]
+    return block
 
-task_block = []
-task_idx = find_index(lambda s: s.startswith("> Task ") and "FAILED" in s)
-if task_idx != -1:
-    j = task_idx
-    while j < len(clean_lines):
-        if j > task_idx and clean_lines[j].startswith("FAILURE:"):
-            break
-        task_block.append(clean_lines[j])
-        j += 1
-
-result_lines = failure_block[:]
-if task_block:
-    if result_lines and result_lines[-1].strip():
-        result_lines.append("")
-    result_lines.extend(task_block)
-
+result_lines = last_failed_block()
 if not result_lines:
-    result_lines = clean_lines[-200:]
+    failure_block = []
+    for idx, line in enumerate(clean_lines):
+        if "FAILURE:" in line or "BUILD FAILED" in line:
+            failure_block = clean_lines[idx: idx + 200]
+            break
+    result_lines = failure_block or clean_lines[-200:]
 
 exclude_substrings = (
     "Run with --stacktrace",
