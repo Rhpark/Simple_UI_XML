@@ -13,9 +13,106 @@ on:
   workflow_dispatch:
 
 jobs:
+  release-check:
+    name: Release Check
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      should_release: ${{ steps.determine.outputs.should_release }}
+      tag: ${{ steps.determine.outputs.tag }}
+      title: ${{ steps.determine.outputs.title }}
+      body: ${{ steps.determine.outputs.body }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 10
+
+      - name: Analyze release metadata
+        id: determine
+        run: |
+          set -euo pipefail
+
+          SHOULD_RELEASE=false
+          TAG=""
+          TITLE=""
+          DESCRIBE=""
+
+          echo "Checking for [release] tag in recent commits..."
+          FOUND=false
+          for i in {0..4}; do
+            CURRENT_MSG=$(git log -1 --skip=$i --pretty=%B 2>/dev/null || echo "")
+            if [ -z "$CURRENT_MSG" ]; then
+              break
+            fi
+            if echo "$CURRENT_MSG" | grep -q "\[release\]"; then
+              COMMIT_MSG="$CURRENT_MSG"
+              FOUND=true
+              break
+            fi
+          done
+
+          if [ "$FOUND" = false ]; then
+            echo "No [release] block found. Skipping release."
+            {
+              echo "should_release=false"
+              echo "tag="
+              echo "title="
+              echo "body="
+            } >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "Release block detected. Parsing metadata..."
+          TAG=$(echo "$COMMIT_MSG" | grep -oP '(?<=Tag)\s*:\s*.*' | head -1 | sed 's/^[[:space:]]*:[[:space:]]*//' | xargs || true)
+          TITLE=$(echo "$COMMIT_MSG" | grep -oP '(?<=Title)\s*:\s*.*' | head -1 | sed 's/^[[:space:]]*:[[:space:]]*//' | xargs || true)
+          DESCRIBE=$(echo "$COMMIT_MSG" | awk '/Describe\s*:/,0' | tail -n +1 | sed '1s/Describe\s*:\s*//' )
+          if [ -z "$DESCRIBE" ]; then
+            DESCRIBE=$(echo "$COMMIT_MSG" | awk '/Descrbe\s*:/,0' | tail -n +1 | sed '1s/Descrbe\s*:\s*//' )
+          fi
+
+          if [ -z "$TAG" ]; then
+            echo "Error: Tag not found in [release] block."
+            exit 1
+          fi
+
+          if ! echo "$TAG" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "Error: Tag format is invalid. Expected x.x.x."
+            exit 1
+          fi
+
+          git fetch --tags
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "Error: Tag $TAG already exists."
+            exit 1
+          fi
+
+          GRADLE_VERSION=$(grep -oP '(?<=version = ")[^"]+' simple_ui/build.gradle.kts | head -1 || true)
+          if [ -z "$GRADLE_VERSION" ]; then
+            echo "Error: Failed to read version from simple_ui/build.gradle.kts"
+            exit 1
+          fi
+
+          if [ "$TAG" != "$GRADLE_VERSION" ]; then
+            echo "Error: Version mismatch between commit tag ($TAG) and build.gradle.kts ($GRADLE_VERSION)"
+            exit 1
+          fi
+
+          echo "Release metadata validated."
+          {
+            echo "should_release=true"
+            echo "tag=$TAG"
+            echo "title=$TITLE"
+            echo "body<<EOF"
+            echo "$DESCRIBE"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
   unit-test:
     name: Unit Tests
     runs-on: ubuntu-latest
+    needs: release-check
     permissions:
       contents: read
       checks: write
@@ -304,190 +401,65 @@ jobs:
   release:
     name: Release from Commit Message
     runs-on: ubuntu-latest
-    needs: build
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    needs: [build, release-check]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master' && needs.release-check.outputs.should_release == 'true'
     permissions:
       contents: write
       issues: write
-    outputs:
-      should_release: ${{ steps.check_release.outputs.should_release }}
-      release_tag: ${{ steps.check_release.outputs.tag }}
-      release_title: ${{ steps.check_release.outputs.title }}
-      release_body: ${{ steps.check_release.outputs.body }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 10
 
-      - name: Parse commit message and validate version
-        id: check_release
-        run: |
-          # Search recent 5 commits for [release] tag
-          echo "Searching for [release] tag in recent 5 commits..."
-          COMMIT_MSG=""
-          FOUND=false
-
-          for i in {0..4}; do
-            CURRENT_MSG=$(git log -1 --skip=$i --pretty=%B 2>/dev/null || echo "")
-            if [ -z "$CURRENT_MSG" ]; then
-              break
-            fi
-
-            echo "--- Commit $((i+1)) ---"
-            echo "$CURRENT_MSG"
-            echo "---"
-
-            if echo "$CURRENT_MSG" | grep -q "\[release\]"; then
-              COMMIT_MSG="$CURRENT_MSG"
-              FOUND=true
-              echo "[release] tag found in commit $((i+1))!"
-              break
-            fi
-          done
-
-          if [ "$FOUND" = false ]; then
-            echo "should_release=false" >> $GITHUB_OUTPUT
-            echo "No [release] tag found in recent 5 commits. Skipping release."
-            exit 0
-          fi
-
-          echo ""
-          echo "=== Processing Release Commit ==="
-          echo "$COMMIT_MSG"
-          echo "================================="
-
-          # Extract Tag, Title, Describe (flexible with spaces before/after colon)
-          TAG=$(echo "$COMMIT_MSG" | grep -oP '(?<=Tag)\s*:\s*.*' | head -1 | sed 's/^[[:space:]]*:[[:space:]]*//' | xargs)
-          TITLE=$(echo "$COMMIT_MSG" | grep -oP '(?<=Title)\s*:\s*.*' | head -1 | sed 's/^[[:space:]]*:[[:space:]]*//' | xargs)
-
-          # Extract Describe (can be multiline, flexible spelling and spacing)
-          DESCRIBE=$(echo "$COMMIT_MSG" | awk '/Describe\s*:/,0' | tail -n +1 | sed '1s/Describe\s*:\s*//')
-          # Fallback for common typo "Descrbe"
-          if [ -z "$DESCRIBE" ]; then
-            DESCRIBE=$(echo "$COMMIT_MSG" | awk '/Descrbe\s*:/,0' | tail -n +1 | sed '1s/Descrbe\s*:\s*//')
-          fi
-
-          echo "Extracted Tag: $TAG"
-          echo "Extracted Title: $TITLE"
-          echo "Extracted Describe: $DESCRIBE"
-
-          # Validate tag format (x.x.x)
-          if ! echo "$TAG" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
-            echo "Error: Tag format is invalid. Expected format: x.x.x (e.g., 0.2.2)"
-            echo "Found: $TAG"
-            exit 1
-          fi
-
-          # Check if tag already exists (prevent duplicate releases)
-          git fetch --tags
-          if git rev-parse "$TAG" >/dev/null 2>&1; then
-            echo "should_release=false" >> $GITHUB_OUTPUT
-            echo "Tag $TAG already exists. Skipping release to prevent duplicate."
-            exit 0
-          fi
-
-          # Extract version from build.gradle.kts
-          GRADLE_VERSION=$(grep -oP '(?<=version = ")[^"]+' simple_ui/build.gradle.kts | head -1)
-          echo "Version in build.gradle.kts: $GRADLE_VERSION"
-
-          # Validate version match
-          if [ "$TAG" != "$GRADLE_VERSION" ]; then
-            echo "Error: Version mismatch!"
-            echo "  Commit message Tag: $TAG"
-            echo "  build.gradle.kts version: $GRADLE_VERSION"
-            echo "Please ensure both versions match before releasing."
-            exit 1
-          fi
-
-          echo "✅ Version validation passed!"
-
-          # Set outputs
-          echo "should_release=true" >> $GITHUB_OUTPUT
-          echo "tag=$TAG" >> $GITHUB_OUTPUT
-          echo "title=$TITLE" >> $GITHUB_OUTPUT
-
-          # Handle multiline describe
-          {
-            echo "body<<EOF"
-            echo "$DESCRIBE"
-            echo "EOF"
-          } >> $GITHUB_OUTPUT
-
       - name: Create Git Tag
-        if: steps.check_release.outputs.should_release == 'true'
         run: |
-          TAG="${{ steps.check_release.outputs.tag }}"
+          TAG="${{ needs.release-check.outputs.tag }}"
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           bash -o pipefail -c "git tag -a \"$TAG\" -m \"Release $TAG\" | tee -a release-tag.log"
           bash -o pipefail -c "git push origin \"$TAG\" | tee -a release-tag.log"
 
       - name: Create GitHub Release
-        if: steps.check_release.outputs.should_release == 'true'
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.check_release.outputs.tag }}
-          release_name: ${{ steps.check_release.outputs.title }}
-          body: ${{ steps.check_release.outputs.body }}
+          tag_name: ${{ needs.release-check.outputs.tag }}
+          release_name: ${{ needs.release-check.outputs.title }}
+          body: ${{ needs.release-check.outputs.body }}
           draft: false
           prerelease: false
+
+      - name: Capture failure snippet (Release)
+        if: failure()
+        run: |
+          LOG_FILE="release-tag.log"
+          SUMMARY="Release job failed. Verify tagging or GitHub release steps."
+          if [ -f "$LOG_FILE" ]; then
+            python3 .github/scripts/extract_gradle_failure.py "$LOG_FILE" release-failure.log || true
+            SUMMARY="$(head -n 1 release-failure.log | tr -d '\r')"
+            {
+              echo "RELEASE_FAILURE_SUMMARY<<EOF"
+              echo "$SUMMARY"
+              echo "EOF"
+              echo "RELEASE_FAILURE_LOG_PATH=$(pwd)/release-failure.log"
+            } >> "$GITHUB_ENV"
+          else
+            {
+              echo "RELEASE_FAILURE_SUMMARY<<EOF"
+              echo "$SUMMARY"
+              echo "EOF"
+            } >> "$GITHUB_ENV"
 
       - name: Report failure (Release from Commit Message)
         if: failure()
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           STAGE_NAME: "Release from Commit Message"
-          FAILURE_MESSAGE: ${{ env.RELEASE_FAILURE_SUMMARY || 'Release job failed. Verify [release] commit parsing, tagging, or release publication.' }}
+          FAILURE_MESSAGE: ${{ env.RELEASE_FAILURE_SUMMARY || 'Release job failed. Verify tagging or GitHub release steps.' }}
           FAILURE_LOG_PATH: ${{ env.RELEASE_FAILURE_LOG_PATH }}
           FAILURE_ENVIRONMENT: |
             Runner: ${{ runner.os }}
             Event: ${{ github.event_name }}
         run: bash .github/scripts/report_action_error.sh
-
-      - name: Capture failure snippet (Release)
-        if: failure()
-        run: |
-          LOG_FILE="release-job.log"
-          SUMMARY="Release job failed. Verify tagging or GitHub release steps."
-          if [ -f "$LOG_FILE" ]; then
-            python3 .github/scripts/extract_gradle_failure.py "$LOG_FILE" release-failure.log || true
-            SUMMARY="$(head -n 1 release-failure.log | tr -d '\r')"
-            {
-              echo "RELEASE_FAILURE_SUMMARY<<EOF"
-              echo "$SUMMARY"
-              echo "EOF"
-              echo "RELEASE_FAILURE_LOG_PATH=$(pwd)/release-failure.log"
-            } >> "$GITHUB_ENV"
-          else
-            {
-              echo "RELEASE_FAILURE_SUMMARY<<EOF"
-              echo "$SUMMARY"
-              echo "EOF"
-            } >> "$GITHUB_ENV"
-      - name: Capture failure snippet (Release)
-        if: failure()
-        run: |
-          LOG_FILE="release-tag.log"
-          if [ ! -f "$LOG_FILE" ] && [ -f "release-job.log" ]; then
-            LOG_FILE="release-job.log"
-          fi
-          SUMMARY="Release job failed. Verify tagging or GitHub release steps."
-          if [ -f "$LOG_FILE" ]; then
-            python3 .github/scripts/extract_gradle_failure.py "$LOG_FILE" release-failure.log || true
-            SUMMARY="$(head -n 1 release-failure.log | tr -d '\r')"
-            {
-              echo "RELEASE_FAILURE_SUMMARY<<EOF"
-              echo "$SUMMARY"
-              echo "EOF"
-              echo "RELEASE_FAILURE_LOG_PATH=$(pwd)/release-failure.log"
-            } >> "$GITHUB_ENV"
-          else
-            {
-              echo "RELEASE_FAILURE_SUMMARY<<EOF"
-              echo "$SUMMARY"
-              echo "EOF"
-            } >> "$GITHUB_ENV"
-          

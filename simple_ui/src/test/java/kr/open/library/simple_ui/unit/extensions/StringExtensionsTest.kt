@@ -420,12 +420,4 @@ class StringExtensionsTest {
             assertNotNull("잘못된 HTML도 예외 없이 처리되어야 합니다", result)
         }
     }
-
-    /**
-     * CI 자동 이슈 리포팅 플로우 검증을 위한 의도적인 실패 케이스
-     */
-    @Test
-    fun testIntentionalFailureForCiAlerting() {
-        fail("Intentional failure to trigger CI action-error workflow")
-    }
 }
