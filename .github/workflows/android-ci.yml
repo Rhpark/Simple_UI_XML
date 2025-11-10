@@ -44,11 +44,19 @@ jobs:
         id: unit_test_failure_snippet
         run: |
           python3 .github/scripts/extract_gradle_failure.py unit-test.log unit-test-failure-snippet.log || true
+          SUMMARY="$(head -n 1 unit-test-failure-snippet.log | tr -d '\r')"
+          if [ -z "$SUMMARY" ]; then
+            SUMMARY="Unit Tests job failed. Please inspect Gradle task :simple_ui:testUnit."
+          fi
+          SUMMARY_ESCAPED="${SUMMARY//'%'/'%25'}"
+          SUMMARY_ESCAPED="${SUMMARY_ESCAPED//$'\n'/'%0A'}"
+          SUMMARY_ESCAPED="${SUMMARY_ESCAPED//$'\r'/'%0D'}"
           {
-            echo "snippet<<EOF"
+            echo "snippet<<UNIT_TEST_SNIPPET"
             cat unit-test-failure-snippet.log
-            echo "EOF"
+            echo "UNIT_TEST_SNIPPET"
           } >> "$GITHUB_OUTPUT"
+          echo "summary=${SUMMARY_ESCAPED}" >> "$GITHUB_OUTPUT"
 
       - name: Publish test results
         uses: EnricoMi/publish-unit-test-result-action@v2
@@ -71,7 +79,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           STAGE_NAME: "Unit Tests"
-          FAILURE_MESSAGE: "Unit Tests job failed. Please inspect Gradle task :simple_ui:testUnit."
+          FAILURE_MESSAGE: ${{ steps.unit_test_failure_snippet.outputs.summary || 'Unit Tests job failed. Please inspect Gradle task :simple_ui:testUnit.' }}
           FAILURE_LOG: ${{ steps.unit_test_failure_snippet.outputs.snippet }}
           FAILURE_ENVIRONMENT: |
             Runner: ${{ runner.os }}
@@ -110,11 +118,19 @@ jobs:
         id: robolectric_failure_snippet
         run: |
           python3 .github/scripts/extract_gradle_failure.py robolectric-test.log robolectric-failure-snippet.log || true
+          SUMMARY="$(head -n 1 robolectric-failure-snippet.log | tr -d '\r')"
+          if [ -z "$SUMMARY" ]; then
+            SUMMARY="Robolectric Tests job failed. Check Gradle task :simple_ui:testRobolectric."
+          fi
+          SUMMARY_ESCAPED="${SUMMARY//'%'/'%25'}"
+          SUMMARY_ESCAPED="${SUMMARY_ESCAPED//$'\n'/'%0A'}"
+          SUMMARY_ESCAPED="${SUMMARY_ESCAPED//$'\r'/'%0D'}"
           {
-            echo "snippet<<EOF"
+            echo "snippet<<ROBOLECTRIC_SNIPPET"
             cat robolectric-failure-snippet.log
-            echo "EOF"
+            echo "ROBOLECTRIC_SNIPPET"
           } >> "$GITHUB_OUTPUT"
+          echo "summary=${SUMMARY_ESCAPED}" >> "$GITHUB_OUTPUT"
 
       - name: Publish test results
         uses: EnricoMi/publish-unit-test-result-action@v2
@@ -137,7 +153,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           STAGE_NAME: "Robolectric Tests"
-          FAILURE_MESSAGE: "Robolectric Tests job failed. Check Gradle task :simple_ui:testRobolectric."
+          FAILURE_MESSAGE: ${{ steps.robolectric_failure_snippet.outputs.summary || 'Robolectric Tests job failed. Check Gradle task :simple_ui:testRobolectric.' }}
           FAILURE_LOG: ${{ steps.robolectric_failure_snippet.outputs.snippet }}
           FAILURE_ENVIRONMENT: |
             Runner: ${{ runner.os }}
