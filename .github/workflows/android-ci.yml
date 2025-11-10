@@ -65,7 +65,7 @@ jobs:
           FAILURE_ENVIRONMENT: |
             Runner: ${{ runner.os }}
             Event: ${{ github.event_name }}
-        run: .github/scripts/report_action_error.sh
+        run: bash .github/scripts/report_action_error.sh
 
   robolectric-test:
     name: Robolectric Tests
@@ -120,7 +120,7 @@ jobs:
           FAILURE_ENVIRONMENT: |
             Runner: ${{ runner.os }}
             Event: ${{ github.event_name }}
-        run: .github/scripts/report_action_error.sh
+        run: bash .github/scripts/report_action_error.sh
 
   build:
     name: Build and Lint Check
@@ -203,7 +203,7 @@ jobs:
           FAILURE_ENVIRONMENT: |
             Runner: ${{ runner.os }}
             Event: ${{ github.event_name }}
-        run: .github/scripts/report_action_error.sh
+        run: bash .github/scripts/report_action_error.sh
 
   release:
     name: Release from Commit Message
@@ -349,5 +349,5 @@ jobs:
           FAILURE_ENVIRONMENT: |
             Runner: ${{ runner.os }}
             Event: ${{ github.event_name }}
-        run: .github/scripts/report_action_error.sh
+        run: bash .github/scripts/report_action_error.sh
 
