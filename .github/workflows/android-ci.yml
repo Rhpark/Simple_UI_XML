@@ -121,7 +121,7 @@ jobs:
           FAILURE_LOG_PATH="${GITHUB_WORKSPACE}/initialize-check-failure.log"
           SUMMARY="Initialize Check failed. See logs above for details."
           if [ -f "$RELEASE_CHECK_LOG" ]; then
-            python3 .github/scripts/extract_gradle_failure.py "$RELEASE_CHECK_LOG" "$FAILURE_LOG_PATH" || true
+            python3 .github/scripts/extract_gradle_failure.py "$RELEASE_CHECK_LOG" "$FAILURE_LOG_PATH"
             SUMMARY="$(head -n 1 "$FAILURE_LOG_PATH" | tr -d '\r')"
           else
             echo "$SUMMARY" > "$FAILURE_LOG_PATH"
@@ -161,7 +161,7 @@ jobs:
         if: failure()
         id: unit_test_failure_snippet
         run: |
-          python3 .github/scripts/extract_gradle_failure.py unit-test.log unit-test-failure-snippet.log || true
+          python3 .github/scripts/extract_gradle_failure.py unit-test.log unit-test-failure-snippet.log
           SUMMARY="$(head -n 1 unit-test-failure-snippet.log | tr -d '\r')"
           if [ -z "$SUMMARY" ]; then
             SUMMARY="Unit Tests job failed. Please inspect Gradle task :simple_ui:testUnit."
@@ -232,7 +232,7 @@ jobs:
         if: failure()
         id: robolectric_failure_snippet
         run: |
-          python3 .github/scripts/extract_gradle_failure.py robolectric-test.log robolectric-failure-snippet.log || true
+          python3 .github/scripts/extract_gradle_failure.py robolectric-test.log robolectric-failure-snippet.log
           SUMMARY="$(head -n 1 robolectric-failure-snippet.log | tr -d '\r')"
           if [ -z "$SUMMARY" ]; then
             SUMMARY="Robolectric Tests job failed. Check Gradle task :simple_ui:testRobolectric."
@@ -317,7 +317,7 @@ jobs:
       - name: Capture failure snippet (testAll)
         if: failure()
         run: |
-          python3 .github/scripts/extract_gradle_failure.py build-testAll.log build-testAll-failure.log || true
+          python3 .github/scripts/extract_gradle_failure.py build-testAll.log build-testAll-failure.log
           SUMMARY="$(head -n 1 build-testAll-failure.log | tr -d '\r')"
           if [ -z "$SUMMARY" ]; then
             SUMMARY="Build job failed while running :simple_ui:testAll."
@@ -337,7 +337,7 @@ jobs:
       - name: Capture failure snippet (kover)
         if: failure()
         run: |
-          python3 .github/scripts/extract_gradle_failure.py build-kover.log build-kover-failure.log || true
+          python3 .github/scripts/extract_gradle_failure.py build-kover.log build-kover-failure.log
           SUMMARY="$(head -n 1 build-kover-failure.log | tr -d '\r')"
           if [ -z "$SUMMARY" ]; then
             SUMMARY="Build job failed while running :simple_ui:koverHtmlReport."
@@ -356,7 +356,7 @@ jobs:
       - name: Capture failure snippet (assemble)
         if: failure()
         run: |
-          python3 .github/scripts/extract_gradle_failure.py build-assemble.log build-assemble-failure.log || true
+          python3 .github/scripts/extract_gradle_failure.py build-assemble.log build-assemble-failure.log
           SUMMARY="$(head -n 1 build-assemble-failure.log | tr -d '\r')"
           if [ -z "$SUMMARY" ]; then
             SUMMARY="Build job failed while assembling artifacts."
@@ -376,7 +376,7 @@ jobs:
       - name: Capture failure snippet (lint)
         if: failure()
         run: |
-          python3 .github/scripts/extract_gradle_failure.py build-lint.log build-lint-failure.log || true
+          python3 .github/scripts/extract_gradle_failure.py build-lint.log build-lint-failure.log
           SUMMARY="$(head -n 1 build-lint-failure.log | tr -d '\r')"
           if [ -z "$SUMMARY" ]; then
             SUMMARY="Build job failed while running lint."
@@ -458,7 +458,7 @@ jobs:
           LOG_FILE="release-tag.log"
           SUMMARY="Release job failed. Verify tagging or GitHub release steps."
           if [ -f "$LOG_FILE" ]; then
-            python3 .github/scripts/extract_gradle_failure.py "$LOG_FILE" release-failure.log || true
+            python3 .github/scripts/extract_gradle_failure.py "$LOG_FILE" release-failure.log
             SUMMARY="$(head -n 1 release-failure.log | tr -d '\r')"
             {
               echo "RELEASE_FAILURE_SUMMARY<<EOF"
@@ -484,9 +484,3 @@ jobs:
             Runner: ${{ runner.os }}
             Event: ${{ github.event_name }}
         run: bash .github/scripts/report_action_error.sh
-
-
-
-
-
-
