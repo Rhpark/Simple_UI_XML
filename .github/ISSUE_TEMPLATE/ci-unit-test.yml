@@ -1,6 +1,6 @@
 name: "CI-UnitTest 이슈 보고"
 description: Report GitHub Actions failures - UnitTest.
-labels: ["CI-UnitTest"]
+labels: ["CI-Unit-Test"]
 body:
   - type: dropdown
     id: failed_stage
