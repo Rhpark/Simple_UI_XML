@@ -121,8 +121,8 @@
         <kr.open.library.simple_ui.presenter.ui.view.recyclerview.RecyclerScrollStateView
             android:id="@+id/rcvResult"
             style="@style/RecyclerView.AllMatch.LinearLayoutManager.Vertical"
-            android:nestedScrollingEnabled="false"
-            android:text="result" />
+            android:minHeight="500dp"
+            android:nestedScrollingEnabled="false" />
 
         </LinearLayout>
 

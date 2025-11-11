@@ -14,6 +14,7 @@ import kotlinx.coroutines.launch
 import kr.open.library.simple_ui.extensions.conditional.checkSdkVersion
 import kr.open.library.simple_ui.logcat.Logx
 import kr.open.library.simple_ui.presenter.extensions.view.toastShort
+import kr.open.library.simple_ui.presenter.extensions.view.toastShowShort
 import kr.open.library.simple_ui.presenter.ui.activity.BaseBindingActivity
 import kr.open.library.simple_ui.presenter.ui.adapter.normal.simple.SimpleRcvAdapter
 import kr.open.library.simple_ui.system_manager.extensions.getDisplayInfo
@@ -31,6 +32,9 @@ class ServiceManagerInfoActivity : BaseBindingActivity<ActivityServiceManagerInf
 
     private val adapter = SimpleRcvAdapter<String>(android.R.layout.test_list_item) {
             holder, item, position -> holder.findViewById<TextView>(android.R.id.text1).text = item
+    } .apply {
+        setDiffUtilItemSame { oldItem, newItem -> oldItem == newItem }
+        setDiffUtilContentsSame { oldItem, newItem -> oldItem == newItem }
     }
 
     private val batteryInfo :BatteryStateInfo by lazy { BatteryStateInfo(this) }
@@ -51,115 +55,139 @@ class ServiceManagerInfoActivity : BaseBindingActivity<ActivityServiceManagerInf
 
             btnDisplay.setOnClickListener {
                 val displayInfo = getDisplayInfo()
-                addItem("=== Display Info ===")
-                addItem("Full Screen Size: ${displayInfo.getFullScreenSize()}")
-                addItem("Available Screen: ${displayInfo.getScreen()}")
-                addItem("Screen With StatusBar: ${displayInfo.getScreenWithStatusBar()}")
-                addItem("StatusBar Height: ${displayInfo.getStatusBarHeight()}")
-                addItem("NavigationBar Size: ${displayInfo.getNavigationBarSize()}")
+                val res =  mutableListOf<String>().apply {
+                    add("=== Display Info ===")
+                    add("Full Screen Size: ${displayInfo.getFullScreenSize()}")
+                    add("Screen Size: ${displayInfo.getScreenSize()}")
+                    add("Status bar size: ${displayInfo.getStatusBarSize()}")
+                    add("Navigation bar size: ${displayInfo.getNavigationBarSize()}")
+                    add("isFullScreen: ${displayInfo.isFullScreen()}")
+                    add("isStatusBarHided: ${displayInfo.isStatusBarHided()}")
+                    add("isNavigationBarHided: ${displayInfo.isNavigationBarHided()}")
+                    add("======================")
+                }
+                addItem(res)
             }
 
             btnSim.setOnClickListener {
+//                READ_PHONE_NUMBERS
+//                onRequestPermissions(listOf(READ_PHONE_STATE)) { deniedPermissions ->
                 onRequestPermissions(listOf(READ_PHONE_STATE)) { deniedPermissions ->
-                    if (deniedPermissions.isEmpty()) {
-                        addItem("=== SIM Info ===")
-
-                        // 기본 정보
-                        addItem("--- Basic Info ---")
-                        addItem("Can Read SIM Info: ${simInfo.isCanReadSimInfo()}")
-                        addItem("Is Dual SIM: ${simInfo.isDualSim()}")
-                        addItem("Is Single SIM: ${simInfo.isSingleSim()}")
-                        addItem("Is Multi SIM: ${simInfo.isMultiSim()}")
-                        addItem("Active SIM Count: ${simInfo.getActiveSimCount()}")
-                        addItem("Active SIM Slot Index List: ${simInfo.getActiveSimSlotIndexList()}")
-
-                        // 기본 SIM 정보
-                        addItem("--- Default SIM Info ---")
-                        addItem("Default SIM SubId: ${simInfo.getSubIdFromDefaultUSim()}")
-                        addItem("Phone Number: ${simInfo.getPhoneNumberFromDefaultUSim()}")
-                        addItem("MCC: ${simInfo.getMccFromDefaultUSimString()}")
-                        addItem("MNC: ${simInfo.getMncFromDefaultUSimString()}")
-                        addItem("Display Name: ${simInfo.getDisplayNameFromDefaultUSim()}")
-                        addItem("Country ISO: ${simInfo.getCountryIsoFromDefaultUSim()}")
-                        addItem("SIM Status: ${simInfo.getStatusFromDefaultUSim()}")
-                        addItem("Is Network Roaming: ${simInfo.isNetworkRoamingFromDefaultUSim()}")
-
-                        // 고급 정보
-                        addItem("--- Advanced Info ---")
-                        addItem("eSIM Supported: ${simInfo.isESimSupported()}")
-
-                        // 멀티 SIM 슬롯별 정보
-                        val activeSlots = simInfo.getActiveSimSlotIndexList()
-                        if (activeSlots.isNotEmpty()) {
-                            activeSlots.forEach { slotIndex ->
-                                addItem("--- SIM Slot $slotIndex ---")
-                                addItem("SubId: ${simInfo.getSubId(slotIndex)}")
-                                addItem("Phone Number: ${simInfo.getPhoneNumber(slotIndex)}")
-                                addItem("MCC: ${simInfo.getMcc(slotIndex)}")
-                                addItem("MNC: ${simInfo.getMnc(slotIndex)}")
-                                addItem("SIM Status: ${simInfo.getActiveSimStatus(slotIndex)}")
-                                addItem("Is eSIM: ${simInfo.isRegisterESim(slotIndex)}")
-                            }
-                        }
-
-                        // 구독 정보 리스트
-                        addItem("--- Subscription Info List ---")
-                        val subInfoList = simInfo.getActiveSubscriptionInfoList()
-                        addItem("Total Subscriptions: ${subInfoList.size}")
-                        subInfoList.forEachIndexed { index, subInfo ->
-                            addItem("Subscription $index: SlotIndex=${subInfo.simSlotIndex}, SubId=${subInfo.subscriptionId}, DisplayName=${subInfo.displayName}")
-                        }
-
-                    } else {
-                        toastShort("Permission Denied $deniedPermissions")
+                    if (!deniedPermissions.isEmpty()) {
+                        toastShowShort("Permission Denied $deniedPermissions")
+                        return@onRequestPermissions
                     }
+                    val res =  mutableListOf<String>().apply {
+                        add("=== SIM Info ===")
+
+                        try {
+// 기본 정보
+                            add("--- Basic Info ---")
+                            add("Can Read SIM Info: ${simInfo.isCanReadSimInfo()}")
+                            add("Is Dual SIM: ${simInfo.isDualSim()}")
+                            add("Is Single SIM: ${simInfo.isSingleSim()}")
+                            add("Is Multi SIM: ${simInfo.isMultiSim()}")
+                            add("Active SIM Count: ${simInfo.getActiveSimCount()}")
+                            add("Active SIM Slot Index List: ${simInfo.getActiveSimSlotIndexList()}")
+
+                            // 기본 SIM 정보
+                            add("--- Default SIM Info ---")
+                            add("Default SIM SubId: ${simInfo.getSubIdFromDefaultUSim()}")
+                            add("Display Name: ${simInfo.getDisplayNameFromDefaultUSim()}")
+                            add("Country ISO: ${simInfo.getCountryIsoFromDefaultUSim()}")
+                            add("Phone Number: ${simInfo.getPhoneNumberFromDefaultUSim()}")
+                            add("MCC: ${simInfo.getMccFromDefaultUSimString()}")
+                            add("MNC: ${simInfo.getMncFromDefaultUSimString()}")
+                            add("SIM Status: ${simInfo.getStatusFromDefaultUSim()}")
+                            add("Is Network Roaming: ${simInfo.isNetworkRoamingFromDefaultUSim()}")
+
+                            // 고급 정보
+                            add("--- Advanced Info ---")
+                            add("eSIM Supported: ${simInfo.isESimSupported()}")
+
+                            // 멀티 SIM 슬롯별 정보
+                            val activeSlots = simInfo.getActiveSimSlotIndexList()
+                            if (activeSlots.isNotEmpty()) {
+                                activeSlots.forEach { slotIndex ->
+                                    add("--- SIM Slot $slotIndex ---")
+                                    add("SubId: ${simInfo.getSubId(slotIndex)}")
+                                    add("Phone Number: ${simInfo.getPhoneNumber(slotIndex)}")
+                                    add("MCC: ${simInfo.getMcc(slotIndex)}")
+                                    add("MNC: ${simInfo.getMnc(slotIndex)}")
+                                    add("SIM Status: ${simInfo.getActiveSimStatus(slotIndex)}")
+                                    add("Is eSIM: ${simInfo.isRegisterESim(slotIndex)}")
+                                }
+                            }
+
+                            // 구독 정보 리스트
+                            add("--- Subscription Info List ---")
+                            val subInfoList = simInfo.getActiveSubscriptionInfoList()
+                            add("Total Subscriptions: ${subInfoList.size}")
+                            subInfoList.forEachIndexed { index, subInfo ->
+                                add("Subscription $index: SlotIndex=${subInfo.simSlotIndex}, SubId=${subInfo.subscriptionId}, DisplayName=${subInfo.displayName}")
+                            }
+                        } catch (e:Exception) {
+                            e.printStackTrace()
+                        }
+
+
+
+                    }
+                    addItem(res)
                 }
             }
 
             btnTelephonyInfo.setOnClickListener {
                 onRequestPermissions(listOf(READ_PHONE_STATE)) { deniedPermissions ->
-                    if (deniedPermissions.isEmpty()) {
-                        addItem("=== Telephony Basic Info ===")
-
-                        // 통신사 정보
-                        addItem("--- Carrier Info ---")
-                        addItem("Carrier Name: ${telephonyInfo.getCarrierName()}")
-                        addItem("MCC: ${telephonyInfo.getMobileCountryCode()}")
-                        addItem("MNC: ${telephonyInfo.getMobileNetworkCode()}")
-
-                        // SIM 상태
-                        addItem("--- SIM State ---")
-                        addItem("SIM State: ${telephonyInfo.getSimState()}")
-                        addItem("SIM State String: ${telephonyInfo.getSimStateString()}")
-                        addItem("Is SIM Ready: ${telephonyInfo.isSimReady()}")
-                        addItem("SIM Operator Name: ${telephonyInfo.getSimOperatorName()}")
-                        addItem("SIM Country ISO: ${telephonyInfo.getSimCountryIso()}")
-
-                        // 전화번호
-                        addItem("--- Phone Number ---")
-                        addItem("Phone Number: ${telephonyInfo.getPhoneNumber()}")
-
-                        // 통화 상태
-                        addItem("--- Call State ---")
-                        addItem("Call State: ${telephonyInfo.getCallState()}")
-
-                        // 네트워크 타입
-                        addItem("--- Network Type ---")
-                        addItem("Network Type: ${telephonyInfo.getNetworkType()}")
-                        addItem("Network Type String: ${telephonyInfo.getNetworkTypeString()}")
-                        addItem("Data Network Type: ${telephonyInfo.getDataNetworkType()}")
-
-                        // 로밍
-                        addItem("--- Roaming ---")
-                        addItem("Is Network Roaming: ${telephonyInfo.isNetworkRoaming()}")
-
-                        // 멀티 SIM
-                        addItem("--- Multi SIM ---")
-                        addItem("Active SIM Count: ${telephonyInfo.getActiveSimCount()}")
-
-                    } else {
-                        toastShort("Permission Denied $deniedPermissions")
+                    if (!deniedPermissions.isEmpty()) {
+                        toastShowShort("Permission Denied $deniedPermissions")
+                        return@onRequestPermissions
                     }
+                    val res =  mutableListOf<String>().apply {
+                        add("=== Telephony Basic Info ===")
+                        try {
+                            // 네트워크 타입
+                            add("--- Network Type ---")
+                            add("Network Type: ${telephonyInfo.getNetworkType()}")
+                            add("Network Type String: ${telephonyInfo.getNetworkTypeString()}")
+                            add("Data Network Type: ${telephonyInfo.getDataNetworkType()}")
+
+                            // 로밍
+                            add("--- Roaming ---")
+                            add("Is Network Roaming: ${telephonyInfo.isNetworkRoaming()}")
+
+                            // 멀티 SIM
+                            add("--- Multi SIM ---")
+                            add("Active SIM Count: ${telephonyInfo.getActiveSimCount()}")
+
+                            // 통신사 정보
+                            add("--- Carrier Info ---")
+                            add("Carrier Name: ${telephonyInfo.getCarrierName()}")
+                            add("MCC: ${telephonyInfo.getMobileCountryCode()}")
+                            add("MNC: ${telephonyInfo.getMobileNetworkCode()}")
+
+                            // SIM 상태
+                            add("--- SIM State ---")
+                            add("SIM State: ${telephonyInfo.getSimState()}")
+                            add("SIM State String: ${telephonyInfo.getSimStateString()}")
+                            add("Is SIM Ready: ${telephonyInfo.isSimReady()}")
+                            add("SIM Operator Name: ${telephonyInfo.getSimOperatorName()}")
+                            add("SIM Country ISO: ${telephonyInfo.getSimCountryIso()}")
+
+                            // 전화번호
+                            add("--- Phone Number ---")
+                            add("Phone Number: ${telephonyInfo.getPhoneNumber()}")
+
+                            // 통화 상태
+                            add("--- Call State ---")
+                            add("Call State: ${telephonyInfo.getCallState()}")
+
+                        } catch (e:Exception) {
+                            e.printStackTrace()
+                        }
+                        add("=======================================")
+                    }
+                    addItem(res)
                 }
             }
 
@@ -431,6 +459,7 @@ class ServiceManagerInfoActivity : BaseBindingActivity<ActivityServiceManagerInf
     }
 
     private fun addItem(item: String) = adapter.addItem(item)
+    private fun addItem(items: List<String>) = adapter.addItems(items)
 
     private fun getBearingDirection(bearing: Float): String {
         return when {

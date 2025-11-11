@@ -192,7 +192,7 @@ kover {
                 classes("kr.open.library.simple_ui.system_manager.info.battery.BatteryStateEvent*")
                 classes("kr.open.library.simple_ui.system_manager.info.battery.BatteryStateInfo*")
                 classes("kr.open.library.simple_ui.system_manager.info.battery.power.PowerProfile*")
-                classes("kr.open.library.simple_ui.system_manager.info.display.DisplayInfo*")
+
                 classes("kr.open.library.simple_ui.system_manager.info.location.LocationSharedPreference*")
                 classes("kr.open.library.simple_ui.system_manager.info.location.LocationStateEvent*")
                 classes("kr.open.library.simple_ui.system_manager.info.location.LocationStateInfo*")

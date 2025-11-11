@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Configuration
 import android.content.res.Resources
-import android.graphics.Insets
 import android.graphics.Point
 import android.os.Build
 import android.util.DisplayMetrics
@@ -13,6 +12,7 @@ import android.view.WindowManager
 import android.view.WindowMetrics
 import androidx.annotation.RequiresApi
 import kr.open.library.simple_ui.extensions.conditional.checkSdkVersion
+import kr.open.library.simple_ui.logcat.Logx
 import kr.open.library.simple_ui.system_manager.base.BaseSystemService
 import kr.open.library.simple_ui.system_manager.extensions.getWindowManager
 
@@ -20,36 +20,10 @@ import kr.open.library.simple_ui.system_manager.extensions.getWindowManager
  * This class provides information about the display of an Android device.
  * DisplayInfo 클래스는 Android 기기의 디스플레이 정보를 제공.
  *
- * This class offers both traditional exception-based methods and safer Result-based alternatives.
- * 이 클래스는 전통적인 예외 기반 메서드와 더 안전한 Result 기반 대안을 모두 제공합니다.
- *
- * Example usage / 사용 예제:
- * ```kotlin
- * val displayInfo = DisplayInfo(context)
- * 
- * // Traditional approach (may throw exceptions)
- * // 전통적인 방식 (예외 발생 가능)
- * try {
- *     val height = displayInfo.getStatusBarHeight()
- *     // Use height...
- * } catch (e: Resources.NotFoundException) {
- *     // Handle error...
- * }
- *
- * // Safe approach with Result pattern
- * displayInfo.getStatusBarHeightSafe().fold(
- *     onSuccess = { height ->
- *         // Use height safely
- *     },
- *     onFailure = { error ->
- *         // Handle error gracefully
- *     }
- * )
- *
- * // Convenient approach with default values
- * val heightWithDefault = displayInfo.getStatusBarHeightOrDefault(60) // Uses 60px if unable to determine
- *
- * ```
+ * Screen Size,
+ * Full Screen Size,
+ * Status Bar Size,
+ * Navigation Bar Size,
  *
  * @param context The application context.
  * @param context 애플리케이션 컨텍스트.
@@ -59,96 +33,154 @@ public open class DisplayInfo(context: Context) : BaseSystemService(context, nul
 
     public val windowManager: WindowManager by lazy { context.getWindowManager() }
 
+
+    @RequiresApi(Build.VERSION_CODES.R)
+    protected open fun getCurrentWindowMetricsSdkR(): WindowMetrics =
+        windowManager.currentWindowMetrics
+
+    protected fun getFullScreenSizeSdkNormal(): Point {
+        val metrics = DisplayMetrics().apply {
+            @Suppress("DEPRECATION")
+            windowManager.defaultDisplay.getRealMetrics(this)
+        }
+        return Point(metrics.widthPixels, metrics.heightPixels)
+    }
+
     /**
-     * Returns the full screen size.
+     * Returns the full screen size(Pixel).
      * 전체 화면 크기를 반환.
      *
      * @return  The full screen size (width, height).
      * @return 전체 화면 크기 (너비, 높이)
      */
     public fun getFullScreenSize(): Point = checkSdkVersion(Build.VERSION_CODES.R,
-        positiveWork = { with(getCurrentWindowMetricsCompat().bounds) { Point(width(), height()) } },
-        negativeWork = { getLegacyRealScreenSize() }
+        positiveWork = { with(getCurrentWindowMetricsSdkR().bounds) { Point(width(), height()) } },
+        negativeWork = { getFullScreenSizeSdkNormal() }
     )
-
-    @RequiresApi(Build.VERSION_CODES.R)
-    protected open fun getCurrentWindowMetricsCompat(): WindowMetrics = windowManager.currentWindowMetrics
 
     /**
-     * Returns the screen size excluding the status bar and navigation bar.
-     * 상태 표시줄과 네비게이션 바를 제외한 화면 크기를 반환.
-     *
-     * If the desired result is not obtained,
-     * be used getScreenWithStatusBar() - getNavigationBarHeight(activity: Activity)
-     *
-     * @return The screen size (width, height).
-     * @return 화면 크기 (너비, 높이).
+     * Returns the total display width in pixels.
+     * 전체 화면의 가로 픽셀 크기를 반환합니다.
      */
-    public fun getScreen(): Point = checkSdkVersion(Build.VERSION_CODES.R,
-        positiveWork = {
-            val windowMetrics = getCurrentWindowMetricsCompat()
-            val insets = windowMetrics.windowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
+    public fun getFullScreenWidth(): Int = getFullScreenSize().x
 
-            val width = windowMetrics.bounds.width() - (insets.left + insets.right)
-            val height = windowMetrics.bounds.height() - (insets.bottom + insets.top)
-            Point(width, height)
-        }, negativeWork = {
-            val fullSize = getLegacyRealScreenSize()
-            val statusBarHeight = runCatching { getStatusBarHeight() }.getOrDefault(0)
-            val legacyInsets = getLegacyNavigationBarInsetsCompat()
-
-            Point(
-                (fullSize.x - legacyInsets.horizontal).coerceAtLeast(0),
-                (fullSize.y - statusBarHeight - legacyInsets.vertical).coerceAtLeast(0)
-            )
-        }
-    )
+    /**
+     * Returns the total display height in pixels.
+     * 전체 화면의 세로 픽셀 크기를 반환합니다.
+     */
+    public fun getFullScreenHeight(): Int = getFullScreenSize().y
 
 
     /**
-     * Returns the screen size excluding the navigation bar.
-     * 탐색 표시줄을 제외한 화면 크기를 반환.
+     * Returns the status bar bounding box as `Point(width, height)`.
+     * - Width uses the current content width (`screenWidth`), 실제 상태바 뷰 폭과는 다를 수 있습니다.
+     * - Height 는 WindowInsets(R+) 또는 legacy `status_bar_height` dimen 으로 계산됩니다.
      *
-     * @return The screen size (width, height).
-     * @return 화면 크기 (너비, 높이)
+     * 가로/세로 회전이나 네비게이션 위치 변화에도 실제 상태바가 차지하는 뷰 영역을 그대로 참고할 수 있습니다.
+     * 단, 일부 제조사/커스터마이징에서는 상태바가 화면 전체 폭을 덮는 구조라 UI 배치 폭과 다를 수 있으니 참고용으로만 사용하세요.
      */
-    public fun getScreenWithStatusBar(): Point = checkSdkVersion(Build.VERSION_CODES.R,
+    @SuppressLint("InternalInsetResource")
+    public open fun getStatusBarSize(): Point = checkSdkVersion(Build.VERSION_CODES.R,
         positiveWork = {
-            val windowMetrics = getCurrentWindowMetricsCompat()
-            val navInsets = windowMetrics.windowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.navigationBars())
-            val width = windowMetrics.bounds.width() - navInsets.horizontal()
-            val height = windowMetrics.bounds.height() - navInsets.bottom
-            Point(width, height)
+            val height =
+                getCurrentWindowMetricsSdkR().windowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.statusBars()).top
+            val width = getFullScreenWidth()
+            return Point(width, height)
         },
         negativeWork = {
-            val fullSize = getLegacyRealScreenSize()
-            val legacyInsets = getLegacyNavigationBarInsetsCompat()
-            Point(
-                (fullSize.x - legacyInsets.horizontal).coerceAtLeast(0),
-                (fullSize.y - legacyInsets.vertical).coerceAtLeast(0)
-            )
+            val height = context.resources.getIdentifier("status_bar_height", "dimen", "android")
+                .takeIf { it > 0 }?.let { context.resources.getDimensionPixelSize(it) }
+                ?: throw Resources.NotFoundException("Cannot find status bar height. Try getStatusBarSize(activity: Activity).")
+
+            val width = getFullScreenWidth()
+            return Point(width, height)
         }
     )
 
     /**
-     * Returns the status bar height.
+     * Returns the status bar height(Pixel).
      * 상태 표시줄 높이를 반환.
      *
      * @return The status bar height.
      * @return 상태 표시줄 높이.
      */
-    @SuppressLint("InternalInsetResource")
-    public open fun getStatusBarHeight(): Int = checkSdkVersion(Build.VERSION_CODES.R,
-        positiveWork = {
-            getCurrentWindowMetricsCompat().windowInsets
-                .getInsetsIgnoringVisibility(WindowInsets.Type.statusBars()).top
-        },
-        negativeWork = {
-            context.resources.getIdentifier("status_bar_height", "dimen", "android")
-                .takeIf { it > 0 }?.let { context.resources.getDimensionPixelSize(it) }
-                ?: throw Resources.NotFoundException("Cannot find status bar height. Try getStatusBarHeight(activity: Activity).")
+    public fun getStatusBarHeight(): Result<Int> = runCatching { getStatusBarSize().y }
+
+    /**
+     * Returns the status bar width wrapped in Result.
+     * 상태바 가로 길이를 Result 로 반환합니다.
+     */
+    public fun getStatusBarWidth(): Result<Int> = runCatching { getStatusBarSize().x }
+
+    @RequiresApi(Build.VERSION_CODES.R)
+    protected fun getNavigationBarSizeSdkR(): Point {
+        val windowMetrics = getCurrentWindowMetricsSdkR()
+        val bounds = windowMetrics.bounds
+        val navInsets =
+            windowMetrics.windowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.navigationBars())
+
+        val size = when {
+            navInsets.bottom > 0 -> Point(bounds.width(), navInsets.bottom)
+            navInsets.top > 0 -> Point(bounds.width(), navInsets.top)
+            navInsets.left > 0 -> Point(navInsets.left, bounds.height())
+            navInsets.right > 0 -> Point(navInsets.right, bounds.height())
+            else -> Point(0, 0)
         }
-    )
+
+        if (size.x == 0 && size.y == 0) {
+            throw Resources.NotFoundException("Cannot determine navigation bar size. Check navigation bar resources.")
+        }
+        return size
+    }
+
+    @SuppressLint("InternalInsetResource")
+    private fun getNavigationBarSizeSdkNormal(): Point {
+        val resources = context.resources
+        fun Resources.dimensionOrNull(name: String): Int? {
+            val id = getIdentifier(name, "dimen", "android")
+            return id.takeIf { it > 0 }?.let { getDimensionPixelSize(it) }?.takeIf { it > 0 }
+        }
+
+        val portraitHeight = resources.dimensionOrNull("navigation_bar_height")
+        val landscapeHeight = resources.dimensionOrNull("navigation_bar_height_landscape")
+        val sideWidth = resources.dimensionOrNull("navigation_bar_width")
+
+        if (portraitHeight == null && landscapeHeight == null && sideWidth == null) {
+            throw Resources.NotFoundException("navigation_bar_* resources missing or zero")
+        }
+
+        val screenSize = getFullScreenSizeSdkNormal()
+        val orientation = resources.configuration.orientation
+
+        return when (orientation) {
+            Configuration.ORIENTATION_PORTRAIT -> {
+                val height = portraitHeight ?: landscapeHeight
+                height?.let { Point(screenSize.x, it) }
+                    ?: Point(0, 0) // 실제로 내비가 없는 제스처 모드일 수 있음
+            }
+
+            Configuration.ORIENTATION_LANDSCAPE -> {
+                val prefersSide =
+                    sideWidth != null && (landscapeHeight == null || sideWidth >= landscapeHeight)
+                if (prefersSide && sideWidth != null) {
+                    Point(sideWidth, screenSize.y)
+                } else {
+                    val height = landscapeHeight ?: portraitHeight
+                    height?.let { Point(screenSize.x, it) } ?: Point(0, 0)
+                }
+            }
+
+            else -> {
+                val vertical = portraitHeight ?: landscapeHeight
+                when {
+                    vertical != null -> Point(screenSize.x, vertical)
+                    sideWidth != null -> Point(sideWidth, screenSize.y)
+                    else -> Point(0, 0)
+                }
+            }
+        }
+    }
+
 
     /**
      * Returns the navigation bar size (thickness).
@@ -163,98 +195,75 @@ public open class DisplayInfo(context: Context) : BaseSystemService(context, nul
      * @return The navigation bar size (thickness in pixels).
      * @return 탐색 표시줄 크기 (픽셀 단위 두께).
      */
+    /**
+     * Returns the navigation bar bounding size (width/height) as a Point.
+     * 네비게이션 바의 가로/세로 크기를 Point 로 반환합니다.
+     */
     @SuppressLint("InternalInsetResource")
-    public open fun getNavigationBarSize(): Int = checkSdkVersion(Build.VERSION_CODES.R,
-        positiveWork = {
-            val navInsets = getCurrentWindowMetricsCompat().windowInsets
-                .getInsetsIgnoringVisibility(WindowInsets.Type.navigationBars())
-            when {
-                navInsets.bottom > 0 -> navInsets.bottom
-                navInsets.top > 0 -> navInsets.top
-                else -> maxOf(navInsets.left, navInsets.right)
-            }
-        },
-        negativeWork = {
-            val legacyInsets = getLegacyNavigationBarInsetsCompat()
-            val size = maxOf(legacyInsets.horizontal, legacyInsets.vertical)
-            if (size > 0) size else throw Resources.NotFoundException("Cannot determine navigation bar size. Check navigation bar resources.")
-        }
+    public fun getNavigationBarSize(): Point = checkSdkVersion(Build.VERSION_CODES.R,
+        positiveWork = { getNavigationBarSizeSdkR() },
+        negativeWork = { getNavigationBarSizeSdkNormal() }
     )
 
     /**
-     * Result 기반 안전 메서드. 상태 표시줄 높이를 Result로 제공.
+     * Returns the navigation bar width component.
+     * 네비게이션 바의 가로 크기를 반환합니다.
      */
-    public fun getStatusBarHeightSafe(): Result<Int> = runCatching { getStatusBarHeight() }
+    public fun getNavigationBarWidth(): Int = getNavigationBarSize().x
 
     /**
-     * Result 기반 안전 메서드. 탐색 표시줄 크기를 Result로 제공.
+     * Returns the navigation bar height component.
+     * 네비게이션 바의 세로 크기를 반환합니다.
      */
-    public fun getNavigationBarSizeSafe(): Result<Int> = runCatching { getNavigationBarSize() }
+    public fun getNavigationBarHeight(): Int = getNavigationBarSize().y
 
     /**
-     * 상태 표시줄 높이를 구하고 실패 시 기본값을 사용한다.
+     * Returns the available screen width after excluding navigation insets.
+     * 네비게이션 영역을 제외한 실제 사용 가능한 가로 픽셀을 반환합니다.
      */
-    public fun getStatusBarHeightOrDefault(defaultValue: Int): Int =
-        getStatusBarHeightSafe().getOrElse { defaultValue }
-
-    /**
-     * 탐색 표시줄 크기를 구하고 실패 시 기본값을 사용한다.
-     */
-    public fun getNavigationBarSizeOrDefault(defaultValue: Int): Int =
-        getNavigationBarSizeSafe().getOrElse { defaultValue }
-
-    private fun getLegacyRealScreenSize(): Point {
-        val metrics = DisplayMetrics().apply {
-            @Suppress("DEPRECATION")
-            windowManager.defaultDisplay.getRealMetrics(this)
-        }
-        return Point(metrics.widthPixels, metrics.heightPixels)
+    public fun getScreenWidth(): Int {
+        val navSize = getNavigationBarSize()
+        val fullWidth = getFullScreenWidth()
+        return if (navSize.x < fullWidth) { fullWidth - navSize.x }
+        else { fullWidth }
     }
 
-    @Suppress("MemberVisibilityCanBePrivate")
-    protected data class LegacyNavigationBarInsets(
-        val horizontal: Int,
-        val vertical: Int,
-    )
-
-    protected open fun getLegacyNavigationBarInsetsCompat(): LegacyNavigationBarInsets {
-        val resources = context.resources
-        fun Resources.dimensionOrZero(name: String): Int {
-            val resId = getIdentifier(name, "dimen", "android")
-            return resId.takeIf { it > 0 }?.let { getDimensionPixelSize(it) } ?: 0
-        }
-
-        val portraitHeight = resources.dimensionOrZero("navigation_bar_height")
-        val landscapeHeight = resources.dimensionOrZero("navigation_bar_height_landscape")
-        val width = resources.dimensionOrZero("navigation_bar_width")
-        val orientation = resources.configuration.orientation
-
-        val maxVertical = maxOf(portraitHeight, landscapeHeight, 0)
-
-        return when (orientation) {
-            Configuration.ORIENTATION_PORTRAIT -> {
-                val vertical = if (portraitHeight > 0) portraitHeight else maxVertical
-                LegacyNavigationBarInsets(horizontal = 0, vertical = vertical)
-            }
-            Configuration.ORIENTATION_LANDSCAPE -> {
-                val prefersSideBar = width > 0 && width >= landscapeHeight
-                if (prefersSideBar) {
-                    LegacyNavigationBarInsets(horizontal = width, vertical = 0)
-                } else {
-                    val vertical = if (landscapeHeight > 0) landscapeHeight else maxVertical
-                    LegacyNavigationBarInsets(horizontal = 0, vertical = vertical)
-                }
-            }
-            else -> {
-                if (width > maxVertical) {
-                    LegacyNavigationBarInsets(horizontal = width, vertical = 0)
-                } else {
-                    LegacyNavigationBarInsets(horizontal = 0, vertical = maxVertical)
-                }
-            }
-        }
+    /**
+     * Returns the available screen height after excluding system bars.
+     * 상태바/네비게이션 바를 제외한 실제 사용 가능한 세로 픽셀을 반환합니다.
+     */
+    public fun getScreenHeight(): Int {
+        val navSize = getNavigationBarSize()
+        val fullHeight = getFullScreenHeight()
+        val statusBarHeight = getStatusBarHeight().getOrElse { 0 }
+        return if (navSize.y < fullHeight) { fullHeight - navSize.y - statusBarHeight }
+        else { fullHeight - statusBarHeight }
     }
 
-    private fun Insets.horizontal(): Int = left + right
-    private fun Insets.vertical(): Int = top + bottom
+    /**
+     * Returns the usable screen size as Point(width, height).
+     * 사용 가능한 화면 크기를 Point 로 반환합니다.
+     */
+    public fun getScreenSize() = Point(getScreenWidth(), getScreenHeight())
+
+    /**
+     * Indicates whether the navigation bar is hidden.
+     * 네비게이션 바가 숨겨졌는지 여부를 반환합니다.
+     */
+    public fun isNavigationBarHided(): Boolean = getNavigationBarHeight() == 0
+
+    /**
+     * Indicates whether the status bar is hidden.
+     * 상태바가 숨겨졌는지 여부를 반환합니다.
+     */
+    public fun isStatusBarHided(): Boolean = getStatusBarHeight().getOrElse {
+        Logx.e(it)
+        -1
+    } == 0
+
+    /**
+     * Indicates whether the window is occupying the full screen (no insets).
+     * 현재 창이 인셋 없이 전체 화면을 사용 중인지 여부를 반환합니다.
+     */
+    public fun isFullScreen(): Boolean = getFullScreenHeight() == getScreenHeight() && getFullScreenWidth() == getScreenWidth()
 }

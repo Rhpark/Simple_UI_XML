@@ -65,7 +65,7 @@ public abstract class RootDialogFragment() : DialogFragment(), PermissionRequest
 
     protected fun resizeDialog(widthRatio: Float, heightRatio: Float) {
         dialog?.window?.let {
-            val screenSize = requireContext().getDisplayInfo().getScreen()
+            val screenSize = requireContext().getDisplayInfo().getScreenSize()
             Logx.d("Screen Size $screenSize, " + requireContext().getDisplayInfo().getFullScreenSize())
             val x = (screenSize.x * widthRatio).toInt()
             val y = (screenSize.y * heightRatio).toInt()
