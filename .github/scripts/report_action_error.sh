@@ -7,6 +7,8 @@ if [[ -z "${STAGE_NAME_INPUT}" ]]; then
   echo "[report_action_error] Stage name is required via argument or STAGE_NAME env." >&2
   exit 1
 fi
+# Normalize potential CR/LF or surrounding spaces from workflow YAML.
+STAGE_NAME_INPUT="$(printf '%s' "${STAGE_NAME_INPUT}" | tr -d '\r' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
 
 GITHUB_TOKEN="${GITHUB_TOKEN:-}"
 if [[ -z "${GITHUB_TOKEN}" ]]; then
