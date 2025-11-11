@@ -48,12 +48,6 @@ body:
       required: true
 
   - type: textarea
-    id: attempts
-    attributes:
-      label: Steps already tried / 시도해본 조치
-      placeholder: e.g., re-ran workflow, cleaned Gradle cache...
-
-  - type: textarea
     id: environment
     attributes:
       label: Extra context (optional) / 추가 정보(선택)
