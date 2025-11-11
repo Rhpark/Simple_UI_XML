@@ -1,0 +1,36 @@
+labels:
+  - ci
+  - needs-triage
+
+issue_template: |-
+  - **Failed stage**: {{FAILED_STAGE}}
+  - **Workflow run**: {{WORKFLOW_URL}}
+  - **Workflow**: {{WORKFLOW_NAME}}
+  - **Application Version**: {{APPLICATION_VERSION}}
+  - **Job**: {{JOB_NAME}}
+  - **Commit**: {{COMMIT_SHA}}
+  - **Actor**: {{ACTOR}}
+
+  ### Failure summary / 실패 요약
+  {{FAILURE_SUMMARY}}
+
+  ### Relevant log excerpt / 관련 로그
+  {{FAILURE_LOG}}
+
+  ### Extra context / 추가 정보
+  {{FAILURE_ENVIRONMENT}}
+
+comment_template: |-
+  Another failure detected for this stage.
+  - Workflow run: {{WORKFLOW_URL}}
+  - Job: {{WORKFLOW_NAME}} / {{JOB_NAME}}
+  - Commit: {{COMMIT_SHA}}
+  - Application Version: {{APPLICATION_VERSION}}
+
+  Summary:
+  {{FAILURE_SUMMARY}}
+
+  Logs:
+  ```
+  {{FAILURE_LOG}}
+  ```
