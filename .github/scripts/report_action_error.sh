@@ -38,7 +38,6 @@ fi
 if [[ -z "${FAILURE_LOG_INPUT}" ]]; then
     FAILURE_LOG_INPUT="Logs available at ${RUN_URL}"
 fi
-FAILURE_ATTEMPTS_INPUT="${FAILURE_ATTEMPTS:-_Not provided_}"
 FAILURE_ENVIRONMENT_INPUT="${FAILURE_ENVIRONMENT:-Runner: ${RUNNER_NAME:-unknown} | Event: ${EVENT_NAME}}"
 APP_VERSION_INPUT="${APPLICATION_VERSION:-}"
 if [[ -z "${APP_VERSION_INPUT}" ]]; then
@@ -114,9 +113,6 @@ ${FAILURE_MESSAGE_INPUT}
 
 ### Relevant log excerpt / 관련 로그
 ${FAILURE_LOG_INPUT}
-
-### Steps already tried / 시도해본 조치
-${FAILURE_ATTEMPTS_INPUT}
 
 ### Extra context / 추가 정보
 ${FAILURE_ENVIRONMENT_INPUT}
