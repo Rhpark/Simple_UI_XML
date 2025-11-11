@@ -40,6 +40,33 @@ if [[ -z "${FAILURE_LOG_INPUT}" ]]; then
 fi
 FAILURE_ATTEMPTS_INPUT="${FAILURE_ATTEMPTS:-_Not provided_}"
 FAILURE_ENVIRONMENT_INPUT="${FAILURE_ENVIRONMENT:-Runner: ${RUNNER_NAME:-unknown} | Event: ${EVENT_NAME}}"
+APP_VERSION_INPUT="${APPLICATION_VERSION:-}"
+if [[ -z "${APP_VERSION_INPUT}" ]]; then
+    VERSION_FILE="${APPLICATION_VERSION_FILE:-simple_ui/build.gradle.kts}"
+    if [[ -f "${VERSION_FILE}" ]]; then
+        APP_VERSION_INPUT="$(python3 - "${VERSION_FILE}" <<'PY'
+import pathlib
+import re
+import sys
+
+path = pathlib.Path(sys.argv[1])
+pattern = re.compile(r'version\s*=\s*"([^"]+)"')
+for line in path.read_text(encoding="utf-8", errors="ignore").splitlines():
+    stripped = line.strip()
+    if stripped.startswith("//") or not stripped:
+        continue
+    match = pattern.search(stripped)
+    if match:
+        print(match.group(1))
+        break
+PY
+)"
+        APP_VERSION_INPUT="$(echo "${APP_VERSION_INPUT}" | head -n 1 | tr -d '\r')"
+    fi
+fi
+if [[ -z "${APP_VERSION_INPUT}" ]]; then
+    APP_VERSION_INPUT="_Unknown_"
+fi
 
 extract_title() {
     python3 - "$FAILURE_MESSAGE_INPUT" "$FAILURE_LOG_INPUT" <<'PY'
@@ -77,6 +104,7 @@ ISSUE_BODY=$(cat <<EOF
 - **Failed stage**: ${STAGE_NAME_INPUT}
 - **Workflow run**: ${RUN_URL}
 - **Workflow**: ${WORKFLOW_NAME}
+- **Application Version**: ${APP_VERSION_INPUT}
 - **Job**: ${JOB_NAME}
 - **Commit**: ${SHA}
 - **Actor**: ${ACTOR}
@@ -143,6 +171,7 @@ comment_issue() {
   COMMENT_BODY=$(cat <<EOF
 Another failure detected for this stage.
 - Workflow run: ${RUN_URL}
+- Application Version: ${APP_VERSION_INPUT}
 - Job: ${WORKFLOW_NAME} / ${JOB_NAME}
 - Commit: ${SHA}
 
