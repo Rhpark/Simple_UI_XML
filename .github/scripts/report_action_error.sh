@@ -171,9 +171,9 @@ comment_issue() {
   COMMENT_BODY=$(cat <<EOF
 Another failure detected for this stage.
 - Workflow run: ${RUN_URL}
-- Application Version: ${APP_VERSION_INPUT}
 - Job: ${WORKFLOW_NAME} / ${JOB_NAME}
 - Commit: ${SHA}
+- Application Version: ${APP_VERSION_INPUT}
 
 Summary:
 ${FAILURE_MESSAGE_INPUT}
