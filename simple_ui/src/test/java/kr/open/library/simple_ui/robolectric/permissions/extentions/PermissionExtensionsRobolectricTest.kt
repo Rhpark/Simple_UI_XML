@@ -80,8 +80,6 @@ class PermissionExtensionsRobolectricTest {
 
         // When & Then
         assertTrue(context.hasPermission(Manifest.permission.CAMERA))
-        assertFalse(context.hasPermission(Manifest.permission.CAMERA))
-        assertFalse(context.hasPermission(Manifest.permission.CAMERA))
     }
 
     @Test

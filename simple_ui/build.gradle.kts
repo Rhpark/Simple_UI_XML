@@ -142,11 +142,7 @@ kover {
                 // 3. Lifecycle 커스텀 Layout
                 classes("**.BaseLifeCycle*Layout")
 
-
-                classes("kr.open.library.simple_ui.extensions.conditional.SdkVersionInlineKt*")
                 classes("kr.open.library.simple_ui.extensions.bundle.BundleInlineKt*")
-                classes("kr.open.library.simple_ui.extensions.string.StringExtensionsKt*")
-//                classes("kr.open.library.simple_ui.local.base.BaseSharedPreference*")
 
                 classes("kr.open.library.simple_ui.logcat.ILogx*")
                 classes("kr.open.library.simple_ui.logcat.extensions.LogxExtensions*")
@@ -161,9 +157,6 @@ kover {
                 classes("kr.open.library.simple_ui.logcat.internal.stacktrace.LogxStackTrace*")
                 classes("kr.open.library.simple_ui.logcat.internal.stacktrace.LogxStackTraceMetaData*")
                 classes("kr.open.library.simple_ui.logcat.runtime.LogxWriter*")
-
-                classes("kr.open.library.simple_ui.permissions.vo.PermissionConstants*")
-//                classes("kr.open.library.simple_ui.permissions.vo.PermissionSpecialType*")
 
                 classes("kr.open.library.simple_ui.presenter.extensions.view.ViewAnimExtensionsKt*")
                 classes("kr.open.library.simple_ui.presenter.extensions.view.ViewLayoutExtensionsKt*")
@@ -182,14 +175,12 @@ kover {
                 classes("kr.open.library.simple_ui.system_manager.base.BaseSystemService*")
                 classes("kr.open.library.simple_ui.system_manager.controller.alarm.AlarmController*")
                 classes("kr.open.library.simple_ui.system_manager.controller.alarm.receiver.BaseAlarmReceiver*")
-//                classes("kr.open.library.simple_ui.system_manager.controller.alarm.vo.AlarmVo*")
                 classes("kr.open.library.simple_ui.system_manager.controller.wifi.WifiController*")
                 classes("kr.open.library.simple_ui.system_manager.controller.window.FloatingViewController*")
                 classes("kr.open.library.simple_ui.system_manager.controller.window.drag.FloatingDragView*")
                 classes("kr.open.library.simple_ui.system_manager.controller.window.drag.FloatingDragViewConfig*")
                 classes("kr.open.library.simple_ui.system_manager.controller.window.fixed.FloatingFixedView*")
                 classes("kr.open.library.simple_ui.system_manager.extensions.SystemServiceExtensionsKt*")
-                classes("kr.open.library.simple_ui.system_manager.info.battery.BatteryStateEvent*")
                 classes("kr.open.library.simple_ui.system_manager.info.battery.BatteryStateInfo*")
                 classes("kr.open.library.simple_ui.system_manager.info.battery.power.PowerProfile*")
 

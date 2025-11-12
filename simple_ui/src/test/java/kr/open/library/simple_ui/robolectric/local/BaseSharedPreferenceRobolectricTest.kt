@@ -208,6 +208,118 @@ class BaseSharedPreferenceRobolectricTest {
         assertEquals(0.0, preference.balance, 0.0)
     }
 
+    @Test
+    fun putValue_withUnsupportedType_logsErrorAndRemovesKey() {
+        // First set a valid value
+        preference.userAge = 42
+        assertTrue(preference.rawContains("user_age"))
+
+        // Try to put an unsupported type (not null)
+        preference.putArbitraryValue("user_age", listOf("invalid"))
+
+        // Key should be removed
+        assertFalse(preference.rawContains("user_age"))
+    }
+
+    @Test
+    fun saveApply_withoutParameters_appliesChanges() {
+        // Manually edit and call saveApply()
+        preference.saveApplyManual()
+        // This just tests that the method doesn't crash
+    }
+
+    @Test
+    fun removeAtFloat_removesKeyImmediately() {
+        preference.rating = 4.5f
+        assertTrue(preference.rawContains("rating"))
+
+        preference.removeRating()
+
+        assertFalse(preference.rawContains("rating"))
+        assertEquals(0.0f, preference.rating, 0.0f)
+    }
+
+    @Test
+    fun removeAtLong_removesKeyImmediately() {
+        preference.userId = 12345L
+        assertTrue(preference.rawContains("user_id"))
+
+        preference.removeUserId()
+
+        assertFalse(preference.rawContains("user_id"))
+        assertEquals(0L, preference.userId)
+    }
+
+    @Test
+    fun removeAtBoolean_removesKeyImmediately() {
+        preference.isPremium = true
+        assertTrue(preference.rawContains("is_premium"))
+
+        preference.removeIsPremium()
+
+        assertFalse(preference.rawContains("is_premium"))
+        assertFalse(preference.isPremium)
+    }
+
+    @Test
+    fun removeAtDouble_removesKeyImmediately() {
+        preference.balance = 99.99
+        assertTrue(preference.rawContains("balance_DOUBLE_"))
+
+        preference.removeBalance()
+
+        assertFalse(preference.rawContains("balance_DOUBLE_"))
+        assertEquals(0.0, preference.balance, 0.0)
+    }
+
+    @Test
+    fun removeAtIntCommit_removesKeyWithCommit() = runBlocking {
+        preference.userAge = 42
+        assertTrue(preference.rawContains("user_age"))
+
+        val removed = preference.removeUserAgeCommit()
+
+        assertTrue(removed)
+        assertFalse(preference.rawContains("user_age"))
+        assertEquals(0, preference.userAge)
+    }
+
+    @Test
+    fun removeAtFloatCommit_removesKeyWithCommit() = runBlocking {
+        preference.rating = 4.5f
+        assertTrue(preference.rawContains("rating"))
+
+        val removed = preference.removeRatingCommit()
+
+        assertTrue(removed)
+        assertFalse(preference.rawContains("rating"))
+        assertEquals(0.0f, preference.rating, 0.0f)
+    }
+
+    @Test
+    fun removeAtLongCommit_removesKeyWithCommit() = runBlocking {
+        preference.userId = 12345L
+        assertTrue(preference.rawContains("user_id"))
+
+        val removed = preference.removeUserIdCommit()
+
+        assertTrue(removed)
+        assertFalse(preference.rawContains("user_id"))
+        assertEquals(0L, preference.userId)
+    }
+
+    @Test
+    fun removeAtStringCommit_removesKeyWithCommit() = runBlocking {
+        preference.userName = "test"
+        assertTrue(preference.rawContains("user_name"))
+
+        val removed = preference.removeUserNameCommit()
+
+        assertTrue(removed)
+        assertFalse(preference.rawContains("user_name"))
+        assertEquals("", preference.userName)
+    }
+
     private class TestPreference(context: Context) :
         BaseSharedPreference(context, PREF_NAME) {
 
@@ -249,6 +361,32 @@ class BaseSharedPreferenceRobolectricTest {
         fun removeUserName() = removeAtString("user_name")
 
         fun removeUserAge() = removeAtInt("user_age")
+
+        fun removeRating() = removeAtFloat("rating")
+
+        fun removeUserId() = removeAtLong("user_id")
+
+        fun removeIsPremium() = removeAtBoolean("is_premium")
+
+        fun removeBalance() = removeAtDouble("balance")
+
+        fun removeUserAgeCommit(): Boolean = runBlocking {
+            removeAtIntCommit("user_age")
+        }
+
+        fun removeRatingCommit(): Boolean = runBlocking {
+            removeAtFloatCommit("rating")
+        }
+
+        fun removeUserIdCommit(): Boolean = runBlocking {
+            removeAtLongCommit("user_id")
+        }
+
+        fun removeUserNameCommit(): Boolean = runBlocking {
+            removeAtStringCommit("user_name")
+        }
+
+        fun saveApplyManual() = saveApply()
 
         fun getEditorPublic() = getEditor()
 
