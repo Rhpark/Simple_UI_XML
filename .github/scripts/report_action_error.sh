@@ -75,7 +75,7 @@ case "${STAGE_NAME_INPUT}" in
     ISSUE_LABELS=("CI-Initialize")
     ;;
   "Unit Tests")
-    ISSUE_LABELS=("CI-UnitTest")
+    ISSUE_LABELS=("CI-Unit-Test")
     ;;
   "Robolectric Tests")
     ISSUE_LABELS=("CI-Robolectric")
