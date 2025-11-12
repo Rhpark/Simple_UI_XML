@@ -53,7 +53,7 @@ android {
 //..
 dependencies {
     //..
-    implementation("com.github.Rhpark:Simple_UI_XML:0.2.3")
+    implementation("com.github.Rhpark:Simple_UI_XML:0.2.5")
     //..
 }
 ```

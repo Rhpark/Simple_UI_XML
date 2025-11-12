@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import kr.open.library.simple_ui.logcat.Logx
+import kr.open.library.simple_ui.presenter.ui.adapter.queue.AdapterOperationQueue
 import kr.open.library.simple_ui.presenter.ui.adapter.viewholder.BaseRcvViewHolder
 import java.util.concurrent.Executor
 
@@ -23,6 +24,12 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder>(
 
     private var onItemClickListener: ((Int, ITEM, View) -> Unit)? = null
     private var onItemLongClickListener: ((Int, ITEM, View) -> Unit)? = null
+
+    // Operation Queue for handling consecutive operations
+    private val operationQueue = AdapterOperationQueue<ITEM>(
+        getCurrentList = { differ.currentList },
+        submitList = { list, callback -> differ.submitList(list, callback) }
+    )
 
     /**
      * Whether DiffUtil should detect moved items.
@@ -117,9 +124,10 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder>(
 
     /**
      * Sets new items using AsyncListDiffer for efficient updates.
+     * 기존 큐의 모든 작업을 취소하고 새로운 리스트로 교체
      */
     public fun setItems(newItems: List<ITEM>, commitCallback: (() -> Unit)? = null) {
-        differ.submitList(newItems.toList()) { commitCallback?.invoke() }
+        operationQueue.clearQueueAndExecute(AdapterOperationQueue.SetItemsOp(newItems, commitCallback))
     }
 
     /**
@@ -128,18 +136,12 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder>(
      * @return true if items were added successfully
      */
     public open fun addItems(items: List<ITEM>, commitCallback: (() -> Unit)? = null): Boolean {
-        return try {
-            if (items.isEmpty()) {
-                Logx.d("addItems() items is empty")
-                return true
-            }
-            val updatedList = getMutableItemList().apply { addAll(items) }
-            differ.submitList(updatedList.toList()) { commitCallback?.invoke() }
-            true
-        } catch (e: Exception) {
-            Logx.e("Failed to add items to list", e)
-            false
+        if (items.isEmpty()) {
+            Logx.d("addItems() items is empty")
+            return true
         }
+        operationQueue.enqueueOperation(AdapterOperationQueue.AddItemsOp(items, commitCallback))
+        return true
     }
 
     /**
@@ -153,35 +155,17 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder>(
      * @return true if the item was added successfully
      */
     public open fun addItem(item: ITEM, commitCallback: (() -> Unit)? = null): Boolean {
-        return try {
-            val updatedList = getMutableItemList().apply { add(item) }
-            differ.submitList(updatedList.toList()) { commitCallback?.invoke() }
-            true
-        } catch (e: Exception) {
-            Logx.e("Failed to add item to list", e)
-            false
-        }
+        operationQueue.enqueueOperation(AdapterOperationQueue.AddItemOp(item, commitCallback))
+        return true
     }
 
     /**
      * Adds a single item at the specified position.
+     * @return true (항상 true 반환, 실제 검증은 execute 시점에 수행)
      */
     public fun addItemAt(position: Int, item: ITEM, commitCallback: (() -> Unit)? = null): Boolean {
-        return try {
-            if (position < 0 || position > itemCount) {
-                throw IndexOutOfBoundsException("Cannot add item at position $position. Valid range: 0..$itemCount")
-            }
-
-            val updatedList = getMutableItemList().apply { add(position, item) }
-            differ.submitList(updatedList.toList()) { commitCallback?.invoke() }
-            true
-        } catch (e: IndexOutOfBoundsException) {
-            Logx.e("Failed to add item at position $position: ${e.message}")
-            false
-        } catch (e: Exception) {
-            Logx.e("Unexpected error while adding item at position $position", e)
-            false
-        }
+        operationQueue.enqueueOperation(AdapterOperationQueue.AddItemAtOp(position, item, commitCallback))
+        return true
     }
 
     /**
@@ -190,56 +174,28 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder>(
      * @return true if items were removed successfully
      */
     public open fun removeAll(commitCallback: (() -> Unit)? = null): Boolean {
-        return try {
-            if (differ.currentList.isEmpty()) {
-                return true
-            }
-            differ.submitList(emptyList()) { commitCallback?.invoke() }
-            true
-        } catch (e: Exception) {
-            Logx.e("Failed to remove all items", e)
-            false
-        }
+        operationQueue.enqueueOperation(AdapterOperationQueue.ClearItemsOp(commitCallback))
+        return true
     }
 
     /**
      * Removes the item at the specified position.
      *
-     * @return true if the item was removed successfully
+     * @return true (항상 true 반환, 실제 검증은 execute 시점에 수행)
      */
     public open fun removeAt(position: Int, commitCallback: (() -> Unit)? = null): Boolean {
-        return try {
-            if (!isPositionValid(position)) {
-                throw IndexOutOfBoundsException(
-                    "Cannot remove item at position $position. Valid range: 0 until $itemCount"
-                )
-            }
-
-            val updatedList = getMutableItemList().apply { removeAt(position) }
-            differ.submitList(updatedList.toList()) { commitCallback?.invoke() }
-            true
-        } catch (e: IndexOutOfBoundsException) {
-            Logx.e("Failed to remove item at position $position: ${e.message}")
-            false
-        } catch (e: Exception) {
-            Logx.e("Unexpected error while removing item at position $position", e)
-            false
-        }
+        operationQueue.enqueueOperation(AdapterOperationQueue.RemoveAtOp(position, commitCallback))
+        return true
     }
 
     /**
      * Removes the first occurrence of the specified item.
      *
-     * @return true if the item was found and removed successfully
+     * @return true (항상 true 반환, 실제 검증은 execute 시점에 수행)
      */
     public open fun removeItem(item: ITEM, commitCallback: (() -> Unit)? = null): Boolean {
-        val position = differ.currentList.indexOf(item)
-        return if (position != -1) {
-            removeAt(position, commitCallback)
-        } else {
-            Logx.w("Item not found in list for removal")
-            false
-        }
+        operationQueue.enqueueOperation(AdapterOperationQueue.RemoveItemOp(item, commitCallback))
+        return true
     }
 
     override fun onBindViewHolder(holder: VH, position: Int) {

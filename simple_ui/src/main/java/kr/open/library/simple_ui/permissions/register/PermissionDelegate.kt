@@ -68,7 +68,7 @@ public class PermissionDelegate<T: Any>(private val contextProvider: T) {
     /**
      * 리소스 정리
      */
-    protected open fun cleanup() {
+    protected fun cleanup() {
         if (shouldClearRequestId()) {
             currentRequestId?.let {
                 permissionManager.cancelRequest(it)
