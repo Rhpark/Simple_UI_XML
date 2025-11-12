@@ -146,7 +146,7 @@ kover {
                 classes("kr.open.library.simple_ui.extensions.conditional.SdkVersionInlineKt*")
                 classes("kr.open.library.simple_ui.extensions.bundle.BundleInlineKt*")
                 classes("kr.open.library.simple_ui.extensions.string.StringExtensionsKt*")
-                classes("kr.open.library.simple_ui.local.base.BaseSharedPreference*")
+//                classes("kr.open.library.simple_ui.local.base.BaseSharedPreference*")
 
                 classes("kr.open.library.simple_ui.logcat.ILogx*")
                 classes("kr.open.library.simple_ui.logcat.extensions.LogxExtensions*")
