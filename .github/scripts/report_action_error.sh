@@ -93,12 +93,11 @@ esac
 
 echo "[report_action_error] Stage: '${STAGE_NAME_INPUT}' -> Labels: ${ISSUE_LABELS[*]}"
 
-# 디버깅: 배열 내용 출력
+# ?�버�? 배열 ?�용 출력
 echo "[DEBUG] ISSUE_LABELS array contents: ${ISSUE_LABELS[@]}"
 echo "[DEBUG] ISSUE_LABELS array length: ${#ISSUE_LABELS[@]}"
 
-# 배열을 JSON으로 직접 변환
-export ISSUE_LABELS_ARRAY="${ISSUE_LABELS[*]}"
+# 배열??JSON?�로 직접 변??export ISSUE_LABELS_ARRAY="${ISSUE_LABELS[*]}"
 ISSUE_LABELS_JSON="$(python3 <<PY
 import json, os
 labels_str = os.environ.get("ISSUE_LABELS_ARRAY", "")
@@ -142,7 +141,7 @@ print(fallback[0].strip() if fallback else "Failure detected")
 PY
 }
 TITLE_SUFFIX="$(extract_title)"
-ISSUE_TITLE="[CI][${STAGE_NAME_INPUT}] ${TITLE_SUFFIX}"
+ISSUE_TITLE="${TITLE_SUFFIX}"
 
 export REPO ISSUE_TITLE
 ISSUE_BODY=$(cat <<EOF
@@ -154,13 +153,13 @@ ISSUE_BODY=$(cat <<EOF
 - **Commit**: ${SHA}
 - **Actor**: ${ACTOR}
 
-### Failure summary / 실패 요약
+### Failure summary / ?�패 ?�약
 ${FAILURE_MESSAGE_INPUT}
 
-### Relevant log excerpt / 관련 로그
+### Relevant log excerpt / 관??로그
 ${FAILURE_LOG_INPUT}
 
-### Extra context / 추가 정보
+### Extra context / 추�? ?�보
 ${FAILURE_ENVIRONMENT_INPUT}
 EOF
 )
@@ -187,7 +186,7 @@ PY
 )
 
 create_issue() {
-  # 디버깅: ISSUE_LABELS_JSON 값 출력
+  # ?�버�? ISSUE_LABELS_JSON �?출력
   echo "[DEBUG] ISSUE_LABELS_JSON=${ISSUE_LABELS_JSON}"
 
   export ISSUE_PAYLOAD
