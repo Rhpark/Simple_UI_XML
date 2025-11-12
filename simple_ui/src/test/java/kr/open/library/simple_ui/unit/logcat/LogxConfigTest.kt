@@ -45,7 +45,6 @@ class LogxConfigTest {
         // Then
         assertNotNull("설정이 null이 아니어야 합니다", config)
         assertTrue("기본적으로 디버그 모드가 켜져있어야 합니다", config.isDebug)
-        assertFalse("기본적으로 디버그 모드가 켜져있어야 합니다", config.isDebug)
     }
 
     @Test
