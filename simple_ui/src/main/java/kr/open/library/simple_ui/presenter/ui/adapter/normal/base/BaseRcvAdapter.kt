@@ -161,9 +161,13 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder>(
 
     /**
      * Adds a single item at the specified position.
-     * @return true (항상 true 반환, 실제 검증은 execute 시점에 수행)
+     * @return true if position is valid, false otherwise
      */
     public fun addItemAt(position: Int, item: ITEM, commitCallback: (() -> Unit)? = null): Boolean {
+        if (position < 0 || position > itemCount) {
+            Logx.e("Cannot add item at position $position. Valid range: 0..$itemCount")
+            return false
+        }
         operationQueue.enqueueOperation(AdapterOperationQueue.AddItemAtOp(position, item, commitCallback))
         return true
     }
@@ -181,9 +185,13 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder>(
     /**
      * Removes the item at the specified position.
      *
-     * @return true (항상 true 반환, 실제 검증은 execute 시점에 수행)
+     * @return true if position is valid, false otherwise
      */
     public open fun removeAt(position: Int, commitCallback: (() -> Unit)? = null): Boolean {
+        if (position < 0 || position >= itemCount) {
+            Logx.e("Cannot remove item at position $position. Valid range: 0 until $itemCount")
+            return false
+        }
         operationQueue.enqueueOperation(AdapterOperationQueue.RemoveAtOp(position, commitCallback))
         return true
     }
@@ -191,9 +199,13 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder>(
     /**
      * Removes the first occurrence of the specified item.
      *
-     * @return true (항상 true 반환, 실제 검증은 execute 시점에 수행)
+     * @return true if item exists in the list, false otherwise
      */
     public open fun removeItem(item: ITEM, commitCallback: (() -> Unit)? = null): Boolean {
+        if (!differ.currentList.contains(item)) {
+            Logx.e("Item not found in the list")
+            return false
+        }
         operationQueue.enqueueOperation(AdapterOperationQueue.RemoveItemOp(item, commitCallback))
         return true
     }

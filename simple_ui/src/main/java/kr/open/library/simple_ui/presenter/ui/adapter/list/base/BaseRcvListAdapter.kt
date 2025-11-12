@@ -84,9 +84,13 @@ public abstract class BaseRcvListAdapter<ITEM, VH : RecyclerView.ViewHolder>(lis
      * @param position 추가할 위치
      * @param item 추가할 아이템
      * @param commitCallback 리스트 갱신 완료 후 호출될 콜백 (null 가능)
-     * @return 추가 성공 여부 (항상 true 반환, 실제 검증은 execute 시점에 수행)
+     * @return 추가 성공 여부 (position이 유효하지 않으면 false 반환)
      */
     public fun addItemAt(position: Int, item: ITEM, commitCallback: (() -> Unit)? = null): Boolean {
+        if (position < 0 || position > itemCount) {
+            Logx.e("Cannot add item at position $position. Valid range: 0..$itemCount")
+            return false
+        }
         operationQueue.enqueueOperation(AdapterOperationQueue.AddItemAtOp(position, item, commitCallback))
         return true
     }
@@ -108,10 +112,14 @@ public abstract class BaseRcvListAdapter<ITEM, VH : RecyclerView.ViewHolder>(lis
      * @param position 추가할 위치
      * @param itemList 추가할 아이템 리스트
      * @param commitCallback 리스트 갱신 완료 후 호출될 콜백 (null 가능)
-     * @return 추가 성공 여부 (항상 true 반환, 실제 검증은 execute 시점에 수행)
+     * @return 추가 성공 여부 (position이 유효하지 않으면 false 반환)
      */
     public fun addItems(position: Int, itemList: List<ITEM>, commitCallback: (() -> Unit)? = null): Boolean {
         if (itemList.isEmpty()) return true
+        if (position < 0 || position > itemCount) {
+            Logx.e("Cannot add items at position $position. Valid range: 0..$itemCount")
+            return false
+        }
         operationQueue.enqueueOperation(AdapterOperationQueue.AddItemsAtOp(position, itemList, commitCallback))
         return true
     }
@@ -127,9 +135,13 @@ public abstract class BaseRcvListAdapter<ITEM, VH : RecyclerView.ViewHolder>(lis
      * 특정 아이템 제거
      * @param item 제거할 아이템
      * @param commitCallback 리스트 갱신 완료 후 호출될 콜백 (null 가능)
-     * @return 제거 성공 여부 (항상 true 반환, 실제 검증은 execute 시점에 수행)
+     * @return 제거 성공 여부 (아이템이 없으면 false 반환)
      */
     public fun removeItem(item: ITEM, commitCallback: (() -> Unit)? = null): Boolean {
+        if (!currentList.contains(item)) {
+            Logx.e("Item not found in the list")
+            return false
+        }
         operationQueue.enqueueOperation(AdapterOperationQueue.RemoveItemOp(item, commitCallback))
         return true
     }
@@ -138,9 +150,13 @@ public abstract class BaseRcvListAdapter<ITEM, VH : RecyclerView.ViewHolder>(lis
      * 특정 위치의 아이템 제거
      * @param position 제거할 아이템 위치
      * @param commitCallback 리스트 갱신 완료 후 호출될 콜백 (null 가능)
-     * @return 제거 성공 여부 (항상 true 반환, 실제 검증은 execute 시점에 수행)
+     * @return 제거 성공 여부 (position이 유효하지 않으면 false 반환)
      */
     public fun removeAt(position: Int, commitCallback: (() -> Unit)? = null): Boolean {
+        if (position < 0 || position >= itemCount) {
+            Logx.e("Cannot remove item at position $position. Valid range: 0 until $itemCount")
+            return false
+        }
         operationQueue.enqueueOperation(AdapterOperationQueue.RemoveAtOp(position, commitCallback))
         return true
     }
@@ -158,10 +174,18 @@ public abstract class BaseRcvListAdapter<ITEM, VH : RecyclerView.ViewHolder>(lis
      * @param fromPosition 이동할 아이템의 현재 위치
      * @param toPosition 이동할 목표 위치
      * @param commitCallback 리스트 갱신 완료 후 호출될 콜백 (null 가능)
-     * @return 이동 성공 여부 (항상 true 반환, 실제 검증은 execute 시점에 수행)
+     * @return 이동 성공 여부 (position이 유효하지 않으면 false 반환)
      */
     public fun moveItem(fromPosition: Int, toPosition: Int, commitCallback: (() -> Unit)? = null): Boolean {
         if (fromPosition == toPosition) return true
+        if (fromPosition < 0 || fromPosition >= itemCount) {
+            Logx.e("Invalid fromPosition $fromPosition. Valid range: 0 until $itemCount")
+            return false
+        }
+        if (toPosition < 0 || toPosition >= itemCount) {
+            Logx.e("Invalid toPosition $toPosition. Valid range: 0 until $itemCount")
+            return false
+        }
         operationQueue.enqueueOperation(AdapterOperationQueue.MoveItemOp(fromPosition, toPosition, commitCallback))
         return true
     }
@@ -171,9 +195,13 @@ public abstract class BaseRcvListAdapter<ITEM, VH : RecyclerView.ViewHolder>(lis
      * @param position 교체할 아이템 위치
      * @param item 새로운 아이템
      * @param commitCallback 리스트 갱신 완료 후 호출될 콜백 (null 가능)
-     * @return 교체 성공 여부 (항상 true 반환, 실제 검증은 execute 시점에 수행)
+     * @return 교체 성공 여부 (position이 유효하지 않으면 false 반환)
      */
     public fun replaceItemAt(position: Int, item: ITEM, commitCallback: (() -> Unit)? = null): Boolean {
+        if (position < 0 || position >= itemCount) {
+            Logx.e("Invalid position $position. Valid range: 0 until $itemCount")
+            return false
+        }
         operationQueue.enqueueOperation(AdapterOperationQueue.ReplaceItemAtOp(position, item, commitCallback))
         return true
     }
