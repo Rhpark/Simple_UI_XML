@@ -178,7 +178,7 @@ PY
 
 create_issue() {
   export ISSUE_PAYLOAD
-  ISSUE_PAYLOAD=$(python3 - <<'PY'
+ISSUE_PAYLOAD=$(python3 - <<PY
 import json, os
 labels = json.loads(os.environ.get("ISSUE_LABELS_JSON", "[]"))
 if not labels:
