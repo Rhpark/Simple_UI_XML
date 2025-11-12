@@ -1,6 +1,6 @@
 name: "Action Error Report / CI 에러 보고"
 description: Report GitHub Actions failures (unitTest → RobolectricTest → build → Release). / GitHub Actions 단계 에러를 공유해주세요.
-#labels: ["ci", "needs-triage"]
+labels: ["ci", "needs-triage"]
 body:
   - type: dropdown
     id: failed_stage
