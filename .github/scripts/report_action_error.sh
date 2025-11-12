@@ -91,6 +91,8 @@ case "${STAGE_NAME_INPUT}" in
     ;;
 esac
 
+echo "[report_action_error] Stage: '${STAGE_NAME_INPUT}' -> Labels: ${ISSUE_LABELS[*]}"
+
 ISSUE_LABELS_JSON="$(printf '%s\n' "${ISSUE_LABELS[@]}" | python3 <<'PY'
 import json, sys
 labels = [line.strip() for line in sys.stdin if line.strip()]
