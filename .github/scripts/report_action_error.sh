@@ -93,11 +93,12 @@ esac
 
 echo "[report_action_error] Stage: '${STAGE_NAME_INPUT}' -> Labels: ${ISSUE_LABELS[*]}"
 
-# ?�버�? 배열 ?�용 출력
+# 디버그용 배열 출력
 echo "[DEBUG] ISSUE_LABELS array contents: ${ISSUE_LABELS[@]}"
 echo "[DEBUG] ISSUE_LABELS array length: ${#ISSUE_LABELS[@]}"
 
-# 배열??JSON?�로 직접 변??export ISSUE_LABELS_ARRAY="${ISSUE_LABELS[*]}"
+# 배열을 JSON 문자열로 변환
+export ISSUE_LABELS_ARRAY="${ISSUE_LABELS[*]}"
 ISSUE_LABELS_JSON="$(python3 <<PY
 import json, os
 labels_str = os.environ.get("ISSUE_LABELS_ARRAY", "")
@@ -153,13 +154,13 @@ ISSUE_BODY=$(cat <<EOF
 - **Commit**: ${SHA}
 - **Actor**: ${ACTOR}
 
-### Failure summary / ?�패 ?�약
+### Failure summary / 실패 요약
 ${FAILURE_MESSAGE_INPUT}
 
-### Relevant log excerpt / 관??로그
+### Relevant log excerpt / 관련 로그
 ${FAILURE_LOG_INPUT}
 
-### Extra context / 추�? ?�보
+### Extra context / 추가 정보
 ${FAILURE_ENVIRONMENT_INPUT}
 EOF
 )
@@ -186,7 +187,7 @@ PY
 )
 
 create_issue() {
-  # ?�버�? ISSUE_LABELS_JSON �?출력
+  # ?ÂÃ«Â²ÂÃªÂ¹? ISSUE_LABELS_JSON ÃªÂ°?Ã¬Â¶ÂÃ«Â Â¥
   echo "[DEBUG] ISSUE_LABELS_JSON=${ISSUE_LABELS_JSON}"
 
   export ISSUE_PAYLOAD
