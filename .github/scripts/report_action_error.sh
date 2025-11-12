@@ -93,11 +93,21 @@ esac
 
 echo "[report_action_error] Stage: '${STAGE_NAME_INPUT}' -> Labels: ${ISSUE_LABELS[*]}"
 
-ISSUE_LABELS_JSON="$(printf '%s\n' "${ISSUE_LABELS[@]}" | python3 <<PY
-import json, sys
-labels = [line.strip() for line in sys.stdin if line.strip()]
+# 디버깅: 배열 내용 출력
+echo "[DEBUG] ISSUE_LABELS array contents: ${ISSUE_LABELS[@]}"
+echo "[DEBUG] ISSUE_LABELS array length: ${#ISSUE_LABELS[@]}"
+
+# 배열을 JSON으로 직접 변환
+export ISSUE_LABELS_ARRAY="${ISSUE_LABELS[*]}"
+ISSUE_LABELS_JSON="$(python3 <<PY
+import json, os
+labels_str = os.environ.get("ISSUE_LABELS_ARRAY", "")
+print(f"[DEBUG Python] ISSUE_LABELS_ARRAY from env: '{labels_str}'", file=__import__('sys').stderr)
+labels = [label.strip() for label in labels_str.split() if label.strip()]
+print(f"[DEBUG Python] Parsed labels from split: {labels}", file=__import__('sys').stderr)
 if not labels:
     labels = ["ci", "needs-triage"]
+    print(f"[DEBUG Python] Using fallback labels", file=__import__('sys').stderr)
 print(json.dumps(labels, ensure_ascii=False))
 PY
 )"
