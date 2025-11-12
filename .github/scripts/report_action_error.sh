@@ -177,12 +177,19 @@ PY
 )
 
 create_issue() {
+  # 디버깅: ISSUE_LABELS_JSON 값 출력
+  echo "[DEBUG] ISSUE_LABELS_JSON=${ISSUE_LABELS_JSON}"
+
   export ISSUE_PAYLOAD
 ISSUE_PAYLOAD=$(python3 - <<PY
-import json, os
-labels = json.loads(os.environ.get("ISSUE_LABELS_JSON", "[]"))
+import json, os, sys
+labels_json = os.environ.get("ISSUE_LABELS_JSON", "[]")
+print(f"[DEBUG Python] ISSUE_LABELS_JSON from env: {labels_json}", file=sys.stderr)
+labels = json.loads(labels_json)
+print(f"[DEBUG Python] Parsed labels: {labels}", file=sys.stderr)
 if not labels:
     labels = ["ci", "needs-triage"]
+    print(f"[DEBUG Python] Labels was empty, using fallback: {labels}", file=sys.stderr)
 payload = {
     "title": os.environ["ISSUE_TITLE"],
     "body": os.environ["ISSUE_BODY"],
@@ -191,6 +198,8 @@ payload = {
 print(json.dumps(payload))
 PY
 )
+
+  echo "[DEBUG] ISSUE_PAYLOAD=${ISSUE_PAYLOAD}"
 
   curl -sSf \
     -X POST \
