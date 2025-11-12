@@ -163,7 +163,7 @@ kover {
                 classes("kr.open.library.simple_ui.logcat.runtime.LogxWriter*")
 
                 classes("kr.open.library.simple_ui.permissions.vo.PermissionConstants*")
-                classes("kr.open.library.simple_ui.permissions.vo.PermissionSpecialType*")
+//                classes("kr.open.library.simple_ui.permissions.vo.PermissionSpecialType*")
 
                 classes("kr.open.library.simple_ui.presenter.extensions.view.ViewAnimExtensionsKt*")
                 classes("kr.open.library.simple_ui.presenter.extensions.view.ViewLayoutExtensionsKt*")
@@ -182,7 +182,7 @@ kover {
                 classes("kr.open.library.simple_ui.system_manager.base.BaseSystemService*")
                 classes("kr.open.library.simple_ui.system_manager.controller.alarm.AlarmController*")
                 classes("kr.open.library.simple_ui.system_manager.controller.alarm.receiver.BaseAlarmReceiver*")
-                classes("kr.open.library.simple_ui.system_manager.controller.alarm.vo.AlarmVo*")
+//                classes("kr.open.library.simple_ui.system_manager.controller.alarm.vo.AlarmVo*")
                 classes("kr.open.library.simple_ui.system_manager.controller.wifi.WifiController*")
                 classes("kr.open.library.simple_ui.system_manager.controller.window.FloatingViewController*")
                 classes("kr.open.library.simple_ui.system_manager.controller.window.drag.FloatingDragView*")

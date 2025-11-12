@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+﻿#!/usr/bin/env bash
 
 set -euo pipefail
 
@@ -94,7 +94,7 @@ esac
 echo "[report_action_error] Stage: '${STAGE_NAME_INPUT}' -> Labels: ${ISSUE_LABELS[*]}"
 
 # 디버그용 배열 출력
-echo "[DEBUG] ISSUE_LABELS array contents: ${ISSUE_LABELS[@]}"
+echo "[DEBUG] ISSUE_LABELS array contents: ${ISSUE_LABELS[*]}"
 echo "[DEBUG] ISSUE_LABELS array length: ${#ISSUE_LABELS[@]}"
 
 # 배열을 JSON 문자열로 변환
@@ -187,7 +187,7 @@ PY
 )
 
 create_issue() {
-  # ?ÂÃ«Â²ÂÃªÂ¹? ISSUE_LABELS_JSON ÃªÂ°?Ã¬Â¶ÂÃ«Â Â¥
+  # 디버깅: ISSUE_LABELS_JSON 값 출력
   echo "[DEBUG] ISSUE_LABELS_JSON=${ISSUE_LABELS_JSON}"
 
   export ISSUE_PAYLOAD
@@ -260,3 +260,4 @@ if [[ -n "${ISSUE_NUMBER}" ]]; then
 else
   create_issue
 fi
+
