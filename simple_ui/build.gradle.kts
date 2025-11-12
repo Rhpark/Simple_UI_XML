@@ -12,7 +12,7 @@ publishing {
         register("release", MavenPublication::class) { // MavenPublication::class 사용 가능
             groupId = "com.github.Rhpark"
             artifactId = "Simple_UI_XML"
-            version = "0.2.3"
+            version = "0.2.4"
 
             afterEvaluate {
                 from(components.findByName("release"))
