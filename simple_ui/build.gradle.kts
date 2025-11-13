@@ -113,9 +113,10 @@ kover {
 
 
 
-                /*****************************
-                 * Android OS 에 종속 인 부분  *
-                 *****************************/
+                /*******************************
+                 *   Android OS 에 종속 인 부분  *
+                 * 통합 테스트 단위에서 태스트 예정 *
+                 *******************************/
 
                 // 2. 베이스 컴포넌트(단위 테스트 어려움)
                 classes("**.RootActivity")
@@ -144,7 +145,6 @@ kover {
                 classes("kr.open.library.simple_ui.logcat.internal.file_writer.LogxFileWriterFactory*")
                 classes("kr.open.library.simple_ui.logcat.internal.file_writer.LogxLifecycleFlushManager*")
                 classes("kr.open.library.simple_ui.logcat.internal.stacktrace.LogxStackTrace*")
-                classes("kr.open.library.simple_ui.logcat.internal.stacktrace.LogxStackTraceMetaData*")
                 classes("kr.open.library.simple_ui.logcat.runtime.LogxWriter*")
 
                 classes("kr.open.library.simple_ui.presenter.extensions.view.ViewAnimExtensionsKt*")
@@ -174,7 +174,6 @@ kover {
                 classes("kr.open.library.simple_ui.system_manager.info.battery.power.PowerProfile*")
 
                 classes("kr.open.library.simple_ui.system_manager.info.location.LocationSharedPreference*")
-                classes("kr.open.library.simple_ui.system_manager.info.location.LocationStateEvent*")
                 classes("kr.open.library.simple_ui.system_manager.info.location.LocationStateInfo*")
                 classes("kr.open.library.simple_ui.system_manager.info.network.connectivity.NetworkConnectivityInfo*")
                 classes("kr.open.library.simple_ui.system_manager.info.network.connectivity.callback.NetworkStateCallback*")
@@ -183,24 +182,7 @@ kover {
                 classes("kr.open.library.simple_ui.system_manager.info.network.sim.SimInfo*")
                 classes("kr.open.library.simple_ui.system_manager.info.network.telephony.TelephonyInfo*")
                 classes("kr.open.library.simple_ui.system_manager.info.network.telephony.callback.CommonTelephonyCallback*")
-                classes("kr.open.library.simple_ui.system_manager.info.network.telephony.data.cell.cdma.CellIdentityCdmaData*")
-                classes("kr.open.library.simple_ui.system_manager.info.network.telephony.data.cell.cdma.CellInfoCdmaData*")
-                classes("kr.open.library.simple_ui.system_manager.info.network.telephony.data.cell.cdma.CellSignalStrengthCdmaData*")
-                classes("kr.open.library.simple_ui.system_manager.info.network.telephony.data.cell.gsm.CellIdentityGsmData*")
-                classes("kr.open.library.simple_ui.system_manager.info.network.telephony.data.cell.gsm.CellInfoGsmData*")
-                classes("kr.open.library.simple_ui.system_manager.info.network.telephony.data.cell.gsm.CellSignalStrengthGsmData*")
-                classes("kr.open.library.simple_ui.system_manager.info.network.telephony.data.cell.lte.CellIdentityLteData*")
-                classes("kr.open.library.simple_ui.system_manager.info.network.telephony.data.cell.lte.CellInfoLteData*")
-                classes("kr.open.library.simple_ui.system_manager.info.network.telephony.data.cell.lte.CellSignalStrengthLteData*")
-                classes("kr.open.library.simple_ui.system_manager.info.network.telephony.data.cell.nr.CellIdentityNrData*")
-                classes("kr.open.library.simple_ui.system_manager.info.network.telephony.data.cell.nr.CellInfoNrData*")
-                classes("kr.open.library.simple_ui.system_manager.info.network.telephony.data.cell.nr.CellSignalStrengthNrData*")
-                classes("kr.open.library.simple_ui.system_manager.info.network.telephony.data.cell.tdscdma.CellIdentityTdscdmaData*")
-                classes("kr.open.library.simple_ui.system_manager.info.network.telephony.data.cell.tdscdma.CellInfoTdscdmaData*")
-                classes("kr.open.library.simple_ui.system_manager.info.network.telephony.data.cell.tdscdma.CellSignalStrengthDataTdscdma*")
-                classes("kr.open.library.simple_ui.system_manager.info.network.telephony.data.cell.wcdma.CellIdentityWcdmaData*")
-                classes("kr.open.library.simple_ui.system_manager.info.network.telephony.data.cell.wcdma.CellInfoWcdmaData*")
-                classes("kr.open.library.simple_ui.system_manager.info.network.telephony.data.cell.wcdma.CellSignalStrengthWcdmaData*")
+
                 classes("kr.open.library.simple_ui.system_manager.info.network.telephony.data.current.CurrentCellInfo*")
                 classes("kr.open.library.simple_ui.system_manager.info.network.telephony.data.current.CurrentServiceState*")
                 classes("kr.open.library.simple_ui.system_manager.info.network.telephony.data.current.CurrentSignalStrength*")
