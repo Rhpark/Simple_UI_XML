@@ -10,17 +10,23 @@ import android.telephony.SignalStrength
 import android.telephony.SubscriptionInfo
 import android.telephony.SubscriptionManager
 import android.telephony.TelephonyCallback
+import android.telephony.TelephonyDisplayInfo
 import android.telephony.TelephonyManager
+import android.util.SparseArray
 import androidx.test.core.app.ApplicationProvider
 import kr.open.library.simple_ui.system_manager.info.network.telephony.callback.CommonTelephonyCallback
 import kr.open.library.simple_ui.system_manager.info.network.telephony.callback.TelephonyCallbackManager
+import kr.open.library.simple_ui.system_manager.info.network.telephony.data.state.TelephonyNetworkState
+import kr.open.library.simple_ui.system_manager.info.network.telephony.data.state.TelephonyNetworkType
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentCaptor
+import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchers.eq
 import org.mockito.Mockito.doReturn
+import org.mockito.Mockito.doThrow
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
 import org.robolectric.RobolectricTestRunner
@@ -64,10 +70,12 @@ class TelephonyCallbackManagerRobolectricTest {
         val serviceState = ServiceState()
         var emittedSignal: SignalStrength? = null
         var emittedService: ServiceState? = null
+        var emittedNetwork: TelephonyNetworkState? = null
 
         val registered = callbackManager.registerSimpleCallback(
             onSignalStrengthChanged = { emittedSignal = it },
-            onServiceStateChanged = { emittedService = it }
+            onServiceStateChanged = { emittedService = it },
+            onNetworkStateChanged = { emittedNetwork = it }
         )
         assertTrue(registered)
 
@@ -78,11 +86,17 @@ class TelephonyCallbackManagerRobolectricTest {
         val telephonyCallback = callbackCaptor.value as CommonTelephonyCallback.BaseTelephonyCallback
         telephonyCallback.onSignalStrengthsChanged(signal)
         telephonyCallback.onServiceStateChanged(serviceState)
+        val displayInfo = mock(TelephonyDisplayInfo::class.java)
+        doReturn(TelephonyDisplayInfo.OVERRIDE_NETWORK_TYPE_NR_ADVANCED)
+            .`when`(displayInfo).overrideNetworkType
+        telephonyCallback.onDisplayInfoChanged(displayInfo)
 
         assertSame(signal, emittedSignal)
         assertSame(signal, callbackManager.currentSignalStrength.value)
         assertSame(serviceState, emittedService)
         assertSame(serviceState, callbackManager.currentServiceState.value)
+        assertEquals(TelephonyNetworkType.CONNECT_5G, emittedNetwork?.networkTypeState)
+        assertEquals(TelephonyNetworkType.CONNECT_5G, callbackManager.currentNetworkState.value?.networkTypeState)
     }
 
     @Test
@@ -119,6 +133,17 @@ class TelephonyCallbackManagerRobolectricTest {
 
         assertTrue(result)
         assertFalse(callbackManager.unregisterSimpleCallback())
+    }
+
+    @Test
+    @Config(sdk = [Build.VERSION_CODES.P])
+    fun unregisterSimpleCallback_onPreS_stopsLegacyListener() {
+        setUp()
+        callbackManager.registerSimpleCallback()
+
+        callbackManager.unregisterSimpleCallback()
+
+        verify(telephonyManager).listen(any(PhoneStateListener::class.java), eq(PhoneStateListener.LISTEN_NONE))
     }
 
     @Test
@@ -249,6 +274,73 @@ class TelephonyCallbackManagerRobolectricTest {
         assertFalse(manager.isRegistered(0))
 
         shadowApp.grantPermissions(Manifest.permission.READ_PHONE_STATE)
+    }
+
+    @Test
+    fun initializeMultiSimSupport_whenCreateForSubscriptionThrows_securityHandled() {
+        val subscriptionInfo = mock(SubscriptionInfo::class.java)
+        doReturn(0).`when`(subscriptionInfo).simSlotIndex
+        doReturn(33).`when`(subscriptionInfo).subscriptionId
+        doReturn(listOf(subscriptionInfo)).`when`(subscriptionManager).activeSubscriptionInfoList
+        doThrow(SecurityException("denied")).`when`(telephonyManager).createForSubscriptionId(33)
+
+        val manager = TelephonyCallbackManager(context)
+        manager.refreshPermissions()
+
+        assertNull(manager.getTelephonyManagerFromUSim(0))
+    }
+
+    @Test(expected = IllegalStateException::class)
+    fun registerAdvancedCallback_whenCallbackMissing_throws() {
+        prepareMultiSimSlot()
+        callbackManager.removeCallbackEntry(0)
+
+        callbackManager.registerAdvancedCallback(
+            simSlotIndex = 0,
+            executor = Executor { it.run() },
+            isGpsOn = false
+        )
+    }
+
+    @Test
+    fun unregisterAdvancedCallback_handlesSecurityThenIllegalExceptions() {
+        val slotTelephonyManager = prepareMultiSimSlot(subscriptionId = 40)
+        callbackManager.registerAdvancedCallback(0, Executor { it.run() }, isGpsOn = false)
+
+        doThrow(SecurityException("base")).doThrow(IllegalArgumentException("gps"))
+            .`when`(slotTelephonyManager).unregisterTelephonyCallback(any())
+
+        callbackManager.unregisterAdvancedCallback(0)
+    }
+
+    @Test
+    fun unregisterAdvancedCallback_handlesIllegalThenSecurityExceptions() {
+        val slotTelephonyManager = prepareMultiSimSlot(subscriptionId = 41)
+        callbackManager.registerAdvancedCallback(0, Executor { it.run() }, isGpsOn = true)
+
+        doThrow(IllegalArgumentException("base")).doThrow(SecurityException("gps"))
+            .`when`(slotTelephonyManager).unregisterTelephonyCallback(any())
+
+        callbackManager.unregisterAdvancedCallback(0)
+    }
+
+    private fun prepareMultiSimSlot(slotIndex: Int = 0, subscriptionId: Int = 1): TelephonyManager {
+        val subscriptionInfo = mock(SubscriptionInfo::class.java)
+        val slotTelephonyManager = mock(TelephonyManager::class.java)
+        doReturn(slotIndex).`when`(subscriptionInfo).simSlotIndex
+        doReturn(subscriptionId).`when`(subscriptionInfo).subscriptionId
+        doReturn(listOf(subscriptionInfo)).`when`(subscriptionManager).activeSubscriptionInfoList
+        doReturn(slotTelephonyManager).`when`(telephonyManager).createForSubscriptionId(subscriptionId)
+        callbackManager.clearMultiSimState()
+        callbackManager.forceUpdateMultiSimData()
+        return slotTelephonyManager
+    }
+
+    private fun TelephonyCallbackManager.removeCallbackEntry(slotIndex: Int) {
+        val callbackField = TelephonyCallbackManager::class.java.getDeclaredField("uSimTelephonyCallbackList")
+        callbackField.isAccessible = true
+        val array = callbackField.get(this) as SparseArray<*>
+        array.remove(slotIndex)
     }
 
     private fun TelephonyCallbackManager.forceUpdateMultiSimData() {

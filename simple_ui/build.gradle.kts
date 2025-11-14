@@ -75,7 +75,7 @@ dependencies {
 
     //Test
     testImplementation(libs.junit)
-    testImplementation("org.robolectric:robolectric:4.13")
+    testImplementation("org.robolectric:robolectric:4.16")
     testImplementation("androidx.test:core:1.6.1")  // ApplicationProvider 등을 위해 필요
     testImplementation("org.mockito:mockito-core:5.7.0")
     testImplementation("org.mockito:mockito-inline:5.2.0")
@@ -128,23 +128,18 @@ kover {
                 classes("**.BaseBindingFragment")
                 classes("**.BaseDialogFragment")
                 classes("**.BaseBindingDialogFragment")
-
+                classes("**.RootDialogFragment")
                 // 3. Lifecycle 커스텀 Layout
                 classes("**.BaseLifeCycle*Layout")
 
-                classes("kr.open.library.simple_ui.extensions.bundle.BundleInlineKt*")
 
                 classes("kr.open.library.simple_ui.logcat.ILogx*")
                 classes("kr.open.library.simple_ui.logcat.extensions.LogxExtensions*")
-                classes("kr.open.library.simple_ui.logcat.internal.file_writer.NoOpLogFileWriter*")
                 classes("kr.open.library.simple_ui.logcat.Logx*")
-                classes("kr.open.library.simple_ui.logcat.config.LogxConfig*")
                 classes("kr.open.library.simple_ui.logcat.config.LogxConfigManager*")
                 classes("kr.open.library.simple_ui.logcat.config.LogxPathUtils*")
                 classes("kr.open.library.simple_ui.logcat.internal.file_writer.LogxFileWriter*")
-                classes("kr.open.library.simple_ui.logcat.internal.file_writer.LogxFileWriterFactory*")
                 classes("kr.open.library.simple_ui.logcat.internal.file_writer.LogxLifecycleFlushManager*")
-                classes("kr.open.library.simple_ui.logcat.internal.stacktrace.LogxStackTrace*")
                 classes("kr.open.library.simple_ui.logcat.runtime.LogxWriter*")
 
                 classes("kr.open.library.simple_ui.presenter.extensions.view.ViewAnimExtensionsKt*")
@@ -156,10 +151,7 @@ kover {
                 classes("kr.open.library.simple_ui.presenter.ui.adapter.normal.simple.SimpleBindingRcvAdapter*")
                 classes("kr.open.library.simple_ui.presenter.ui.adapter.normal.simple.SimpleRcvAdapter*")
 
-                classes("kr.open.library.simple_ui.presenter.ui.fragment.dialog.RootDialogFragment*")
                 classes("kr.open.library.simple_ui.presenter.ui.view.recyclerview.RecyclerScrollStateView*")
-                classes("kr.open.library.simple_ui.presenter.viewmodel.BaseViewModel*")
-                classes("kr.open.library.simple_ui.presenter.viewmodel.BaseViewModelEvent*")
 
                 classes("kr.open.library.simple_ui.system_manager.base.BaseSystemService*")
                 classes("kr.open.library.simple_ui.system_manager.controller.alarm.AlarmController*")
@@ -169,7 +161,6 @@ kover {
                 classes("kr.open.library.simple_ui.system_manager.controller.window.drag.FloatingDragView*")
                 classes("kr.open.library.simple_ui.system_manager.controller.window.drag.FloatingDragViewConfig*")
                 classes("kr.open.library.simple_ui.system_manager.controller.window.fixed.FloatingFixedView*")
-                classes("kr.open.library.simple_ui.system_manager.extensions.SystemServiceExtensionsKt*")
                 classes("kr.open.library.simple_ui.system_manager.info.battery.BatteryStateInfo*")
                 classes("kr.open.library.simple_ui.system_manager.info.battery.power.PowerProfile*")
 
@@ -182,8 +173,6 @@ kover {
                 classes("kr.open.library.simple_ui.system_manager.info.network.sim.SimInfo*")
                 classes("kr.open.library.simple_ui.system_manager.info.network.telephony.TelephonyInfo*")
                 classes("kr.open.library.simple_ui.system_manager.info.network.telephony.callback.CommonTelephonyCallback*")
-
-                classes("kr.open.library.simple_ui.system_manager.info.network.telephony.data.current.CurrentCellInfo*")
                 classes("kr.open.library.simple_ui.system_manager.info.network.telephony.data.current.CurrentServiceState*")
                 classes("kr.open.library.simple_ui.system_manager.info.network.telephony.data.current.CurrentSignalStrength*")
             }
