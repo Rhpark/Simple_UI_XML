@@ -1,6 +1,7 @@
 package kr.open.library.simpleui_xml.activity_fragment
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -51,10 +52,10 @@ class ActivityFragmentActivity : BaseBindingActivity<ActivityActivityFragmentBin
                         startActivity(intent)
                     }
                     is ActivityFragmentActivityVmEvent.OnClickBaseDialogFragment -> {
-                        BaseDialogFragmentExample().safeShow(supportFragmentManager, "BaseDialogFragment")
+                        BaseDialogFragmentExample().apply { setBackgroundColor(Color.WHITE) }.safeShow(supportFragmentManager, "BaseDialogFragment")
                     }
                     is ActivityFragmentActivityVmEvent.OnClickBaseBindingDialogFragment -> {
-                        BaseBindingDialogFragmentExample().safeShow(supportFragmentManager, "BaseBindingDialogFragment")
+                        BaseBindingDialogFragmentExample().apply { setBackgroundColor(Color.WHITE) }.safeShow(supportFragmentManager, "BaseBindingDialogFragment")
                     }
                 }
             }

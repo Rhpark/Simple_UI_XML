@@ -6,6 +6,8 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.Gravity
 import android.view.View
+import androidx.annotation.ColorInt
+import androidx.annotation.DrawableRes
 import androidx.annotation.StyleRes
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
@@ -24,11 +26,22 @@ public abstract class RootDialogFragment() : DialogFragment(), PermissionRequest
     private var animationStyle: Int? = null
     private var dialogGravity: Int = Gravity.CENTER
     private var dialogCancelable: Boolean = true
-
+    private var backgroundColor: Int? = Color.TRANSPARENT
+    private var backgroundResId : Int? = null
     /************************
      *   Permission Check   *
      ************************/
     protected lateinit var permissionDelegate : PermissionDelegate<DialogFragment>
+
+    public open fun setBackgroundColor(@ColorInt color: Int) {
+        this.backgroundColor = color
+        this.backgroundResId = null
+    }
+
+    public open fun setBackgroundDrawable(@DrawableRes resId:Int) {
+        this.backgroundColor = null
+        this.backgroundResId = resId
+    }
 
     public interface OnItemClick {
         public fun onItemClickListener(v: View)
@@ -69,7 +82,8 @@ public abstract class RootDialogFragment() : DialogFragment(), PermissionRequest
             Logx.d("Screen Size $screenSize, " + requireContext().getDisplayInfo().getFullScreenSize())
             val x = (screenSize.x * widthRatio).toInt()
             val y = (screenSize.y * heightRatio).toInt()
-            it.setLayout(x, y)
+//            it.setLayout(x, y)
+            it.setLayout(x, -2) //WARP_
         }?: Logx.e("Error dialog window is null!")
     }
 
@@ -129,4 +143,7 @@ public abstract class RootDialogFragment() : DialogFragment(), PermissionRequest
     override fun onRequestPermissions(permissions: List<String>, onResult: (deniedPermissions: List<String>) -> Unit) {
         permissionDelegate.requestPermissions(permissions, onResult)
     }
+
+    protected fun getBackgroundColor() = backgroundColor
+    protected fun getBackgroundResId() = backgroundResId
 }

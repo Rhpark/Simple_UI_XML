@@ -53,6 +53,8 @@ public abstract class BaseBindingDialogFragment<BINDING : ViewDataBinding>(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.lifecycleOwner = viewLifecycleOwner
+        getBackgroundColor()?.let { setBackgroundColor(it) }
+        getBackgroundResId()?.let { setBackgroundDrawable(it) }
     }
 
 
@@ -83,5 +85,15 @@ public abstract class BaseBindingDialogFragment<BINDING : ViewDataBinding>(
      */
     protected inline fun <reified T : ViewModel> DialogFragment.getViewModel(): T {
         return ViewModelProvider(this)[T::class.java]
+    }
+
+    override fun setBackgroundColor(color: Int) {
+        super.setBackgroundColor(color)
+        _binding?.root?.setBackgroundColor(color)
+    }
+
+    override fun setBackgroundDrawable(resId: Int) {
+        super.setBackgroundDrawable(resId)
+        _binding?.root?.setBackgroundResource(resId)
     }
 }

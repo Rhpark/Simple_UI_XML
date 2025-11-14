@@ -30,6 +30,7 @@ class BaseActivityExample : BaseActivity(R.layout.activity_base_activity_example
         }
 
         setupStatusBarButtons()
+        setupSystemBarsButtons()
         setupNavigationBarButtons()
 
         Logx.d("BaseActivityExample - onCreate() completed")
@@ -42,14 +43,49 @@ class BaseActivityExample : BaseActivity(R.layout.activity_base_activity_example
             Triple(R.id.btnStatusBarGreen, Color.GREEN, "GREEN")
         ).forEach { (buttonId, color, label) ->
             findViewById<Button>(buttonId).setOnClickListener {
+                statusBarVisible()
                 setStatusBarColor(color)
                 Logx.d("StatusBar color changed to $label")
             }
         }
 
-        findViewById<Button>(R.id.btnStatusBarTransparent).setOnClickListener {
-            setStatusBarTransparent()
-            Logx.d("StatusBar set to TRANSPARENT")
+        findViewById<Button>(R.id.btnStatusBarGone).setOnClickListener {
+            statusBarGone()
+            Logx.d("StatusBar set to GONE")
+        }
+
+        findViewById<Button>(R.id.btnStatusBarVisible).setOnClickListener {
+            statusBarVisible()
+            Logx.d("StatusBar set to VISIBLE")
+        }
+
+        findViewById<Button>(R.id.btnStatusBarReset).setOnClickListener {
+            statusBarVisible()
+            statusBarReset()
+            Logx.d("StatusBar RESET")
+        }
+    }
+
+    private fun setupSystemBarsButtons() {
+        listOf(
+            Triple(R.id.btnSystemBarsRed, Color.RED, "RED"),
+            Triple(R.id.btnSystemBarsBlue, Color.BLUE, "BLUE"),
+            Triple(R.id.btnSystemBarsGreen, Color.GREEN, "GREEN")
+        ).forEach { (buttonId, color, label) ->
+            findViewById<Button>(buttonId).setOnClickListener {
+                setSystemBarsColor(color)
+                Logx.d("SystemBars color changed to $label")
+            }
+        }
+
+        findViewById<Button>(R.id.btnSystemBarsLight).setOnClickListener {
+            setSystemBarsAppearance(isDarkIcon = false)
+            Logx.d("SystemBars appearance set to LIGHT (dark icons)")
+        }
+
+        findViewById<Button>(R.id.btnSystemBarsDark).setOnClickListener {
+            setSystemBarsAppearance(isDarkIcon = true)
+            Logx.d("SystemBars appearance set to DARK (light icons)")
         }
     }
 
@@ -63,6 +99,18 @@ class BaseActivityExample : BaseActivity(R.layout.activity_base_activity_example
                 setNavigationBarColor(color)
                 Logx.d("NavigationBar color changed to $label")
             }
+        }
+
+        findViewById<Button>(R.id.btnNavigationBarGone).setOnClickListener {
+            navigationBarGone()
+        }
+
+        findViewById<Button>(R.id.btnNavigationBarVisible).setOnClickListener {
+            navigationBarVisible()
+        }
+
+        findViewById<Button>(R.id.btnNavigationBarReset).setOnClickListener {
+            navigationBarReset()
         }
     }
 }

@@ -25,8 +25,24 @@ public abstract class BaseDialogFragment(
         return rootView
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        getBackgroundColor()?.let { setBackgroundColor(it) }
+        getBackgroundResId()?.let { setBackgroundDrawable(it) }
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _rootView = null
+    }
+
+    override fun setBackgroundColor(color: Int) {
+        super.setBackgroundColor(color)
+        _rootView?.setBackgroundColor(color)
+    }
+
+    override fun setBackgroundDrawable(resId: Int) {
+        super.setBackgroundDrawable(resId)
+        _rootView?.setBackgroundResource(resId)
     }
 }

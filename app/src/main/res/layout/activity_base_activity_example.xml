@@ -52,10 +52,25 @@
 
     </LinearLayout>
 
-    <Button
-        android:id="@+id/btnStatusBarTransparent"
-        style="@style/Button.MatchWrap"
-        android:text="Transparent" />
+    <LinearLayout
+        style="@style/Layout.MatchWrap.Horizontal">
+
+        <Button
+            android:id="@+id/btnStatusBarGone"
+            style="@style/Button.WeightWrap"
+            android:text="Gone" />
+
+        <Button
+            android:id="@+id/btnStatusBarVisible"
+            style="@style/Button.WeightWrap"
+            android:text="Visible" />
+
+        <Button
+            android:id="@+id/btnStatusBarReset"
+            style="@style/Button.WeightWrap"
+            android:text="Reset" />
+
+    </LinearLayout>
 
     <TextView
         style="@style/TextView.MatchWrap.Bold"
@@ -83,5 +98,69 @@
             android:text="Green" />
 
     </LinearLayout>
+
+    <LinearLayout
+        style="@style/Layout.MatchWrap.Horizontal">
+
+        <Button
+            android:id="@+id/btnNavigationBarGone"
+            style="@style/Button.WeightWrap"
+            android:text="Gone" />
+
+        <Button
+            android:id="@+id/btnNavigationBarVisible"
+            style="@style/Button.WeightWrap"
+            android:text="Visible" />
+
+        <Button
+            android:id="@+id/btnNavigationBarReset"
+            style="@style/Button.WeightWrap"
+            android:text="Reset" />
+
+    </LinearLayout>
+
+
+    <TextView
+        style="@style/TextView.MatchWrap.Bold"
+        android:text="System Bars Control"
+        android:textSize="18sp"
+        android:paddingTop="16dp"
+        android:paddingBottom="8dp" />
+
+    <LinearLayout
+        style="@style/Layout.MatchWrap.Horizontal">
+
+        <Button
+            android:id="@+id/btnSystemBarsRed"
+            style="@style/Button.WeightWrap"
+            android:text="Red" />
+
+        <Button
+            android:id="@+id/btnSystemBarsBlue"
+            style="@style/Button.WeightWrap"
+            android:text="Blue" />
+
+        <Button
+            android:id="@+id/btnSystemBarsGreen"
+            style="@style/Button.WeightWrap"
+            android:text="Green" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/Layout.MatchWrap.Horizontal">
+
+        <Button
+            android:id="@+id/btnSystemBarsLight"
+            style="@style/Button.WeightWrap"
+            android:text="Light Icons" />
+
+        <Button
+            android:id="@+id/btnSystemBarsDark"
+            style="@style/Button.WeightWrap"
+            android:text="Dark Icons" />
+
+    </LinearLayout>
+
 
 </LinearLayout>

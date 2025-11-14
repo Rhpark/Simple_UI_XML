@@ -3,8 +3,7 @@
 
     <LinearLayout
         style="@style/Layout.AllMatch.Vertical"
-        android:padding="24dp"
-        android:background="#FFFFFF">
+        android:padding="24dp">
 
         <TextView
             android:id="@+id/tvDialogTitle"
