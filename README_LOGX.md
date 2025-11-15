@@ -160,6 +160,8 @@ Logx.t("Thread 정보")         // 스레드 정보
 
 #### 📂 File saving configuration (파일 저장 설정)
 
+> **Note:** Storage helper APIs are provided through `LogxPathUtils` (import `kr.open.library.simple_ui.logcat.config.LogxPathUtils`) and require an Android `Context` such as `applicationContext`.
+
 **Default setup (no permission required) (기본 설정, 권한 불필요):**
 ```kotlin
 Logx.configure {
@@ -205,7 +207,7 @@ Logx의 **기본 로깅 기능(Logcat 출력)**은 **권한이 필요하지 않�
 Logx.configure {
     fileConfig {
         saveToFile = true
-        filePath = Logx.getInternalLogPath()  // 기본값
+        filePath = LogxPathUtils.getInternalLogPath(applicationContext)  // 기본값
     }
 }
 ```
@@ -224,7 +226,7 @@ Logx.configure {
 Logx.configure {
     fileConfig {
         saveToFile = true
-        filePath = Logx.getAppExternalLogPath()
+        filePath = LogxPathUtils.getAppExternalLogPath(applicationContext)
     }
 }
 ```
@@ -246,7 +248,7 @@ Logx.configure {
 Logx.configure {
     fileConfig {
         saveToFile = true
-        filePath = Logx.getPublicExternalLogPath()
+        filePath = LogxPathUtils.getPublicExternalLogPath(applicationContext)
     }
 }
 ```
@@ -295,21 +297,21 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
     }
 
     private fun setupLogxWithPublicStorage() {
-        Logx.configure {
-            fileConfig {
-                saveToFile = true
-                filePath = Logx.getPublicExternalLogPath()
-            }
-        }
+Logx.configure {
+    fileConfig {
+        saveToFile = true
+        filePath = LogxPathUtils.getPublicExternalLogPath(applicationContext)
+    }
+}
     }
 
     private fun setupLogxWithAppExternalStorage() {
-        Logx.configure {
-            fileConfig {
-                saveToFile = true
-                filePath = Logx.getAppExternalLogPath()  // 권한 불필요!
-            }
-        }
+Logx.configure {
+    fileConfig {
+        saveToFile = true
+        filePath = LogxPathUtils.getAppExternalLogPath(applicationContext)  // 권한 불필요!
+    }
+}
     }
 }
 ```
@@ -660,7 +662,7 @@ private fun setupLogging() {
 
         fileConfig {
             saveToFile = true
-            filePath = Logx.getFilePath()
+            filePath = LogxPathUtils.getAppExternalLogPath(applicationContext)
         }
 
         logTypes {
@@ -868,7 +870,7 @@ Logx의 **기본 로깅 기능(Logcat 출력)**은 **권한이 필요하지 않�
 Logx.configure {
     fileConfig {
         saveToFile = true
-        filePath = Logx.getInternalLogPath()  // 기본값
+        filePath = LogxPathUtils.getInternalLogPath(applicationContext)  // 기본값
     }
 }
 ```
@@ -887,7 +889,7 @@ Logx.configure {
 Logx.configure {
     fileConfig {
         saveToFile = true
-        filePath = Logx.getAppExternalLogPath()
+        filePath = LogxPathUtils.getAppExternalLogPath(applicationContext)
     }
 }
 ```
@@ -906,7 +908,7 @@ Logx.configure {
 Logx.configure {
     fileConfig {
         saveToFile = true
-        filePath = Logx.getPublicExternalLogPath()
+        filePath = LogxPathUtils.getPublicExternalLogPath(applicationContext)
     }
 }
 ```
@@ -951,7 +953,7 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
         Logx.configure {
             fileConfig {
                 saveToFile = true
-                filePath = Logx.getPublicExternalLogPath()
+                filePath = LogxPathUtils.getPublicExternalLogPath(this)
             }
         }
     }
@@ -960,7 +962,7 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
         Logx.configure {
             fileConfig {
                 saveToFile = true
-                filePath = Logx.getAppExternalLogPath()  // 권한 불필요!
+                filePath = LogxPathUtils.getAppExternalLogPath(this)  // 권한 불필요!
             }
         }
     }

@@ -450,6 +450,7 @@ private fun registerAlarm(hour: Int, minute: Int) {
     val alarmVo = AlarmVo(
         key = 1,
         title = "Alarm Title", // (알람 제목)
+        message = "Alarm Message", // (알람 메시지)
         hour = hour,
         minute = minute,
         second = 0
@@ -459,7 +460,13 @@ private fun registerAlarm(hour: Int, minute: Int) {
 
 // Exact Alarm (Runs even in Idle mode) (정확한 Alarm (Idle 모드에서도 실행))
 private fun registerExactAlarm(hour: Int, minute: Int) {
-    val alarmVo = AlarmVo(key = 2, title = "Exact Alarm", hour = hour, minute = minute) // (정확한 알람)
+    val alarmVo = AlarmVo(
+        key = 2,
+        title = "Exact Alarm", // (정확한 알람)
+        message = "Exact Alarm Message",
+        hour = hour,
+        minute = minute
+    )
     getAlarmController().registerAlarmExactAndAllowWhileIdle(AlarmReceiver::class.java, alarmVo)
 }
 

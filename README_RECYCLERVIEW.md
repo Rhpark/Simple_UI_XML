@@ -546,7 +546,7 @@ adapter.moveItem(fromPos, toPos) {
 RcvListDiffUtilCallBack<Item>(
     itemsTheSame = { old, new -> old.id == new.id },
     contentsTheSame = { old, new -> old == new },
-    getChangePayload = { old, new ->
+    changePayload = { old, new ->
         if (old.title != new.title) "title_changed" else null
     }
 )
@@ -818,7 +818,7 @@ class CustomViewHolder(layout: Int, parent: ViewGroup)
     // 첫 호출: findViewById 실행 + 캐시 저장
     // 이후 호출: 캐시에서 즉시 반환 (성능 향상!)
     private val titleView = findViewById<TextView>(R.id.tvTitle)
-    private val descView = findViewByIdOrNull<TextView>(R.id.tvDesc)  // null-safe
+    private val descView = findViewByIdOrNull<TextView>(R.id.tvDescription)  // null-safe
 
     fun bind(item: Item) {
         if (isValidPosition()) {  // position 검증
@@ -834,7 +834,7 @@ class CustomViewHolder(layout: Int, parent: ViewGroup)
 val adapter = SimpleRcvListAdapter<Item>(R.layout.item, diffUtil) { holder, item, pos ->
     // findViewById는 자동 캐싱됨!
     val titleView = holder.findViewById<TextView>(R.id.tvTitle)
-    val descView = holder.findViewByIdOrNull<TextView>(R.id.tvDesc)
+    val descView = holder.findViewByIdOrNull<TextView>(R.id.tvDescription)
 
     titleView.text = item.title
     descView?.text = item.description

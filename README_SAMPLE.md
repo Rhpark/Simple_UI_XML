@@ -246,13 +246,17 @@ override fun eventVmCollect() {
 <summary><strong>순수 Android - 커스텀 Adapter 구현</strong></summary>
 
 ```kotlin
-class PermissionResultAdapter : RecyclerView.Adapter<PermissionResultAdapter.ViewHolder>() {
-    private var items = mutableListOf<String>()
+class PermissionResultAdapter : ListAdapter<String, PermissionResultAdapter.ViewHolder>(DiffCallback()) {
+
+    class ViewHolder(private val binding: ItemRcvTextviewBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(item: String) {
+            binding.tvTitle.text = item
+        }
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = DataBindingUtil.inflate<ItemRcvTextviewBinding>(
+        val binding = ItemRcvTextviewBinding.inflate(
             LayoutInflater.from(parent.context),
-            R.layout.item_rcv_textview,
             parent,
             false
         )
@@ -260,29 +264,22 @@ class PermissionResultAdapter : RecyclerView.Adapter<PermissionResultAdapter.Vie
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(items[position])
+        holder.bind(getItem(position))
     }
 
-    override fun getItemCount(): Int = items.size
-
-    fun addItem(item: String) {
-        items.add(item)
-        notifyItemInserted(items.size - 1)
-    }
-
-    class ViewHolder(private val binding: ItemRcvTextviewBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: String) {
-            binding.tvItem01.text = item
-            binding.executePendingBindings()
-        }
+    class DiffCallback : DiffUtil.ItemCallback<String>() {
+        override fun areItemsTheSame(oldItem: String, newItem: String): Boolean = oldItem == newItem
+        override fun areContentsTheSame(oldItem: String, newItem: String): Boolean = oldItem == newItem
     }
 }
 
 // Activity에서 사용
 private fun setupRecyclerView() {
     adapter = PermissionResultAdapter()
-    binding.rcvPermission.layoutManager = LinearLayoutManager(this)
-    binding.rcvPermission.adapter = adapter
+    binding.rcvPermissionResults.apply {
+        adapter = this@PermissionsActivityOrigin.adapter
+        layoutManager = LinearLayoutManager(this@PermissionsActivityOrigin)
+    }
 }
 ```
 **문제점:** ViewHolder 클래스, Adapter 클래스, 수동 바인딩 로직 모두 구현 필요
@@ -293,9 +290,8 @@ private fun setupRecyclerView() {
 
 ```kotlin
 // 간단한 어댑터 설정 - 한 줄로 완성!
-private val adapter = SimpleRcvAdapter<String>(R.layout.item_rcv_textview) {
-    holder, item, position ->
-    holder.findViewById<TextView>(R.id.tvItem01).text = item
+private val adapter = SimpleRcvAdapter<String>(R.layout.item_rcv_textview) { holder, item, position ->
+    holder.findViewById<TextView>(R.id.tvTitle).text = item
 }.apply {
     setOnItemClickListener { i, s, view ->
         view.snackBarShowShort("OnClick $s")

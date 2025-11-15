@@ -288,11 +288,11 @@ The following lists applicable Style patterns organized by View type.
 #### **5️⃣ EditText.WidthHeight.InputType.Gravity**
 ```xml
 <EditText
-    style="@style/EditText.MatchWrap.TextEmailAddress"
+    style="@style/EditText.MatchWrap.Email"
     android:hint="Enter email (이메일 입력)" />
 
 <EditText
-    style="@style/VEditText.MatchWrap.Number.Center"
+    style="@style/EditText.MatchWrap.Number.Center"
     android:hint="Enter number (숫자 입력)"
     android:inputType="number" />
 ```
@@ -311,16 +311,16 @@ The following lists applicable Style patterns organized by View type.
 #### **7️⃣ CheckBox / RadioButton / Switch - *.WidthHeight.Checked**
 ```xml
 <CheckBox
-    style="@style/CheckBox.WidthHeight.Checked"
+    style="@style/CheckBox.MatchWrap.Checked"
     android:text="I agree (동의합니다)"
     android:checked="false" />
 
 <RadioButton
-    style="@style/RadioButton.WidthHeight.Unchecked"
+    style="@style/RadioButton.MatchWrap.Unchecked"
     android:text="Option 1 (옵션 1)" />
 
 <Switch
-    style="@style/Switch.WidthHeight.Checked"
+    style="@style/Switch.MatchWrap.On"
     android:text="Receive notifications (알림 받기)" />
 ```
 
@@ -330,11 +330,11 @@ The following lists applicable Style patterns organized by View type.
     style="@style/RadioGroup.MatchWrap.Vertical">
 
     <RadioButton
-        style="@style/RadioButton.MatchWrap.Check"
+        style="@style/RadioButton.MatchWrap.Checked"
         android:text="Option 1 (옵션 1)" />
 
     <RadioButton
-        style="@style/RadioButton.MatchWrap.Uncheck"
+        style="@style/RadioButton.MatchWrap.Unchecked"
         android:text="Option 2 (옵션 2)" />
 </RadioGroup>
 

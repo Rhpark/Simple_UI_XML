@@ -239,6 +239,11 @@
 <br>
 </br>
 
+> *코드 위치: `kr.open.library.simple_ui.permissions.extentions.*` 패키지*
+
+<br>
+</br>
+
 #### **🎨 resource/** — Resource access extensions (리소스 접근 Extensions)
 - **Safe access:** `getDrawableCompat(R.drawable.icon)`
 - **Automatic SDK branching:** handles version differences internally
@@ -805,16 +810,18 @@ imageView.load(R.drawable.icon) {
 
 ```
 kr.open.library.simple_ui.extensions/
-├─ view/           → UI 조작 (Toast, TextView, ImageView, 애니메이션)
-├─ display/        → 단위 변환 (dp↔px, sp↔px)
-├─ round_to/       → 숫자 반올림 (roundTo, roundUp, roundDown)
-├─ conditional/    → 조건부 실행 (SDK 체크, ifTrue, ifGreaterThan)
 ├─ bundle/         → Bundle 타입 안전 접근
-├─ string/         → 문자열 검증/가공 (isEmailValid, isPhoneNumberValid, isUrlValid, isNumeric, isAlphaNumeric, stripHtmlTags)
+├─ conditional/    → 조건부 실행 (SDK 체크, ifTrue, ifGreaterThan)
 ├─ date/           → 날짜 포맷팅
-├─ trycatch/       → 예외 처리 (safeCatch)
-├─ permissions/    → 권한 확인 통합
-└─ resource/       → 리소스 안전 접근
+├─ round_to/       → 숫자 반올림 (roundTo, roundUp, roundDown)
+├─ string/         → 문자열 검증/가공 (isEmailValid, isPhoneNumberValid, isUrlValid, isNumeric, isAlphaNumeric, stripHtmlTags)
+├─ time/           → 시간 조작/포맷팅
+└─ trycatch/       → 예외 처리 (safeCatch, runCatching 확장)
+
+kr.open.library.simple_ui.presenter.extensions/
+├─ display/        → 단위 변환 (dp↔px, sp↔px)
+├─ resource/       → 리소스 안전 접근
+└─ view/           → UI 조작 (Toast, TextView, ImageView, 애니메이션, SnackBar 등)
 ```
 
 **💡 Find what you need immediately by package name!**

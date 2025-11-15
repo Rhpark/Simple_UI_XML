@@ -482,7 +482,101 @@ class MainFragment : BaseBindingFragment<FragmentMainBinding>(R.layout.fragment_
 <br>
 </br>
 
-### 3. ViewModel Event System Comparison (셋째: ViewModel 이벤트 시스템 비교)
+### 3. DialogFragment + ViewModel Integration (셋째: DialogFragment + ViewModel 연동)
+
+<details>
+<summary><strong>Pure Android — manual DialogFragment + ViewModel setup (순수 Android - DialogFragment + ViewModel 수동 초기화)</strong></summary>
+
+```kotlin
+class InfoDialog : AppCompatDialogFragment() {
+
+    private var _binding: DialogInfoBinding? = null
+    private val binding get() = _binding!!
+    private val viewModel: InfoDialogViewModel by viewModels()
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = DialogInfoBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        binding.lifecycleOwner = viewLifecycleOwner
+        binding.vm = viewModel
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.events.collect { event ->
+                    when (event) {
+                        InfoDialogEvent.Dismiss -> dismissAllowingStateLoss()
+                        is InfoDialogEvent.ShowToast ->
+                            Toast.makeText(requireContext(), event.message, Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        }
+
+        binding.btnConfirm.setOnClickListener { viewModel.onConfirm() }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+}
+```
+**Issues:** Manual nullable-binding 처리, lifecycleOwner 지정, event Flow 구독, 다이얼로그 종료 처리 등이 모두 반복됩니다.
+
+**문제점:** nullable-binding, lifecycleOwner, 이벤트 구독, 다이얼로그 종료 로직까지 매번 작성해야 합니다.
+</details>
+
+<details>
+<summary><strong>Simple UI — BaseBindingDialogFragment + ViewModel (Simple UI - BaseBindingDialogFragment + ViewModel)</strong></summary>
+
+```kotlin
+class InfoDialog : BaseBindingDialogFragment<DialogInfoBinding>(R.layout.dialog_info) {
+
+    private val vm: InfoDialogViewModel by lazy { getViewModel<InfoDialogViewModel>() }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        binding.vm = vm
+        lifecycle.addObserver(vm)
+
+        // 필요 시 다이얼로그 크기/배경 제어도 즉시 가능
+        resizeDialog(0.85f, 0.5f)
+
+        eventVmCollect()
+    }
+
+    override fun eventVmCollect() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            vm.mEventVm.collect { event ->
+                when (event) {
+                    InfoDialogEvent.Dismiss -> safeDismiss()
+                    is InfoDialogEvent.ShowToast ->
+                        binding.root.snackBarShowShort(event.message)
+                }
+            }
+        }
+    }
+}
+```
+**Result:** DataBinding, lifecycleOwner 연결, nullable-binding 관리, 이벤트 구독, 다이얼로그 종료까지 동일한 패턴으로 자동화됩니다.
+
+**결과:** DataBinding/lifecycleOwner/이벤트 처리/다이얼로그 종료가 모두 통일된 패턴으로 해결됩니다.
+</details>
+
+<br>
+</br>
+
+### 4. ViewModel Event System Comparison (넷째: ViewModel 이벤트 시스템 비교)
 
 <details>
 <summary><strong>Pure Android — manual Flow/Channel wiring (순수 Android - Flow/Channel 수동 구성)</strong></summary>

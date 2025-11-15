@@ -391,10 +391,10 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
     private fun startLocationTracking() {
         // 1. Start location tracking - One line (위치 추적 시작 - 한 줄)
         locationInfo.registerStart(
-            scope = lifecycleScope,
-            provider = LocationManager.GPS_PROVIDER,
-            minTime = 1000L,
-            minDistance = 10f
+            coroutineScope = lifecycleScope,
+            locationProvider = LocationManager.GPS_PROVIDER,
+            minTimeMs = 1000L,
+            minDistanceM = 10f
         )
 
         // 2. Query initial values - Simple getters (초기 값 조회 - 간단한 getter)
@@ -572,15 +572,16 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
         val fullSize = displayInfo.getFullScreenSize()
         Log.d("Display", "Full: ${fullSize.x} x ${fullSize.y}") // (전체)
 
-        // 2. Available screen size (exclude status bar, navigation bar)
-        // (사용 가능 화면 크기 (상태바, 네비게이션바 제외))
-        val availableSize = displayInfo.getScreen()
-        Log.d("Display", "Available: ${availableSize.x} x ${availableSize.y}") // (사용 가능)
+        // 2. Usable screen size (exclude bars automatically)
+        // (사용 가능 화면 크기 (상단/하단 바 자동 제외))
+        val usableSize = displayInfo.getScreenSize()
+        Log.d("Display", "Usable: ${usableSize.x} x ${usableSize.y}") // (사용 가능)
 
-        // 3. Screen size with status bar (exclude navigation bar only)
-        // (상태바 포함 화면 크기 (네비게이션바만 제외))
-        val screenWithStatusBar = displayInfo.getScreenWithStatusBar()
-        Log.d("Display", "With status bar: ${screenWithStatusBar.x} x ${screenWithStatusBar.y}") // (상태바 포함)
+        // 3. Screen width/height helpers
+        // (화면 가로/세로 헬퍼)
+        val screenWidth = displayInfo.getScreenWidth()
+        val screenHeight = displayInfo.getScreenHeight()
+        Log.d("Display", "Width/Height: $screenWidth x $screenHeight")
 
         // 4. Status bar height (상태바 높이)
         val statusBarHeight = displayInfo.getStatusBarHeight()
@@ -657,7 +658,7 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 **System Service Manager Info**는 6가지 핵심 시스템 정보를 제공합니다:
 
 ### **Battery State Info (배터리 상태 정보)** - Battery Status Information
-- **Real-time Updates:** `registerStart(scope, updateCycleTime)` - StateFlow-based auto-updates
+- **Real-time Updates:** `registerStart(coroutine: CoroutineScope, updateCycleTimeMs)` - StateFlow-based auto-updates
   - `updateCycleTime` - Update cycle (default: 1000ms) (업데이트 주기 (기본값: 1000ms))
   - Automatic BroadcastReceiver registration/unregistration (자동 BroadcastReceiver 등록/해제)
 - **Capacity Info:** `getCapacity()` - Battery level (0~100%) (배터리 잔량 (0~100%))
@@ -706,10 +707,10 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 
 ### **Display Info (디스플레이 정보)** - Display Information
 - **Full Screen Size:** `getFullScreenSize()` - Full screen size (includes status bar, navigation bar) (전체 화면 크기 (상태바, 네비게이션바 포함))
-- **Available Screen:** `getScreen()` - Screen size excluding status bar and navigation bar (상태바, 네비게이션바 제외한 화면 크기)
-- **Screen with Status Bar:** `getScreenWithStatusBar()` - Includes status bar, excludes navigation bar (상태바 포함, 네비게이션바 제외)
-- **Status Bar Height:** `getStatusBarHeight()` - Status bar height (상태바 높이)
-- **Navigation Bar Height:** `getNavigationBarHeight()` - Navigation bar height (네비게이션바 높이)
+- **Usable Screen Size:** `getScreenSize()` - Screen size excluding both bars (상태바/네비게이션바 제외한 실제 사용 영역)
+- **Screen Width/Height:** `getScreenWidth()`, `getScreenHeight()` - Usable width/height helpers (사용 가능 가로/세로 헬퍼)
+- **Status Bar Metrics:** `getStatusBarSize()`, `getStatusBarHeight()`, `getStatusBarWidth()` (상태바 크기 관련 메서드)
+- **Navigation Bar Metrics:** `getNavigationBarSize()`, `getNavigationBarHeight()`, `getNavigationBarWidth()` (네비게이션바 크기 관련 메서드)
 - **Auto SDK Branching:** Automatic handling for Android R (API 30) and above/below (Android R (API 30) 이상/이하 자동 처리)
 
 <br>
@@ -753,8 +754,8 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 - **Network Type String:** `getNetworkTypeString()` - Convert 20+ network types to string (20가지 이상 네트워크 타입 문자열 변환)
   - 5G NR, LTE_CA, LTE, HSPA+, HSDPA, UMTS, EDGE, GPRS, CDMA, EVDO, GSM, TD_SCDMA, IWLAN, etc. (등)
 - **Roaming:** `isNetworkRoaming()` - Check roaming status (로밍 상태 확인)
-- **Signal Strength:** `getCurrentSignalStrength()` - StateFlow-based signal strength (StateFlow 기반 신호 강도)
-- **Service State:** `getCurrentServiceState()` - StateFlow-based service state (StateFlow 기반 서비스 상태)
+- **Signal Strength:** `currentSignalStrength` StateFlow + `getCurrentSignalStrength()` latest value (StateFlow + 최신 값 getter)
+- **Service State:** `currentServiceState` StateFlow + `getCurrentServiceState()` latest value (StateFlow + 최신 값 getter)
 - **Multi-SIM:** `getActiveSimCount()`, `getActiveSubscriptionInfoList()` - Multi-SIM support (멀티 SIM 지원)
 - **TelephonyManager Query:** `getTelephonyManagerFromUSim(slotIndex)` - Return TelephonyManager for specific SIM slot (특정 SIM 슬롯의 TelephonyManager 반환)
 - **Real-time Callback (Basic):** `registerCallback(handler, onSignalStrength, onServiceState, onNetworkState)` - StateFlow-based real-time updates (StateFlow 기반 실시간 업데이트)
@@ -840,11 +841,11 @@ Each Info requires permissions **based on features used**. Add only the permissi
 
 | Info | Required Permissions (필수 권한) | Runtime Permission (런타임 권한) | No Permission Required (권한 불필요) |
 |:--|:--|:--:|:--:|
-| **BatteryStateInfo** | - | - | ✅ |
+| **BatteryStateInfo** | `BATTERY_STATS` (system-level) | - | - |
 | **DisplayInfo** | - | - | ✅ |
 | **LocationStateInfo** | `ACCESS_FINE_LOCATION`<br>`ACCESS_COARSE_LOCATION` | ✅ | - |
-| **SimInfo** | `READ_PHONE_STATE` | ✅ | - |
-| **TelephonyInfo** | `READ_PHONE_STATE`<br>`READ_PHONE_NUMBERS` (선택)<br>`ACCESS_FINE_LOCATION` (선택) | ✅ | - |
+| **SimInfo** | `READ_PHONE_STATE`<br>`READ_PHONE_NUMBERS`<br>`ACCESS_FINE_LOCATION` | ✅ | - |
+| **TelephonyInfo** | `READ_PHONE_STATE`<br>`READ_PHONE_NUMBERS`<br>`ACCESS_FINE_LOCATION` | ✅ | - |
 | **NetworkConnectivityInfo** | `ACCESS_NETWORK_STATE`<br>`ACCESS_WIFI_STATE` (선택) | - | - |
 
 <br>
@@ -857,12 +858,12 @@ Each Info requires permissions **based on features used**. Add only the permissi
 </br>
 
 
-#### 1️⃣ **Battery State Info** - No Permission Required (권한 불필요) ✅
+#### 1️⃣ **Battery State Info** - `BATTERY_STATS` (System Permission)
 
-Battery information queries **do not require permissions**.
+`BatteryStateInfo` requests `android.permission.BATTERY_STATS` via `BaseSystemService`.
 <br></br>
 
-배터리 정보 조회는 **권한이 필요하지 않습니다**.
+`android.permission.BATTERY_STATS` 권한을 요구하며, 이는 시스템/프리로드 앱 전용입니다.
 
 **Usage Example (사용 예시)**:
 ```kotlin
@@ -875,19 +876,20 @@ lifecycleScope.launch {
     batteryInfo.sfUpdate.collect { event ->
         when (event) {
             is BatteryStateEvent.OnCapacity -> {
-                Log.d("Battery", "Capacity (용량): ${event.capacity}%")
+                Log.d("Battery", "Capacity (용량): ${event.percent}%")
             }
-            is BatteryStateEvent.OnCharging -> {
-                Log.d("Battery", "Charging (충전 중): ${event.isCharging}")
+            is BatteryStateEvent.OnChargeStatus -> {
+                val isCharging = event.status == BatteryManager.BATTERY_STATUS_CHARGING
+                Log.d("Battery", "Charging (충전 중): $isCharging")
             }
         }
     }
 }
 ```
 
-> **Note (참고)**: Battery information is provided via system broadcasts and does not require permissions.
+> **Note (참고)**: 대부분의 서드파티 앱은 BATTERY_STATS를 부여받을 수 없습니다. 권한이 없으면 `tryCatchSystemManager()`가 기본값을 반환합니다.
 >
-> **참고**: 배터리 정보는 시스템 브로드캐스트로 제공되어 권한이 필요하지 않습니다.
+> **참고**: BATTERY_STATS는 시스템 전용 권한이므로 미부여 시 기본값이 반환됩니다.
 
 
 <br>
@@ -944,10 +946,10 @@ onRequestPermissions(listOf(
         // Permissions granted - Start location tracking (권한 허용됨 - 위치 추적 시작)
         val locationInfo = LocationStateInfo(context)
         locationInfo.registerStart(
-            scope = lifecycleScope,
-            provider = LocationManager.GPS_PROVIDER,
-            minTime = 1000L,
-            minDistance = 10f
+            coroutineScope = lifecycleScope,
+            locationProvider = LocationManager.GPS_PROVIDER,
+            minTimeMs = 1000L,
+            minDistanceM = 10f
         )
 
         // Real-time location updates via StateFlow (StateFlow로 위치 변경 실시간 수신)
@@ -981,19 +983,25 @@ onRequestPermissions(listOf(
 </br>
 
 
-#### 4️⃣ **SIM Info** - Phone State Permission Required (전화 상태 권한 필수)
+#### 4️⃣ **SIM Info** - Phone/Location Permissions Required (전화/위치 권한 필수)
 
 **AndroidManifest.xml**:
 ```xml
 <!-- Required: Read phone state (필수: 전화 상태 읽기) -->
 <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+<!-- Required: Read phone numbers (필수: 전화번호 읽기) -->
+<uses-permission android:name="android.permission.READ_PHONE_NUMBERS" />
+<!-- Required: Cell-based location helpers (필수: 셀 기반 위치) -->
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 ```
 
 **Runtime Permission Request (런타임 권한 요청)**:
 ```kotlin
 // Request phone state permission (required) (전화 상태 권한 요청 (필수))
 onRequestPermissions(listOf(
-    Manifest.permission.READ_PHONE_STATE
+    Manifest.permission.READ_PHONE_STATE,
+    Manifest.permission.READ_PHONE_NUMBERS,
+    Manifest.permission.ACCESS_FINE_LOCATION
 )) { deniedPermissions ->
     if (deniedPermissions.isEmpty()) {
         // Permissions granted - Query SIM info (권한 허용됨 - SIM 정보 조회)
@@ -1018,7 +1026,7 @@ onRequestPermissions(listOf(
 ```
 
 > **Note (참고)**:
-> - `READ_PHONE_STATE` is a **dangerous permission** requiring runtime request (`READ_PHONE_STATE`는 **위험 권한**으로 런타임 요청 필수)
+> - `READ_PHONE_STATE`, `READ_PHONE_NUMBERS`, `ACCESS_FINE_LOCATION` are **dangerous permissions** requiring runtime request
 > - Phone number reading may be restricted on Android 10+ (API 29+) (Android 10+ (API 29+)부터 전화번호 읽기가 제한될 수 있음)
 
 
@@ -1026,26 +1034,28 @@ onRequestPermissions(listOf(
 </br>
 
 
-#### 5️⃣ **Telephony Info** - Phone State + Optional Permissions (전화 상태 + 선택적 권한)
+#### 5️⃣ **Telephony Info** - Phone/Location Permissions Required (전화/위치 권한 필수)
 
 **AndroidManifest.xml**:
 ```xml
 <!-- Required: Read phone state (필수: 전화 상태 읽기) -->
 <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
-<!-- Optional: Read phone numbers (Android 8.0+) (선택: 전화번호 읽기 (Android 8.0+)) -->
+<!-- Required: Read phone numbers (Android 8.0+) (필수: 전화번호 읽기 (Android 8.0+)) -->
 <uses-permission android:name="android.permission.READ_PHONE_NUMBERS" />
 
-<!-- Optional: Location-based network info (cell tower location, etc.) -->
-<!-- (선택: 위치 기반 통신망 정보 (셀 타워 위치 등)) -->
+<!-- Required: Location-based network info (cell tower location, etc.) -->
+<!-- (필수: 위치 기반 통신망 정보 (셀 타워 위치 등)) -->
 <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 ```
 
 **Runtime Permission Request (Basic) (런타임 권한 요청 (기본))**:
 ```kotlin
-// Request basic permissions only (required) (기본 권한만 요청 (필수))
+// Request required permissions together (필수 권한 일괄 요청)
 onRequestPermissions(listOf(
-    Manifest.permission.READ_PHONE_STATE
+    Manifest.permission.READ_PHONE_STATE,
+    Manifest.permission.READ_PHONE_NUMBERS,
+    Manifest.permission.ACCESS_FINE_LOCATION
 )) { deniedPermissions ->
     if (deniedPermissions.isEmpty()) {
         // Permissions granted - Query network info (권한 허용됨 - 통신망 정보 조회)
@@ -1066,7 +1076,7 @@ onRequestPermissions(listOf(
         // Real-time signal strength via StateFlow (StateFlow로 신호 강도 실시간 수신)
         telephonyInfo.registerCallback()
         lifecycleScope.launch {
-            telephonyInfo.getCurrentSignalStrength().collect { signalStrength ->
+            telephonyInfo.currentSignalStrength.collect { signalStrength ->
                 Log.d("Telephony", "Signal Strength (신호 강도): ${signalStrength?.level}")
             }
         }
@@ -1074,9 +1084,9 @@ onRequestPermissions(listOf(
 }
 ```
 
-**Runtime Permission Request (Full - Phone Number + Location) (런타임 권한 요청 (전체 - 전화번호 + 위치))**:
+**Runtime Permission Request (Detailed Rationale) (런타임 권한 요청 (자세한 사유))**:
 ```kotlin
-// For full features (optional) (전체 기능 사용 시 (선택))
+// Same permission set with explicit rationale (필요 권한을 이유와 함께 요청)
 onRequestPermissions(listOf(
     Manifest.permission.READ_PHONE_STATE,
     Manifest.permission.READ_PHONE_NUMBERS,
@@ -1095,17 +1105,16 @@ onRequestPermissions(listOf(
         // (셀 타워 위치 정보 (ACCESS_FINE_LOCATION 필요))
         // ... Detailed cell info can be queried (상세 셀 정보 조회 가능)
     } else {
-        // Partial permissions granted - Use basic info only
-        // (일부 권한만 허용됨 - 기본 정보만 사용)
+        // Partial permissions granted - Only safe APIs return data
+        // (일부 권한만 허용됨 - 허용된 범위의 API만 사용 가능)
         Log.d("Telephony", "Denied Permissions (거부된 권한): $deniedPermissions")
     }
 }
 ```
 
 > **Note (참고)**:
-> - `READ_PHONE_STATE` - Required (Carrier, network type, etc.) (필수 (통신사, 네트워크 타입 등))
-> - `READ_PHONE_NUMBERS` - Optional (Phone number query) (선택 (전화번호 조회))
-> - `ACCESS_FINE_LOCATION` - Optional (Detailed cell tower location) (선택 (셀 타워 상세 위치))
+> - `READ_PHONE_STATE`, `READ_PHONE_NUMBERS`, `ACCESS_FINE_LOCATION` are all requested up front (모두 선요청)
+> - 권한이 거부된 항목과 관련된 API는 `tryCatchSystemManager()`를 통해 기본값을 반환합니다.
 
 
 <br>
@@ -1166,6 +1175,7 @@ lifecycleScope.launch {
 |:--|:--|:--|:--|
 | **Normal Permissions (일반 권한)** | `ACCESS_NETWORK_STATE`<br>`ACCESS_WIFI_STATE` | Auto-granted with Manifest declaration (Manifest 선언만으로 자동 허용) | NetworkConnectivityInfo |
 | **Dangerous Permissions (위험 권한)** | `ACCESS_FINE_LOCATION`<br>`ACCESS_COARSE_LOCATION`<br>`READ_PHONE_STATE`<br>`READ_PHONE_NUMBERS` | Runtime permission request required (런타임 권한 요청 필수) | LocationStateInfo<br>SimInfo<br>TelephonyInfo |
+| **Signature/System Permissions (시그니처/시스템 권한)** | `BATTERY_STATS` | System/privileged apps only (시스템/사전 탑재 앱 전용) | BatteryStateInfo |
 
 <br>
 </br>
@@ -1181,7 +1191,12 @@ onRequestPermissions(listOf(
 )) { deniedPermissions ->
     if (deniedPermissions.isEmpty()) {
         // Use network-based location only (네트워크 기반 위치만 사용)
-        locationInfo.registerStart(provider = LocationManager.NETWORK_PROVIDER)
+        locationInfo.registerStart(
+            coroutineScope = lifecycleScope,
+            locationProvider = LocationManager.NETWORK_PROVIDER,
+            minTimeMs = 0L,
+            minDistanceM = 0f
+        )
     }
 }
 ```
@@ -1194,7 +1209,12 @@ onRequestPermissions(listOf(
 )) { deniedPermissions ->
     if (deniedPermissions.isEmpty()) {
         // Use GPS-based location (GPS 기반 위치 사용)
-        locationInfo.registerStart(provider = LocationManager.GPS_PROVIDER)
+        locationInfo.registerStart(
+            coroutineScope = lifecycleScope,
+            locationProvider = LocationManager.GPS_PROVIDER,
+            minTimeMs = 0L,
+            minDistanceM = 0f
+        )
     }
 }
 ```
