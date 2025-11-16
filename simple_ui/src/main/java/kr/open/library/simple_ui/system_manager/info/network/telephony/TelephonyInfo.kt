@@ -53,6 +53,11 @@ import java.util.concurrent.Executor
  * - android.permission.ACCESS_FINE_LOCATION (셀 정보/Cell info)
  * - android.permission.READ_PHONE_NUMBERS (전화번호/Phone numbers)
  *
+ * ⚠️ Permission fallback:
+ * - If any required permission is missing, public API calls return safe defaults
+ *   (null, empty list, or false) via tryCatchSystemManager().
+ * - Always call refreshPermissions() after the host Activity/Fragment obtains runtime permissions.
+ *
  * 사용 예시 / Usage Example:
  * ```
  * val telephonyInfo = TelephonyInfo(context)

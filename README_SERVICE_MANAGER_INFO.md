@@ -720,6 +720,7 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 - **Basic Info:** `isDualSim()`, `isSingleSim()`, `isMultiSim()` - Check SIM type (SIM 타입 확인)
 - **Active SIM:** `getActiveSimCount()`, `getActiveSimSlotIndexList()` - Active SIM information (활성화된 SIM 정보)
 - **Read Permission:** `isCanReadSimInfo()` - Check if SIM info can be read (permission and initialization status) (SIM 정보 읽기 가능 여부 확인 (권한 및 초기화 상태))
+- **Permission fallback:** 요청 권한이 없으면 빈 리스트/null을 반환하고 Logx에 경고가 남습니다. 권한 허용 후 `refreshPermissions()` 호출을 권장합니다.
 - **Subscription Info:** `getActiveSubscriptionInfoList()` - Query all subscription info (모든 구독 정보 조회)
 - **Subscription ID:**
   - `getSubIdFromDefaultUSim()` - Query default SIM subscription ID (기본 SIM의 구독 ID 조회)
@@ -758,6 +759,7 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 - **Service State:** `currentServiceState` StateFlow + `getCurrentServiceState()` latest value (StateFlow + 최신 값 getter)
 - **Multi-SIM:** `getActiveSimCount()`, `getActiveSubscriptionInfoList()` - Multi-SIM support (멀티 SIM 지원)
 - **TelephonyManager Query:** `getTelephonyManagerFromUSim(slotIndex)` - Return TelephonyManager for specific SIM slot (특정 SIM 슬롯의 TelephonyManager 반환)
+- **Permission fallback:** 권한이 없으면 안전한 기본값/빈 리스트를 반환하며 로그에 경고가 남습니다. 권한을 허용했다면 `refreshPermissions()`를 호출해 상태를 갱신하세요.
 - **Real-time Callback (Basic):** `registerCallback(handler, onSignalStrength, onServiceState, onNetworkState)` - StateFlow-based real-time updates (StateFlow 기반 실시간 업데이트)
 - **Unregister Callback:** `unregisterCallback()` - Unregister registered callback (등록된 콜백 해제)
 - **Auto API Compatibility:** Automatic branching between TelephonyCallback (API 31+) vs PhoneStateListener (TelephonyCallback (API 31+) vs PhoneStateListener 자동 분기)
@@ -847,6 +849,12 @@ Each Info requires permissions **based on features used**. Add only the permissi
 | **SimInfo** | `READ_PHONE_STATE`<br>`READ_PHONE_NUMBERS`<br>`ACCESS_FINE_LOCATION` | ✅ | - |
 | **TelephonyInfo** | `READ_PHONE_STATE`<br>`READ_PHONE_NUMBERS`<br>`ACCESS_FINE_LOCATION` | ✅ | - |
 | **NetworkConnectivityInfo** | `ACCESS_NETWORK_STATE`<br>`ACCESS_WIFI_STATE` (선택) | - | - |
+
+### ⚠️ Permission Troubleshooting Checklist (권한 점검 체크리스트)
+1. **Manifest 선언 확인** – 필요한 모든 권한을 `AndroidManifest.xml`에 추가했는지 확인하세요.
+2. **런타임 요청** – 위험 권한은 `onRequestPermissions()` 또는 자체 ActivityResult 로직으로 요청합니다.
+3. **refreshPermissions() 호출** – 권한 허용 후 `BaseSystemService.refreshPermissions()`를 호출하면 Simple UI가 즉시 새 상태를 반영합니다.
+4. **Logx 확인** – 권한이 없으면 `tryCatchSystemManager()`가 기본값을 반환하며 Logx에 경고를 남깁니다.
 
 <br>
 </br>

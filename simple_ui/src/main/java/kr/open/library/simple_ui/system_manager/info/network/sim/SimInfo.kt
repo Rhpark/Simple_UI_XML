@@ -40,7 +40,12 @@ import kr.open.library.simple_ui.system_manager.extensions.getTelephonyManager
  * - android.permission.READ_PHONE_STATE (필수/Required)
  * - android.permission.READ_PHONE_NUMBERS (전화번호/Phone numbers)
  * - android.permission.ACCESS_FINE_LOCATION (일부 기능/Some features)
- * 
+ *
+ * ⚠️ Permission fallback:
+ * - Permissions are checked through BaseSystemService. Missing permissions lead to
+ *   default values (예: 빈 리스트, null) and warning logs.
+ * - 권한을 획득한 뒤에는 refreshPermissions()를 호출하여 상태를 갱신하세요.
+ *
  * 사용 예시 / Usage Example:
  * ```
  * val simInfo = SimInfo(context)

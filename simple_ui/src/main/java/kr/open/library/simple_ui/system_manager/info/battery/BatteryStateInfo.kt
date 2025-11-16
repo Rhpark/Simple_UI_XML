@@ -28,6 +28,11 @@ import kr.open.library.simple_ui.system_manager.info.battery.power.PowerProfile
  * This class provides information about the battery state of an Android device.
  * BatteryStateInfo 클래스는 Android 기기의 배터리 상태 정보를 제공.
  *
+ * ⚠️ Permission notice / 권한 안내:
+ * - Requires `android.permission.BATTERY_STATS` (system / preloaded apps only).
+ * - When the permission is missing, `tryCatchSystemManager()` returns default values.
+ *   (일반 앱은 기본값만 받을 수 있음을 명시적으로 안내하세요.)
+ *
  * It is recommended to call destroy() upon complete shutdown.
  * 완전 종료 시 destroy()를 호출하는 것을 권장.
  *

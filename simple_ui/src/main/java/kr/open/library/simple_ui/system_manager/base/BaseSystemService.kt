@@ -59,6 +59,11 @@ public abstract class BaseSystemService(
     /**
      * Simple safe execution with basic error handling.
      * 기본 오류 처리가 포함된 간단한 안전 실행입니다.
+     *
+     * 권한이 부여되지 않은 경우:
+     * - 지정한 defaultValue 를 반환합니다.
+     * - Logx 로 부족한 권한 목록을 경고합니다.
+     * - 필요한 경우 refreshPermissions() 호출을 유도합니다.
      */
     protected inline fun <T> tryCatchSystemManager(defaultValue: T, block: () -> T): T {
 
