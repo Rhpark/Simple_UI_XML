@@ -1,11 +1,7 @@
-# 📦 Simple UI Extensions & Style vs Pure Android - Complete Comparison Guide (📦 Simple UI Extensions & Style vs 순수 Android - 완벽 비교 가이드)
-
+# 📦 Simple UI Extensions & Style vs Pure Android - Complete Comparison Guide
+> **"Simple UI Extensions & Style vs 순수 Android - 완벽 비교 가이드"**
 ![extensions_style_example.gif](example%2Fextensions_style_example.gif)
-
-> **"Achieve more with shorter extension code!"** See at a glance how Simple UI Extensions transform your workflow compared to pure Android.
-
-<br>
-</br>
+**"Achieve more with shorter extension code!"** See at a glance how Simple UI Extensions transform your workflow compared to pure Android.
 
 > **"더 짧은 코드로 Extensions을!"** 순수 Android 대비 Simple UI Extensions이 주는 체감 차이를 한눈에 확인하세요.
 
@@ -14,28 +10,24 @@
 
 ## 🔎 At a Glance (한눈 비교)
 
-<br>
-</br>
-
-### Extensions Comparison (Extensions 비교)
-| Feature (항목) | Pure Android (순수 Android) | Simple UI | Impact (효과) |
-|:--|:--|:--|:--|
-| 🍞 **Toast display (Toast 표시)** | `Toast.makeText(this, "msg", LENGTH_SHORT).show()` | `toastShowShort("msg")` | **60% shorter (60% 짧게)** |
-| 🎨 **TextView styling (TextView 스타일)** | `setTypeface()` + `paintFlags` manipulation | `bold().underline()` | **Chainable (체이닝)** |
-| 📏 **Unit conversion (단위 변환)** | `TypedValue.applyDimension(...)` | `16.dpToPx(this)` | **82% shorter (82% 짧게)** |
-| ✉️ **String validation (문자열 검증)** | `Patterns.EMAIL_ADDRESS.matcher().matches()` | `email.isEmailValid()` | **Intuitive (직관적)** |
-| 🔢 **Number rounding (숫자 반올림)** | `Math.round(x * 100.0) / 100.0` | `x.roundTo(2)` | **Concise (간결)** |
-| 🎯 **Conditional execution (조건부 실행)** | `if (Build.VERSION.SDK_INT >= S) { }` | `checkSdkVersion(S) { }` | **55% shorter (55% 짧게)** |
-| 🎬 **View animation (View 애니메이션)** | ValueAnimator + listener (15–20 lines) | `view.fadeIn()` | **Single line (1줄로 완료)** |
-| 🚫 **Prevent duplicate clicks (중복 클릭 방지)** | `lastClickTime` variable + `if` (8 lines) | `setOnDebouncedClickListener { }` | **Automatic (자동 처리)** |
-| 📦 **Bundle access (Bundle 접근)** | Type-specific calls (`getInt()`, `getString()`, …) | `getValue<T>("key", default)` | **Type-safe (타입 안전)** |
-| 🎨 **ImageView effects (ImageView 효과)** | ColorMatrix + ColorMatrixColorFilter setup | `imageView.makeGrayscale()` | **Instant application (즉시 적용)** |
-
-> **Key takeaway:** Simple UI eliminates repetitive code via **extension functions**, dramatically improving development speed.
+### Extensions Comparison 
+| Category                                  | Plain Android | Simple UI | Impact (효과)                    |
+|:------------------------------------------|:--|:--|:-------------------------------|
+| **Toast Show**                          | `Toast.makeText(this, "msg", LENGTH_SHORT).show()` | `toastShowShort("msg")` | **60% ↓**                      |
+| **TextView styling**                   | `setTypeface()` + `paintFlags` manipulation | `bold().underline()` | **Chainable**                  |
+| **Unit conversion**                    | `TypedValue.applyDimension(...)` | `16.dpToPx(this)` | **82% ↓**                      |
+|  **String validation**                  | `Patterns.EMAIL_ADDRESS.matcher().matches()` | `email.isEmailValid()` | **Intuitive**            |
+| **Number rounding**                    | `Math.round(x * 100.0) / 100.0` | `x.roundTo(2)` | **Concise**               |
+| **Conditional execution**              | `if (Build.VERSION.SDK_INT >= S) { }` | `checkSdkVersion(S) { }` | **55% ↓**                      |
+| **View animation**                     | ValueAnimator + listener (15–20 lines) | `view.fadeIn()` | **1 line**                     |
+| **Prevent duplicate clicks**           | `lastClickTime` variable + `if` (8 lines) | `setOnDebouncedClickListener { }` | **Automatic**                  |
+| **Bundle access**                      | Type-specific calls (`getInt()`, `getString()`, …) | `getValue<T>("key", default)` | **Type-safe**                  |
+| **ImageView effects**                  | ColorMatrix + ColorMatrixColorFilter setup | `imageView.makeGrayscale()` | **Instant application**        |
 
 <br>
 </br>
 
+**Key takeaway:** Simple UI eliminates repetitive code via **extension functions**, dramatically improving development speed. 
 > **핵심:** Simple UI는 "반복 코드"를 **확장함수**로 해결합니다. 개발 속도가 달라집니다.
 
 <br>
@@ -44,18 +36,13 @@
 ## 💡 Why Simple UI Extensions Are Essential (왜 Simple UI Extensions가 필수인가?)
 
 ### 🚀 **Productivity You Can Feel Immediately (즉시 체감되는 생산성)**
-- **Typing time saved:** shorten verbose method calls  
-  - Example: `Toast.makeText(this, "text", Toast.LENGTH_SHORT).show()` (56 chars) → `toastShowShort("text")` (22 chars)
+- **Typing time saved:** shorten verbose method calls
 - **Automated SDK version branching:** simplify `Build.VERSION.SDK_INT` checks into concise functions
 - **Eliminate double-click bugs:** automatic prevention without manual timing logic
 
-<br>
-</br>
-
-- **타이핑 시간 절약**: 긴 메서드 호출을 짧게 단축  
-  - 예: `Toast.makeText(this, "text", Toast.LENGTH_SHORT).show()` (56자) → `toastShowShort("text")` (22자)
-- **SDK 버전 분기 자동화**: `Build.VERSION.SDK_INT` 체크를 함수로 간소화
-- **중복 클릭 버그 제거**: 수동 타이밍 체크 없이 자동 방지
+> - **타이핑 시간 절약**: 긴 메서드 호출을 짧게 단축
+> - ****SDK 버전 분기 자동화: `Build.VERSION.SDK_INT` 체크를 함수로 간소화
+> - **중복 클릭 버그 제거**: 수동 타이밍 체크 없이 자동 방지
 
 <br>
 </br>
@@ -65,14 +52,10 @@
 - **Null safety:** chain safe defaults using `firstNotNull()`
 - **Simplified exception handling:** specify defaults and auto-log with `safeCatch()`
 - **Unified permission handling:** resolve normal/special permissions with a single `hasPermission()`
-
-<br>
-</br>
-
-- **컴파일 타임 타입 체크**: `Bundle.getValue<T>`로 런타임 에러 사전 차단
-- **Null 안전성**: `firstNotNull()`으로 안전한 기본값 체인
-- **예외 처리 간소화**: `safeCatch()`로 기본값 지정 및 자동 로깅
-- **권한 처리 통합**: 일반/특수 권한을 `hasPermission()` 하나로 해결
+> - **컴파일 타임 타입 체크**: `Bundle.getValue<T>`로 런타임 에러 사전 차단
+> - **Null 안전성**: `firstNotNull()`으로 안전한 기본값 체인
+> - **예외 처리 간소화**: `safeCatch()`로 기본값 지정 및 자동 로깅
+> - **권한 처리 통합**: 일반/특수 권한을 `hasPermission()` 하나로 해결
 
 <br>
 </br>
@@ -82,70 +65,40 @@
 - **Natural extensions:** `3.14159.roundTo(2)` reads like a number
 - **Conditional chaining:** `list.ifNotEmpty { }.ifEmpty { }` enables a functional style
 - **Animation DSL:** `view.fadeIn()`, `view.shake()` speak for themselves
+> - **메서드 체이닝**: `textView.bold().underline().italic()`으로 의도가 명확
+> - **자연스러운 확장**: `3.14159.roundTo(2)`처럼 자연스럽게 읽힘
+> - **조건부 체이닝**: `list.ifNotEmpty { }.ifEmpty { }`로 함수형 스타일 구현
+> - **애니메이션 DSL**: `view.fadeIn()`, `view.shake()`로 직관적인 표현
+
 
 <br>
 </br>
 
-- **메서드 체이닝**: `textView.bold().underline().italic()`으로 의도가 명확
-- **자연스러운 확장**: `3.14159.roundTo(2)`처럼 자연스럽게 읽힘
-- **조건부 체이닝**: `list.ifNotEmpty { }.ifEmpty { }`로 함수형 스타일 구현
-- **애니메이션 DSL**: `view.fadeIn()`, `view.shake()`로 직관적인 표현
-
-<br>
-</br>
-
-## 📦 Complete Comparison: Extensions & Style vs Pure Android (📦 완벽 비교 목록: Extensions & Style vs 순수 Android)
+## 📦 Complete Comparison: Extensions & Style vs Pure Android (완벽 비교 목록: Extensions & Style vs 순수 Android)
 
 ### 📂 **Available Extension Packages (제공되는 Extensions 패키지)** — organized by package
 
 #### **🎨 view/** — UI manipulation extensions (UI 조작 Extensions)
-- **Toast/SnackBar:** lightweight message helpers
+- **Toast/SnackBar:** lightweight message helpers(간단한 메시지 표시)
 - **TextView:** chainable `bold()`, `underline()`, `italic()`
 - **EditText:** `getTextToString()`, `textToInt()`, `isTextEmpty()`
 - **ImageView:** `setTint()`, `makeGrayscale()`, `centerCrop()`, `fadeIn()`
 - **View animations:** `fadeIn/Out()`, `shake()`, `pulse()`, `rotate()`, `slideIn/Out()`
 - **View helpers:** `setVisible/Gone()`, `setMargins()`, `setOnDebouncedClickListener()`
-
-<br>
-</br>
-
-- **Toast/SnackBar**: 간단 메시지 표시
-- **TextView**: `bold()`, `underline()`, `italic()` 체이닝
-- **EditText**: `getTextToString()`, `textToInt()`, `isTextEmpty()`
-- **ImageView**: `setTint()`, `makeGrayscale()`, `centerCrop()`, `fadeIn()`
-- **View 애니메이션**: `fadeIn/Out()`, `shake()`, `pulse()`, `rotate()`, `slideIn/Out()`
-- **View 조작**: `setVisible/Gone()`, `setMargins()`, `setOnDebouncedClickListener()`
-
 <br>
 </br>
 
 #### **📏 display/** — Unit conversion extensions (단위 변환 Extensions)
-- **dp↔px conversions:** `16.dpToPx()`, `48.pxToDp()`
-- **sp↔px conversions:** `14.spToPx()`, `42.pxToSp()`
-- **Drop-in usage:** `view.setWidth(100.dpToPx(this))`
-
-<br>
-</br>
-
-- **dp↔px 변환**: `16.dpToPx()`, `48.pxToDp()`
-- **sp↔px 변환**: `14.spToPx()`, `42.pxToSp()`
-- **즉시 사용**: `view.setWidth(100.dpToPx(this))`
-
+- **dp ↔ px conversions(변환):** `16.dpToPx()`, `48.pxToDp()`
+- **sp ↔ px conversions(변환):** `14.spToPx()`, `42.pxToSp()`
+- **Drop-in usage:(즉시 사용)** `view.setWidth(100.dpToPx(this))`
 <br>
 </br>
 
 #### **🔢 round_to/** — Number rounding extensions (숫자 반올림 Extensions)
-- **Decimal rounding:** `3.14159.roundTo(2)` → `3.14`
-- **Round up/down:** `price.roundUp(2)`, `price.roundDown(2)`
-- **Integer rounding:** `1234.roundTo(2)` → `1200`
-
-<br>
-</br>
-
-- **소수점 반올림**: `3.14159.roundTo(2)` → `3.14`
-- **올림/내림**: `price.roundUp(2)`, `price.roundDown(2)`
-- **정수 반올림**: `1234.roundTo(2)` → `1200`
-
+- **Decimal rounding(소수점 반올림):** `3.14159.roundTo(2)` → `3.14`
+- **Round up/down(올림/내림):** `price.roundUp(2)`, `price.roundDown(2)`
+- **Integer rounding(정수 반올림):** `1234.roundTo(2)` → `1200`
 <br>
 </br>
 
@@ -154,105 +107,50 @@
 - **Number comparisons:** `score.ifGreaterThan(80)`, `age.ifGreaterThanOrEqual(18)`, `value.ifEquals(100)`, `errorCode.ifNotEquals(0)`
 - **Boolean helpers:** `isLoggedIn.ifTrue { ... }.ifFalse { ... }`
 - **Collection helpers:** `list.ifNotEmpty { }.filterIf(condition) { }`
-
-<br>
-</br>
-
-- **SDK 체크**: `checkSdkVersion(S) { ... }`
-- **숫자 비교**: `score.ifGreaterThan(80)`, `age.ifGreaterThanOrEqual(18)`, `value.ifEquals(100)`, `errorCode.ifNotEquals(0)`
-- **Boolean**: `isLoggedIn.ifTrue { ... }.ifFalse { ... }`
-- **Collection**: `list.ifNotEmpty { }.filterIf(condition) { }`
-
 <br>
 </br>
 
 #### **📦 bundle/** — Type-safe Bundle extensions (Bundle 타입 안전 Extensions)
-- **Type-safe access:** `bundle.getValue<Int>("id", 0)`
-- **Automatic type inference:** compile-time guarantees via reified types
-
-<br>
-</br>
-
-- **타입 안전 접근**: `bundle.getValue<Int>("id", 0)`
-- **자동 타입 추론**: Reified Type으로 컴파일 타임 체크
-
+- **Type-safe access(타입 안전):** `bundle.getValue<Int>("id", 0)`
+- **Automatic type inference(자동 타입 추론):** compile-time guarantees via reified types
 <br>
 </br>
 
 #### **📝 string/** — String validation & processing extensions (문자열 검증/가공 Extensions)
-- **Email validation:** `email.isEmailValid()`
-- **Phone validation:** `phone.isPhoneNumberValid()`
-- **URL validation:** `url.isUrlValid()`
-- **Number/alphanumeric checks:** `text.isNumeric()`, `username.isAlphaNumeric()`
-- **Whitespace removal:** `text.removeWhitespace()`
-- **Strip HTML tags:** `html.stripHtmlTags()`
-
-<br>
-</br>
-
-- **이메일 검증**: `email.isEmailValid()`
-- **전화번호 검증**: `phone.isPhoneNumberValid()`
-- **URL 검증**: `url.isUrlValid()`
-- **숫자/영문 검증**: `text.isNumeric()`, `username.isAlphaNumeric()`
-- **공백 제거**: `text.removeWhitespace()`
-- **HTML 태그 제거**: `html.stripHtmlTags()`
-
+- **Email validation(검증):** `email.isEmailValid()`
+- **Phone validation(검증):** `phone.isPhoneNumberValid()`
+- **URL validation(검증):** `url.isUrlValid()`
+- **Number/alphanumeric checks(검증):** `text.isNumeric()`, `username.isAlphaNumeric()`
+- **Whitespace removal(공백 제거):** `text.removeWhitespace()`
+- **Strip HTML tags(HTML TAG 제거):** `html.stripHtmlTags()`
 <br>
 </br>
 
 #### **📅 date/** — Date formatting extensions (날짜 포맷 Extensions)
 - **Long → String:** `timestamp.timeDateToString("yyyy-MM-dd")`
-
-<br>
-</br>
-
-- **Long → String**: `timestamp.timeDateToString("yyyy-MM-dd")`
-
 <br>
 </br>
 
 #### **⚠️ trycatch/** — Exception handling extensions (예외 처리 Extensions)
-- **Three overloads:** `safeCatch(block)`, `safeCatch(defaultValue, block)`, `safeCatch(block, onCatch)`
-- **Coroutine friendly:** automatically rethrows `CancellationException`
-- **Auto logging:** prints stack traces when exceptions occur
-
-<br>
-</br>
-
-- **3가지 오버로드**: `safeCatch(block)`, `safeCatch(defaultValue, block)`, `safeCatch(block, onCatch)`
-- **코루틴 안전**: `CancellationException` 자동 전파
-- **자동 로깅**: 예외 발생 시 자동 `printStackTrace`
-
+- **Three overloads(3가지 오버로드):** `safeCatch(block)`, `safeCatch(defaultValue, block)`, `safeCatch(block, onCatch)`
+- **Coroutine friendly(코루틴 안전):** automatically rethrows `CancellationException`(자동전파)
+- **Auto logging(자동 로깅):** prints stack traces when exceptions occur
 <br>
 </br>
 
 #### **🔐 permissions/** — Permission check extensions (권한 확인 Extensions)
-- **Unified permission check:** `hasPermission(Manifest.permission.CAMERA)`
-- **Supports both normal and special permissions**
-
-<br>
-</br>
-
-- **통합 권한 체크**: `hasPermission(Manifest.permission.CAMERA)`
-- **일반/특수 권한 모두 지원**
-
-<br>
-</br>
-
-> *코드 위치: `kr.open.library.simple_ui.permissions.extentions.*` 패키지*
-
+- **Unified permission check(통합 권한 체크):** `hasPermission(Manifest.permission.CAMERA)`
+- **Supports both normal and special permissions(일반/특수 권한 모두 지원)**
 <br>
 </br>
 
 #### **🎨 resource/** — Resource access extensions (리소스 접근 Extensions)
 - **Safe access:** `getDrawableCompat(R.drawable.icon)`
 - **Automatic SDK branching:** handles version differences internally
-
 <br>
 </br>
 
-- **안전한 접근**: `getDrawableCompat(R.drawable.icon)`
-- **버전 분기 자동**: SDK 버전별 자동 처리
+**코드 위치: `kr.open.library.simple_ui.permissions.extentions.*` 패키지**
 
 <br>
 </br>
@@ -312,10 +210,10 @@ class MainActivity : AppCompatActivity() {
 ```
 **Issues:** Repetitive builder usage, complex Snackbar configuration, and verbose code every time.
 
+> **문제점:** 반복 Builder 패턴, 복잡한 SnackBar 설정, 매번 길게 작성.
+
 <br>
 </br>
-
-**문제점:** 반복 Builder 패턴, 복잡한 SnackBar 설정, 매번 길게 작성
 </details>
 
 <details>
@@ -356,14 +254,11 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 ```
 **Result:** Single-line usage, clear configuration via `SnackBarOption`, and intuitive method names!
 
-<br>
-</br>
+>**결과:** 한 줄 끝, SnackBarOption으로 명확한 설정, 직관적 메서드명!
 
-**결과:** 한 줄 끝, SnackBarOption으로 명확한 설정, 직관적 메서드명!
+<br></br>
 </details>
 
-<br>
-</br>
 
 ### 2. TextView Styling Comparison (둘째: TextView 스타일링 비교)
 
@@ -423,10 +318,10 @@ class MainActivity : AppCompatActivity() {
 ```
 **Issues:** Manual Paint/Typeface manipulation, separate methods per style change, and no chaining.
 
+> **문제점:** 복잡한 Paint/Typeface 조작, 각 기능마다 메서드 작성 필요, 체이닝 불가
+
 <br>
 </br>
-
-**문제점:** 복잡한 Paint/Typeface 조작, 각 기능마다 메서드 작성 필요, 체이닝 불가
 </details>
 
 <details>
@@ -469,14 +364,12 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 ```
 **Result:** Single method calls, chainable operations, and intuitive examples!
 
+> **결과:** 한 줄 메서드 호출, 체이닝 가능, 직관적 예제!
+
 <br>
 </br>
-
-**결과:** 한 줄 메서드 호출, 체이닝 가능, 직관적 예제!
 </details>
 
-<br>
-</br>
 
 ### 3. Unit Conversion (dp ↔ px, sp ↔ px) Comparison (셋째: 단위 변환 (dp ↔ px, sp ↔ px) 비교)
 
@@ -528,10 +421,10 @@ class MainActivity : AppCompatActivity() {
 ```
 **Issues:** Repeated calls to `TypedValue`, separate methods for each conversion, and manual `displayMetrics` access.
 
+> **문제점:** TypedValue 반복 API, 각 변환마다 메서드 작성 필요, displayMetrics 접근
+
 <br>
 </br>
-
-**문제점:** TypedValue 반복 API, 각 변환마다 메서드 작성 필요, displayMetrics 접근
 </details>
 
 <details>
@@ -568,14 +461,12 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 ```
 **Result:** Intuitive number extensions turn conversions into single-line calls.
 
+>**결과:** Number Extension으로 직관적, 한 줄 변환 끝!
+
 <br>
 </br>
-
-**결과:** Number Extension으로 직관적, 한 줄 변환 끝!
 </details>
 
-<br>
-</br>
 
 ### 4. String Validation (Email/Numeric) Comparison (넷째: 문자열 검증 (이메일/숫자) 비교)
 
@@ -630,10 +521,10 @@ class MainActivity : AppCompatActivity() {
 ```
 **Issues:** Helper methods must be written each time, crafting regex patterns is error-prone, and validation logic gets duplicated.
 
-<br>
-</br>
+> **문제점:** 매번 메서드 작성 필요, Regex 패턴 작성 어려움, 반복 검증 로직
 
-**문제점:** 매번 메서드 작성 필요, Regex 패턴 작성 어려움, 반복 검증 로직
+ <br>
+</br>
 </details>
 
 <details>
@@ -684,14 +575,11 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 ```
 **Result:** String extensions provide intuitive, compile-time-safe, single-line validation.
 
+> **결과:** String Extension으로 직관적, 컴파일 타임, 한 줄 검증 끝!
+
 <br>
 </br>
-
-**결과:** String Extension으로 직관적, 컴파일 타임, 한 줄 검증 끝!
 </details>
-
-<br>
-</br>
 
 ## 🎯 Key Advantages of Simple UI Extensions & Style (Simple UI Extensions & Style의 주요 장점)
 
@@ -699,46 +587,33 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 
 #### **Code volume per usage (매번 작성하는 코드량 비교)**
 
-| Feature (기능) | Pure Android (순수 Android) | Simple UI | Improvement (개선점) |
-|:--|:--|:--|:--|
-| **Toast 표시** | `Toast.makeText(this, "msg", Toast.LENGTH_SHORT).show()` <br>(56자) | `toastShowShort("msg")` <br>(22자) | **60% 감소** |
-| **SnackBar + Action** | Snackbar.make() + setAction() + setActionTextColor() + show() <br>(약 7줄, 180자+) | `snackBarShowShort("msg", SnackBarOption(...))` <br>(약 4줄, 90자) | **절반으로 단축** |
-| **TextView 스타일** | `textView.setTypeface(..., Typeface.BOLD)` <br>`textView.paintFlags = ... or Paint.UNDERLINE_TEXT_FLAG` <br>(2줄, 112자) | `textView.bold().underline()` <br>(1줄, 28자) | **75% 감소** |
-| **중복 클릭 방지** | lastClickTime 변수 + if문 체크 <br>(8줄) | `setOnDebouncedClickListener { }` <br>(1줄) | **완전 제거** |
-| **단위 변환** | `TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, resources.displayMetrics)` <br>(90자) | `dp.dpToPx(this)` <br>(16자) | **82% 감소** |
-| **SDK 버전 분기** | `if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) { }` <br>(54자) | `checkSdkVersion(S) { }` <br>(24자) | **55% 감소** |
+| Feature                   | Plain Android                                                                               | Simple UI | Improvement      |
+|:------------------------------|:--------------------------------------------------------------------------------------------------------|:--|:-----------------|
+| **Toast Show**                | `Toast.makeText(this, "msg", Toast.LENGTH_SHORT).show()`                                                | `toastShowShort("msg")`  | **60% ↓**        |
+| **SnackBar + Action**         | Snackbar.make() + setAction() + setActionTextColor() + show()                                           | `snackBarShowShort("msg", SnackBarOption(...))`  | **50% ↓**        |
+| **TextView Style**            | `textView.setTypeface(..., Typeface.BOLD)` <br>`textView.paintFlags = ... or Paint.UNDERLINE_TEXT_FLAG` | `textView.bold().underline()`  | **75% ↓**        |
+| **Prevent Double Click**      | lastClickTime 변수 + if문 체크                                                                               | `setOnDebouncedClickListener { }`  | **1 Line**       |
+| **Unit conversion**           | `TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, resources.displayMetrics)`                  | `dp.dpToPx(this)`  | **82% ↓**        |
+| **SDK 버전 분기**                 | `if (Build.VERSION.SDK_INT >= S) { }`                                                                   | `checkSdkVersion(S) { }`  | **30% ↓**        |
+| **EmailValid**                | `Patterns.EMAIL_ADDRESS.matcher(email).matches()`                                                       | `email.isEmailValid()`  | **1 Line**       |
+| **roundTo/roundUp/roundDown** | Math.round() 계산식 매번 작성                                                      | `price.roundTo(2)`  | **1 Line**       |
+| **View Animation**            | ValueAnimator + Listener 구현 (15~20줄)                                                      | `view.fadeIn()`  | **1 Line**       |
 
 <br>
 </br>
 
-#### **Write once, reuse everywhere (한 번 작성으로 반복 사용, 유틸 함수 불필요)**
-
-| Feature (기능) | Pure Android (순수 Android) | Simple UI |
-|:--|:--|:--|
-| **이메일 검증** | Patterns.EMAIL_ADDRESS.matcher(email).matches() 메서드 작성 필요 | `email.isEmailValid()` - 바로 사용 |
-| **숫자 반올림** | Math.round() 계산식 매번 작성 | `price.roundTo(2)` - 바로 사용 |
-| **View 애니메이션** | ValueAnimator + Listener 구현 (15~20줄) | `view.fadeIn()` - 바로 사용 |
-
-<br>
-</br>
-
-**💡 Measured impact:**
+**💡 Measured impact/ 실측 결과:**
 - **Average typing reduced by 55–82%**
 - **No need to create repetitive utility methods** (the library handles them)
 - **Dramatically improved readability** (long method chains → concise, expressive names)
+> - **타이핑량 평균 55~82% 감소**
+> - **반복 유틸 메서드 작성 불필요** (라이브러리가 제공)
+> - **가독성 대폭 향상** (긴 메서드 체인 → 짧고 명확한 이름)
 
 <br>
 </br>
 
-**💡 실측 결과**:
-- **타이핑량 평균 55~82% 감소**
-- **반복 유틸 메서드 작성 불필요** (라이브러리가 제공)
-- **가독성 대폭 향상** (긴 메서드 체인 → 짧고 명확한 이름)
-
-<br>
-</br>
-
-### 6. 🛡️ Type Safety — Catch Errors at Compile Time (🛡️ **타입 안전성** - 컴파일 타임에 에러 차단)
+### 6. 🛡️ Type Safety — Catch Errors at Compile Time (**타입 안전성** - 컴파일 타임에 에러 차단)
 
 #### **Shift runtime errors to compile time (런타임 에러를 컴파일 타임으로)**
 ```kotlin
@@ -750,7 +625,6 @@ val name = bundle.getString("name")  // null 반환 가능
 val age = bundle.getValue("age", 0)  // Reified Type
 val name = bundle.getValue("name", "Unknown")  // Null 안전
 ```
-
 <br>
 </br>
 
@@ -763,11 +637,10 @@ val rounded = Math.round(price * 100.0) / 100.0  // 복잡!
 // ✅ Simple UI
 val rounded = price.roundTo(2)  // 타입 자동 추론
 ```
-
 <br>
 </br>
 
-### 7. 🎨 Intuitive APIs — Code as Documentation (🎨 **직관적 API** - 코드가 곧 문서)
+### 7. 🎨 Intuitive APIs — Code as Documentation (**직관적 API** - 코드가 곧 문서)
 
 #### **Code that reads like natural language (자연어처럼 읽히는 코드)**
 ```kotlin
@@ -806,7 +679,7 @@ imageView.load(R.drawable.icon) {
 <br>
 </br>
 
-### 8. 📦 Organized Package Structure — Easy to Find, Easy to Learn (📦 **체계적 패키지 구조** - 찾기 쉽고 배우기 쉬운 구조)
+### 8. 📦 Organized Package Structure — Easy to Find, Easy to Learn (**체계적 패키지 구조** - 찾기 쉽고 배우기 쉬운 구조)
 
 ```
 kr.open.library.simple_ui.extensions/
@@ -825,16 +698,12 @@ kr.open.library.simple_ui.presenter.extensions/
 ```
 
 **💡 Find what you need immediately by package name!**
+>**💡 원하는 기능을 패키지명으로 바로 찾기!**
 
 <br>
 </br>
 
-**💡 원하는 기능을 패키지명으로 바로 찾기!**
-
-<br>
-</br>
-
-### 9. ⚡ Practical, Ready-to-Use Features (⚡ **실전에서 바로 쓸 수 있는 기능들**)
+### 9. ⚡ Practical, Ready-to-Use Features (**실전에서 바로 쓸 수 있는 기능들**)
 
 #### **Solve everyday pain points (매일 마주치는 문제를 해결)**
 ```kotlin
@@ -865,30 +734,28 @@ val userId = intent.extras?.getValue("user_id", -1) ?: -1
 ## 📣 Real User Testimonials (실제 사용 후기)
 
 > 💬 **"I was so tired of checking lastClickTime for double-click bugs. Now it's just one setOnDebouncedClickListener(). Amazing!"**
-
+>
 > 💬 **"TextView styling chaining is a killer feature. bold().underline() makes code so readable!"**
-
+>
 > 💬 **"3.14159.roundTo(2) — This is Kotlin at its best! No more Math.round() mistakes."**
-
+>
 > 💬 **"I hated typing if (Build.VERSION.SDK_INT >= ...) every time. checkSdkVersion() cleaned everything up."**
-
+>
 > 💬 **"One-line animations like fadeIn(), shake(), pulse() made UX improvements lightning fast!"**
-
+>
 > 💬 **"Bundle.getValue<T>() type safety definitely reduced runtime bugs."**
 
-<br>
-</br>
 
 > 💬 **"중복 클릭 버그 때문에 매번 lastClickTime 체크하던 게 너무 귀찮았는데, setOnDebouncedClickListener() 하나로 끝나니 감동..."**
-
+>
 > 💬 **"TextView 스타일링 체이닝이 진짜 킬러 기능. bold().underline() 이렇게 쓰니까 코드 읽기 너무 편함!"**
-
+>
 > 💬 **"3.14159.roundTo(2) 이게 Kotlin답다! 더 이상 Math.round() 쓰다가 실수 안 해도 돼요"**
-
+>
 > 💬 **"SDK 버전 분기할 때마다 if (Build.VERSION.SDK_INT >= ...) 타이핑하기 싫었는데, checkSdkVersion()으로 깔끔하게 정리됨"**
-
+>
 > 💬 **"fadeIn(), shake(), pulse() 같은 애니메이션이 한 줄로 되니까 UX 개선 작업이 엄청 빨라졌어요!"**
-
+>
 > 💬 **"Bundle.getValue<T>()로 타입 안전하게 데이터 가져오니까 런타임 버그가 확실히 줄었어요"**
 
 <br>
@@ -897,25 +764,19 @@ val userId = intent.extras?.getValue("user_id", -1) ?: -1
 ## 🎯 Conclusion: Essential Tool for Android Developers (결론: Android 개발자를 위한 필수 도구)
 
 **Simple UI Extensions** was created to solve the **repetition and inconvenience** of pure Android development.
+>**Simple UI Extensions**은 순수 Android 개발의 **반복과 불편함**을 해결하기 위해 만들어졌습니다.
 
-✅ **Extensions comparison** — simplify repetitive code  
-✅ **Organized structure** — clear responsibilities per package  
-✅ **Type safety** — prevent runtime errors at compile time  
+✅ **Extensions comparison** — simplify repetitive code/ **Extensions 비교** - 반복 코드를 간단히!
+
+✅ **Organized structure** — clear responsibilities per package/ **체계적 구조** - 패키지별 명확한 역할!
+
+✅ **Type safety** — prevent runtime errors at compile time/ **타입 안전성** - 컴파일 타임 런타임 에러 방지!
 
 If you want to accelerate development,  
 **start using Simple UI today!** 🚀
 
-<br>
-</br>
-
-**Simple UI Extensions**은 순수 Android 개발의 **반복과 불편함**을 해결하기 위해 만들어졌습니다.
-
-✅ **Extensions 비교** - 반복 코드를 간단히!  
-✅ **체계적 구조** - 패키지별 명확한 역할!  
-✅ **타입 안전성** - 컴파일 타임 런타임 에러 방지!  
-
-**개발 속도를 높이고 싶다면,**  
-**Simple UI를 사용해 보세요!** 🚀
+> **개발 속도를 높이고 싶다면,**  
+> **Simple UI를 사용해 보세요!** 🚀
 
 <br>
 </br>
@@ -923,72 +784,40 @@ If you want to accelerate development,
 ## 📂 Explore the Actual Code (실제 코드 확인)
 
 **Sample files:**
-> - 🎯 Activity: `package kr.open.library.simpleui_xml.extenstions_style/ExtensionsStyleActivity`
-> - ⚡ Run the sample to experience the difference firsthand!
+ - 🎯 Activity: `package kr.open.library.simpleui_xml.extenstions_style/ExtensionsStyleActivity`
+ - ⚡ Run the sample to experience the difference firsthand!
 
 <br>
 </br>
 
 **Implemented examples:**
 - 📦 view/ — Toast, SnackBar, TextView styling (bold, italic, underline, strikethrough)
-- 📦 display/ — Bidirectional unit conversions (dp↔px, sp↔px)
-
-<br>
-</br>
-
-**실제 예시 파일:**
-> - 🎯 Activity: `package kr.open.library.simpleui_xml.extenstions_style/ExtensionsStyleActivity`
-> - ⚡ 직접 실행해보면 체감 차이를 확실히 느끼실 수 있습니다!
-
-<br>
-</br>
-
-**구현된 예제 기능:**
-- 📦 view/ - Toast, SnackBar, TextView 스타일링 (bold, italic, underline, strikethrough)
-- 📦 display/ - 단위 변환 상호 변환 (dp↔px, sp↔px)
+- 📦 display/ — Bidirectional unit conversions (dp ↔ px, sp ↔ px)
 - 📦 resource/ - Drawable, Color 타입 안전 접근
-- 📦 string/ - 이메일/숫자 검증 실시간, 공백 제거
-- 📦 date/ - 날짜 포맷 다양한 형식
-- 📦 trycatch/ - safeCatch 예외 처리
-- 📦 permissions/ - CAMERA 권한 확인
+- 📦 string/ - email valid, round_to, etc/ 이메일,숫자 검증 실시간, 공백 제거
+- 📦 date/ - Data Format, other etc type, 날짜 포맷 다양한 형식
+- 📦 trycatch/ - safeCatch/ 예외 처리
+- 📦 permissions/ - CAMERA Permission Check
 
 <br>
 </br>
 
-## 📦 Additional Extensions (not in the sample, built into the library) (추가 Extensions 기능 - 실제 코드에는 미포함, 라이브러리 내장)
+## 📦 Additional Extensions (not in the sample, built into the library) 
+> - (추가 Extensions 기능 - 실제 코드에는 미포함, 라이브러리 내장)
+> - 위 예제 Activity에는 포함되지 않았지만, Simple UI 라이브러리에서 제공하는 강력한 Extensions입니다.
 
-위 예제 Activity에는 포함되지 않았지만, Simple UI 라이브러리에서 제공하는 강력한 Extensions입니다.
-
-<br>
-</br>
 
 ### 🔢 round_to/ — Number Rounding Extensions (숫자 반올림 확장)
 
 **Features:**
-- `roundTo(decimals)` — round to the specified decimal place
-- `roundUp(decimals)` — round up to the specified place
-- `roundDown(decimals)` — round down to the specified place
+- `roundTo(decimals)` — round to the specified decimal place/ 지정된 소수점 자리로 반올림
+- `roundUp(decimals)` — round up to the specified place/ 지정된 자리로 올림
+- `roundDown(decimals)` — round down to the specified place/ 지정된 자리로 내림
 
 <br>
 </br>
 
-**제공 기능:**
-- `roundTo(decimals)` - 지정된 소수점 자리로 반올림
-- `roundUp(decimals)` - 지정된 자리로 올림
-- `roundDown(decimals)` - 지정된 자리로 내림
-
-<br>
-</br>
-
-**Supported types:** Double, Float, Int, Long, Short
-
-<br>
-</br>
-
-**지원 타입:** Double, Float, Int, Long, Short
-
-<br>
-</br>
+**Supported types/지원 타입:** Double, Float, Int, Long, Short
 
 **Usage examples:**
 ```kotlin
@@ -1007,18 +836,10 @@ val rounded = number.roundTo(2)  // 1200
 val up = number.roundUp(2)       // 1300
 ```
 
-**Benefits:**
-- Eliminate repetitive Math.round/ceil/floor code
-- Provide a consistent API across all numeric types
-- Use the same method names for both decimal and integer rounding
-
-<br>
-</br>
-
-**장점:**
-- 반복적인 Math.round/ceil/floor 코드 제거
-- 모든 숫자 타입에서 일관된 API
-- 소수점/정수 모두 동일한 메서드명
+**Benefits/장점:**
+- Eliminate repetitive Math.round/ceil/floor code/ 반복적인 Math.round/ceil/floor 코드 제거
+- Provide a consistent API across all numeric types/ 모든 숫자 타입에서 일관된 API
+- Use the same method names for both decimal and integer rounding/ 소수점,정수 모두 동일한 메서드명
 
 <br>
 </br>
@@ -1039,15 +860,19 @@ checkSdkVersion(Build.VERSION_CODES.S) {
     // Android 12 이상 코드
 }
 
+// 기존 방식 분기 처리
+if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+  // Android 12 이상 코드
+} else {
+    
+}
+
 // 분기 처리
 val result = checkSdkVersion(Build.VERSION_CODES.S,
     positiveWork = { "Android 12 이상" },
     negativeWork = { "Android 12 미만" }
 )
 ```
-
-<br>
-</br>
 
 <br>
 </br>
@@ -1092,19 +917,9 @@ errorCode.ifNotEquals(0) {
 }
 ```
 
-**Supported numeric types:**
+**Supported numeric types/ 지원하는 숫자 타입:**
 - `ifGreaterThan`, `ifGreaterThanOrEqual`, `ifEquals`: `Int`, `Float`, `Double`, `Short`, `Long`
-- `ifNotEquals`: `Int`, `Float`, `Double`, `Long` (Short excluded)
-
-<br>
-</br>
-
-**지원하는 숫자 타입:**
-- `ifGreaterThan`, `ifGreaterThanOrEqual`, `ifEquals`: `Int`, `Float`, `Double`, `Short`, `Long`
-- `ifNotEquals`: `Int`, `Float`, `Double`, `Long` (Short 제외)
-
-<br>
-</br>
+- `ifNotEquals`: `Int`, `Float`, `Double`, `Long`, `Short`
 
 <br>
 </br>
@@ -1129,12 +944,9 @@ isNetworkAvailable.ifTrue {
     syncData()
 }
 ```
-
 <br>
 </br>
 
-<br>
-</br>
 
 **4. Null coalescing (Null 체크, firstNotNull)**
 ```kotlin
@@ -1145,12 +957,9 @@ val finalValue = userInput ?: cachedValue ?: defaultValue
 val finalValue = firstNotNull(userInput, cachedValue, defaultValue)
 
 ```
-
 <br>
 </br>
 
-<br>
-</br>
 
 **5. Collection conditionals (Collection 조건부, filterIf, ifNotEmpty)**
 ```kotlin
@@ -1170,20 +979,11 @@ searchResults
 <br>
 </br>
 
-**Benefits:**
-- Improve readability by removing nested `if` statements
-- Embrace a functional programming style
-- Enable chainable APIs
-- Simplify SDK version branching
-
-<br>
-</br>
-
-**장점:**
-- if문 중첩 제거로 가독성 향상
-- 함수형 프로그래밍 스타일
-- 체이닝 가능한 API
-- SDK 버전 분기 간소화
+**Benefits/ 장점:**
+- Improve readability by removing nested `if` statements/ if문 중첩 제거로 가독성 향상
+- Embrace a functional programming style/ 함수형 프로그래밍 스타일
+- Enable chainable APIs/ 체이닝 가능한 API
+- Simplify SDK version branching/ SDK 버전 분기 간소화
 
 <br>
 </br>
@@ -1208,20 +1008,11 @@ val isActive = bundle.getValue("is_active", false)
 // 지원 타입: Int, Boolean, Float, Long, Double, String, Char, Short, Byte, ByteArray, Bundle
 ```
 
-**Benefits:**
-- No need to call different methods per type
-- Compile-time safety via reified types
-- Automatically return `defaultValue` and log when keys are missing
-- Improve code consistency
-
-<br>
-</br>
-
-**장점:**
-- 타입별로 다른 메서드 호출 불필요
-- Reified Type으로 컴파일 타임 타입 체크
-- Key 누락 시 자동으로 defaultValue 반환 및 로그 출력
-- 코드 일관성 향상
+**Benefits/ 장점:**
+- No need to call different methods per type/ 타입별로 다른 메서드 호출 불필요
+- Compile-time safety via reified types/ Reified Type으로 컴파일 타임 타입 체크
+- Automatically return `defaultValue` and log when keys are missing/ Key 누락 시 자동으로 defaultValue 반환 및 로그 출력
+- Improve code consistency/ 코드 일관성 향상
 
 <br>
 </br>
@@ -1230,10 +1021,7 @@ val isActive = bundle.getValue("is_active", false)
 
 The sample code only covers Toast/SnackBar/TextView, but the library ships with far more extensions.
 
-<br>
-</br>
-
-예제 코드에는 Toast/SnackBar/TextView만 포함되었지만, 실제로는 더 많은 Extensions를 제공합니다.
+> 예제 코드에는 Toast/SnackBar/TextView만 포함되었지만, 실제로는 더 많은 Extensions를 제공합니다.
 
 #### **EditText extensions (EditText Extensions)**
 ```kotlin
@@ -1250,7 +1038,6 @@ val age = editText.textToInt() ?: 0
 val price = editText.textToFloat() ?: 0f
 val distance = editText.textToDouble() ?: 0.0
 ```
-
 <br>
 </br>
 
@@ -1303,18 +1090,10 @@ textView.style {
 }
 ```
 
-**Highlights:**
-- Works with both TextView and EditText
-- Offers chainable fluent APIs
-- Apply multiple styles at once via `style { }` blocks
-
-<br>
-</br>
-
-**특징:**
-- TextView와 EditText 모두에서 동작
-- 체이닝 가능한 fluent API
-- `style { }` 블록으로 여러 스타일 동시 적용
+**Highlights/ 특징:**
+- Works with both TextView and EditText/ TextView와 EditText 모두에서 동작
+- Offers chainable fluent APIs/ 체이닝 가능한 fluent API
+- Apply multiple styles at once via `style { }` blocks/ `style { }` 블록으로 여러 스타일 동시 적용
 
 <br>
 </br>
@@ -1344,7 +1123,6 @@ imageView.load(R.drawable.icon) {
     centerCrop()
 }
 ```
-
 <br>
 </br>
 
@@ -1354,7 +1132,6 @@ view.setVisible()    // visibility = VISIBLE
 view.setGone()       // visibility = GONE
 view.setInvisible()  // visibility = INVISIBLE
 ```
-
 <br>
 </br>
 
@@ -1376,7 +1153,6 @@ button.setOnDebouncedClickListener(600L) { view ->
     navigateToNextScreen()
 }
 ```
-
 <br>
 </br>
 
@@ -1398,7 +1174,6 @@ view.setSize(200, 100)
 view.setWidthMatchParent()
 view.setHeightWrapContent()
 ```
-
 <br>
 </br>
 
@@ -1486,20 +1261,19 @@ customView.bindLifecycleObserver(observer)
 customView.unbindLifecycleObserver(observer)
 ```
 
-**Lifecycle highlights:**
+**Lifecycle highlights/ Lifecycle 기능 특징:**
 - **Automatic owner switching:** when a view moves to another screen, it rebinds to the new LifecycleOwner automatically
 - **Duplicate registration protection:** safely ignore duplicate observer registrations
 - **Memory-leak prevention:** managed automatically via the View Tag system
 - **Fragment/Activity detection:** extracts the LifecycleOwner from the ViewTree or Context
 
-<br>
-</br>
+> - **자동 Owner 전환**: View가 다른 화면으로 이동하면 자동으로 새 LifecycleOwner에 바인딩
+> - **중복 등록 방지**: 동일한 Observer를 여러 번 등록해도 안전
+> - **메모리 누수 방지**: View Tag 시스템으로 자동 관리
+> - **Fragment/Activity 감지**: ViewTree 또는 Context에서 LifecycleOwner 자동 추출
 
-**Lifecycle 기능 특징:**
-- **자동 Owner 전환**: View가 다른 화면으로 이동하면 자동으로 새 LifecycleOwner에 바인딩
-- **중복 등록 방지**: 동일한 Observer를 여러 번 등록해도 안전
-- **메모리 누수 방지**: View Tag 시스템으로 자동 관리
-- **Fragment/Activity 감지**: ViewTree 또는 Context에서 LifecycleOwner 자동 추출
+  <br>
+  </br>
 
 **Practical example (실용 예제):**
 ```kotlin
@@ -1528,22 +1302,12 @@ class AnimatedView(context: Context) : View(context) {
 }
 ```
 
-**Benefits:**
-- Greatly reduce repetitive code
-- Simplify animation logic
-- Provide clean, chainable APIs
-- Prevent memory leaks via the View Tag system
-- Automatically manage lifecycles for safe resource cleanup
-
-<br>
-</br>
-
-**장점:**
-- 반복 코드 대폭 감소
-- 애니메이션 코드 간소화
-- 체이닝 가능한 깔끔한 API
-- 메모리 누수 방지 (View Tag 시스템 활용)
-- Lifecycle 자동 관리로 안전한 리소스 해제
+**Benefits:/ 장점**
+- Greatly reduce repetitive code/ 반복 코드 대폭 감소
+- Simplify animation logic/ 애니메이션 코드 간소화
+- Provide clean, chainable APIs/ 체이닝 가능한 깔끔한 API
+- Prevent memory leaks via the View Tag system/ 메모리 누수 방지 (View Tag 시스템 활용)
+- Automatically manage lifecycles for safe resource cleanup/ Lifecycle 자동 관리로 안전한 리소스 해제
 
 <br>
 </br>
@@ -1552,10 +1316,10 @@ class AnimatedView(context: Context) : View(context) {
 
 Simple UI offers a rich set of string validation and transformation extensions.
 
+> Simple UI는 다양한 문자열 검증 및 가공 Extensions를 제공합니다.
+
 <br>
 </br>
-
-Simple UI는 다양한 문자열 검증 및 가공 Extensions를 제공합니다.
 
 #### **String validation extensions (문자열 검증 Extensions)**
 ```kotlin
@@ -1607,20 +1371,14 @@ val userInput = " <script>alert('xss')</script> Hello "
 val safe = userInput.stripHtmlTags().trim()  // " Hello "
 ```
 
-**Benefits:**
-- Improve validation accuracy based on Android's Patterns API
-- Optimize performance with precompiled regular expressions
-- Enforce result usage with the `@CheckResult` annotation
-- Maintain a clean, chainable API
+**Benefits/ 장점:**
+- Improve validation accuracy based on Android's Patterns API/ Android Patterns API 기반으로 검증 정확도 향상
+- Optimize performance with precompiled regular expressions/ Precompiled Regex로 성능 최적화
+- Enforce result usage with the `@CheckResult` annotation/  `@CheckResult` 어노테이션으로 결과 사용 강제
+- Maintain a clean, chainable API/ 체이닝 가능한 깔끔한 API
 
 <br>
 </br>
-
-**장점:**
-- Android Patterns API 기반으로 검증 정확도 향상
-- Precompiled Regex로 성능 최적화
-- `@CheckResult` 어노테이션으로 결과 사용 강제
-- 체이닝 가능한 깔끔한 API
 
 **Performance optimization (성능 최적화):**
 ```kotlin
@@ -1636,22 +1394,23 @@ private val ALPHANUMERIC_REGEX = "^[a-zA-Z0-9]*$".toRegex()
 <br>
 </br>
 
-### ⚠️ trycatch/ Package — Exception Handling Extensions (trycatch/ 패키지 - 예외 처리 Extensions)
+### ⚠️ trycatch/ Package — Exception Handling Extensions
+> (trycatch/ 패키지 - 예외 처리 Extensions)
 
 Simple UI provides three `safeCatch` overloads for safe exception handling.
 
+> Simple UI는 안전한 예외 처리를 위한 3가지 `safeCatch` 오버로드를 제공합니다.
+
 <br>
 </br>
-
-Simple UI는 안전한 예외 처리를 위한 3가지 `safeCatch` 오버로드를 제공합니다.
 
 #### **1. safeCatch(block) — Unit-return overload (safeCatch(block) - Unit 반환형)**
 Protect simple executions where no return value is needed.
+>반환값이 필요없는 단순 실행을 안전하게 보호합니다.
 
 <br>
 </br>
 
-반환값이 필요없는 단순 실행을 안전하게 보호합니다.
 ```kotlin
 // 기존 방식
 try {
@@ -1676,13 +1435,14 @@ safeCatch {
 }
 ```
 
-#### **2. safeCatch(defaultValue, block) — default value overload (safeCatch(defaultValue, block) - 기본값 반환형)**
-Return a default value whenever an exception occurs.
-
 <br>
 </br>
 
-예외 발생 시 기본값을 반환합니다.
+#### **2. safeCatch(defaultValue, block) — default value overload (safeCatch(defaultValue, block) - 기본값 반환형)**
+Return a default value whenever an exception occurs.
+>예외 발생 시 기본값을 반환합니다.
+
+
 ```kotlin
 // 기존 방식
 val result = try {
@@ -1707,14 +1467,14 @@ val userInfo = safeCatch(UserInfo.EMPTY) {
     apiClient.getUserInfo()
 }
 ```
+<br>
+</br>
 
 #### **3. safeCatch(block, onCatch) — custom exception handler overload (safeCatch(block, onCatch) - 예외 핸들러 반환형)**
 Receive the exception object, handle it customly, and return a value.
 
-<br>
-</br>
+> 예외 객체를 받아서 커스텀 처리 후 값을 반환합니다.
 
-예외 객체를 받아서 커스텀 처리 후 값을 반환합니다.
 ```kotlin
 // 기존 방식
 val result = try {
@@ -1777,32 +1537,15 @@ public inline fun <T> safeCatch(defaultValue: T, block: () -> T): T {
 }
 ```
 
-**Benefits:**
-- Remove try-catch boilerplate
-- Safely handle coroutine cancellations and system errors
-- Automatically log exceptions (`printStackTrace`)
-- Cover every scenario with three overloads
-- Keep the code concise and easy to read
+**Benefits/ 장점:**
+- Remove try-catch boilerplate/ try-catch 보일러플레이트 제거
+- Safely handle coroutine cancellations and system errors/ 코루틴 취소 및 시스템 에러 안전하게 처리
+- Automatically log exceptions (`printStackTrace`)/ 자동 예외 로깅 (printStackTrace)
+- Cover every scenario with three overloads/ 3가지 오버로드로 모든 상황 커버
+- Keep the code concise and easy to read/ 간결하고 읽기 쉬운 코드
 
 <br>
 </br>
 
-**장점:**
-- try-catch 보일러플레이트 제거
-- 코루틴 취소 및 시스템 에러 안전하게 처리
-- 자동 예외 로깅 (printStackTrace)
-- 3가지 오버로드로 모든 상황 커버
-- 간결하고 읽기 쉬운 코드
-
-**Comparison table (비교표):**
-
-| Overload (오버로드) | When to use (사용 시기) | Behavior on exception (예외 시 동작) |
-|---------|----------|------------|
-| `safeCatch(block)` | No return value needed (반환값 불필요) | Ignore exception (log only) (예외 무시, 로깅만) |
-| `safeCatch(defaultValue, block)` | Default value needed (기본값 반환 필요) | Return defaultValue (defaultValue 반환) |
-| `safeCatch(block, onCatch)` | Exception-specific handling (예외별 처리 필요) | Execute onCatch lambda (onCatch 람다 실행) |
-
-<br>
-</br>
 
 .
