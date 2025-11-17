@@ -2,6 +2,7 @@ package kr.open.library.simple_ui.presenter.ui.view.recyclerview
 
 import android.content.Context
 import android.util.AttributeSet
+import androidx.annotation.VisibleForTesting
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -10,7 +11,6 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kr.open.library.simple_ui.R
 import kr.open.library.simple_ui.logcat.Logx
 import java.lang.ref.WeakReference
-import kotlin.math.abs
 
 /**
  * A custom RecyclerView that provides edge reach and scroll direction detection.
@@ -25,22 +25,16 @@ public open class RecyclerScrollStateView : RecyclerView {
         private const val DEFAULT_SCROLL_DIRECTION_THRESHOLD = 20
     }
 
-    private var isAtTop = false
-    private var isAtBottom = false
-    private var isAtLeft = false
-    private var isAtRight = false
-
-    private var edgeReachThreshold = DEFAULT_EDGE_REACH_THRESHOLD // Threshold for edge reach detection
-    private var scrollDirectionThreshold = DEFAULT_SCROLL_DIRECTION_THRESHOLD // Threshold for scroll direction detection
-
-    private var accumulatedDx = 0
-    private var accumulatedDy = 0
+    // 계산 로직을 담당하는 객체 (테스트 시 접근 가능)
+    @VisibleForTesting
+    internal val scrollStateCalculator = RecyclerScrollStateCalculator(
+        edgeReachThreshold = DEFAULT_EDGE_REACH_THRESHOLD,
+        scrollDirectionThreshold = DEFAULT_SCROLL_DIRECTION_THRESHOLD
+    )
 
     // WeakReference를 사용한 리스너 관리
     private var onEdgeReachedListener: WeakReference<OnEdgeReachedListener>? = null
     private var onScrollDirectionChangedListener: WeakReference<OnScrollDirectionChangedListener>? = null
-
-    private var currentScrollDirection : ScrollDirection = ScrollDirection.IDLE
 
     // Flow를 통한 이벤트 스트림 (옵션)
     private val msfScrollDirectionFlow = MutableSharedFlow<ScrollDirection>(
@@ -86,8 +80,8 @@ public open class RecyclerScrollStateView : RecyclerView {
         override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
             super.onScrollStateChanged(recyclerView, newState)
             if(newState == SCROLL_STATE_IDLE) {
-                resetScrollAccumulation()
-                updateScrollDirection(ScrollDirection.IDLE)
+                val result = scrollStateCalculator.resetScrollAccumulation()
+                if (result.directionChanged) { notifyScrollDirectionChanged(result.newDirection) }
             }
         }
 
@@ -98,13 +92,7 @@ public open class RecyclerScrollStateView : RecyclerView {
         }
     }
 
-    private fun resetScrollAccumulation() {
-        accumulatedDx = 0
-        accumulatedDy = 0
-    }
-
-    private fun updateScrollDirection(direction: ScrollDirection) {
-        currentScrollDirection = direction
+    private fun notifyScrollDirectionChanged(direction: ScrollDirection) {
         onScrollDirectionChangedListener?.get()?.onScrollDirectionChanged(direction)
         msfScrollDirectionFlow.safeEmit(direction) {
             Logx.w("Fail emit data $direction")
@@ -122,24 +110,24 @@ public open class RecyclerScrollStateView : RecyclerView {
      * Top,Bottom Reach Detection
      */
     private fun checkVerticalEdges() {
+        val result = scrollStateCalculator.checkVerticalEdges(
+            verticalScrollOffset = computeVerticalScrollOffset(),
+            canScrollDown = canScrollVertically(1),
+            verticalScrollExtent = computeVerticalScrollExtent(),
+            verticalScrollRange = computeVerticalScrollRange()
+        )
 
-        val newIsAtTop = computeVerticalScrollOffset() <= edgeReachThreshold
-        if (newIsAtTop != isAtTop) {
-            isAtTop = newIsAtTop
-            onEdgeReachedListener?.get()?.onEdgeReached(ScrollEdge.TOP, newIsAtTop)
-            msfEdgeReachedFlow.safeEmit(ScrollEdge.TOP to newIsAtTop) {
-                Logx.w("Failure emit Edge ${ScrollEdge.TOP}, $newIsAtTop")
+        if (result.topChanged) {
+            onEdgeReachedListener?.get()?.onEdgeReached(ScrollEdge.TOP, result.isAtTop)
+            msfEdgeReachedFlow.safeEmit(ScrollEdge.TOP to result.isAtTop) {
+                Logx.w("Failure emit Edge ${ScrollEdge.TOP}, ${result.isAtTop}")
             }
         }
 
-        val isBottomReached = !canScrollVertically(1) &&
-                computeVerticalScrollExtent() + computeVerticalScrollOffset() + edgeReachThreshold >= computeVerticalScrollRange()
-
-        if (isBottomReached != isAtBottom) {
-            isAtBottom = isBottomReached
-            onEdgeReachedListener?.get()?.onEdgeReached(ScrollEdge.BOTTOM, isBottomReached)
-            msfEdgeReachedFlow.safeEmit(ScrollEdge.BOTTOM to isBottomReached) {
-                Logx.w("Failure emit Edge ${ScrollEdge.BOTTOM}, $isBottomReached")
+        if (result.bottomChanged) {
+            onEdgeReachedListener?.get()?.onEdgeReached(ScrollEdge.BOTTOM, result.isAtBottom)
+            msfEdgeReachedFlow.safeEmit(ScrollEdge.BOTTOM to result.isAtBottom) {
+                Logx.w("Failure emit Edge ${ScrollEdge.BOTTOM}, ${result.isAtBottom}")
             }
         }
     }
@@ -148,22 +136,24 @@ public open class RecyclerScrollStateView : RecyclerView {
      * Left,Right Reach Detection
      */
     private fun checkHorizontalEdges() {
+        val result = scrollStateCalculator.checkHorizontalEdges(
+            horizontalScrollOffset = computeHorizontalScrollOffset(),
+            canScrollRight = canScrollHorizontally(1),
+            horizontalScrollExtent = computeHorizontalScrollExtent(),
+            horizontalScrollRange = computeHorizontalScrollRange()
+        )
 
-        val newIsAtLeft = computeHorizontalScrollOffset() <= edgeReachThreshold
-        if (newIsAtLeft != isAtLeft) {
-            isAtLeft = newIsAtLeft
-            onEdgeReachedListener?.get()?.onEdgeReached(ScrollEdge.LEFT, newIsAtLeft)
-            msfEdgeReachedFlow.safeEmit(ScrollEdge.LEFT to isAtLeft) {
-                Logx.w("Failure emit Edge ${ScrollEdge.LEFT}, $isAtLeft")
+        if (result.leftChanged) {
+            onEdgeReachedListener?.get()?.onEdgeReached(ScrollEdge.LEFT, result.isAtLeft)
+            msfEdgeReachedFlow.safeEmit(ScrollEdge.LEFT to result.isAtLeft) {
+                Logx.w("Failure emit Edge ${ScrollEdge.LEFT}, ${result.isAtLeft}")
             }
         }
 
-        val isRightReached = !canScrollHorizontally(1) && computeHorizontalScrollExtent() + computeHorizontalScrollOffset() + edgeReachThreshold >= computeHorizontalScrollRange()
-        if (isRightReached != isAtRight) {
-            isAtRight = isRightReached
-            onEdgeReachedListener?.get()?.onEdgeReached(ScrollEdge.RIGHT, isRightReached)
-            msfEdgeReachedFlow.safeEmit(ScrollEdge.RIGHT to isAtRight) {
-                Logx.w("Failure emit Edge ${ScrollEdge.RIGHT}, $isAtRight")
+        if (result.rightChanged) {
+            onEdgeReachedListener?.get()?.onEdgeReached(ScrollEdge.RIGHT, result.isAtRight)
+            msfEdgeReachedFlow.safeEmit(ScrollEdge.RIGHT to result.isAtRight) {
+                Logx.w("Failure emit Edge ${ScrollEdge.RIGHT}, ${result.isAtRight}")
             }
         }
     }
@@ -179,26 +169,16 @@ public open class RecyclerScrollStateView : RecyclerView {
     }
 
     private fun updateVerticalScrollDirection(dy: Int) {
-        accumulatedDy += dy
-        if (abs(accumulatedDy) >= scrollDirectionThreshold) {
-            val newVerticalScrollDirection = if(accumulatedDy > 0) ScrollDirection.DOWN else ScrollDirection.UP
-
-            if (newVerticalScrollDirection != currentScrollDirection) {
-                updateScrollDirection(newVerticalScrollDirection)
-            }
-            accumulatedDy = 0
+        val result = scrollStateCalculator.updateVerticalScrollDirection(dy)
+        if (result.directionChanged) {
+            notifyScrollDirectionChanged(result.newDirection)
         }
     }
 
     private fun updateHorizontalScrollDirection(dx: Int) {
-        accumulatedDx += dx
-        if (abs(accumulatedDx) >= scrollDirectionThreshold) {
-            val newHorizontalScrollDirection =if(accumulatedDx > 0) ScrollDirection.RIGHT else ScrollDirection.LEFT
-
-            if (newHorizontalScrollDirection != currentScrollDirection) {
-                updateScrollDirection(newHorizontalScrollDirection)
-            }
-            accumulatedDx = 0
+        val result = scrollStateCalculator.updateHorizontalScrollDirection(dx)
+        if (result.directionChanged) {
+            notifyScrollDirectionChanged(result.newDirection)
         }
     }
 
@@ -283,7 +263,7 @@ public open class RecyclerScrollStateView : RecyclerView {
         require(minimumScrollMovementRange >= 0) {
             "minimumScrollMovementRange must be >= 0, but input value is $minimumScrollMovementRange"
         }
-        this.scrollDirectionThreshold = minimumScrollMovementRange
+        scrollStateCalculator.updateThresholds(scrollDirectionThreshold = minimumScrollMovementRange)
     }
 
     /**
@@ -305,6 +285,6 @@ public open class RecyclerScrollStateView : RecyclerView {
         require(edgeReachThreshold >= 0) {
             "edgeReachThreshold must be >= 0, but input value is $edgeReachThreshold"
         }
-        this.edgeReachThreshold = edgeReachThreshold
+        scrollStateCalculator.updateThresholds(edgeReachThreshold = edgeReachThreshold)
     }
 }

@@ -1,19 +1,32 @@
 ﻿package kr.open.library.simple_ui.robolectric.permissions.extentions
 
 import android.Manifest
+import android.app.AlarmManager
 import android.app.Application
+import android.app.NotificationManager
 import android.content.Context
 import android.content.pm.PermissionInfo
 import android.os.Build
+import android.os.PowerManager
+import android.provider.Settings
 import androidx.test.core.app.ApplicationProvider
 import kr.open.library.simple_ui.permissions.extentions.*
+import androidx.core.app.NotificationManagerCompat
+import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Mockito
+import org.mockito.Mockito.`when`
+import org.mockito.Mockito.doReturn
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.mockStatic
+import org.mockito.Mockito.spy
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows
 import org.robolectric.annotation.Config
+import org.robolectric.util.ReflectionHelpers
 
 /**
  * Robolectric tests for PermissionExtensions
@@ -34,7 +47,7 @@ class PermissionExtensionsRobolectricTest {
     @Before
     fun setUp() {
         application = ApplicationProvider.getApplicationContext()
-        context = application
+        context = spy(application)
 
         // Register permissions in Robolectric's PackageManager
         val shadowPackageManager = Shadows.shadowOf(application.packageManager)
@@ -412,6 +425,15 @@ class PermissionExtensionsRobolectricTest {
     }
 
     @Test
+    fun hasPermission_accessNotificationPolicy_returnsTrueWhenServiceGrantsAccess() {
+        val notificationManager = mock(NotificationManager::class.java)
+        `when`(notificationManager.isNotificationPolicyAccessGranted).thenReturn(true)
+        doReturn(notificationManager).`when`(context).getSystemService(Context.NOTIFICATION_SERVICE)
+
+        assertTrue(context.hasPermission(Manifest.permission.ACCESS_NOTIFICATION_POLICY))
+    }
+
+    @Test
     @Config(sdk = [Build.VERSION_CODES.Q])
     fun hasPermission_manageExternalStorage_legacyPathReturnsFalse() {
         assertFalse(context.hasPermission(Manifest.permission.MANAGE_EXTERNAL_STORAGE))
@@ -473,6 +495,17 @@ class PermissionExtensionsRobolectricTest {
     fun hasPermission_requestInstallPackages_beforeAndroidP_returnsFalse() {
         // When & Then - Tests negativeWork branch (returns true before Android O)
         assertFalse(context.hasPermission(Manifest.permission.REQUEST_INSTALL_PACKAGES))
+    }
+
+    @Test
+    fun hasPermission_requestInstallPackages_preO_returnsTrueFromNegativeBranch() {
+        val original = Build.VERSION.SDK_INT
+        ReflectionHelpers.setStaticField(Build.VERSION::class.java, "SDK_INT", Build.VERSION_CODES.N)
+        try {
+            assertTrue(context.hasPermission(Manifest.permission.REQUEST_INSTALL_PACKAGES))
+        } finally {
+            ReflectionHelpers.setStaticField(Build.VERSION::class.java, "SDK_INT", original)
+        }
     }
 
     @Test
@@ -550,5 +583,43 @@ class PermissionExtensionsRobolectricTest {
 
         // When & Then
         assertTrue(context.hasPermission(normalPermission))
+    }
+
+    @Test
+    fun hasPermission_requestIgnoreBatteryOptimizations_returnsTrueWhenPowerManagerIgnores() {
+        val powerManager = mock(PowerManager::class.java)
+        `when`(powerManager.isIgnoringBatteryOptimizations(context.packageName)).thenReturn(true)
+        Shadows.shadowOf(application).setSystemService(Context.POWER_SERVICE, powerManager)
+
+        assertTrue(context.hasPermission(Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS))
+    }
+
+    @Test
+    fun hasPermission_requestIgnoreBatteryOptimizations_handlesMissingPowerManagerGracefully() {
+        doReturn(null).`when`(context).getSystemService(Context.POWER_SERVICE)
+
+        assertFalse(context.hasPermission(Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS))
+    }
+
+    @Test
+    @Config(sdk = [Build.VERSION_CODES.S])
+    fun hasPermission_scheduleExactAlarm_returnsTrueWhenAlarmManagerAllows() {
+        val alarmManager = mock(AlarmManager::class.java)
+        `when`(alarmManager.canScheduleExactAlarms()).thenReturn(true)
+        Shadows.shadowOf(application).setSystemService(Context.ALARM_SERVICE, alarmManager)
+
+        assertTrue(context.hasPermission(Manifest.permission.SCHEDULE_EXACT_ALARM))
+    }
+
+    @Test
+    @Config(sdk = [Build.VERSION_CODES.TIRAMISU])
+    fun hasPermission_postNotifications_returnsTrueWhenEnabled() {
+        mockStatic(NotificationManagerCompat::class.java).use { mocked ->
+            val manager = mock(NotificationManagerCompat::class.java)
+            `when`(manager.areNotificationsEnabled()).thenReturn(true)
+            mocked.`when`<NotificationManagerCompat> { NotificationManagerCompat.from(context) }.thenReturn(manager)
+
+            assertTrue(context.hasPermission(Manifest.permission.POST_NOTIFICATIONS))
+        }
     }
 }

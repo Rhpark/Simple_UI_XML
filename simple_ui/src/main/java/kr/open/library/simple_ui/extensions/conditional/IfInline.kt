@@ -263,6 +263,14 @@ public inline fun <T> Float.ifNotEquals(comparison: Float, doWork: () -> T,
  *
  * @return (center > comparison) -> doWork()
  */
+public inline fun <T> Short.ifNotEquals(comparison: Short, doWork: () -> T,
+): T? = if (this != comparison) { doWork() } else { null }
+
+/**
+ * @param comparison
+ *
+ * @return (center > comparison) -> doWork()
+ */
 public inline fun <T> Double.ifNotEquals(comparison: Double, doWork: () -> T,
 ): T? = if (this != comparison) { doWork() } else { null }
 

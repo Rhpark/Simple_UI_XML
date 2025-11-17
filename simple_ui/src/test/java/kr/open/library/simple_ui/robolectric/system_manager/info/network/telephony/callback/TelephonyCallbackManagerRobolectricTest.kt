@@ -16,6 +16,9 @@ import android.util.SparseArray
 import androidx.test.core.app.ApplicationProvider
 import kr.open.library.simple_ui.system_manager.info.network.telephony.callback.CommonTelephonyCallback
 import kr.open.library.simple_ui.system_manager.info.network.telephony.callback.TelephonyCallbackManager
+import kr.open.library.simple_ui.system_manager.info.network.telephony.data.current.CurrentCellInfo
+import kr.open.library.simple_ui.system_manager.info.network.telephony.data.current.CurrentServiceState
+import kr.open.library.simple_ui.system_manager.info.network.telephony.data.current.CurrentSignalStrength
 import kr.open.library.simple_ui.system_manager.info.network.telephony.data.state.TelephonyNetworkState
 import kr.open.library.simple_ui.system_manager.info.network.telephony.data.state.TelephonyNetworkType
 import org.junit.Assert.*
@@ -28,6 +31,7 @@ import org.mockito.ArgumentMatchers.eq
 import org.mockito.Mockito.doReturn
 import org.mockito.Mockito.doThrow
 import org.mockito.Mockito.mock
+import org.mockito.Mockito.spy
 import org.mockito.Mockito.verify
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows
@@ -248,6 +252,97 @@ class TelephonyCallbackManagerRobolectricTest {
     }
 
     @Test
+    fun setCallbacks_whenSlotPresent_delegatesToCommonCallback() {
+        val slotIndex = 3
+        val slotTelephonyManager = mock(TelephonyManager::class.java)
+        val callbackSpy = spy(CommonTelephonyCallback(slotTelephonyManager))
+        callbackManager.injectSlot(slotIndex, callbackSpy, slotTelephonyManager)
+
+        val signalListener: (CurrentSignalStrength) -> Unit = {}
+        val serviceListener: (CurrentServiceState) -> Unit = {}
+        val activeSubListener: (Int) -> Unit = {}
+        val dataConnectionListener: (Int, Int) -> Unit = { _, _ -> }
+        val cellInfoListener: (CurrentCellInfo) -> Unit = {}
+        val callStateListener: (Int, String?) -> Unit = { _, _ -> }
+        val displayListener: (TelephonyDisplayInfo) -> Unit = {}
+        val telephonyStateListener: (TelephonyNetworkState) -> Unit = {}
+
+        callbackManager.setOnSignalStrength(slotIndex, signalListener)
+        callbackManager.setOnServiceState(slotIndex, serviceListener)
+        callbackManager.setOnActiveDataSubId(slotIndex, activeSubListener)
+        callbackManager.setOnDataConnectionState(slotIndex, dataConnectionListener)
+        callbackManager.setOnCellInfo(slotIndex, cellInfoListener)
+        callbackManager.setOnCallState(slotIndex, callStateListener)
+        callbackManager.setOnDisplayState(slotIndex, displayListener)
+        callbackManager.setOnTelephonyNetworkType(slotIndex, telephonyStateListener)
+
+        verify(callbackSpy).setOnSignalStrength(signalListener)
+        verify(callbackSpy).setOnServiceState(serviceListener)
+        verify(callbackSpy).setOnActiveDataSubId(activeSubListener)
+        verify(callbackSpy).setOnDataConnectionState(dataConnectionListener)
+        verify(callbackSpy).setOnCellInfo(cellInfoListener)
+        verify(callbackSpy).setOnCallState(callStateListener)
+        verify(callbackSpy).setOnDisplay(displayListener)
+        verify(callbackSpy).setOnTelephonyNetworkType(telephonyStateListener)
+    }
+
+    @Test
+    fun registerAdvancedCallback_usesBaseCallbackWhenGpsOff() {
+        val slotIndex = 4
+        val slotTelephonyManager = mock(TelephonyManager::class.java)
+        val callbackSpy = spy(CommonTelephonyCallback(slotTelephonyManager))
+        callbackManager.injectSlot(slotIndex, callbackSpy, slotTelephonyManager)
+
+        val executor = Executor { it.run() }
+        callbackManager.registerAdvancedCallback(
+            simSlotIndex = slotIndex,
+            executor = executor,
+            isGpsOn = false,
+            onActiveDataSubId = {},
+            onDataConnectionState = { _, _ -> },
+            onCellInfo = {},
+            onSignalStrength = {},
+            onServiceState = {},
+            onCallState = { _, _ -> },
+            onDisplayInfo = {},
+            onTelephonyNetworkState = {}
+        )
+
+        val callbackCaptor = ArgumentCaptor.forClass(TelephonyCallback::class.java)
+        verify(slotTelephonyManager).registerTelephonyCallback(any(Executor::class.java), callbackCaptor.capture())
+        assertSame(callbackSpy.baseTelephonyCallback, callbackCaptor.value)
+        assertTrue(callbackManager.isRegistered(slotIndex))
+    }
+
+    @Test
+    fun registerAdvancedCallback_usesGpsCallbackWhenGpsOn() {
+        val slotIndex = 6
+        val slotTelephonyManager = mock(TelephonyManager::class.java)
+        val callbackSpy = spy(CommonTelephonyCallback(slotTelephonyManager))
+        callbackManager.injectSlot(slotIndex, callbackSpy, slotTelephonyManager)
+
+        val executor = Executor { it.run() }
+        callbackManager.registerAdvancedCallback(
+            simSlotIndex = slotIndex,
+            executor = executor,
+            isGpsOn = true,
+            onActiveDataSubId = {},
+            onDataConnectionState = { _, _ -> },
+            onCellInfo = {},
+            onSignalStrength = {},
+            onServiceState = {},
+            onCallState = { _, _ -> },
+            onDisplayInfo = {},
+            onTelephonyNetworkState = {}
+        )
+
+        val gpsCallbackCaptor = ArgumentCaptor.forClass(TelephonyCallback::class.java)
+        verify(slotTelephonyManager).registerTelephonyCallback(any(Executor::class.java), gpsCallbackCaptor.capture())
+        assertSame(callbackSpy.baseGpsTelephonyCallback, gpsCallbackCaptor.value)
+        assertTrue(callbackManager.isRegistered(slotIndex))
+    }
+
+    @Test
     fun onDestroy_unregistersCallbacksSafely() {
         val subscriptionInfo = mock(SubscriptionInfo::class.java)
         val slotTelephonyManager = mock(TelephonyManager::class.java)
@@ -360,5 +455,22 @@ class TelephonyCallbackManagerRobolectricTest {
         (managerField.get(this) as android.util.SparseArray<*>).clear()
         (callbackField.get(this) as android.util.SparseArray<*>).clear()
         (registeredField.get(this) as android.util.SparseBooleanArray).clear()
+    }
+
+    private fun TelephonyCallbackManager.injectSlot(
+        slotIndex: Int,
+        callback: CommonTelephonyCallback,
+        manager: TelephonyManager
+    ) {
+        val managerField = TelephonyCallbackManager::class.java.getDeclaredField("uSimTelephonyManagerList")
+        managerField.isAccessible = true
+        val callbackField = TelephonyCallbackManager::class.java.getDeclaredField("uSimTelephonyCallbackList")
+        callbackField.isAccessible = true
+        val registeredField = TelephonyCallbackManager::class.java.getDeclaredField("isRegistered")
+        registeredField.isAccessible = true
+
+        (managerField.get(this) as android.util.SparseArray<TelephonyManager>).put(slotIndex, manager)
+        (callbackField.get(this) as android.util.SparseArray<CommonTelephonyCallback>).put(slotIndex, callback)
+        (registeredField.get(this) as android.util.SparseBooleanArray).put(slotIndex, false)
     }
 }

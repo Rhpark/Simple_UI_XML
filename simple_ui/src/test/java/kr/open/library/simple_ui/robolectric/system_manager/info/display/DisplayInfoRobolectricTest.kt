@@ -294,6 +294,27 @@ class DisplayInfoRobolectricTest {
         doReturn(1920).`when`(fullSpy).getScreenHeight()
         assertTrue(fullSpy.isFullScreen())
     }
+
+    @Test
+    fun getNavigationBarWidth_returnsInsetWidth() {
+        val info = createWindowMetricsDisplayInfo(
+            context = application,
+            bounds = Rect(0, 0, 1800, 1600),
+            statusBarInsets = Insets.of(0, 40, 0, 0),
+            navigationInsets = Insets.of(120, 0, 0, 0),
+        )
+
+        assertEquals(120, info.getNavigationBarWidth())
+    }
+
+    @Test
+    fun isStatusBarHided_returnsFalseWhenHeightLookupFails() {
+        val spyInfo = spy(DisplayInfo(application))
+        doReturn(Result.failure<Int>(Resources.NotFoundException("missing")))
+            .`when`(spyInfo).getStatusBarHeight()
+
+        assertFalse(spyInfo.isStatusBarHided())
+    }
 }
 
 @Config(sdk = [Build.VERSION_CODES.R])

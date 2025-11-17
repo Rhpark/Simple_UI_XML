@@ -23,11 +23,19 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Mockito.mockStatic
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows
 import org.robolectric.annotation.Config
 import org.robolectric.shadows.ShadowNotificationManager
 import org.robolectric.shadows.ShadowPendingIntent
+import java.util.concurrent.Callable
+import java.util.concurrent.Delayed
+import java.util.concurrent.Executors
+import java.util.concurrent.Future
+import java.util.concurrent.ScheduledExecutorService
+import java.util.concurrent.ScheduledFuture
+import java.util.concurrent.TimeUnit
 
 @RunWith(RobolectricTestRunner::class)
 class SimpleNotificationControllerRobolectricTest {
@@ -417,6 +425,42 @@ class SimpleNotificationControllerRobolectricTest {
 
     @Test
     @Config(sdk = [Build.VERSION_CODES.P])
+    fun progressCleanupScheduler_removesStaleEntries() {
+        val option = SimpleProgressNotificationOptionVo(
+            notificationId = 30,
+            progressPercent = 5
+        )
+
+        mockStatic(Executors::class.java).use { executorsMock ->
+            val recordingExecutor = RecordingScheduledExecutor()
+            executorsMock.`when`<ScheduledExecutorService> { Executors.newSingleThreadScheduledExecutor() }
+                .thenReturn(recordingExecutor)
+
+            controller.showProgressNotification(option)
+
+            val progressMapField = SimpleNotificationController::class.java.getDeclaredField("progressBuilders").apply {
+                isAccessible = true
+            }
+            @Suppress("UNCHECKED_CAST")
+            val progressBuilders = progressMapField.get(controller) as MutableMap<Int, Any>
+            val info = requireNotNull(progressBuilders[30])
+            val infoClass = info::class.java
+            val builderField = infoClass.getDeclaredField("builder").apply { isAccessible = true }
+            val builder = builderField.get(info) as NotificationCompat.Builder
+            val constructor = infoClass.getDeclaredConstructor(NotificationCompat.Builder::class.java, Long::class.javaPrimitiveType).apply {
+                isAccessible = true
+            }
+            val staleTime = System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(31)
+            progressBuilders[30] = constructor.newInstance(builder, staleTime)
+
+            recordingExecutor.runScheduledTask()
+
+            assertFalse(progressBuilders.containsKey(30))
+        }
+    }
+
+    @Test
+    @Config(sdk = [Build.VERSION_CODES.P])
     fun showNotification_withProgressStyle_fallsBackToDefaultBuilder() {
         val option = SimpleNotificationOptionVo(
             notificationId = 23,
@@ -530,4 +574,91 @@ class SimpleNotificationControllerRobolectricTest {
 
         tiramisuController.cleanup()
     }
+}
+
+private class RecordingScheduledExecutor : ScheduledExecutorService {
+
+    private var shutdown = false
+    private var scheduledRunnable: Runnable? = null
+
+    fun runScheduledTask() {
+        scheduledRunnable?.run()
+    }
+
+    override fun scheduleWithFixedDelay(
+        command: Runnable,
+        initialDelay: Long,
+        delay: Long,
+        unit: TimeUnit
+    ): ScheduledFuture<*> {
+        scheduledRunnable = command
+        return ImmediateScheduledFuture
+    }
+
+    override fun shutdown() {
+        shutdown = true
+    }
+
+    override fun shutdownNow(): MutableList<Runnable> {
+        shutdown = true
+        return mutableListOf()
+    }
+
+    override fun isShutdown(): Boolean = shutdown
+
+    override fun isTerminated(): Boolean = shutdown
+
+    override fun awaitTermination(timeout: Long, unit: TimeUnit): Boolean = true
+
+    override fun execute(command: Runnable) {
+        command.run()
+    }
+
+    override fun <V : Any?> submit(task: Callable<V>): Future<V> =
+        throw UnsupportedOperationException()
+
+    override fun submit(task: Runnable): Future<*> =
+        throw UnsupportedOperationException()
+
+    override fun <V : Any?> submit(task: Runnable, result: V): Future<V> =
+        throw UnsupportedOperationException()
+
+    override fun <T : Any?> schedule(callable: Callable<T>, delay: Long, unit: TimeUnit): ScheduledFuture<T> =
+        throw UnsupportedOperationException()
+
+    override fun schedule(command: Runnable, delay: Long, unit: TimeUnit): ScheduledFuture<*> =
+        throw UnsupportedOperationException()
+
+    override fun scheduleAtFixedRate(
+        command: Runnable,
+        initialDelay: Long,
+        period: Long,
+        unit: TimeUnit
+    ): ScheduledFuture<*> =
+        throw UnsupportedOperationException()
+
+    override fun <T : Any?> invokeAll(tasks: Collection<Callable<T>>): MutableList<Future<T>> =
+        throw UnsupportedOperationException()
+
+    override fun <T : Any?> invokeAll(
+        tasks: Collection<Callable<T>>,
+        timeout: Long,
+        unit: TimeUnit
+    ): MutableList<Future<T>> = throw UnsupportedOperationException()
+
+    override fun <T : Any?> invokeAny(tasks: Collection<Callable<T>>): T =
+        throw UnsupportedOperationException()
+
+    override fun <T : Any?> invokeAny(tasks: Collection<Callable<T>>, timeout: Long, unit: TimeUnit): T =
+        throw UnsupportedOperationException()
+}
+
+private object ImmediateScheduledFuture : ScheduledFuture<Unit> {
+    override fun getDelay(unit: TimeUnit): Long = 0
+    override fun compareTo(other: Delayed): Int = 0
+    override fun cancel(mayInterruptIfRunning: Boolean): Boolean = true
+    override fun isCancelled(): Boolean = false
+    override fun isDone(): Boolean = true
+    override fun get(): Unit = Unit
+    override fun get(timeout: Long, unit: TimeUnit): Unit = Unit
 }

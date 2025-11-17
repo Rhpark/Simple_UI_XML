@@ -51,8 +51,12 @@ object LogxPathUtils {
      * 앱 전용 외부 저장소 경로 (권한 불필요)
      */
     fun getAppExternalLogPath(context: Context): String {
-        return context.getExternalFilesDir(LOG_DIR_NAME)?.absolutePath
-            ?: getInternalLogPath(context) // fallback to internal
+        val externalDir = context.getExternalFilesDir(LOG_DIR_NAME)
+        return if (externalDir != null) {
+            externalDir.absolutePath
+        } else {
+            getInternalLogPath(context) // fallback to internal
+        }
     }
 
     /**
@@ -60,8 +64,12 @@ object LogxPathUtils {
      */
     fun getPublicExternalLogPath(context: Context): String = checkSdkVersion(Build.VERSION_CODES.Q,
         positiveWork = {
-            (context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)?.absolutePath + "/$LOG_DIR_NAME")
-                ?: getAppExternalLogPath(context)
+            val documentsDir = context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)
+            if (documentsDir != null) {
+                documentsDir.absolutePath + "/$LOG_DIR_NAME"
+            } else {
+                getAppExternalLogPath(context)
+            }
         },
         negativeWork = {
             // API 28 이하: 전통적인 외부 저장소

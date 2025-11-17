@@ -2,9 +2,11 @@ package kr.open.library.simple_ui.unit.logcat.internal.stacktrace
 
 import kr.open.library.simple_ui.logcat.internal.stacktrace.LogxStackTrace
 import kr.open.library.simple_ui.logcat.internal.stacktrace.LogxStackTraceMetaData
-import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.lang.reflect.InvocationTargetException
 
 class LogxStackTraceTest {
 
@@ -40,6 +42,41 @@ class LogxStackTraceTest {
         assertTrue(normal.contains("fakeMethod"))
         assertTrue(parent.contains("fakeMethod"))
         assertTrue(json.contains("("))
+    }
+
+    @Test
+    fun `getStackTrace throws when requested level exceeds stack size`() {
+        val method = LogxStackTrace::class.java.getDeclaredMethod("getStackTrace", Int::class.javaPrimitiveType)
+        method.isAccessible = true
+
+        assertThrows(InvocationTargetException::class.java) {
+            method.invoke(LogxStackTrace(), Int.MAX_VALUE)
+        }
+    }
+
+    @Test
+    fun `isCoroutinePath recognizes coroutine package`() {
+        val method = LogxStackTrace::class.java.getDeclaredMethod("isCoroutinePath", String::class.java)
+        method.isAccessible = true
+
+        val result = method.invoke(LogxStackTrace(), "kotlinx.coroutines.JobSupport") as Boolean
+
+        assertTrue(result)
+    }
+
+    @Test
+    fun `isNormalMethod filters lambda synthesized classes`() {
+        val method = LogxStackTrace::class.java.getDeclaredMethod("isNormalMethod", StackTraceElement::class.java)
+        method.isAccessible = true
+
+        val lambdaFrame = StackTraceElement("com.example.Foo\$Lambda$1", "invoke", "Foo.kt", 5)
+        val normalFrame = StackTraceElement("com.example.Bar", "invoke", "Bar.kt", 6)
+
+        val isLambdaNormal = method.invoke(LogxStackTrace(), lambdaFrame) as Boolean
+        val isNormal = method.invoke(LogxStackTrace(), normalFrame) as Boolean
+
+        assertTrue(isNormal)
+        assertFalse(isLambdaNormal)
     }
 
 }

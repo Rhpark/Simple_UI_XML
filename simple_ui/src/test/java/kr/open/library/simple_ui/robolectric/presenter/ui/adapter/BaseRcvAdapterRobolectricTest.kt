@@ -5,9 +5,12 @@ import android.os.Build
 import android.os.Looper
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ApplicationProvider
 import kr.open.library.simple_ui.presenter.ui.adapter.normal.base.BaseRcvAdapter
+import androidx.recyclerview.widget.DiffUtil
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
@@ -49,6 +52,23 @@ class BaseRcvAdapterRobolectricTest {
 
         override fun onBindViewHolder(holder: TestViewHolder, position: Int, item: TestItem) {
             // No binding needed for tests
+        }
+    }
+
+    // Adapter capturing payload invocations
+    private class PayloadTrackingAdapter : BaseRcvAdapter<TestItem, TestViewHolder>() {
+        var lastPayloads: List<Any>? = null
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TestViewHolder {
+            return TestViewHolder(View(parent.context))
+        }
+
+        override fun onBindViewHolder(holder: TestViewHolder, position: Int, item: TestItem) {
+            // no-op
+        }
+
+        override fun onBindViewHolder(holder: TestViewHolder, position: Int, item: TestItem, payloads: List<Any>) {
+            lastPayloads = payloads
         }
     }
 
@@ -629,6 +649,69 @@ class BaseRcvAdapterRobolectricTest {
     }
 
     @Test
+    fun onBindViewHolder_invokesLongClickListener_whenAdapterPositionValid() {
+        val longClickAdapter = TestAdapter()
+        longClickAdapter.addItem(TestItem(1, "Long"))
+        shadowOf(Looper.getMainLooper()).idle()
+
+        var captured: Triple<Int, TestItem, View>? = null
+        longClickAdapter.setOnItemLongClickListener { index, item, view ->
+            captured = Triple(index, item, view)
+        }
+
+        val recyclerView = RecyclerView(context).apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = longClickAdapter
+            measure(
+                View.MeasureSpec.makeMeasureSpec(500, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(500, View.MeasureSpec.EXACTLY)
+            )
+            layout(0, 0, 500, 500)
+        }
+        shadowOf(Looper.getMainLooper()).idle()
+
+        val holder = recyclerView.findViewHolderForAdapterPosition(0)
+        checkNotNull(holder)
+
+        assertTrue(holder.itemView.performLongClick())
+        assertNotNull(captured)
+        assertEquals(0, captured!!.first)
+        assertEquals(TestItem(1, "Long"), captured!!.second)
+    }
+
+    @Test
+    fun onBindViewHolder_withPayloads_invokesPayloadOverride() {
+        val payloadAdapter = PayloadTrackingAdapter()
+        payloadAdapter.addItem(TestItem(1, "Payload"))
+        shadowOf(Looper.getMainLooper()).idle()
+        val holder = payloadAdapter.onCreateViewHolder(FrameLayout(context), 0)
+        holder.forceAdapterPosition(0)
+
+        val payloads = mutableListOf<Any>("partial")
+        payloadAdapter.onBindViewHolder(holder, 0, payloads)
+
+        assertEquals(payloads, payloadAdapter.lastPayloads)
+
+        payloadAdapter.lastPayloads = listOf("initial")
+        payloadAdapter.onBindViewHolder(holder, 5, payloads)
+        assertEquals(listOf("initial"), payloadAdapter.lastPayloads)
+    }
+
+    @Test
+    fun diffUtilChangePayload_usesCustomProvider() {
+        val adapter = TestAdapter()
+        adapter.setDiffUtilChangePayload { old, new -> "${old.name}->${new.name}" }
+
+        val method = BaseRcvAdapter::class.java.getDeclaredMethod("createDiffCallback")
+        method.isAccessible = true
+        @Suppress("UNCHECKED_CAST")
+        val callback = method.invoke(adapter) as DiffUtil.ItemCallback<TestItem>
+
+        val payload = callback.getChangePayload(TestItem(1, "Before"), TestItem(1, "After"))
+        assertEquals("Before->After", payload)
+    }
+
+    @Test
     fun removingNegativePosition_fails() {
         // Given
         adapter.addItem(TestItem(1, "Item 1"))
@@ -672,4 +755,19 @@ class BaseRcvAdapterRobolectricTest {
      * - DiffUtil configuration
      * - Listener registration mechanics
      */
+}
+
+private fun RecyclerView.ViewHolder.forceAdapterPosition(position: Int) {
+    fun setField(name: String) {
+        try {
+            val field = RecyclerView.ViewHolder::class.java.getDeclaredField(name)
+            field.isAccessible = true
+            field.setInt(this, position)
+        } catch (_: NoSuchFieldException) {
+            // Ignore for older/newer versions
+        }
+    }
+    setField("mPosition")
+    setField("mBindingAdapterPosition")
+    setField("mAbsoluteAdapterPosition")
 }

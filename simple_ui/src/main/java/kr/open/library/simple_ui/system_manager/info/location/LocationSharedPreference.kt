@@ -16,7 +16,7 @@ public class LocationSharedPreference(private val context: Context) :
     private var prefLat by doublePref(LATITUDE_SUFFIX, 0.0)
     private var prefLon by doublePref(LONGITUDE_SUFFIX, 0.0)
     private var prefAccuracy by floatPref(ACCURACY_SUFFIX, 0.0f)
-    private var prefTime by longPref(ACCURACY_SUFFIX, 0L)
+    private var prefTime by longPref(TIME_SUFFIX, 0L)
     private var prefProvider by stringPref(PROVIDER_SUFFIX, null)
 
     private companion object {
