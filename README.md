@@ -48,12 +48,6 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
-    android {
-        buildFeatures {
-//        viewBinding = true // ViewBinding만 사용할 경우
-            dataBinding = true   // BaseBindingActivity / BaseBindingFragment 사용 시 필수
-        }
-    }
     //..
 }
 //..
