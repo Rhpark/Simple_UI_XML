@@ -1,9 +1,9 @@
 # Logx vs Android Log - Complete Comparison Guide (Logx vs Android Log - 완벽 비교 가이드)
 
-### Logx Output Preview (Logx 출력 예시)
+### Logx Output Preview
 ![logx.gif](example_gif%2Flogx.gif)
-> **"Premium logging done in a single line."** See at a glance how Logx feels compared to the classic `Log` API.
->
+**"Premium logging done in a single line."** See at a glance how Logx feels compared to the classic `Log` API.
+
 > **“단 한 줄로 끝내는 고급 로깅.”** 기존 `Log` 대비 Logx가 주는 체감 차이를 한눈에 확인하세요.
 
 <br>
@@ -11,22 +11,22 @@
 
 ## 🔎 At a Glance (한눈 비교)
 
-| Category (항목) | Android Log |                            Logx                             |
-|:--|:--:|:-----------------------------------------------------------:|
-| Output format (출력 포맷) | `D/TAG: message` | `[Ap] [Package] [Level] (File:LineNumber).Method - message` |
-| Auto annotate file/line (파일/라인 자동 표기) | ❌ |                              ✅                              |
-| Auto annotate caller method (호출 메서드 자동 표기) | ❌ |                              ✅                              |
-| Auto annotate thread ID (스레드 ID 자동 표기) | △(manual handling) |                              ✅                              |
-| JSON pretty print (JSON 예쁘게 출력) | △(manual formatting) |                              ✅                              |
-| File archive (파일 저장/로그 아카이브) | △(custom implementation) |                              ✅                              |
-| DSL-based configuration/filter (DSL 기반 구성/필터) | ❌ |                              ✅                              |
+| Category                                      |     Plain Android Log      |                        Simple UI Logx                        |
+|:----------------------------------------------|:------------------------:|:------------------------------------------------------------:|
+| Output format                                 |     `D/TAG: message`     | `[App] [Package] [Level] (File:LineNumber).Method - message` |
+| Show file/line                                |            ❌             |                              ✅                               |
+| Show caller method                            |            ❌             |                              ✅                               |
+| Show thread ID                                |    △(manual handling)    |                              ✅                               |
+| Show JSON print                               |   △(manual formatting)   |                              ✅                               |
+| File Save archive                             | △(custom implementation) |                              ✅                               |
+| DSL-based configuration/filter  |            ❌             |                              ✅                               |
 
-> **Key point:** Logx automatically attaches the metadata you care about, dramatically accelerating debugging.
->
+
+**Key point:** Logx automatically attaches the metadata you care about, dramatically accelerating debugging.
+
 > **핵심:** Logx는 “알고 싶은 메타정보”를 **자동**으로 붙여 줍니다. 디버깅 속도가 달라집니다.
 
-<br>
-</br>
+<br></br>
 
 ## 💡 Why It Matters (왜 중요한가)
 
@@ -36,10 +36,10 @@
 - Gain operational convenience: file archiving, filtering, and level control benefit both development and operations.
   <br>
   </br>
-- 문제 지점까지의 시간 단축: 파일·라인·메서드를 찾는 수고가 0.
-- 재현성 향상: 스레드/컨텍스트 메타가 붙어 원인 파악이 빨라집니다.
-- 읽을 수 있는 로그: JSON을 자동 정렬해 데이터 구조가 한눈에 보입니다.
-- 운영 편의: 파일 저장/필터/레벨 제어로 개발↔운영 모두 유리합니다.
+> - 문제 지점까지의 시간 단축: 파일·라인·메서드를 찾는 수고가 없습니다..
+> - 재현성 향상: 스레드/컨텍스트 메타가 붙어 원인 파악이 빨라집니다.
+> - 읽을 수 있는 로그: JSON을 자동 정렬해 데이터 구조가 한눈에 보입니다.
+> - 운영 편의: 파일 저장/필터/레벨 제어로 개발↔운영 모두 유리합니다.
 
 <br>
 </br>
@@ -74,12 +74,12 @@ RhPark[]  kr.open.library.simpleui_xml  E  (LogxActivity.kt:60).demonstrateBasic
 - `VERBOSE LEVEL` – Actual log message content
   <br>
   </br>
-- `RhPark[TAG]` - 앱 이름[TAG명] (DSL configure로 변경 가능)
-- `kr.open.library.simpleui_xml` - 패키지명 자동 감지
-- `V/D/I/W/E` - 로그 레벨 (Verbose/Debug/Info/Warning/Error)
-- `(LogxActivity.kt:56)` - 파일명과 라인번호 **자동 추적(IDE에서 클릭 시 이동)**
-- `.demonstrateBasicLogging` - 호출한 메서드명 **자동 추적**
-- `VERBOSE LEVEL` - 실제 로그 메시지
+> - `RhPark[TAG]` - 앱 이름[TAG명] (DSL configure로 변경 가능)
+> - `kr.open.library.simpleui_xml` - 패키지명 자동 감지
+> - `V/D/I/W/E` - 로그 레벨 (Verbose/Debug/Info/Warning/Error)
+> - `(LogxActivity.kt:56)` - 파일명과 라인번호 **자동 추적(IDE에서 클릭 시 이동)**
+> - `.demonstrateBasicLogging` - 호출한 메서드명 **자동 추적**
+> - `VERBOSE LEVEL` - 실제 로그 메시지
 
 <br>
 </br>
@@ -89,12 +89,7 @@ RhPark[]  kr.open.library.simpleui_xml  E  (LogxActivity.kt:60).demonstrateBasic
 - **Logx**: `(File:Line).Method - message`
 
 **Debugging becomes radically easier!** Instantly see which file, line, and method produced the log.
-  <br>
-  </br>
-- 기존 Android Log: `D/TAG: message`
-- **Logx**: `(파일명:라인).메서드명 - message`
-
-**디버깅이 혁신적으로 쉬워집니다!** 어느 파일의 몇 번째 줄, 어떤 메서드에서 호출했는지 한눈에 확인 가능!
+> **디버깅이 혁신적으로 쉬워집니다!** 어느 파일의 몇 번째 줄, 어떤 메서드에서 호출했는지 한눈에 확인 가능!
 
 <br>
 </br>
@@ -109,22 +104,12 @@ RhPark[]  kr.open.library.simpleui_xml  E  (LogxActivity.kt:60).demonstrateBasic
 - DSL-based configuration
 - Advanced filtering
 - Optional TAG usage
-  <br>
-  </br>
-- Parent Method 호출 추적 (스택 정보)
-- Thread ID 자동 표시
-- JSON 포맷팅 자동화
-- 파일 저장 자동화
-- DSL 기반 설정
-- 고급 필터링
-- TAG는 옵션
 
-<br>
-</br>
+<br></br>
 
-## ⚡ Quick Start Guide (빠른 시작 가이드)
+## ⚡ Quick Start Guide
 
-### Step 1: Initialize (1단계: 초기화, 필수)
+### Step 1: Initialize
 ```kotlin
 // MyApplication의 onCreate()에서 초기화
 override fun onCreate() {
@@ -138,11 +123,12 @@ override fun onCreate() {
 <br>
 </br>
 
-### Step 2: Start logging right away (2단계: 바로 사용)
+### Step 2: Start logging right away 
 ```kotlin
 // 기본 로깅
 Logx.d("디버그 메시지")
 Logx.i("정보 메시지")
+Logx.i("TAG","정보 메시지")
 
 // 확장 함수 사용
 "디버그 메시지".logxD()
@@ -156,7 +142,7 @@ Logx.t("Thread 정보")         // 스레드 정보
 <br>
 </br>
 
-### Step 3: Advanced configuration (3단계: 고급 설정, 선택사항)
+### Step 3: Advanced configuration 
 
 #### 📂 File saving configuration (파일 저장 설정)
 
@@ -186,23 +172,23 @@ Logx.configure {
 Logx’s **default Logcat output** needs **no permissions**.  
 Only the **file-saving feature** may require permissions depending on the storage destination.
 
+> Logx의 **기본 로깅 기능(Logcat 출력)**은 **권한이 필요하지 않습니다**.  
+> **파일 저장 기능**을 사용할 때만 저장소 타입에 따라 권한이 필요할 수 있습니다.
+
 <br>
 </br>
 
-Logx의 **기본 로깅 기능(Logcat 출력)**은 **권한이 필요하지 않습니다**.  
-**파일 저장 기능**을 사용할 때만 저장소 타입에 따라 권한이 필요할 수 있습니다.
-
-| Storage type (저장소 타입) | Path (경로) | Permission | User access (사용자 접근) |
+| Storage type  | Path  | Permission | User access  |
 |:--|:--|:--:|:--:|
-| **INTERNAL** | `/data/data/[package]/files/AppLogs` | ❌ Not required (불필요) | ❌ Not accessible (불가) |
-| **APP_EXTERNAL** | `/Android/data/[package]/files/AppLogs` | ❌ Not required (불필요) | ✅ Accessible (가능) |
+| **INTERNAL** | `/data/data/[package]/files/AppLogs` |  Not required (불필요) |  Not accessible (불가) |
+| **APP_EXTERNAL** | `/Android/data/[package]/files/AppLogs` |  Not required (불필요) |  Accessible (가능) |
 | **PUBLIC_EXTERNAL** | `/Documents/AppLogs` (API 29+)<br>`/storage/emulated/0/AppLogs` (API 28-) | ⚠️ Required only on Android 9 or lower (Android 9 이하만 필요) | ✅ Easy access (쉽게 접근) |
 
 <br>
 
-#### 💡 Storage type selection guide (저장소 타입 선택 가이드)
+#### 💡 Storage type selection guide
 
-**1. INTERNAL (no permission required) (INTERNAL (내부 저장소) - 권한 불필요)**
+**1. INTERNAL (no permission required)**
 ```kotlin
 Logx.configure {
     fileConfig {
@@ -211,17 +197,17 @@ Logx.configure {
     }
 }
 ```
-✅ **Pros:** No permission required, automatically cleaned up when the app is removed
+✅ **Pros:** No permission required, automatically cleaned up when the app is removed.
+
 ❌ **Cons:** Users cannot access directly
-<br>
-</br>
-✅ **장점**: 권한 불필요, 앱 삭제 시 자동 정리  
-❌ **단점**: 사용자가 직접 접근 불가
+
+> ✅ **장점**: 권한 불필요, 앱 삭제 시 자동 정리  
+> ❌ **단점**: 사용자가 직접 접근 불가
 
 <br>
 </br>
 
-**2. APP_EXTERNAL (no permission required, recommended) (APP_EXTERNAL (앱 전용 외부 저장소) - 권한 불필요 ✅ 권장)**
+**2. APP_EXTERNAL (no permission required, recommended**
 ```kotlin
 Logx.configure {
     fileConfig {
@@ -231,16 +217,15 @@ Logx.configure {
 }
 ```
 ✅ **Pros:** No permission required, accessible through file manager, automatically cleaned up when the app is removed
+
 ✅ **Recommendation:** Best option in most situations!
-<br>
-</br>
-✅ **장점**: 권한 불필요, 파일 관리자로 접근 가능, 앱 삭제 시 자동 정리  
-✅ **추천**: 대부분의 경우 최선의 선택!
+> ✅ **장점**: 권한 불필요, 파일 관리자로 접근 가능, 앱 삭제 시 자동 정리  
+> ✅ **추천**: 대부분의 경우 최선의 선택!
 
 <br>
 </br>
 
-**3. PUBLIC_EXTERNAL (permission needed on Android 9 or lower) (PUBLIC_EXTERNAL (공용 외부 저장소) - Android 9 이하 권한 필요)**
+**3. PUBLIC_EXTERNAL (permission needed on Android 9 or lower)**
 ```kotlin
 // AndroidManifest.xml에 권한 추가 (Android 9 이하만)
 // <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
@@ -253,13 +238,12 @@ Logx.configure {
 }
 ```
 ✅ **Pros:** Logs remain even after uninstall, easy access
-❌ **Cons:** Requires permission on Android 9 or lower
-<br>
-</br>
-✅ **장점**: 앱 삭제 후에도 로그 유지, 쉬운 접근  
-❌ **단점**: Android 9 이하 권한 필요
 
-<br>
+❌ **Cons:** Requires permission on Android 9 or lower
+> ✅ **장점**: 앱 삭제 후에도 로그 유지, 쉬운 접근  
+> ❌ **단점**: Android 9 이하 권한 필요
+
+<br></br>
 
 #### 🛡️ Permission request example (PUBLIC_EXTERNAL 사용 시)
 
@@ -283,7 +267,7 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
             )) { deniedPermissions ->
                 if (deniedPermissions.isEmpty()) {
-                    // 권한 허용됨
+                    // Permission Request Success
                     setupLogxWithPublicStorage()
                 } else {
                     // 권한 거부됨 - APP_EXTERNAL로 대체
@@ -297,21 +281,21 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
     }
 
     private fun setupLogxWithPublicStorage() {
-Logx.configure {
-    fileConfig {
-        saveToFile = true
-        filePath = LogxPathUtils.getPublicExternalLogPath(applicationContext)
-    }
-}
+        Logx.configure {
+            fileConfig {
+                saveToFile = true
+                filePath = LogxPathUtils.getPublicExternalLogPath(applicationContext)
+            }
+        }
     }
 
     private fun setupLogxWithAppExternalStorage() {
-Logx.configure {
-    fileConfig {
-        saveToFile = true
-        filePath = LogxPathUtils.getAppExternalLogPath(applicationContext)  // 권한 불필요!
-    }
-}
+        Logx.configure {
+            fileConfig {
+                saveToFile = true
+                filePath = LogxPathUtils.getAppExternalLogPath(applicationContext)  // 권한 불필요!
+            }
+        }
     }
 }
 ```
@@ -320,7 +304,7 @@ Logx.configure {
 
 #### 📊 Recommended options (권장 사항)
 
-| Scenario (시나리오) | Recommended storage (권장 저장소) | Reason (이유) |
+| Scenario  | Recommended storage  | Reason  |
 |:--|:--:|:--|
 | **General app logging** | `APP_EXTERNAL` | No permission + user accessible (권한 불필요 + 사용자 접근 가능) |
 | **Debugging/Development** | `APP_EXTERNAL` | No permission + fast access (권한 불필요 + 빠른 접근) |
@@ -335,13 +319,9 @@ Logx.configure {
 <br>
 </br>
 
-## Real-World Code Comparisons (실제 코드 비교)
+## Log vs Logx
 
-<br>
-</br>
-
-### 1. Caller tracing comparison (호출자 추적 비교)
-
+### 1. Caller tracing comparison
 <details>
 <summary><strong>Legacy Android Log - Stack tracing (기존 Android Log - Stack 추적)</strong></summary>
 
@@ -375,8 +355,8 @@ private fun childMethod() {
     Log.d("NORMAL", "일반적인 로그 출력 완료")
 }
 ```
-**Issues (문제점):** Complex StackTrace parsing, difficult to implement, requires many lines  
-**문제점:** 복잡한 StackTrace 파싱, 구현 어려움, 여러 라인 필요
+**Issues:** Complex StackTrace parsing, difficult to implement, requires many lines  
+> **문제점:** 복잡한 StackTrace 파싱, 구현 어려움, 여러 라인 필요
 </details>
 
 <details>
@@ -394,13 +374,12 @@ private fun childMethod() {
 }
 ```
 **Result (결과):** Automatic caller tracing with file name, line number, and class automatically included
-**결과:** 자동 호출자 추적, 파일명/라인번호, 클래스명 모두 자동!
+> **결과:** 자동 호출자 추적, 파일명/라인번호, 클래스명 모두 자동!
 </details>
 
-<br>
-</br>
+<br></br>
 
-### 2. JSON formatting comparison (JSON 포맷팅 비교)
+### 2. JSON formatting comparison
 
 <details>
 <summary><strong>Legacy Android Log - JSON formatting (기존 Android Log - JSON 포맷팅)</strong></summary>
@@ -427,8 +406,8 @@ private fun logJsonData() {
     }
 }
 ```
-**Issues (문제점):** Complex parsing, exception handling, multi-line splitting, manual error handling  
-**문제점:** 복잡한 파싱, 예외처리, 여러 라인 분할, 오류 처리 필요
+**Issues:** Complex parsing, exception handling, multi-line splitting, manual error handling  
+> **문제점:** 복잡한 파싱, 예외처리, 여러 라인 분할, 오류 처리 필요
 </details>
 
 <details>
@@ -442,14 +421,14 @@ private fun logJsonData() {
     Logx.j("JSON_DEMO", jsonData) // 끝!
 }
 ```
-**Result (결과):** Automatic JSON parsing, pretty indentation, and error handling  
-**결과:** 자동 JSON 파싱, 예쁜 들여쓰기, 오류 처리 모두 자동!
+**Result :** Automatic JSON parsing, Auto formating, and error handling  
+> **결과:** 자동 JSON 파싱, 자동 포멧, 오류 처리 모두 자동!
 </details>
 
 <br>
 </br>
 
-### 3. Thread ID tracing (Thread ID 추적)
+### 3. Thread ID tracing
 
 <details>
 <summary><strong>Legacy Android Log - Thread tracing (기존 Android Log - Thread 추적)</strong></summary>
@@ -478,8 +457,8 @@ private fun demonstrateThreadTracking() {
     }
 }
 ```
-**Issues (문제점):** Gathering thread info, handling multiple attributes, repetitive boilerplate  
-**문제점:** 현재 Thread 정보 수집, 여러 속성, 복잡한 구현
+**Issues:** Gathering thread info, handling multiple attributes, repetitive boilerplate  
+> **문제점:** 현재 Thread 정보 수집, 여러 속성, 복잡한 구현
 </details>
 
 <details>
@@ -502,7 +481,7 @@ private fun demonstrateThreadTracking() {
 <br>
 </br>
 
-### 4. File saving feature (파일 저장 기능)
+### 4. File saving feature
 
 <details>
 <summary><strong>Legacy Android Log - File saving (기존 Android Log - 파일 저장)</strong></summary>
@@ -569,8 +548,8 @@ private fun logWithFile(tag: String, message: String) {
     logFileManager.writeToFile(tag, message, "D")
 }
 ```
-**Issues (문제점):** 50+ lines of complex logic, exception handling, file management, resource cleanup  
-**문제점:** 50+ 라인의 복잡한 로직, 예외 처리, 파일관리, 리소스 해제
+**Issues:** 50+ lines of complex logic, exception handling, file management, resource cleanup  
+> **문제점:** 50+ 라인의 복잡한 로직, 예외 처리, 파일관리, 리소스 해제
 </details>
 
 <details>
@@ -586,14 +565,14 @@ private fun logWithFile(tag: String, message: String) {
     Logx.d(tag, message) // 동시에 Logcat + 파일에 자동 저장!
 }
 ```
-**Result (결과):** Automatic file creation, path management, timestamps, and storage lifecycle  
-**결과:** 파일 생성, 저장 경로, 타임스탬프, 저장 관리 모두 자동!
+**Result:** Automatic file creation, path management, timestamps, and storage lifecycle  
+> **결과:** 파일 생성, 저장 경로, 타임스탬프, 저장 관리 모두 자동!
 </details>
 
 <br>
 </br>
 
-### 5. Configuration management (설정 관리 기능)
+### 5. Configuration management
 
 <details>
 <summary><strong>Legacy Android Log - Configuration management (기존 Android Log - 설정 관리)</strong></summary>
@@ -645,8 +624,8 @@ private fun setupLogging() {
     LogConfig.setAllowedTags(listOf("IMPORTANT", "ERROR"))
 }
 ```
-**Issues (문제점):** Complex configuration, many helper methods, difficult state management  
-**문제점:** 복잡한 설정, 여러개 포함 메서드, 상태 관리 어려움
+**Issues:** Complex configuration, many helper methods, difficult state management  
+> **문제점:** 복잡한 설정, 여러개 포함 메서드, 상태 관리 어려움
 </details>
 
 <details>
@@ -675,8 +654,8 @@ private fun setupLogging() {
     }
 }
 ```
-**Result (결과):** Intuitive configuration, type safety, readable DSL, handled in one block  
-**결과:** 직관적인 설정, 타입 안전성, 가독성 좋은 DSL, 한번에 처리!
+**Result:** Intuitive configuration, type safety, readable DSL, handled in one block  
+> **결과:** 직관적인 설정, 타입 안전성, 가독성 좋은 DSL, 한번에 처리!
 </details>
 
 <br>
@@ -688,11 +667,9 @@ private fun setupLogging() {
 - **JSON formatting**: Complex parsing logic → `Logx.j()` in a single line
 - **Stack tracing**: Reading the current StackTrace → `Logx.p()` in one line
 - **Thread tracing**: Current thread details → `Logx.t()` in one line
-  <br>
-  </br>
-- **JSON 포맷팅**: 복잡한 파싱 로직 → `Logx.j()` 한 줄
-- **Stack 추적**: 현재 StackTrace → `Logx.p()` 한 줄
-- **Thread 추적**: 현재 Thread 정보 → `Logx.t()` 한 줄
+> - **JSON 포맷팅**: 복잡한 파싱 로직 → `Logx.j()` 한 줄
+> - **Stack 추적**: 현재 StackTrace → `Logx.p()` 한 줄
+> - **Thread 추적**: 현재 Thread 정보 → `Logx.t()` 한 줄
 
 <br>
 </br>
@@ -701,11 +678,9 @@ private fun setupLogging() {
 - **Automatic storage path**: Choose between Internal/External/Public locations
 - **Automated retention**: Storage lifecycle handled for each option
 - **Resource cleanup**: Hooks into Android lifecycle automatically
-  <br>
-  </br>
-- **자동 저장 경로**: Internal/External/Public 저장소 중 선택
-- **저장 관리 자동**: 저장소별 저장 라이프사이클 자동 관리
-- **리소스 해제**: Android Lifecycle과 연동 자동화
+> - **자동 저장 경로**: Internal/External/Public 저장소 중 선택
+> - **저장 관리 자동**: 저장소별 저장 라이프사이클 자동 관리
+> - **리소스 해제**: Android Lifecycle과 연동 자동화
 
 <br>
 </br>
@@ -714,11 +689,9 @@ private fun setupLogging() {
 - **DSL-based**: Kotlin DSL makes configuration readable
 - **Runtime changes**: Adjust settings at runtime with ease
 - **Type safety**: Compile-time validation of options
-  <br>
-  </br>
-- **DSL 기반**: Kotlin DSL로 가독성 좋은 설정
-- **런타임 변경**: Runtime 설정 변경 가능
-- **타입 안전성**: 컴파일 타임에 설정 검증
+> - **DSL 기반**: Kotlin DSL로 가독성 좋은 설정
+> - **런타임 변경**: Runtime 설정 변경 가능
+> - **타입 안전성**: 컴파일 타임에 설정 검증
 
 <br>
 </br>
@@ -727,32 +700,24 @@ private fun setupLogging() {
 - **Tracing utilities**: Capture caller paths and execution threads
 - **Structured output**: Render JSON data in a readable format
 - **Simplified code**: Maintainable structure with less boilerplate
-  <br>
-  </br>
-- **추적 도구**: 호출 경로, 실행 스레드 도구
-- **구조적 출력**: JSON 데이터의 체계적 출력
-- **코드 간소화**: 유지보수 편리한 구조
+> - **추적 도구**: 호출 경로, 실행 스레드 도구
+> - **구조적 출력**: JSON 데이터의 체계적 출력
+> - **코드 간소화**: 유지보수 편리한 구조
 
 <br>
 </br>
 
 ## Developer Feedback (개발자들의 후기)
 
-> **"Parent method tracing lets us grasp complex call chains at a glance!"**
->
-> **"Parent Method 추적으로 복잡한 호출 관계도 한 눈에 파악!"**
->
-> **"JSON logging was never this easy!"**
->
-> **"JSON 로깅이 이렇게 간단할 줄 몰랐어!"**
->
-> **"One line of configuration and every log is backed up automatically!"**
->
-> **"파일 저장 설정 한 줄로 모든 로그 자동 백업!"**
->
-> **"The DSL let us unify the team’s logging rules in minutes!"**
->
-> **"DSL 설정으로 팀 전체 로깅 규칙을 통일했어!"**
+- **"Parent method tracing lets us grasp complex call chains at a glance!"**
+- **"JSON logging was never this easy!"**
+- **"One line of configuration and every log is backed up automatically!"**
+- **"The DSL let us unify the team’s logging rules in minutes!"**
+
+> - **"Parent Method 추적으로 복잡한 호출 관계도 한 눈에 파악!"**
+> - **"JSON 로깅이 이렇게 간단할 줄 몰랐어!"**
+> - **"파일 저장 설정 한 줄로 모든 로그 자동 백업!"**
+> - **"DSL 설정으로 팀 전체 로깅 규칙을 통일했어!"**
 
 <br>
 </br>
@@ -762,35 +727,18 @@ private fun setupLogging() {
 **Simple UI Logx** completely transforms traditional logging.  
 It **shortens complex logging code**, **dramatically improves developer productivity**, and delivers an **intuitive logging experience**.
 
-**JSON parsing, stack tracing, thread information, file saving**—  
-every advanced capability becomes **simple and powerful** with **Logx**.
+>**Simple UI Logx**는 기존의 로깅 방식을 완전히 바꿉니다.
+>**복잡한 로깅 코드를 단축**시키고, **개발 생산성을 크게 향상**시키며 **직관적인 로깅 경험**을 제공합니다.
+
 
 Start now! ✨
 
-<br>
-</br>
 
-**Simple UI Logx**는 기존의 로깅 방식을 완전히 바꿉니다.
-**복잡한 로깅 코드를 단축**시키고, **개발 생산성을 크게 향상**시키며 **직관적인 로깅 경험**을 제공합니다.
-
-**JSON 파싱, Stack 추적, Thread 정보, 파일 저장**
-모든 고급기능이 **Logx**로, 간단하고 **강력하게**.
-
-지금 바로 시작하세요! ✨
-
-<br>
-</br>
-
-## Explore Real Implementations (실제 구현 예제보기)
+## Example Path
 
 **Live sample code (라이브 예제 코드):**
-> - Logx sample: `app/src/main/java/kr/open/library/simpleui_xml/logx/LogxActivity`
-> - Launch the sample app to see the implementation in action!
-
-<br>
-</br>
-
-> - Logx 예제: `app/src/main/java/kr/open/library/simpleui_xml/logx/LogxActivity`
+- **Logx sample:** `app/src/main/java/kr/open/library/simpleui_xml/logx/LogxActivity`
+- Launch the sample app to see the implementation in action!
 > - 실제로 앱을 구동 시켜서 실제 구현 예제를 확인해 보세요!
 
 <br>
@@ -805,42 +753,26 @@ Start now! ✨
 - Real-time storage and path switching
 - Advanced DSL-based configuration
 - Log filtering and level tooling
-  <br>
-  </br>
-- 기본 로깅 vs 고급 로깅
-- 실시간 JSON 데이터 처리
-- 실시간 Parent Method 호출 추적
-- 실시간 Thread ID 및 스레드 추적
-- 실시간 로그 파일 저장
-- 실시간 저장소 및 경로 변경
-- 고급 DSL 기반 설정
-- 로그 필터링 및 레벨 도구
+> - 기본 로깅 vs 고급 로깅
+> - 실시간 JSON 데이터 처리
+> - 실시간 Parent Method 호출 추적
+> - 실시간 Thread ID 및 스레드 추적
+> - 실시간 로그 파일 저장
+> - 실시간 저장소 및 경로 변경
+> - 고급 DSL 기반 설정
+> - 로그 필터링 및 레벨 도구
 
-
-<br>
-</br>
+<br></br>
 
 ## 🔐 Permission Requirements (파일 저장 기능 사용 시)
 
 Logx’s **default Logcat output** needs **no permissions**.  
 Only when you use the **file saving feature** might additional permissions be required depending on the storage location.
 
-<br>
-</br>
+> Logx의 **기본 로깅 기능(Logcat 출력)**은 **권한이 필요하지 않습니다**.  
+> **파일 저장 기능**을 사용할 때만 저장소 타입에 따라 권한이 필요할 수 있습니다.
 
-Logx의 **기본 로깅 기능(Logcat 출력)**은 **권한이 필요하지 않습니다**.  
-**파일 저장 기능**을 사용할 때만 저장소 타입에 따라 권한이 필요할 수 있습니다.
-
-### 📂 Permissions by storage type (저장소 타입별 권한)
-
-| Storage type (저장소 타입) | Path (경로) | Permission required (권한 필요 여부) | User access (사용자 접근) |
-|:--|:--|:--:|:--:|
-| **INTERNAL** | `/data/data/[package]/files/AppLogs` | ❌ Not required (불필요) | ❌ Not accessible (불가) |
-| **APP_EXTERNAL** | `/Android/data/[package]/files/AppLogs` | ❌ Not required (불필요) | ✅ Accessible (가능) |
-| **PUBLIC_EXTERNAL** | `/Documents/AppLogs` (API 29+)<br>`/storage/emulated/0/AppLogs` (API 28-) | ⚠️ Required only on Android 9 or lower (Android 9 이하만 필요) | ✅ Easy access (쉽게 접근) |
-
-<br>
-</br>
+<br></br>
 
 ### ⚙️ Permission setup when using PUBLIC_EXTERNAL (권한 설정, PUBLIC_EXTERNAL 사용 시)
 
@@ -852,75 +784,15 @@ Logx의 **기본 로깅 기능(Logcat 출력)**은 **권한이 필요하지 않�
     android:maxSdkVersion="28" />
 ```
 
-> **Note:**  
-> - Android 10+ (API 29+) relies on **Scoped Storage**, so no permission is needed.  
-> - `APP_EXTERNAL` is an app-specific external storage directory: **no permission required** and user-accessible (**recommended**).
->
-> **참고**:
+**Note:**  
+- Android 10+ (API 29+) relies on **Scoped Storage**, so no permission is needed.  
+- `APP_EXTERNAL` is an app-specific external storage directory: **no permission required** and user-accessible (**recommended**).
+
+> **참고**
 > - Android 10+ (API 29+)는 **Scoped Storage** 사용으로 권한 불필요
 > - `APP_EXTERNAL`는 앱 전용 외부 저장소로 **권한 불필요**하며 사용자 접근 가능 **(권장)**
 
-<br>
-</br>
-
-### 💡 Storage type selection guide (저장소 타입 선택 가이드)
-
-#### **INTERNAL (no permission required) (INTERNAL (내부 저장소) - 권한 불필요)**
-```kotlin
-Logx.configure {
-    fileConfig {
-        saveToFile = true
-        filePath = LogxPathUtils.getInternalLogPath(applicationContext)  // 기본값
-    }
-}
-```
-**Pros:** No permission required, automatically cleaned up when the app is removed
-**Cons:** Users cannot access directly
-<br>
-</br>
-**장점**: 권한 불필요, 앱 삭제 시 자동 정리  
-**단점**: 사용자가 직접 접근 불가
-
-<br>
-</br>
-
-#### **APP_EXTERNAL (no permission required, recommended) (APP_EXTERNAL (앱 전용 외부 저장소) - 권한 불필요 ✅ 권장)**
-```kotlin
-Logx.configure {
-    fileConfig {
-        saveToFile = true
-        filePath = LogxPathUtils.getAppExternalLogPath(applicationContext)
-    }
-}
-```
-**Pros:** No permission required, accessible through file manager, automatically cleaned up when the app is removed
-**Cons:** None — the best option in most scenarios
-<br>
-</br>
-**장점**: 권한 불필요, 파일 관리자로 접근 가능, 앱 삭제 시 자동 정리  
-**단점**: 없음 **(대부분의 경우 최선의 선택)**
-
-<br>
-</br>
-
-#### **PUBLIC_EXTERNAL (permission needed on Android 9 or lower) (PUBLIC_EXTERNAL (공용 외부 저장소) - Android 9 이하 권한 필요)**
-```kotlin
-Logx.configure {
-    fileConfig {
-        saveToFile = true
-        filePath = LogxPathUtils.getPublicExternalLogPath(applicationContext)
-    }
-}
-```
-**Pros:** Logs remain even after uninstall, easy access for users
-**Cons:** Requires permission on Android 9 or lower
-<br>
-</br>
-**장점**: 앱 삭제 후에도 로그 유지, 쉬운 접근  
-**단점**: Android 9 이하 권한 필요
-
-<br>
-</br>
+<br></br>
 
 ### 🛡️ Permission check and request (권한 확인 및 요청)
 
@@ -969,23 +841,5 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 }
 ```
 
-<br>
-</br>
-
-### 📊 Recommended options (권장 사항)
-
-| Scenario (시나리오) | Recommended storage (권장 저장소) | Reason (이유) |
-|:--|:--:|:--|
-| **General app logging** | `APP_EXTERNAL` | No permission needed + user accessible (권한 불필요 + 사용자 접근 가능) |
-| **Debugging/Development** | `APP_EXTERNAL` | No permission needed + fast access (권한 불필요 + 빠른 접근) |
-| **Long-term retention** | `PUBLIC_EXTERNAL` | Survives even after uninstall (앱 삭제 후에도 유지) |
-| **Security sensitive** | `INTERNAL` | Users cannot access (사용자 접근 불가) |
-
-> **Bottom line:** In most situations, choose **APP_EXTERNAL (no permission required)**! ✅
->
-> **결론**: 대부분의 경우 **APP_EXTERNAL (권한 불필요)**를 사용하는 것이 가장 좋습니다! ✅
-
-<br>
-</br>
 
 .
