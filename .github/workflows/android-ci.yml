@@ -24,6 +24,7 @@ jobs:
       tag: ${{ steps.determine.outputs.tag }}
       title: ${{ steps.determine.outputs.title }}
       body: ${{ steps.determine.outputs.body }}
+      docs_only: ${{ steps.determine.outputs.docs_only }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -32,6 +33,8 @@ jobs:
 
       - name: Analyze release metadata
         id: determine
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before || '' }}
         run: |
           set -euo pipefail
           LOG_FILE="${GITHUB_WORKSPACE}/initialize-check.log"
@@ -51,15 +54,64 @@ jobs:
             FOUND=false
           fi
 
+          TARGET_BASE="${BASE_SHA}"
+          if [ -z "$TARGET_BASE" ]; then
+            if git rev-parse HEAD^ >/dev/null 2>&1; then
+              TARGET_BASE=$(git rev-parse HEAD^)
+            else
+              TARGET_BASE=""
+            fi
+          fi
+
+          echo "Calculating changed files against base '${TARGET_BASE:-<unknown>}'..."
+          if [ -n "$TARGET_BASE" ]; then
+            mapfile -t CHANGED_FILES < <(git diff --name-only "$TARGET_BASE" HEAD)
+          else
+            mapfile -t CHANGED_FILES < <(git ls-tree --name-only -r HEAD)
+          fi
+
+          DOCS_ONLY=false
+          if [ "${#CHANGED_FILES[@]}" -gt 0 ]; then
+            DOCS_ONLY=true
+            for file in "${CHANGED_FILES[@]}"; do
+              if [[ "$file" =~ (^|/)README[^/]*\.md$ ]]; then
+                continue
+              fi
+              if [[ "$file" =~ ^example_gif/ ]]; then
+                continue
+              fi
+              DOCS_ONLY=false
+              break
+            done
+          fi
+          echo "Docs-only commit detected? ${DOCS_ONLY}"
+
           if [ "$FOUND" = false ]; then
+            if [ "$DOCS_ONLY" = true ]; then
+              echo "Doc-only commit without [release] block detected. Skipping downstream jobs."
+              {
+                echo "should_release=false"
+                echo "tag="
+                echo "title="
+                echo "body="
+                echo "docs_only=true"
+              } >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
             echo "No [release] block found in HEAD commit. Skipping release."
             {
               echo "should_release=false"
               echo "tag="
               echo "title="
               echo "body="
+              echo "docs_only=false"
             } >> "$GITHUB_OUTPUT"
             exit 0
+          fi
+
+          if [ "$DOCS_ONLY" = true ]; then
+            echo "Doc-only changes found but release metadata detected. Continuing CI."
+            DOCS_ONLY=false
           fi
 
           echo "Release block detected. Parsing metadata..."
@@ -105,6 +157,7 @@ jobs:
             echo "body<<EOF"
             echo "$DESCRIBE"
             echo "EOF"
+            echo "docs_only=false"
           } >> "$GITHUB_OUTPUT"
 
       - name: Report failure (Initialize Check)
@@ -132,6 +185,7 @@ jobs:
 
   unit-test:
     name: Unit Tests
+    if: ${{ needs.initialize-check.outputs.docs_only != 'true' }}
     runs-on: ubuntu-latest
     needs: initialize-check
     permissions:
@@ -203,6 +257,7 @@ jobs:
 
   robolectric-test:
     name: Robolectric Tests
+    if: ${{ needs.initialize-check.outputs.docs_only != 'true' }}
     runs-on: ubuntu-latest
     needs: unit-test  # unit-test가 성공해야 실행
     permissions:
@@ -274,6 +329,7 @@ jobs:
 
   build:
     name: Build and Lint Check
+    if: ${{ needs.initialize-check.outputs.docs_only != 'true' }}
     runs-on: ubuntu-latest
     needs: robolectric-test  # robolectric-test가 성공해야 실행
     permissions:

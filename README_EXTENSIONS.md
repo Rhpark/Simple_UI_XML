@@ -1,7 +1,10 @@
-# 📦 Simple UI Extensions & Style vs Pure Android - Complete Comparison Guide
+# 📦 Simple UI Extensions & Style vs Plain Android - Complete Comparison Guide
 > **"Simple UI Extensions & Style vs 순수 Android - 완벽 비교 가이드"**
+
+
 ![extensions_style_example.gif](example%2Fextensions_style_example.gif)
-**"Achieve more with shorter extension code!"** See at a glance how Simple UI Extensions transform your workflow compared to pure Android.
+
+**"Achieve more with shorter extension code!"** See at a glance how Simple UI Extensions transform your workflow compared to Plain Android.
 
 > **"더 짧은 코드로 Extensions을!"** 순수 Android 대비 Simple UI Extensions이 주는 체감 차이를 한눈에 확인하세요.
 
@@ -74,7 +77,7 @@
 <br>
 </br>
 
-## 📦 Complete Comparison: Extensions & Style vs Pure Android (완벽 비교 목록: Extensions & Style vs 순수 Android)
+## 📦 Complete Comparison: Extensions & Style vs Plain Android (완벽 비교 목록: Extensions & Style vs 순수 Android)
 
 ### 📂 **Available Extension Packages (제공되는 Extensions 패키지)** — organized by package
 
@@ -160,7 +163,7 @@
 ### 1. Toast/SnackBar Display Comparison (첫째: Toast/SnackBar 표시 비교)
 
 <details>
-<summary><strong>Pure Android — builder pattern (순수 Android - Builder 패턴)</strong></summary>
+<summary><strong>Plain Android — builder pattern (순수 Android - Builder 패턴)</strong></summary>
 
 ```kotlin
 class MainActivity : AppCompatActivity() {
@@ -263,7 +266,7 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 ### 2. TextView Styling Comparison (둘째: TextView 스타일링 비교)
 
 <details>
-<summary><strong>Pure Android — manual Paint/Typeface handling (순수 Android - Paint/Typeface 직접 설정)</strong></summary>
+<summary><strong>Plain Android — manual Paint/Typeface handling (순수 Android - Paint/Typeface 직접 설정)</strong></summary>
 
 ```kotlin
 class MainActivity : AppCompatActivity() {
@@ -374,7 +377,7 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 ### 3. Unit Conversion (dp ↔ px, sp ↔ px) Comparison (셋째: 단위 변환 (dp ↔ px, sp ↔ px) 비교)
 
 <details>
-<summary><strong>Pure Android — repetitive TypedValue coding (순수 Android - TypedValue 반복 코딩)</strong></summary>
+<summary><strong>Plain Android — repetitive TypedValue coding (순수 Android - TypedValue 반복 코딩)</strong></summary>
 
 ```kotlin
 class MainActivity : AppCompatActivity() {
@@ -471,7 +474,7 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 ### 4. String Validation (Email/Numeric) Comparison (넷째: 문자열 검증 (이메일/숫자) 비교)
 
 <details>
-<summary><strong>Pure Android — manual Patterns matching (순수 Android - Patterns 수동 매칭)</strong></summary>
+<summary><strong>Plain Android — manual Patterns matching (순수 Android - Patterns 수동 매칭)</strong></summary>
 
 ```kotlin
 class MainActivity : AppCompatActivity() {
@@ -763,7 +766,7 @@ val userId = intent.extras?.getValue("user_id", -1) ?: -1
 
 ## 🎯 Conclusion: Essential Tool for Android Developers (결론: Android 개발자를 위한 필수 도구)
 
-**Simple UI Extensions** was created to solve the **repetition and inconvenience** of pure Android development.
+**Simple UI Extensions** was created to solve the **repetition and inconvenience** of Plain Android development.
 >**Simple UI Extensions**은 순수 Android 개발의 **반복과 불편함**을 해결하기 위해 만들어졌습니다.
 
 ✅ **Extensions comparison** — simplify repetitive code/ **Extensions 비교** - 반복 코드를 간단히!
