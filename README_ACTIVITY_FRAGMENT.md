@@ -203,6 +203,7 @@ onRequestPermissions(
 | Change both Bars simultaneously | Call each separately |  `setSystemBarsColor(color, isLightBars)` |
 | Query Insets values | Need decorView calculation | `statusBarHeight`, `navigationBarHeight` properties |
 | API 35+ support | Need to insert custom view | Already implemented inside RootActivity |
+
 <br></br>
 
 ## 🧩 Base Class Features Summary (베이스 클래스 기능 정리)
