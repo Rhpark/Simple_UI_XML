@@ -148,12 +148,8 @@ kover {
 
                 classes("kr.open.library.simple_ui.system_manager.info.location.LocationStateInfo*")
                 classes("kr.open.library.simple_ui.system_manager.info.network.connectivity.NetworkConnectivityInfo*")
-                classes("kr.open.library.simple_ui.system_manager.info.network.connectivity.callback.NetworkStateCallback*")
                 classes("kr.open.library.simple_ui.system_manager.info.network.sim.SimInfo*")
                 classes("kr.open.library.simple_ui.system_manager.info.network.telephony.TelephonyInfo*")
-                classes("kr.open.library.simple_ui.system_manager.info.network.telephony.callback.CommonTelephonyCallback*")
-                classes("kr.open.library.simple_ui.system_manager.info.network.telephony.data.current.CurrentServiceState*")
-                classes("kr.open.library.simple_ui.system_manager.info.network.telephony.data.current.CurrentSignalStrength*")
             }
         }
     }

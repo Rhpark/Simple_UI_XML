@@ -9,6 +9,7 @@ import android.graphics.Bitmap
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.test.core.app.ApplicationProvider
+import kr.open.library.simple_ui.logcat.Logx
 import kr.open.library.simple_ui.system_manager.controller.notification.SimpleNotificationController
 import kr.open.library.simple_ui.system_manager.controller.notification.vo.NotificationStyle
 import kr.open.library.simple_ui.system_manager.controller.notification.vo.SimpleNotificationOptionVo
@@ -105,6 +106,20 @@ class SimpleNotificationControllerRobolectricTest {
         assertEquals(channelName, registeredChannel.name.toString())
         assertEquals(importance, registeredChannel.importance)
         assertEquals(description, registeredChannel.description)
+    }
+
+    @Test
+    @Config(sdk = [Build.VERSION_CODES.P])
+    fun createChannel_withoutDescription_leavesDescriptionNull() {
+        val channelId = "no_desc_channel"
+        controller.createChannel(channelId, "No Desc", NotificationManager.IMPORTANCE_DEFAULT, null)
+
+        val registeredChannel = controller.notificationManager.getNotificationChannel(channelId)
+        assertNotNull(registeredChannel)
+        assertEquals(channelId, registeredChannel.id)
+        assertEquals("No Desc", registeredChannel.name.toString())
+        assertEquals(NotificationManager.IMPORTANCE_DEFAULT, registeredChannel.importance)
+        assertEquals(null, registeredChannel.description)
     }
 
     @Test
@@ -424,6 +439,28 @@ class SimpleNotificationControllerRobolectricTest {
     }
 
     @Test
+    fun cleanup_whenAwaitTerminationReturnsFalse_callsShutdownNow() {
+        val scheduler = AwaitFalseScheduler()
+        controller.setCleanupSchedulerForTest(scheduler)
+
+        controller.cleanup()
+
+        assertTrue(scheduler.shutdownNowCalled)
+    }
+
+    @Test
+    fun cleanup_whenInterruptedExceptionOccurs_resetsThreadInterruptFlag() {
+        val scheduler = InterruptScheduler()
+        controller.setCleanupSchedulerForTest(scheduler)
+        assertFalse(Thread.currentThread().isInterrupted)
+
+        controller.cleanup()
+
+        assertTrue(scheduler.shutdownNowCalled)
+        assertTrue("Thread interrupt flag should be set", Thread.interrupted())
+    }
+
+    @Test
     @Config(sdk = [Build.VERSION_CODES.P])
     fun progressCleanupScheduler_removesStaleEntries() {
         val option = SimpleProgressNotificationOptionVo(
@@ -456,6 +493,65 @@ class SimpleNotificationControllerRobolectricTest {
             recordingExecutor.runScheduledTask()
 
             assertFalse(progressBuilders.containsKey(30))
+        }
+    }
+
+    @Test
+    @Config(sdk = [Build.VERSION_CODES.P])
+    fun progressCleanupScheduler_handlesExceptionsInsideTask() {
+        val option = SimpleProgressNotificationOptionVo(
+            notificationId = 31,
+            progressPercent = 10
+        )
+
+        mockStatic(Executors::class.java).use { executorsMock ->
+            val recordingExecutor = RecordingScheduledExecutor()
+            executorsMock.`when`<ScheduledExecutorService> { Executors.newSingleThreadScheduledExecutor() }
+                .thenReturn(recordingExecutor)
+
+            controller.showProgressNotification(option)
+
+            val progressMapField = SimpleNotificationController::class.java.getDeclaredField("progressBuilders").apply {
+                isAccessible = true
+            }
+            @Suppress("UNCHECKED_CAST")
+            val progressBuilders = progressMapField.get(controller) as MutableMap<Int, Any>
+            val info = requireNotNull(progressBuilders[31])
+            val infoClass = info::class.java
+            val builderField = infoClass.getDeclaredField("builder").apply { isAccessible = true }
+            val builder = builderField.get(info) as NotificationCompat.Builder
+            val constructor = infoClass.getDeclaredConstructor(NotificationCompat.Builder::class.java, Long::class.javaPrimitiveType).apply {
+                isAccessible = true
+            }
+            val staleTime = System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(31)
+            progressBuilders[31] = constructor.newInstance(builder, staleTime)
+
+            mockStatic(Logx::class.java).use { logxMock ->
+                logxMock.`when`<Unit> { Logx.d("Removed stale progress notification: 31") }
+                    .thenThrow(RuntimeException("boom"))
+                recordingExecutor.runScheduledTask()
+            }
+
+            assertFalse(progressBuilders.containsKey(31))
+        }
+    }
+
+    @Test
+    @Config(sdk = [Build.VERSION_CODES.P])
+    fun progressCleanupScheduler_whenExecutorCreationFails_doesNotStart() {
+        val option = SimpleProgressNotificationOptionVo(
+            notificationId = 32,
+            progressPercent = 5
+        )
+
+        mockStatic(Executors::class.java).use { executorsMock ->
+            executorsMock.`when`<ScheduledExecutorService> { Executors.newSingleThreadScheduledExecutor() }
+                .thenThrow(RuntimeException("boom"))
+
+            val result = controller.showProgressNotification(option)
+
+            assertTrue(result)
+            assertEquals(null, controller.getCleanupSchedulerForTest())
         }
     }
 
@@ -661,4 +757,90 @@ private object ImmediateScheduledFuture : ScheduledFuture<Unit> {
     override fun isDone(): Boolean = true
     override fun get(): Unit = Unit
     override fun get(timeout: Long, unit: TimeUnit): Unit = Unit
+}
+
+private fun SimpleNotificationController.setCleanupSchedulerForTest(executor: ScheduledExecutorService?) {
+    val field = SimpleNotificationController::class.java.getDeclaredField("cleanupScheduler").apply { isAccessible = true }
+    field.set(this, executor)
+}
+
+private fun SimpleNotificationController.getCleanupSchedulerForTest(): ScheduledExecutorService? {
+    val field = SimpleNotificationController::class.java.getDeclaredField("cleanupScheduler").apply { isAccessible = true }
+    @Suppress("UNCHECKED_CAST")
+    return field.get(this) as? ScheduledExecutorService
+}
+
+private open class AwaitFalseScheduler : ScheduledExecutorService {
+    var shutdownCalled = false
+    var shutdownNowCalled = false
+    override fun shutdown() {
+        shutdownCalled = true
+    }
+
+    override fun shutdownNow(): MutableList<Runnable> {
+        shutdownCalled = true
+        shutdownNowCalled = true
+        return mutableListOf()
+    }
+
+    override fun isShutdown(): Boolean = shutdownCalled
+
+    override fun isTerminated(): Boolean = shutdownCalled
+
+    override fun awaitTermination(timeout: Long, unit: TimeUnit): Boolean = false
+
+    override fun execute(command: Runnable) {
+        command.run()
+    }
+
+    override fun <V : Any?> submit(task: Callable<V>): Future<V> =
+        throw UnsupportedOperationException()
+
+    override fun submit(task: Runnable): Future<*> =
+        throw UnsupportedOperationException()
+
+    override fun <V : Any?> submit(task: Runnable, result: V): Future<V> =
+        throw UnsupportedOperationException()
+
+    override fun <T : Any?> schedule(callable: Callable<T>, delay: Long, unit: TimeUnit): ScheduledFuture<T> =
+        throw UnsupportedOperationException()
+
+    override fun schedule(command: Runnable, delay: Long, unit: TimeUnit): ScheduledFuture<*> =
+        throw UnsupportedOperationException()
+
+    override fun scheduleAtFixedRate(
+        command: Runnable,
+        initialDelay: Long,
+        period: Long,
+        unit: TimeUnit
+    ): ScheduledFuture<*> = throw UnsupportedOperationException()
+
+    override fun scheduleWithFixedDelay(
+        command: Runnable,
+        initialDelay: Long,
+        delay: Long,
+        unit: TimeUnit
+    ): ScheduledFuture<*> = throw UnsupportedOperationException()
+
+    override fun <T : Any?> invokeAll(tasks: Collection<Callable<T>>): MutableList<Future<T>> =
+        throw UnsupportedOperationException()
+
+    override fun <T : Any?> invokeAll(
+        tasks: Collection<Callable<T>>,
+        timeout: Long,
+        unit: TimeUnit
+    ): MutableList<Future<T>> = throw UnsupportedOperationException()
+
+    override fun <T : Any?> invokeAny(tasks: Collection<Callable<T>>): T =
+        throw UnsupportedOperationException()
+
+    override fun <T : Any?> invokeAny(tasks: Collection<Callable<T>>, timeout: Long, unit: TimeUnit): T =
+        throw UnsupportedOperationException()
+}
+
+private class InterruptScheduler : AwaitFalseScheduler() {
+    @Throws(InterruptedException::class)
+    override fun awaitTermination(timeout: Long, unit: TimeUnit): Boolean {
+        throw InterruptedException("forced")
+    }
 }

@@ -34,22 +34,6 @@ class FloatingFixedViewTest {
 
     @Test
     @Config(sdk = [Build.VERSION_CODES.R])
-    fun `params fall back to system alert on very old devices`() {
-        val original = Build.VERSION.SDK_INT
-        ReflectionHelpers.setStaticField(Build.VERSION::class.java, "SDK_INT", Build.VERSION_CODES.JELLY_BEAN_MR2)
-        try {
-            val view = View(context)
-            val floatingView = FloatingFixedView(view, startX = 0, startY = 0)
-
-            val params = floatingView.params
-            assertEquals(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT, params.type)
-        } finally {
-            ReflectionHelpers.setStaticField(Build.VERSION::class.java, "SDK_INT", original)
-        }
-    }
-
-    @Test
-    @Config(sdk = [Build.VERSION_CODES.R])
     fun `getRect uses measured width when view has not been laid out`() {
         val view = View(context)
         val floatingView = FloatingFixedView(view, startX = 5, startY = 7)
@@ -63,5 +47,23 @@ class FloatingFixedViewTest {
         assertEquals(7, rect.top)
         assertEquals(85, rect.right)
         assertEquals(47, rect.bottom)
+    }
+
+    @Test
+    @Config(sdk = [Build.VERSION_CODES.R])
+    fun `getRect uses actual width and height when view is laid out`() {
+        val view = View(context)
+        val floatingView = FloatingFixedView(view, startX = 10, startY = 15)
+
+        val widthSpec = View.MeasureSpec.makeMeasureSpec(100, View.MeasureSpec.EXACTLY)
+        val heightSpec = View.MeasureSpec.makeMeasureSpec(50, View.MeasureSpec.EXACTLY)
+        view.measure(widthSpec, heightSpec)
+        view.layout(0, 0, 100, 50)
+
+        val rect = floatingView.getRect()
+        assertEquals(10, rect.left)
+        assertEquals(15, rect.top)
+        assertEquals(110, rect.right)
+        assertEquals(65, rect.bottom)
     }
 }

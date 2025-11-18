@@ -64,4 +64,32 @@ class FloatingDragViewTest {
             recordedPhases
         )
     }
+
+    @Test
+    fun `updateCollisionState without callbacks does not crash`() {
+        val view = View(context)
+        val dragView = FloatingDragView(
+            view = view,
+            startX = 0,
+            startY = 0
+        )
+
+        assertTrue(dragView.updateCollisionState(FloatingViewTouchType.TOUCH_DOWN, FloatingViewCollisionsType.OCCURING))
+        assertEquals(
+            FloatingViewTouchType.TOUCH_DOWN to FloatingViewCollisionsType.OCCURING,
+            dragView.sfCollisionStateFlow.value
+        )
+
+        assertTrue(dragView.updateCollisionState(FloatingViewTouchType.TOUCH_MOVE, FloatingViewCollisionsType.OCCURING))
+        assertEquals(
+            FloatingViewTouchType.TOUCH_MOVE to FloatingViewCollisionsType.OCCURING,
+            dragView.sfCollisionStateFlow.value
+        )
+
+        assertTrue(dragView.updateCollisionState(FloatingViewTouchType.TOUCH_UP, FloatingViewCollisionsType.UNCOLLISIONS))
+        assertEquals(
+            FloatingViewTouchType.TOUCH_UP to FloatingViewCollisionsType.UNCOLLISIONS,
+            dragView.sfCollisionStateFlow.value
+        )
+    }
 }

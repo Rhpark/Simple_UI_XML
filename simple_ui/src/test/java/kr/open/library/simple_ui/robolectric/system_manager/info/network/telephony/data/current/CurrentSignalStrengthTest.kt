@@ -1,15 +1,10 @@
 package kr.open.library.simple_ui.robolectric.system_manager.info.network.telephony.data.current
 
 import android.os.Build
-import android.telephony.CellSignalStrengthCdma
-import android.telephony.CellSignalStrengthGsm
-import android.telephony.CellSignalStrengthLte
-import android.telephony.CellSignalStrengthNr
-import android.telephony.CellSignalStrengthTdscdma
-import android.telephony.CellSignalStrengthWcdma
-import android.telephony.SignalStrength
+import android.telephony.*
 import kr.open.library.simple_ui.system_manager.info.network.telephony.data.current.CurrentSignalStrength
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito.doReturn
@@ -42,5 +37,32 @@ class CurrentSignalStrengthTest {
         assertEquals(1, current.cellDataGsmList.size)
         assertEquals(1, current.cellDataTdscdmaList.size)
         assertEquals(1, current.cellDataNrList.size)
+    }
+
+    @Test
+    fun `handles empty signal list`() {
+        val signalStrength = mock(SignalStrength::class.java)
+        doReturn(emptyList<CellSignalStrength>()).`when`(signalStrength).cellSignalStrengths
+
+        val current = CurrentSignalStrength(signalStrength)
+
+        assertTrue(current.cellDataLteList.isEmpty())
+        assertTrue(current.cellDataNrList.isEmpty())
+    }
+
+    @Test
+    fun `toResString contains each captured list`() {
+        val signalStrength = mock(SignalStrength::class.java)
+        val lte = mock(CellSignalStrengthLte::class.java)
+        val gsm = mock(CellSignalStrengthGsm::class.java)
+        doReturn(listOf(lte, gsm)).`when`(signalStrength).cellSignalStrengths
+
+        val current = CurrentSignalStrength(signalStrength)
+
+        val result = current.toResString()
+        assertTrue(result.contains("cellDataLteList"))
+        assertTrue(result.contains("cellDataGsmList"))
+        assertTrue(result.contains(current.cellDataLteList.first().toString()))
+        assertTrue(result.contains(current.cellDataGsmList.first().toString()))
     }
 }

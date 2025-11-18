@@ -724,6 +724,12 @@ class IfInlineTest {
             trueInput = 9L,
             expectedTrueResult = "long-neq-single"
         ) { value, action -> value.ifNotEquals(7L) { action() } }
+
+        assertSingleConditionalBranches(
+            falseInput = 10.toShort(),
+            trueInput = 15.toShort(),
+            expectedTrueResult = "short-neq-single"
+        ) { value, action -> value.ifNotEquals(10.toShort()) { action() } }
     }
 
     @Test

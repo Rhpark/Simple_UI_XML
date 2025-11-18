@@ -47,32 +47,12 @@ public open class FloatingFixedView(
      * @return 플로팅 레이아웃 파라미터 / Floating layout parameters
      */
     private fun getFloatingLayoutParam(): LayoutParams = safeCatch(defaultValue = getDefaultLayoutParam()) {
-        checkSdkVersion(Build.VERSION_CODES.O,
-            positiveWork = {
-                // Android O (API 26) 이상: TYPE_APPLICATION_OVERLAY 사용 (권장)
-                // Android O+ (API 26+): Use TYPE_APPLICATION_OVERLAY (recommended)
-                LayoutParams(
-                    LayoutParams.WRAP_CONTENT,
-                    LayoutParams.WRAP_CONTENT,
-                    LayoutParams.TYPE_APPLICATION_OVERLAY,
-                    LayoutParams.FLAG_NOT_FOCUSABLE,
-                    PixelFormat.TRANSLUCENT
-                )
-            },
-            negativeWork = {
-                // Android O 미만: 보안을 위해 TYPE_APPLICATION_OVERLAY 우선 사용
-                // Below Android O: Prefer TYPE_APPLICATION_OVERLAY for security
-                // 참고: TYPE_SYSTEM_ALERT는 보안 위험이 있으므로 최소한의 권한만 사용
-                LayoutParams(
-                    LayoutParams.WRAP_CONTENT,
-                    LayoutParams.WRAP_CONTENT,
-                    checkSdkVersion(Build.VERSION_CODES.KITKAT,
-                        positiveWork = { LayoutParams.TYPE_APPLICATION_OVERLAY },
-                        negativeWork = { LayoutParams.TYPE_SYSTEM_ALERT }),
-                    LayoutParams.FLAG_NOT_FOCUSABLE,
-                    PixelFormat.TRANSLUCENT
-                )
-            }
+        LayoutParams(
+            LayoutParams.WRAP_CONTENT,
+            LayoutParams.WRAP_CONTENT,
+            LayoutParams.TYPE_APPLICATION_OVERLAY,
+            LayoutParams.FLAG_NOT_FOCUSABLE,
+            PixelFormat.TRANSLUCENT
         )
     }
 

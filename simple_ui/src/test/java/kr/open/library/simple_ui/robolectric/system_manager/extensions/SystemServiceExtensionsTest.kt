@@ -19,6 +19,7 @@ import android.telephony.euicc.EuiccManager
 import androidx.test.core.app.ApplicationProvider
 import kr.open.library.simple_ui.system_manager.extensions.getAlarmManager
 import kr.open.library.simple_ui.system_manager.extensions.getBatteryManager
+import kr.open.library.simple_ui.system_manager.extensions.getAlarmController
 import kr.open.library.simple_ui.system_manager.extensions.getBatteryStateInfo
 import kr.open.library.simple_ui.system_manager.extensions.getBluetoothManager
 import kr.open.library.simple_ui.system_manager.extensions.getConnectivityManager
@@ -88,6 +89,7 @@ class SystemServiceExtensionsTest {
         val notificationController = application.getNotificationController(SimpleNotificationType.ACTIVITY)
         val displayInfo = application.getDisplayInfo()
         val vibratorController = application.getVibratorController()
+        val alarmController = application.getAlarmController()
 
         assertNotNull(wifiController)
         assertNotNull(softKeyboardController)
@@ -97,6 +99,7 @@ class SystemServiceExtensionsTest {
         assertNotNull(notificationController)
         assertNotNull(displayInfo)
         assertNotNull(vibratorController)
+        assertNotNull(alarmController)
     }
 
     @Test

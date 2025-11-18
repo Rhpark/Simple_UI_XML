@@ -1,16 +1,10 @@
 package kr.open.library.simple_ui.robolectric.system_manager.info.network.telephony.data.current
 
 import android.os.Build
-import android.telephony.CellIdentityCdma
-import android.telephony.CellIdentityGsm
-import android.telephony.CellIdentityLte
-import android.telephony.CellIdentityNr
-import android.telephony.CellIdentityTdscdma
-import android.telephony.CellIdentityWcdma
-import android.telephony.NetworkRegistrationInfo
-import android.telephony.ServiceState
+import android.telephony.*
 import kr.open.library.simple_ui.system_manager.info.network.telephony.data.current.CurrentServiceState
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito.doReturn
@@ -49,5 +43,40 @@ class CurrentServiceStateTest {
         val info = mock(NetworkRegistrationInfo::class.java)
         doReturn(identity).`when`(info).cellIdentity
         return info
+    }
+
+    @Test
+    fun `accessors expose registration info values`() {
+        val serviceState = mock(ServiceState::class.java)
+        val info = mock(NetworkRegistrationInfo::class.java)
+        doReturn(listOf(info)).`when`(serviceState).networkRegistrationInfoList
+        doReturn(NetworkRegistrationInfo.DOMAIN_PS).`when`(info).domain
+        doReturn(AccessNetworkConstants.TRANSPORT_TYPE_WLAN).`when`(info).transportType
+        doReturn(TelephonyManager.NETWORK_TYPE_LTE).`when`(info).accessNetworkTechnology
+        doReturn(listOf(NetworkRegistrationInfo.SERVICE_TYPE_DATA)).`when`(info).availableServices
+
+        val current = CurrentServiceState(serviceState)
+
+        assertEquals(info, current.getNetworkRegistrationInfo(0))
+        assertEquals(NetworkRegistrationInfo.DOMAIN_PS, current.getDomain(0))
+        assertEquals(AccessNetworkConstants.TRANSPORT_TYPE_WLAN, current.getTransportType(0))
+        assertEquals(TelephonyManager.NETWORK_TYPE_LTE, current.getAccessNetworkTechnology(0))
+        assertEquals(listOf(NetworkRegistrationInfo.SERVICE_TYPE_DATA), current.getAvailableServices(0))
+    }
+
+    @Test
+    fun `toResString contains populated lists`() {
+        val serviceState = mock(ServiceState::class.java)
+        val gsmInfo = mockNetworkRegistrationInfo(mock(CellIdentityGsm::class.java))
+        val lteInfo = mockNetworkRegistrationInfo(mock(CellIdentityLte::class.java))
+        doReturn(listOf(gsmInfo, lteInfo)).`when`(serviceState).networkRegistrationInfoList
+
+        val current = CurrentServiceState(serviceState)
+
+        val result = current.toResString()
+        assertTrue(result.contains("cellDataGsmList"))
+        assertTrue(result.contains("cellDataLteList"))
+        assertTrue(result.contains(current.cellDataGsmList.first().toString()))
+        assertTrue(result.contains(current.cellDataLteList.first().toString()))
     }
 }

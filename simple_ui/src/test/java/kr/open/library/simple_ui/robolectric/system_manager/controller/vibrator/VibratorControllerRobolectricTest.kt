@@ -114,6 +114,21 @@ class VibratorControllerRobolectricTest {
     }
 
     @Test
+    @Config(sdk = [Build.VERSION_CODES.Q])
+    fun vibrate_preS_usesLegacyVibrator() {
+        grantVibratePermission()
+        val controller = VibratorController(application)
+
+        val result = controller.vibrate(90L)
+
+        assertTrue(result)
+        val effectCaptor = ArgumentCaptor.forClass(VibrationEffect::class.java)
+        verify(vibrator).vibrate(effectCaptor.capture())
+        assertNotNull(effectCaptor.value)
+        verifyNoInteractions(vibratorManager)
+    }
+
+    @Test
     @Config(sdk = [Build.VERSION_CODES.S])
     fun createWaveform_s_usesVibratorManager() {
         grantVibratePermission()
@@ -129,6 +144,21 @@ class VibratorControllerRobolectricTest {
         verify(vibratorManager).vibrate(combinedCaptor.capture())
         assertNotNull(combinedCaptor.value)
         verifyNoInteractions(vibrator)
+    }
+
+    @Test
+    @Config(sdk = [Build.VERSION_CODES.Q])
+    fun createWaveform_preS_usesLegacyVibrator() {
+        grantVibratePermission()
+        val controller = VibratorController(application)
+
+        val result = controller.createWaveform(longArrayOf(0L, 5L), intArrayOf(0, 128))
+
+        assertTrue(result)
+        val effectCaptor = ArgumentCaptor.forClass(VibrationEffect::class.java)
+        verify(vibrator).vibrate(effectCaptor.capture())
+        assertNotNull(effectCaptor.value)
+        verifyNoInteractions(vibratorManager)
     }
 
     @Test
@@ -153,6 +183,36 @@ class VibratorControllerRobolectricTest {
         val controller = VibratorController(application)
 
         val result = controller.createPredefined(VibrationEffect.EFFECT_CLICK)
+
+        assertTrue(result)
+        val combinedCaptor = ArgumentCaptor.forClass(CombinedVibration::class.java)
+        verify(vibratorManager).vibrate(combinedCaptor.capture())
+        assertNotNull(combinedCaptor.value)
+        verifyNoInteractions(vibrator)
+    }
+
+    @Test
+    @Config(sdk = [Build.VERSION_CODES.Q])
+    fun createPredefined_preS_usesLegacyVibrator() {
+        grantVibratePermission()
+        val controller = VibratorController(application)
+
+        val result = controller.createPredefined(VibrationEffect.EFFECT_CLICK)
+
+        assertTrue(result)
+        val effectCaptor = ArgumentCaptor.forClass(VibrationEffect::class.java)
+        verify(vibrator).vibrate(effectCaptor.capture())
+        assertNotNull(effectCaptor.value)
+        verifyNoInteractions(vibratorManager)
+    }
+
+    @Test
+    @Config(sdk = [Build.VERSION_CODES.S])
+    fun vibratePattern_s_usesVibratorManager() {
+        grantVibratePermission()
+        val controller = VibratorController(application)
+
+        val result = controller.vibratePattern(longArrayOf(0L, 30L, 60L), repeat = 0)
 
         assertTrue(result)
         val combinedCaptor = ArgumentCaptor.forClass(CombinedVibration::class.java)

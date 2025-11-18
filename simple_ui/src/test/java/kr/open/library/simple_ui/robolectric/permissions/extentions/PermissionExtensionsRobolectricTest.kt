@@ -622,4 +622,26 @@ class PermissionExtensionsRobolectricTest {
             assertTrue(context.hasPermission(Manifest.permission.POST_NOTIFICATIONS))
         }
     }
+
+    @Test
+    @Config(sdk = [Build.VERSION_CODES.S])
+    fun hasPermission_scheduleExactAlarm_handlesMissingAlarmManagerGracefully() {
+        doReturn(null).`when`(context).getSystemService(Context.ALARM_SERVICE)
+
+        assertFalse(context.hasPermission(Manifest.permission.SCHEDULE_EXACT_ALARM))
+    }
+
+    @Test
+    fun hasPermission_accessNotificationPolicy_handlesMissingNotificationManagerGracefully() {
+        doReturn(null).`when`(context).getSystemService(Context.NOTIFICATION_SERVICE)
+
+        assertFalse(context.hasPermission(Manifest.permission.ACCESS_NOTIFICATION_POLICY))
+    }
+
+    @Test
+    fun hasUsageStatsPermission_handlesMissingAppOpsManagerGracefully() {
+        doReturn(null).`when`(context).getSystemService(Context.APP_OPS_SERVICE)
+
+        assertFalse(context.hasUsageStatsPermission())
+    }
 }

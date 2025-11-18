@@ -57,4 +57,16 @@ class FloatingDragViewConfigTest {
 
         assertFalse(config.getIsDragging())
     }
+
+    @Test
+    fun `vertical movement beyond threshold sets dragging`() {
+        val view = View(context)
+        val dragView = FloatingDragView(view, startX = 0, startY = 0)
+        val config = FloatingDragViewConfig(dragView)
+
+        config.onTouchDown(5f, 5f)
+        config.onTouchMove(10f, 40f) // X below threshold, Y beyond threshold
+
+        assertTrue(config.getIsDragging())
+    }
 }
