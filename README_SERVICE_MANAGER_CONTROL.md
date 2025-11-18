@@ -1,7 +1,6 @@
-# System Service Manager Controller vs Pure Android - Complete Comparison Guide (System Service Manager Controller vs 순수 Android - 완벽 비교 가이드)
+# System Service Manager Controller vs Plain Android - Complete Comparison Guide (System Service Manager Controller vs 순수 Android - 완벽 비교 가이드)
 
-> **"Simplify complex System Services into a single line!"** See the immediate difference Simple UI Controller makes compared to traditional Android System Service usage.
->
+**"Simplify complex System Services into a single line!"** See the immediate difference Simple UI Controller makes compared to traditional Android System Service usage.
 > **"복잡한 System Service를 한 줄로 끝내자!"** 기존 Android System Service 사용 대비 Simple UI Controller가 주는 체감 차이를 한눈에 확인하세요.
 
 <br>
@@ -9,78 +8,60 @@
 
 ## 🔎 At a Glance (한눈 비교)
 
-| Category (항목) | Pure Android (순수 Android) | Simple UI Controller | Impact (개선 효과) |
-|:--|:--:|:--:|:--:|
-| **SoftKeyboard Control (키보드 제어)** | `getSystemService()`<br>`showSoftInput()` calls (호출) | `getSoftKeyboardController().show()` | **Dozens of lines → One line (수십 줄 → 한 줄)** |
-| **Vibrator Control (진동 제어)** | SDK version branching + 3 APIs (SDK 버전 분기 + 3가지 API) | `getVibratorController().vibrate()` | **Auto SDK handling (SDK 자동 처리)** |
-| **Alarm Registration (알람 등록)** | `AlarmManager` + `PendingIntent` + `Calendar` setup (설정) | `getAlarmController().registerAlarmClock()` | **Complex setup → Simple call (복잡한 설정 → 간단 호출)** |
-| **Notification Display (알림 표시)** | `NotificationManager` + Channel + Builder setup (설정) | `getNotificationController().showNotification()` | **Auto channel management (채널 자동 관리)** |
-| **WiFi Info Query (WiFi 정보 조회)** | `WifiManager` + SDK branching + Permission handling (SDK 분기 + 권한 처리) | `getWifiController().getConnectionInfo()` | **Auto SDK handling (SDK 자동 처리)** |
-| **Floating View Management (플로팅 View 관리)** | `WindowManager` + `LayoutParams` + Touch handling (Touch 처리) | `getFloatingViewController().addFloatingDragView()` | **Auto Touch handling (Touch 자동화)** |
+| Category                                  |                    Plain Android                    |                Simple UI Controller                 |                   Impact\                    |
+|:------------------------------------------|:---------------------------------------------------:|:---------------------------------------------------:|:--------------------------------------------:|
+| **SoftKeyboard Control**                  |   `getSystemService()`<br>`showSoftInput()` calls   |        `getSoftKeyboardController().show()`         |        **Dozens of lines → One line**        |
+| **Vibrator Control**                      |           SDK version branching + 3 APIs            |         `getVibratorController().vibrate()`         |            **Auto SDK handling**             |
+| **Alarm Registration**                    | `AlarmManager` + `PendingIntent` + `Calendar` setup |     `getAlarmController().registerAlarmClock()`     |       **Complex setup → Simple call**        |
+| **Notification Display**                  |   `NotificationManager` + Channel + Builder setup   |  `getNotificationController().showNotification()`   |         **Auto channel management**          |
+| **WiFi Info Query**                       | `WifiManager` + SDK branching + Permission handling |      `getWifiController().getConnectionInfo()`      |            **Auto SDK handling**             |
+| **Floating View Management**              | `WindowManager` + `LayoutParams` + Touch handling   | `getFloatingViewController().addFloatingDragView()` |           **Auto Touch handling**            |
 
-> **Key takeaway:** System Service Manager Controller simplifies complex system service calls with **Extension functions**.
->
+**Key takeaway:** System Service Manager Controller simplifies complex system service calls with **Extension functions**.
+
 > **핵심:** System Service Manager Controller는 복잡한 시스템 서비스 호출을 **Extension 함수**로 단순화합니다.
 
-<br>
-</br>
+<br></br>
 
-## 💡 Why It Matters (왜 중요한가)
+## 💡 Why It Matters
 
 ### Eliminate Repetitive Code (반복 코드 제거)
 - **System Service Acquisition:** Simplify `getSystemService()` calls with Extension functions
 - **Auto SDK Version Handling:** Automatically handle Vibrator/VibratorManager version branching internally
 - **Hide Complex Configuration:** Encapsulate Alarm Calendar calculations, Floating View Touch handling, etc.
+> - **시스템 서비스 획득**: `getSystemService()` 호출과 Extension 함수로 간단하게
+> - **SDK 버전 처리 자동화**: Vibrator/VibratorManager 버전 분기를 내부에서 자동 처리
+> - **복잡한 설정 숨김**: Alarm Calendar 계산, Floating View Touch 처리 등을 캡슐화
 
-<br>
-</br>
-
-- **시스템 서비스 획득**: `getSystemService()` 호출과 Extension 함수로 간단하게
-- **SDK 버전 처리 자동화**: Vibrator/VibratorManager 버전 분기를 내부에서 자동 처리
-- **복잡한 설정 숨김**: Alarm Calendar 계산, Floating View Touch 처리 등을 캡슐화
-
-<br>
-</br>
+<br></br>
 
 ### Safe Error Handling (안전한 에러 처리)
 - **Automatic Exception Handling:** Controller automatically handles exceptions and returns Runtime results
 - **Return Result Values:** Return safe Boolean via `tryCatchSystemManager()`
 - **Lifecycle Integration:** Automatically cleanup all resources on `onDestroy()`
+> - **자동 예외 처리**: Controller 내부에서 자동 예외 처리 후 Runtime 결과 반환
+> - **결과 값 리턴**: `tryCatchSystemManager()` 통해 안전한 Boolean 반환
+> - **Lifecycle 연동**: `onDestroy()` 시 모든 리소스 자동 정리
 
-<br>
-</br>
-
-- **자동 예외 처리**: Controller 내부에서 자동 예외 처리 후 Runtime 결과 반환
-- **결과 값 리턴**: `tryCatchSystemManager()` 통해 안전한 Boolean 반환
-- **Lifecycle 연동**: `onDestroy()` 시 모든 리소스 자동 정리
-
-<br>
-</br>
+<br></br>
 
 ### Developer-Friendly Interface (개발자 친화적 인터페이스)
 - **Unified API:** Intuitive methods like `show()`, `vibrate()`, `registerAlarmClock()`
 - **Consistent Code Style:** Unify all services with Controller pattern
 - **Type Safety:** Compile-time error checking support
+> - **통합 API 제공**: `show()`, `vibrate()`, `registerAlarmClock()` 등 직관적 메서드
+> - **일관된 코드 스타일**: Controller 패턴으로 모든 서비스 통일
+> - **타입 안전성**: Compile-time 오류 체크 지원
 
-<br>
-</br>
+<br></br>
 
-- **통합 API 제공**: `show()`, `vibrate()`, `registerAlarmClock()` 등 직관적 메서드
-- **일관된 코드 스타일**: Controller 패턴으로 모든 서비스 통일
-- **타입 안전성**: Compile-time 오류 체크 지원
+## SystemManager VS Controller 
 
-<br>
-</br>
 
-## Real Code Comparison (실제 코드 비교)
-
-<br>
-</br>
-
-### First: SoftKeyboard Control Comparison (첫째: SoftKeyboard 제어 비교)
+### #1: SoftKeyboardController
 
 <details>
-<summary><strong>Pure Android - SoftKeyboard Display (순수 Android - SoftKeyboard 표시)</strong></summary>
+<summary><strong>Plain Android - SoftKeyboard Display (순수 Android - SoftKeyboard 표시)</strong></summary>
 
 ```kotlin
 // Traditional SoftKeyboard display method (기존의 SoftKeyboard 표시 방법)
@@ -141,7 +122,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
     }
 }
 ```
-**Issues (문제점):**
+**Issues:**
 - Multiple `getSystemService()` calls and type casting
 - Manual null handling and focus handling repeated
 - Must implement delayed execution manually
@@ -150,17 +131,16 @@ override fun onCreate(savedInstanceState: Bundle?) {
 - Additional learning needed for WindowCompat and WindowInsets API
 - Boilerplate-heavy structure
 
-<br>
-</br>
+> **문제점:**
+> - 여러 단계의 `getSystemService()` 호출과 타입 캐스팅
+> - Null 처리, Focus 처리 수동으로 반복
+> - 지연 실행 기능을 직접 구현해야 함
+> - **SDK 버전 분기 처리 복잡** (Android 11+에서 ADJUST_RESIZE deprecated)
+> - WindowInsetsController null 체크 및 fallback 처리 필요
+> - WindowCompat, WindowInsets API 추가 학습 필요
+> - 보일러플레이트 코드가 많은 구조
 
-**문제점:**
-- 여러 단계의 `getSystemService()` 호출과 타입 캐스팅
-- Null 처리, Focus 처리 수동으로 반복
-- 지연 실행 기능을 직접 구현해야 함
-- **SDK 버전 분기 처리 복잡** (Android 11+에서 ADJUST_RESIZE deprecated)
-- WindowInsetsController null 체크 및 fallback 처리 필요
-- WindowCompat, WindowInsets API 추가 학습 필요
-- 보일러플레이트 코드가 많은 구조
+<br></br>
 </details>
 
 <details>
@@ -216,7 +196,7 @@ public fun setAdjustResize(window: Window) {
     )
 }
 ```
-**Advantages (장점):**
+**Advantages:**
 - **Dramatically simplified** (Dozens of lines → One line)
 - Automated null handling and focus handling
 - Built-in delayed execution (Runnable/Coroutine)
@@ -224,27 +204,23 @@ public fun setAdjustResize(window: Window) {
 - **Automatic SDK version branching** (Android 11+ WindowInsetsController auto-used)
 - Automated WindowInsetsController null handling and WindowCompat fallback
 - Safe exception handling, Boolean return
-
-<br>
-</br>
-
-**장점:**
-- **극적인 코드 간소화** (수십 줄 → 한 줄)
-- Null 처리, Focus 처리 자동화
-- 지연 실행 (Runnable/Coroutine) 기본 제공
-- **checkSdkVersion() 헬퍼로 깔끔한 SDK 버전 분기**
-- **SDK 버전 자동 분기 처리** (Android 11+ WindowInsetsController 자동 사용)
-- WindowInsetsController null 처리 및 WindowCompat fallback 자동화
-- 안전한 예외 처리, Boolean 반환
+> **장점:**
+> - **극적인 코드 간소화** (수십 줄 → 한 줄)
+> - Null 처리, Focus 처리 자동화
+> - 지연 실행 (Runnable/Coroutine) 기본 제공
+> - **checkSdkVersion() 헬퍼로 깔끔한 SDK 버전 분기**
+> - **SDK 버전 자동 분기 처리** (Android 11+ WindowInsetsController 자동 사용)
+> - WindowInsetsController null 처리 및 WindowCompat fallback 자동화
+> - 안전한 예외 처리, Boolean 반환
 </details>
 
 <br>
 </br>
 
-### Second: Vibrator Control Comparison (둘째: Vibrator 제어 비교)
+### #2: VibratorController
 
 <details>
-<summary><strong>Pure Android - Vibrator Control (순수 Android - Vibrator 제어)</strong></summary>
+<summary><strong>Plain Android - Vibrator Control (순수 Android - Vibrator 제어)</strong></summary>
 
 ```kotlin
 // Traditional SDK version branching (기존의 SDK 버전 분기 처리)
@@ -292,20 +268,18 @@ private fun vibratePattern(pattern: LongArray, repeat: Int = -1) {
     }
 }
 ```
-**Issues (문제점):**
+**Issues:**
 - Required branching for 3 SDK versions
 - Repeated `getSystemService()` calls and type casting
 - Manual suppression of Deprecated API
 - Difficult to maintain with complex structure
+> **문제점:**
+> - 3가지 SDK 버전별 분기 처리 필수
+> - `getSystemService()` 반복 호출과 타입 캐스팅
+> - Deprecated API 수동 Suppress 처리
+> - 복잡한 구조로 유지보수 어려움
 
-<br>
-</br>
-
-**문제점:**
-- 3가지 SDK 버전별 분기 처리 필수
-- `getSystemService()` 반복 호출과 타입 캐스팅
-- Deprecated API 수동 Suppress 처리
-- 복잡한 구조로 유지보수 어려움
+<br></br>
 </details>
 
 <details>
@@ -345,25 +319,21 @@ private fun cancelVibrate() {
 - Automatic exception handling
 - Deprecated API handled internally
 - Safe exception handling, Boolean return
-
-<br>
-</br>
-
-**장점:**
-- **대폭 간소화** (복잡한 분기 → 단일 호출)
-- SDK 버전 분기 완전 자동 (Vibrator/VibratorManager)
-- 자동 예외 처리
-- Deprecated API 내부에서 처리
-- 안전한 예외 처리, Boolean 반환
+> **장점:**
+> - **대폭 간소화** (복잡한 분기 → 단일 호출)
+> - SDK 버전 분기 완전 자동 (Vibrator/VibratorManager)
+> - 자동 예외 처리
+> - Deprecated API 내부에서 처리
+> - 안전한 예외 처리, Boolean 반환
 </details>
 
 <br>
 </br>
 
-### Third: Alarm Registration Comparison (셋째: Alarm 등록 비교)
+### #3: AlarmController
 
 <details>
-<summary><strong>Pure Android - Alarm Registration (순수 Android - Alarm 등록)</strong></summary>
+<summary><strong>Plain Android - Alarm Registration (순수 Android - Alarm 등록)</strong></summary>
 
 ```kotlin
 // Traditional Alarm registration method (기존의 Alarm 등록 방법)
@@ -423,22 +393,18 @@ private fun removeAlarm(key: Int) {
     }
 }
 ```
-**Issues (문제점):**
+**Issues:**
 - Manual Calendar setup and today/tomorrow calculation
 - PendingIntent flags must be set manually
 - Must create AlarmClockInfo directly
 - Need to manage Receiver Class
 - Repeated manual null handling
-
-<br>
-</br>
-
-**문제점:**
-- Calendar 설정 및 오늘/내일 계산 수동 처리
-- PendingIntent 플래그 수동 설정 필수
-- AlarmClockInfo 직접 생성해야 함
-- Receiver Class 관리 필요
-- Null 처리 수동으로 반복
+> **문제점:**
+> - Calendar 설정 및 오늘/내일 계산 수동 처리
+> - PendingIntent 플래그 수동 설정 필수
+> - AlarmClockInfo 직접 생성해야 함
+> - Receiver Class 관리 필요
+> - Null 처리 수동으로 반복
 </details>
 
 <details>
@@ -480,33 +446,29 @@ private fun checkAlarmExists(key: Int): Boolean {
     return getAlarmController().exists(key, AlarmReceiver::class.java)
 }
 ```
-**Advantages (장점):**
+**Advantages**
 - **Dramatically simplified** (Complex setup → VO object)
 - Automatic Calendar calculation (Auto today/tomorrow determination)
 - Automatic PendingIntent creation (Built-in flags)
 - Automatic AlarmClockInfo creation
 - Automatic exception handling, automatic SDK version handling
 - Safe exception handling, Boolean return
-
-<br>
-</br>
-
-**장점:**
-- **대폭 간소화** (복잡한 설정 → VO 객체)
-- Calendar 자동 계산 (오늘/내일 자동 판단)
-- PendingIntent 자동 생성 (플래그 내장)
-- AlarmClockInfo 자동 생성
-- 자동 예외 처리, SDK 버전 자동 처리
-- 안전한 예외 처리, Boolean 반환
+> **장점:**
+> - **대폭 간소화** (복잡한 설정 → VO 객체)
+> - Calendar 자동 계산 (오늘/내일 자동 판단)
+> - PendingIntent 자동 생성 (플래그 내장)
+> - AlarmClockInfo 자동 생성
+> - 자동 예외 처리, SDK 버전 자동 처리
+> - 안전한 예외 처리, Boolean 반환
 </details>
 
 <br>
 </br>
 
-### Fourth: Floating View Management Comparison (넷째: Floating View 관리 비교)
+### #4: FloatingViewController
 
 <details>
-<summary><strong>Pure Android - Floating View Management (순수 Android - Floating View 관리)</strong></summary>
+<summary><strong>Plain Android - Floating View Management (순수 Android - Floating View 관리)</strong></summary>
 
 ```kotlin
 // Traditional Floating View addition (기존의 Floating View 추가)
@@ -558,22 +520,20 @@ private fun addFloatingView() {
     }
 }
 ```
-**Issues (문제점):**
+**Issues:**
 - Complex WindowManager and LayoutParams setup
 - SDK version-specific TYPE branching required
 - Must implement Touch events directly (dozens of lines)
 - Must implement Collision Detection directly
 - Memory leak risk
+> **문제점:**
+> - WindowManager, LayoutParams 복잡한 설정
+> - SDK 버전별 TYPE 분기 필요
+> - Touch 이벤트 직접 구현 필요 (수십 줄)
+> - Collision Detection 직접 구현 필요
+> - 메모리 누수 위험
 
-<br>
-</br>
-
-**문제점:**
-- WindowManager, LayoutParams 복잡한 설정
-- SDK 버전별 TYPE 분기 필요
-- Touch 이벤트 직접 구현 필요 (수십 줄)
-- Collision Detection 직접 구현 필요
-- 메모리 누수 위험
+<br></br>
 </details>
 
 <details>
@@ -613,33 +573,29 @@ private fun removeAll() {
     floatingViewController.removeAllFloatingView()
 }
 ```
-**Advantages (장점):**
+**Advantages):**
 - **Dramatically simplified** (Dozens of lines → Few lines)
 - Automatic WindowManager and LayoutParams handling
 - Automatic Touch event handling (Flow-based)
 - Automatic Collision Detection provided
 - Memory leak prevention (Automatic Lifecycle management)
 - Automatic SDK version branching
-
-<br>
-</br>
-
-**장점:**
-- **큰 폭으로 간소화** (수십 줄 → 몇 줄)
-- WindowManager, LayoutParams 자동 처리
-- Touch 이벤트 자동 처리 (Flow 기반)
-- Collision Detection 자동 제공
-- 메모리 누수 방지 (Lifecycle 자동 관리)
-- SDK 버전 자동 분기
+> **장점:**
+> - **큰 폭으로 간소화** (수십 줄 → 몇 줄)
+> - WindowManager, LayoutParams 자동 처리
+> - Touch 이벤트 자동 처리 (Flow 기반)
+> - Collision Detection 자동 제공
+> - 메모리 누수 방지 (Lifecycle 자동 관리)
+> - SDK 버전 자동 분기
 </details>
 
 <br>
 </br>
 
-### Fifth: Notification Display Comparison (다섯째: Notification 표시 비교)
+### #5: NotificationController
 
 <details>
-<summary><strong>Pure Android - Notification Display (순수 Android - Notification 표시)</strong></summary>
+<summary><strong>Plain Android - Notification Display (순수 Android - Notification 표시)</strong></summary>
 
 ```kotlin
 // Traditional Notification display method (기존의 Notification 표시 방법)
@@ -703,20 +659,18 @@ private fun showProgressNotification(progress: Int) {
     notificationManager.notify(2, progressBuilder!!.build())
 }
 ```
-**Issues (문제점):**
+**Issues:**
 - Manual Channel creation, Builder setup, and PendingIntent
 - SDK version branching required (Android 8.0+)
 - Must manage Builder reference directly for progress notifications
 - Memory leak risk (Storing Builder reference)
+> **문제점:**
+> - Channel 생성, Builder 설정, PendingIntent 모두 수동
+> - SDK 버전 분기 필요 (Android 8.0+)
+> - 진행률 알림용 Builder 참조 직접 관리
+> - 메모리 누수 위험 (Builder 참조 보관)
 
-<br>
-</br>
-
-**문제점:**
-- Channel 생성, Builder 설정, PendingIntent 모두 수동
-- SDK 버전 분기 필요 (Android 8.0+)
-- 진행률 알림용 Builder 참조 직접 관리
-- 메모리 누수 위험 (Builder 참조 보관)
+<br></br>
 </details>
 
 <details>
@@ -773,33 +727,29 @@ private fun showBigTextNotification() {
     getNotificationController(SimpleNotificationType.ACTIVITY).showNotification(option)
 }
 ```
-**Advantages (장점):**
+**Advantages:**
 - **Dramatically simplified** (Complex setup → VO object)
 - Automatic Channel creation and management
 - Automatic PendingIntent creation (Type-specific)
 - Automatic Builder reference management (Memory leak prevention)
 - Automatic progress notification cleanup (After 30 minutes)
 - Easy support for various styles (DEFAULT, BIG_TEXT, BIG_PICTURE, PROGRESS)
-
-<br>
-</br>
-
-**장점:**
-- **대폭 간소화** (복잡한 설정 → VO 객체)
-- Channel 자동 생성 및 관리
-- PendingIntent 자동 생성 (타입별 구분)
-- Builder 참조 자동 관리 (메모리 누수 방지)
-- 진행률 알림 자동 정리 (30분 후)
-- 다양한 스타일 간편 지원 (DEFAULT, BIG_TEXT, BIG_PICTURE, PROGRESS)
+> **장점:**
+> - **대폭 간소화** (복잡한 설정 → VO 객체)
+> - Channel 자동 생성 및 관리
+> - PendingIntent 자동 생성 (타입별 구분)
+> - Builder 참조 자동 관리 (메모리 누수 방지)
+> - 진행률 알림 자동 정리 (30분 후)
+> - 다양한 스타일 간편 지원 (DEFAULT, BIG_TEXT, BIG_PICTURE, PROGRESS)
 </details>
 
 <br>
 </br>
 
-### Sixth: WiFi Information Query Comparison (여섯째: WiFi 정보 조회 비교)
+### #6: WiFiController
 
 <details>
-<summary><strong>Pure Android - WiFi Information Query (순수 Android - WiFi 정보 조회)</strong></summary>
+<summary><strong>Plain Android - WiFi Information Query (순수 Android - WiFi 정보 조회)</strong></summary>
 
 ```kotlin
 // Traditional WiFi information query method (기존의 WiFi 정보 조회 방법)
@@ -864,22 +814,20 @@ private fun calculateSignalLevel(rssi: Int): Int {
     return WifiManager.calculateSignalLevel(rssi, 5)
 }
 ```
-**Issues (문제점):**
+**Issues:**
 - Complex SDK version-specific branching
 - Need to use both ConnectivityManager and WifiManager
 - Manual SSID quote removal
 - Manual Deprecated API suppression
 - Complex permission handling (Multiple permission combinations)
+> **문제점:**
+> - SDK 버전별 분기 처리 복잡
+> - ConnectivityManager, WifiManager 모두 사용 필요
+> - SSID 따옴표 제거 수동 처리
+> - Deprecated API 수동 Suppress
+> - 권한 처리 복잡 (여러 권한 조합)
 
-<br>
-</br>
-
-**문제점:**
-- SDK 버전별 분기 처리 복잡
-- ConnectivityManager, WifiManager 모두 사용 필요
-- SSID 따옴표 제거 수동 처리
-- Deprecated API 수동 Suppress
-- 권한 처리 복잡 (여러 권한 조합)
+<br></br>
 </details>
 
 <details>
@@ -949,24 +897,20 @@ private fun checkWifiBands() {
     Log.d("WiFi", "5GHz: $is5GHz, 6GHz: $is6GHz")
 }
 ```
-**Advantages (장점):**
+**Advantages:**
 - **Dramatically simplified** (Complex branching → Single call)
 - Automatic SDK version branching (Android 12+ / 11 and below)
 - Automatic SSID quote removal
 - Deprecated API handled internally
 - Convenient helper methods (getCurrentSsid, getCurrentRssi, etc.)
 - Automatic modern API support (NetworkCapabilities)
-
-<br>
-</br>
-
-**장점:**
-- **대폭 간소화** (복잡한 분기 → 단일 호출)
-- SDK 버전 자동 분기 (Android 12+ / 11 이하)
-- SSID 따옴표 자동 제거
-- Deprecated API 내부 처리
-- 편리한 헬퍼 메서드 (getCurrentSsid, getCurrentRssi 등)
-- 현대적 API 자동 지원 (NetworkCapabilities)
+> **장점:**
+> - **대폭 간소화** (복잡한 분기 → 단일 호출)
+> - SDK 버전 자동 분기 (Android 12+ / 11 이하)
+> - SSID 따옴표 자동 제거
+> - Deprecated API 내부 처리
+> - 편리한 헬퍼 메서드 (getCurrentSsid, getCurrentRssi 등)
+> - 현대적 API 자동 지원 (NetworkCapabilities)
 </details>
 
 <br>
