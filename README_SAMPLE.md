@@ -2,7 +2,7 @@
 
 ![simple_example.gif](example_gif%2Fsimple_example.gif)
 
-> **"말보다는 코드로!"** 기존 권한 관리 개발 대비 Simple UI가 주는 체감 차이를 한눈에 확인하세요.
+> 기존 권한 관리 개발 대비 Simple UI가 주는 체감 차이를 한눈에 확인하세요.
 
 <br>
 </br>

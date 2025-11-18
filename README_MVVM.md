@@ -1,4 +1,7 @@
-# 📱 Simple UI MVVM Pattern – Complete Guide (📱 Simple UI MVVM 패턴 - 완벽 가이드)
+# 📱 Simple UI MVVM Pattern – Complete Guide 
+> **Simple UI MVVM 패턴 - 완벽 가이드**
+
+<br></br>
 
 ### Activity + ViewModel Quick Setup (Activity + ViewModel 초기 설정)
 ![mvvm_activity_init.gif](example_gif%2Fmvvm_activity_init.gif)

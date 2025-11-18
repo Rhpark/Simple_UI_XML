@@ -1,4 +1,7 @@
-# System Service Manager Info vs Plain Android - Complete Comparison Guide (System Service Manager Info vs 순수 Android - 완벽 비교 가이드)
+# System Service Manager Info vs Plain Android - Complete Comparison Guide
+> **System Service Manager Info vs 순수 Android - 완벽 비교 가이드**
+
+<br></br>
 
 **"Simplify complex System Service information collection!"** See the immediate difference Simple UI Info makes compared to traditional Android System Service data retrieval.
 > **"복잡한 System Service 정보 수집을 간단하게!"** 기존 Android System Service 정보 조회 대비 Simple UI Info가 주는 체감 차이를 한눈에 확인하세요.

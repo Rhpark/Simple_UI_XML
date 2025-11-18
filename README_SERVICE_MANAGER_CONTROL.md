@@ -1,4 +1,7 @@
-# System Service Manager Controller vs Plain Android - Complete Comparison Guide (System Service Manager Controller vs 순수 Android - 완벽 비교 가이드)
+# System Service Manager Controller vs Plain Android - Complete Comparison Guide 
+> **System Service Manager Controller vs 순수 Android - 완벽 비교 가이드**
+
+<br></br>
 
 **"Simplify complex System Services into a single line!"** See the immediate difference Simple UI Controller makes compared to traditional Android System Service usage.
 > **"복잡한 System Service를 한 줄로 끝내자!"** 기존 Android System Service 사용 대비 Simple UI Controller가 주는 체감 차이를 한눈에 확인하세요.

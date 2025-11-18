@@ -1,7 +1,7 @@
 # 📦 Simple UI Extensions & Style vs Plain Android - Complete Comparison Guide
 > **"Simple UI Extensions & Style vs 순수 Android - 완벽 비교 가이드"**
 
-
+<br></br>
 ![extensions_style_example.gif](example%2Fextensions_style_example.gif)
 
 **"Achieve more with shorter extension code!"** See at a glance how Simple UI Extensions transform your workflow compared to Plain Android.

@@ -1,6 +1,7 @@
 # 📘 Simple UI Activity & Fragment - Complete Guide 
-> (Simple UI Activity & Fragment 전체 가이드)
+> **Simple UI Activity & Fragment 전체 가이드**
 
+<br></br>
 Simple UI's Activity/Fragment base classes are productivity tools that eliminate repetitive initialization code and centralize permission handling, system bar management, and MVVM interactions in one place. This document provides the philosophy behind each base class, usage scenarios, and practical examples.
  > Simple UI의 Activity/Fragment 베이스 클래스는 반복되는 초기화 코드를 걷어내고, 권한/시스템바 처리, MVVM 상호 작용까지 한 곳에 모아둔 생산성 도구입니다. 이 문서는 각 베이스 클래스의 철학과 사용 시나리오, 실제 예제까지 상세히 정리했습니다.
 

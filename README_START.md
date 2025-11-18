@@ -1,8 +1,10 @@
-# 🚀 Simple UI XML — We handle the complexity, you keep your speed (복잡함은 우리가, 속도는 당신에게)
+# 🚀 Simple UI XML — We handle the complexity, you keep your speed
+> **복잡함은 우리가, 속도는 당신에게**
 
- **Repetitive Activity/Fragment setups**, **never-ending permission handling**, 
+<br>,</br>
 
-and the swelling boilerplate... 
+**Repetitive Activity/Fragment setups**, **never-ending permission handling**, and the swelling boilerplate... 
+
 We built **Simple UI XML** to give you that time back.
 
 > **반복되는 Activity/Fragment 세팅**, **끝나지 않는 권한 처리**, 그리고 불어나는 보일러플레이트...  

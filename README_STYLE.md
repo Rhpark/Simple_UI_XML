@@ -1,4 +1,5 @@
-# 📦 Simple Style vs Plain Android - Complete Comparison Guide (📦 Simple Style vs 순수 Android - 완벽 비교 가이드)
+# 📦 Simple Style vs Plain Android - Complete Comparison Guide 
+> **Simple Style vs 순수 Android - 완벽 비교 가이드**
 
 ### Style Output Example (style 출력 예시)
 ![xml_style.png](example_gif%2Fxml_style.png)

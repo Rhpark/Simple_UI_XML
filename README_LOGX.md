@@ -1,4 +1,7 @@
-# Logx vs Android Log - Complete Comparison Guide (Logx vs Android Log - 완벽 비교 가이드)
+# Logx vs Android Log - Complete Comparison Guide 
+> **Logx vs Android Log - 완벽 비교 가이드**
+
+<br></br>
 
 ### Logx Output Preview
 ![logx.gif](example_gif%2Flogx.gif)
