@@ -131,10 +131,10 @@ class RecyclerViewActivity : BaseBindingActivity<ActivityRecyclerviewBinding>(R.
             simpleAdapter.removeAll()
         }
         else if(binding.rBtnChangeSimpleListAdapter.isChecked) {
-            simpleListAdapter.clearItems()
+            simpleListAdapter.removeAll()
         }
         else if(binding.rBtnChangeCustomLIstAdapter.isChecked) {
-            customListAdapter.clearItems()
+            customListAdapter.removeAll()
         }
     }
 

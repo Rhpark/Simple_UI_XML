@@ -1,9 +1,9 @@
-# 📦 Simple Style vs Pure Android - Complete Comparison Guide (📦 Simple Style vs 순수 Android - 완벽 비교 가이드)
+# 📦 Simple Style vs Plain Android - Complete Comparison Guide (📦 Simple Style vs 순수 Android - 완벽 비교 가이드)
 
 ### Style Output Example (style 출력 예시)
 ![xml_style.png](example_gif%2Fxml_style.png)
 
-> **"Achieve Simpler Layouts with Style XML!"** See the tangible difference that Style provides compared to pure XML at a glance.
+> **"Achieve Simpler Layouts with Style XML!"** See the tangible difference that Style provides compared to Plain XML at a glance.
 <br></br>
 > **"더 간단한 Layout Style XML로!"** 순수 XML 대비 Style이 주는 체감 차이를 한눈에 확인하세요.
 
@@ -13,15 +13,14 @@
 ## 🔎 At a Glance Comparison (한눈 비교)
 
 ### XML Style System (XML Style 시스템)
-| Category (항목) | Pure Android (순수 Android)                                                                                                        | Simple UI                                         | Impact (효과) |
-|:--|:------------------------------------------------------------------------------------------------------------------|:--------------------------------------------------|:--|
-| **Basic Layout (기본 레이아웃)** | `layout_width="match_parent"`<br>`layout_height="wrap_content"`<br>`orientation="vertical"`<br>`gravity="center"` | `style="@style/Layout.MatchWrap.Vertical.Center"` | **4 attrs→1 line (4속성→1줄)** |
-| **Weight Equal Distribution (Weight 균등 분할)** | `layout_width="0dp"`<br>`layout_weight="1"`<br>`layout_height="wrap_content"`                                     | `style="@style/View.WeightWrap"`                  | **3 attrs→1 line (3속성→1줄)** |
-| **View Size (View 크기)** | `layout_width="match_parent"`<br>`layout_height="wrap_content"`                                                   | `style="@style/View.MatchWrap"`                   | **2 attrs→1 line (2속성→1줄)** |
-| **Nested Properties (중첩 속성)** | orientation + gravity + width + height + etc.. written every time (매번 작성)                                                               | Combine various styles through chaining (다양한 스타일로 체이닝으로 조합)                           | **Remove Repetition (반복 제거)** |
+| Category                                  | Plain Android                                                                                                     | Simple UI                                         | Impact                 |
+|:------------------------------------------|:------------------------------------------------------------------------------------------------------------------|:--------------------------------------------------|:-----------------------|
+| **Basic Layout**                          | `layout_width="match_parent"`<br>`layout_height="wrap_content"`<br>`orientation="vertical"`<br>`gravity="center"` | `style="@style/Layout.MatchWrap.Vertical.Center"` | **4 attrs→1 line**     |
+| **Weight Equal Distribution**             | `layout_width="0dp"`<br>`layout_weight="1"`<br>`layout_height="wrap_content"`                                     | `style="@style/View.WeightWrap"`                  | **3 attrs→1 line**     |
+| **View Size**                             | `layout_width="match_parent"`<br>`layout_height="wrap_content"`                                                   | `style="@style/View.MatchWrap"`                   | **2 attrs→1 line**     |
+| **Nested Properties**                     | orientation + gravity + width + height + etc.. written every time                                                 | Combine various styles through chaining           | **Remove Repetition ** |
 
-> **Key Point:** Style XML solves "repetitive code" in one line. Development speed changes dramatically.
-<br></br>
+**Key Point:** Style XML solves "repetitive code" in one line. Development speed changes dramatically.
 > **핵심:** Style XML은 "반복 코드"를 한줄로 해결합니다. 개발 속도가 달라집니다.
 
 <br>
@@ -30,18 +29,18 @@
 ## 💡 Why Simple Style XML Matters (왜 Style XML이 필수인가?)
 
 ### ⚡ **Concise XML Too (XML도 간결하게)**
-- **Style Inheritance (Style 상속)**: `Layout.MatchWrap.Vertical.Center` - 4 properties in 1 line (4개 속성을 1줄로)
-- **Weight Automation (Weight 자동화)**: `View.WeightWrap` - automatically sets width=0dp + weight=10 (width=0dp + weight=10 자동 설정)
-- **Error Prevention (실수 방지)**: width/height cannot be omitted (width/height 누락 불가능)
+- **Style Inheritance**: `Layout.MatchWrap.Vertical.Center` - 4 properties in 1 line
+- **Weight Automation**: `View.WeightWrap` - automatically sets width=0dp + weight=10
+- **Error Prevention**: width/height cannot be omitted
 
 <br>
 </br>
 
-## 📦 Complete Comparison List: Style vs Pure XML (완벽 비교 목록: Style vs 순수 XML)
+## 📦 Setting Ui Style vs Plain XML
 
 
 <details>
-<summary><strong>Pure Android - Write Properties Every Time (순수 Android - 매번 속성 작성)</strong></summary>
+<summary><strong>Plain Android - Write Properties Every Time (순수 Android - 매번 속성 작성)</strong></summary>
 
 ```xml
 <!-- Write width/height every time (매번 width/height 작성) -->
@@ -94,8 +93,9 @@
 </LinearLayout>
 ```
 **Issues:** Write width/height every time, repeat weight + width=0dp, combine orientation + gravity direction
+> **문제점:** 매번 width/height 작성, weight + width=0dp 반복, orientation + gravity 방향 조합
+
 <br></br>
-**문제점:** 매번 width/height 작성, weight + width=0dp 반복, orientation + gravity 방향 조합
 </details>
 
 <details>
@@ -150,8 +150,7 @@
 </LinearLayout>
 ```
 **Result:** Automatically handled via Style inheritance, simple direction setting, eliminate repetitive writing!
-<br></br>
-**결과:** Style 상속으로 자동, 방향 설정 간단, 반복 작성 제거!
+> **결과:** Style 상속으로 자동, 방향 설정 간단, 반복 작성 제거!
 </details>
 
 <br>
@@ -159,7 +158,8 @@
 
 ## 🎯 Key Advantages of Style (Style의 주요 장점)
 
-### 📝 **Dramatic Code Reduction (압도적 코드 단축)** - XML properties **4 lines→1 line (75% reduction)** + prevent width/height omission errors (XML 속성 **4줄→1줄 (75% 단축)** + width/height 누락 실수 방지)
+### 📝 **Dramatic Code Reduction** - XML properties **4 lines→1 line (75% reduction)** + prevent width/height omission errors 
+> (XML 속성 **4줄→1줄 (75% 단축)** + width/height 누락 실수 방지)
 
 <br>
 </br>
@@ -167,8 +167,7 @@
 
 ## 📣 Real User Reviews (실제 사용 후기)
 
-> 💬 **"After introducing the XML Style system, layout writing time was cut in half. Just one line of Layout.MatchWrap.Vertical.Center and it's done!"**
-<br></br>
+💬 **"After introducing the XML Style system, layout writing time was cut in half. Just one line of Layout.MatchWrap.Vertical.Center and it's done!"**
 > 💬 **"XML Style 시스템 도입 후 레이아웃 작성 시간 반 토막. Layout.MatchWrap.Vertical.Center 한 줄이면 끝!"**
 
 <br>
@@ -176,33 +175,24 @@
 
 ## 🎯 Conclusion: Essential Tool for Android Developers (결론: Android 개발자를 위한 필수 도구)
 
-**Style XML** was created to solve the **repetition and inconvenience** of Layout Style configuration in pure Android.
-<br></br>
-**Style XML**은 순수 Android에서 Layout Style 설정의 **반복과 불편함**을 해결하기 위해 만들어졌습니다.
+**Style XML** was created to solve the **repetition and inconvenience** of Layout Style configuration in Plain Android.
 
 ✅ **XML Style System** - Layout basic properties in just one line! (레이아웃 기본 속성을 단 한줄로!)
 
 **If you want to increase development speed,**
-<br></br>
+
 **Try using Style XML!** 🚀
-<br></br>
-**개발 속도를 높이고 싶다면,**
-<br></br>
-**Style XML을 사용해 보세요!** 🚀
+> - **Style XML**은 순수 Android에서 Layout Style 설정의 **반복과 불편함**을 해결하기 위해 만들어졌습니다.
+> - **개발 속도를 높이고 싶다면,**
+> - **Style XML을 사용해 보세요!** 🚀
 
 <br>
 </br>
 
-## 📂 Check Real Code (실제 코드 확인)
+## 📂 Example
 
-**Real Example Files (실제 예시 파일):**
+**Path:**
 > - 🎨 Layout: `app/src/main/res/layout/activity_extensions_style.xml`
-
-<br>
-</br>
-
-**Implemented Example Features (구현된 예제 기능):**
-- 🎨 XML Style - Various Layout direction setting examples (다양한 Layout 방향 설정 예시)
 
 <br>
 </br>
@@ -233,8 +223,7 @@ Basic size combinations available for all Views (모든 View에서 사용 가능
 ### 🎯 Supported Style Combinations (지원 가능한 Style 조합)
 
 The following lists applicable Style patterns organized by View type.
-<br></br>
-각 View 타입별로 적용 가능한 Style 패턴을 정리했습니다.
+> 각 View 타입별로 적용 가능한 Style 패턴을 정리.
 
 #### **1️⃣ View.WidthHeight**
 ```xml
@@ -409,10 +398,14 @@ The following lists applicable Style patterns organized by View type.
 ```
 
 **Advantages (장점):**
-- Reduce XML code by 50% or more (XML 코드 50% 이상 단축)
-- Error prevention (width/height omission, etc.) (실수 방지 (width/height 누락 등))
-- Easy maintenance (유지보수 용이)
-- Maintain consistency across the entire project (프로젝트 전체 일관성 유지)
+- Reduce XML code by 50% or more 
+- Error prevention (width/height omission, etc.)
+- Easy maintenance 
+- Maintain consistency across the entire project 
+> - (XML 코드 50% 이상 단축)
+> -  (실수 방지 (width/height 누락 등))
+> - (유지보수 용이)
+> - (프로젝트 전체 일관성 유지)
 
 <br>
 </br>

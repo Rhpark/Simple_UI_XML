@@ -311,7 +311,7 @@ class BaseRcvListAdapterRobolectricTest {
     @Test
     fun clearOnEmptyList_succeeds() {
         // When
-        adapter.clearItems()
+        adapter.removeAll()
 
         // Then
         assertEquals(0, adapter.itemCount)
@@ -503,15 +503,6 @@ class BaseRcvListAdapterRobolectricTest {
 
     @Test
     fun itemClickListener_canBeConfigured() {
-        // Given
-        var clickedPosition = -1
-        var clickedItem: TestItem? = null
-
-        adapter.setOnItemClickListener { position, item, _ ->
-            clickedPosition = position
-            clickedItem = item
-        }
-
         // When
         addItemAwait(TestItem(1, "Item 1"))
 
@@ -521,14 +512,6 @@ class BaseRcvListAdapterRobolectricTest {
 
     @Test
     fun itemLongClickListener_canBeConfigured() {
-        // Given
-        var longClickedPosition = -1
-        var longClickedItem: TestItem? = null
-
-        adapter.setOnItemLongClickListener { position, item, _ ->
-            longClickedPosition = position
-            longClickedItem = item
-        }
 
         // When
         addItemAwait(TestItem(1, "Item 1"))
@@ -755,7 +738,7 @@ class BaseRcvListAdapterRobolectricTest {
 
     private fun clearItemsAwait() {
         awaitListUpdate(expectedItemCount = 0) { commit ->
-            adapter.clearItems(commit)
+            adapter.removeAll(commit)
         }
     }
 

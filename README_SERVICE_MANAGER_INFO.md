@@ -1,7 +1,6 @@
-# System Service Manager Info vs Pure Android - Complete Comparison Guide (System Service Manager Info vs 순수 Android - 완벽 비교 가이드)
+# System Service Manager Info vs Plain Android - Complete Comparison Guide (System Service Manager Info vs 순수 Android - 완벽 비교 가이드)
 
-> **"Simplify complex System Service information collection!"** See the immediate difference Simple UI Info makes compared to traditional Android System Service data retrieval.
->
+**"Simplify complex System Service information collection!"** See the immediate difference Simple UI Info makes compared to traditional Android System Service data retrieval.
 > **"복잡한 System Service 정보 수집을 간단하게!"** 기존 Android System Service 정보 조회 대비 Simple UI Info가 주는 체감 차이를 한눈에 확인하세요.
 
 <br>
@@ -9,21 +8,19 @@
 
 ## 🔎 At a Glance (한눈 비교)
 
-| Category (항목) | Pure Android (순수 Android) | Simple UI Info | Impact (개선 효과) |
-|:--|:--:|:--:|:--:|
-| **Battery Info (배터리 정보)** | `BroadcastReceiver` + `IntentFilter` + Manual management (수동 관리) | `BatteryStateInfo().registerStart()` | **StateFlow automation (StateFlow 자동화)** |
-| **Location Info (위치 정보)** | `LocationManager` + Permissions + Callback implementation (권한 + 콜백 구현) | `LocationStateInfo().registerStart()` | **Auto Provider management (Provider 자동 관리)** |
-| **Display Info (디스플레이 정보)** | SDK branching + WindowManager + DisplayMetrics (SDK 분기) | `DisplayInfo().getFullScreenSize()` | **Auto SDK handling (SDK 자동 처리)** |
-| **SIM Card Info (SIM 카드 정보)** | `SubscriptionManager` + Manual multi-SIM management (멀티 SIM 수동 관리) | `SimInfo().getActiveSimCount()` | **Multi-SIM automation (멀티 SIM 자동화)** |
-| **Telephony Info (통신 정보)** | `TelephonyManager` + Manual Callback implementation (Callback 수동 구현) | `TelephonyInfo().registerCallback()` | **Auto API compatibility (API 자동 호환)** |
-| **Network Connectivity (네트워크 연결)** | `ConnectivityManager` + Callback implementation (Callback 구현) | `NetworkConnectivityInfo().isNetworkConnected()` | **Auto Transport detection (Transport 자동 감지)** |
+| Category                          |                           Plain Android                            |                  Simple UI Info                  |            Impact             |
+|:----------------------------------|:------------------------------------------------------------------:|:------------------------------------------------:|:-----------------------------:|
+| **Battery Info**                  |      `BroadcastReceiver` + `IntentFilter` + Manual management      |      `BatteryStateInfo().registerStart()`        |   **StateFlow automation**    |
+| **Location Info**                 |     `LocationManager` + Permissions + Callback implementation      |      `LocationStateInfo().registerStart()`       | **Auto Provider management**  |
+| **Display Info**                  |           SDK branching + WindowManager + DisplayMetrics           |       `DisplayInfo().getFullScreenSize()`        |     **Auto SDK handling**     |
+| **SIM Card Info**                 |        `SubscriptionManager` + Manual multi-SIM management         |         `SimInfo().getActiveSimCount()`          |   **Multi-SIM automation**    |
+| **Telephony Info**                |        `TelephonyManager` + Manual Callback implementation         |       `TelephonyInfo().registerCallback()`       |  **Auto API compatibility**   |
+| **Network Connectivity**          |          `ConnectivityManager` + Callback implementation           | `NetworkConnectivityInfo().isNetworkConnected()` | **Auto Transport detection**  |
 
-> **Key takeaway:** System Service Manager Info simplifies complex system information collection with **StateFlow-based** architecture.
->
+**Key takeaway:** System Service Manager Info simplifies complex system information collection with **StateFlow-based** architecture.
 > **핵심:** System Service Manager Info는 복잡한 시스템 정보 수집을 **StateFlow 기반**으로 단순화합니다.
 
-<br>
-</br>
+<br></br>
 
 ## 💡 Why It Matters (왜 중요한가)
 
@@ -31,13 +28,9 @@
 - **Real-time Updates:** Manual BroadcastReceiver management → Automatic StateFlow collect
 - **Lifecycle Safety:** Coroutine scope integration prevents memory leaks
 - **Event Type Separation:** Type-safe event handling with Sealed Classes
-
-<br>
-</br>
-
-- **실시간 업데이트**: BroadcastReceiver 수동 관리 → StateFlow 자동 collect
-- **Lifecycle 안전**: 코루틴 스코프 연동으로 메모리 누수 방지
-- **이벤트 타입 분리**: Sealed Class로 타입 안전한 이벤트 처리
+> - **실시간 업데이트**: BroadcastReceiver 수동 관리 → StateFlow 자동 collect
+> - **Lifecycle 안전**: 코루틴 스코프 연동으로 메모리 누수 방지
+> - **이벤트 타입 분리**: Sealed Class로 타입 안전한 이벤트 처리
 
 <br>
 </br>
@@ -46,13 +39,9 @@
 - **Automatic BroadcastReceiver Registration/Unregistration:** Auto-detect Battery, Location Provider changes
 - **Automatic SDK Version Branching:** Display API (R+/below), Fused Provider (S+) auto-branching
 - **Simplified Permission Handling:** Automatic required permission checks and safe exception handling
-
-<br>
-</br>
-
-- **BroadcastReceiver 자동 등록/해제**: Battery, Location Provider 변경 자동 감지
-- **SDK 버전 분기 자동 처리**: Display API (R 이상/이하), Fused Provider (S+) 자동 분기
-- **권한 처리 간소화**: 필수 권한 자동 체크 및 안전한 예외 처리
+> - **BroadcastReceiver 자동 등록/해제**: Battery, Location Provider 변경 자동 감지
+> - **SDK 버전 분기 자동 처리**: Display API (R 이상/이하), Fused Provider (S+) 자동 분기
+> - **권한 처리 간소화**: 필수 권한 자동 체크 및 안전한 예외 처리
 
 <br>
 </br>
@@ -61,26 +50,19 @@
 - **Intuitive Method Names:** `getCapacity()`, `getTemperature()`, `isGpsEnabled()`
 - **Various Helper Methods:** `isCharging()`, `isHealthGood()`, `calculateDistance()`
 - **Data Classes Provided:** NetworkConnectivitySummary, NetworkCapabilitiesData, etc.
+> - **직관적 메서드 이름**: `getCapacity()`, `getTemperature()`, `isGpsEnabled()`
+> - **다양한 헬퍼 메서드**: `isCharging()`, `isHealthGood()`, `calculateDistance()`
+> - **데이터 클래스 제공**: NetworkConnectivitySummary, NetworkCapabilitiesData 등
 
-<br>
-</br>
+<br></br>
 
-- **직관적 메서드 이름**: `getCapacity()`, `getTemperature()`, `isGpsEnabled()`
-- **다양한 헬퍼 메서드**: `isCharging()`, `isHealthGood()`, `calculateDistance()`
-- **데이터 클래스 제공**: NetworkConnectivitySummary, NetworkCapabilitiesData 등
+## SystemManager VS StateInfo 
 
-<br>
-</br>
 
-## Real Code Comparison (실제 코드 비교)
-
-<br>
-</br>
-
-### First: Battery Information Collection Comparison (첫째: Battery 정보 수집 비교)
+### #1: BatteryStateInfo
 
 <details>
-<summary><strong>Pure Android - Battery Information Collection (순수 Android - Battery 정보 수집)</strong></summary>
+<summary><strong>Plain Android - Battery Information Collection (순수 Android - Battery 정보 수집)</strong></summary>
 
 ```kotlin
 // Traditional Battery information collection method (기존의 Battery 정보 수집 방법)
@@ -163,7 +145,7 @@ class BatteryMonitor(private val context: Context) {
     }
 }
 ```
-**Issues (문제점):**
+**Issues:**
 - Manual BroadcastReceiver registration and unregistration required
 - Must add all IntentFilter Actions manually
 - Must implement Battery information extraction logic directly
@@ -171,18 +153,16 @@ class BatteryMonitor(private val context: Context) {
 - Must implement callback mechanism manually
 - Manual Lifecycle management
 - Memory leak risk
+> **문제점:**
+> - BroadcastReceiver 수동 등록 및 해제 필요
+> - IntentFilter 모든 Action 직접 추가
+> - Battery 정보 추출 로직 직접 구현
+> - 온도/전압 단위 변환 수동 처리
+> - 콜백 메커니즘 직접 구현
+> - Lifecycle 관리 수동
+> - 메모리 누수 위험
 
-<br>
-</br>
-
-**문제점:**
-- BroadcastReceiver 수동 등록 및 해제 필요
-- IntentFilter 모든 Action 직접 추가
-- Battery 정보 추출 로직 직접 구현
-- 온도/전압 단위 변환 수동 처리
-- 콜백 메커니즘 직접 구현
-- Lifecycle 관리 수동
-- 메모리 누수 위험
+<br></br>
 </details>
 
 <details>
@@ -227,31 +207,27 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
     // Auto cleanup in onDestroy() (onDestroy()에서 자동 정리)
 }
 ```
-**Advantages (장점):**
+**Advantages:**
 - **Dramatically simplified** (Complex Receiver → One line registration)
 - Automatic BroadcastReceiver management
 - StateFlow-based reactive updates
 - 12 type-safe events
 - Automatic Lifecycle cleanup
-
-<br>
-</br>
-
-**장점:**
-- **대폭 간소화** (복잡한 Receiver → 한 줄 등록)
-- BroadcastReceiver 자동 관리
-- StateFlow 기반 반응형 업데이트
-- 12가지 타입 안전한 이벤트
-- Lifecycle 자동 정리
+> **장점:**
+> - **대폭 간소화** (복잡한 Receiver → 한 줄 등록)
+> - BroadcastReceiver 자동 관리
+> - StateFlow 기반 반응형 업데이트
+> - 12가지 타입 안전한 이벤트
+> - Lifecycle 자동 정리
 </details>
 
 <br>
 </br>
 
-### Second: Location Tracking Comparison (둘째: Location 위치 추적 비교)
+### #2: LocationStateInfo
 
 <details>
-<summary><strong>Pure Android - Manual Location Tracking (순수 Android - Location 수동 추적)</strong></summary>
+<summary><strong>Plain Android - Manual Location Tracking (순수 Android - Location 수동 추적)</strong></summary>
 
 ```kotlin
 // Traditional Location tracking method (기존의 Location 추적 방법)
@@ -345,24 +321,22 @@ class LocationTracker(private val context: Context) {
     }
 }
 ```
-**Issues (문제점):**
+**Issues:**
 - Manual LocationListener implementation and registration
 - Manual permission check repetition
 - Manual Provider status change handling
 - Must set location update parameters directly
 - Manual Lifecycle management
 - Memory leak risk
+> **문제점:**
+> - LocationListener 수동 구현 및 등록
+> - 권한 체크 수동 반복
+> - Provider 상태 변경 수동 처리
+> - 위치 업데이트 파라미터 직접 설정
+> - Lifecycle 관리 수동
+> - 메모리 누수 위험
 
-<br>
-</br>
-
-**문제점:**
-- LocationListener 수동 구현 및 등록
-- 권한 체크 수동 반복
-- Provider 상태 변경 수동 처리
-- 위치 업데이트 파라미터 직접 설정
-- Lifecycle 관리 수동
-- 메모리 누수 위험
+<br></br>
 </details>
 
 <details>
@@ -431,7 +405,7 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
     // Auto cleanup in onDestroy() (onDestroy()에서 자동 정리)
 }
 ```
-**Advantages (장점):**
+**Advantages:**
 - **Dramatically simplified** (Complex Listener → One line registration)
 - Automatic LocationListener management
 - StateFlow-based reactive updates
@@ -439,27 +413,23 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 - Automatic Provider status tracking
 - Distance/bearing calculation helpers provided
 - Automatic Lifecycle cleanup
-
-<br>
-</br>
-
-**장점:**
-- **대폭 간소화** (복잡한 Listener → 한 줄 등록)
-- LocationListener 자동 관리
-- StateFlow 기반 반응형 업데이트
-- 5가지 타입 안전한 이벤트 (위치, GPS, Network, Passive, Fused)
-- Provider 상태 자동 추적
-- 거리/방향 계산 헬퍼 제공
-- Lifecycle 자동 정리
+> **장점:**
+> - **대폭 간소화** (복잡한 Listener → 한 줄 등록)
+> - LocationListener 자동 관리
+> - StateFlow 기반 반응형 업데이트
+> - 5가지 타입 안전한 이벤트 (위치, GPS, Network, Passive, Fused)
+> - Provider 상태 자동 추적
+> - 거리/방향 계산 헬퍼 제공
+> - Lifecycle 자동 정리
 </details>
 
 <br>
 </br>
 
-### Third: Display Information Query Comparison (셋째: Display 정보 조회 비교)
+### #3: DisplayInfo
 
 <details>
-<summary><strong>Pure Android - Manual Display Query (순수 Android - Display 수동 조회)</strong></summary>
+<summary><strong>Plain Android - Manual Display Query (순수 Android - Display 수동 조회)</strong></summary>
 
 ```kotlin
 // Traditional Display information query method (기존의 Display 정보 조회 방법)
@@ -538,22 +508,20 @@ class DisplayHelper(private val context: Context) {
     }
 }
 ```
-**Issues (문제점):**
+**Issues:**
 - Manual SDK version branching
 - Direct use of Deprecated API
 - Manual Resources ID query
 - Complex Insets calculation
 - Code duplication (repeated version branching)
+> **문제점:**
+> - SDK 버전별 분기 수동 처리
+> - Deprecated API 직접 사용
+> - Resources ID 수동 조회
+> - 복잡한 Insets 계산
+> - 코드 중복 (버전별 분기 반복)
 
-<br>
-</br>
-
-**문제점:**
-- SDK 버전별 분기 수동 처리
-- Deprecated API 직접 사용
-- Resources ID 수동 조회
-- 복잡한 Insets 계산
-- 코드 중복 (버전별 분기 반복)
+<br></br>
 </details>
 
 <details>
@@ -593,41 +561,37 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
     }
 }
 ```
-**Advantages (장점):**
+**Advantages:**
 - **Dramatically simplified** (Auto SDK branching)
 - Automatic Android R (API 30) branching
 - Automatic Deprecated API avoidance
 - Automatic Resources query
 - Automatic Insets calculation
 - Simple getter methods
-
-<br>
-</br>
-
-**장점:**
-- **대폭 간소화** (SDK 분기 자동 처리)
-- Android R (API 30) 자동 분기
-- Deprecated API 자동 회피
-- Resources 자동 조회
-- Insets 자동 계산
-- 간단한 getter 메서드
+> **장점:**
+> - **대폭 간소화** (SDK 분기 자동 처리)
+> - Android R (API 30) 자동 분기
+> - Deprecated API 자동 회피
+> - Resources 자동 조회
+> - Insets 자동 계산
+> - 간단한 getter 메서드
 </details>
 
 <br>
 </br>
 
-## Core Advantages of System Service Manager Info (System Service Manager Info의 핵심 장점)
+## Core Advantages of System Service Manager Info
 
 ### 1. **StateFlow-Based Reactive Architecture (StateFlow 기반 반응형 구조)**
 - Battery: BroadcastReceiver → StateFlow
 - Location: LocationListener → StateFlow
-- Sealed Class type safety (Sealed Class 타입 안전)
+- Sealed Class type safety
 
 <br>
 </br>
 
 ### 2. **Automatic SDK Version Handling (SDK 버전 자동 처리)**
-- Display: Automatic Android R branching (Android R 자동 분기)
+- Display: Automatic Android SDK branching (Android SDK 자동 분기)
 - Location: Automatic Fused Provider support (Fused Provider 자동 지원)
 - Developers don't need to worry! (개발자는 신경 쓸 필요 없음!)
 
@@ -644,20 +608,21 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 
 ## See Real Implementation Examples (실제 구현 예제보기)
 
-**Live Example Code (라이브 예제 코드):**
-> - System Service Manager Info : [ServiceManagerInfoActivity.kt](app/src/main/java/kr/open/library/simpleui_xml/system_service_manager/info/ServiceManagerInfoActivity.kt)
+**Example Code:**
+
+System Service Manager Info : [ServiceManagerInfoActivity.kt](app/src/main/java/kr/open/library/simpleui_xml/system_service_manager/info/ServiceManagerInfoActivity.kt)
 > - Run the app to see actual implementation examples! (실제로 앱을 구동 시켜서 실제 구현 예제를 확인해 보세요!)
 
 <br>
 </br>
 
-## 🎯 Available Info List (제공되는 Info 목록)
+## 🎯 Available Info List
 
 **System Service Manager Info** provides 6 core system information types:
 <br></br>
 **System Service Manager Info**는 6가지 핵심 시스템 정보를 제공합니다:
 
-### **Battery State Info (배터리 상태 정보)** - Battery Status Information
+### **Battery State Info** - Battery Status Information
 - **Real-time Updates:** `registerStart(coroutine: CoroutineScope, updateCycleTimeMs)` - StateFlow-based auto-updates
   - `updateCycleTime` - Update cycle (default: 1000ms) (업데이트 주기 (기본값: 1000ms))
   - Automatic BroadcastReceiver registration/unregistration (자동 BroadcastReceiver 등록/해제)
@@ -680,7 +645,7 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 <br>
 </br>
 
-### **Location State Info (위치 상태 정보)** - Location Status Information
+### **Location State Info** - Location Status Information
 - **Real-time Updates:** `registerStart(coroutineScope, locationProvider, minTimeMs, minDistanceM)` - StateFlow-based location tracking
   - `coroutineScope` - Coroutine scope (Lifecycle integrated) (코루틴 스코프 (Lifecycle과 연동))
   - `locationProvider` - Location provider (GPS_PROVIDER, NETWORK_PROVIDER, PASSIVE_PROVIDER, FUSED_PROVIDER, etc.) (위치 제공자)
@@ -705,12 +670,12 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 <br>
 </br>
 
-### **Display Info (디스플레이 정보)** - Display Information
+### **Display Info** - Display Information
 - **Full Screen Size:** `getFullScreenSize()` - Full screen size (includes status bar, navigation bar) (전체 화면 크기 (상태바, 네비게이션바 포함))
 - **Usable Screen Size:** `getScreenSize()` - Screen size excluding both bars (상태바/네비게이션바 제외한 실제 사용 영역)
 - **Screen Width/Height:** `getScreenWidth()`, `getScreenHeight()` - Usable width/height helpers (사용 가능 가로/세로 헬퍼)
-- **Status Bar Metrics:** `getStatusBarSize()`, `getStatusBarHeight()`, `getStatusBarWidth()` (상태바 크기 관련 메서드)
-- **Navigation Bar Metrics:** `getNavigationBarSize()`, `getNavigationBarHeight()`, `getNavigationBarWidth()` (네비게이션바 크기 관련 메서드)
+- **Status Bar Size:** `getStatusBarSize()`, `getStatusBarHeight()`, `getStatusBarWidth()` (상태바 크기 관련 메서드)
+- **Navigation Bar Size:** `getNavigationBarSize()`, `getNavigationBarHeight()`, `getNavigationBarWidth()` (네비게이션바 크기 관련 메서드)
 - **Auto SDK Branching:** Automatic handling for Android R (API 30) and above/below (Android R (API 30) 이상/이하 자동 처리)
 
 <br>
@@ -828,50 +793,44 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
   - `onBlockedStatusChanged` - Blocked status changed (차단 상태 변경)
 - **Summary Info:** `getNetworkConnectivitySummary()` - Query all connection states at once (NetworkConnectivitySummary data class) (모든 연결 상태 한 번에 조회 (NetworkConnectivitySummary 데이터 클래스))
 
-
-<br>
-</br>
+<br></br>
 
 ## 🔐 **Required Permissions by Info (Info별 필수 권한)**
 
 Each Info requires permissions **based on features used**. Add only the permissions for the Info you need.
-<br></br>
-
-각 Info는 **사용하는 기능에 따라** 권한이 필요합니다. 필요한 Info의 권한만 추가하세요.
+>각 Info는 **사용하는 기능에 따라** 권한이 필요합니다. 필요한 Info의 권한만 추가하세요.
 
 ### 📋 Permission Requirements Summary (권한 요구사항 요약)
 
-| Info | Required Permissions (필수 권한) | Runtime Permission (런타임 권한) | No Permission Required (권한 불필요) |
-|:--|:--|:--:|:--:|
-| **BatteryStateInfo** | `BATTERY_STATS` (system-level) | - | - |
-| **DisplayInfo** | - | - | ✅ |
-| **LocationStateInfo** | `ACCESS_FINE_LOCATION`<br>`ACCESS_COARSE_LOCATION` | ✅ | - |
-| **SimInfo** | `READ_PHONE_STATE`<br>`READ_PHONE_NUMBERS`<br>`ACCESS_FINE_LOCATION` | ✅ | - |
-| **TelephonyInfo** | `READ_PHONE_STATE`<br>`READ_PHONE_NUMBERS`<br>`ACCESS_FINE_LOCATION` | ✅ | - |
-| **NetworkConnectivityInfo** | `ACCESS_NETWORK_STATE`<br>`ACCESS_WIFI_STATE` (선택) | - | - |
+| Info                        | Required Permissions (필수 권한)                                         | Runtime Permission (런타임 권한) | No Permission Required (권한 불필요) |
+|:----------------------------|:---------------------------------------------------------------------|:--:|:--:|
+| **BatteryStateInfo**        | `BATTERY_STATS` (system-level)                                       | - | - |
+| **DisplayInfo**             | -                                                                    | - | ✅ |
+| **LocationStateInfo**       | `ACCESS_FINE_LOCATION`<br>`ACCESS_COARSE_LOCATION`                   | ✅ | - |
+| **SimInfo**                 | `READ_PHONE_STATE`<br>`READ_PHONE_NUMBERS`<br>`ACCESS_FINE_LOCATION` | ✅ | - |
+| **TelephonyInfo**           | `READ_PHONE_STATE`<br>`READ_PHONE_NUMBERS`<br>`ACCESS_FINE_LOCATION` | ✅ | - |
+| **NetworkConnectivityInfo** | `ACCESS_NETWORK_STATE`<br>`ACCESS_WIFI_STATE` (선택)                   | - | - |
 
 ### ⚠️ Permission Troubleshooting Checklist (권한 점검 체크리스트)
-1. **Manifest 선언 확인** – 필요한 모든 권한을 `AndroidManifest.xml`에 추가했는지 확인하세요.
-2. **런타임 요청** – 위험 권한은 `onRequestPermissions()` 또는 자체 ActivityResult 로직으로 요청합니다.
-3. **refreshPermissions() 호출** – 권한 허용 후 `BaseSystemService.refreshPermissions()`를 호출하면 Simple UI가 즉시 새 상태를 반영합니다.
-4. **Logx 확인** – 권한이 없으면 `tryCatchSystemManager()`가 기본값을 반환하며 Logx에 경고를 남깁니다.
+- **Check Manifest declaration** – Verify all required permissions are added to AndroidManifest.xml.
+- **Runtime request** – Request dangerous permissions with onRequestPermissions() or your own ActivityResult logic.
+- **Call refreshPermissions()** – After granting permission, call BaseSystemService.refreshPermissions() and Simple UI will immediately reflect the new state.
+- **Check Logx** – If permission is missing, tryCatchSystemManager() returns a default value and logs a warning to Logx.
+> - **Manifest 선언 확인** – 필요한 모든 권한을 `AndroidManifest.xml`에 추가했는지 확인하세요.
+> - **런타임 요청** – 위험 권한은 `onRequestPermissions()` 또는 자체 ActivityResult 로직으로 요청합니다.
+> - **refreshPermissions() 호출** – 권한 허용 후 `BaseSystemService.refreshPermissions()`를 호출하면 Simple UI가 즉시 새 상태를 반영합니다.
+> - **Logx 확인** – 권한이 없으면 `tryCatchSystemManager()`가 기본값을 반환하며 Logx에 경고를 남깁니다.
 
 <br>
 </br>
 
-### ⚙️ Detailed Permission Settings by Info (Info별 상세 권한 설정)
+## ⚙️ Detailed Permission Settings by Info (Info별 상세 권한 설정)
 
 
-<br>
-</br>
-
-
-#### 1️⃣ **Battery State Info** - `BATTERY_STATS` (System Permission)
+### 1️⃣ **Battery State Info** - `BATTERY_STATS` (System Permission)
 
 `BatteryStateInfo` requests `android.permission.BATTERY_STATS` via `BaseSystemService`.
-<br></br>
-
-`android.permission.BATTERY_STATS` 권한을 요구하며, 이는 시스템/프리로드 앱 전용입니다.
+>`android.permission.BATTERY_STATS` 권한을 요구하며, 이는 시스템/프리로드 앱 전용입니다.
 
 **Usage Example (사용 예시)**:
 ```kotlin
@@ -894,22 +853,17 @@ lifecycleScope.launch {
     }
 }
 ```
-
+**Note** Most third-party apps cannot be granted BATTERY_STATS. If permission is missing, tryCatchSystemManager() returns a default value.
+**Note** BATTERY_STATS is a system-only permission, so a default value is returned when not granted.
 > **Note (참고)**: 대부분의 서드파티 앱은 BATTERY_STATS를 부여받을 수 없습니다. 권한이 없으면 `tryCatchSystemManager()`가 기본값을 반환합니다.
->
 > **참고**: BATTERY_STATS는 시스템 전용 권한이므로 미부여 시 기본값이 반환됩니다.
 
-
-<br>
-</br>
-
+<br></br>
 
 #### 2️⃣ **Display Info** - No Permission Required (권한 불필요) ✅
 
 Display information queries **do not require permissions**.
-<br></br>
-
-디스플레이 정보 조회는 **권한이 필요하지 않습니다**.
+> 디스플레이 정보 조회는 **권한이 필요하지 않습니다**.
 
 **Usage Example (사용 예시)**:
 ```kotlin
@@ -926,9 +880,8 @@ val statusBarHeight = displayInfo.getStatusBarHeight()
 Log.d("Display", "Status Bar Height (상태바 높이): $statusBarHeight")
 ```
 
-> **Note (참고)**: Display information is available via public APIs and does not require permissions.
->
-> **참고**: 디스플레이 정보는 공개 API로 권한이 필요하지 않습니다.
+**Note:** Display information is available via public APIs and does not require permissions.
+> **참고:** 디스플레이 정보는 공개 API로 권한이 필요하지 않습니다.
 
 
 <br>
@@ -981,10 +934,10 @@ onRequestPermissions(listOf(
 }
 ```
 
-> **Note (참고)**:
-> - `ACCESS_FINE_LOCATION` - GPS location (precise location) (GPS 위치 (정확한 위치))
-> - `ACCESS_COARSE_LOCATION` - Network location (approximate location) (네트워크 위치 (대략적 위치))
-> - Both permissions are **dangerous permissions** requiring runtime request (두 권한 모두 **위험 권한**으로 런타임 요청 필수)
+**Note**:
+- `ACCESS_FINE_LOCATION` - GPS location (precise location) (GPS 위치 (정확한 위치))
+- `ACCESS_COARSE_LOCATION` - Network location (approximate location) (네트워크 위치 (대략적 위치))
+- Both permissions are **dangerous permissions** requiring runtime request (두 권한 모두 **위험 권한**으로 런타임 요청 필수)
 
 
 <br>
@@ -1033,14 +986,11 @@ onRequestPermissions(listOf(
 }
 ```
 
-> **Note (참고)**:
-> - `READ_PHONE_STATE`, `READ_PHONE_NUMBERS`, `ACCESS_FINE_LOCATION` are **dangerous permissions** requiring runtime request
-> - Phone number reading may be restricted on Android 10+ (API 29+) (Android 10+ (API 29+)부터 전화번호 읽기가 제한될 수 있음)
+**Note (참고)**:
+- `READ_PHONE_STATE`, `READ_PHONE_NUMBERS`, `ACCESS_FINE_LOCATION` are **dangerous permissions** requiring runtime request
+- Phone number reading may be restricted on Android 10+ (API 29+) (Android 10+ (API 29+)부터 전화번호 읽기가 제한될 수 있음)
 
-
-<br>
-</br>
-
+<br></br>
 
 #### 5️⃣ **Telephony Info** - Phone/Location Permissions Required (전화/위치 권한 필수)
 
@@ -1120,14 +1070,11 @@ onRequestPermissions(listOf(
 }
 ```
 
-> **Note (참고)**:
-> - `READ_PHONE_STATE`, `READ_PHONE_NUMBERS`, `ACCESS_FINE_LOCATION` are all requested up front (모두 선요청)
-> - 권한이 거부된 항목과 관련된 API는 `tryCatchSystemManager()`를 통해 기본값을 반환합니다.
+**Note (참고)**:
+- `READ_PHONE_STATE`, `READ_PHONE_NUMBERS`, `ACCESS_FINE_LOCATION` are all requested up front (모두 선요청)
+- 권한이 거부된 항목과 관련된 API는 `tryCatchSystemManager()`를 통해 기본값을 반환합니다.
 
-
-<br>
-</br>
-
+<br></br>
 
 #### 6️⃣ **Network Connectivity Info** - Network State Permissions (네트워크 상태 권한)
 
@@ -1170,20 +1117,21 @@ lifecycleScope.launch {
 }
 ```
 
-> **Note (참고)**:
-> - `ACCESS_NETWORK_STATE` is a **normal permission** (no runtime request needed) (`ACCESS_NETWORK_STATE`는 **일반 권한**으로 런타임 요청 불필요)
-> - `ACCESS_WIFI_STATE` is a **normal permission** (no runtime request needed) (`ACCESS_WIFI_STATE`는 **일반 권한**으로 런타임 요청 불필요)
+**Note (참고)**:
+- `ACCESS_NETWORK_STATE` is a **normal permission** (no runtime request needed) 
+- `ACCESS_WIFI_STATE` is a **normal permission** (no runtime request needed) 
+>- (`ACCESS_NETWORK_STATE`는 **일반 권한**으로 런타임 요청 불필요)
+>- (`ACCESS_WIFI_STATE`는 **일반 권한**으로 런타임 요청 불필요)
 
-<br>
-</br>
+<br></br>
 
 ### 📊 Permission Types Summary (권한 타입별 정리)
 
-| Permission Type (권한 타입) | Permissions (권한 목록) | Request Method (요청 방법) | Used by Info (사용 Info) |
-|:--|:--|:--|:--|
-| **Normal Permissions (일반 권한)** | `ACCESS_NETWORK_STATE`<br>`ACCESS_WIFI_STATE` | Auto-granted with Manifest declaration (Manifest 선언만으로 자동 허용) | NetworkConnectivityInfo |
-| **Dangerous Permissions (위험 권한)** | `ACCESS_FINE_LOCATION`<br>`ACCESS_COARSE_LOCATION`<br>`READ_PHONE_STATE`<br>`READ_PHONE_NUMBERS` | Runtime permission request required (런타임 권한 요청 필수) | LocationStateInfo<br>SimInfo<br>TelephonyInfo |
-| **Signature/System Permissions (시그니처/시스템 권한)** | `BATTERY_STATS` | System/privileged apps only (시스템/사전 탑재 앱 전용) | BatteryStateInfo |
+| Permission Type                               | Permissions                                                                                      | Request Method                                               | Used by Info                                  |
+|:----------------------------------------------|:-------------------------------------------------------------------------------------------------|:-------------------------------------------------------------|:----------------------------------------------|
+| **Normal Permissions**                        | `ACCESS_NETWORK_STATE`<br>`ACCESS_WIFI_STATE`                                                    | Auto-granted with Manifest declaration                       | NetworkConnectivityInfo                       |
+| **Dangerous Permissions**                     | `ACCESS_FINE_LOCATION`<br>`ACCESS_COARSE_LOCATION`<br>`READ_PHONE_STATE`<br>`READ_PHONE_NUMBERS` | Runtime permission request required                          | LocationStateInfo<br>SimInfo<br>TelephonyInfo |
+| **Signature/System Permissions**              | `BATTERY_STATS`                                                                                  | System/privileged apps only                                  | BatteryStateInfo                              |
 
 <br>
 </br>

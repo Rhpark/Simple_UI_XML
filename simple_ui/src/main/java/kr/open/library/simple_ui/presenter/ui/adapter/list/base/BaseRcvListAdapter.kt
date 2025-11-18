@@ -165,7 +165,7 @@ public abstract class BaseRcvListAdapter<ITEM, VH : RecyclerView.ViewHolder>(lis
      * 모든 아이템 제거
      * @param commitCallback 리스트 갱신 완료 후 호출될 콜백 (null 가능)
      */
-    public fun clearItems(commitCallback: (() -> Unit)? = null) {
+    public fun removeAll(commitCallback: (() -> Unit)? = null) {
         operationQueue.enqueueOperation(AdapterOperationQueue.ClearItemsOp(commitCallback))
     }
 
