@@ -540,3 +540,80 @@ jobs:
             Runner: ${{ runner.os }}
             Event: ${{ github.event_name }}
         run: bash .github/scripts/report_action_error.sh
+
+  firebase-distribute:
+    name: Firebase App Distribution
+    runs-on: ubuntu-latest
+    needs: [build, initialize-check]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master' && needs.initialize-check.outputs.should_release == 'true'
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 10
+
+      - name: Validate Gradle Wrapper
+        uses: gradle/wrapper-validation-action@v2
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: gradle
+
+      - name: Set up Android SDK (base)
+        uses: android-actions/setup-android@v3
+
+      - name: Accept SDK licenses
+        run: yes | sdkmanager --licenses
+
+      - name: Install SDK packages
+        run: sdkmanager "platforms;android-35" "build-tools;35.0.0" "platform-tools"
+
+      - name: Setup Gradle (cache)
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Prepare Firebase credentials
+        run: |
+          cat <<'EOF' > "$RUNNER_TEMP/firebase-app-dist.json"
+          ${{ secrets.FIREBASE_APP_DIST }}
+          EOF
+          echo "FIREBASE_CREDENTIALS_FILE=$RUNNER_TEMP/firebase-app-dist.json" >> $GITHUB_ENV
+
+      - name: Distribute release to Firebase
+        env:
+          FIREBASE_RELEASE_NOTES: ${{ needs.initialize-check.outputs.body }}
+        run: bash -o pipefail -c "./gradlew :app:appDistributionUploadRelease --stacktrace |& tee firebase-appdist.log"
+
+      - name: Capture failure snippet (Firebase App Distribution)
+        if: failure()
+        run: |
+          python3 .github/scripts/extract_gradle_failure.py firebase-appdist.log firebase-appdist-failure.log
+          SUMMARY="$(head -n 1 firebase-appdist-failure.log | tr -d '\r')"
+          if [ -z "$SUMMARY" ]; then
+            SUMMARY="Firebase distribution failed while uploading APK."
+          fi
+          {
+            echo "FIREBASE_FAILURE_SUMMARY<<EOF"
+            echo "$SUMMARY"
+            echo "EOF"
+            echo "FIREBASE_FAILURE_LOG_PATH=$(pwd)/firebase-appdist-failure.log"
+          } >> "$GITHUB_ENV"
+
+      - name: Report failure (Firebase App Distribution)
+        if: failure()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          STAGE_NAME: "Firebase App Distribution"
+          FAILURE_MESSAGE: ${{ env.FIREBASE_FAILURE_SUMMARY || 'Firebase distribution failed while uploading APK.' }}
+          FAILURE_LOG_PATH: ${{ env.FIREBASE_FAILURE_LOG_PATH }}
+          FAILURE_ENVIRONMENT: |
+            Runner: ${{ runner.os }}
+            Event: ${{ github.event_name }}
+        run: bash .github/scripts/report_action_error.sh
