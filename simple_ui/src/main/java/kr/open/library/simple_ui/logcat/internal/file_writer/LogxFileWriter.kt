@@ -1,4 +1,4 @@
-package kr.open.library.simple_ui.logcat.internal.file_writer
+﻿package kr.open.library.simple_ui.logcat.internal.file_writer
 
 import android.content.Context
 import android.util.Log
@@ -107,17 +107,15 @@ class LogxFileWriter(
     }
     
     private fun writeToFile(file: File, logLine: String) {
-        logWriterScope.launch {
-            try {
-                BufferedWriter(FileWriter(file, true)).use { writer ->
-                    writer.write(logLine)
-                    writer.newLine()
-                    writer.flush() // 즉시 플러시하여 데이터 손실 방지
-                }
-            } catch (e: IOException) {
-                Log.e("ImmediateLogFileWriter", "Failed to write to file: ${file.path}", e)
-                throw LogFileWriteException("Failed to write to file: ${file.path}", e)
+        try {
+            BufferedWriter(FileWriter(file, true)).use { writer ->
+                writer.write(logLine)
+                writer.newLine()
+                writer.flush() // 즉시 플러시해 쓰기 순서 유지
             }
+        } catch (e: IOException) {
+            Log.e("ImmediateLogFileWriter", "Failed to write to file: ${file.path}", e)
+            throw LogFileWriteException("Failed to write to file: ${file.path}", e)
         }
     }
 
