@@ -342,6 +342,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Prepare Google Services config
+        run: |
+          cat <<'EOF' > app/google-services.json
+          ${{ secrets.FIREBASE_CREDENTIALS }}
+          EOF
+
       - name: Validate Gradle Wrapper
         uses: gradle/wrapper-validation-action@v2
 
@@ -585,6 +591,12 @@ jobs:
           ${{ secrets.FIREBASE_APP_DIST }}
           EOF
           echo "FIREBASE_CREDENTIALS_FILE=$RUNNER_TEMP/firebase-app-dist.json" >> $GITHUB_ENV
+
+      - name: Prepare Google Services config
+        run: |
+          cat <<'EOF' > app/google-services.json
+          ${{ secrets.FIREBASE_CREDENTIALS }}
+          EOF
 
       - name: Distribute release to Firebase
         env:
