@@ -599,17 +599,48 @@ jobs:
           EOF
 
       - name: Distribute release to Firebase
+        id: upload_release
+        continue-on-error: true
         env:
           FIREBASE_RELEASE_NOTES: ${{ needs.initialize-check.outputs.body }}
-        run: bash -o pipefail -c "./gradlew :app:appDistributionUploadRelease --stacktrace |& tee firebase-appdist.log"
+        run: bash -o pipefail -c "./gradlew :app:appDistributionUploadRelease --stacktrace |& tee firebase-appdist-release.log"
 
-      - name: Capture failure snippet (Firebase App Distribution)
-        if: failure()
+      - name: Handle release upload failure and prepare fallback
+        if: steps.upload_release.outcome == 'failure'
         run: |
-          python3 .github/scripts/extract_gradle_failure.py firebase-appdist.log firebase-appdist-failure.log
+          python3 .github/scripts/extract_gradle_failure.py firebase-appdist-release.log firebase-appdist-release-failure.log || true
+          SUMMARY="$(head -n 1 firebase-appdist-release-failure.log | tr -d '\r')"
+          if [ -z "$SUMMARY" ]; then
+            SUMMARY="Firebase release distribution failed. Falling back to debug variant."
+            cp firebase-appdist-release.log firebase-appdist-release-failure.log
+          fi
+          {
+            echo "RELEASE_APPDIST_FAILURE_SUMMARY<<EOF"
+            echo "$SUMMARY"
+            echo "EOF"
+            echo "RELEASE_APPDIST_FAILURE_LOG_PATH=$(pwd)/firebase-appdist-release-failure.log"
+          } >> "$GITHUB_ENV"
+          {
+            echo "### Firebase release upload failed" >> "$GITHUB_STEP_SUMMARY"
+            echo "$SUMMARY" >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "Attempting debug variant upload..." >> "$GITHUB_STEP_SUMMARY"
+          }
+
+      - name: Distribute debug to Firebase
+        id: upload_debug
+        if: steps.upload_release.outcome == 'failure'
+        env:
+          FIREBASE_RELEASE_NOTES: ${{ needs.initialize-check.outputs.body }}
+        run: bash -o pipefail -c "./gradlew :app:appDistributionUploadDebug --stacktrace |& tee firebase-appdist-debug.log"
+
+      - name: Capture failure snippet (Firebase App Distribution Debug)
+        if: steps.upload_release.outcome == 'failure' && failure()
+        run: |
+          python3 .github/scripts/extract_gradle_failure.py firebase-appdist-debug.log firebase-appdist-failure.log
           SUMMARY="$(head -n 1 firebase-appdist-failure.log | tr -d '\r')"
           if [ -z "$SUMMARY" ]; then
-            SUMMARY="Firebase distribution failed while uploading APK."
+            SUMMARY="Firebase debug distribution failed while uploading APK."
           fi
           {
             echo "FIREBASE_FAILURE_SUMMARY<<EOF"
