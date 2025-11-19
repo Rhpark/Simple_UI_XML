@@ -6,7 +6,7 @@ import kr.open.library.simple_ui.extensions.string.isNumeric
 import kr.open.library.simple_ui.extensions.string.isPhoneNumberValid
 import kr.open.library.simple_ui.extensions.string.isUrlValid
 import kr.open.library.simple_ui.extensions.string.removeWhitespace
-import kr.open.library.simple_ui.extensions.string.stripHtmlTags
+import kr.open.library.simple_ui.extensions.string.removeHtmlTags
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -165,39 +165,39 @@ class StringExtensionsRobolectricTest {
 
     @Test
     fun stripHtmlTags_removesSimpleHtmlTags() {
-        assertEquals("Hello World", "<p>Hello World</p>".stripHtmlTags())
-        assertEquals("Hello World", "<p>Hello <b>World</b></p>".stripHtmlTags())
-        assertEquals("Text", "<div>Text</div>".stripHtmlTags())
+        assertEquals("Hello World", "<p>Hello World</p>".removeHtmlTags())
+        assertEquals("Hello World", "<p>Hello <b>World</b></p>".removeHtmlTags())
+        assertEquals("Text", "<div>Text</div>".removeHtmlTags())
     }
 
     @Test
     fun stripHtmlTags_removesMultipleTags() {
         assertEquals("TitleContentFooter",
-            "<h1>Title</h1><p>Content</p><footer>Footer</footer>".stripHtmlTags())
+            "<h1>Title</h1><p>Content</p><footer>Footer</footer>".removeHtmlTags())
     }
 
     @Test
     fun stripHtmlTags_removesSelfClosingTags() {
-        assertEquals("Text ", "<p>Text <br/></p>".stripHtmlTags())
-        assertEquals("Image: ", "Image: <img src='test.jpg'/>".stripHtmlTags())
+        assertEquals("Text ", "<p>Text <br/></p>".removeHtmlTags())
+        assertEquals("Image: ", "Image: <img src='test.jpg'/>".removeHtmlTags())
     }
 
     @Test
     fun stripHtmlTags_handlesEmptyAndNoTags() {
-        assertEquals("", "".stripHtmlTags())
-        assertEquals("Plain text", "Plain text".stripHtmlTags())
+        assertEquals("", "".removeHtmlTags())
+        assertEquals("Plain text", "Plain text".removeHtmlTags())
     }
 
     @Test
     fun stripHtmlTags_handlesTagsWithAttributes() {
-        assertEquals("Link", "<a href='http://example.com'>Link</a>".stripHtmlTags())
+        assertEquals("Link", "<a href='http://example.com'>Link</a>".removeHtmlTags())
         assertEquals("Styled Text",
-            "<span style='color: red;'>Styled Text</span>".stripHtmlTags())
+            "<span style='color: red;'>Styled Text</span>".removeHtmlTags())
     }
 
     @Test
     fun stripHtmlTags_preservesSpacesBetweenContent() {
-        assertEquals("Hello World", "<span>Hello</span> <span>World</span>".stripHtmlTags())
+        assertEquals("Hello World", "<span>Hello</span> <span>World</span>".removeHtmlTags())
     }
 
     // ==============================================
@@ -212,13 +212,13 @@ class StringExtensionsRobolectricTest {
         assertTrue("".isNumeric())
         assertTrue("".isAlphaNumeric())
         assertEquals("", "".removeWhitespace())
-        assertEquals("", "".stripHtmlTags())
+        assertEquals("", "".removeHtmlTags())
     }
 
     @Test
     fun stringExtensions_handlesUnicodeCharacters() {
         assertEquals("한글테스트", "한글 테스트".removeWhitespace())
-        assertEquals("日本語", "<p>日本語</p>".stripHtmlTags())
+        assertEquals("日本語", "<p>日本語</p>".removeHtmlTags())
     }
 
     @Test
@@ -232,7 +232,7 @@ class StringExtensionsRobolectricTest {
     @Test
     fun stripHtmlTags_combinedWithWhitespaceRemoval() {
         val html = "<p>Hello World</p>"
-        val stripped = html.stripHtmlTags()
+        val stripped = html.removeHtmlTags()
         assertEquals("Hello World", stripped)
         assertEquals("HelloWorld", stripped.removeWhitespace())
     }

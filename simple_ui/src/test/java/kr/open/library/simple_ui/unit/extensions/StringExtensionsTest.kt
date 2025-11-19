@@ -3,7 +3,6 @@ package kr.open.library.simple_ui.unit.extensions
 import kr.open.library.simple_ui.extensions.string.*
 import org.junit.Test
 import org.junit.Assert.*
-import org.junit.Ignore
 
 /**
  * String Extensions에 대한 단위 테스트
@@ -159,7 +158,7 @@ class StringExtensionsTest {
         val input = "<p>Hello <b>World</b></p>"
 
         // When
-        val result = input.stripHtmlTags()
+        val result = input.removeHtmlTags()
 
         // Then
         assertEquals("Hello World", result)
@@ -174,7 +173,7 @@ class StringExtensionsTest {
         val input = "<div>Text</div>"
 
         // When
-        val result = input.stripHtmlTags()
+        val result = input.removeHtmlTags()
 
         // Then
         assertEquals("Text", result)
@@ -189,7 +188,7 @@ class StringExtensionsTest {
         val input = "Plain text"
 
         // When
-        val result = input.stripHtmlTags()
+        val result = input.removeHtmlTags()
 
         // Then
         assertEquals("Plain text", result)
@@ -204,7 +203,7 @@ class StringExtensionsTest {
         val input = "<div><p>Hello</p><span>World</span></div>"
 
         // When
-        val result = input.stripHtmlTags()
+        val result = input.removeHtmlTags()
 
         // Then
         assertEquals("HelloWorld", result)
@@ -350,7 +349,7 @@ class StringExtensionsTest {
         val input = "<div><div><div>Nested</div></div></div>"
 
         // When
-        val result = input.stripHtmlTags()
+        val result = input.removeHtmlTags()
 
         // Then
         assertEquals("Nested", result)
@@ -365,7 +364,7 @@ class StringExtensionsTest {
         val input = "<img src='test.jpg'/><br/>Text<hr/>"
 
         // When
-        val result = input.stripHtmlTags()
+        val result = input.removeHtmlTags()
 
         // Then
         assertEquals("Text", result)
@@ -380,7 +379,7 @@ class StringExtensionsTest {
         val input = "<div class='container' id='main'>Content</div>"
 
         // When
-        val result = input.stripHtmlTags()
+        val result = input.removeHtmlTags()
 
         // Then
         assertEquals("Content", result)
@@ -395,7 +394,7 @@ class StringExtensionsTest {
         val input = "<p>&lt;Hello&gt; &amp; &quot;World&quot;</p>"
 
         // When
-        val result = input.stripHtmlTags()
+        val result = input.removeHtmlTags()
 
         // Then
         assertEquals("&lt;Hello&gt; &amp; &quot;World&quot;", result)
@@ -416,7 +415,7 @@ class StringExtensionsTest {
 
         // When & Then
         malformedHtml.forEach { html ->
-            val result = html.stripHtmlTags()
+            val result = html.removeHtmlTags()
             assertNotNull("잘못된 HTML도 예외 없이 처리되어야 합니다", result)
         }
     }

@@ -3,7 +3,7 @@ package kr.open.library.simpleui_xml.extenstions_style
 import android.Manifest
 import android.os.Bundle
 import androidx.core.widget.addTextChangedListener
-import kr.open.library.simple_ui.extensions.date.timeDateToString
+import kr.open.library.simple_ui.extensions.date.toDateString
 import kr.open.library.simple_ui.extensions.string.isEmailValid
 import kr.open.library.simple_ui.extensions.string.isNumeric
 import kr.open.library.simple_ui.extensions.string.removeWhitespace
@@ -175,8 +175,8 @@ class ExtensionsStyleActivity : BaseBindingActivity<ActivityExtensionsStyleBindi
     private fun setupDateExtensions() {
         binding.btnFormatDate.setOnClickListener {
             val currentTime = System.currentTimeMillis()
-            val formatted1 = currentTime.timeDateToString("yyyy-MM-dd HH:mm:ss", Locale.KOREA)
-            val formatted2 = currentTime.timeDateToString("yyyy년 MM월 dd일 HH시 mm분", Locale.KOREA)
+            val formatted1 = currentTime.toDateString("yyyy-MM-dd HH:mm:ss", Locale.KOREA)
+            val formatted2 = currentTime.toDateString("yyyy년 MM월 dd일 HH시 mm분", Locale.KOREA)
 
             binding.tvDateResult.text = """
                결과:

@@ -1,3 +1,7 @@
+/**
+ * String validation and cleanup helpers that keep pattern checks consistent.<br><br>
+ * 문자열 패턴 검증과 정리를 일관되게 처리하기 위한 확장 함수 모음입니다.<br>
+ */
 package kr.open.library.simple_ui.extensions.string
 
 import androidx.annotation.CheckResult
@@ -9,9 +13,11 @@ private val NUMERIC_REGEX = "^[0-9]*$".toRegex()
 private val ALPHANUMERIC_REGEX = "^[a-zA-Z0-9]*$".toRegex()
 
 /**
- * Validates if the string is a valid email address using Android's built-in email pattern
+ * Validates the string against Android's built-in email address pattern.<br><br>
+ * Android 기본 이메일 패턴에 부합하는지 검사합니다.<br>
  *
- * @return true if the string matches a valid email format, false otherwise
+ * @return true when the format is a valid email, otherwise false.<br><br>
+ *         유효한 이메일이면 true, 아니면 false를 반환합니다.<br>
  *
  * Example:
  * ```
@@ -23,9 +29,11 @@ private val ALPHANUMERIC_REGEX = "^[a-zA-Z0-9]*$".toRegex()
 public fun String.isEmailValid(): Boolean = android.util.Patterns.EMAIL_ADDRESS.matcher(this).matches()
 
 /**
- * Validates if the string is a valid phone number using Android's built-in phone pattern
+ * Validates the string against Android's built-in phone number pattern.<br><br>
+ * Android 기본 전화번호 패턴에 부합하는지 검사합니다.<br>
  *
- * @return true if the string matches a valid phone number format, false otherwise
+ * @return true when the format is a valid phone number, otherwise false.<br><br>
+ *         유효한 전화번호면 true, 아니면 false를 반환합니다.<br>
  *
  * Example:
  * ```
@@ -37,9 +45,11 @@ public fun String.isEmailValid(): Boolean = android.util.Patterns.EMAIL_ADDRESS.
 public fun String.isPhoneNumberValid(): Boolean = android.util.Patterns.PHONE.matcher(this).matches()
 
 /**
- * Validates if the string is a valid URL using Android's built-in web URL pattern
+ * Validates the string against Android's built-in web URL pattern.<br><br>
+ * Android 기본 웹 URL 패턴에 부합하는지 검사합니다.<br>
  *
- * @return true if the string matches a valid URL format, false otherwise
+ * @return true when the format is a valid URL, otherwise false.<br><br>
+ *         유효한 URL이면 true, 아니면 false를 반환합니다.<br>
  *
  * Example:
  * ```
@@ -51,10 +61,11 @@ public fun String.isPhoneNumberValid(): Boolean = android.util.Patterns.PHONE.ma
 public fun String.isUrlValid(): Boolean = android.util.Patterns.WEB_URL.matcher(this).matches()
 
 /**
- * Checks if the string contains only numeric characters (0-9)
- * Empty strings are considered numeric
+ * Checks whether the string contains only digits (0-9); empty strings count as numeric.<br><br>
+ * 문자열이 숫자(0-9)만 포함하는지 검사하며, 빈 문자열도 숫자로 취급합니다.<br>
  *
- * @return true if the string contains only digits, false otherwise
+ * @return true when every character is numeric, otherwise false.<br><br>
+ *         모든 문자가 숫자면 true, 아니면 false를 반환합니다.<br>
  *
  * Example:
  * ```
@@ -67,10 +78,11 @@ public fun String.isUrlValid(): Boolean = android.util.Patterns.WEB_URL.matcher(
 public fun String.isNumeric(): Boolean = matches(NUMERIC_REGEX)
 
 /**
- * Checks if the string contains only alphanumeric characters (a-z, A-Z, 0-9)
- * Empty strings are considered alphanumeric
+ * Checks whether the string contains only letters and digits; empty strings count as alphanumeric.<br><br>
+ * 문자열이 영문자와 숫자만 포함하는지 검사하며, 빈 문자열도 허용합니다.<br>
  *
- * @return true if the string contains only letters and digits, false otherwise
+ * @return true when every character is alphanumeric, otherwise false.<br><br>
+ *         모든 문자가 영숫자면 true, 아니면 false를 반환합니다.<br>
  *
  * Example:
  * ```
@@ -83,10 +95,11 @@ public fun String.isNumeric(): Boolean = matches(NUMERIC_REGEX)
 public fun String.isAlphaNumeric(): Boolean = matches(ALPHANUMERIC_REGEX)
 
 /**
- * Removes all whitespace characters from the string
- * This includes spaces, tabs, newlines, and other whitespace characters
+ * Removes every whitespace character such as spaces, tabs, and line breaks from the string.<br><br>
+ * 공백, 탭, 줄바꿈 등 모든 공백 문자를 제거합니다.<br>
  *
- * @return a new string with all whitespace characters removed
+ * @return A new string with whitespace removed.<br><br>
+ *         공백이 제거된 새 문자열을 반환합니다.<br>
  *
  * Example:
  * ```
@@ -98,19 +111,20 @@ public fun String.isAlphaNumeric(): Boolean = matches(ALPHANUMERIC_REGEX)
 public fun String.removeWhitespace(): String = replace(WHITESPACE_REGEX, "")
 
 /**
- * Removes all HTML tags from the string, leaving only the text content
- * This uses a simple regex pattern that matches basic HTML tags
+ * Strips simple HTML tags using a lightweight regex, leaving only text content.<br><br>
+ * 가벼운 정규식을 사용해 단순 HTML 태그를 제거하고 텍스트만 남깁니다.<br>
  *
- * @return a new string with HTML tags removed
+ * @return A new string with tags removed.<br><br>
+ *         태그가 제거된 새 문자열을 반환합니다.<br>
  *
  * Example:
  * ```
- * "<p>Hello <b>World</b></p>".stripHtmlTags()  // returns "Hello World"
- * "<div>Text</div>".stripHtmlTags()            // returns "Text"
+ * "<p>Hello <b>World</b></p>".removeHtmlTags()  // returns "Hello World"
+ * "<div>Text</div>".removeHtmlTags()            // returns "Text"
  * ```
  *
- * Note: This is a basic implementation suitable for simple HTML.
- * For complex HTML parsing, consider using a proper HTML parser.
+ * Note: This implementation targets basic markup; use a dedicated parser for complex HTML.<br><br>
+ *       단순 마크업에 적합한 구현이므로, 복잡한 HTML은 전용 파서를 사용하는 것이 좋습니다.<br>
  */
 @CheckResult
-public fun String.stripHtmlTags(): String = replace(HTML_TAG_REGEX, "")
+public fun String.removeHtmlTags(): String = replace(HTML_TAG_REGEX, "")

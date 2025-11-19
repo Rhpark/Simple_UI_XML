@@ -1,3 +1,8 @@
+/**
+ * Central manager that coordinates normal and special permission requests across configuration changes.<br><br>
+ * 구성 변경 상황에서도 일반·특수 권한 요청을 일괄 조율하는 중앙 관리자입니다.<br>
+ */
+
 package kr.open.library.simple_ui.permissions.manager
 
 import android.app.Activity
@@ -16,29 +21,51 @@ import java.lang.ref.WeakReference
 import java.util.UUID
 
 /**
- * 콜백 추가 결과
+ * Indicates whether an additional callback could be attached to an in-flight request.<br><br>
+ * 진행 중인 권한 요청에 추가 콜백을 부착할 수 있었는지를 나타냅니다.<br>
  */
+
+
 enum class CallbackAddResult {
-    SUCCESS,              // 콜백이 성공적으로 추가됨
-    REQUEST_NOT_FOUND,    // 요청을 찾을 수 없음 (이미 완료되었거나 취소됨)
-    PERMISSION_MISMATCH   // 요청한 권한 목록이 기존 요청과 다름
+    /**
+     * Additional callbacks were attached successfully.<br><br>
+     * 추가 콜백이 정상적으로 연결되었습니다.<br>
+     */
+    SUCCESS,
+
+    /**
+     * The request could not be found (completed or cancelled already).<br><br>
+     * 요청을 찾을 수 없어 이미 완료되었거나 취소된 상태입니다.<br>
+     */
+    REQUEST_NOT_FOUND,
+
+    /**
+     * The permission set does not match the existing pending request.<br><br>
+     * 새로 전달된 권한 집합이 기존 대기 요청과 일치하지 않습니다.<br>
+     */
+    PERMISSION_MISMATCH
 }
 
 /**
- * 단순하고 안전한 권한 관리자
- * 
- * 특징:
- * - 콜백 기반의 간단한 API
- * - 일반 권한과 특수 권한 통합 처리
- * - 메모리 안전을 위한 WeakReference 사용
- * - 자동 요청 정리
+ * Lightweight permission orchestrator that merges callback-based requests with special flows.<br><br>
+ * 콜백 기반 요청과 특수 권한 흐름을 결합한 경량 권한 오케스트레이터입니다.<br>
+ *
+ * Key capabilities:<br><br>
+ * 주요 기능:<br>
+ * - Coordinates normal and special permission flows inside a single queue.<br><br>
+ *   단일 큐에서 일반·특수 권한을 순차적으로 처리합니다.<br>
+ * - Tracks delegates through WeakReference to avoid memory leaks.<br><br>
+ *   WeakReference로 delegate를 추적해 메모리 누수를 방지합니다.<br>
+ * - Cleans up expired requests automatically on a timer.<br><br>
+ *   타이머를 활용해 만료된 요청을 자동 정리합니다.<br>
  */
+
 class PermissionManager private constructor() {
 
     companion object {
         @Volatile
         private var INSTANCE: PermissionManager? = null
-        
+
         fun getInstance(): PermissionManager {
             return INSTANCE ?: synchronized(this) {
                 INSTANCE ?: PermissionManager().also { INSTANCE = it }
@@ -46,38 +73,54 @@ class PermissionManager private constructor() {
         }
     }
 
-    // 진행 중인 요청 관리
+    // Stores in-flight permission requests keyed by requestId.<br><br>
+    // 진행 중인 권한 요청을 requestId 기준으로 관리합니다.<br>
     private val pendingRequests = mutableMapOf<String, PendingRequest>()
 
-    // Delegate 참조 관리 (WeakReference로 메모리 누수 방지)
+    // Tracks delegates via WeakReference to prevent leaks after configuration changes.<br><br>
+    // 설정 변경 시 참조가 오래 살아남지 않도록 WeakReference로 Delegate를 추적합니다.<br>
     private val activeDelegates = mutableMapOf<String, WeakReference<PermissionDelegate<*>>>()
 
-    // 메인 스레드 핸들러 (재시도용)
+    // Handles delayed cleanup and retries on the main thread.<br><br>
+    // 메인 스레드에서 정리와 재시도를 처리하는 핸들러입니다.<br>
     private val mainHandler = Handler(Looper.getMainLooper())
 
-    // 자동 정리 작업
+    // Holds the runnable that periodically cleans up finished requests.<br><br>
+    // 주기적으로 요청을 정리하는 Runnable을 저장합니다.<br>
     private var cleanupRunnable: Runnable? = null
-    
-    // 내부 요청 정보
+
+    // Internal snapshot of a pending permission request.<br><br>
+    // 대기 중인 권한 요청의 내부 스냅샷입니다.<br>
     private data class PendingRequest(
-        val callbacks: MutableList<(List<String>) -> Unit> = mutableListOf(),  // 콜백 리스트로 변경
+        // Callbacks waiting for the permission result.<br><br>
+        // 권한 결과를 기다리는 콜백 모음입니다.<br>
+        val callbacks: MutableList<(List<String>) -> Unit> = mutableListOf(),
         val requestTime: Long = System.currentTimeMillis(),
         val originalPermissions: List<String> = emptyList(),
         var remainingSpecialPermissions: List<String> = emptyList()
-        // specialPermissionLaunchers 제거: 이제 Delegate에서 동적으로 조회
+        // Special launchers are now queried dynamically from the delegate.<br><br>
+        // 특수 권한 런처는 Delegate에서 동적으로 조회합니다.<br>
     )
 
     /**
-     * 권한 요청 (메인 API)
+     * Entry point for requesting both normal and special permissions.<br><br>
+     * 일반 권한과 특수 권한을 한 번에 요청하는 기본 API 입니다.<br>
      *
-     * @param context 컨텍스트
-     * @param requestPermissionLauncher 일반 권한 요청 런처
-     * @param permissions 요청할 권한 목록
-     * @param callback 결과 콜백 (거부된 권한 목록)
-     * @param preGeneratedRequestId 미리 생성된 요청 ID (Delegate 등록용)
-     * @return 요청 ID (취소 시 사용)
+     * @param context Context used to validate lifecycle state before launching.<br><br>
+     *                요청을 시작하기 전에 생명주기 상태를 확인할 Context 입니다.<br>
+     * @param requestPermissionLauncher Launcher that handles the normal permission array.<br><br>
+     *                                  일반 권한 배열을 처리하는 ActivityResultLauncher 입니다.<br>
+     * @param permissions Ordered list of permissions to request.<br><br>
+     *                    요청할 권한 순서를 그대로 담은 목록입니다.<br>
+     * @param callback Callback receiving denied permissions after the flow finishes.<br><br>
+     *                 전체 흐름이 끝난 뒤 거부된 권한 목록을 전달받는 콜백입니다.<br>
+     * @param preGeneratedRequestId Optional pre-generated requestId used when a delegate already exists.<br><br>
+     *                              Delegate가 이미 존재할 때 사용할 수 있는 선 생성 requestId 입니다.<br>
+     * @return Request identifier that can later cancel or relink the delegate.<br><br>
+     *         추후 요청을 취소하거나 Delegate를 재연결할 때 사용할 수 있는 식별자입니다.<br>
      *
-     * 참고: specialPermissionLaunchers는 이제 Delegate에서 동적으로 조회됨
+     * Note: Special permission launchers are resolved dynamically from the delegate now.<br><br>
+     * 참고: 특수 권한 런처는 Delegate에서 동적으로 조회됩니다.<br>
      */
     @Synchronized
     fun request(
@@ -87,7 +130,8 @@ class PermissionManager private constructor() {
         callback: (List<String>) -> Unit,
         preGeneratedRequestId: String? = null
     ): String {
-        // 입력 검증
+        // Guard clause that avoids unnecessary launches when nothing is requested.<br><br>
+        // 요청할 권한이 없으면 불필요한 실행을 즉시 차단합니다.<br>
         if (permissions.isEmpty()) {
             callback(emptyList())
             return ""
@@ -98,7 +142,8 @@ class PermissionManager private constructor() {
             return ""
         }
 
-        // 만료된 요청 정리
+        // Removes expired entries so that stale callbacks do not pile up.<br><br>
+        // 오래된 요청을 미리 정리해 콜백이 쌓이지 않도록 합니다.<br>
         cleanupExpiredRequests()
 
         val remainingPermissions = context.remainPermissions(permissions)
@@ -107,44 +152,55 @@ class PermissionManager private constructor() {
             return ""
         }
 
-        // 미리 생성된 ID 사용 (Delegate가 이미 등록되어 있음)
+        // Reuse pre-generated IDs when a delegate already registered the request.<br><br>
+        // Delegate가 이미 등록된 경우 선 생성한 ID를 재활용합니다.<br>
         val requestId = preGeneratedRequestId ?: UUID.randomUUID().toString()
         val request = PendingRequest(
-            callbacks = mutableListOf(callback),  // 첫 번째 콜백 추가
+            // Seeds the first callback listener for this request.<br><br>
+            // 요청에 대한 첫 번째 콜백 리스너를 등록합니다.<br>
+            callbacks = mutableListOf(callback),
             originalPermissions = permissions
         )
         pendingRequests[requestId] = request
-        
-        // 자동 정리 스케줄링
+
+        // Ensures cleanup continues to run while we have in-flight requests.<br><br>
+        // 진행 중인 요청이 있는 동안 자동 정리 작업이 계속되도록 예약합니다.<br>
         scheduleCleanup()
-        
+
         val (specialPermissions, normalPermissions) = remainingPermissions.partition {
             context.isSpecialPermission(it)
         }
-        
-        // 일반 권한 요청
+
+        // Launches the normal permission flow first when necessary.<br><br>
+        // 필요 시 먼저 일반 권한 요청을 실행합니다.<br>
         if (normalPermissions.isNotEmpty()) {
             try {
                 requestPermissionLauncher.launch(normalPermissions.toTypedArray())
             } catch (e: Exception) {
                 Logx.e("Failed to launch permission request: $e")
-                // 유령 요청 방지: pendingRequests, activeDelegates 모두 정리
+                // Prevents ghost requests by clearing pendingRequests and delegates together.<br><br>
+                // 유령 요청이 남지 않도록 pendingRequests와 delegate를 함께 정리합니다.<br>
                 pendingRequests.remove(requestId)
                 unregisterDelegate(requestId)
-                // 콜백 호출 (모든 권한 거부로 처리)
+                // Notifies callers assuming every permission remained denied.<br><br>
+                // 모든 권한이 거부된 것으로 간주하고 콜백을 호출합니다.<br>
                 invokeAllCallbacks(request, remainingPermissions)
-                // 빈 문자열 반환하여 Delegate가 currentRequestId를 null로 설정하도록 함
+                // Returns an empty id so the delegate clears its currentRequestId.<br><br>
+                // 빈 문자열을 반환해 Delegate가 currentRequestId를 비우도록 합니다.<br>
                 return ""
             }
         }
 
-        // 특수 권한 순차 처리
-        // 일반 권한이 있으면 일반 권한 완료 후 result()에서 처리됨
+        // Handles special permissions sequentially.<br><br>
+        // 특수 권한을 순차적으로 처리합니다.<br>
+        // If normal permissions exist we wait until result() triggers.<br><br>
+        // 일반 권한을 요청했다면 result() 호출 이후에 특수 권한을 진행합니다.<br>
         if (specialPermissions.isNotEmpty() && normalPermissions.isEmpty()) {
             request.remainingSpecialPermissions = specialPermissions.drop(1)
             val firstSpecialPermission = specialPermissions.first()
 
-            // Delegate에서 런처 동적 조회
+            // Requests the proper launcher from the delegate at runtime.<br><br>
+            // Delegate로부터 적합한 런처를 동적으로 받아옵니다.<br>
             val launcher = getSpecialLauncher(requestId, firstSpecialPermission)
             if (launcher != null) {
                 launchSpecialPermissionWithRetry(context, firstSpecialPermission, launcher, requestId)
@@ -153,16 +209,25 @@ class PermissionManager private constructor() {
                 handleSpecialPermissionFailure(context, requestId, firstSpecialPermission)
             }
         } else if (specialPermissions.isNotEmpty() && normalPermissions.isNotEmpty()) {
-            // 일반 권한과 특수 권한이 모두 있는 경우, 특수 권한은 나중에 처리
+            // When both types exist, defer special permissions until normals finish.<br><br>
+            // 일반 권한과 특수 권한을 함께 요청한 경우 특수 권한은 일반 흐름 이후에 처리합니다.<br>
             request.remainingSpecialPermissions = specialPermissions
         }
-        
+
         return requestId
     }
 
 
     /**
-     * 일반 권한 결과 처리 (ActivityResultLauncher 콜백용)
+     * Handles ActivityResultLauncher callbacks for normal permissions.<br><br>
+     * 일반 권한 ActivityResultLauncher 콜백을 처리합니다.<br>
+     *
+     * @param context Context used to verify lifecycle and actual grant state.<br><br>
+     *                생명주기와 실제 권한 상태를 확인할 Context 입니다.<br>
+     * @param permissions Map containing permission-granted pairs from the launcher.<br><br>
+     *                    런처에서 전달받은 권한과 승인 여부 쌍입니다.<br>
+     * @param requestId Identifier of the pending request to resolve.<br><br>
+     *                  처리할 대기 요청의 식별자입니다.<br>
      */
     @Synchronized
     fun result(context: Context, permissions: Map<String, Boolean>, requestId: String?) {
@@ -176,14 +241,16 @@ class PermissionManager private constructor() {
             granted || context.hasPermission(permission)
         }.keys.toList()
 
-        // 특수 권한이 있으면 계속 처리, 없으면 요청 완료
+        // Continue with special permissions if needed; otherwise finalize the request.<br><br>
+        // 특수 권한이 남아 있다면 계속 진행하고, 없다면 요청을 종료합니다.<br>
         if (request.remainingSpecialPermissions.isEmpty()) {
             pendingRequests.remove(requestId)
             unregisterDelegate(requestId)
 
             invokeAllCallbacks(request, deniedPermissions)
         } else {
-            // 특수 권한이 남아있는 경우 다음 특수 권한 처리
+            // Picks up the next special permission in line.<br><br>
+            // 다음 특수 권한을 이어서 처리합니다.<br>
             val nextPermission = request.remainingSpecialPermissions.first()
             request.remainingSpecialPermissions = request.remainingSpecialPermissions.drop(1)
 
@@ -198,7 +265,15 @@ class PermissionManager private constructor() {
     }
 
     /**
-     * 특수 권한 결과 처리 (ActivityResultLauncher 콜백용)
+     * Handles ActivityResultLauncher callbacks for special permissions.<br><br>
+     * 특수 권한 ActivityResultLauncher 콜백을 처리합니다.<br>
+     *
+     * @param context Context reference used to check actual permission states.<br><br>
+     *                특수 권한 승인 여부를 다시 검증할 Context 입니다.<br>
+     * @param permission Special permission the launcher reported.<br><br>
+     *                   런처에서 반환한 특수 권한입니다.<br>
+     * @param requestId Identifier of the pending permission request.<br><br>
+     *                  현재 진행 중인 권한 요청 식별자입니다.<br>
      */
     @Synchronized
     fun resultSpecialPermission(context: Context, permission: String, requestId: String?) {
@@ -210,17 +285,20 @@ class PermissionManager private constructor() {
             Logx.w("Request $requestId not found. Process may have been killed or request already completed.")
             return
         }
-        
-        // 현재 특수 권한 승인 상태 확인 및 로깅
+
+        // Double-checks the current permission grant state and logs it.<br><br>
+        // 현재 권한 승인 상태를 다시 확인하고 로그로 남깁니다.<br>
         val isGranted = context.hasPermission(permission)
         Logx.d("Special permission $permission result: ${if (isGranted) "GRANTED" else "DENIED"}")
-        
-        // 다음 특수 권한이 있으면 계속 처리
+
+        // Continue to the next special permission when necessary.<br><br>
+        // 다음 특수 권한이 남아 있다면 이어서 처리합니다.<br>
         if (request.remainingSpecialPermissions.isNotEmpty()) {
             val nextPermission = request.remainingSpecialPermissions.first()
             request.remainingSpecialPermissions = request.remainingSpecialPermissions.drop(1)
 
-            // Delegate에서 런처 동적 조회
+            // Retrieves a launcher reference from the delegate on demand.<br><br>
+            // Delegate에서 런처 참조를 필요할 때마다 받아옵니다.<br>
             val launcher = getSpecialLauncher(requestId, nextPermission)
             if (launcher != null) {
                 launchSpecialPermissionWithRetry(context, nextPermission, launcher, requestId)
@@ -232,7 +310,8 @@ class PermissionManager private constructor() {
             }
         }
 
-        // 모든 특수 권한 처리 완료 - 최종 결과 계산
+        // All special permissions have been processed, so compute the final result.<br><br>
+        // 특수 권한 처리가 모두 끝났으므로 최종 결과를 산출합니다.<br>
         pendingRequests.remove(requestId)
         unregisterDelegate(requestId)
         val finalDeniedPermissions = context.remainPermissions(request.originalPermissions)
@@ -241,7 +320,11 @@ class PermissionManager private constructor() {
     }
 
     /**
-     * 요청 취소
+     * Cancels an in-flight permission request.<br><br>
+     * 진행 중인 권한 요청을 취소합니다.<br>
+     *
+     * @param requestId Identifier of the request to remove.<br><br>
+     *                  취소할 요청의 식별자입니다.<br>
      */
     @Synchronized
     fun cancelRequest(requestId: String) {
@@ -250,8 +333,16 @@ class PermissionManager private constructor() {
     }
 
     /**
-     * Delegate 등록 (권한 요청 시작 시 호출)
-     * Configuration change 후 자동 재등록에도 사용됨
+     * Registers the delegate that owns this permission request.<br><br>
+     * 권한 요청을 소유한 Delegate를 등록합니다.<br>
+     *
+     * Used to reattach after configuration changes.<br><br>
+     * 구성 변경 이후 자동 재등록에도 사용됩니다.<br>
+     *
+     * @param requestId Identifier of the pending request.<br><br>
+     *                  진행 중인 요청의 식별자입니다.<br>
+     * @param delegate Delegate that mediates permission launches.<br><br>
+     *                 권한 실행을 중계할 Delegate 입니다.<br>
      */
     @Synchronized
     fun registerDelegate(requestId: String, delegate: PermissionDelegate<*>) {
@@ -267,7 +358,11 @@ class PermissionManager private constructor() {
     }
 
     /**
-     * Delegate 등록 해제 (요청 완료 또는 취소 시)
+     * Unregisters the delegate once the request finishes or gets cancelled.<br><br>
+     * 요청이 완료되거나 취소되면 Delegate 등록을 해제합니다.<br>
+     *
+     * @param requestId Identifier whose delegate should be removed.<br><br>
+     *                  참조를 제거할 요청 ID 입니다.<br>
      */
     @Synchronized
     fun unregisterDelegate(requestId: String) {
@@ -276,7 +371,11 @@ class PermissionManager private constructor() {
     }
 
     /**
-     * 활성 요청 확인 (Delegate 자동 재등록 시 사용)
+     * Indicates whether a request is still active (used when restoring delegates).<br><br>
+     * 요청이 여전히 활성 상태인지 확인합니다. Delegate 복구 시 사용됩니다.<br>
+     *
+     * @param requestId Identifier to check.<br><br>
+     *                  확인할 요청 ID 입니다.<br>
      */
     @Synchronized
     fun hasActiveRequest(requestId: String): Boolean {
@@ -284,7 +383,13 @@ class PermissionManager private constructor() {
     }
 
     /**
-     * 요청의 원본 권한 목록 조회
+     * Returns the original permission set associated with the request.<br><br>
+     * 요청과 연결된 원본 권한 목록을 반환합니다.<br>
+     *
+     * @param requestId Identifier of the pending request.<br><br>
+     *                  조회할 요청 ID 입니다.<br>
+     * @return Permission set or null if the request is unknown.<br><br>
+     *         요청을 찾지 못하면 null 을 반환합니다.<br>
      */
     @Synchronized
     fun getRequestPermissions(requestId: String): Set<String>? {
@@ -292,11 +397,17 @@ class PermissionManager private constructor() {
     }
 
     /**
-     * 진행 중인 요청에 콜백 추가 (중복 요청 시 사용)
-     * @param requestId 요청 ID
-     * @param callback 추가할 콜백
-     * @param requestedPermissions 요청한 권한 목록 (검증용)
-     * @return CallbackAddResult - 성공, 요청 없음, 권한 불일치 중 하나
+     * Adds an additional callback to an in-flight request (for duplicate launches).<br><br>
+     * 중복 요청 상황에서 진행 중인 요청에 콜백을 추가합니다.<br>
+     *
+     * @param requestId Identifier of the pending request.<br><br>
+     *                  대기 중인 요청 ID 입니다.<br>
+     * @param callback Callback that receives denied permissions at the end.<br><br>
+     *                 최종적으로 거부된 권한 목록을 전달받는 콜백입니다.<br>
+     * @param requestedPermissions Permission list supplied by the caller for validation.<br><br>
+     *                             검증용으로 전달된 권한 목록입니다.<br>
+     * @return CallbackAddResult describing success, missing request, or mismatch.<br><br>
+     *         콜백 추가 성공, 요청 없음, 권한 불일치 중 하나를 나타내는 CallbackAddResult 입니다.<br>
      */
     @Synchronized
     fun addCallbackToRequest(
@@ -304,10 +415,12 @@ class PermissionManager private constructor() {
         callback: (List<String>) -> Unit,
         requestedPermissions: List<String>
     ): CallbackAddResult {
-        // 요청을 찾을 수 없음 - 이미 완료되었거나 취소됨
+        // Returns immediately when the request no longer exists.<br><br>
+        // 요청이 이미 완료되었거나 취소되었다면 즉시 반환합니다.<br>
         val request = pendingRequests[requestId] ?: return CallbackAddResult.REQUEST_NOT_FOUND
 
-        // 권한 목록 검증 (순서 무관, 내용만 비교)
+        // Compares permission sets regardless of order to ensure parity.<br><br>
+        // 순서에 상관없이 권한 집합이 동일한지 확인합니다.<br>
         val existingPermissions = request.originalPermissions.toSet()
         val newPermissions = requestedPermissions.toSet()
 
@@ -316,14 +429,23 @@ class PermissionManager private constructor() {
             return CallbackAddResult.PERMISSION_MISMATCH
         }
 
-        // 콜백 추가 성공
+        // Appends the callback when everything matches.<br><br>
+        // 조건이 일치하면 콜백을 추가합니다.<br>
         request.callbacks.add(callback)
         Logx.d("Added callback to existing request: $requestId (total callbacks: ${request.callbacks.size})")
         return CallbackAddResult.SUCCESS
     }
 
     /**
-     * 현재 활성화된 런처 가져오기 (내부용)
+     * Retrieves the special-permission launcher associated with a request.<br><br>
+     * 요청과 연결된 특수 권한 런처를 조회합니다.<br>
+     *
+     * @param requestId Pending request identifier.<br><br>
+     *                  조회할 요청 ID 입니다.<br>
+     * @param permission Special permission key for the launcher.<br><br>
+     *                   런처를 가져올 특수 권한 키입니다.<br>
+     * @return Launcher instance or null if the delegate is gone.<br><br>
+     *         Delegate가 없으면 null을 반환합니다.<br>
      */
     private fun getSpecialLauncher(requestId: String, permission: String): ActivityResultLauncher<Intent>? {
         val delegateRef = activeDelegates[requestId] ?: run {
@@ -341,7 +463,13 @@ class PermissionManager private constructor() {
     }
 
     /**
-     * 모든 콜백 호출 (헬퍼 메서드)
+     * Invokes every registered callback with the provided denied list.<br><br>
+     * 등록된 모든 콜백에 전달된 거부 목록을 전달합니다.<br>
+     *
+     * @param request Pending request that owns the callbacks.<br><br>
+     *                콜백을 보유한 요청 객체입니다.<br>
+     * @param deniedPermissions Permissions that remain denied.<br><br>
+     *                          거부 상태로 남아 있는 권한 목록입니다.<br>
      */
     private fun invokeAllCallbacks(request: PendingRequest, deniedPermissions: List<String>) {
         Logx.d("Invoking ${request.callbacks.size} callback(s) with denied permissions: $deniedPermissions")
@@ -353,53 +481,64 @@ class PermissionManager private constructor() {
             }
         }
     }
-    
+
 
 
     /**
-     * 만료된 요청 정리 (5분 경과)
+     * Cleans up requests that exceeded the timeout (default 5 minutes).<br><br>
+     * 기본 5분 타임아웃을 초과한 요청을 정리합니다.<br>
      */
     fun cleanupExpiredRequests() {
         val currentTime = System.currentTimeMillis()
         val expiredRequestIds = mutableListOf<String>()
 
-        // 만료된 요청 찾기
+        // Identifies requests that lingered beyond the maximum window.<br><br>
+        // 허용 시간을 초과한 요청을 찾아냅니다.<br>
         for ((requestId, request) in pendingRequests) {
             if (currentTime - request.requestTime > PermissionConstants.Defaults.REQUEST_TIMEOUT_MS) {
                 expiredRequestIds.add(requestId)
-                // 만료된 요청에 대한 모든 콜백 호출
+                // Notifies callbacks immediately to prevent silent abandonment.<br><br>
+                // 조용히 방치되지 않도록 콜백을 즉시 호출합니다.<br>
                 invokeAllCallbacks(request, request.originalPermissions)
             }
         }
 
-        // 만료된 요청 및 Delegate 참조 모두 제거 (유령 요청 방지)
+        // Removes both pending entries and delegate references to avoid leaks.<br><br>
+        // pendingRequests와 delegate 참조를 함께 제거해 유령 요청을 막습니다.<br>
         expiredRequestIds.forEach { requestId ->
             pendingRequests.remove(requestId)
-            unregisterDelegate(requestId)  // activeDelegates도 함께 정리
+            // Ensures the matching activeDelegates entry is cleared as well.<br><br>
+            // activeDelegates 항목도 함께 정리합니다.<br>
+            unregisterDelegate(requestId)
             Logx.d("Cleaned up expired request: $requestId")
         }
 
-        // 다음 자동 정리 스케줄링 (요청이 남아있는 경우에만)
+        // Schedule another cleanup pass only when requests remain.<br><br>
+        // 요청이 남아 있을 때만 다음 정리 작업을 예약합니다.<br>
         if (pendingRequests.isNotEmpty()) {
             scheduleCleanup()
         }
     }
-    
+
     /**
-     * 자동 정리 스케줄링 (1분마다)
+     * Schedules the cleanup runnable (default interval: 60 seconds).<br><br>
+     * 정리 Runnable을 예약합니다. 기본 주기는 60초입니다.<br>
      */
     private fun scheduleCleanup() {
         cleanupRunnable?.let { mainHandler.removeCallbacks(it) }
-        
+
         cleanupRunnable = Runnable {
             cleanupExpiredRequests()
         }
-        
-        mainHandler.postDelayed(cleanupRunnable!!, 60_000) // 1분 후 실행
+
+        // Posts a delayed cleanup on the main thread.<br><br>
+        // 메인 스레드에 지연 정리 작업을 게시합니다.<br>
+        mainHandler.postDelayed(cleanupRunnable!!, 60_000)
     }
 
-    // Private Functions
-    
+    // Private helpers<br><br>
+    // 내부 헬퍼 함수 모음입니다.<br>
+
     private fun launchSpecialPermissionWithRetry(
         context: Context,
         permission: String,
@@ -413,8 +552,9 @@ class PermissionManager private constructor() {
                 launcher.launch(intent)
             } catch (e: Exception) {
                 Logx.e("Failed to launch special permission request (attempt ${retryCount + 1}) $e" )
-                
-                // 재시도 로직 (최대 1회) - 50ms 후 비동기 재시도
+
+                // Retry once asynchronously after 50ms to handle transient issues.<br><br>
+                // 일시적인 문제를 대비해 50ms 후 한 번 비동기로 재시도합니다.<br>
                 if (retryCount < 1) {
                     mainHandler.postDelayed({
                         try {
@@ -433,13 +573,14 @@ class PermissionManager private constructor() {
             handleSpecialPermissionFailure(context, requestId, permission)
         }
     }
-    
+
     private fun handleSpecialPermissionFailure(context: Context?, requestId: String, permission: String) {
         val request = pendingRequests[requestId] ?: return
 
         val nextPermission = request.remainingSpecialPermissions.firstOrNull()
         if (nextPermission != null && context != null) {
-            // Delegate에서 런처 동적 조회
+            // Retrieves the next launcher dynamically from the delegate.<br><br>
+            // Delegate에서 다음 런처를 동적으로 조회합니다.<br>
             val launcher = getSpecialLauncher(requestId, nextPermission)
             if (launcher != null) {
                 request.remainingSpecialPermissions = request.remainingSpecialPermissions.drop(1)
@@ -470,7 +611,8 @@ class PermissionManager private constructor() {
     }
 
     private fun createSpecialPermissionIntent(context: Context, permission: String): Intent? {
-        // API 레벨 체크
+        // Validates API levels before creating the permission intent.<br><br>
+        // 권한 인텐트를 만들기 전에 필요한 API 레벨을 확인합니다.<br>
         when (permission) {
             in PermissionConstants.ApiLevelRequirements.ANDROID_R_PERMISSIONS -> {
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) return null
@@ -482,9 +624,9 @@ class PermissionManager private constructor() {
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return null
             }
         }
-        
+
         val action = PermissionConstants.SPECIAL_PERMISSION_ACTIONS[permission] ?: return null
-        
+
         return if (PermissionConstants.PERMISSIONS_REQUIRING_PACKAGE_URI.contains(permission)) {
             Intent(action, Uri.parse("package:${context.packageName}"))
         } else {

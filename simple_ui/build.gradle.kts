@@ -1,10 +1,12 @@
 import org.gradle.api.tasks.testing.Test
+import org.jetbrains.dokka.gradle.engine.parameters.VisibilityModifier
 
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     id ("maven-publish")
-    id("org.jetbrains.kotlinx.kover") version "0.9.3"
+    id("org.jetbrains.kotlinx.kover") version "0.9.3" //UnitTest
+    id("org.jetbrains.dokka") version "2.1.0" //Dokka - Document
 }
 
 publishing {
@@ -72,6 +74,9 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
+
+    //Dokka - Document
+    dokkaPlugin("org.jetbrains.dokka:android-documentation-plugin:2.1.0")
 
     //Test
     testImplementation(libs.junit)
@@ -192,4 +197,10 @@ tasks.register("testAll") {
     group = "verification"
 
     dependsOn("testUnit", "testRobolectric")
+}
+
+dokka {
+    dokkaSourceSets.configureEach {
+        documentedVisibilities.set(setOf(VisibilityModifier.Public, VisibilityModifier.Protected))
+    }
 }
