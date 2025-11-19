@@ -4,7 +4,10 @@ import android.Manifest
 import android.os.Build
 import androidx.annotation.RequiresApi
 
-
+/**
+ * Enumerates Android permissions that require custom flows outside the standard runtime dialog.<br><br>
+ * 표준 런타임 다이얼로그만으로 허용할 수 없는 특수 권한을 나열합니다.<br>
+ */
 enum class PermissionSpecialType(val permission: String) {
     SYSTEM_ALERT_WINDOW(Manifest.permission.SYSTEM_ALERT_WINDOW),
     WRITE_SETTINGS(Manifest.permission.WRITE_SETTINGS),

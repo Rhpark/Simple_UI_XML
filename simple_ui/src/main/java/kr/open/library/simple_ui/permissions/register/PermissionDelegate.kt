@@ -15,7 +15,11 @@ import kr.open.library.simple_ui.permissions.extentions.hasPermission
 import kr.open.library.simple_ui.permissions.manager.CallbackAddResult
 import kr.open.library.simple_ui.permissions.vo.PermissionSpecialType
 
-public class PermissionDelegate<T: Any>(private val contextProvider: T) {
+/**
+ * Coordinates permission requests while surviving configuration changes.<br><br>
+ * 구성 변경 동안에도 권한 요청을 안전하게 이어 주는 조정자입니다.<br>
+ */
+public class PermissionDelegate<T : Any>(private val contextProvider: T) {
 
     protected val permissionManager = PermissionManager.getInstance()
     private var currentRequestId: String? = null
@@ -39,8 +43,11 @@ public class PermissionDelegate<T: Any>(private val contextProvider: T) {
     }
 
     init {
-        // Lifecycle 이벤트를 감지하여 자동으로 정리 및 재등록
-        val lifecycleOwner = when(contextProvider) {
+        /*
+         * Observes lifecycle transitions to automatically re-register or clean up delegates.<br><br>
+         * 라이프사이클 변화를 감시해 Delegate를 자동으로 재등록하거나 정리합니다.<br>
+         */
+        val lifecycleOwner = when (contextProvider) {
             is ComponentActivity -> contextProvider.lifecycle
             is Fragment -> contextProvider.lifecycle
             else -> throw IllegalArgumentException("Unsupported context provider type")
@@ -49,13 +56,20 @@ public class PermissionDelegate<T: Any>(private val contextProvider: T) {
             override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
                 when (event) {
                     Lifecycle.Event.ON_START -> {
-                        // onRestoreInstanceState()는 onCreate()와 onStart() 사이에 호출됨
+                        /*
+                         * onRestoreInstanceState() runs between onCreate() and onStart().<br><br>
+                         * onRestoreInstanceState()는 onCreate()와 onStart() 사이에 실행됩니다.<br>
+                         */
                         if (hasRestoredState) {
                             attemptAutoReregistration()
                             hasRestoredState = false
                         }
                     }
                     Lifecycle.Event.ON_DESTROY -> {
+                        /*
+                         * Ensures pending requests are disposed when the owner is destroyed.<br><br>
+                         * 소유자가 파괴될 때 진행 중인 요청을 정리합니다.<br>
+                         */
                         cleanup()
                     }
                     else -> {}
@@ -66,7 +80,8 @@ public class PermissionDelegate<T: Any>(private val contextProvider: T) {
 
 
     /**
-     * 리소스 정리
+     * Releases any pending request when the host is no longer valid.<br><br>
+     * 호스트가 더 이상 유효하지 않을 때 남은 요청을 정리합니다.<br>
      */
     protected fun cleanup() {
         if (shouldClearRequestId()) {
@@ -78,6 +93,13 @@ public class PermissionDelegate<T: Any>(private val contextProvider: T) {
         }
     }
 
+    /**
+     * Decides whether the stored requestId should be nulled out.<br><br>
+     * 저장된 requestId를 비워야 하는지 여부를 결정합니다.<br>
+     *
+     * @return True if configuration is not changing and cleanup is safe.<br><br>
+     *         구성 변경 중이 아니어서 정리해도 안전할 때 true 를 반환합니다.<br>
+     */
     private fun shouldClearRequestId(): Boolean = when (contextProvider) {
         is ComponentActivity -> contextProvider.isFinishing && !contextProvider.isChangingConfigurations
         is Fragment -> {
@@ -88,22 +110,40 @@ public class PermissionDelegate<T: Any>(private val contextProvider: T) {
         else -> true
     }
 
+    /**
+     * Saves the active request identifier so it can be restored later.<br><br>
+     * 이후 복원을 위해 진행 중인 요청 식별자를 저장합니다.<br>
+     *
+     * @param outState Bundle that will persist across process death.<br><br>
+     *                 프로세스 재생성 시 유지되는 Bundle 입니다.<br>
+     */
     fun onSaveInstanceState(outState: Bundle) {
         currentRequestId?.let { outState.putString(KEY_REQUEST_ID, it) }
     }
 
+    /**
+     * Restores the pending request identifier from a saved state bundle.<br><br>
+     * 저장된 상태 번들에서 대기 중인 요청 식별자를 복원합니다.<br>
+     *
+     * @param savedState Bundle provided by the host lifecycle.<br><br>
+     *                   호스트 라이프사이클에서 전달된 Bundle 입니다.<br>
+     */
     fun onRestoreInstanceState(savedState: Bundle?) {
         currentRequestId = savedState?.getString(KEY_REQUEST_ID)
         hasRestoredState = true
 
-        // 즉시 재등록 시도 (ON_START가 이미 지나갔을 수도 있음)
+        /*
+         * Attempts eager re-registration in case ON_START already passed.<br><br>
+         * ON_START 단계가 지나간 뒤라도 즉시 재등록을 시도합니다.<br>
+         */
         if (currentRequestId != null) {
             attemptAutoReregistration()
         }
     }
 
     /**
-     * 자동 재등록 시도 (Configuration Change 후)
+     * Tries to rebind this delegate after a configuration change.<br><br>
+     * 구성 변경 이후 Delegate를 다시 연결하려고 시도합니다.<br>
      */
     private fun attemptAutoReregistration() {
         currentRequestId?.let { requestId ->
@@ -118,13 +158,22 @@ public class PermissionDelegate<T: Any>(private val contextProvider: T) {
     }
 
     /**
-     * 현재 권한 요청 ID 반환 (디버깅용)
+     * Exposes the active permission request identifier for debugging.<br><br>
+     * 디버깅을 위해 현재 활성 권한 요청 ID를 제공합니다.<br>
+     *
+     * @return Current requestId or null when idle.<br><br>
+     *         진행 중인 요청이 없다면 null 을 반환합니다.<br>
      */
     fun getCurrentRequestId(): String? = currentRequestId
 
     /**
-     * 특수 권한 런처 가져오기 (PermissionManager가 호출)
-     * internal: 같은 패키지 내에서만 접근 가능
+     * Provides the launcher registered for a specific special permission.<br><br>
+     * 특정 특수 권한에 등록된 런처를 반환합니다.<br>
+     *
+     * @param permission Permission key tied to the launcher.<br><br>
+     *                   런처와 연결된 권한 식별자입니다.<br>
+     * @return Launcher instance or null if none exists.<br><br>
+     *         등록된 런처가 없으면 null 을 반환합니다.<br>
      */
     internal fun getSpecialLauncher(permission: String): ActivityResultLauncher<Intent>? {
         return specialPermissionLauncher[permission]
@@ -132,17 +181,27 @@ public class PermissionDelegate<T: Any>(private val contextProvider: T) {
 
 
     /**
-     * 권한 요청 메인 함수
-     * @param permissions 요청할 권한 목록
-     * @param onResult 권한 요청 결과 콜백 (거부된 권한 목록을 반환)
+     * Requests one or more permissions, deduplicating concurrent calls.<br><br>
+     * 중복 호출을 제어하면서 하나 이상의 권한을 요청합니다.<br>
+     *
+     * @param permissions Ordered list of permissions to request.<br><br>
+     *                    요청할 권한 순서를 유지한 목록입니다.<br>
+     * @param onResult Callback invoked with denied permissions once finished.<br><br>
+     *                 완료 후 거부된 권한 목록을 전달받는 콜백입니다.<br>
      */
     public fun requestPermissions(
         permissions: List<String>,
         onResult: (deniedPermissions: List<String>) -> Unit
     ) {
-        // 진행 중인 요청 확인
+        /*
+         * Avoids duplicating requests by attaching callbacks to the in-flight one.<br><br>
+         * 진행 중인 요청이 있다면 콜백만 추가해 중복 실행을 방지합니다.<br>
+         */
         if (currentRequestId != null && permissionManager.hasActiveRequest(currentRequestId!!)) {
-            // 같은 권한 요청인지 확인 후 콜백 추가
+            /*
+             * Verifies whether the new request matches the existing permission set.<br><br>
+             * 새 요청이 기존 권한 집합과 동일한지 재검증합니다.<br>
+             */
             val result = permissionManager.addCallbackToRequest(
                 requestId = currentRequestId!!,
                 callback = onResult,
@@ -155,22 +214,34 @@ public class PermissionDelegate<T: Any>(private val contextProvider: T) {
                     return
                 }
                 CallbackAddResult.PERMISSION_MISMATCH -> {
-                    // 다른 권한 요청 → 무시 (더 안전함)
+                    /*
+                     * Ignores mismatched requests to prevent leaking stale callbacks.<br><br>
+                     * 일치하지 않는 요청은 무시하여 잘못된 콜백 연결을 방지합니다.<br>
+                     */
                     val existingPermissions = permissionManager.getRequestPermissions(currentRequestId!!)
                     Logx.w("Cannot add callback: permission mismatch. Existing: $existingPermissions, Requested: ${permissions.toSet()}")
                     Logx.w("Ignoring duplicate request with different permissions. Please wait for current request to complete.")
                     return
                 }
                 CallbackAddResult.REQUEST_NOT_FOUND -> {
-                    // 레이스 컨디션 감지: 요청이 막 완료됨
+                    /*
+                     * Handles the race where the previous request finished between checks.<br><br>
+                     * 직전 요청이 막 끝난 레이스 컨디션을 감지해 새 요청을 준비합니다.<br>
+                     */
                     Logx.d("Race condition detected: request $currentRequestId just completed. Starting new request.")
                     currentRequestId = null
-                    // 아래로 진행하여 새 요청 시작
+                    /*
+                     * Continues below to start a brand-new permission request.<br><br>
+                     * 이어지는 코드에서 새로운 권한 요청을 시작합니다.<br>
+                     */
                 }
             }
         }
 
-        // 먼저 임시 ID 생성 및 Delegate 등록 (request() 호출 전에!)
+        /*
+         * Pre-registers a delegate so PermissionManager can look it up immediately.<br><br>
+         * PermissionManager 가 바로 찾을 수 있도록 먼저 Delegate를 등록합니다.<br>
+         */
         val tempRequestId = java.util.UUID.randomUUID().toString()
         permissionManager.registerDelegate(tempRequestId, this)
 
@@ -179,10 +250,17 @@ public class PermissionDelegate<T: Any>(private val contextProvider: T) {
             requestPermissionLauncher = normalPermissionLauncher,
             permissions = permissions,
             callback = onResult,
-            preGeneratedRequestId = tempRequestId  // 미리 생성한 ID 전달
+            /*
+             * Supplies the pre-generated ID so PermissionManager can reuse it.<br><br>
+             * PermissionManager 가 재사용할 수 있도록 선 생성한 ID를 전달합니다.<br>
+             */
+            preGeneratedRequestId = tempRequestId
         )
 
-        // request()가 실패하면 빈 문자열 반환하므로 정리 필요
+        /*
+         * Clean up the delegate if the request failed to launch and returned empty.<br><br>
+         * 요청 실행이 실패해 빈 문자열을 반환하면 Delegate를 정리합니다.<br>
+         */
         if (currentRequestId.isNullOrEmpty()) {
             permissionManager.unregisterDelegate(tempRequestId)
             currentRequestId = null
@@ -191,17 +269,36 @@ public class PermissionDelegate<T: Any>(private val contextProvider: T) {
 
 
     /**
-     * 여러 권한의 현재 상태 확인
+     * Checks whether every permission in the list is already granted.<br><br>
+     * 목록의 모든 권한이 이미 허용되었는지 확인합니다.<br>
+     *
+     * @param permissions Permissions to verify.<br><br>
+     *                    확인할 권한 목록입니다.<br>
+     * @return True if all permissions are granted.<br><br>
+     *         모두 허용된 경우 true 를 반환합니다.<br>
      */
     fun arePermissionsGranted(permissions: List<String>): Boolean = permissions.all { isPermissionGranted(it) }
 
     /**
-     * 거부된 권한들 반환
+     * Returns the subset of permissions that remain denied.<br><br>
+     * 여전히 거부 상태인 권한 목록을 반환합니다.<br>
+     *
+     * @param permissions Permissions to inspect.<br><br>
+     *                    상태를 확인할 권한 목록입니다.<br>
+     * @return Permissions that are not yet granted.<br><br>
+     *         아직 허용되지 않은 권한 목록입니다.<br>
      */
     fun getDeniedPermissions(permissions: List<String>): List<String> =
         permissions.filter { !isPermissionGranted(it) }
 
 
+    /**
+     * Resolves the Android Context from the backing provider.<br><br>
+     * 전달받은 provider 에서 Android Context 를 추출합니다.<br>
+     *
+     * @return Host context used for permission APIs.<br><br>
+     *         권한 API 호출에 사용할 호스트 Context 입니다.<br>
+     */
     private fun getContext() = when (contextProvider) {
         is ComponentActivity -> contextProvider
         is Fragment -> contextProvider.requireContext()
@@ -209,24 +306,47 @@ public class PermissionDelegate<T: Any>(private val contextProvider: T) {
     }
 
     /**
-     * 특정 권한의 현재 상태 확인
+     * Checks whether a single permission has already been granted.<br><br>
+     * 단일 권한의 허용 여부를 확인합니다.<br>
+     *
+     * @param permission Permission to check.<br><br>
+     *                   확인할 권한입니다.<br>
+     * @return True if the permission has been granted.<br><br>
+     *         권한이 허용되었다면 true 를 반환합니다.<br>
      */
-    fun isPermissionGranted(permission: String): Boolean =  getContext().hasPermission(permission)
+    fun isPermissionGranted(permission: String): Boolean = getContext().hasPermission(permission)
 
 
     /**
-     * 일반 권한 결과 처리
+     * Forwards normal permission results to the manager.<br><br>
+     * 일반 권한 요청 결과를 PermissionManager 로 전달합니다.<br>
+     *
+     * @param permissions Map of permission to granted flag.<br><br>
+     *                    권한과 승인 여부를 담은 맵입니다.<br>
      */
     private fun handlePermissionResult(permissions: Map<String, Boolean>) =
         permissionManager.result(getContext(), permissions, currentRequestId)
 
     /**
-     * 특수 권한 결과 처리
+     * Forwards special permission results to the manager.<br><br>
+     * 특수 권한 결과를 PermissionManager 로 전달합니다.<br>
+     *
+     * @param permission Special permission evaluated by the launcher.<br><br>
+     *                   런처가 처리한 특수 권한입니다.<br>
      */
     protected fun handleSpecialPermissionResult(permission: String) =
         permissionManager.resultSpecialPermission(getContext(), permission, currentRequestId)
 
 
+    /**
+     * Registers a launcher dedicated to a special permission.<br><br>
+     * 특정 특수 권한을 처리할 런처를 등록합니다.<br>
+     *
+     * @param permission Permission tied to the launcher.<br><br>
+     *                   런처와 연결할 권한입니다.<br>
+     * @return ActivityResultLauncher instance scoped to the host.<br><br>
+     *         호스트 범위에 묶인 ActivityResultLauncher 를 반환합니다.<br>
+     */
     protected fun createSpecialLauncher(permission: String) = when (contextProvider) {
         is ComponentActivity -> contextProvider.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
                 permissionManager.resultSpecialPermission(getContext(), permission, currentRequestId)
