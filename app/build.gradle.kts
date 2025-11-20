@@ -15,7 +15,7 @@ android {
         minSdk = 28
         targetSdk = 35
         versionCode = 1
-        versionName = "0.2.9"
+        versionName = libs.versions.appVersion.toString()
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -70,6 +70,13 @@ firebaseAppDistribution {
         ?: System.getenv("FIREBASE_TESTERS")
     if (!testersValue.isNullOrBlank()) {
         testers = testersValue
+    }
+
+    val artifactOverride =
+        (project.findProperty("firebaseArtifactPath") as String?) ?:
+        System.getenv("FIREBASE_ARTIFACT_PATH")
+    if (!artifactOverride.isNullOrBlank()) {
+        artifactPath = artifactOverride
     }
 }
 

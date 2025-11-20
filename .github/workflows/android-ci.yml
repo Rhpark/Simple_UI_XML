@@ -598,15 +598,72 @@ jobs:
           ${{ secrets.FIREBASE_CREDENTIALS }}
           EOF
 
+      - name: Assemble release APK
+        id: assemble_release
+        run: bash -o pipefail -c "./gradlew :app:assembleRelease --stacktrace |& tee assemble-release.log"
+
+      - name: Capture failure snippet (Assemble release APK)
+        if: failure() && steps.assemble_release.outcome == 'failure'
+        run: |
+          python3 .github/scripts/extract_gradle_failure.py assemble-release.log firebase-appdist-failure.log
+          SUMMARY="$(head -n 1 firebase-appdist-failure.log | tr -d '\r')"
+          if [ -z "$SUMMARY" ]; then
+            SUMMARY="Failed while assembling release APK before Firebase distribution."
+          fi
+          {
+            echo "FIREBASE_FAILURE_SUMMARY<<EOF"
+            echo "$SUMMARY"
+            echo "EOF"
+            echo "FIREBASE_FAILURE_LOG_PATH=$(pwd)/firebase-appdist-failure.log"
+          } >> "$GITHUB_ENV"
+
+      - name: Determine release artifact path
+        id: release_artifact
+        run: |
+          set -euo pipefail
+          RELEASE_APK="app/build/outputs/apk/release/app-release.apk"
+          RELEASE_UNSIGNED="app/build/outputs/apk/release/app-release-unsigned.apk"
+          SELECTED=""
+          SOURCE=""
+          if [ -f "$RELEASE_APK" ]; then
+            SELECTED="$RELEASE_APK"
+            SOURCE="signed release"
+          elif [ -f "$RELEASE_UNSIGNED" ]; then
+            SELECTED="$RELEASE_UNSIGNED"
+            SOURCE="unsigned release"
+          fi
+          if [ -n "$SELECTED" ]; then
+            ABS_PATH="$(realpath "$SELECTED")"
+            echo "artifact=$ABS_PATH" >> "$GITHUB_OUTPUT"
+            echo "artifact_source=$SOURCE" >> "$GITHUB_OUTPUT"
+            echo "Selected $SOURCE artifact: $ABS_PATH"
+          else
+            echo "artifact=" >> "$GITHUB_OUTPUT"
+            echo "artifact_source=" >> "$GITHUB_OUTPUT"
+            echo "::warning::No release APK artifacts found. Firebase upload will fallback to debug."
+          fi
+
       - name: Distribute release to Firebase
         id: upload_release
         continue-on-error: true
         env:
           FIREBASE_RELEASE_NOTES: ${{ needs.initialize-check.outputs.body }}
-        run: bash -o pipefail -c "./gradlew :app:appDistributionUploadRelease --stacktrace |& tee firebase-appdist-release.log"
+          FIREBASE_ARTIFACT_OVERRIDE: ${{ steps.release_artifact.outputs.artifact }}
+        run: |
+          set -euo pipefail
+          LOG_FILE="firebase-appdist-release.log"
+          ARTIFACT="${FIREBASE_ARTIFACT_OVERRIDE}"
+          if [ -z "$ARTIFACT" ]; then
+            echo "Release artifact path not found. Ensure :app:assembleRelease produced an APK." | tee "$LOG_FILE"
+            exit 1
+          fi
+          ./gradlew :app:appDistributionUploadRelease -PfirebaseArtifactPath="$ARTIFACT" --stacktrace |& tee "$LOG_FILE"
 
       - name: Handle release upload failure and prepare fallback
         if: steps.upload_release.outcome == 'failure'
+        env:
+          RELEASE_ARTIFACT_SOURCE: ${{ steps.release_artifact.outputs.artifact_source }}
+          RELEASE_ARTIFACT_PATH: ${{ steps.release_artifact.outputs.artifact }}
         run: |
           python3 .github/scripts/extract_gradle_failure.py firebase-appdist-release.log firebase-appdist-release-failure.log || true
           SUMMARY="$(head -n 1 firebase-appdist-release-failure.log | tr -d '\r')"
@@ -624,15 +681,65 @@ jobs:
             echo "### Firebase release upload failed" >> "$GITHUB_STEP_SUMMARY"
             echo "$SUMMARY" >> "$GITHUB_STEP_SUMMARY"
             echo "" >> "$GITHUB_STEP_SUMMARY"
+            if [ -n "${RELEASE_ARTIFACT_SOURCE:-}" ]; then
+              echo "- Artifact attempted (${RELEASE_ARTIFACT_SOURCE}): ${RELEASE_ARTIFACT_PATH}" >> "$GITHUB_STEP_SUMMARY"
+              echo "" >> "$GITHUB_STEP_SUMMARY"
+            fi
             echo "Attempting debug variant upload..." >> "$GITHUB_STEP_SUMMARY"
           }
+
+      - name: Assemble debug APK (fallback)
+        id: assemble_debug
+        if: steps.upload_release.outcome == 'failure'
+        run: bash -o pipefail -c "./gradlew :app:assembleDebug --stacktrace |& tee assemble-debug.log"
+
+      - name: Capture failure snippet (Assemble debug APK)
+        if: failure() && steps.assemble_debug.outcome == 'failure'
+        run: |
+          python3 .github/scripts/extract_gradle_failure.py assemble-debug.log firebase-appdist-failure.log
+          SUMMARY="$(head -n 1 firebase-appdist-failure.log | tr -d '\r')"
+          if [ -z "$SUMMARY" ]; then
+            SUMMARY="Failed while assembling debug APK during Firebase fallback."
+          fi
+          {
+            echo "FIREBASE_FAILURE_SUMMARY<<EOF"
+            echo "$SUMMARY"
+            echo "EOF"
+            echo "FIREBASE_FAILURE_LOG_PATH=$(pwd)/firebase-appdist-failure.log"
+          } >> "$GITHUB_ENV"
+
+      - name: Determine debug artifact path
+        id: debug_artifact
+        if: steps.upload_release.outcome == 'failure'
+        run: |
+          set -euo pipefail
+          DEBUG_APK="app/build/outputs/apk/debug/app-debug.apk"
+          if [ -f "$DEBUG_APK" ]; then
+            ABS_PATH="$(realpath "$DEBUG_APK")"
+            echo "artifact=$ABS_PATH" >> "$GITHUB_OUTPUT"
+            echo "artifact_source=debug" >> "$GITHUB_OUTPUT"
+            echo "Selected debug artifact: $ABS_PATH"
+          else
+            echo "artifact=" >> "$GITHUB_OUTPUT"
+            echo "artifact_source=" >> "$GITHUB_OUTPUT"
+            echo "::warning::Debug APK not found after assembleDebug."
+          fi
 
       - name: Distribute debug to Firebase
         id: upload_debug
         if: steps.upload_release.outcome == 'failure'
         env:
           FIREBASE_RELEASE_NOTES: ${{ needs.initialize-check.outputs.body }}
-        run: bash -o pipefail -c "./gradlew :app:appDistributionUploadDebug --stacktrace |& tee firebase-appdist-debug.log"
+          FIREBASE_ARTIFACT_OVERRIDE: ${{ steps.debug_artifact.outputs.artifact }}
+        run: |
+          set -euo pipefail
+          LOG_FILE="firebase-appdist-debug.log"
+          ARTIFACT="${FIREBASE_ARTIFACT_OVERRIDE}"
+          if [ -z "$ARTIFACT" ]; then
+            echo "Debug artifact path not found. Ensure fallback assemble produced app-debug.apk." | tee "$LOG_FILE"
+            exit 1
+          fi
+          ./gradlew :app:appDistributionUploadDebug -PfirebaseArtifactPath="$ARTIFACT" --stacktrace |& tee "$LOG_FILE"
 
       - name: Capture failure snippet (Firebase App Distribution Debug)
         if: steps.upload_release.outcome == 'failure' && failure()
