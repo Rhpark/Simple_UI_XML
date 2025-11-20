@@ -138,40 +138,7 @@ jobs:
             exit 1
           fi
 
-          GRADLE_VERSION=$(
-            python3 - <<'PY' || true
-          import re, sys
-          from pathlib import Path
-
-
-          def read_version_from_gradle():
-              path = Path("simple_ui/build.gradle.kts")
-              if not path.is_file():
-                  return None
-              text = path.read_text(encoding="utf-8")
-              match = re.search(r'version\s*=\s*"([^"]+)"', text)
-              if match:
-                  return match.group(1)
-              return None
-
-
-          def read_version_from_toml():
-              path = Path("gradle/libs.versions.toml")
-              if not path.is_file():
-                  return None
-              text = path.read_text(encoding="utf-8")
-              match = re.search(r'appVersion\s*=\s*"([^"]+)"', text)
-              if match:
-                  return match.group(1)
-              return None
-
-
-          value = read_version_from_gradle() or read_version_from_toml()
-          if value is None:
-              sys.exit(1)
-          print(value)
-PY
-          )
+          GRADLE_VERSION=$(python3 .github/scripts/read_app_version.py || true)
           if [ -z "$GRADLE_VERSION" ]; then
             echo "Error: Failed to read version from simple_ui/build.gradle.kts"
             exit 1
