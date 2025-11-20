@@ -140,6 +140,9 @@ jobs:
 
           GRADLE_VERSION=$(grep -oP '(?<=version = ")[^"]+' simple_ui/build.gradle.kts | head -1 || true)
           if [ -z "$GRADLE_VERSION" ]; then
+            GRADLE_VERSION=$(grep -oP '(?<=appVersion\s*=\s*")[^"]+' gradle/libs.versions.toml | head -1 || true)
+          fi
+          if [ -z "$GRADLE_VERSION" ]; then
             echo "Error: Failed to read version from simple_ui/build.gradle.kts"
             exit 1
           fi

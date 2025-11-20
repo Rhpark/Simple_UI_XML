@@ -14,7 +14,7 @@ publishing {
         register("release", MavenPublication::class) { // MavenPublication::class 사용 가능
             groupId = "com.github.Rhpark"
             artifactId = "Simple_UI_XML"
-            version = libs.versions.appVersion.toString()
+            version = libs.versions.appVersion.get()
 
             afterEvaluate {
                 from(components.findByName("release"))
