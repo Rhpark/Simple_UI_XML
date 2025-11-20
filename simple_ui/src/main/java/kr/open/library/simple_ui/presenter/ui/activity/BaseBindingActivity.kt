@@ -10,31 +10,87 @@ import androidx.lifecycle.ViewModelProvider
 
 
 /**
- * A base activity class that uses View Binding and provides common functionality for activities with data binding.
- * Binding을 사용하는 액티비티에 대한 공통 기능을 제공하는 기본 액티비티 클래스.
+ * A base Activity class that uses DataBinding and provides common functionality for data-bound activities.<br>
+ * Extends RootActivity to inherit system bar control and permission management.<br><br>
+ * DataBinding을 사용하고 데이터 바인딩 Activity에 대한 공통 기능을 제공하는 기본 Activity 클래스입니다.<br>
+ * RootActivity를 확장하여 시스템 바 제어와 권한 관리를 상속받습니다.<br>
  *
- * This class handles the following tasks:
- * - Inflates the layout and sets up View Binding.
- * - Sets the lifecycle owner for the binding.
- * - Provides a convenient method to obtain a ViewModel.
+ * This class handles the following tasks:<br>
+ * - Inflates the layout and sets up DataBinding<br>
+ * - Sets the lifecycle owner for the binding<br>
+ * - Provides a convenient method to obtain a ViewModel<br>
+ * - Provides hook methods for view creation and event collection<br><br>
+ * 이 클래스는 다음과 같은 작업을 처리합니다:<br>
+ * - 레이아웃을 인플레이션하고 DataBinding을 설정합니다<br>
+ * - 바인딩에 대한 생명주기 소유자를 설정합니다<br>
+ * - ViewModel을 얻는 편리한 메서드를 제공합니다<br>
+ * - 뷰 생성 및 이벤트 수집을 위한 훅 메서드를 제공합니다<br>
  *
- * 이 클래스는 다음과 같은 작업을 처리합니다.
- * - 레이아웃을 확장하고 뷰 바인딩을 설정합니다.
- * - 바인딩에 대한 수명 주기 소유자를 설정합니다.
- * - ViewModel을 얻는 편리한 방법을 제공합니다.
+ * Usage example:<br>
+ * ```kotlin
+ * class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
+ *     private val viewModel: MainViewModel by lazy { getViewModel() }
  *
- * @param BINDING The type of the View Binding class.
- * @param layoutRes The layout resource ID for the activity.
+ *     override fun onCreateView(rootView: View, savedInstanceState: Bundle?) {
+ *         binding.viewModel = viewModel
+ *         setupViews()
+ *     }
  *
- * @param BINDING 뷰 바인딩 클래스의 유형입니다.
- * @param layoutRes 액티비티의 레이아웃 리소스 ID입니다.
+ *     override fun eventVmCollect() {
+ *         lifecycleScope.launch {
+ *             repeatOnLifecycle(Lifecycle.State.STARTED) {
+ *                 viewModel.events.collect { event ->
+ *                     handleEvent(event)
+ *                 }
+ *             }
+ *         }
+ *     }
+ * }
+ * ```
+ * <br><br>
+ * 사용 예제:<br>
+ * ```kotlin
+ * class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
+ *     private val viewModel: MainViewModel by lazy { getViewModel() }
+ *
+ *     override fun onCreateView(rootView: View, savedInstanceState: Bundle?) {
+ *         binding.viewModel = viewModel
+ *         setupViews()
+ *     }
+ *
+ *     override fun eventVmCollect() {
+ *         lifecycleScope.launch {
+ *             repeatOnLifecycle(Lifecycle.State.STARTED) {
+ *                 viewModel.events.collect { event ->
+ *                     handleEvent(event)
+ *                 }
+ *             }
+ *         }
+ *     }
+ * }
+ * ```
+ * <br>
+ *
+ * @param BINDING The type of the DataBinding class.<br><br>
+ *                DataBinding 클래스의 타입.<br>
+ *
+ * @param layoutRes The layout resource ID for the activity.<br><br>
+ *                  Activity의 레이아웃 리소스 ID.<br>
+ *
+ * @see RootActivity For base class with system bar and permission features.<br><br>
+ *      시스템 바와 권한 기능이 있는 기본 클래스는 RootActivity를 참조하세요.<br>
+ *
+ * @see BaseActivity For simple layout-based Activity without DataBinding.<br><br>
+ *      DataBinding 없이 간단한 레이아웃 기반 Activity는 BaseActivity를 참조하세요.<br>
  */
 public abstract class BaseBindingActivity<BINDING : ViewDataBinding>(@LayoutRes private val layoutRes: Int) :
     RootActivity() {
 
     /**
-     * The View Binding object for the activity.
-     * 뷰 바인딩 객체.
+     * The DataBinding object for the activity.<br>
+     * Initialized in onCreate and available for use in onCreateView and afterwards.<br><br>
+     * Activity의 DataBinding 객체입니다.<br>
+     * onCreate에서 초기화되며 onCreateView 이후부터 사용 가능합니다.<br>
      */
     protected lateinit var binding: BINDING
         private set
@@ -46,20 +102,38 @@ public abstract class BaseBindingActivity<BINDING : ViewDataBinding>(@LayoutRes 
         binding.lifecycleOwner = this
     }
 
+    /**
+     * Called after binding is initialized but before lifecycleOwner is set.<br>
+     * Override this method to set up views and bind ViewModel to the binding.<br><br>
+     * 바인딩이 초기화된 후 lifecycleOwner가 설정되기 전에 호출됩니다.<br>
+     * 뷰를 설정하고 ViewModel을 바인딩에 연결하려면 이 메서드를 오버라이드하세요.<br>
+     *
+     * @param rootView The root view of the inflated layout.<br><br>
+     *                 인플레이션된 레이아웃의 루트 뷰.<br>
+     *
+     * @param savedInstanceState The saved instance state bundle, if any.<br><br>
+     *                           저장된 인스턴스 상태 번들 (있는 경우).<br>
+     */
     protected open fun onCreateView(rootView: View, savedInstanceState: Bundle?) {
 
     }
 
 
-    /*********************************
-     *  ViewModel 이벤트 구독 및 처리   *
-     *********************************/
+    /**
+     * Override this method to set up ViewModel event collection.<br>
+     * Typically used to collect Flow events from ViewModel using lifecycleScope.<br><br>
+     * ViewModel 이벤트 수집을 설정하려면 이 메서드를 오버라이드하세요.<br>
+     * 일반적으로 lifecycleScope를 사용하여 ViewModel의 Flow 이벤트를 수집하는 데 사용됩니다.<br>
+     */
     protected open fun eventVmCollect() {}
 
 
     /**
-     * Obtains a ViewModel of the specified type.
-     * 지정된 유형의 ViewModel을 가져옵니다.
+     * Obtains a ViewModel of the specified type using ViewModelProvider.<br><br>
+     * ViewModelProvider를 사용하여 지정된 타입의 ViewModel을 가져옵니다.<br>
+     *
+     * @return The ViewModel instance of type T.<br><br>
+     *         타입 T의 ViewModel 인스턴스.<br>
      */
     protected inline fun <reified T : ViewModel> getViewModel(): T {
         return ViewModelProvider(this)[T::class.java]

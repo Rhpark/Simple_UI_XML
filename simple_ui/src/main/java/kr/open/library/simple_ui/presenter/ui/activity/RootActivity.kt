@@ -22,32 +22,69 @@ import kr.open.library.simple_ui.logcat.Logx
 import kr.open.library.simple_ui.permissions.register.PermissionRequester
 import kr.open.library.simple_ui.permissions.register.PermissionDelegate
 
+/**
+ * Root Activity class providing comprehensive system bar control and permission management.<br>
+ * Serves as the foundation for all Activity classes in the library with API version-aware implementations.<br><br>
+ * 시스템 바 제어와 권한 관리를 종합적으로 제공하는 루트 Activity 클래스입니다.<br>
+ * API 버전을 인식하는 구현으로 라이브러리의 모든 Activity 클래스의 기반이 됩니다.<br>
+ *
+ * Features:<br>
+ * - StatusBar and NavigationBar color customization<br>
+ * - System bar visibility control (show/hide/transparent)<br>
+ * - Runtime permission management via PermissionDelegate<br>
+ * - API 35+ Edge-to-edge support with custom background views<br>
+ * - Lifecycle-aware permission state preservation<br><br>
+ * 기능:<br>
+ * - StatusBar와 NavigationBar 색상 커스터마이징<br>
+ * - 시스템 바 가시성 제어 (표시/숨김/투명)<br>
+ * - PermissionDelegate를 통한 런타임 권한 관리<br>
+ * - 커스텀 배경 뷰를 사용한 API 35+ Edge-to-edge 지원<br>
+ * - 생명주기 인식 권한 상태 보존<br>
+ *
+ * @see BaseActivity For simple layout-based Activity.<br><br>
+ *      간단한 레이아웃 기반 Activity는 BaseActivity를 참조하세요.<br>
+ *
+ * @see BaseBindingActivity For DataBinding-enabled Activity.<br><br>
+ *      DataBinding을 사용하는 Activity는 BaseBindingActivity를 참조하세요.<br>
+ */
 abstract class RootActivity : AppCompatActivity(), PermissionRequester {
 
-    /************************
-     *   Permission Check   *
-     ************************/
+    /**
+     * Delegate for handling runtime permission requests.<br><br>
+     * 런타임 권한 요청을 처리하는 델리게이트입니다.<br>
+     */
     protected lateinit var permissionDelegate : PermissionDelegate<AppCompatActivity>
 
-    /************************************
-     *  API 35+ StatusBar 배경 View 관리  *
-     ************************************/
+    /**
+     * Background view for StatusBar color on API 35+.<br><br>
+     * API 35+에서 StatusBar 색상을 위한 배경 뷰입니다.<br>
+     */
     private var statusBarBackgroundView: View? = null
+
+    /**
+     * Background view for NavigationBar color on API 35+.<br><br>
+     * API 35+에서 NavigationBar 색상을 위한 배경 뷰입니다.<br>
+     */
     private var navigationBarBackgroundView: View? = null
 
-
-    /*************************
-     *  화면의 statusBar 높이  *
-     *************************/
+    /**
+     * Returns the current StatusBar height in pixels.<br>
+     * Uses WindowInsets on API 30+ and legacy method on older versions.<br><br>
+     * 현재 StatusBar 높이를 픽셀 단위로 반환합니다.<br>
+     * API 30+에서는 WindowInsets를 사용하고 이전 버전에서는 레거시 메서드를 사용합니다.<br>
+     */
     public val statusBarHeight: Int
         get() = checkSdkVersion(Build.VERSION_CODES.R,
             positiveWork = { window.decorView.getRootWindowInsets()?.getInsets(WindowInsets.Type.statusBars())?.top ?: 0 },
             negativeWork = { Rect().apply { window.decorView.getWindowVisibleDisplayFrame(this) }.top }
         )
 
-    /******************************
-     *  화면의 navigationBar 높이  *
-     ******************************/
+    /**
+     * Returns the current NavigationBar height in pixels.<br>
+     * Uses WindowInsets on API 30+ and legacy calculation on older versions.<br><br>
+     * 현재 NavigationBar 높이를 픽셀 단위로 반환합니다.<br>
+     * API 30+에서는 WindowInsets를 사용하고 이전 버전에서는 레거시 계산을 사용합니다.<br>
+     */
     public val navigationBarHeight: Int
         get() = checkSdkVersion(Build.VERSION_CODES.R,
             positiveWork = { window.decorView.getRootWindowInsets()?.getInsets(WindowInsets.Type.navigationBars())?.bottom ?: 0 },
@@ -71,7 +108,13 @@ abstract class RootActivity : AppCompatActivity(), PermissionRequester {
     }
 
     /**
-     * Override this method to perform initialization before the standard onCreate logic.
+     * Override this method to perform initialization before the standard onCreate logic.<br>
+     * Called after super.onCreate() but before any child class initialization.<br><br>
+     * 표준 onCreate 로직 전에 초기화를 수행하려면 이 메서드를 오버라이드하세요.<br>
+     * super.onCreate() 후 자식 클래스 초기화 전에 호출됩니다.<br>
+     *
+     * @param savedInstanceState The saved instance state bundle, if any.<br><br>
+     *                           저장된 인스턴스 상태 번들 (있는 경우).<br>
      */
     protected open fun beforeOnCreated(savedInstanceState: Bundle?) {}
 
@@ -82,11 +125,14 @@ abstract class RootActivity : AppCompatActivity(), PermissionRequester {
 
 
     /**
-     * Configures system bars (status and navigation) with the same color.
-     * 시스템 바(상태 및 네비게이션)를 동일한 색상으로 설정.
+     * Configures system bars (status and navigation) with the same color.<br><br>
+     * 시스템 바(상태 및 네비게이션)를 동일한 색상으로 설정합니다.<br>
      *
-     * @param color The color to set for both status and navigation bars.
-     * @param isLightSystemBars Whether to use light system bar icons.
+     * @param color The color to set for both status and navigation bars.<br><br>
+     *              상태 및 네비게이션 바에 설정할 색상.<br>
+     *
+     * @param isLightSystemBars Whether to use light system bar icons (dark icons for light backgrounds).<br><br>
+     *                          라이트 시스템 바 아이콘 사용 여부 (밝은 배경에는 어두운 아이콘).<br>
      */
     protected fun setSystemBarsColor(@ColorInt color: Int, isLightSystemBars: Boolean = false) {
         setStatusBarColor(color, isLightSystemBars)
@@ -95,21 +141,26 @@ abstract class RootActivity : AppCompatActivity(), PermissionRequester {
 
 
     /**
-     * Sets the status bar color.
-     * 상태 표시줄 색상 설정.
+     * Sets the status bar color.<br><br>
+     * 상태 표시줄 색상을 설정합니다.<br>
      *
-     * ## API 버전별 동작 방식
+     * ## API version behavior / API 버전별 동작 방식<br>
      *
-     * ### API 28-34 (Android 9.0 ~ Android 14)
-     * - `window.statusBarColor`를 직접 설정하여 StatusBar 색상 변경
-     * - 기존 방식으로 안정적으로 동작
+     * ### API 28-34 (Android 9.0 ~ Android 14)<br>
+     * - Sets StatusBar color directly via `window.statusBarColor`<br>
+     * - `window.statusBarColor`를 직접 설정하여 StatusBar 색상 변경<br>
      *
-     * ### API 35+ (Android 15+)
-     * - StatusBar가 항상 투명하게 강제됨
-     * 색 변경시
+     * ### API 35+ (Android 15+)<br>
+     * - StatusBar is always transparent by system<br>
+     * - Uses custom background View to simulate color<br>
+     * - StatusBar가 시스템에 의해 항상 투명하게 강제됨<br>
+     * - 색상을 시뮬레이션하기 위해 커스텀 배경 뷰 사용<br>
      *
-     * @param color The color to set. StatusBar 색상
-     * @param isLightStatusBar Whether to use light status bar icons. true일 경우 어두운 아이콘(라이트 모드), false일 경우 밝은 아이콘(다크 모드)
+     * @param color The color to set for StatusBar.<br><br>
+     *              StatusBar에 설정할 색상.<br>
+     *
+     * @param isLightStatusBar Whether to use light status bar icons. true for dark icons (light mode), false for light icons (dark mode).<br><br>
+     *                         라이트 상태 바 아이콘 사용 여부. true일 경우 어두운 아이콘(라이트 모드), false일 경우 밝은 아이콘(다크 모드).<br>
      */
     protected fun setStatusBarColor(@ColorInt color: Int, isLightStatusBar: Boolean = false) {
 
@@ -130,11 +181,14 @@ abstract class RootActivity : AppCompatActivity(), PermissionRequester {
     }
 
     /**
-     * Sets the navigation bar color.
-     * 네비게이션 바 색상 설정.
+     * Sets the navigation bar color.<br><br>
+     * 네비게이션 바 색상을 설정합니다.<br>
      *
-     * @param color The color to set.
-     * @param isLightNavigationBar Whether to use light navigation bar icons.
+     * @param color The color to set for NavigationBar.<br><br>
+     *              NavigationBar에 설정할 색상.<br>
+     *
+     * @param isLightNavigationBar Whether to use light navigation bar icons (dark icons for light backgrounds).<br><br>
+     *                             라이트 네비게이션 바 아이콘 사용 여부 (밝은 배경에는 어두운 아이콘).<br>
      */
     protected fun setNavigationBarColor(@ColorInt color: Int, isLightNavigationBar: Boolean = false) {
 
@@ -153,10 +207,11 @@ abstract class RootActivity : AppCompatActivity(), PermissionRequester {
     }
 
     /**
-     * Sets the system bar icons mode(StatusBar + NavigationBar).
-     * 시스템 바 아이콘을 밝기 모드 설정(light 또는 dark).
+     * Sets the system bar icons mode (StatusBar + NavigationBar).<br><br>
+     * 시스템 바 아이콘 밝기 모드를 설정합니다 (light 또는 dark).<br>
      *
-     * @param isDarkIcon True for dark icons (light mode), false for light icons (dark mode).
+     * @param isDarkIcon True for dark icons (light mode), false for light icons (dark mode).<br><br>
+     *                   어두운 아이콘은 true (라이트 모드), 밝은 아이콘은 false (다크 모드).<br>
      */
     protected fun setSystemBarsAppearance(isDarkIcon: Boolean) {
         setStatusBarAppearance(isDarkIcon)
@@ -164,12 +219,13 @@ abstract class RootActivity : AppCompatActivity(), PermissionRequester {
     }
 
     /**
-     *  StatusBar Icon Mode(Dark or Light)
+     * Sets the StatusBar icon mode (Dark or Light).<br>
+     * It may not work on certain devices.<br><br>
+     * StatusBar 아이콘 모드를 설정합니다 (Dark 또는 Light).<br>
+     * 특정 장치에서는 작동하지 않을 수 있습니다.<br>
      *
-     *  It may not work on certain devices.
-     *  특정 장치에서는 작동하지 않을 수 있습니다.
-     *
-     *  @param isDarkIcon true is Dark, false is Bright
+     * @param isDarkIcon true for dark icons, false for light icons.<br><br>
+     *                   어두운 아이콘은 true, 밝은 아이콘은 false.<br>
      */
     protected fun setStatusBarAppearance(isDarkIcon: Boolean) {
         WindowCompat.getInsetsController(window, window.decorView).apply {
@@ -178,12 +234,13 @@ abstract class RootActivity : AppCompatActivity(), PermissionRequester {
     }
 
     /**
-     *  NavigationBar Icon Mode(Dark or Light)
+     * Sets the NavigationBar icon mode (Dark or Light).<br>
+     * It may not work on certain devices.<br><br>
+     * NavigationBar 아이콘 모드를 설정합니다 (Dark 또는 Light).<br>
+     * 특정 장치에서는 작동하지 않을 수 있습니다.<br>
      *
-     *  It may not work on certain devices.
-     *  특정 장치에서는 작동하지 않을 수 있습니다.
-     *
-     *  @param isDarkIcon true is Dark, false is Bright
+     * @param isDarkIcon true for dark icons, false for light icons.<br><br>
+     *                   어두운 아이콘은 true, 밝은 아이콘은 false.<br>
      */
     protected fun setNavigationBarAppearance(isDarkIcon: Boolean) {
         window.apply {
@@ -195,8 +252,10 @@ abstract class RootActivity : AppCompatActivity(), PermissionRequester {
 
 
     /**
-     * SystemBar Reset(Color, VisibleMode).
-     * 시스템 바 초기화(색상, 가시성 모드).
+     * Resets system bars (StatusBar and NavigationBar) to their initial state.<br>
+     * Restores default colors and visibility mode.<br><br>
+     * 시스템 바(StatusBar와 NavigationBar)를 초기 상태로 초기화합니다.<br>
+     * 기본 색상과 가시성 모드를 복원합니다.<br>
      */
     protected fun setSystemBarsReset() {
         statusBarReset()
@@ -204,8 +263,10 @@ abstract class RootActivity : AppCompatActivity(), PermissionRequester {
     }
 
     /**
-     * Resets the navigation bar to its initial state.
-     * 네비게이션 바를 초기 상태로 복원.
+     * Resets the navigation bar to its initial state.<br>
+     * Removes custom background views on API 35+ and restores theme default color on older versions.<br><br>
+     * 네비게이션 바를 초기 상태로 복원합니다.<br>
+     * API 35+에서는 커스텀 배경 뷰를 제거하고 이전 버전에서는 테마 기본 색상을 복원합니다.<br>
      */
     protected fun navigationBarReset() {
         window.apply {
@@ -253,8 +314,10 @@ abstract class RootActivity : AppCompatActivity(), PermissionRequester {
     }
 
     /**
-     * StatusBar Reset
-     * 상태 표시줄 초기화.
+     * Resets the StatusBar to its initial state.<br>
+     * Removes custom background views on API 35+ and restores theme default color on older versions.<br><br>
+     * StatusBar를 초기 상태로 초기화합니다.<br>
+     * API 35+에서는 커스텀 배경 뷰를 제거하고 이전 버전에서는 테마 기본 색상을 복원합니다.<br>
      */
     protected fun statusBarReset() {
         window.apply {
@@ -300,8 +363,8 @@ abstract class RootActivity : AppCompatActivity(), PermissionRequester {
     }
 
     /**
-     * SystemBar Gone.
-     * 시스템 바 Gone.
+     * Hides both StatusBar and NavigationBar.<br><br>
+     * StatusBar와 NavigationBar를 모두 숨깁니다.<br>
      */
     protected fun setSystemBarsGone() {
         statusBarGone()
@@ -309,8 +372,10 @@ abstract class RootActivity : AppCompatActivity(), PermissionRequester {
     }
 
     /**
-     * Sets the status bar to transparent.
-     * 상태 표시줄을 투명하게 설정.
+     * Hides the StatusBar.<br>
+     * Uses WindowInsetsController on API 30+ and FLAG_FULLSCREEN on older versions.<br><br>
+     * StatusBar를 숨깁니다.<br>
+     * API 30+에서는 WindowInsetsController를 사용하고 이전 버전에서는 FLAG_FULLSCREEN을 사용합니다.<br>
      */
     protected fun statusBarGone() {
         window.apply {
@@ -339,8 +404,10 @@ abstract class RootActivity : AppCompatActivity(), PermissionRequester {
     }
 
     /**
-     * Hides the navigation bar.
-     * 네비게이션 바를 숨김.
+     * Hides the NavigationBar.<br>
+     * Uses WindowInsetsController on API 30+ and SYSTEM_UI_FLAG on older versions.<br><br>
+     * NavigationBar를 숨깁니다.<br>
+     * API 30+에서는 WindowInsetsController를 사용하고 이전 버전에서는 SYSTEM_UI_FLAG를 사용합니다.<br>
      */
     protected fun navigationBarGone() {
         window.apply {
@@ -363,6 +430,12 @@ abstract class RootActivity : AppCompatActivity(), PermissionRequester {
     }
 
 
+    /**
+     * Shows the StatusBar.<br>
+     * Uses WindowInsetsController on API 30+ and clears FLAG_FULLSCREEN on older versions.<br><br>
+     * StatusBar를 표시합니다.<br>
+     * API 30+에서는 WindowInsetsController를 사용하고 이전 버전에서는 FLAG_FULLSCREEN을 해제합니다.<br>
+     */
     protected fun statusBarVisible() {
         window.apply {
             checkSdkVersion(Build.VERSION_CODES.R,
@@ -384,19 +457,28 @@ abstract class RootActivity : AppCompatActivity(), PermissionRequester {
 
 
     /**
-     * API 35+ StatusBar 배경 View 초기화 및 추가
+     * Initializes and adds a background View for StatusBar on API 35+.<br><br>
+     * API 35+에서 StatusBar 배경 뷰를 초기화하고 추가합니다.<br>
      *
+     * Since StatusBar is always transparent on API 35+, this creates a custom background View
+     * positioned in the StatusBar area to simulate color.<br><br>
      * API 35+에서는 StatusBar가 항상 투명하므로, StatusBar 영역에 배치될
-     * 커스텀 배경 View를 생성하여 색상을 표현합니다.
+     * 커스텀 배경 뷰를 생성하여 색상을 표현합니다.<br>
      *
-     * ## 동작 방식
-     * 1. 기존에 생성된 StatusBar 배경 View가 있다면 제거 (색상 변경 시)
-     * 2. 새로운 View를 생성하고 지정된 색상 적용
-     * 3. DecorView의 최상위(index 0)에 배치하여 StatusBar 영역을 덮음
-     * 4. 초기 높이를 명시적으로 설정 (WRAP_CONTENT는 화면 전체를 덮는 문제 발생)
-     * 5. WindowInsets 리스너를 등록하여 화면 회전 등의 상황에서 높이 동적 업데이트
+     * ## How it works / 동작 방식<br>
+     * 1. Remove existing StatusBar background View if present (for color changes)<br>
+     *    기존에 생성된 StatusBar 배경 뷰가 있다면 제거 (색상 변경 시)<br>
+     * 2. Create new View and apply specified color<br>
+     *    새로운 뷰를 생성하고 지정된 색상 적용<br>
+     * 3. Add to DecorView at index 0 (topmost) to cover StatusBar area<br>
+     *    DecorView의 최상위(index 0)에 배치하여 StatusBar 영역을 덮음<br>
+     * 4. Set explicit height (WRAP_CONTENT causes full screen coverage issue)<br>
+     *    명시적으로 높이 설정 (WRAP_CONTENT는 화면 전체를 덮는 문제 발생)<br>
+     * 5. Register WindowInsets listener for dynamic height updates on rotation<br>
+     *    화면 회전 등의 상황에서 높이 동적 업데이트를 위해 WindowInsets 리스너 등록<br>
      *
-     * @param color 적용할 StatusBar 색상
+     * @param color The color to apply to StatusBar.<br><br>
+     *              StatusBar에 적용할 색상.<br>
      */
     @SuppressLint("WrongConstant")
     @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
@@ -447,23 +529,29 @@ abstract class RootActivity : AppCompatActivity(), PermissionRequester {
 
 
     /**
-     * API 35+ ContentView에 StatusBar 영역만큼 padding 추가
+     * Adds padding to ContentView for StatusBar area on API 35+.<br><br>
+     * API 35+에서 ContentView에 StatusBar 영역만큼 padding을 추가합니다.<br>
      *
+     * When Edge-to-edge layout is enabled on API 35+, ContentView extends into the StatusBar area.
+     * This causes existing layouts to overlap with StatusBar, so top padding is added to ensure
+     * consistent layout behavior across API versions.<br><br>
      * API 35+에서 Edge-to-edge 레이아웃이 활성화되면 ContentView가 StatusBar 영역까지 확장됩니다.
      * 이로 인해 기존 레이아웃이 StatusBar와 겹치는 문제가 발생하므로,
-     * ContentView에 top padding을 추가하여 API 버전에 관계없이 일관된 레이아웃 동작을 보장합니다.
+     * ContentView에 top padding을 추가하여 API 버전에 관계없이 일관된 레이아웃 동작을 보장합니다.<br>
      *
-     * ## 동작 방식
-     * 1. ContentView(android.R.id.content)를 가져옴
-     * 2. 즉시 top padding을 StatusBar 높이만큼 설정 (WindowInsets 리스너는 지연 호출되므로)
-     * 3. WindowInsets 리스너를 등록하여 화면 회전 등의 상황에서 padding 동적 업데이트
+     * ## How it works / 동작 방식<br>
+     * 1. Get ContentView (android.R.id.content)<br>
+     *    ContentView(android.R.id.content)를 가져옴<br>
+     * 2. Immediately set top padding to StatusBar height (WindowInsets listener is called with delay)<br>
+     *    즉시 top padding을 StatusBar 높이만큼 설정 (WindowInsets 리스너는 지연 호출되므로)<br>
+     * 3. Register WindowInsets listener for dynamic padding updates on rotation<br>
+     *    화면 회전 등의 상황에서 padding 동적 업데이트를 위해 WindowInsets 리스너 등록<br>
      *
-     * ## 설계 결정
-     * - **Padding 추가 이유**: 기존 사용자 코드가 API 버전에 관계없이 동일하게 동작하도록 보장
-     * - **하위 호환성**: API 28-34와 동일한 레이아웃 동작 유지
-     * - **대안**: Edge-to-edge 디자인이 필요한 경우 `setStatusBarTransparent()` 사용
-     *
-     * @param statusBarHeight StatusBar 높이 (픽셀 단위)
+     * ## Design decisions / 설계 결정<br>
+     * - **Why add padding**: Ensures existing user code works identically across API versions<br>
+     *   **Padding 추가 이유**: 기존 사용자 코드가 API 버전에 관계없이 동일하게 동작하도록 보장<br>
+     * - **Backward compatibility**: Maintains same layout behavior as API 28-34<br>
+     *   **하위 호환성**: API 28-34와 동일한 레이아웃 동작 유지<br>
      */
     @SuppressLint("WrongConstant")
     @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
@@ -496,6 +584,13 @@ abstract class RootActivity : AppCompatActivity(), PermissionRequester {
         }
     }
 
+    /**
+     * Initializes and adds a background View for NavigationBar on API 35+.<br><br>
+     * API 35+에서 NavigationBar 배경 뷰를 초기화하고 추가합니다.<br>
+     *
+     * @param color The color to apply to NavigationBar.<br><br>
+     *              NavigationBar에 적용할 색상.<br>
+     */
     @SuppressLint("WrongConstant")
     @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
     private fun setNavigationBarColorSdk35(@ColorInt color: Int) {
@@ -541,8 +636,10 @@ abstract class RootActivity : AppCompatActivity(), PermissionRequester {
     }
 
     /**
-     * Shows the navigation bar.
-     * 네비게이션 바를 표시.
+     * Shows the NavigationBar.<br>
+     * Uses WindowInsetsController on API 30+ and clears SYSTEM_UI_FLAG on older versions.<br><br>
+     * NavigationBar를 표시합니다.<br>
+     * API 30+에서는 WindowInsetsController를 사용하고 이전 버전에서는 SYSTEM_UI_FLAG를 해제합니다.<br>
      */
     protected fun navigationBarVisible() {
         window.apply {

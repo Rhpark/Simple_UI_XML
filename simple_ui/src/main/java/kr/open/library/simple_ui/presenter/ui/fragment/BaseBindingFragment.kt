@@ -12,24 +12,59 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 
 /**
- * A base fragment class that uses View Binding and provides common functionality for fragments with data binding.
- * 바인딩을 사용하는 프래그먼트에 대한 공통 기능을 제공하는 BaseBindingFragment.
+ * A base Fragment class that uses DataBinding and provides common functionality for data-bound fragments.<br>
+ * Extends RootFragment to inherit permission management.<br><br>
+ * DataBinding을 사용하고 데이터 바인딩 Fragment에 대한 공통 기능을 제공하는 기본 Fragment 클래스입니다.<br>
+ * RootFragment를 확장하여 권한 관리를 상속받습니다.<br>
  *
- * This class handles the following tasks:
- * - Inflates the layout and sets up View Binding.
- * - Sets the lifecycle owner for the binding.
- * - Provides a convenient method to obtain a ViewModel.
+ * This class handles the following tasks:<br>
+ * - Inflates the layout and sets up DataBinding<br>
+ * - Sets the lifecycle owner for the binding (viewLifecycleOwner)<br>
+ * - Provides a convenient method to obtain a ViewModel<br>
+ * - Provides hook methods for view creation and event collection<br>
+ * - Proper binding cleanup in onDestroyView<br><br>
+ * 이 클래스는 다음과 같은 작업을 처리합니다:<br>
+ * - 레이아웃을 인플레이션하고 DataBinding을 설정합니다<br>
+ * - 바인딩에 대한 생명주기 소유자를 설정합니다 (viewLifecycleOwner)<br>
+ * - ViewModel을 얻는 편리한 메서드를 제공합니다<br>
+ * - 뷰 생성 및 이벤트 수집을 위한 훅 메서드를 제공합니다<br>
+ * - onDestroyView에서 적절한 바인딩 정리<br>
  *
- * 이 클래스는 다음과 같은 작업을 처리.
- * - 레이아웃을 확장하고 뷰 바인딩을 설정.
- * - 바인딩에 대한 수명 주기 소유자를 설정.
- * - ViewModel을 얻는 편리한 방법을 제공.
+ * Usage example:<br>
+ * ```kotlin
+ * class HomeFragment : BaseBindingFragment<FragmentHomeBinding>(R.layout.fragment_home) {
+ *     private val viewModel: HomeViewModel by lazy { getViewModel() }
  *
- * @param BINDING The type of the View Binding class.
- * @param layoutRes The layout resource ID for the fragment.
+ *     override fun afterOnCreateView(rootView: View, savedInstanceState: Bundle?) {
+ *         binding.viewModel = viewModel
+ *         setupViews()
+ *     }
  *
- * @param BINDING 뷰 바인딩 클래스의 유형.
- * @param layoutRes 프래그먼트의 레이아웃 리소스 ID.
+ *     override fun eventVmCollect() {
+ *         viewLifecycleOwner.lifecycleScope.launch {
+ *             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+ *                 viewModel.events.collect { handleEvent(it) }
+ *             }
+ *         }
+ *     }
+ * }
+ * ```
+ * <br>
+ *
+ * @param BINDING The type of the DataBinding class.<br><br>
+ *                DataBinding 클래스의 타입.<br>
+ *
+ * @param layoutRes The layout resource ID for the fragment.<br><br>
+ *                  Fragment의 레이아웃 리소스 ID.<br>
+ *
+ * @param isAttachToParent Whether to attach the inflated view to the parent container.<br><br>
+ *                         인플레이션된 뷰를 부모 컨테이너에 첨부할지 여부.<br>
+ *
+ * @see RootFragment For base class with permission features.<br><br>
+ *      권한 기능이 있는 기본 클래스는 RootFragment를 참조하세요.<br>
+ *
+ * @see BaseFragment For simple layout-based Fragment without DataBinding.<br><br>
+ *      DataBinding 없이 간단한 레이아웃 기반 Fragment는 BaseFragment를 참조하세요.<br>
  */
 public abstract class BaseBindingFragment<BINDING : ViewDataBinding>(
     @LayoutRes private val layoutRes: Int,
@@ -37,10 +72,17 @@ public abstract class BaseBindingFragment<BINDING : ViewDataBinding>(
 ) : RootFragment() {
 
     /**
-     * The View Binding object for the fragment.
-     * 프래그먼트에 대한 뷰 바인딩 객체.
+     * Internal backing field for binding.<br><br>
+     * binding의 내부 백킹 필드입니다.<br>
      */
     private var _binding: BINDING? = null
+
+    /**
+     * The DataBinding object for the fragment.<br>
+     * Throws IllegalStateException if accessed after onDestroyView().<br><br>
+     * Fragment의 DataBinding 객체입니다.<br>
+     * onDestroyView() 이후에 접근하면 IllegalStateException이 발생합니다.<br>
+     */
     protected val binding: BINDING
         get() = _binding
             ?: throw IllegalStateException("Binding accessed after onDestroyView()")
@@ -55,14 +97,16 @@ public abstract class BaseBindingFragment<BINDING : ViewDataBinding>(
 
 
     /**
-     * Called immediately after onCreateView() has returned, but before any saved state has been restored in to the view.
-     * onCreateView()가 반환된 직후에 호출되지만 저장된 상태가 뷰에 복원되기 전에 호출.
+     * Called immediately after onCreateView() has returned, but before any saved state has been restored into the view.<br>
+     * Override this method to set up views and bind ViewModel to the binding.<br><br>
+     * onCreateView()가 반환된 직후에 호출되지만 저장된 상태가 뷰에 복원되기 전에 호출됩니다.<br>
+     * 뷰를 설정하고 ViewModel을 바인딩에 연결하려면 이 메서드를 오버라이드하세요.<br>
      *
-     * @param rootView The root view of the fragment's layout.
-     * @param savedInstanceState If non-null, this fragment is being re-constructed from a previous saved state as given here.
+     * @param rootView The root view of the fragment's layout.<br><br>
+     *                 Fragment 레이아웃의 루트 뷰.<br>
      *
-     * @param rootView 프래그먼트 레이아웃의 루트 뷰.
-     * @param savedInstanceState null이 아닌 경우 이 프래그먼트는 여기에 지정된 이전에 저장된 상태에서 다시 생성.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed from a previous saved state.<br><br>
+     *                           null이 아닌 경우 이 Fragment는 이전에 저장된 상태에서 다시 생성됩니다.<br>
      */
     protected open fun afterOnCreateView(rootView: View, savedInstanceState: Bundle?) {
 
@@ -75,26 +119,21 @@ public abstract class BaseBindingFragment<BINDING : ViewDataBinding>(
     }
 
 
-
-    /*********************************
-     *  ViewModel 이벤트 구독 및 처리   *
-     *********************************/
+    /**
+     * Override this method to set up ViewModel event collection.<br>
+     * Typically used to collect Flow events from ViewModel using viewLifecycleOwner.lifecycleScope.<br><br>
+     * ViewModel 이벤트 수집을 설정하려면 이 메서드를 오버라이드하세요.<br>
+     * 일반적으로 viewLifecycleOwner.lifecycleScope를 사용하여 ViewModel의 Flow 이벤트를 수집하는 데 사용됩니다.<br>
+     */
     protected open fun eventVmCollect() {}
 
 
-
     /**
-     * Obtains a ViewModel of the specified type.
-     * 지정된 유형의 ViewModel을 가져옴.
+     * Obtains a ViewModel of the specified type using ViewModelProvider.<br><br>
+     * ViewModelProvider를 사용하여 지정된 타입의 ViewModel을 가져옵니다.<br>
      *
-     * This method uses the [ViewModelProvider] to create or retrieve a ViewModel instance.
-     * 이 메서드는 [ViewModelProvider]를 사용하여 ViewModel 인스턴스를 생성하거나 검색.
-     *
-     * @param T The type of the ViewModel to obtain.
-     * @return A ViewModel of the specified type.
-     *
-     * @param T 가져올 ViewModel의 유형.
-     * @return 지정된 유형의 ViewModel.
+     * @return The ViewModel instance of type T.<br><br>
+     *         타입 T의 ViewModel 인스턴스.<br>
      */
     protected inline fun <reified T : ViewModel> Fragment.getViewModel(): T {
         return ViewModelProvider(this)[T::class.java]

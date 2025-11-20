@@ -84,7 +84,13 @@ case "${STAGE_NAME_INPUT}" in
     ISSUE_LABELS=("CI-Build")
     ;;
   "Release from Commit Message")
-    ISSUE_LABELS=("CI-Release")
+    ISSUE_LABELS=("CD-Release")
+    ;;
+  "Assemble APK")
+    ISSUE_LABELS=("CD-Apk")
+    ;;
+  "Firebase App Distribution")
+    ISSUE_LABELS=("CD-Firebase")
     ;;
   *)
     ISSUE_LABELS=("ci" "needs-triage")
