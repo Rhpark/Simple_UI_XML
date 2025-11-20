@@ -547,42 +547,29 @@ jobs:
             Event: ${{ github.event_name }}
         run: bash .github/scripts/report_action_error.sh
 
-  firebase-distribute:
-    name: Firebase App Distribution
-    runs-on: ubuntu-latest
-    needs: [build, initialize-check]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master' && needs.initialize-check.outputs.should_release == 'true'
-    permissions:
-      contents: read
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 10
-
-      - name: Validate Gradle Wrapper
+      - name: Validate Gradle Wrapper (distribution)
         uses: gradle/wrapper-validation-action@v2
 
-      - name: Set up JDK 17
+      - name: Set up JDK 17 (distribution)
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
           cache: gradle
 
-      - name: Set up Android SDK (base)
+      - name: Set up Android SDK (distribution)
         uses: android-actions/setup-android@v3
 
-      - name: Accept SDK licenses
+      - name: Accept SDK licenses (distribution)
         run: yes | sdkmanager --licenses
 
-      - name: Install SDK packages
+      - name: Install SDK packages (distribution)
         run: sdkmanager "platforms;android-35" "build-tools;35.0.0" "platform-tools"
 
-      - name: Setup Gradle (cache)
+      - name: Setup Gradle (distribution cache)
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Make gradlew executable
+      - name: Make gradlew executable (distribution)
         run: chmod +x ./gradlew
 
       - name: Prepare Firebase credentials
@@ -757,7 +744,7 @@ jobs:
           } >> "$GITHUB_ENV"
 
       - name: Report failure (Firebase App Distribution)
-        if: failure()
+        if: failure() && env.FIREBASE_FAILURE_SUMMARY
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           STAGE_NAME: "Firebase App Distribution"
