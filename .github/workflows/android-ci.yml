@@ -25,6 +25,7 @@ jobs:
       title: ${{ steps.determine.outputs.title }}
       body: ${{ steps.determine.outputs.body }}
       docs_only: ${{ steps.determine.outputs.docs_only }}
+      testers: ${{ steps.determine.outputs.testers }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -45,6 +46,7 @@ jobs:
           TAG=""
           TITLE=""
           DESCRIBE=""
+          TESTERS=""
 
           echo "Checking [release] tag in HEAD commit..."
           COMMIT_MSG=$(git log -1 --pretty=%B 2>/dev/null || echo "")
@@ -121,6 +123,11 @@ jobs:
           if [ -z "$DESCRIBE" ]; then
             DESCRIBE=$(echo "$COMMIT_MSG" | awk '/Descrbe\s*:/,0' | tail -n +1 | sed '1s/Descrbe\s*:\s*//' )
           fi
+          RAW_TESTERS=$(echo "$COMMIT_MSG" | grep -oP '(?<=Tester)\s*:\s*.*' | head -1 | sed 's/^[[:space:]]*:[[:space:]]*//' || true)
+          TESTERS=""
+          if [ -n "$RAW_TESTERS" ]; then
+            TESTERS=$(echo "$RAW_TESTERS" | sed 's/[[:space:]]//g')
+          fi
 
           if [ -z "$TAG" ]; then
             echo "Error: Tag not found in [release] block."
@@ -157,6 +164,7 @@ jobs:
             echo "body<<EOF"
             echo "$DESCRIBE"
             echo "EOF"
+            echo "testers=$TESTERS"
             echo "docs_only=false"
           } >> "$GITHUB_OUTPUT"
 
@@ -636,6 +644,7 @@ jobs:
         env:
           FIREBASE_RELEASE_NOTES: ${{ needs.initialize-check.outputs.body }}
           FIREBASE_ARTIFACT_OVERRIDE: ${{ steps.release_artifact.outputs.artifact }}
+          FIREBASE_TESTERS: ${{ needs.initialize-check.outputs.testers }}
         run: |
           set -euo pipefail
           LOG_FILE="firebase-appdist-release.log"
@@ -718,6 +727,7 @@ jobs:
         env:
           FIREBASE_RELEASE_NOTES: ${{ needs.initialize-check.outputs.body }}
           FIREBASE_ARTIFACT_OVERRIDE: ${{ steps.debug_artifact.outputs.artifact }}
+          FIREBASE_TESTERS: ${{ needs.initialize-check.outputs.testers }}
         run: |
           set -euo pipefail
           LOG_FILE="firebase-appdist-debug.log"
