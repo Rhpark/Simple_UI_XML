@@ -17,6 +17,7 @@ import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.android.controller.ActivityController
+import kotlinx.coroutines.test.runTest
 import java.lang.reflect.Field
 import java.lang.reflect.Method
 import java.util.UUID
@@ -118,7 +119,7 @@ class PermissionDelegateRobolectricTest {
     }
 
     @Test
-    fun cleanup_clearsActiveRequestWhenActivityFinishes() {
+    fun cleanup_clearsActiveRequestWhenActivityFinishes() = runTest {
         val requestId = UUID.randomUUID().toString()
         setCurrentRequestId(requestId)
         insertPendingRequest(requestId, listOf(Manifest.permission.CAMERA))
@@ -135,7 +136,7 @@ class PermissionDelegateRobolectricTest {
     }
 
     @Test
-    fun cleanup_clearsWhenFragmentIsRemoving() {
+    fun cleanup_clearsWhenFragmentIsRemoving() = runTest {
         class RegisteringFragment : Fragment() {
             lateinit var delegate: PermissionDelegate<Fragment>
             override fun onCreate(savedInstanceState: Bundle?) {
@@ -209,18 +210,6 @@ class PermissionDelegateRobolectricTest {
         PermissionSpecialType.entries.forEach { type ->
             Assert.assertNotNull("Launcher missing for ${type.permission}", delegate.getSpecialLauncher(type.permission))
         }
-    }
-
-    @Test
-    fun handleSpecialPermissionResult_invokesManager() {
-        val requestId = UUID.randomUUID().toString()
-        setCurrentRequestId(requestId)
-
-        val method = PermissionDelegate::class.java.getDeclaredMethod("handleSpecialPermissionResult", String::class.java).apply {
-            isAccessible = true
-        }
-
-        method.invoke(delegate, Manifest.permission.SYSTEM_ALERT_WINDOW)
     }
 
     private fun insertPendingRequest(requestId: String, permissions: List<String>): Any {

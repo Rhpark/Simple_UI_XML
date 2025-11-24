@@ -10,9 +10,15 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
-import android.os.Handler
-import android.os.Looper
 import androidx.activity.result.ActivityResultLauncher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kr.open.library.simple_ui.logcat.Logx
 import kr.open.library.simple_ui.permissions.vo.PermissionConstants
 import kr.open.library.simple_ui.permissions.extentions.*
@@ -81,13 +87,17 @@ class PermissionManager private constructor() {
     // 설정 변경 시 참조가 오래 살아남지 않도록 WeakReference로 Delegate를 추적합니다.<br>
     private val activeDelegates = mutableMapOf<String, WeakReference<PermissionDelegate<*>>>()
 
-    // Handles delayed cleanup and retries on the main thread.<br><br>
-    // 메인 스레드에서 정리와 재시도를 처리하는 핸들러입니다.<br>
-    private val mainHandler = Handler(Looper.getMainLooper())
+    // CoroutineScope for delayed cleanup and retries on the main thread.<br><br>
+    // 메인 스레드에서 정리와 재시도를 처리하는 CoroutineScope입니다.<br>
+    private val managerScope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
 
-    // Holds the runnable that periodically cleans up finished requests.<br><br>
-    // 주기적으로 요청을 정리하는 Runnable을 저장합니다.<br>
-    private var cleanupRunnable: Runnable? = null
+    // Job for the periodic cleanup task.<br><br>
+    // 주기적인 정리 작업을 위한 Job입니다.<br>
+    private var cleanupJob: Job? = null
+
+    // Mutex for thread-safe access to shared state.<br><br>
+    // 공유 상태에 대한 스레드 안전 접근을 위한 Mutex입니다.<br>
+    private val mutex = Mutex()
 
     // Internal snapshot of a pending permission request.<br><br>
     // 대기 중인 권한 요청의 내부 스냅샷입니다.<br>
@@ -122,34 +132,33 @@ class PermissionManager private constructor() {
      * Note: Special permission launchers are resolved dynamically from the delegate now.<br><br>
      * 참고: 특수 권한 런처는 Delegate에서 동적으로 조회됩니다.<br>
      */
-    @Synchronized
-    fun request(
+    suspend fun request(
         context: Context,
         requestPermissionLauncher: ActivityResultLauncher<Array<String>>,
         permissions: List<String>,
         callback: (List<String>) -> Unit,
         preGeneratedRequestId: String? = null
-    ): String {
+    ): String = mutex.withLock {
         // Guard clause that avoids unnecessary launches when nothing is requested.<br><br>
         // 요청할 권한이 없으면 불필요한 실행을 즉시 차단합니다.<br>
         if (permissions.isEmpty()) {
             callback(emptyList())
-            return ""
+            return@withLock ""
         }
 
         if (isContextDestroyed(context)) {
             callback(permissions)
-            return ""
+            return@withLock ""
         }
 
         // Removes expired entries so that stale callbacks do not pile up.<br><br>
         // 오래된 요청을 미리 정리해 콜백이 쌓이지 않도록 합니다.<br>
-        cleanupExpiredRequests()
+        cleanupExpiredRequestsInternal()
 
         val remainingPermissions = context.remainPermissions(permissions)
         if (remainingPermissions.isEmpty()) {
             callback(emptyList())
-            return ""
+            return@withLock ""
         }
 
         // Reuse pre-generated IDs when a delegate already registered the request.<br><br>
@@ -181,13 +190,13 @@ class PermissionManager private constructor() {
                 // Prevents ghost requests by clearing pendingRequests and delegates together.<br><br>
                 // 유령 요청이 남지 않도록 pendingRequests와 delegate를 함께 정리합니다.<br>
                 pendingRequests.remove(requestId)
-                unregisterDelegate(requestId)
+                unregisterDelegateInternal(requestId)
                 // Notifies callers assuming every permission remained denied.<br><br>
                 // 모든 권한이 거부된 것으로 간주하고 콜백을 호출합니다.<br>
                 invokeAllCallbacks(request, remainingPermissions)
                 // Returns an empty id so the delegate clears its currentRequestId.<br><br>
                 // 빈 문자열을 반환해 Delegate가 currentRequestId를 비우도록 합니다.<br>
-                return ""
+                return@withLock ""
             }
         }
 
@@ -214,7 +223,7 @@ class PermissionManager private constructor() {
             request.remainingSpecialPermissions = specialPermissions
         }
 
-        return requestId
+        requestId
     }
 
 
@@ -229,13 +238,12 @@ class PermissionManager private constructor() {
      * @param requestId Identifier of the pending request to resolve.<br><br>
      *                  처리할 대기 요청의 식별자입니다.<br>
      */
-    @Synchronized
-    fun result(context: Context, permissions: Map<String, Boolean>, requestId: String?) {
-        if (requestId == null) return
+    suspend fun result(context: Context, permissions: Map<String, Boolean>, requestId: String?) = mutex.withLock {
+        if (requestId == null) return@withLock
 
-        if (isContextDestroyed(context)) return
+        if (isContextDestroyed(context)) return@withLock
 
-        val request = pendingRequests[requestId] ?: return
+        val request = pendingRequests[requestId] ?: return@withLock
 
         val deniedPermissions = permissions.filterNot { (permission, granted) ->
             granted || context.hasPermission(permission)
@@ -245,7 +253,7 @@ class PermissionManager private constructor() {
         // 특수 권한이 남아 있다면 계속 진행하고, 없다면 요청을 종료합니다.<br>
         if (request.remainingSpecialPermissions.isEmpty()) {
             pendingRequests.remove(requestId)
-            unregisterDelegate(requestId)
+            unregisterDelegateInternal(requestId)
 
             invokeAllCallbacks(request, deniedPermissions)
         } else {
@@ -275,15 +283,14 @@ class PermissionManager private constructor() {
      * @param requestId Identifier of the pending permission request.<br><br>
      *                  현재 진행 중인 권한 요청 식별자입니다.<br>
      */
-    @Synchronized
-    fun resultSpecialPermission(context: Context, permission: String, requestId: String?) {
-        if (requestId == null) return
+    suspend fun resultSpecialPermission(context: Context, permission: String, requestId: String?) = mutex.withLock {
+        if (requestId == null) return@withLock
 
-        if (isContextDestroyed(context)) return
+        if (isContextDestroyed(context)) return@withLock
 
         val request = pendingRequests[requestId] ?: run {
             Logx.w("Request $requestId not found. Process may have been killed or request already completed.")
-            return
+            return@withLock
         }
 
         // Double-checks the current permission grant state and logs it.<br><br>
@@ -302,18 +309,18 @@ class PermissionManager private constructor() {
             val launcher = getSpecialLauncher(requestId, nextPermission)
             if (launcher != null) {
                 launchSpecialPermissionWithRetry(context, nextPermission, launcher, requestId)
-                return
+                return@withLock
             } else {
                 Logx.e("No launcher available for special permission: $nextPermission (Delegate may have been destroyed)")
                 handleSpecialPermissionFailure(context, requestId, nextPermission)
-                return
+                return@withLock
             }
         }
 
         // All special permissions have been processed, so compute the final result.<br><br>
         // 특수 권한 처리가 모두 끝났으므로 최종 결과를 산출합니다.<br>
         pendingRequests.remove(requestId)
-        unregisterDelegate(requestId)
+        unregisterDelegateInternal(requestId)
         val finalDeniedPermissions = context.remainPermissions(request.originalPermissions)
 
         invokeAllCallbacks(request, finalDeniedPermissions)
@@ -326,10 +333,9 @@ class PermissionManager private constructor() {
      * @param requestId Identifier of the request to remove.<br><br>
      *                  취소할 요청의 식별자입니다.<br>
      */
-    @Synchronized
-    fun cancelRequest(requestId: String) {
+    suspend fun cancelRequest(requestId: String) = mutex.withLock {
         pendingRequests.remove(requestId)
-        unregisterDelegate(requestId)
+        unregisterDelegateInternal(requestId)
     }
 
     /**
@@ -344,8 +350,7 @@ class PermissionManager private constructor() {
      * @param delegate Delegate that mediates permission launches.<br><br>
      *                 권한 실행을 중계할 Delegate 입니다.<br>
      */
-    @Synchronized
-    fun registerDelegate(requestId: String, delegate: PermissionDelegate<*>) {
+    suspend fun registerDelegate(requestId: String, delegate: PermissionDelegate<*>) = mutex.withLock {
         val existingRef = activeDelegates[requestId]
         val existingDelegate = existingRef?.get()
 
@@ -364,8 +369,15 @@ class PermissionManager private constructor() {
      * @param requestId Identifier whose delegate should be removed.<br><br>
      *                  참조를 제거할 요청 ID 입니다.<br>
      */
-    @Synchronized
-    fun unregisterDelegate(requestId: String) {
+    suspend fun unregisterDelegate(requestId: String) = mutex.withLock {
+        unregisterDelegateInternal(requestId)
+    }
+
+    /**
+     * Internal version of unregisterDelegate without mutex lock.<br><br>
+     * mutex 잠금 없이 사용하는 내부 버전의 unregisterDelegate입니다.<br>
+     */
+    private fun unregisterDelegateInternal(requestId: String) {
         activeDelegates.remove(requestId)
         Logx.d("Unregistered delegate for request: $requestId")
     }
@@ -377,9 +389,8 @@ class PermissionManager private constructor() {
      * @param requestId Identifier to check.<br><br>
      *                  확인할 요청 ID 입니다.<br>
      */
-    @Synchronized
-    fun hasActiveRequest(requestId: String): Boolean {
-        return pendingRequests.containsKey(requestId)
+    suspend fun hasActiveRequest(requestId: String): Boolean = mutex.withLock {
+        pendingRequests.containsKey(requestId)
     }
 
     /**
@@ -391,9 +402,8 @@ class PermissionManager private constructor() {
      * @return Permission set or null if the request is unknown.<br><br>
      *         요청을 찾지 못하면 null 을 반환합니다.<br>
      */
-    @Synchronized
-    fun getRequestPermissions(requestId: String): Set<String>? {
-        return pendingRequests[requestId]?.originalPermissions?.toSet()
+    suspend fun getRequestPermissions(requestId: String): Set<String>? = mutex.withLock {
+        pendingRequests[requestId]?.originalPermissions?.toSet()
     }
 
     /**
@@ -409,15 +419,14 @@ class PermissionManager private constructor() {
      * @return CallbackAddResult describing success, missing request, or mismatch.<br><br>
      *         콜백 추가 성공, 요청 없음, 권한 불일치 중 하나를 나타내는 CallbackAddResult 입니다.<br>
      */
-    @Synchronized
-    fun addCallbackToRequest(
+    suspend fun addCallbackToRequest(
         requestId: String,
         callback: (List<String>) -> Unit,
         requestedPermissions: List<String>
-    ): CallbackAddResult {
+    ): CallbackAddResult = mutex.withLock {
         // Returns immediately when the request no longer exists.<br><br>
         // 요청이 이미 완료되었거나 취소되었다면 즉시 반환합니다.<br>
-        val request = pendingRequests[requestId] ?: return CallbackAddResult.REQUEST_NOT_FOUND
+        val request = pendingRequests[requestId] ?: return@withLock CallbackAddResult.REQUEST_NOT_FOUND
 
         // Compares permission sets regardless of order to ensure parity.<br><br>
         // 순서에 상관없이 권한 집합이 동일한지 확인합니다.<br>
@@ -426,14 +435,14 @@ class PermissionManager private constructor() {
 
         if (existingPermissions != newPermissions) {
             Logx.w("Permission mismatch! Existing: $existingPermissions, Requested: $newPermissions")
-            return CallbackAddResult.PERMISSION_MISMATCH
+            return@withLock CallbackAddResult.PERMISSION_MISMATCH
         }
 
         // Appends the callback when everything matches.<br><br>
         // 조건이 일치하면 콜백을 추가합니다.<br>
         request.callbacks.add(callback)
         Logx.d("Added callback to existing request: $requestId (total callbacks: ${request.callbacks.size})")
-        return CallbackAddResult.SUCCESS
+        CallbackAddResult.SUCCESS
     }
 
     /**
@@ -487,8 +496,19 @@ class PermissionManager private constructor() {
     /**
      * Cleans up requests that exceeded the timeout (default 5 minutes).<br><br>
      * 기본 5분 타임아웃을 초과한 요청을 정리합니다.<br>
+     *
+     * Internal function for testing purposes.<br><br>
+     * 테스트 목적의 internal 함수입니다.<br>
      */
-    fun cleanupExpiredRequests() {
+    internal suspend fun cleanupExpiredRequests() = mutex.withLock {
+        cleanupExpiredRequestsInternal()
+    }
+
+    /**
+     * Internal version of cleanupExpiredRequests without mutex lock.<br><br>
+     * mutex 잠금 없이 사용하는 내부 버전의 cleanupExpiredRequests입니다.<br>
+     */
+    private fun cleanupExpiredRequestsInternal() {
         val currentTime = System.currentTimeMillis()
         val expiredRequestIds = mutableListOf<String>()
 
@@ -509,7 +529,7 @@ class PermissionManager private constructor() {
             pendingRequests.remove(requestId)
             // Ensures the matching activeDelegates entry is cleared as well.<br><br>
             // activeDelegates 항목도 함께 정리합니다.<br>
-            unregisterDelegate(requestId)
+            unregisterDelegateInternal(requestId)
             Logx.d("Cleaned up expired request: $requestId")
         }
 
@@ -521,19 +541,18 @@ class PermissionManager private constructor() {
     }
 
     /**
-     * Schedules the cleanup runnable (default interval: 60 seconds).<br><br>
-     * 정리 Runnable을 예약합니다. 기본 주기는 60초입니다.<br>
+     * Schedules the cleanup job (default interval: 60 seconds).<br><br>
+     * 정리 Job을 예약합니다. 기본 주기는 60초입니다.<br>
      */
     private fun scheduleCleanup() {
-        cleanupRunnable?.let { mainHandler.removeCallbacks(it) }
+        cleanupJob?.cancel()
 
-        cleanupRunnable = Runnable {
-            cleanupExpiredRequests()
+        cleanupJob = managerScope.launch {
+            delay(60_000)
+            mutex.withLock {
+                cleanupExpiredRequestsInternal()
+            }
         }
-
-        // Posts a delayed cleanup on the main thread.<br><br>
-        // 메인 스레드에 지연 정리 작업을 게시합니다.<br>
-        mainHandler.postDelayed(cleanupRunnable!!, 60_000)
     }
 
     // Private helpers<br><br>
@@ -556,14 +575,15 @@ class PermissionManager private constructor() {
                 // Retry once asynchronously after 50ms to handle transient issues.<br><br>
                 // 일시적인 문제를 대비해 50ms 후 한 번 비동기로 재시도합니다.<br>
                 if (retryCount < 1) {
-                    mainHandler.postDelayed({
+                    managerScope.launch {
+                        delay(50)
                         try {
                             launchSpecialPermissionWithRetry(context, permission, launcher, requestId, retryCount + 1)
                         } catch (retryException: Exception) {
                             Logx.e("Retry failed for special permission request $retryException" )
                             handleSpecialPermissionFailure(context, requestId, permission)
                         }
-                    }, 50)
+                    }
                 } else {
                     handleSpecialPermissionFailure(context, requestId, permission)
                 }
@@ -597,7 +617,7 @@ class PermissionManager private constructor() {
         }
 
         pendingRequests.remove(requestId)
-        unregisterDelegate(requestId)
+        unregisterDelegateInternal(requestId)
 
         invokeAllCallbacks(request, deniedPermissions)
     }

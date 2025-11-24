@@ -9,6 +9,11 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 import kr.open.library.simple_ui.logcat.Logx
 import kr.open.library.simple_ui.permissions.manager.PermissionManager
 import kr.open.library.simple_ui.permissions.extentions.hasPermission
@@ -26,17 +31,25 @@ public class PermissionDelegate<T : Any>(private val contextProvider: T) {
     private var hasRestoredState = false
     private val KEY_REQUEST_ID = "KEY_PERMISSIONS_REQUEST_ID"
 
+    // Self-managed CoroutineScope for calling suspend functions.<br><br>
+    // suspend 함수 호출을 위한 자체 관리 CoroutineScope입니다.<br>
+    private val delegateScope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
+
     private val specialPermissionLauncher = buildMap<String, ActivityResultLauncher<Intent>> {
         PermissionSpecialType.entries.forEach { put(it.permission, createSpecialLauncher(it.permission)) }
     }
 
     private val normalPermissionLauncher: ActivityResultLauncher<Array<String>> = when (contextProvider) {
         is ComponentActivity -> contextProvider.registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-            permissionManager.result(getContext(), permissions, currentRequestId)
+            delegateScope.launch {
+                permissionManager.result(getContext(), permissions, currentRequestId)
+            }
         }
 
         is Fragment -> contextProvider.registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-            permissionManager.result(getContext(), permissions, currentRequestId)
+            delegateScope.launch {
+                permissionManager.result(getContext(), permissions, currentRequestId)
+            }
         }
 
         else -> throw IllegalArgumentException("Unsupported context provider type")
@@ -71,6 +84,7 @@ public class PermissionDelegate<T : Any>(private val contextProvider: T) {
                          * 소유자가 파괴될 때 진행 중인 요청을 정리합니다.<br>
                          */
                         cleanup()
+                        delegateScope.cancel()
                     }
                     else -> {}
                 }
@@ -85,9 +99,15 @@ public class PermissionDelegate<T : Any>(private val contextProvider: T) {
      */
     protected fun cleanup() {
         if (shouldClearRequestId()) {
-            currentRequestId?.let {
-                permissionManager.cancelRequest(it)
-                permissionManager.unregisterDelegate(it)
+            currentRequestId?.let { requestId ->
+                /*
+                 * Uses an independent scope to ensure cleanup completes even after delegateScope is cancelled.<br><br>
+                 * delegateScope이 취소된 후에도 정리가 완료되도록 독립적인 scope를 사용합니다.<br>
+                 */
+                CoroutineScope(Dispatchers.Main.immediate).launch {
+                    permissionManager.cancelRequest(requestId)
+                    permissionManager.unregisterDelegate(requestId)
+                }
             }
             currentRequestId = null
         }
@@ -147,12 +167,14 @@ public class PermissionDelegate<T : Any>(private val contextProvider: T) {
      */
     private fun attemptAutoReregistration() {
         currentRequestId?.let { requestId ->
-            if (permissionManager.hasActiveRequest(requestId)) {
-                permissionManager.registerDelegate(requestId, this)
-                Logx.d("Auto-reregistered delegate for request: $requestId")
-            } else {
-                Logx.w("Attempted to reregister for inactive request: $requestId. Request may have been completed or cancelled.")
-                currentRequestId = null
+            delegateScope.launch {
+                if (permissionManager.hasActiveRequest(requestId)) {
+                    permissionManager.registerDelegate(requestId, this@PermissionDelegate)
+                    Logx.d("Auto-reregistered delegate for request: $requestId")
+                } else {
+                    Logx.w("Attempted to reregister for inactive request: $requestId. Request may have been completed or cancelled.")
+                    currentRequestId = null
+                }
             }
         }
     }
@@ -193,77 +215,79 @@ public class PermissionDelegate<T : Any>(private val contextProvider: T) {
         permissions: List<String>,
         onResult: (deniedPermissions: List<String>) -> Unit
     ) {
-        /*
-         * Avoids duplicating requests by attaching callbacks to the in-flight one.<br><br>
-         * 진행 중인 요청이 있다면 콜백만 추가해 중복 실행을 방지합니다.<br>
-         */
-        if (currentRequestId != null && permissionManager.hasActiveRequest(currentRequestId!!)) {
+        delegateScope.launch {
             /*
-             * Verifies whether the new request matches the existing permission set.<br><br>
-             * 새 요청이 기존 권한 집합과 동일한지 재검증합니다.<br>
+             * Avoids duplicating requests by attaching callbacks to the in-flight one.<br><br>
+             * 진행 중인 요청이 있다면 콜백만 추가해 중복 실행을 방지합니다.<br>
              */
-            val result = permissionManager.addCallbackToRequest(
-                requestId = currentRequestId!!,
-                callback = onResult,
-                requestedPermissions = permissions
-            )
+            if (currentRequestId != null && permissionManager.hasActiveRequest(currentRequestId!!)) {
+                /*
+                 * Verifies whether the new request matches the existing permission set.<br><br>
+                 * 새 요청이 기존 권한 집합과 동일한지 재검증합니다.<br>
+                 */
+                val result = permissionManager.addCallbackToRequest(
+                    requestId = currentRequestId!!,
+                    callback = onResult,
+                    requestedPermissions = permissions
+                )
 
-            when (result) {
-                CallbackAddResult.SUCCESS -> {
-                    Logx.d("Added callback to existing request: $currentRequestId (same permissions)")
-                    return
-                }
-                CallbackAddResult.PERMISSION_MISMATCH -> {
-                    /*
-                     * Ignores mismatched requests to prevent leaking stale callbacks.<br><br>
-                     * 일치하지 않는 요청은 무시하여 잘못된 콜백 연결을 방지합니다.<br>
-                     */
-                    val existingPermissions = permissionManager.getRequestPermissions(currentRequestId!!)
-                    Logx.w("Cannot add callback: permission mismatch. Existing: $existingPermissions, Requested: ${permissions.toSet()}")
-                    Logx.w("Ignoring duplicate request with different permissions. Please wait for current request to complete.")
-                    return
-                }
-                CallbackAddResult.REQUEST_NOT_FOUND -> {
-                    /*
-                     * Handles the race where the previous request finished between checks.<br><br>
-                     * 직전 요청이 막 끝난 레이스 컨디션을 감지해 새 요청을 준비합니다.<br>
-                     */
-                    Logx.d("Race condition detected: request $currentRequestId just completed. Starting new request.")
-                    currentRequestId = null
-                    /*
-                     * Continues below to start a brand-new permission request.<br><br>
-                     * 이어지는 코드에서 새로운 권한 요청을 시작합니다.<br>
-                     */
+                when (result) {
+                    CallbackAddResult.SUCCESS -> {
+                        Logx.d("Added callback to existing request: $currentRequestId (same permissions)")
+                        return@launch
+                    }
+                    CallbackAddResult.PERMISSION_MISMATCH -> {
+                        /*
+                         * Ignores mismatched requests to prevent leaking stale callbacks.<br><br>
+                         * 일치하지 않는 요청은 무시하여 잘못된 콜백 연결을 방지합니다.<br>
+                         */
+                        val existingPermissions = permissionManager.getRequestPermissions(currentRequestId!!)
+                        Logx.w("Cannot add callback: permission mismatch. Existing: $existingPermissions, Requested: ${permissions.toSet()}")
+                        Logx.w("Ignoring duplicate request with different permissions. Please wait for current request to complete.")
+                        return@launch
+                    }
+                    CallbackAddResult.REQUEST_NOT_FOUND -> {
+                        /*
+                         * Handles the race where the previous request finished between checks.<br><br>
+                         * 직전 요청이 막 끝난 레이스 컨디션을 감지해 새 요청을 준비합니다.<br>
+                         */
+                        Logx.d("Race condition detected: request $currentRequestId just completed. Starting new request.")
+                        currentRequestId = null
+                        /*
+                         * Continues below to start a brand-new permission request.<br><br>
+                         * 이어지는 코드에서 새로운 권한 요청을 시작합니다.<br>
+                         */
+                    }
                 }
             }
-        }
 
-        /*
-         * Pre-registers a delegate so PermissionManager can look it up immediately.<br><br>
-         * PermissionManager 가 바로 찾을 수 있도록 먼저 Delegate를 등록합니다.<br>
-         */
-        val tempRequestId = java.util.UUID.randomUUID().toString()
-        permissionManager.registerDelegate(tempRequestId, this)
-
-        currentRequestId = permissionManager.request(
-            context = getContext(),
-            requestPermissionLauncher = normalPermissionLauncher,
-            permissions = permissions,
-            callback = onResult,
             /*
-             * Supplies the pre-generated ID so PermissionManager can reuse it.<br><br>
-             * PermissionManager 가 재사용할 수 있도록 선 생성한 ID를 전달합니다.<br>
+             * Pre-registers a delegate so PermissionManager can look it up immediately.<br><br>
+             * PermissionManager 가 바로 찾을 수 있도록 먼저 Delegate를 등록합니다.<br>
              */
-            preGeneratedRequestId = tempRequestId
-        )
+            val tempRequestId = java.util.UUID.randomUUID().toString()
+            permissionManager.registerDelegate(tempRequestId, this@PermissionDelegate)
 
-        /*
-         * Clean up the delegate if the request failed to launch and returned empty.<br><br>
-         * 요청 실행이 실패해 빈 문자열을 반환하면 Delegate를 정리합니다.<br>
-         */
-        if (currentRequestId.isNullOrEmpty()) {
-            permissionManager.unregisterDelegate(tempRequestId)
-            currentRequestId = null
+            currentRequestId = permissionManager.request(
+                context = getContext(),
+                requestPermissionLauncher = normalPermissionLauncher,
+                permissions = permissions,
+                callback = onResult,
+                /*
+                 * Supplies the pre-generated ID so PermissionManager can reuse it.<br><br>
+                 * PermissionManager 가 재사용할 수 있도록 선 생성한 ID를 전달합니다.<br>
+                 */
+                preGeneratedRequestId = tempRequestId
+            )
+
+            /*
+             * Clean up the delegate if the request failed to launch and returned empty.<br><br>
+             * 요청 실행이 실패해 빈 문자열을 반환하면 Delegate를 정리합니다.<br>
+             */
+            if (currentRequestId.isNullOrEmpty()) {
+                permissionManager.unregisterDelegate(tempRequestId)
+                currentRequestId = null
+            }
         }
     }
 
@@ -318,27 +342,6 @@ public class PermissionDelegate<T : Any>(private val contextProvider: T) {
 
 
     /**
-     * Forwards normal permission results to the manager.<br><br>
-     * 일반 권한 요청 결과를 PermissionManager 로 전달합니다.<br>
-     *
-     * @param permissions Map of permission to granted flag.<br><br>
-     *                    권한과 승인 여부를 담은 맵입니다.<br>
-     */
-    private fun handlePermissionResult(permissions: Map<String, Boolean>) =
-        permissionManager.result(getContext(), permissions, currentRequestId)
-
-    /**
-     * Forwards special permission results to the manager.<br><br>
-     * 특수 권한 결과를 PermissionManager 로 전달합니다.<br>
-     *
-     * @param permission Special permission evaluated by the launcher.<br><br>
-     *                   런처가 처리한 특수 권한입니다.<br>
-     */
-    protected fun handleSpecialPermissionResult(permission: String) =
-        permissionManager.resultSpecialPermission(getContext(), permission, currentRequestId)
-
-
-    /**
      * Registers a launcher dedicated to a special permission.<br><br>
      * 특정 특수 권한을 처리할 런처를 등록합니다.<br>
      *
@@ -349,11 +352,15 @@ public class PermissionDelegate<T : Any>(private val contextProvider: T) {
      */
     protected fun createSpecialLauncher(permission: String) = when (contextProvider) {
         is ComponentActivity -> contextProvider.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            delegateScope.launch {
                 permissionManager.resultSpecialPermission(getContext(), permission, currentRequestId)
             }
+        }
 
-        is Fragment ->  contextProvider.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            permissionManager.resultSpecialPermission(getContext(), permission, currentRequestId)
+        is Fragment -> contextProvider.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            delegateScope.launch {
+                permissionManager.resultSpecialPermission(getContext(), permission, currentRequestId)
+            }
         }
         else -> throw IllegalArgumentException("Unsupported context provider type")
     }

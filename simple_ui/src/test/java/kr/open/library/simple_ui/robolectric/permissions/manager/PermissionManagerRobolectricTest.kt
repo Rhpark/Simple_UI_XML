@@ -7,6 +7,7 @@ import android.content.Intent
 import android.os.Build
 import androidx.activity.result.ActivityResultLauncher
 import androidx.test.core.app.ApplicationProvider
+import kotlinx.coroutines.test.runTest
 import kr.open.library.simple_ui.permissions.extentions.hasPermission
 import kr.open.library.simple_ui.permissions.extentions.remainPermissions
 import kr.open.library.simple_ui.permissions.manager.CallbackAddResult
@@ -86,7 +87,7 @@ class PermissionManagerRobolectricTest {
     // ==============================================
 
     @Test
-    fun request_withEmptyPermissions_callsCallbackImmediately() {
+    fun request_withEmptyPermissions_callsCallbackImmediately() = runTest {
         // Given
         var callbackInvoked = false
         var deniedPermissions: List<String>? = null
@@ -110,7 +111,7 @@ class PermissionManagerRobolectricTest {
     }
 
     @Test
-    fun request_withAllGrantedPermissions_callsCallbackImmediately() {
+    fun request_withAllGrantedPermissions_callsCallbackImmediately() = runTest {
         // Given
         Shadows.shadowOf(application).grantPermissions(Manifest.permission.CAMERA)
         var callbackInvoked = false
@@ -135,7 +136,7 @@ class PermissionManagerRobolectricTest {
     }
 
     @Test
-    fun request_withDeniedPermissions_launchesPermissionRequest() {
+    fun request_withDeniedPermissions_launchesPermissionRequest() = runTest {
         // Given
         Shadows.shadowOf(application).denyPermissions(Manifest.permission.CAMERA)
 
@@ -153,7 +154,7 @@ class PermissionManagerRobolectricTest {
     }
 
     @Test
-    fun request_withMultiplePermissions_launchesOnlyDenied() {
+    fun request_withMultiplePermissions_launchesOnlyDenied() = runTest {
         // Given
         Shadows.shadowOf(application).apply {
             grantPermissions(Manifest.permission.CAMERA)
@@ -180,7 +181,7 @@ class PermissionManagerRobolectricTest {
     // ==============================================
 
     @Test
-    fun result_withAllGranted_invokesCallbackWithEmptyList() {
+    fun result_withAllGranted_invokesCallbackWithEmptyList() = runTest {
         // Given
         Shadows.shadowOf(application).denyPermissions(Manifest.permission.CAMERA)
         var deniedPermissions: List<String>? = null
@@ -208,7 +209,7 @@ class PermissionManagerRobolectricTest {
     }
 
     @Test
-    fun result_withSomeDenied_invokesCallbackWithDeniedList() {
+    fun result_withSomeDenied_invokesCallbackWithDeniedList() = runTest {
         // Given
         Shadows.shadowOf(application).denyPermissions(
             Manifest.permission.CAMERA,
@@ -246,7 +247,7 @@ class PermissionManagerRobolectricTest {
     }
 
     @Test
-    fun result_withNullRequestId_doesNotCrash() {
+    fun result_withNullRequestId_doesNotCrash() = runTest {
         // When & Then - should not crash
         permissionManager.result(
             context = context,
@@ -256,7 +257,7 @@ class PermissionManagerRobolectricTest {
     }
 
     @Test
-    fun result_withUnknownRequestId_doesNotCrash() {
+    fun result_withUnknownRequestId_doesNotCrash() = runTest {
         // When & Then - should not crash
         permissionManager.result(
             context = context,
@@ -278,7 +279,7 @@ class PermissionManagerRobolectricTest {
      */
 
     @Test
-    fun resultSpecialPermission_withNullRequestId_doesNotCrash() {
+    fun resultSpecialPermission_withNullRequestId_doesNotCrash() = runTest {
         // When & Then - should not crash
         permissionManager.resultSpecialPermission(
             context = context,
@@ -288,7 +289,7 @@ class PermissionManagerRobolectricTest {
     }
 
     @Test
-    fun resultSpecialPermission_withUnknownRequestId_doesNotCrash() {
+    fun resultSpecialPermission_withUnknownRequestId_doesNotCrash() = runTest {
         // When & Then - should not crash
         permissionManager.resultSpecialPermission(
             context = context,
@@ -302,7 +303,7 @@ class PermissionManagerRobolectricTest {
     // ==============================================
 
     @Test
-    fun addCallbackToRequest_whenRequestExists_returnsSuccess() {
+    fun addCallbackToRequest_whenRequestExists_returnsSuccess() = runTest {
         // Given
         Shadows.shadowOf(application).denyPermissions(Manifest.permission.CAMERA)
         val requestId = permissionManager.request(
@@ -324,7 +325,7 @@ class PermissionManagerRobolectricTest {
     }
 
     @Test
-    fun addCallbackToRequest_whenRequestNotFound_returnsRequestNotFound() {
+    fun addCallbackToRequest_whenRequestNotFound_returnsRequestNotFound() = runTest {
         // When
         val result = permissionManager.addCallbackToRequest(
             requestId = "unknown-request-id",
@@ -337,7 +338,7 @@ class PermissionManagerRobolectricTest {
     }
 
     @Test
-    fun addCallbackToRequest_whenPermissionMismatch_returnsPermissionMismatch() {
+    fun addCallbackToRequest_whenPermissionMismatch_returnsPermissionMismatch() = runTest {
         // Given
         Shadows.shadowOf(application).denyPermissions(Manifest.permission.CAMERA)
         val requestId = permissionManager.request(
@@ -359,7 +360,7 @@ class PermissionManagerRobolectricTest {
     }
 
     @Test
-    fun result_withMultipleCallbacks_invokesAllCallbacks() {
+    fun result_withMultipleCallbacks_invokesAllCallbacks() = runTest {
         // Given
         Shadows.shadowOf(application).denyPermissions(Manifest.permission.CAMERA)
         var callback1Invoked = false
@@ -397,7 +398,7 @@ class PermissionManagerRobolectricTest {
     // ==============================================
 
     @Test
-    fun cancelRequest_removesRequest() {
+    fun cancelRequest_removesRequest() = runTest {
         // Given
         Shadows.shadowOf(application).denyPermissions(Manifest.permission.CAMERA)
         val requestId = permissionManager.request(
@@ -420,7 +421,7 @@ class PermissionManagerRobolectricTest {
     }
 
     @Test
-    fun cancelRequest_withUnknownRequestId_doesNotCrash() {
+    fun cancelRequest_withUnknownRequestId_doesNotCrash() = runTest {
         // When & Then - should not crash
         permissionManager.cancelRequest("unknown-request-id")
     }
@@ -430,7 +431,7 @@ class PermissionManagerRobolectricTest {
     // ==============================================
 
     @Test
-    fun registerDelegate_storesDelegate() {
+    fun registerDelegate_storesDelegate() = runTest {
         // Given
         val requestId = "test-request-id"
 
@@ -442,7 +443,7 @@ class PermissionManagerRobolectricTest {
     }
 
     @Test
-    fun hasActiveRequest_whenRequestExists_returnsTrue() {
+    fun hasActiveRequest_whenRequestExists_returnsTrue() = runTest {
         // Given
         Shadows.shadowOf(application).denyPermissions(Manifest.permission.CAMERA)
         val requestId = permissionManager.request(
@@ -457,13 +458,13 @@ class PermissionManagerRobolectricTest {
     }
 
     @Test
-    fun hasActiveRequest_whenRequestNotExists_returnsFalse() {
+    fun hasActiveRequest_whenRequestNotExists_returnsFalse() = runTest {
         // When & Then
         assertFalse(permissionManager.hasActiveRequest("unknown-request-id"))
     }
 
     @Test
-    fun getRequestPermissions_whenRequestExists_returnsPermissions() {
+    fun getRequestPermissions_whenRequestExists_returnsPermissions() = runTest {
         // Given
         Shadows.shadowOf(application).denyPermissions(Manifest.permission.CAMERA)
         val requestId = permissionManager.request(
@@ -483,7 +484,7 @@ class PermissionManagerRobolectricTest {
     }
 
     @Test
-    fun getRequestPermissions_whenRequestNotExists_returnsNull() {
+    fun getRequestPermissions_whenRequestNotExists_returnsNull() = runTest {
         // When
         val permissions = permissionManager.getRequestPermissions("unknown-request-id")
 
@@ -496,13 +497,13 @@ class PermissionManagerRobolectricTest {
     // ==============================================
 
     @Test
-    fun cleanupExpiredRequests_doesNotCrashOnEmptyRequests() {
+    fun cleanupExpiredRequests_doesNotCrashOnEmptyRequests() = runTest {
         // When & Then - should not crash
         permissionManager.cleanupExpiredRequests()
     }
 
     @Test
-    fun cleanupExpiredRequests_doesNotRemoveRecentRequests() {
+    fun cleanupExpiredRequests_doesNotRemoveRecentRequests() = runTest {
         // Given
         Shadows.shadowOf(application).denyPermissions(Manifest.permission.CAMERA)
         val requestId = permissionManager.request(
@@ -524,7 +525,7 @@ class PermissionManagerRobolectricTest {
     // ==============================================
 
     @Test
-    fun request_withDuplicatePermissions_handlesCorrectly() {
+    fun request_withDuplicatePermissions_handlesCorrectly() = runTest {
         // Given
         Shadows.shadowOf(application).denyPermissions(Manifest.permission.CAMERA)
 
@@ -547,7 +548,7 @@ class PermissionManagerRobolectricTest {
 
 
     @Test
-    fun unregisterDelegate_withUnknownRequestId_doesNotCrash() {
+    fun unregisterDelegate_withUnknownRequestId_doesNotCrash() = runTest {
         // When & Then - should not crash
         permissionManager.unregisterDelegate("unknown-request-id")
     }
@@ -557,7 +558,7 @@ class PermissionManagerRobolectricTest {
     // ==============================================
 
     @Test
-    fun request_withDestroyedActivity_returnsEmptyAndCallsCallback() {
+    fun request_withDestroyedActivity_returnsEmptyAndCallsCallback() = runTest {
         // Given
         val mockActivity = mock(android.app.Activity::class.java)
         `when`(mockActivity.isDestroyed).thenReturn(true)
@@ -579,7 +580,7 @@ class PermissionManagerRobolectricTest {
     }
 
     @Test
-    fun request_withFinishingActivity_returnsEmptyAndCallsCallback() {
+    fun request_withFinishingActivity_returnsEmptyAndCallsCallback() = runTest {
         // Given
         val mockActivity = mock(android.app.Activity::class.java)
         `when`(mockActivity.isDestroyed).thenReturn(false)
@@ -601,7 +602,7 @@ class PermissionManagerRobolectricTest {
     }
 
     @Test
-    fun result_withDestroyedActivity_doesNotInvokeCallback() {
+    fun result_withDestroyedActivity_doesNotInvokeCallback() = runTest {
         // Given
         Shadows.shadowOf(application).denyPermissions(Manifest.permission.CAMERA)
         var callbackInvoked = false
@@ -632,7 +633,7 @@ class PermissionManagerRobolectricTest {
     // ==============================================
 
     @Test
-    fun request_whenLauncherThrows_handlesGracefully() {
+    fun request_whenLauncherThrows_handlesGracefully() = runTest {
         // Given
         Shadows.shadowOf(application).denyPermissions(Manifest.permission.CAMERA)
         `when`(mockLauncher.launch(any())).thenThrow(RuntimeException("Launcher failed"))
@@ -658,7 +659,7 @@ class PermissionManagerRobolectricTest {
     // ==============================================
 
     @Test
-    fun result_whenCallbackThrows_continuesWithOtherCallbacks() {
+    fun result_whenCallbackThrows_continuesWithOtherCallbacks() = runTest {
         // Given
         Shadows.shadowOf(application).denyPermissions(Manifest.permission.CAMERA)
         var callback2Invoked = false
@@ -694,7 +695,7 @@ class PermissionManagerRobolectricTest {
     // ==============================================
 
     @Test
-    fun registerDelegate_whenAlreadyRegistered_replacesDelegate() {
+    fun registerDelegate_whenAlreadyRegistered_replacesDelegate() = runTest {
         // Given
         val requestId = "test-request-id"
         @Suppress("UNCHECKED_CAST")
@@ -713,7 +714,7 @@ class PermissionManagerRobolectricTest {
     // ==============================================
 
     @Test
-    fun request_withPreGeneratedRequestId_usesProvidedId() {
+    fun request_withPreGeneratedRequestId_usesProvidedId() = runTest {
         // Given
         Shadows.shadowOf(application).denyPermissions(Manifest.permission.CAMERA)
         val preGeneratedId = "my-custom-request-id"
