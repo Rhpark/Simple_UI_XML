@@ -3,7 +3,18 @@ plugins {
     alias(libs.plugins.kotlin.android)
     // FireBase (Add the Google services Gradle plugin)
     id("com.google.gms.google-services")
-    id("com.google.firebase.appdistribution")
+    id("com.google.firebase.appdistribution") //apk 자동 배포
+    id("com.google.firebase.crashlytics") //Firebase Exception Report
+}
+
+// 빌드 타입별 Suffix 상수
+object AppConfig {
+    const val DEBUG = "debug"
+    const val VERIFICATION = "verification"
+    const val RELEASE = "release"
+    const val DEBUG_SUFFIX = ".$DEBUG"
+    const val VERIFICATION_SUFFIX = ".$VERIFICATION"
+    const val RELEASE_SUFFIX = ""
 }
 
 android {
@@ -21,12 +32,43 @@ android {
     }
 
     buildTypes {
+        debug {
+            applicationIdSuffix = AppConfig.DEBUG_SUFFIX
+
+            // Develop 모드: Crashlytics 비활성화
+            manifestPlaceholders["crashlytics_collection_enabled"] = false
+
+            buildConfigField("String", "BUILD_TYPE_NAME", "\"${AppConfig.DEBUG}\"")
+        }
+
+        create(AppConfig.VERIFICATION) {
+            initWith(getByName(AppConfig.DEBUG))
+            applicationIdSuffix = AppConfig.VERIFICATION_SUFFIX
+
+            // simple_ui 모듈에 verification이 없으면 debug를 사용
+            matchingFallbacks += listOf(AppConfig.DEBUG)
+
+            // Testing 모드: Crashlytics 비활성화
+            manifestPlaceholders["crashlytics_collection_enabled"] = false
+
+            // BuildConfig 필드 추가
+            buildConfigField("String", "BUILD_TYPE_NAME", "\"${AppConfig.VERIFICATION}\"")
+            buildConfigField("String", "CRASH_REPORT_URL", "\"https://us-central1-rhpark-cc1f1.cloudfunctions.net/reportTestCrash\"")
+            buildConfigField("String", "CRASH_API_KEY", "\"SIMPLE_UI_VER_2025_nR8kL4mX9pT2wQ7vK3sN\"")
+        }
+
         release {
+            applicationIdSuffix = AppConfig.RELEASE_SUFFIX
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+
+            // Release 모드: Crashlytics 활성화
+            manifestPlaceholders["crashlytics_collection_enabled"] = true
+
+            buildConfigField("String", "BUILD_TYPE_NAME", "\"${AppConfig.RELEASE}\"")
         }
     }
     compileOptions {
@@ -41,6 +83,7 @@ android {
         //noinspection DataBindingWithoutKapt
         dataBinding = true
 //        viewBinding = true
+        buildConfig = true  // BuildConfig 활성화
     }
 }
 
@@ -106,4 +149,9 @@ dependencies {
 
     // Add the dependencies for any other desired Firebase products
     // https://firebase.google.com/docs/android/setup#available-libraries
+
+    // Add the dependencies for the Crashlytics NDK and Analytics libraries
+    // When using the BoM, you don't specify versions in Firebase library dependencies
+    implementation("com.google.firebase:firebase-crashlytics-ndk")
+    implementation("com.google.firebase:firebase-analytics")
 }

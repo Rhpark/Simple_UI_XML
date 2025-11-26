@@ -35,8 +35,14 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:name=".MyApplication"
         android:theme="@style/Theme.SimpleUI_XML"
         tools:targetApi="31">
+
+        <!-- Firebase Crashlytics 데이터 수집 제어 -->
+        <meta-data
+            android:name="firebase_crashlytics_collection_enabled"
+            android:value="${crashlytics_collection_enabled}" />
         <activity
             android:name=".activity_fragment.ActivityFragmentActivity"
             android:exported="false" />
