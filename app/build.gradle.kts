@@ -39,6 +39,8 @@ android {
             manifestPlaceholders["crashlytics_collection_enabled"] = false
 
             buildConfigField("String", "BUILD_TYPE_NAME", "\"${AppConfig.DEBUG}\"")
+            buildConfigField("String", "CRASH_REPORT_URL", "\"\"")
+            buildConfigField("String", "CRASH_API_KEY", "\"\"")
         }
 
         create(AppConfig.VERIFICATION) {
@@ -69,6 +71,8 @@ android {
             manifestPlaceholders["crashlytics_collection_enabled"] = true
 
             buildConfigField("String", "BUILD_TYPE_NAME", "\"${AppConfig.RELEASE}\"")
+            buildConfigField("String", "CRASH_REPORT_URL", "\"\"")
+            buildConfigField("String", "CRASH_API_KEY", "\"\"")
         }
     }
     compileOptions {
