@@ -2,4 +2,4 @@ jdk:
   - openjdk17
 
 install:
-  - ./gradlew :simple_ui:assembleRelease :simple_ui:publishToMavenLocal
+  - ./gradlew :simple_core:publishToMavenLocal :simple_xml:assembleRelease :simple_xml:publishToMavenLocal
