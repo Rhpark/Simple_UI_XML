@@ -83,6 +83,26 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
 }
 
+// Dokka Configuration for simple_core module
+// simple_core 모듈 Dokka 설정
+tasks.dokkaHtml {
+    moduleName.set("Simple UI Core")
+
+    dokkaSourceSets {
+        named("main") {
+            sourceLink {
+                localDirectory.set(file("src/main/java"))
+                remoteUrl.set(uri("https://github.com/Rhpark/Simple_UI_XML/tree/master/simple_core/src/main/java").toURL())
+                remoteLineSuffix.set("#L")
+            }
+
+            externalDocumentationLink {
+                url.set(uri("https://developer.android.com/reference/").toURL())
+            }
+        }
+    }
+}
+
 // Test tasks
 tasks.register<Test>("testUnit") {
     description = "Runs pure unit tests only (no Android dependencies)"
