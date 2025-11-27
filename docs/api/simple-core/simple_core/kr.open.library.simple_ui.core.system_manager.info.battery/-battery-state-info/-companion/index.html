@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>Companion</title>
+    <link href="../../../../images/logo-icon.svg" rel="icon" type="image/svg">
+        <script>var pathToRoot = "../../../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+      if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      } else {
+        const savedDarkMode = JSON.parse(storage)
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async="async"></script>
+<script type="text/javascript" src="../../../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../../../styles/style.css" rel="Stylesheet">
+<link href="../../../../styles/main.css" rel="Stylesheet">
+<link href="../../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../../scripts/safe-local-storage_blocking.js"></script>
+<script type="text/javascript" src="../../../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../../../ui-kit/ui-kit.min.js" defer="defer"></script>
+</head>
+<body>
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+            <a class="library-name--link" href="../../../../index.html" tabindex="1">
+                    simple_core
+            </a>
+        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle"
+                type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">
+        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector jvm-like" data-active="" aria-pressed="true"
+                        data-filter=":simple_core/main">androidJvm</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox"
+                        data-role="dropdown-toggle"
+                        aria-controls="platform-tags-listbox"
+                        aria-haspopup="listbox"
+                        aria-expanded="false"
+                        aria-label="Toggle source sets"
+                ></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":simple_core/main"
+                                       data-filter=":simple_core/main"/>
+                                <span class="checkbox--icon"></span>
+                                androidJvm
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button"
+                    type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config='{"defaultSize": 280, "minSize": 200, "maxSize": 400}'>
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list"
+                    data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    simple_core
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" data-page-type="classlike" id="content" pageIds="simple_core::kr.open.library.simple_ui.core.system_manager.info.battery/BatteryStateInfo.Companion///PointingToDeclaration//-1254007377">
+  <div class="breadcrumbs"><a href="../../../../index.html">simple_core</a><span class="delimiter">/</span><a href="../../index.html">kr.open.library.simple_ui.core.system_manager.info.battery</a><span class="delimiter">/</span><a href="../index.html">BatteryStateInfo</a><span class="delimiter">/</span><span class="current">Companion</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span><span>Companion</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">object </span><a href="index.html">Companion</a></div></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="PROPERTY">
+        <h2 class="tableheader">Properties</h2>
+        <div class="table"><a data-name="-357365647%2FProperties%2F-1254007377" anchor-label="BATTERY_ERROR_VALUE" id="-357365647%2FProperties%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-b-a-t-t-e-r-y_-e-r-r-o-r_-v-a-l-u-e.html"><span>BATTERY_</span><wbr></wbr><span>ERROR_</span><wbr></wbr><span>VALUE</span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-357365647%2FProperties%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-b-a-t-t-e-r-y_-e-r-r-o-r_-v-a-l-u-e.html">BATTERY_ERROR_VALUE</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Error value used when battery information cannot be retrieved. 배터리 정보를 가져올 수 없을 때 사용하는 오류 값.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1679661823%2FProperties%2F-1254007377" anchor-label="BATTERY_UPDATE_ACTION" id="1679661823%2FProperties%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-b-a-t-t-e-r-y_-u-p-d-a-t-e_-a-c-t-i-o-n.html"><span>BATTERY_</span><wbr></wbr><span>UPDATE_</span><wbr></wbr><span>ACTION</span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1679661823%2FProperties%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-b-a-t-t-e-r-y_-u-p-d-a-t-e_-a-c-t-i-o-n.html">BATTERY_UPDATE_ACTION</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div><div class="brief "><p class="paragraph">Custom battery update action for internal broadcasts. 내부 브로드캐스트용 사용자 정의 배터리 업데이트 액션.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-570555334%2FProperties%2F-1254007377" anchor-label="DEFAULT_UPDATE_CYCLE_TIME_MS" id="-570555334%2FProperties%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-d-e-f-a-u-l-t_-u-p-d-a-t-e_-c-y-c-l-e_-t-i-m-e_-m-s.html"><span>DEFAULT_</span><wbr></wbr><span>UPDATE_</span><wbr></wbr><span>CYCLE_</span><wbr></wbr><span>TIME_</span><wbr></wbr><span>MS</span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-570555334%2FProperties%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-d-e-f-a-u-l-t_-u-p-d-a-t-e_-c-y-c-l-e_-t-i-m-e_-m-s.html">DEFAULT_UPDATE_CYCLE_TIME_MS</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-long/index.html">Long</a><span class="token operator"> = </span><span class="token constant">1000</span></div><div class="brief "><p class="paragraph">Default update cycle time in milliseconds. 기본 업데이트 주기 시간 (밀리초).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-802480174%2FProperties%2F-1254007377" anchor-label="STR_BATTERY_HEALTH_COLD" id="-802480174%2FProperties%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-s-t-r_-b-a-t-t-e-r-y_-h-e-a-l-t-h_-c-o-l-d.html"><span>STR_</span><wbr></wbr><span>BATTERY_</span><wbr></wbr><span>HEALTH_</span><wbr></wbr><span>COLD</span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-802480174%2FProperties%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-s-t-r_-b-a-t-t-e-r-y_-h-e-a-l-t-h_-c-o-l-d.html">STR_BATTERY_HEALTH_COLD</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="450167378%2FProperties%2F-1254007377" anchor-label="STR_BATTERY_HEALTH_DEAD" id="450167378%2FProperties%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-s-t-r_-b-a-t-t-e-r-y_-h-e-a-l-t-h_-d-e-a-d.html"><span>STR_</span><wbr></wbr><span>BATTERY_</span><wbr></wbr><span>HEALTH_</span><wbr></wbr><span>DEAD</span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="450167378%2FProperties%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-s-t-r_-b-a-t-t-e-r-y_-h-e-a-l-t-h_-d-e-a-d.html">STR_BATTERY_HEALTH_DEAD</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="559801369%2FProperties%2F-1254007377" anchor-label="STR_BATTERY_HEALTH_GOOD" id="559801369%2FProperties%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-s-t-r_-b-a-t-t-e-r-y_-h-e-a-l-t-h_-g-o-o-d.html"><span>STR_</span><wbr></wbr><span>BATTERY_</span><wbr></wbr><span>HEALTH_</span><wbr></wbr><span>GOOD</span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="559801369%2FProperties%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-s-t-r_-b-a-t-t-e-r-y_-h-e-a-l-t-h_-g-o-o-d.html">STR_BATTERY_HEALTH_GOOD</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-257291837%2FProperties%2F-1254007377" anchor-label="STR_BATTERY_HEALTH_OVER_VOLTAGE" id="-257291837%2FProperties%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-s-t-r_-b-a-t-t-e-r-y_-h-e-a-l-t-h_-o-v-e-r_-v-o-l-t-a-g-e.html"><span>STR_</span><wbr></wbr><span>BATTERY_</span><wbr></wbr><span>HEALTH_</span><wbr></wbr><span>OVER_</span><wbr></wbr><span>VOLTAGE</span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-257291837%2FProperties%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-s-t-r_-b-a-t-t-e-r-y_-h-e-a-l-t-h_-o-v-e-r_-v-o-l-t-a-g-e.html">STR_BATTERY_HEALTH_OVER_VOLTAGE</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1656785478%2FProperties%2F-1254007377" anchor-label="STR_BATTERY_HEALTH_UNKNOWN" id="-1656785478%2FProperties%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-s-t-r_-b-a-t-t-e-r-y_-h-e-a-l-t-h_-u-n-k-n-o-w-n.html"><span>STR_</span><wbr></wbr><span>BATTERY_</span><wbr></wbr><span>HEALTH_</span><wbr></wbr><span>UNKNOWN</span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1656785478%2FProperties%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-s-t-r_-b-a-t-t-e-r-y_-h-e-a-l-t-h_-u-n-k-n-o-w-n.html">STR_BATTERY_HEALTH_UNKNOWN</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-433618293%2FProperties%2F-1254007377" anchor-label="STR_CHARGE_PLUG_AC" id="-433618293%2FProperties%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-s-t-r_-c-h-a-r-g-e_-p-l-u-g_-a-c.html"><span>STR_</span><wbr></wbr><span>CHARGE_</span><wbr></wbr><span>PLUG_</span><wbr></wbr><span>AC</span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-433618293%2FProperties%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-s-t-r_-c-h-a-r-g-e_-p-l-u-g_-a-c.html">STR_CHARGE_PLUG_AC</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1649002906%2FProperties%2F-1254007377" anchor-label="STR_CHARGE_PLUG_DOCK" id="1649002906%2FProperties%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-s-t-r_-c-h-a-r-g-e_-p-l-u-g_-d-o-c-k.html"><span>STR_</span><wbr></wbr><span>CHARGE_</span><wbr></wbr><span>PLUG_</span><wbr></wbr><span>DOCK</span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1649002906%2FProperties%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-s-t-r_-c-h-a-r-g-e_-p-l-u-g_-d-o-c-k.html">STR_CHARGE_PLUG_DOCK</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="406954019%2FProperties%2F-1254007377" anchor-label="STR_CHARGE_PLUG_UNKNOWN" id="406954019%2FProperties%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-s-t-r_-c-h-a-r-g-e_-p-l-u-g_-u-n-k-n-o-w-n.html"><span>STR_</span><wbr></wbr><span>CHARGE_</span><wbr></wbr><span>PLUG_</span><wbr></wbr><span>UNKNOWN</span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="406954019%2FProperties%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-s-t-r_-c-h-a-r-g-e_-p-l-u-g_-u-n-k-n-o-w-n.html">STR_CHARGE_PLUG_UNKNOWN</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1190177833%2FProperties%2F-1254007377" anchor-label="STR_CHARGE_PLUG_USB" id="1190177833%2FProperties%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-s-t-r_-c-h-a-r-g-e_-p-l-u-g_-u-s-b.html"><span>STR_</span><wbr></wbr><span>CHARGE_</span><wbr></wbr><span>PLUG_</span><wbr></wbr><span>USB</span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1190177833%2FProperties%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-s-t-r_-c-h-a-r-g-e_-p-l-u-g_-u-s-b.html">STR_CHARGE_PLUG_USB</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1524632945%2FProperties%2F-1254007377" anchor-label="STR_CHARGE_PLUG_WIRELESS" id="-1524632945%2FProperties%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-s-t-r_-c-h-a-r-g-e_-p-l-u-g_-w-i-r-e-l-e-s-s.html"><span>STR_</span><wbr></wbr><span>CHARGE_</span><wbr></wbr><span>PLUG_</span><wbr></wbr><span>WIRELESS</span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1524632945%2FProperties%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">const </span><span class="token keyword">val </span><a href="-s-t-r_-c-h-a-r-g-e_-p-l-u-g_-w-i-r-e-l-e-s-s.html">STR_CHARGE_PLUG_WIRELESS</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>© 2025 Copyright</div>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

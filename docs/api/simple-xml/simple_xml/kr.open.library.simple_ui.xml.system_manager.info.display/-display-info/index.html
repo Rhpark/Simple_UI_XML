@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>DisplayInfo</title>
+    <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
+        <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+      if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      } else {
+        const savedDarkMode = JSON.parse(storage)
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/safe-local-storage_blocking.js"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../../ui-kit/ui-kit.min.js" defer="defer"></script>
+</head>
+<body>
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+            <a class="library-name--link" href="../../../index.html" tabindex="1">
+                    simple_xml
+            </a>
+        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle"
+                type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">
+        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector jvm-like" data-active="" aria-pressed="true"
+                        data-filter=":simple_xml/main">androidJvm</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox"
+                        data-role="dropdown-toggle"
+                        aria-controls="platform-tags-listbox"
+                        aria-haspopup="listbox"
+                        aria-expanded="false"
+                        aria-label="Toggle source sets"
+                ></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":simple_xml/main"
+                                       data-filter=":simple_xml/main"/>
+                                <span class="checkbox--icon"></span>
+                                androidJvm
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button"
+                    type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config='{"defaultSize": 280, "minSize": 200, "maxSize": 400}'>
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list"
+                    data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    simple_xml
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" data-page-type="classlike" id="content" pageIds="simple_xml::kr.open.library.simple_ui.xml.system_manager.info.display/DisplayInfo///PointingToDeclaration//1260065567">
+  <div class="breadcrumbs"><a href="../../../index.html">simple_xml</a><span class="delimiter">/</span><a href="../index.html">kr.open.library.simple_ui.xml.system_manager.info.display</a><span class="delimiter">/</span><span class="current">DisplayInfo</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Display</span><wbr></wbr><span><span>Info</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_xml/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">class </span><a href="index.html">DisplayInfo</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">context<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/content/Context.html">Context</a></span></span><span class="token punctuation">)</span> : <span data-unresolved-link="kr.open.library.simple_ui.core.system_manager.base/BaseSystemService///PointingToDeclaration/">BaseSystemService</span></div><p class="paragraph">This class provides information about the display of an Android device. DisplayInfo 클래스는 Android 기기의 디스플레이 정보를 제공.</p><p class="paragraph">Screen Size, Full Screen Size, Status Bar Size, Navigation Bar Size,</p><h4 class="tableheader">Parameters</h4><div class="table"><div class="table-row table-row_content" data-filterable-current=":simple_xml/main" data-filterable-set=":simple_xml/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>context</span></span></u></div></span></div><div><div class="title"><p class="paragraph">애플리케이션 컨텍스트.</p></div></div></div></div></div></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="tableheader">Constructors</h2>
+        <div class="table"><a data-name="-363185237%2FConstructors%2F1260065567" anchor-label="DisplayInfo" id="-363185237%2FConstructors%2F1260065567" data-filterable-set=":simple_xml/main"></a>
+          <div class="table-row table-row_content" data-togglable="CONSTRUCTOR" data-filterable-current=":simple_xml/main" data-filterable-set=":simple_xml/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-display-info.html"><span>Display</span><wbr></wbr><span><span>Info</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-363185237%2FConstructors%2F1260065567"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_xml/main"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">context<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/content/Context.html">Context</a></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="PROPERTY">
+        <h2 class="tableheader">Properties</h2>
+        <div class="table"><a data-name="-181237297%2FProperties%2F1260065567" anchor-label="windowManager" id="-181237297%2FProperties%2F1260065567" data-filterable-set=":simple_xml/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_xml/main" data-filterable-set=":simple_xml/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="window-manager.html"><span>window</span><wbr></wbr><span><span>Manager</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-181237297%2FProperties%2F1260065567"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_xml/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="window-manager.html">windowManager</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/view/WindowManager.html">WindowManager</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="tableheader">Functions</h2>
+        <div class="table"><a data-name="2079620148%2FFunctions%2F1260065567" anchor-label="getFullScreenHeight" id="2079620148%2FFunctions%2F1260065567" data-filterable-set=":simple_xml/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_xml/main" data-filterable-set=":simple_xml/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-full-screen-height.html"><span>get</span><wbr></wbr><span>Full</span><wbr></wbr><span>Screen</span><wbr></wbr><span><span>Height</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2079620148%2FFunctions%2F1260065567"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_xml/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="get-full-screen-height.html"><span class="token function">getFullScreenHeight</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Returns the total display height in pixels. 전체 화면의 세로 픽셀 크기를 반환합니다.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-142832102%2FFunctions%2F1260065567" anchor-label="getFullScreenSize" id="-142832102%2FFunctions%2F1260065567" data-filterable-set=":simple_xml/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_xml/main" data-filterable-set=":simple_xml/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-full-screen-size.html"><span>get</span><wbr></wbr><span>Full</span><wbr></wbr><span>Screen</span><wbr></wbr><span><span>Size</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-142832102%2FFunctions%2F1260065567"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_xml/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="get-full-screen-size.html"><span class="token function">getFullScreenSize</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/graphics/Point.html">Point</a></div><div class="brief "><p class="paragraph">Returns the full screen size(Pixel). 전체 화면 크기를 반환.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-308948679%2FFunctions%2F1260065567" anchor-label="getFullScreenWidth" id="-308948679%2FFunctions%2F1260065567" data-filterable-set=":simple_xml/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_xml/main" data-filterable-set=":simple_xml/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-full-screen-width.html"><span>get</span><wbr></wbr><span>Full</span><wbr></wbr><span>Screen</span><wbr></wbr><span><span>Width</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-308948679%2FFunctions%2F1260065567"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_xml/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="get-full-screen-width.html"><span class="token function">getFullScreenWidth</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Returns the total display width in pixels. 전체 화면의 가로 픽셀 크기를 반환합니다.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-444610210%2FFunctions%2F1260065567" anchor-label="getNavigationBarHeight" id="-444610210%2FFunctions%2F1260065567" data-filterable-set=":simple_xml/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_xml/main" data-filterable-set=":simple_xml/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-navigation-bar-height.html"><span>get</span><wbr></wbr><span>Navigation</span><wbr></wbr><span>Bar</span><wbr></wbr><span><span>Height</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-444610210%2FFunctions%2F1260065567"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_xml/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="get-navigation-bar-height.html"><span class="token function">getNavigationBarHeight</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Returns the navigation bar height component. 네비게이션 바의 세로 크기를 반환합니다.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2062360004%2FFunctions%2F1260065567" anchor-label="getNavigationBarSize" id="2062360004%2FFunctions%2F1260065567" data-filterable-set=":simple_xml/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_xml/main" data-filterable-set=":simple_xml/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-navigation-bar-size.html"><span>get</span><wbr></wbr><span>Navigation</span><wbr></wbr><span>Bar</span><wbr></wbr><span><span>Size</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2062360004%2FFunctions%2F1260065567"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_xml/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="get-navigation-bar-size.html"><span class="token function">getNavigationBarSize</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/graphics/Point.html">Point</a></div><div class="brief "><p class="paragraph">Returns the navigation bar bounding size (width/height) as a Point. 네비게이션 바의 가로/세로 크기를 Point 로 반환합니다.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-667470129%2FFunctions%2F1260065567" anchor-label="getNavigationBarWidth" id="-667470129%2FFunctions%2F1260065567" data-filterable-set=":simple_xml/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_xml/main" data-filterable-set=":simple_xml/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-navigation-bar-width.html"><span>get</span><wbr></wbr><span>Navigation</span><wbr></wbr><span>Bar</span><wbr></wbr><span><span>Width</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-667470129%2FFunctions%2F1260065567"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_xml/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="get-navigation-bar-width.html"><span class="token function">getNavigationBarWidth</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Returns the navigation bar width component. 네비게이션 바의 가로 크기를 반환합니다.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1381586301%2FFunctions%2F1260065567" anchor-label="getPermissionInfo" id="-1381586301%2FFunctions%2F1260065567" data-filterable-set=":simple_xml/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_xml/main" data-filterable-set=":simple_xml/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-1381586301%2FFunctions%2F1260065567"><span>get</span><wbr></wbr><span>Permission</span><wbr></wbr><span><span>Info</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1381586301%2FFunctions%2F1260065567"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_xml/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="index.html#-1381586301%2FFunctions%2F1260065567"><span class="token function">getPermissionInfo</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-map/index.html">Map</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator">&gt;</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1967667709%2FFunctions%2F1260065567" anchor-label="getScreenHeight" id="-1967667709%2FFunctions%2F1260065567" data-filterable-set=":simple_xml/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_xml/main" data-filterable-set=":simple_xml/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-screen-height.html"><span>get</span><wbr></wbr><span>Screen</span><wbr></wbr><span><span>Height</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1967667709%2FFunctions%2F1260065567"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_xml/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="get-screen-height.html"><span class="token function">getScreenHeight</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Returns the available screen height after excluding system bars. 상태바/네비게이션 바를 제외한 실제 사용 가능한 세로 픽셀을 반환합니다.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1993736105%2FFunctions%2F1260065567" anchor-label="getScreenSize" id="1993736105%2FFunctions%2F1260065567" data-filterable-set=":simple_xml/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_xml/main" data-filterable-set=":simple_xml/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-screen-size.html"><span>get</span><wbr></wbr><span>Screen</span><wbr></wbr><span><span>Size</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1993736105%2FFunctions%2F1260065567"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_xml/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="get-screen-size.html"><span class="token function">getScreenSize</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/graphics/Point.html">Point</a></div><div class="brief "><p class="paragraph">Returns the usable screen size as Point(width, height). 사용 가능한 화면 크기를 Point 로 반환합니다.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1500156298%2FFunctions%2F1260065567" anchor-label="getScreenWidth" id="1500156298%2FFunctions%2F1260065567" data-filterable-set=":simple_xml/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_xml/main" data-filterable-set=":simple_xml/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-screen-width.html"><span>get</span><wbr></wbr><span>Screen</span><wbr></wbr><span><span>Width</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1500156298%2FFunctions%2F1260065567"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_xml/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="get-screen-width.html"><span class="token function">getScreenWidth</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Returns the available screen width after excluding navigation insets. 네비게이션 영역을 제외한 실제 사용 가능한 가로 픽셀을 반환합니다.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2104044740%2FFunctions%2F1260065567" anchor-label="getStatusBarHeight" id="-2104044740%2FFunctions%2F1260065567" data-filterable-set=":simple_xml/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_xml/main" data-filterable-set=":simple_xml/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-status-bar-height.html"><span>get</span><wbr></wbr><span>Status</span><wbr></wbr><span>Bar</span><wbr></wbr><span><span>Height</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2104044740%2FFunctions%2F1260065567"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_xml/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="get-status-bar-height.html"><span class="token function">getStatusBarHeight</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-result/index.html">Result</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Returns the status bar height(Pixel). 상태 표시줄 높이를 반환.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2091317470%2FFunctions%2F1260065567" anchor-label="getStatusBarSize" id="-2091317470%2FFunctions%2F1260065567" data-filterable-set=":simple_xml/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_xml/main" data-filterable-set=":simple_xml/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-status-bar-size.html"><span>get</span><wbr></wbr><span>Status</span><wbr></wbr><span>Bar</span><wbr></wbr><span><span>Size</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2091317470%2FFunctions%2F1260065567"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_xml/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="get-status-bar-size.html"><span class="token function">getStatusBarSize</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/graphics/Point.html">Point</a></div><div class="brief "><p class="paragraph">Returns the status bar bounding box as <code class="lang-kotlin">Point(width, height)</code>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-582452943%2FFunctions%2F1260065567" anchor-label="getStatusBarWidth" id="-582452943%2FFunctions%2F1260065567" data-filterable-set=":simple_xml/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_xml/main" data-filterable-set=":simple_xml/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-status-bar-width.html"><span>get</span><wbr></wbr><span>Status</span><wbr></wbr><span>Bar</span><wbr></wbr><span><span>Width</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-582452943%2FFunctions%2F1260065567"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_xml/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="get-status-bar-width.html"><span class="token function">getStatusBarWidth</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-result/index.html">Result</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Returns the status bar width wrapped in Result. 상태바 가로 길이를 Result 로 반환합니다.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1209969609%2FFunctions%2F1260065567" anchor-label="isFullScreen" id="1209969609%2FFunctions%2F1260065567" data-filterable-set=":simple_xml/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_xml/main" data-filterable-set=":simple_xml/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-full-screen.html"><span>is</span><wbr></wbr><span>Full</span><wbr></wbr><span><span>Screen</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1209969609%2FFunctions%2F1260065567"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_xml/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="is-full-screen.html"><span class="token function">isFullScreen</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Indicates whether the window is occupying the full screen (no insets). 현재 창이 인셋 없이 전체 화면을 사용 중인지 여부를 반환합니다.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="175436897%2FFunctions%2F1260065567" anchor-label="isNavigationBarHided" id="175436897%2FFunctions%2F1260065567" data-filterable-set=":simple_xml/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_xml/main" data-filterable-set=":simple_xml/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-navigation-bar-hided.html"><span>is</span><wbr></wbr><span>Navigation</span><wbr></wbr><span>Bar</span><wbr></wbr><span><span>Hided</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="175436897%2FFunctions%2F1260065567"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_xml/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="is-navigation-bar-hided.html"><span class="token function">isNavigationBarHided</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Indicates whether the navigation bar is hidden. 네비게이션 바가 숨겨졌는지 여부를 반환합니다.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1026178000%2FFunctions%2F1260065567" anchor-label="isPermissionGranted" id="-1026178000%2FFunctions%2F1260065567" data-filterable-set=":simple_xml/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_xml/main" data-filterable-set=":simple_xml/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-1026178000%2FFunctions%2F1260065567"><span>is</span><wbr></wbr><span>Permission</span><wbr></wbr><span><span>Granted</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1026178000%2FFunctions%2F1260065567"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_xml/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="index.html#-1026178000%2FFunctions%2F1260065567"><span class="token function">isPermissionGranted</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">permission<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-326156861%2FFunctions%2F1260065567" anchor-label="isStatusBarHided" id="-326156861%2FFunctions%2F1260065567" data-filterable-set=":simple_xml/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_xml/main" data-filterable-set=":simple_xml/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-status-bar-hided.html"><span>is</span><wbr></wbr><span>Status</span><wbr></wbr><span>Bar</span><wbr></wbr><span><span>Hided</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-326156861%2FFunctions%2F1260065567"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_xml/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="is-status-bar-hided.html"><span class="token function">isStatusBarHided</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Indicates whether the status bar is hidden. 상태바가 숨겨졌는지 여부를 반환합니다.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1305458555%2FFunctions%2F1260065567" anchor-label="onDestroy" id="1305458555%2FFunctions%2F1260065567" data-filterable-set=":simple_xml/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_xml/main" data-filterable-set=":simple_xml/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#1305458555%2FFunctions%2F1260065567"><span>on</span><wbr></wbr><span><span>Destroy</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1305458555%2FFunctions%2F1260065567"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_xml/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="index.html#1305458555%2FFunctions%2F1260065567"><span class="token function">onDestroy</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1576261413%2FFunctions%2F1260065567" anchor-label="refreshPermissions" id="-1576261413%2FFunctions%2F1260065567" data-filterable-set=":simple_xml/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_xml/main" data-filterable-set=":simple_xml/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-1576261413%2FFunctions%2F1260065567"><span>refresh</span><wbr></wbr><span><span>Permissions</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1576261413%2FFunctions%2F1260065567"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_xml/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="index.html#-1576261413%2FFunctions%2F1260065567"><span class="token function">refreshPermissions</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>© 2025 Copyright</div>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

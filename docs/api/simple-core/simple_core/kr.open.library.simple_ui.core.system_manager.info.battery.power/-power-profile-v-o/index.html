@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>PowerProfileVO</title>
+    <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
+        <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+      if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      } else {
+        const savedDarkMode = JSON.parse(storage)
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/safe-local-storage_blocking.js"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../../ui-kit/ui-kit.min.js" defer="defer"></script>
+</head>
+<body>
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+            <a class="library-name--link" href="../../../index.html" tabindex="1">
+                    simple_core
+            </a>
+        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle"
+                type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">
+        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector jvm-like" data-active="" aria-pressed="true"
+                        data-filter=":simple_core/main">androidJvm</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox"
+                        data-role="dropdown-toggle"
+                        aria-controls="platform-tags-listbox"
+                        aria-haspopup="listbox"
+                        aria-expanded="false"
+                        aria-label="Toggle source sets"
+                ></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":simple_core/main"
+                                       data-filter=":simple_core/main"/>
+                                <span class="checkbox--icon"></span>
+                                androidJvm
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button"
+                    type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config='{"defaultSize": 280, "minSize": 200, "maxSize": 400}'>
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list"
+                    data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    simple_core
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" data-page-type="classlike" id="content" pageIds="simple_core::kr.open.library.simple_ui.core.system_manager.info.battery.power/PowerProfileVO///PointingToDeclaration//-1254007377">
+  <div class="breadcrumbs"><a href="../../../index.html">simple_core</a><span class="delimiter">/</span><a href="../index.html">kr.open.library.simple_ui.core.system_manager.info.battery.power</a><span class="delimiter">/</span><span class="current">PowerProfileVO</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Power</span><wbr></wbr><span>Profile</span><wbr></wbr><span><span>VO</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">enum </span><a href="index.html">PowerProfileVO</a> : <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-enum/index.html">Enum</a><span class="token operator">&lt;</span><a href="index.html">PowerProfileVO</a><span class="token operator">&gt; </span></div></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button><button class="section-tab" data-togglable="ENTRY">Entries</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="ENTRY">
+        <h2 class="tableheader">Entries</h2>
+        <div class="table"><a data-name="1714683578%2FClasslikes%2F-1254007377" anchor-label="POWER_CPU_SUSPEND" id="1714683578%2FClasslikes%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-togglable="ENTRY" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-p-o-w-e-r_-c-p-u_-s-u-s-p-e-n-d/index.html">POWER_CPU_SUSPEND</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1714683578%2FClasslikes%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><div class="block"><a href="-p-o-w-e-r_-c-p-u_-s-u-s-p-e-n-d/index.html">POWER_CPU_SUSPEND</a></div></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="529968286%2FClasslikes%2F-1254007377" anchor-label="POWER_CPU_IDLE" id="529968286%2FClasslikes%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-togglable="ENTRY" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-p-o-w-e-r_-c-p-u_-i-d-l-e/index.html">POWER_CPU_IDLE</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="529968286%2FClasslikes%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><div class="block"><a href="-p-o-w-e-r_-c-p-u_-i-d-l-e/index.html">POWER_CPU_IDLE</a></div></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-104876336%2FClasslikes%2F-1254007377" anchor-label="POWER_CPU_ACTIVE" id="-104876336%2FClasslikes%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-togglable="ENTRY" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-p-o-w-e-r_-c-p-u_-a-c-t-i-v-e/index.html">POWER_CPU_ACTIVE</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-104876336%2FClasslikes%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><div class="block"><a href="-p-o-w-e-r_-c-p-u_-a-c-t-i-v-e/index.html">POWER_CPU_ACTIVE</a></div></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-453950441%2FClasslikes%2F-1254007377" anchor-label="POWER_SCREEN_FULL" id="-453950441%2FClasslikes%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-togglable="ENTRY" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-p-o-w-e-r_-s-c-r-e-e-n_-f-u-l-l/index.html">POWER_SCREEN_FULL</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-453950441%2FClasslikes%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><div class="block"><a href="-p-o-w-e-r_-s-c-r-e-e-n_-f-u-l-l/index.html">POWER_SCREEN_FULL</a></div></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-79574916%2FClasslikes%2F-1254007377" anchor-label="POWER_WIFI_SCAN" id="-79574916%2FClasslikes%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-togglable="ENTRY" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-p-o-w-e-r_-w-i-f-i_-s-c-a-n/index.html">POWER_WIFI_SCAN</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-79574916%2FClasslikes%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><div class="block"><a href="-p-o-w-e-r_-w-i-f-i_-s-c-a-n/index.html">POWER_WIFI_SCAN</a></div></div><div class="brief "><p class="paragraph">Power consumption when WiFi driver is scanning for networks.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2004759326%2FClasslikes%2F-1254007377" anchor-label="POWER_WIFI_ON" id="2004759326%2FClasslikes%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-togglable="ENTRY" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-p-o-w-e-r_-w-i-f-i_-o-n/index.html">POWER_WIFI_ON</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2004759326%2FClasslikes%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><div class="block"><a href="-p-o-w-e-r_-w-i-f-i_-o-n/index.html">POWER_WIFI_ON</a></div></div><div class="brief "><p class="paragraph">Power consumption when WiFi driver is on.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1939710843%2FClasslikes%2F-1254007377" anchor-label="POWER_WIFI_ACTIVE" id="-1939710843%2FClasslikes%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-togglable="ENTRY" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-p-o-w-e-r_-w-i-f-i_-a-c-t-i-v-e/index.html">POWER_WIFI_ACTIVE</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1939710843%2FClasslikes%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><div class="block"><a href="-p-o-w-e-r_-w-i-f-i_-a-c-t-i-v-e/index.html">POWER_WIFI_ACTIVE</a></div></div><div class="brief "><p class="paragraph">Power consumption when WiFi driver is transmitting/receiving.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1544344544%2FClasslikes%2F-1254007377" anchor-label="POWER_WIFI_CONTROLLER_IDLE" id="1544344544%2FClasslikes%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-togglable="ENTRY" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-p-o-w-e-r_-w-i-f-i_-c-o-n-t-r-o-l-l-e-r_-i-d-l-e/index.html">POWER_WIFI_CONTROLLER_IDLE</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1544344544%2FClasslikes%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><div class="block"><a href="-p-o-w-e-r_-w-i-f-i_-c-o-n-t-r-o-l-l-e-r_-i-d-l-e/index.html">POWER_WIFI_CONTROLLER_IDLE</a></div></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1574369490%2FClasslikes%2F-1254007377" anchor-label="POWER_WIFI_CONTROLLER_RX" id="1574369490%2FClasslikes%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-togglable="ENTRY" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-p-o-w-e-r_-w-i-f-i_-c-o-n-t-r-o-l-l-e-r_-r-x/index.html">POWER_WIFI_CONTROLLER_RX</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1574369490%2FClasslikes%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><div class="block"><a href="-p-o-w-e-r_-w-i-f-i_-c-o-n-t-r-o-l-l-e-r_-r-x/index.html">POWER_WIFI_CONTROLLER_RX</a></div></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="989597840%2FClasslikes%2F-1254007377" anchor-label="POWER_WIFI_CONTROLLER_TX" id="989597840%2FClasslikes%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-togglable="ENTRY" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-p-o-w-e-r_-w-i-f-i_-c-o-n-t-r-o-l-l-e-r_-t-x/index.html">POWER_WIFI_CONTROLLER_TX</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="989597840%2FClasslikes%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><div class="block"><a href="-p-o-w-e-r_-w-i-f-i_-c-o-n-t-r-o-l-l-e-r_-t-x/index.html">POWER_WIFI_CONTROLLER_TX</a></div></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1539519194%2FClasslikes%2F-1254007377" anchor-label="POWER_WIFI_CONTROLLER_TX_LEVELS" id="-1539519194%2FClasslikes%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-togglable="ENTRY" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-p-o-w-e-r_-w-i-f-i_-c-o-n-t-r-o-l-l-e-r_-t-x_-l-e-v-e-l-s/index.html">POWER_WIFI_CONTROLLER_TX_LEVELS</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1539519194%2FClasslikes%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><div class="block"><a href="-p-o-w-e-r_-w-i-f-i_-c-o-n-t-r-o-l-l-e-r_-t-x_-l-e-v-e-l-s/index.html">POWER_WIFI_CONTROLLER_TX_LEVELS</a></div></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="708654396%2FClasslikes%2F-1254007377" anchor-label="POWER_WIFI_CONTROLLER_OPERATING_VOLTAGE" id="708654396%2FClasslikes%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-togglable="ENTRY" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-p-o-w-e-r_-w-i-f-i_-c-o-n-t-r-o-l-l-e-r_-o-p-e-r-a-t-i-n-g_-v-o-l-t-a-g-e/index.html">POWER_WIFI_CONTROLLER_OPERATING_VOLTAGE</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="708654396%2FClasslikes%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><div class="block"><a href="-p-o-w-e-r_-w-i-f-i_-c-o-n-t-r-o-l-l-e-r_-o-p-e-r-a-t-i-n-g_-v-o-l-t-a-g-e/index.html">POWER_WIFI_CONTROLLER_OPERATING_VOLTAGE</a></div></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="959964091%2FClasslikes%2F-1254007377" anchor-label="POWER_BLUETOOTH_CONTROLLER_IDLE" id="959964091%2FClasslikes%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-togglable="ENTRY" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-p-o-w-e-r_-b-l-u-e-t-o-o-t-h_-c-o-n-t-r-o-l-l-e-r_-i-d-l-e/index.html">POWER_BLUETOOTH_CONTROLLER_IDLE</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="959964091%2FClasslikes%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><div class="block"><a href="-p-o-w-e-r_-b-l-u-e-t-o-o-t-h_-c-o-n-t-r-o-l-l-e-r_-i-d-l-e/index.html">POWER_BLUETOOTH_CONTROLLER_IDLE</a></div></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="581583725%2FClasslikes%2F-1254007377" anchor-label="POWER_BLUETOOTH_CONTROLLER_RX" id="581583725%2FClasslikes%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-togglable="ENTRY" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-p-o-w-e-r_-b-l-u-e-t-o-o-t-h_-c-o-n-t-r-o-l-l-e-r_-r-x/index.html">POWER_BLUETOOTH_CONTROLLER_RX</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="581583725%2FClasslikes%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><div class="block"><a href="-p-o-w-e-r_-b-l-u-e-t-o-o-t-h_-c-o-n-t-r-o-l-l-e-r_-r-x/index.html">POWER_BLUETOOTH_CONTROLLER_RX</a></div></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-3187925%2FClasslikes%2F-1254007377" anchor-label="POWER_BLUETOOTH_CONTROLLER_TX" id="-3187925%2FClasslikes%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-togglable="ENTRY" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-p-o-w-e-r_-b-l-u-e-t-o-o-t-h_-c-o-n-t-r-o-l-l-e-r_-t-x/index.html">POWER_BLUETOOTH_CONTROLLER_TX</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-3187925%2FClasslikes%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><div class="block"><a href="-p-o-w-e-r_-b-l-u-e-t-o-o-t-h_-c-o-n-t-r-o-l-l-e-r_-t-x/index.html">POWER_BLUETOOTH_CONTROLLER_TX</a></div></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2105671359%2FClasslikes%2F-1254007377" anchor-label="POWER_BLUETOOTH_CONTROLLER_OPERATING_VOLTAGE" id="-2105671359%2FClasslikes%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-togglable="ENTRY" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-p-o-w-e-r_-b-l-u-e-t-o-o-t-h_-c-o-n-t-r-o-l-l-e-r_-o-p-e-r-a-t-i-n-g_-v-o-l-t-a-g-e/index.html">POWER_BLUETOOTH_CONTROLLER_OPERATING_VOLTAGE</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2105671359%2FClasslikes%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><div class="block"><a href="-p-o-w-e-r_-b-l-u-e-t-o-o-t-h_-c-o-n-t-r-o-l-l-e-r_-o-p-e-r-a-t-i-n-g_-v-o-l-t-a-g-e/index.html">POWER_BLUETOOTH_CONTROLLER_OPERATING_VOLTAGE</a></div></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1988524700%2FClasslikes%2F-1254007377" anchor-label="POWER_MODEM_CONTROLLER_SLEEP" id="1988524700%2FClasslikes%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-togglable="ENTRY" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-p-o-w-e-r_-m-o-d-e-m_-c-o-n-t-r-o-l-l-e-r_-s-l-e-e-p/index.html">POWER_MODEM_CONTROLLER_SLEEP</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1988524700%2FClasslikes%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><div class="block"><a href="-p-o-w-e-r_-m-o-d-e-m_-c-o-n-t-r-o-l-l-e-r_-s-l-e-e-p/index.html">POWER_MODEM_CONTROLLER_SLEEP</a></div></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-569322569%2FClasslikes%2F-1254007377" anchor-label="POWER_MODEM_CONTROLLER_IDLE" id="-569322569%2FClasslikes%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-togglable="ENTRY" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-p-o-w-e-r_-m-o-d-e-m_-c-o-n-t-r-o-l-l-e-r_-i-d-l-e/index.html">POWER_MODEM_CONTROLLER_IDLE</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-569322569%2FClasslikes%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><div class="block"><a href="-p-o-w-e-r_-m-o-d-e-m_-c-o-n-t-r-o-l-l-e-r_-i-d-l-e/index.html">POWER_MODEM_CONTROLLER_IDLE</a></div></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-675872151%2FClasslikes%2F-1254007377" anchor-label="POWER_MODEM_CONTROLLER_RX" id="-675872151%2FClasslikes%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-togglable="ENTRY" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-p-o-w-e-r_-m-o-d-e-m_-c-o-n-t-r-o-l-l-e-r_-r-x/index.html">POWER_MODEM_CONTROLLER_RX</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-675872151%2FClasslikes%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><div class="block"><a href="-p-o-w-e-r_-m-o-d-e-m_-c-o-n-t-r-o-l-l-e-r_-r-x/index.html">POWER_MODEM_CONTROLLER_RX</a></div></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1260643801%2FClasslikes%2F-1254007377" anchor-label="POWER_MODEM_CONTROLLER_TX" id="-1260643801%2FClasslikes%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-togglable="ENTRY" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-p-o-w-e-r_-m-o-d-e-m_-c-o-n-t-r-o-l-l-e-r_-t-x/index.html">POWER_MODEM_CONTROLLER_TX</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1260643801%2FClasslikes%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><div class="block"><a href="-p-o-w-e-r_-m-o-d-e-m_-c-o-n-t-r-o-l-l-e-r_-t-x/index.html">POWER_MODEM_CONTROLLER_TX</a></div></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-499914043%2FClasslikes%2F-1254007377" anchor-label="POWER_MODEM_CONTROLLER_OPERATING_VOLTAGE" id="-499914043%2FClasslikes%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-togglable="ENTRY" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-p-o-w-e-r_-m-o-d-e-m_-c-o-n-t-r-o-l-l-e-r_-o-p-e-r-a-t-i-n-g_-v-o-l-t-a-g-e/index.html">POWER_MODEM_CONTROLLER_OPERATING_VOLTAGE</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-499914043%2FClasslikes%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><div class="block"><a href="-p-o-w-e-r_-m-o-d-e-m_-c-o-n-t-r-o-l-l-e-r_-o-p-e-r-a-t-i-n-g_-v-o-l-t-a-g-e/index.html">POWER_MODEM_CONTROLLER_OPERATING_VOLTAGE</a></div></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-19768281%2FClasslikes%2F-1254007377" anchor-label="POWER_GPS_ON" id="-19768281%2FClasslikes%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-togglable="ENTRY" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-p-o-w-e-r_-g-p-s_-o-n/index.html">POWER_GPS_ON</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-19768281%2FClasslikes%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><div class="block"><a href="-p-o-w-e-r_-g-p-s_-o-n/index.html">POWER_GPS_ON</a></div></div><div class="brief "><p class="paragraph">Power consumption when GPS is on.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="759488356%2FClasslikes%2F-1254007377" anchor-label="POWER_GPS_SIGNAL_QUALITY_BASED" id="759488356%2FClasslikes%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-togglable="ENTRY" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-p-o-w-e-r_-g-p-s_-s-i-g-n-a-l_-q-u-a-l-i-t-y_-b-a-s-e-d/index.html">POWER_GPS_SIGNAL_QUALITY_BASED</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="759488356%2FClasslikes%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><div class="block"><a href="-p-o-w-e-r_-g-p-s_-s-i-g-n-a-l_-q-u-a-l-i-t-y_-b-a-s-e-d/index.html">POWER_GPS_SIGNAL_QUALITY_BASED</a></div></div><div class="brief "><p class="paragraph">GPS power parameters based on signal quality</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1731308608%2FClasslikes%2F-1254007377" anchor-label="POWER_GPS_OPERATING_VOLTAGE" id="1731308608%2FClasslikes%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-togglable="ENTRY" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-p-o-w-e-r_-g-p-s_-o-p-e-r-a-t-i-n-g_-v-o-l-t-a-g-e/index.html">POWER_GPS_OPERATING_VOLTAGE</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1731308608%2FClasslikes%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><div class="block"><a href="-p-o-w-e-r_-g-p-s_-o-p-e-r-a-t-i-n-g_-v-o-l-t-a-g-e/index.html">POWER_GPS_OPERATING_VOLTAGE</a></div></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1375949622%2FClasslikes%2F-1254007377" anchor-label="POWER_RADIO_ON" id="1375949622%2FClasslikes%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-togglable="ENTRY" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-p-o-w-e-r_-r-a-d-i-o_-o-n/index.html">POWER_RADIO_ON</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1375949622%2FClasslikes%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><div class="block"><a href="-p-o-w-e-r_-r-a-d-i-o_-o-n/index.html">POWER_RADIO_ON</a></div></div><div class="brief "><p class="paragraph">Power consumption when cell radio is on but not on a call.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1307553864%2FClasslikes%2F-1254007377" anchor-label="POWER_RADIO_SCANNING" id="1307553864%2FClasslikes%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-togglable="ENTRY" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-p-o-w-e-r_-r-a-d-i-o_-s-c-a-n-n-i-n-g/index.html">POWER_RADIO_SCANNING</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1307553864%2FClasslikes%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><div class="block"><a href="-p-o-w-e-r_-r-a-d-i-o_-s-c-a-n-n-i-n-g/index.html">POWER_RADIO_SCANNING</a></div></div><div class="brief "><p class="paragraph">Power consumption when cell radio is hunting for a signal.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1621733533%2FClasslikes%2F-1254007377" anchor-label="POWER_RADIO_ACTIVE" id="1621733533%2FClasslikes%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-togglable="ENTRY" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-p-o-w-e-r_-r-a-d-i-o_-a-c-t-i-v-e/index.html">POWER_RADIO_ACTIVE</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1621733533%2FClasslikes%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><div class="block"><a href="-p-o-w-e-r_-r-a-d-i-o_-a-c-t-i-v-e/index.html">POWER_RADIO_ACTIVE</a></div></div><div class="brief "><p class="paragraph">Power consumption when talking on the phone.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-232859893%2FClasslikes%2F-1254007377" anchor-label="POWER_AUDIO" id="-232859893%2FClasslikes%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-togglable="ENTRY" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-p-o-w-e-r_-a-u-d-i-o/index.html">POWER_AUDIO</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-232859893%2FClasslikes%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><div class="block"><a href="-p-o-w-e-r_-a-u-d-i-o/index.html">POWER_AUDIO</a></div></div><div class="brief "><p class="paragraph">Power consumed by the audio hardware when playing back audio content. This is in addition to the CPU power, probably due to a DSP and / or amplifier.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-245504784%2FClasslikes%2F-1254007377" anchor-label="POWER_VIDEO" id="-245504784%2FClasslikes%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-togglable="ENTRY" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-p-o-w-e-r_-v-i-d-e-o/index.html">POWER_VIDEO</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-245504784%2FClasslikes%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><div class="block"><a href="-p-o-w-e-r_-v-i-d-e-o/index.html">POWER_VIDEO</a></div></div><div class="brief "><p class="paragraph">Power consumed by any media hardware when playing back video content. This is in addition to the CPU power, probably due to a DSP.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1903426201%2FClasslikes%2F-1254007377" anchor-label="POWER_FLASHLIGHT" id="1903426201%2FClasslikes%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-togglable="ENTRY" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-p-o-w-e-r_-f-l-a-s-h-l-i-g-h-t/index.html">POWER_FLASHLIGHT</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1903426201%2FClasslikes%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><div class="block"><a href="-p-o-w-e-r_-f-l-a-s-h-l-i-g-h-t/index.html">POWER_FLASHLIGHT</a></div></div><div class="brief "><p class="paragraph">Average power consumption when camera flashlight is on.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-306964812%2FClasslikes%2F-1254007377" anchor-label="POWER_MEMORY" id="-306964812%2FClasslikes%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-togglable="ENTRY" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-p-o-w-e-r_-m-e-m-o-r-y/index.html">POWER_MEMORY</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-306964812%2FClasslikes%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><div class="block"><a href="-p-o-w-e-r_-m-e-m-o-r-y/index.html">POWER_MEMORY</a></div></div><div class="brief "><p class="paragraph">Power consumption when DDR is being used.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="703075800%2FClasslikes%2F-1254007377" anchor-label="POWER_CAMERA" id="703075800%2FClasslikes%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-togglable="ENTRY" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-p-o-w-e-r_-c-a-m-e-r-a/index.html">POWER_CAMERA</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="703075800%2FClasslikes%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><div class="block"><a href="-p-o-w-e-r_-c-a-m-e-r-a/index.html">POWER_CAMERA</a></div></div><div class="brief "><p class="paragraph">Average power consumption when the camera is on over all standard use cases.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="685519426%2FClasslikes%2F-1254007377" anchor-label="POWER_WIFI_BATCHED_SCAN" id="685519426%2FClasslikes%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-togglable="ENTRY" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-p-o-w-e-r_-w-i-f-i_-b-a-t-c-h-e-d_-s-c-a-n/index.html">POWER_WIFI_BATCHED_SCAN</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="685519426%2FClasslikes%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><div class="block"><a href="-p-o-w-e-r_-w-i-f-i_-b-a-t-c-h-e-d_-s-c-a-n/index.html">POWER_WIFI_BATCHED_SCAN</a></div></div><div class="brief "><p class="paragraph">Power consumed by wif batched scaning.  Broken down into bins by Channels Scanned per Hour.  May do 1-720 scans per hour of 1-100 channels for a range of 1-72,000.  Going logrithmic (1-8, 9-64, 65-512, 513-4096, 4097-)!</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-511117185%2FClasslikes%2F-1254007377" anchor-label="POWER_BATTERY_CAPACITY" id="-511117185%2FClasslikes%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-togglable="ENTRY" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-p-o-w-e-r_-b-a-t-t-e-r-y_-c-a-p-a-c-i-t-y/index.html">POWER_BATTERY_CAPACITY</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-511117185%2FClasslikes%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><div class="block"><a href="-p-o-w-e-r_-b-a-t-t-e-r-y_-c-a-p-a-c-i-t-y/index.html">POWER_BATTERY_CAPACITY</a></div></div><div class="brief "><p class="paragraph">Battery capacity in milliAmpHour (mAh).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="946719888%2FClasslikes%2F-1254007377" anchor-label="POWER_GROUP_DISPLAY_AMBIENT" id="946719888%2FClasslikes%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-togglable="ENTRY" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-p-o-w-e-r_-g-r-o-u-p_-d-i-s-p-l-a-y_-a-m-b-i-e-n-t/index.html">POWER_GROUP_DISPLAY_AMBIENT</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="946719888%2FClasslikes%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><div class="block"><a href="-p-o-w-e-r_-g-r-o-u-p_-d-i-s-p-l-a-y_-a-m-b-i-e-n-t/index.html">POWER_GROUP_DISPLAY_AMBIENT</a></div></div><div class="brief "><p class="paragraph">Power consumption when a screen is in doze/ambient/always-on mode, including backlight power.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-402575830%2FClasslikes%2F-1254007377" anchor-label="POWER_GROUP_DISPLAY_SCREEN_ON" id="-402575830%2FClasslikes%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-togglable="ENTRY" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-p-o-w-e-r_-g-r-o-u-p_-d-i-s-p-l-a-y_-s-c-r-e-e-n_-o-n/index.html">POWER_GROUP_DISPLAY_SCREEN_ON</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-402575830%2FClasslikes%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><div class="block"><a href="-p-o-w-e-r_-g-r-o-u-p_-d-i-s-p-l-a-y_-s-c-r-e-e-n_-o-n/index.html">POWER_GROUP_DISPLAY_SCREEN_ON</a></div></div><div class="brief "><p class="paragraph">Power consumption when a screen is on, not including the backlight power.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="788351258%2FClasslikes%2F-1254007377" anchor-label="POWER_GROUP_DISPLAY_SCREEN_FULL" id="788351258%2FClasslikes%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-togglable="ENTRY" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-p-o-w-e-r_-g-r-o-u-p_-d-i-s-p-l-a-y_-s-c-r-e-e-n_-f-u-l-l/index.html">POWER_GROUP_DISPLAY_SCREEN_FULL</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="788351258%2FClasslikes%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><div class="block"><a href="-p-o-w-e-r_-g-r-o-u-p_-d-i-s-p-l-a-y_-s-c-r-e-e-n_-f-u-l-l/index.html">POWER_GROUP_DISPLAY_SCREEN_FULL</a></div></div><div class="brief "><p class="paragraph">Power consumption of a screen at full backlight brightness.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1119574292%2FClasslikes%2F-1254007377" anchor-label="TAG_DEVICE" id="1119574292%2FClasslikes%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-togglable="ENTRY" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-t-a-g_-d-e-v-i-c-e/index.html">TAG_DEVICE</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1119574292%2FClasslikes%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><div class="block"><a href="-t-a-g_-d-e-v-i-c-e/index.html">TAG_DEVICE</a></div></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1763158127%2FClasslikes%2F-1254007377" anchor-label="TAG_ITEM" id="-1763158127%2FClasslikes%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-togglable="ENTRY" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-t-a-g_-i-t-e-m/index.html">TAG_ITEM</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1763158127%2FClasslikes%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><div class="block"><a href="-t-a-g_-i-t-e-m/index.html">TAG_ITEM</a></div></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-617300701%2FClasslikes%2F-1254007377" anchor-label="TAG_ARRAY" id="-617300701%2FClasslikes%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-togglable="ENTRY" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-t-a-g_-a-r-r-a-y/index.html">TAG_ARRAY</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-617300701%2FClasslikes%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><div class="block"><a href="-t-a-g_-a-r-r-a-y/index.html">TAG_ARRAY</a></div></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1334359690%2FClasslikes%2F-1254007377" anchor-label="TAG_ARRAYITEM" id="-1334359690%2FClasslikes%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-togglable="ENTRY" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-t-a-g_-a-r-r-a-y-i-t-e-m/index.html">TAG_ARRAYITEM</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1334359690%2FClasslikes%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><div class="block"><a href="-t-a-g_-a-r-r-a-y-i-t-e-m/index.html">TAG_ARRAYITEM</a></div></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="648392008%2FClasslikes%2F-1254007377" anchor-label="ATTR_NAME" id="648392008%2FClasslikes%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-togglable="ENTRY" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-a-t-t-r_-n-a-m-e/index.html">ATTR_NAME</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="648392008%2FClasslikes%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><div class="block"><a href="-a-t-t-r_-n-a-m-e/index.html">ATTR_NAME</a></div></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1027094068%2FClasslikes%2F-1254007377" anchor-label="TAG_MODEM" id="1027094068%2FClasslikes%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-togglable="ENTRY" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-t-a-g_-m-o-d-e-m/index.html">TAG_MODEM</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1027094068%2FClasslikes%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><div class="block"><a href="-t-a-g_-m-o-d-e-m/index.html">TAG_MODEM</a></div></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1451356218%2FClasslikes%2F-1254007377" anchor-label="CPU_PER_CLUSTER_CORE_COUNT" id="-1451356218%2FClasslikes%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-togglable="ENTRY" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-c-p-u_-p-e-r_-c-l-u-s-t-e-r_-c-o-r-e_-c-o-u-n-t/index.html">CPU_PER_CLUSTER_CORE_COUNT</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1451356218%2FClasslikes%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><div class="block"><a href="-c-p-u_-p-e-r_-c-l-u-s-t-e-r_-c-o-r-e_-c-o-u-n-t/index.html">CPU_PER_CLUSTER_CORE_COUNT</a></div></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1268568808%2FClasslikes%2F-1254007377" anchor-label="CPU_CLUSTER_POWER_COUNT" id="1268568808%2FClasslikes%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-togglable="ENTRY" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-c-p-u_-c-l-u-s-t-e-r_-p-o-w-e-r_-c-o-u-n-t/index.html">CPU_CLUSTER_POWER_COUNT</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1268568808%2FClasslikes%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><div class="block"><a href="-c-p-u_-c-l-u-s-t-e-r_-p-o-w-e-r_-c-o-u-n-t/index.html">CPU_CLUSTER_POWER_COUNT</a></div></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2064967298%2FClasslikes%2F-1254007377" anchor-label="CPU_CORE_SPEED_PREFIX" id="2064967298%2FClasslikes%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-togglable="ENTRY" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-c-p-u_-c-o-r-e_-s-p-e-e-d_-p-r-e-f-i-x/index.html">CPU_CORE_SPEED_PREFIX</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2064967298%2FClasslikes%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><div class="block"><a href="-c-p-u_-c-o-r-e_-s-p-e-e-d_-p-r-e-f-i-x/index.html">CPU_CORE_SPEED_PREFIX</a></div></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-179633020%2FClasslikes%2F-1254007377" anchor-label="CPU_CORE_POWER_PREFIX" id="-179633020%2FClasslikes%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-togglable="ENTRY" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-c-p-u_-c-o-r-e_-p-o-w-e-r_-p-r-e-f-i-x/index.html">CPU_CORE_POWER_PREFIX</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-179633020%2FClasslikes%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><div class="block"><a href="-c-p-u_-c-o-r-e_-p-o-w-e-r_-p-r-e-f-i-x/index.html">CPU_CORE_POWER_PREFIX</a></div></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="PROPERTY">
+        <h2 class="tableheader">Properties</h2>
+        <div class="table"><a data-name="1580430899%2FProperties%2F-1254007377" anchor-label="entries" id="1580430899%2FProperties%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="entries.html"><span><span>entries</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1580430899%2FProperties%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="entries.html">entries</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.enums/-enum-entries/index.html">EnumEntries</a><span class="token operator">&lt;</span><a href="index.html">PowerProfileVO</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Returns a representation of an immutable list of all enum entries, in the order they're declared.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-372974862%2FProperties%2F-1254007377" anchor-label="name" id="-372974862%2FProperties%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../kr.open.library.simple_ui.core.system_manager.info.network.telephony.data.state/-telephony-network-type/-c-o-n-n-e-c-t_5-g/index.html#-372974862%2FProperties%2F-1254007377"><span><span>name</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-372974862%2FProperties%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="../../kr.open.library.simple_ui.core.system_manager.info.network.telephony.data.state/-telephony-network-type/-c-o-n-n-e-c-t_5-g/index.html#-372974862%2FProperties%2F-1254007377">name</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-739389684%2FProperties%2F-1254007377" anchor-label="ordinal" id="-739389684%2FProperties%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../kr.open.library.simple_ui.core.system_manager.info.network.telephony.data.state/-telephony-network-type/-c-o-n-n-e-c-t_5-g/index.html#-739389684%2FProperties%2F-1254007377"><span><span>ordinal</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-739389684%2FProperties%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="../../kr.open.library.simple_ui.core.system_manager.info.network.telephony.data.state/-telephony-network-type/-c-o-n-n-e-c-t_5-g/index.html#-739389684%2FProperties%2F-1254007377">ordinal</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1725654819%2FProperties%2F-1254007377" anchor-label="res" id="1725654819%2FProperties%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="res.html"><span><span>res</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1725654819%2FProperties%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="res.html">res</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="tableheader">Functions</h2>
+        <div class="table"><a data-name="-996715959%2FFunctions%2F-1254007377" anchor-label="valueOf" id="-996715959%2FFunctions%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="value-of.html"><span>value</span><wbr></wbr><span><span>Of</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-996715959%2FFunctions%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="value-of.html"><span class="token function">valueOf</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">PowerProfileVO</a></div><div class="brief "><p class="paragraph">Returns the enum constant of this type with the specified name. The string must match exactly an identifier used to declare an enum constant in this type. (Extraneous whitespace characters are not permitted.)</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1548950763%2FFunctions%2F-1254007377" anchor-label="values" id="-1548950763%2FFunctions%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="values.html"><span><span>values</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1548950763%2FFunctions%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="values.html"><span class="token function">values</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-array/index.html">Array</a><span class="token operator">&lt;</span><a href="index.html">PowerProfileVO</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Returns an array containing the constants of this enum type, in the order they're declared.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>© 2025 Copyright</div>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
