@@ -1,9 +1,9 @@
 package kr.open.library.simpleui_xml.recyclerview.new_.adapter
 
 import android.view.ViewGroup
-import kr.open.library.simple_ui.presenter.ui.adapter.list.base.BaseRcvListAdapter
-import kr.open.library.simple_ui.presenter.ui.adapter.list.diffutil.RcvListDiffUtilCallBack
-import kr.open.library.simple_ui.presenter.ui.adapter.viewholder.BaseBindingRcvViewHolder
+import kr.open.library.simple_ui.xml.ui.adapter.list.base.BaseRcvListAdapter
+import kr.open.library.simple_ui.xml.ui.adapter.list.diffutil.RcvListDiffUtilCallBack
+import kr.open.library.simple_ui.xml.ui.adapter.viewholder.BaseBindingRcvViewHolder
 import kr.open.library.simpleui_xml.R
 import kr.open.library.simpleui_xml.databinding.ItemRcvTextviewBinding
 import kr.open.library.simpleui_xml.recyclerview.model.SampleItem

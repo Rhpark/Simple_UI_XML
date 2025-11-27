@@ -1,6 +1,6 @@
 package kr.open.library.simpleui_xml.permission
 
-import kr.open.library.simple_ui.presenter.viewmodel.BaseViewModelEvent
+import kr.open.library.simple_ui.core.viewmodel.BaseViewModelEvent
 
 class PermissionsActivityVm : BaseViewModelEvent<PermissionsActivityVmEvent>() {
 

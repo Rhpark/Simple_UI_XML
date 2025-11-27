@@ -6,7 +6,7 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
-import kr.open.library.simple_ui.presenter.ui.activity.BaseBindingActivity
+import kr.open.library.simple_ui.xml.ui.activity.BaseBindingActivity
 import kr.open.library.simpleui_xml.R
 import kr.open.library.simpleui_xml.activity_fragment.activity.BaseActivityExample
 import kr.open.library.simpleui_xml.activity_fragment.activity.BaseBindingActivityExample

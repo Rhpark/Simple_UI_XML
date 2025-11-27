@@ -8,9 +8,11 @@ This library helps you make easy and more simple code for Android developers
 
 ## Project Structure
 
-**library**  :simple_ui module 
+**libraries** (v0.3.0+):
+- **simple_core**: UI-independent core functionality (usable with Compose or XML)
+- **simple_xml**: XML UI-specific components and extensions
 
-**testing samples** : app module
+**testing samples**: app module
 
 <br>
 </br>
@@ -52,7 +54,12 @@ android {
 //..
 dependencies {
     //..
-    implementation("com.github.Rhpark:Simple_UI_XML:0.2.5")
+    // Version 0.3.0+ (Modular Structure)
+    implementation("com.github.Rhpark:Simple_UI_Core:0.3.0")  // Core functionality only
+    implementation("com.github.Rhpark:Simple_UI_XML:0.3.0")   // XML UI components (includes Core)
+
+    // Or use XML module only (it automatically includes Core as transitive dependency)
+    // implementation("com.github.Rhpark:Simple_UI_XML:0.3.0")
     //..
 }
 ```

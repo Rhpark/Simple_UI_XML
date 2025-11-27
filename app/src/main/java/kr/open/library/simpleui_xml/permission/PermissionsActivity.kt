@@ -6,12 +6,12 @@ import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
-import kr.open.library.simple_ui.logcat.Logx
-import kr.open.library.simple_ui.presenter.extensions.view.SnackBarOption
-import kr.open.library.simple_ui.presenter.extensions.view.snackBarMakeShort
-import kr.open.library.simple_ui.presenter.extensions.view.snackBarShowShort
-import kr.open.library.simple_ui.presenter.ui.activity.BaseBindingActivity
-import kr.open.library.simple_ui.presenter.ui.adapter.normal.simple.SimpleRcvAdapter
+import kr.open.library.simple_ui.core.logcat.Logx
+import kr.open.library.simple_ui.xml.extensions.view.SnackBarOption
+import kr.open.library.simple_ui.xml.extensions.view.snackBarMakeShort
+import kr.open.library.simple_ui.xml.extensions.view.snackBarShowShort
+import kr.open.library.simple_ui.xml.ui.activity.BaseBindingActivity
+import kr.open.library.simple_ui.xml.ui.adapter.normal.simple.SimpleRcvAdapter
 import kr.open.library.simpleui_xml.R
 import kr.open.library.simpleui_xml.databinding.ActivityPermissionsBinding
 

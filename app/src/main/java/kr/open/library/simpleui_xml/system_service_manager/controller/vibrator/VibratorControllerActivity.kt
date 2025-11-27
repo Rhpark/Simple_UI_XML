@@ -4,10 +4,10 @@ import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
-import kr.open.library.simple_ui.extensions.conditional.checkSdkVersion
-import kr.open.library.simple_ui.presenter.extensions.view.toastShort
-import kr.open.library.simple_ui.presenter.ui.activity.BaseActivity
-import kr.open.library.simple_ui.system_manager.extensions.getVibratorController
+import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
+import kr.open.library.simple_ui.xml.extensions.view.toastShort
+import kr.open.library.simple_ui.xml.ui.activity.BaseActivity
+import kr.open.library.simple_ui.core.system_manager.extensions.getVibratorController
 import kr.open.library.simpleui_xml.R
 import kr.open.library.simpleui_xml.databinding.ActivityVibratorControllerBinding
 

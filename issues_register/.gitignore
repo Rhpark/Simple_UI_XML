@@ -1,0 +1,16 @@
+# Compiled JavaScript files
+lib/
+
+# Node modules
+node_modules/
+
+# Local Firebase emulator data
+.firebase/
+
+# Firebase debug log
+firebase-debug.log
+firebase-debug.*.log
+
+# Environment files (보안)
+.env
+.env.local

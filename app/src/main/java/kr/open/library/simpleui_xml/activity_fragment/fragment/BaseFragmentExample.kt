@@ -5,9 +5,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import kr.open.library.simple_ui.logcat.Logx
-import kr.open.library.simple_ui.presenter.extensions.view.snackBarShowShort
-import kr.open.library.simple_ui.presenter.ui.fragment.BaseFragment
+import kr.open.library.simple_ui.core.logcat.Logx
+import kr.open.library.simple_ui.xml.extensions.view.snackBarShowShort
+import kr.open.library.simple_ui.xml.ui.fragment.BaseFragment
 import kr.open.library.simpleui_xml.R
 import kotlin.random.Random
 

@@ -38,7 +38,7 @@
             style="@style/Button.MatchWrap.Bold"
             android:text="Multi" />
 
-        <kr.open.library.simple_ui.presenter.ui.view.recyclerview.RecyclerScrollStateView
+        <kr.open.library.simple_ui.xml.ui.view.recyclerview.RecyclerScrollStateView
             android:id="@+id/rcvPermission"
             style="@style/RecyclerView.MatchWeight.LinearLayoutManager.Vertical" />
 

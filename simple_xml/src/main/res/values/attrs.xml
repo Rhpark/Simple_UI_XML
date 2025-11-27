@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="RecyclerScrollStateView">
+        <attr name="edgeReachThreshold" format="integer" />
+        <attr name="scrollDirectionThreshold" format="integer" />
+    </declare-styleable>
+
+</resources>

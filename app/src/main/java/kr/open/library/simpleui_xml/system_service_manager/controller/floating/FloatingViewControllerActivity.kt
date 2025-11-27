@@ -11,15 +11,15 @@ import android.view.View
 import android.widget.ImageView
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
-import kr.open.library.simple_ui.presenter.extensions.view.setGone
-import kr.open.library.simple_ui.presenter.extensions.view.setVisible
-import kr.open.library.simple_ui.presenter.extensions.view.toastShort
-import kr.open.library.simple_ui.presenter.ui.activity.BaseActivity
-import kr.open.library.simple_ui.system_manager.controller.window.FloatingViewController
-import kr.open.library.simple_ui.system_manager.controller.window.drag.FloatingDragView
-import kr.open.library.simple_ui.system_manager.controller.window.fixed.FloatingFixedView
-import kr.open.library.simple_ui.system_manager.controller.window.vo.FloatingViewCollisionsType
-import kr.open.library.simple_ui.system_manager.controller.window.vo.FloatingViewTouchType
+import kr.open.library.simple_ui.xml.extensions.view.setGone
+import kr.open.library.simple_ui.xml.extensions.view.setVisible
+import kr.open.library.simple_ui.xml.extensions.view.toastShort
+import kr.open.library.simple_ui.xml.ui.activity.BaseActivity
+import kr.open.library.simple_ui.xml.system_manager.controller.window.FloatingViewController
+import kr.open.library.simple_ui.xml.system_manager.controller.window.drag.FloatingDragView
+import kr.open.library.simple_ui.xml.system_manager.controller.window.fixed.FloatingFixedView
+import kr.open.library.simple_ui.xml.system_manager.controller.window.vo.FloatingViewCollisionsType
+import kr.open.library.simple_ui.xml.system_manager.controller.window.vo.FloatingViewTouchType
 import kr.open.library.simpleui_xml.R
 import kr.open.library.simpleui_xml.databinding.ActivityFloatingControllerBinding
 

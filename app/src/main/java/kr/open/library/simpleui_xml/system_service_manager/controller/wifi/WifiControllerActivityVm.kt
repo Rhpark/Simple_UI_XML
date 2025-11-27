@@ -1,6 +1,6 @@
 package kr.open.library.simpleui_xml.system_service_manager.controller.wifi
 
-import kr.open.library.simple_ui.presenter.viewmodel.BaseViewModelEvent
+import kr.open.library.simple_ui.core.viewmodel.BaseViewModelEvent
 
 sealed class WifiControllerActivityVmEvent {
     object GetWifiInfo : WifiControllerActivityVmEvent()

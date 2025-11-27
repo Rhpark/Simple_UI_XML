@@ -83,7 +83,7 @@
         </LinearLayout>
 
         <!-- RecyclerScrollStateView (Simple UI의 고급 RecyclerView) -->
-        <kr.open.library.simple_ui.presenter.ui.view.recyclerview.RecyclerScrollStateView
+        <kr.open.library.simple_ui.xml.ui.view.recyclerview.RecyclerScrollStateView
             android:id="@+id/rcvItems"
             style="@style/RecyclerView.MatchWeight.LinearLayoutManager"
             app:edgeReachThreshold="10"

@@ -118,7 +118,7 @@
             android:text="Location Check Within Radius" />
 
 
-        <kr.open.library.simple_ui.presenter.ui.view.recyclerview.RecyclerScrollStateView
+        <kr.open.library.simple_ui.xml.ui.view.recyclerview.RecyclerScrollStateView
             android:id="@+id/rcvResult"
             style="@style/RecyclerView.AllMatch.LinearLayoutManager.Vertical"
             android:minHeight="500dp"

@@ -1,8 +1,8 @@
 package kr.open.library.simpleui_xml.activity_fragment.fragment
 
 import android.os.Bundle
-import kr.open.library.simple_ui.logcat.Logx
-import kr.open.library.simple_ui.presenter.ui.activity.BaseBindingActivity
+import kr.open.library.simple_ui.core.logcat.Logx
+import kr.open.library.simple_ui.xml.ui.activity.BaseBindingActivity
 import kr.open.library.simpleui_xml.R
 import kr.open.library.simpleui_xml.activity_fragment.ActivityFragmentActivity.Companion.BASE_BINDING_FRAGMENT
 import kr.open.library.simpleui_xml.activity_fragment.ActivityFragmentActivity.Companion.BASE_FRAGMENT

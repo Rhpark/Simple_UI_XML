@@ -23,4 +23,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "SimpleUI_XML"
 include(":app")
-include(":simple_ui")
+include(":simple_core")
+include(":simple_xml")

@@ -2,10 +2,10 @@ package kr.open.library.simpleui_xml.system_service_manager.controller.alarm
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import kr.open.library.simple_ui.presenter.extensions.view.toastShort
-import kr.open.library.simple_ui.presenter.ui.activity.BaseActivity
-import kr.open.library.simple_ui.system_manager.controller.alarm.vo.AlarmVo
-import kr.open.library.simple_ui.system_manager.extensions.getAlarmController
+import kr.open.library.simple_ui.xml.extensions.view.toastShort
+import kr.open.library.simple_ui.xml.ui.activity.BaseActivity
+import kr.open.library.simple_ui.core.system_manager.controller.alarm.vo.AlarmVo
+import kr.open.library.simple_ui.core.system_manager.extensions.getAlarmController
 import kr.open.library.simpleui_xml.R
 import kr.open.library.simpleui_xml.databinding.ActivityAlarmControllerBinding
 import kr.open.library.simpleui_xml.system_service_manager.controller.receiver.AlarmReceiver

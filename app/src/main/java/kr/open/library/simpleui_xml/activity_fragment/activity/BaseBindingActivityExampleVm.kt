@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kr.open.library.simple_ui.presenter.viewmodel.BaseViewModelEvent
+import kr.open.library.simple_ui.core.viewmodel.BaseViewModelEvent
 
 class BaseBindingActivityExampleVm : BaseViewModelEvent<BaseBindingActivityExampleVmEvent>() {
 

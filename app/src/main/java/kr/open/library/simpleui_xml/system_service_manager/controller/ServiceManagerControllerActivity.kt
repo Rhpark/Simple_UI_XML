@@ -2,7 +2,7 @@ package kr.open.library.simpleui_xml.system_service_manager.controller
 
 import android.content.Intent
 import android.os.Bundle
-import kr.open.library.simple_ui.presenter.ui.activity.BaseActivity
+import kr.open.library.simple_ui.xml.ui.activity.BaseActivity
 import kr.open.library.simpleui_xml.R
 import kr.open.library.simpleui_xml.databinding.ActivityServiceManagerControllerBinding
 import kr.open.library.simpleui_xml.system_service_manager.controller.alarm.AlarmControllerActivity

@@ -1,7 +1,7 @@
 package kr.open.library.simpleui_xml
 
 import android.app.Application
-import kr.open.library.simple_ui.logcat.Logx
+import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simpleui_xml.crash.CrashReporter
 
 class MyApplication:Application() {

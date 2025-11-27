@@ -1,8 +1,8 @@
 package kr.open.library.simpleui_xml.activity_fragment
 
 import androidx.lifecycle.LifecycleOwner
-import kr.open.library.simple_ui.logcat.Logx
-import kr.open.library.simple_ui.presenter.viewmodel.BaseViewModelEvent
+import kr.open.library.simple_ui.core.logcat.Logx
+import kr.open.library.simple_ui.core.viewmodel.BaseViewModelEvent
 
 class ActivityFragmentActivityVm : BaseViewModelEvent<ActivityFragmentActivityVmEvent>() {
 

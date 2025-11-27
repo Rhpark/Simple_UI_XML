@@ -7,10 +7,10 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
-import kr.open.library.simple_ui.extensions.conditional.checkSdkVersion
-import kr.open.library.simple_ui.presenter.extensions.view.toastShort
-import kr.open.library.simple_ui.presenter.ui.activity.BaseBindingActivity
-import kr.open.library.simple_ui.system_manager.extensions.getWifiController
+import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
+import kr.open.library.simple_ui.xml.extensions.view.toastShort
+import kr.open.library.simple_ui.xml.ui.activity.BaseBindingActivity
+import kr.open.library.simple_ui.core.system_manager.extensions.getWifiController
 import kr.open.library.simpleui_xml.R
 import kr.open.library.simpleui_xml.databinding.ActivityWifiControllerBinding
 

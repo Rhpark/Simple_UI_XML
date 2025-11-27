@@ -92,7 +92,13 @@ android {
 }
 
 firebaseAppDistribution {
-    appId = "1:549084067814:android:2477eceb48b0314a738827"
+    // Determine the App ID based on the task name
+    val taskNames = gradle.startParameter.taskNames.toString().lowercase()
+    appId = when {
+        taskNames.contains("verification") -> "1:549084067814:android:3ecfc4be81884ce0738827" // Verification
+        taskNames.contains("debug") -> "1:549084067814:android:d467d3ea55c4c608738827"        // Debug
+        else -> "1:549084067814:android:2477eceb48b0314a738827"                                 // Release (Default)
+    }
 
     val credentialsFile =
         (project.findProperty("firebaseCredentialsFile") as String?) ?:
@@ -128,7 +134,8 @@ firebaseAppDistribution {
 }
 
 dependencies {
-    implementation(project(":simple_ui"))
+    implementation(project(":simple_core"))
+    implementation(project(":simple_xml"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
