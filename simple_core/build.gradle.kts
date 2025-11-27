@@ -4,6 +4,8 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     id("maven-publish")
+    id("org.jetbrains.kotlinx.kover") version "0.9.3" //UnitTest
+    id("org.jetbrains.dokka") version "2.1.0" //Dokka - Document
 }
 
 publishing {
@@ -66,6 +68,9 @@ dependencies {
     implementation(libs.androidx.lifecycle.common)
     implementation(libs.androidx.lifecycle.process)
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
+
+    //Dokka - Document
+    dokkaPlugin("org.jetbrains.dokka:android-documentation-plugin:2.1.0")
 
     // Test
     testImplementation(libs.junit)

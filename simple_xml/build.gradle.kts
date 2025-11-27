@@ -4,6 +4,8 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     id("maven-publish")
+    id("org.jetbrains.kotlinx.kover") version "0.9.3" //UnitTest
+    id("org.jetbrains.dokka") version "2.1.0" //Dokka - Document
 }
 
 publishing {
@@ -75,6 +77,9 @@ dependencies {
 
     // Lifecycle (XML에서 필요한 추가 라이프사이클)
     implementation(libs.androidx.lifecycle.process)
+
+    //Dokka - Document
+    dokkaPlugin("org.jetbrains.dokka:android-documentation-plugin:2.1.0")
 
     // Test
     testImplementation(libs.junit)
