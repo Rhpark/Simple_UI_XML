@@ -147,7 +147,7 @@ jobs:
 
           GRADLE_VERSION=$(python3 .github/scripts/read_app_version.py || true)
           if [ -z "$GRADLE_VERSION" ]; then
-            echo "Error: Failed to read version from simple_ui/build.gradle.kts"
+            echo "Error: Failed to read version from simple_core/build.gradle.kts or simple_xml/build.gradle.kts"
             exit 1
           fi
 
@@ -217,7 +217,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Run pure unit tests only
-        run: bash -o pipefail -c "./gradlew :simple_ui:testUnit |& tee unit-test.log"
+        run: bash -o pipefail -c "./gradlew :simple_core:testUnit :simple_xml:testUnit |& tee unit-test.log"
 
       - name: Capture failure snippet (Unit Tests)
         if: failure()
@@ -226,7 +226,7 @@ jobs:
           python3 .github/scripts/extract_gradle_failure.py unit-test.log unit-test-failure-snippet.log
           SUMMARY="$(head -n 1 unit-test-failure-snippet.log | tr -d '\r')"
           if [ -z "$SUMMARY" ]; then
-            SUMMARY="Unit Tests job failed. Please inspect Gradle task :simple_ui:testUnit."
+            SUMMARY="Unit Tests job failed. Please inspect Gradle tasks :simple_core:testUnit and :simple_xml:testUnit."
           fi
           {
             echo "UNIT_TEST_FAILURE_SUMMARY<<EOF"
@@ -240,7 +240,8 @@ jobs:
         if: always()
         with:
           files: |
-            simple_ui/build/test-results/testUnit/**/*.xml
+            simple_core/build/test-results/testUnit/**/*.xml
+            simple_xml/build/test-results/testUnit/**/*.xml
           check_name: Unit Test Results
 
       - name: Upload test report
@@ -248,7 +249,9 @@ jobs:
         if: always()
         with:
           name: unit-test-report
-          path: simple_ui/build/reports/tests/testUnit/
+          path: |
+            simple_core/build/reports/tests/testUnit/
+            simple_xml/build/reports/tests/testUnit/
           retention-days: 30
 
       - name: Report failure (Unit Tests)
@@ -289,7 +292,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Run Robolectric tests
-        run: bash -o pipefail -c "./gradlew :simple_ui:testRobolectric |& tee robolectric-test.log"
+        run: bash -o pipefail -c "./gradlew :simple_core:testRobolectric :simple_xml:testRobolectric |& tee robolectric-test.log"
 
       - name: Capture failure snippet (Robolectric Tests)
         if: failure()
@@ -312,7 +315,8 @@ jobs:
         if: always()
         with:
           files: |
-            simple_ui/build/test-results/testRobolectric/**/*.xml
+            simple_core/build/test-results/testRobolectric/**/*.xml
+            simple_xml/build/test-results/testRobolectric/**/*.xml
           check_name: Robolectric Test Results
 
       - name: Upload test report
@@ -320,7 +324,9 @@ jobs:
         if: always()
         with:
           name: robolectric-test-report
-          path: simple_ui/build/reports/tests/testRobolectric/
+          path: |
+            simple_core/build/reports/tests/testRobolectric/
+            simple_xml/build/reports/tests/testRobolectric/
           retention-days: 30
 
       - name: Report failure (Robolectric Tests)
@@ -382,7 +388,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Run all tests for coverage
-        run: bash -o pipefail -c "./gradlew :simple_ui:testAll |& tee build-testAll.log"
+        run: bash -o pipefail -c "./gradlew :simple_core:testAll :simple_xml:testAll |& tee build-testAll.log"
 
       - name: Capture failure snippet (testAll)
         if: failure()
@@ -390,18 +396,18 @@ jobs:
           python3 .github/scripts/extract_gradle_failure.py build-testAll.log build-testAll-failure.log
           SUMMARY="$(head -n 1 build-testAll-failure.log | tr -d '\r')"
           if [ -z "$SUMMARY" ]; then
-            SUMMARY="Build job failed while running :simple_ui:testAll."
+            SUMMARY="Build job failed while running :simple_core:testAll and :simple_xml:testAll."
           fi
           {
             echo "BUILD_FAILURE_SUMMARY<<EOF"
             echo "$SUMMARY"
             echo "EOF"
             echo "BUILD_FAILURE_LOG_PATH=$(pwd)/build-testAll-failure.log"
-            echo "BUILD_FAILURE_SOURCE=:simple_ui:testAll"
+            echo "BUILD_FAILURE_SOURCE=:simple_core:testAll and :simple_xml:testAll"
           } >> "$GITHUB_ENV"
 
       - name: Generate Kover coverage report
-        run: bash -o pipefail -c "./gradlew :simple_ui:koverHtmlReport |& tee build-kover.log"
+        run: bash -o pipefail -c "./gradlew :simple_core:koverHtmlReport :simple_xml:koverHtmlReport |& tee build-kover.log"
         if: always()
 
       - name: Capture failure snippet (kover)
@@ -410,14 +416,14 @@ jobs:
           python3 .github/scripts/extract_gradle_failure.py build-kover.log build-kover-failure.log
           SUMMARY="$(head -n 1 build-kover-failure.log | tr -d '\r')"
           if [ -z "$SUMMARY" ]; then
-            SUMMARY="Build job failed while running :simple_ui:koverHtmlReport."
+            SUMMARY="Build job failed while running koverHtmlReport."
           fi
           {
             echo "BUILD_FAILURE_SUMMARY<<EOF"
             echo "$SUMMARY"
             echo "EOF"
             echo "BUILD_FAILURE_LOG_PATH=$(pwd)/build-kover-failure.log"
-            echo "BUILD_FAILURE_SOURCE=:simple_ui:koverHtmlReport"
+            echo "BUILD_FAILURE_SOURCE=koverHtmlReport"
           } >> "$GITHUB_ENV"
 
       - name: Assemble
@@ -464,7 +470,9 @@ jobs:
         if: always()
         with:
           name: coverage-report
-          path: simple_ui/build/reports/kover/html/
+          path: |
+            simple_core/build/reports/kover/html/
+            simple_xml/build/reports/kover/html/
           retention-days: 30
 
       - name: Upload reports

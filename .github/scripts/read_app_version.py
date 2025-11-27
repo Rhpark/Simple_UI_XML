@@ -18,10 +18,18 @@ def _read_version(path: str, pattern: str) -> str | None:
 
 
 def main() -> int:
+    # Try simple_core first (main library module)
     version = _read_version(
-        "simple_ui/build.gradle.kts",
+        "simple_core/build.gradle.kts",
         r'version\s*=\s*"([^"]+)"',
     )
+    # Fallback to simple_xml
+    if version is None:
+        version = _read_version(
+            "simple_xml/build.gradle.kts",
+            r'version\s*=\s*"([^"]+)"',
+        )
+    # Fallback to gradle/libs.versions.toml
     if version is None:
         version = _read_version(
             "gradle/libs.versions.toml",
