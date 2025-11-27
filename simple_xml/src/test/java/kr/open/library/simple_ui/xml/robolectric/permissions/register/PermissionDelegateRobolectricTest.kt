@@ -214,7 +214,7 @@ class PermissionDelegateRobolectricTest {
 
     private fun insertPendingRequest(requestId: String, permissions: List<String>): Any {
         val pendingRequests = pendingRequestsField.get(permissionManager) as MutableMap<String, Any>
-        val clazz = Class.forName("kr.open.library.simple_ui.permissions.manager.PermissionManager\$PendingRequest")
+        val clazz = Class.forName("kr.open.library.simple_ui.xml.permissions.manager.PermissionManager\$PendingRequest")
         val ctor = clazz.getDeclaredConstructor(MutableList::class.java, Long::class.javaPrimitiveType, List::class.java, List::class.java)
         ctor.isAccessible = true
         val pending = ctor.newInstance(
