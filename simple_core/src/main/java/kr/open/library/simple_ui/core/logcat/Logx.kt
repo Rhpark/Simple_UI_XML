@@ -60,13 +60,35 @@ import java.util.EnumSet
  */
 object Logx : ILogx {
 
+    /**
+     * Application context for Android-specific operations.<br>
+     * Used for file path resolution and lifecycle management.<br><br>
+     * Android 특정 작업을 위한 애플리케이션 컨텍스트입니다.<br>
+     * 파일 경로 확인 및 라이프사이클 관리에 사용됩니다.<br>
+     */
     @Volatile
     private var appContext: Context? = null
 
+    /**
+     * Default tag used when no custom tag is specified.<br><br>
+     * 커스텀 태그가 지정되지 않았을 때 사용되는 기본 태그입니다.<br>
+     */
     public const val DEFAULT_TAG = ""
 
+    /**
+     * Configuration manager responsible for managing Logx settings.<br>
+     * Follows Single Responsibility Principle by delegating configuration logic.<br><br>
+     * Logx 설정 관리를 담당하는 설정 관리자입니다.<br>
+     * 단일 책임 원칙에 따라 설정 로직을 위임합니다.<br>
+     */
     private val configManager = LogxConfigManager()
 
+    /**
+     * Writer responsible for outputting log messages to Logcat and files.<br>
+     * Automatically receives configuration updates from configManager.<br><br>
+     * 로그 메시지를 Logcat과 파일로 출력하는 작성기입니다.<br>
+     * configManager로부터 설정 업데이트를 자동으로 받습니다.<br>
+     */
     @SuppressLint("StaticFieldLeak")
     public var logWriter = LogxWriter(configManager.config)
 
@@ -238,59 +260,416 @@ object Logx : ILogx {
     }
 
 
+
+    /**
+     * Logs a VERBOSE level message with stack trace information.<br><br>
+     * VERBOSE 레벨 메시지를 스택 트레이스 정보와 함께 기록합니다.<br>
+     */
     override fun v() = logWriter.write(DEFAULT_TAG, "", LogxType.VERBOSE)
+
+    /**
+     * Logs a VERBOSE level message.<br><br>
+     * VERBOSE 레벨 메시지를 기록합니다.<br>
+     *
+     * @param msg The message to log.<br><br>
+     *            기록할 메시지.
+     */
     override fun v(msg: Any?) = logWriter.write(DEFAULT_TAG, msg, LogxType.VERBOSE)
+
+    /**
+     * Logs a VERBOSE level message with a custom tag.<br><br>
+     * 커스텀 태그와 함께 VERBOSE 레벨 메시지를 기록합니다.<br>
+     *
+     * @param tag Custom tag for filtering logs.<br><br>
+     *            로그 필터링을 위한 커스텀 태그.
+     * @param msg The message to log.<br><br>
+     *            기록할 메시지.
+     */
     override fun v(tag: String, msg: Any?) = logWriter.write(tag, msg, LogxType.VERBOSE)
+
+    /**
+     * Logs a VERBOSE level message with extended formatting.<br><br>
+     * 확장된 포맷으로 VERBOSE 레벨 메시지를 기록합니다.<br>
+     *
+     * @param msg The message to log.<br><br>
+     *            기록할 메시지.
+     */
     fun v1(msg: Any?) = logWriter.writeExtensions(DEFAULT_TAG, msg, LogxType.VERBOSE)
+
+    /**
+     * Logs a VERBOSE level message with extended formatting and a custom tag.<br><br>
+     * 확장된 포맷과 커스텀 태그로 VERBOSE 레벨 메시지를 기록합니다.<br>
+     *
+     * @param tag Custom tag for filtering logs.<br><br>
+     *            로그 필터링을 위한 커스텀 태그.
+     * @param msg The message to log.<br><br>
+     *            기록할 메시지.
+     */
     fun v1(tag: String, msg: Any?) = logWriter.writeExtensions(tag, msg, LogxType.VERBOSE)
 
+    /**
+     * Logs a DEBUG level message with stack trace information.<br><br>
+     * DEBUG 레벨 메시지를 스택 트레이스 정보와 함께 기록합니다.<br>
+     */
     override fun d() = logWriter.write(DEFAULT_TAG, "", LogxType.DEBUG)
+
+    /**
+     * Logs a DEBUG level message.<br><br>
+     * DEBUG 레벨 메시지를 기록합니다.<br>
+     *
+     * @param msg The message to log.<br><br>
+     *            기록할 메시지.
+     */
     override fun d(msg: Any?) = logWriter.write(DEFAULT_TAG, msg, LogxType.DEBUG)
+
+    /**
+     * Logs a DEBUG level message with a custom tag.<br><br>
+     * 커스텀 태그와 함께 DEBUG 레벨 메시지를 기록합니다.<br>
+     *
+     * @param tag Custom tag for filtering logs.<br><br>
+     *            로그 필터링을 위한 커스텀 태그.
+     * @param msg The message to log.<br><br>
+     *            기록할 메시지.
+     */
     override fun d(tag: String, msg: Any?) = logWriter.write(tag, msg, LogxType.DEBUG)
+
+    /**
+     * Logs a DEBUG level message with extended formatting.<br><br>
+     * 확장된 포맷으로 DEBUG 레벨 메시지를 기록합니다.<br>
+     *
+     * @param msg The message to log.<br><br>
+     *            기록할 메시지.
+     */
     fun d1(msg: Any?) = logWriter.writeExtensions(DEFAULT_TAG, msg, LogxType.DEBUG)
+
+    /**
+     * Logs a DEBUG level message with extended formatting and a custom tag.<br><br>
+     * 확장된 포맷과 커스텀 태그로 DEBUG 레벨 메시지를 기록합니다.<br>
+     *
+     * @param tag Custom tag for filtering logs.<br><br>
+     *            로그 필터링을 위한 커스텀 태그.
+     * @param msg The message to log.<br><br>
+     *            기록할 메시지.
+     */
     fun d1(tag: String, msg: Any?) = logWriter.writeExtensions(tag, msg, LogxType.DEBUG)
 
+    /**
+     * Logs an INFO level message with stack trace information.<br><br>
+     * INFO 레벨 메시지를 스택 트레이스 정보와 함께 기록합니다.<br>
+     */
     override fun i() = logWriter.write(DEFAULT_TAG, "", LogxType.INFO)
+
+    /**
+     * Logs an INFO level message.<br><br>
+     * INFO 레벨 메시지를 기록합니다.<br>
+     *
+     * @param msg The message to log.<br><br>
+     *            기록할 메시지.
+     */
     override fun i(msg: Any?) = logWriter.write(DEFAULT_TAG, msg, LogxType.INFO)
+
+    /**
+     * Logs an INFO level message with a custom tag.<br><br>
+     * 커스텀 태그와 함께 INFO 레벨 메시지를 기록합니다.<br>
+     *
+     * @param tag Custom tag for filtering logs.<br><br>
+     *            로그 필터링을 위한 커스텀 태그.
+     * @param msg The message to log.<br><br>
+     *            기록할 메시지.
+     */
     override fun i(tag: String, msg: Any?) = logWriter.write(tag, msg, LogxType.INFO)
+
+    /**
+     * Logs an INFO level message with extended formatting.<br><br>
+     * 확장된 포맷으로 INFO 레벨 메시지를 기록합니다.<br>
+     *
+     * @param msg The message to log.<br><br>
+     *            기록할 메시지.
+     */
     fun i1(msg: Any?) = logWriter.writeExtensions(DEFAULT_TAG, msg, LogxType.INFO)
+
+    /**
+     * Logs an INFO level message with extended formatting and a custom tag.<br><br>
+     * 확장된 포맷과 커스텀 태그로 INFO 레벨 메시지를 기록합니다.<br>
+     *
+     * @param tag Custom tag for filtering logs.<br><br>
+     *            로그 필터링을 위한 커스텀 태그.
+     * @param msg The message to log.<br><br>
+     *            기록할 메시지.
+     */
     fun i1(tag: String, msg: Any?) = logWriter.writeExtensions(tag, msg, LogxType.INFO)
 
+    /**
+     * Logs a WARN level message with stack trace information.<br><br>
+     * WARN 레벨 메시지를 스택 트레이스 정보와 함께 기록합니다.<br>
+     */
     override fun w() = logWriter.write(DEFAULT_TAG, "", LogxType.WARN)
+
+    /**
+     * Logs a WARN level message.<br><br>
+     * WARN 레벨 메시지를 기록합니다.<br>
+     *
+     * @param msg The message to log.<br><br>
+     *            기록할 메시지.
+     */
     override fun w(msg: Any?) = logWriter.write(DEFAULT_TAG, msg, LogxType.WARN)
+
+    /**
+     * Logs a WARN level message with a custom tag.<br><br>
+     * 커스텀 태그와 함께 WARN 레벨 메시지를 기록합니다.<br>
+     *
+     * @param tag Custom tag for filtering logs.<br><br>
+     *            로그 필터링을 위한 커스텀 태그.
+     * @param msg The message to log.<br><br>
+     *            기록할 메시지.
+     */
     override fun w(tag: String, msg: Any?) = logWriter.write(tag, msg, LogxType.WARN)
+
+    /**
+     * Logs a WARN level message with extended formatting.<br><br>
+     * 확장된 포맷으로 WARN 레벨 메시지를 기록합니다.<br>
+     *
+     * @param msg The message to log.<br><br>
+     *            기록할 메시지.
+     */
     fun w1(msg: Any?) = logWriter.writeExtensions(DEFAULT_TAG, msg, LogxType.WARN)
+
+    /**
+     * Logs a WARN level message with extended formatting and a custom tag.<br><br>
+     * 확장된 포맷과 커스텀 태그로 WARN 레벨 메시지를 기록합니다.<br>
+     *
+     * @param tag Custom tag for filtering logs.<br><br>
+     *            로그 필터링을 위한 커스텀 태그.
+     * @param msg The message to log.<br><br>
+     *            기록할 메시지.
+     */
     fun w1(tag: String, msg: Any?) = logWriter.writeExtensions(tag, msg, LogxType.WARN)
 
+    /**
+     * Logs an ERROR level message with stack trace information.<br><br>
+     * ERROR 레벨 메시지를 스택 트레이스 정보와 함께 기록합니다.<br>
+     */
     override fun e() = logWriter.write(DEFAULT_TAG, "", LogxType.ERROR)
+
+    /**
+     * Logs an ERROR level message.<br><br>
+     * ERROR 레벨 메시지를 기록합니다.<br>
+     *
+     * @param msg The message to log.<br><br>
+     *            기록할 메시지.
+     */
     override fun e(msg: Any?) = logWriter.write(DEFAULT_TAG, msg, LogxType.ERROR)
+
+    /**
+     * Logs an ERROR level message with a custom tag.<br><br>
+     * 커스텀 태그와 함께 ERROR 레벨 메시지를 기록합니다.<br>
+     *
+     * @param tag Custom tag for filtering logs.<br><br>
+     *            로그 필터링을 위한 커스텀 태그.
+     * @param msg The message to log.<br><br>
+     *            기록할 메시지.
+     */
     override fun e(tag: String, msg: Any?) = logWriter.write(tag, msg, LogxType.ERROR)
+
+    /**
+     * Logs an ERROR level message with extended formatting.<br><br>
+     * 확장된 포맷으로 ERROR 레벨 메시지를 기록합니다.<br>
+     *
+     * @param msg The message to log.<br><br>
+     *            기록할 메시지.
+     */
     fun e1(msg: Any?) = logWriter.writeExtensions(DEFAULT_TAG, msg, LogxType.ERROR)
+
+    /**
+     * Logs an ERROR level message with extended formatting and a custom tag.<br><br>
+     * 확장된 포맷과 커스텀 태그로 ERROR 레벨 메시지를 기록합니다.<br>
+     *
+     * @param tag Custom tag for filtering logs.<br><br>
+     *            로그 필터링을 위한 커스텀 태그.
+     * @param msg The message to log.<br><br>
+     *            기록할 메시지.
+     */
     fun e1(tag: String, msg: Any?) = logWriter.writeExtensions(tag, msg, LogxType.ERROR)
 
     // 확장 기능들
+    /**
+     * Logs the parent method call information.<br>
+     * Useful for debugging call hierarchies.<br><br>
+     * 부모 메서드 호출 정보를 기록합니다.<br>
+     * 호출 계층 디버깅에 유용합니다.<br>
+     */
     override fun p() = logWriter.writeParent(DEFAULT_TAG, "")
+
+    /**
+     * Logs the parent method call information with a message.<br><br>
+     * 부모 메서드 호출 정보를 메시지와 함께 기록합니다.<br>
+     *
+     * @param msg The message to log.<br><br>
+     *            기록할 메시지.
+     */
     override fun p(msg: Any?) = logWriter.writeParent(DEFAULT_TAG, msg)
+
+    /**
+     * Logs the parent method call information with a custom tag and message.<br><br>
+     * 부모 메서드 호출 정보를 커스텀 태그와 메시지와 함께 기록합니다.<br>
+     *
+     * @param tag Custom tag for filtering logs.<br><br>
+     *            로그 필터링을 위한 커스텀 태그.
+     * @param msg The message to log.<br><br>
+     *            기록할 메시지.
+     */
     override fun p(tag: String, msg: Any?) = logWriter.writeParent(tag, msg)
+
+    /**
+     * Logs the parent method call information with extended formatting.<br><br>
+     * 확장된 포맷으로 부모 메서드 호출 정보를 기록합니다.<br>
+     *
+     * @param msg The message to log.<br><br>
+     *            기록할 메시지.
+     */
     fun p1(msg: Any?) = logWriter.writeExtensionsParent(DEFAULT_TAG, msg)
+
+    /**
+     * Logs the parent method call information with extended formatting and a custom tag.<br><br>
+     * 확장된 포맷과 커스텀 태그로 부모 메서드 호출 정보를 기록합니다.<br>
+     *
+     * @param tag Custom tag for filtering logs.<br><br>
+     *            로그 필터링을 위한 커스텀 태그.
+     * @param msg The message to log.<br><br>
+     *            기록할 메시지.
+     */
     fun p1(tag: String, msg: Any?) = logWriter.writeExtensionsParent(tag, msg)
 
+    /**
+     * Logs the current thread ID.<br>
+     * Useful for debugging multi-threaded applications.<br><br>
+     * 현재 스레드 ID를 기록합니다.<br>
+     * 멀티스레드 애플리케이션 디버깅에 유용합니다.<br>
+     */
     override fun t() = logWriter.writeThreadId(DEFAULT_TAG, "")
+
+    /**
+     * Logs the current thread ID with a message.<br><br>
+     * 현재 스레드 ID를 메시지와 함께 기록합니다.<br>
+     *
+     * @param msg The message to log.<br><br>
+     *            기록할 메시지.
+     */
     override fun t(msg: Any?) = logWriter.writeThreadId(DEFAULT_TAG, msg)
+
+    /**
+     * Logs the current thread ID with a custom tag and message.<br><br>
+     * 현재 스레드 ID를 커스텀 태그와 메시지와 함께 기록합니다.<br>
+     *
+     * @param tag Custom tag for filtering logs.<br><br>
+     *            로그 필터링을 위한 커스텀 태그.
+     * @param msg The message to log.<br><br>
+     *            기록할 메시지.
+     */
     override fun t(tag: String, msg: Any?) = logWriter.writeThreadId(tag, msg)
 
+    /**
+     * Logs a JSON-formatted message with visual markers for enhanced readability.<br><br>
+     * 가독성을 높이기 위한 시각적 마커와 함께 JSON 형식의 메시지를 기록합니다.<br>
+     *
+     * @param msg The JSON string to log.<br><br>
+     *            기록할 JSON 문자열.
+     */
     override fun j(msg: String) = logWriter.writeJson(DEFAULT_TAG, msg)
+
+    /**
+     * Logs a JSON-formatted message with visual markers and a custom tag.<br><br>
+     * 시각적 마커와 커스텀 태그로 JSON 형식의 메시지를 기록합니다.<br>
+     *
+     * @param tag Custom tag for filtering logs.<br><br>
+     *            로그 필터링을 위한 커스텀 태그.
+     * @param msg The JSON string to log.<br><br>
+     *            기록할 JSON 문자열.
+     */
     override fun j(tag: String, msg: String) = logWriter.writeJson(tag, msg)
+
+    /**
+     * Logs a JSON-formatted message with extended formatting and visual markers.<br><br>
+     * 확장된 포맷과 시각적 마커로 JSON 형식의 메시지를 기록합니다.<br>
+     *
+     * @param msg The JSON string to log.<br><br>
+     *            기록할 JSON 문자열.
+     */
     fun j1(msg: String) = logWriter.writeJsonExtensions(DEFAULT_TAG, msg)
+
+    /**
+     * Logs a JSON-formatted message with extended formatting, visual markers, and a custom tag.<br><br>
+     * 확장된 포맷, 시각적 마커, 커스텀 태그로 JSON 형식의 메시지를 기록합니다.<br>
+     *
+     * @param tag Custom tag for filtering logs.<br><br>
+     *            로그 필터링을 위한 커스텀 태그.
+     * @param msg The JSON string to log.<br><br>
+     *            기록할 JSON 문자열.
+     */
     fun j1(tag: String, msg: String) = logWriter.writeJsonExtensions(tag, msg)
 
     // 레거시 호환성을 위한 getter 메서드들
+    /**
+     * Returns the current debug mode setting.<br><br>
+     * 현재 디버그 모드 설정을 반환합니다.<br>
+     *
+     * @return `true` if debug mode is enabled, `false` otherwise.<br><br>
+     *         디버그 모드가 활성화되어 있으면 `true`, 그렇지 않으면 `false`.<br>
+     */
     fun getDebugMode(): Boolean = configManager.config.isDebug
+
+    /**
+     * Returns the current debug filter setting.<br><br>
+     * 현재 디버그 필터 설정을 반환합니다.<br>
+     *
+     * @return `true` if debug filter is enabled, `false` otherwise.<br><br>
+     *         디버그 필터가 활성화되어 있으면 `true`, 그렇지 않으면 `false`.<br>
+     */
     fun getDebugFilter(): Boolean = configManager.config.isDebugFilter
+
+    /**
+     * Returns the current save-to-file setting.<br><br>
+     * 현재 파일 저장 설정을 반환합니다.<br>
+     *
+     * @return `true` if saving logs to file is enabled, `false` otherwise.<br><br>
+     *         로그를 파일에 저장하는 기능이 활성화되어 있으면 `true`, 그렇지 않으면 `false`.<br>
+     */
     fun getSaveToFile(): Boolean = configManager.config.isDebugSave
+
+    /**
+     * Returns the current log file path.<br><br>
+     * 현재 로그 파일 경로를 반환합니다.<br>
+     *
+     * @return The absolute path where log files are saved.<br><br>
+     *         로그 파일이 저장되는 절대 경로.<br>
+     */
     fun getFilePath(): String = configManager.config.saveFilePath
+
+    /**
+     * Returns the current application name used in logs.<br><br>
+     * 로그에 사용되는 현재 애플리케이션 이름을 반환합니다.<br>
+     *
+     * @return The application name string.<br><br>
+     *         애플리케이션 이름 문자열.<br>
+     */
     fun getAppName(): String = configManager.config.appName
+
+    /**
+     * Returns the current set of tags used for debug filtering.<br><br>
+     * 디버그 필터링에 사용되는 현재 태그 집합을 반환합니다.<br>
+     *
+     * @return A set of filter tag strings.<br><br>
+     *         필터 태그 문자열의 집합.<br>
+     */
     fun getDebugFilterList(): Set<String> = configManager.config.debugFilterList
+
+    /**
+     * Returns the current set of enabled log types.<br><br>
+     * 현재 활성화된 로그 타입 집합을 반환합니다.<br>
+     *
+     * @return An EnumSet of enabled LogxType values.<br><br>
+     *         활성화된 LogxType 값들의 EnumSet.<br>
+     */
     fun getDebugLogTypeList(): EnumSet<LogxType> = configManager.config.debugLogTypeList
 
     /**

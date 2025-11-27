@@ -27,16 +27,76 @@ import kr.open.library.simple_ui.core.system_manager.extensions.getPowerManager
  */
 public abstract class BaseAlarmReceiver() : BroadcastReceiver() {
 
+    /**
+     * Controller for managing alarm notifications.<br>
+     * Must be initialized by subclasses before use.<br><br>
+     * 알람 알림 관리를 위한 컨트롤러입니다.<br>
+     * 사용하기 전에 서브클래스에서 초기화해야 합니다.<br>
+     */
     protected lateinit var notificationController: SimpleNotificationController
 
+    /**
+     * Type of alarm registration method to use.<br><br>
+     * 사용할 알람 등록 방법의 타입입니다.<br>
+     */
     protected abstract val registerType: RegisterType
+
+    /**
+     * Class type of the BroadcastReceiver for creating PendingIntents.<br><br>
+     * PendingIntent 생성을 위한 BroadcastReceiver의 클래스 타입입니다.<br>
+     */
     protected abstract val classType: Class<*>
 
+    /**
+     * Creates a notification channel for alarm notifications.<br>
+     * Must be called before showing any notifications on Android O and above.<br><br>
+     * 알람 알림을 위한 알림 채널을 생성합니다.<br>
+     * Android O 이상에서 알림을 표시하기 전에 반드시 호출해야 합니다.<br>
+     *
+     * @param context The application context.<br><br>
+     *                애플리케이션 컨텍스트.
+     * @param alarmVo The alarm data.<br><br>
+     *                알람 데이터.
+     */
     protected abstract fun createNotificationChannel(context: Context, alarmVo: AlarmVo)
 
+    /**
+     * Displays a notification for the triggered alarm.<br><br>
+     * 트리거된 알람에 대한 알림을 표시합니다.<br>
+     *
+     * @param context The application context.<br><br>
+     *                애플리케이션 컨텍스트.
+     * @param alarmVo The alarm data containing notification details.<br><br>
+     *                알림 세부정보를 포함하는 알람 데이터.
+     */
     protected abstract fun showNotification(context: Context, alarmVo: AlarmVo)
 
+    /**
+     * Loads all stored alarms from persistent storage.<br>
+     * Used for re-registering alarms after device boot.<br><br>
+     * 영구 저장소에서 저장된 모든 알람을 로드합니다.<br>
+     * 기기 부팅 후 알람을 다시 등록하는 데 사용됩니다.<br>
+     *
+     * @param context The application context.<br><br>
+     *                애플리케이션 컨텍스트.
+     * @return List of all stored alarms.<br><br>
+     *         저장된 모든 알람의 목록.<br>
+     */
     protected abstract fun loadAllalarmVoList(context: Context): List<AlarmVo>
+
+    /**
+     * Loads a specific alarm by its key from the intent extras.<br><br>
+     * 인텐트 extras에서 키로 특정 알람을 로드합니다.<br>
+     *
+     * @param context The application context.<br><br>
+     *                애플리케이션 컨텍스트.
+     * @param intent The received broadcast intent.<br><br>
+     *               수신된 브로드캐스트 인텐트.
+     * @param key The unique identifier for the alarm.<br><br>
+     *            알람의 고유 식별자.
+     * @return The alarm data, or null if not found.<br><br>
+     *         알람 데이터, 찾을 수 없는 경우 null.<br>
+     */
     protected abstract fun loadalarmVoList(context:Context, intent: Intent, key:Int): AlarmVo?
 
     /**
@@ -169,6 +229,19 @@ public abstract class BaseAlarmReceiver() : BroadcastReceiver() {
         }
     }
 
+    /**
+     * Registers an alarm using the configured registration type.<br>
+     * Delegates to the appropriate AlarmController method based on registerType.<br><br>
+     * 구성된 등록 타입을 사용하여 알람을 등록합니다.<br>
+     * registerType에 따라 적절한 AlarmController 메서드로 위임합니다.<br>
+     *
+     * @param alarmController The alarm controller instance.<br><br>
+     *                        알람 컨트롤러 인스턴스.
+     * @param alarmVo The alarm data to register.<br><br>
+     *                등록할 알람 데이터.
+     * @return `true` if registration succeeded, `false` otherwise.<br><br>
+     *         등록 성공 시 `true`, 그렇지 않으면 `false`.<br>
+     */
     private fun registerAlarm(alarmController: AlarmController, alarmVo: AlarmVo): Boolean =
         when (registerType) {
             RegisterType.ALARM_AND_ALLOW_WHILE_IDLE -> {
@@ -184,9 +257,29 @@ public abstract class BaseAlarmReceiver() : BroadcastReceiver() {
             }
         }
 
+    /**
+     * Enum defining the available alarm registration types.<br>
+     * Each type corresponds to a different AlarmManager scheduling method.<br><br>
+     * 사용 가능한 알람 등록 타입을 정의하는 열거형입니다.<br>
+     * 각 타입은 다른 AlarmManager 스케줄링 방법에 해당합니다.<br>
+     */
     public enum class RegisterType {
+        /**
+         * Standard alarm clock type that shows in status bar and wakes the device.<br><br>
+         * 상태 표시줄에 표시되고 기기를 깨우는 표준 알람 시계 타입입니다.<br>
+         */
         ALARM_CLOCK,
+
+        /**
+         * Alarm that can fire while device is idle (less precise).<br><br>
+         * 기기가 유휴 상태일 때도 실행될 수 있는 알람(덜 정밀함)입니다.<br>
+         */
         ALARM_AND_ALLOW_WHILE_IDLE,
+
+        /**
+         * Exact alarm that can fire while device is idle (precise timing).<br><br>
+         * 기기가 유휴 상태일 때도 실행될 수 있는 정확한 알람(정밀한 타이밍)입니다.<br>
+         */
         ALARM_EXACT_AND_ALLOW_WHILE_IDLE
     }
 }

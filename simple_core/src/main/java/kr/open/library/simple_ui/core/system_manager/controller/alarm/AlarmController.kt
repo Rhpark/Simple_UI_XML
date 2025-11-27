@@ -32,6 +32,10 @@ public open class AlarmController(context: Context) :
         )
     ) {
 
+    /**
+     * Lazy-initialized AlarmManager instance for scheduling and managing alarms.<br><br>
+     * 알람 스케줄링 및 관리를 위한 지연 초기화된 AlarmManager 인스턴스입니다.<br>
+     */
     public val alarmManager: AlarmManager by lazy { context.getAlarmManager() }
 
     /**

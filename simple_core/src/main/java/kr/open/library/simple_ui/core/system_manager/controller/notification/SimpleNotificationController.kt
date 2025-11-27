@@ -25,15 +25,31 @@ import java.util.concurrent.TimeUnit
 
 
 /**
- * <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+ * Controller for managing Android notifications with support for various styles and features.<br>
+ * Provides methods for creating channels, displaying notifications, and managing progress notifications.<br><br>
+ * 다양한 스타일과 기능을 지원하는 Android 알림 관리 컨트롤러입니다.<br>
+ * 채널 생성, 알림 표시, 진행률 알림 관리를 위한 메서드를 제공합니다.<br>
  *
- * NotificationManager.IMPORTANCE_HIGH	긴급 상황이며 알림음이 울리며 헤드업으로 표시
- * NotificationManager.IMPORTANCE_DEFAULT	높은 중요도이며 알림음이 울림
- * NotificationManager.IMPORTANCE_LOW	중간 중요도이며 알림음이 울리지 않음
- * NotificationManager.IMPORTANCE_MIN   낮은 중요도이며 알림음이 없고 상태표시줄에 표시되지 않음
+ * Required permission:<br>
+ * `<uses-permission android:name="android.permission.POST_NOTIFICATIONS" />`<br><br>
+ * 필수 권한:<br>
+ * `<uses-permission android:name="android.permission.POST_NOTIFICATIONS" />`<br>
  *
- * @param context 컨텍스트
- * @param showType 알림 클릭 시 동작 유형 (Activity, Service, Broadcast)
+ * Notification Importance Levels:<br>
+ * - `IMPORTANCE_HIGH`: Urgent, makes sound and appears as heads-up<br>
+ * - `IMPORTANCE_DEFAULT`: High priority, makes sound<br>
+ * - `IMPORTANCE_LOW`: Medium priority, no sound<br>
+ * - `IMPORTANCE_MIN`: Low priority, no sound and not shown in status bar<br><br>
+ * 알림 중요도 레벨:<br>
+ * - `IMPORTANCE_HIGH`: 긴급, 알림음이 울리며 헤즈업으로 표시<br>
+ * - `IMPORTANCE_DEFAULT`: 높은 중요도, 알림음이 울림<br>
+ * - `IMPORTANCE_LOW`: 중간 중요도, 알림음이 울리지 않음<br>
+ * - `IMPORTANCE_MIN`: 낮은 중요도, 알림음이 없고 상태표시줄에 표시되지 않음<br>
+ *
+ * @param context The application context.<br><br>
+ *                애플리케이션 컨텍스트.
+ * @param showType Action type when notification is clicked (Activity, Service, Broadcast).<br><br>
+ *                 알림 클릭 시 동작 유형 (Activity, Service, Broadcast).
  */
 public open class SimpleNotificationController(context: Context, private val showType: SimpleNotificationType) :
     BaseSystemService(
@@ -43,6 +59,10 @@ public open class SimpleNotificationController(context: Context, private val sho
             negativeWork = { null })
     ) {
 
+    /**
+     * Lazy-initialized NotificationManager instance for managing notifications.<br><br>
+     * 알림 관리를 위한 지연 초기화된 NotificationManager 인스턴스입니다.<br>
+     */
     public val notificationManager: NotificationManager by lazy { context.getNotificationManager() }
     
     init {
@@ -50,30 +70,70 @@ public open class SimpleNotificationController(context: Context, private val sho
         ensureDefaultChannel()
     }
 
-    // 진행률 알림 빌더들을 저장하는 맵 (ID별 관리) - Thread-safe
+    /**
+     * Thread-safe map storing progress notification builders by notification ID.<br>
+     * Used for updating progress without recreating the builder.<br><br>
+     * 알림 ID별로 진행률 알림 빌더를 저장하는 스레드 세이프 맵입니다.<br>
+     * 빌더를 재생성하지 않고 진행률을 업데이트하는 데 사용됩니다.<br>
+     */
     private val progressBuilders = ConcurrentHashMap<Int, ProgressNotificationInfo>()
     
-    // 진행률 알림 정리를 위한 스케줄러 (필요시 생성)
+    /**
+     * Scheduler for cleaning up stale progress notifications (created on demand).<br><br>
+     * 오래된 진행률 알림을 정리하기 위한 스케줄러(필요 시 생성).<br>
+     */
     private var cleanupScheduler: ScheduledExecutorService? = null
     
-    // 진행률 알림 정보를 담는 데이터 클래스
+    /**
+     * Data class holding progress notification information.<br><br>
+     * 진행률 알림 정보를 담는 데이터 클래스입니다.<br>
+     *
+     * @param builder The notification builder instance.<br><br>
+     *                알림 빌더 인스턴스.
+     * @param lastUpdateTime Timestamp of last update in milliseconds.<br><br>
+     *                       마지막 업데이트 시간(밀리초).
+     */
     private data class ProgressNotificationInfo(
         val builder: NotificationCompat.Builder,
         val lastUpdateTime: Long = System.currentTimeMillis()
     )
 
-    // 현재 설정된 알림 채널
+    /**
+     * Currently active notification channel.<br><br>
+     * 현재 활성화된 알림 채널입니다.<br>
+     */
     private var currentChannel: NotificationChannel? = null
     
-    // 기본 채널 상수
+    /**
+     * Companion object containing default channel constants.<br><br>
+     * 기본 채널 상수를 포함하는 컴패니언 객체입니다.<br>
+     */
     companion object {
+        /**
+         * Default notification channel ID.<br><br>
+         * 기본 알림 채널 ID.<br>
+         */
         private const val DEFAULT_CHANNEL_ID = "default_notification_channel"
+
+        /**
+         * Default notification channel name.<br><br>
+         * 기본 알림 채널 이름.<br>
+         */
         private const val DEFAULT_CHANNEL_NAME = "Default Notifications"
+
+        /**
+         * Default notification channel description.<br><br>
+         * 기본 알림 채널 설명.<br>
+         */
         private const val DEFAULT_CHANNEL_DESCRIPTION = "Default notification channel for the application"
     }
 
     /**
-     * NotificationChannel을 생성 및 등록하고 현재 채널로 설정.
+     * Creates and registers a NotificationChannel, then sets it as the current channel.<br><br>
+     * NotificationChannel을 생성 및 등록하고 현재 채널로 설정합니다.<br>
+     *
+     * @param notificationChannel The notification channel to create.<br><br>
+     *                            생성할 알림 채널.
      */
     public fun createChannel(notificationChannel: NotificationChannel) {
         currentChannel = notificationChannel
@@ -81,11 +141,17 @@ public open class SimpleNotificationController(context: Context, private val sho
     }
 
     /**
-     * 알림 채널을 생성하여 등록합니다.
-     * @param channelId 채널 ID
-     * @param channelName 채널 이름
-     * @param importance 중요도 (IMPORTANCE_HIGH, DEFAULT, LOW, MIN)
-     * @param description 채널 설명 (선택사항)
+     * Creates and registers a notification channel with the specified parameters.<br><br>
+     * 지정된 파라미터로 알림 채널을 생성하여 등록합니다.<br>
+     *
+     * @param channelId Channel unique identifier.<br><br>
+     *                  채널 고유 식별자.
+     * @param channelName Channel display name.<br><br>
+     *                    채널 표시 이름.
+     * @param importance Channel importance level (IMPORTANCE_HIGH, DEFAULT, LOW, MIN).<br><br>
+     *                   채널 중요도 레벨 (IMPORTANCE_HIGH, DEFAULT, LOW, MIN).
+     * @param description Channel description (optional).<br><br>
+     *                    채널 설명 (선택사항).
      */
     public fun createChannel(channelId: String, channelName: String, importance: Int, description: String? = null) {
         createChannel(NotificationChannel(channelId, channelName, importance).apply {
@@ -94,9 +160,13 @@ public open class SimpleNotificationController(context: Context, private val sho
     }
 
     /**
-     * 알림을 표시합니다. 스타일에 따라 적절한 형태로 표시됩니다.
-     * @param notificationOption 알림 옵션
-     * @return 성공 여부
+     * Displays a notification with the appropriate style based on the option.<br><br>
+     * 옵션에 따라 적절한 스타일로 알림을 표시합니다.<br>
+     *
+     * @param notificationOption Notification configuration options.<br><br>
+     *                           알림 구성 옵션.
+     * @return `true` if notification was shown successfully, `false` otherwise.<br><br>
+     *         알림 표시 성공 시 `true`, 그렇지 않으면 `false`.<br>
      */
     public fun showNotification(notificationOption: SimpleNotificationOptionVo): Boolean =
         tryCatchSystemManager(false) {
@@ -115,9 +185,13 @@ public open class SimpleNotificationController(context: Context, private val sho
         }
 
     /**
-     * 알림 빌더를 생성합니다.
-     * @param notificationOption 알림 옵션
-     * @return NotificationCompat.Builder
+     * Creates a notification builder with standard configuration.<br><br>
+     * 표준 구성으로 알림 빌더를 생성합니다.<br>
+     *
+     * @param notificationOption Notification configuration options.<br><br>
+     *                           알림 구성 옵션.
+     * @return Configured NotificationCompat.Builder instance.<br><br>
+     *         구성된 NotificationCompat.Builder 인스턴스.<br>
      */
     public fun getBuilder(notificationOption: SimpleNotificationOptionVo):NotificationCompat.Builder {
         return with(notificationOption) {
