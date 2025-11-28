@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>LogxConfigManager</title>
+    <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
+        <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+      if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      } else {
+        const savedDarkMode = JSON.parse(storage)
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/safe-local-storage_blocking.js"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../../ui-kit/ui-kit.min.js" defer="defer"></script>
+</head>
+<body>
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+            <a class="library-name--link" href="../../../index.html" tabindex="1">
+                    simple_core
+            </a>
+        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle"
+                type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">
+        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector jvm-like" data-active="" aria-pressed="true"
+                        data-filter=":simple_core/main">androidJvm</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox"
+                        data-role="dropdown-toggle"
+                        aria-controls="platform-tags-listbox"
+                        aria-haspopup="listbox"
+                        aria-expanded="false"
+                        aria-label="Toggle source sets"
+                ></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":simple_core/main"
+                                       data-filter=":simple_core/main"/>
+                                <span class="checkbox--icon"></span>
+                                androidJvm
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button"
+                    type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config='{"defaultSize": 280, "minSize": 200, "maxSize": 400}'>
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list"
+                    data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    simple_core
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" data-page-type="classlike" id="content" pageIds="simple_core::kr.open.library.simple_ui.core.logcat.config/LogxConfigManager///PointingToDeclaration//-1254007377">
+  <div class="breadcrumbs"><a href="../../../index.html">simple_core</a><span class="delimiter">/</span><a href="../index.html">kr.open.library.simple_ui.core.logcat.config</a><span class="delimiter">/</span><span class="current">LogxConfigManager</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Logx</span><wbr></wbr><span>Config</span><wbr></wbr><span><span>Manager</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">class </span><a href="index.html">LogxConfigManager</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">initialConfig<span class="token operator">: </span><a href="../-logx-config/index.html">LogxConfig</a><span class="token operator"> = </span>LogxConfig()</span></span><span class="token punctuation">)</span></div><p class="paragraph">Thread-safe configuration manager for Logx logging system.<br> Manages configuration updates and notifies registered listeners when configuration changes.<br><br> Logx 로깅 시스템의 스레드 안전 설정 관리자입니다.<br> 설정 업데이트를 관리하고 설정 변경 시 등록된 리스너에게 알립니다.<br></p><p class="paragraph">Thread-safety: All public methods are thread-safe using ReentrantReadWriteLock.<br></p><ul><li><p class="paragraph">Read operations (config access) use read lock for concurrent access<br></p></li><li><p class="paragraph">Write operations (config updates, listener management) use write lock for exclusive access<br><br> 스레드 안전성: 모든 public 메서드는 ReentrantReadWriteLock을 사용하여 스레드 안전합니다.<br></p></li><li><p class="paragraph">읽기 작업 (config 접근)은 동시 접근을 위해 읽기 잠금 사용<br></p></li><li><p class="paragraph">쓰기 작업 (config 업데이트, 리스너 관리)은 배타적 접근을 위해 쓰기 잠금 사용<br></p></li></ul><h4 class="tableheader">Parameters</h4><div class="table"><div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>initial</span><wbr></wbr><span><span>Config</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The initial configuration to use. Defaults to a default LogxConfig instance.<br><br>     사용할 초기 설정. 기본값은 기본 LogxConfig 인스턴스입니다.</p></div></div></div></div></div></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="tableheader">Constructors</h2>
+        <div class="table"><a data-name="1727188265%2FConstructors%2F-1254007377" anchor-label="LogxConfigManager" id="1727188265%2FConstructors%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-togglable="CONSTRUCTOR" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-logx-config-manager.html"><span>Logx</span><wbr></wbr><span>Config</span><wbr></wbr><span><span>Manager</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1727188265%2FConstructors%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">initialConfig<span class="token operator">: </span><a href="../-logx-config/index.html">LogxConfig</a><span class="token operator"> = </span>LogxConfig()</span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="TYPE">
+        <h2 class="tableheader">Types</h2>
+        <div class="table"><a data-name="840185937%2FClasslikes%2F-1254007377" anchor-label="ConfigChangeListener" id="840185937%2FClasslikes%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-config-change-listener/index.html"><span>Config</span><wbr></wbr><span>Change</span><wbr></wbr><span><span>Listener</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="840185937%2FClasslikes%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">interface </span><a href="-config-change-listener/index.html">ConfigChangeListener</a></div><div class="brief "><p class="paragraph">Callback interface for receiving configuration change notifications.<br><br> 설정 변경 알림을 받기 위한 콜백 인터페이스입니다.<br></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="PROPERTY">
+        <h2 class="tableheader">Properties</h2>
+        <div class="table"><a data-name="1915383040%2FProperties%2F-1254007377" anchor-label="config" id="1915383040%2FProperties%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="config.html"><span><span>config</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1915383040%2FProperties%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="config.html">config</a><span class="token operator">: </span><a href="../-logx-config/index.html">LogxConfig</a></div><div class="brief "><p class="paragraph">Returns the current configuration in a thread-safe manner.<br> Uses read lock to allow concurrent access from multiple threads.<br><br> 스레드 안전 방식으로 현재 설정을 반환합니다.<br> 여러 스레드의 동시 접근을 허용하기 위해 읽기 잠금을 사용합니다.<br></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="tableheader">Functions</h2>
+        <div class="table"><a data-name="896623442%2FFunctions%2F-1254007377" anchor-label="addConfigChangeListener" id="896623442%2FFunctions%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="add-config-change-listener.html"><span>add</span><wbr></wbr><span>Config</span><wbr></wbr><span>Change</span><wbr></wbr><span><span>Listener</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="896623442%2FFunctions%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="add-config-change-listener.html"><span class="token function">addConfigChangeListener</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">listener<span class="token operator">: </span><a href="-config-change-listener/index.html">LogxConfigManager.ConfigChangeListener</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Registers a configuration change listener in a thread-safe manner.<br><br> 스레드 안전 방식으로 설정 변경 리스너를 등록합니다.<br></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1895951691%2FFunctions%2F-1254007377" anchor-label="removeAllConfigChangeListener" id="-1895951691%2FFunctions%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="remove-all-config-change-listener.html"><span>remove</span><wbr></wbr><span>All</span><wbr></wbr><span>Config</span><wbr></wbr><span>Change</span><wbr></wbr><span><span>Listener</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1895951691%2FFunctions%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="remove-all-config-change-listener.html"><span class="token function">removeAllConfigChangeListener</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Removes all configuration change listeners in a thread-safe manner.<br><br> 스레드 안전 방식으로 모든 설정 변경 리스너를 제거합니다.<br></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="593768843%2FFunctions%2F-1254007377" anchor-label="removeConfigChangeListener" id="593768843%2FFunctions%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="remove-config-change-listener.html"><span>remove</span><wbr></wbr><span>Config</span><wbr></wbr><span>Change</span><wbr></wbr><span><span>Listener</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="593768843%2FFunctions%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="remove-config-change-listener.html"><span class="token function">removeConfigChangeListener</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">listener<span class="token operator">: </span><a href="-config-change-listener/index.html">LogxConfigManager.ConfigChangeListener</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Removes a configuration change listener in a thread-safe manner.<br><br> 스레드 안전 방식으로 설정 변경 리스너를 제거합니다.<br></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-716513588%2FFunctions%2F-1254007377" anchor-label="setAppName" id="-716513588%2FFunctions%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-app-name.html"><span>set</span><wbr></wbr><span>App</span><wbr></wbr><span><span>Name</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-716513588%2FFunctions%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-app-name.html"><span class="token function">setAppName</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">name<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the application name used in log file naming and organization.<br><br> 로그 파일 이름 지정 및 구성에 사용되는 애플리케이션 이름을 업데이트합니다.<br></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1509156542%2FFunctions%2F-1254007377" anchor-label="setDebugFilter" id="1509156542%2FFunctions%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-debug-filter.html"><span>set</span><wbr></wbr><span>Debug</span><wbr></wbr><span><span>Filter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1509156542%2FFunctions%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-debug-filter.html"><span class="token function">setDebugFilter</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">isFilter<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the debug filter setting.<br><br> 디버그 필터 설정을 업데이트합니다.<br></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1389871675%2FFunctions%2F-1254007377" anchor-label="setDebugFilterList" id="-1389871675%2FFunctions%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-debug-filter-list.html"><span>set</span><wbr></wbr><span>Debug</span><wbr></wbr><span>Filter</span><wbr></wbr><span><span>List</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1389871675%2FFunctions%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-debug-filter-list.html"><span class="token function">setDebugFilterList</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">tags<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the set of tag filters for debug logging.<br> Only logs matching these tags will be displayed when debug filtering is enabled.<br><br> 디버그 로깅을 위한 태그 필터 집합을 업데이트합니다.<br> 디버그 필터링이 활성화된 경우 이 태그와 일치하는 로그만 표시됩니다.<br></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2019306735%2FFunctions%2F-1254007377" anchor-label="setDebugLogTypeList" id="2019306735%2FFunctions%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-debug-log-type-list.html"><span>set</span><wbr></wbr><span>Debug</span><wbr></wbr><span>Log</span><wbr></wbr><span>Type</span><wbr></wbr><span><span>List</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2019306735%2FFunctions%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-debug-log-type-list.html"><span class="token function">setDebugLogTypeList</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">types<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/util/EnumSet.html">EnumSet</a><span class="token operator">&lt;</span><a href="../../kr.open.library.simple_ui.core.logcat.model/-logx-type/index.html">LogxType</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the set of log types to display.<br><br> 표시할 로그 타입 집합을 업데이트합니다.<br></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-672146637%2FFunctions%2F-1254007377" anchor-label="setDebugMode" id="-672146637%2FFunctions%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-debug-mode.html"><span>set</span><wbr></wbr><span>Debug</span><wbr></wbr><span><span>Mode</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-672146637%2FFunctions%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-debug-mode.html"><span class="token function">setDebugMode</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">isDebug<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the debug mode setting.<br><br> 디버그 모드 설정을 업데이트합니다.<br></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1631388527%2FFunctions%2F-1254007377" anchor-label="setFilePath" id="1631388527%2FFunctions%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-file-path.html"><span>set</span><wbr></wbr><span>File</span><wbr></wbr><span><span>Path</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1631388527%2FFunctions%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-file-path.html"><span class="token function">setFilePath</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">path<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the log file path.<br><br> 로그 파일 경로를 업데이트합니다.<br></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1367551463%2FFunctions%2F-1254007377" anchor-label="setSaveToFile" id="1367551463%2FFunctions%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-save-to-file.html"><span>set</span><wbr></wbr><span>Save</span><wbr></wbr><span>To</span><wbr></wbr><span><span>File</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1367551463%2FFunctions%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-save-to-file.html"><span class="token function">setSaveToFile</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">isSave<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the file saving setting.<br><br> 파일 저장 설정을 업데이트합니다.<br></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-723563309%2FFunctions%2F-1254007377" anchor-label="updateConfig" id="-723563309%2FFunctions%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-config.html"><span>update</span><wbr></wbr><span><span>Config</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-723563309%2FFunctions%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-config.html"><span class="token function">updateConfig</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">newConfig<span class="token operator">: </span><a href="../-logx-config/index.html">LogxConfig</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Updates the entire configuration and notifies all registered listeners.<br> Creates a snapshot of listeners to avoid holding the lock during notifications.<br><br> 전체 설정을 업데이트하고 등록된 모든 리스너에게 알립니다.<br> 알림 중 잠금을 유지하지 않도록 리스너의 스냅샷을 생성합니다.<br></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>© 2025 Copyright</div>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

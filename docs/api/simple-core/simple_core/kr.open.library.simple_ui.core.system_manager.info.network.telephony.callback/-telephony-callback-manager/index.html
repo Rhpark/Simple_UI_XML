@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>TelephonyCallbackManager</title>
+    <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
+        <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+      if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      } else {
+        const savedDarkMode = JSON.parse(storage)
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/safe-local-storage_blocking.js"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../../ui-kit/ui-kit.min.js" defer="defer"></script>
+</head>
+<body>
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+            <a class="library-name--link" href="../../../index.html" tabindex="1">
+                    simple_core
+            </a>
+        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle"
+                type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">
+        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector jvm-like" data-active="" aria-pressed="true"
+                        data-filter=":simple_core/main">androidJvm</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox"
+                        data-role="dropdown-toggle"
+                        aria-controls="platform-tags-listbox"
+                        aria-haspopup="listbox"
+                        aria-expanded="false"
+                        aria-label="Toggle source sets"
+                ></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":simple_core/main"
+                                       data-filter=":simple_core/main"/>
+                                <span class="checkbox--icon"></span>
+                                androidJvm
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button"
+                    type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config='{"defaultSize": 280, "minSize": 200, "maxSize": 400}'>
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list"
+                    data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    simple_core
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" data-page-type="classlike" id="content" pageIds="simple_core::kr.open.library.simple_ui.core.system_manager.info.network.telephony.callback/TelephonyCallbackManager///PointingToDeclaration//-1254007377">
+  <div class="breadcrumbs"><a href="../../../index.html">simple_core</a><span class="delimiter">/</span><a href="../index.html">kr.open.library.simple_ui.core.system_manager.info.network.telephony.callback</a><span class="delimiter">/</span><span class="current">TelephonyCallbackManager</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Telephony</span><wbr></wbr><span>Callback</span><wbr></wbr><span><span>Manager</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">class </span><a href="index.html">TelephonyCallbackManager</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">context<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/content/Context.html">Context</a></span></span><span class="token punctuation">)</span> : <a href="../../kr.open.library.simple_ui.core.system_manager.base/-base-system-service/index.html">BaseSystemService</a></div><p class="paragraph">Telephony Callback Management Class.<br><br> Telephony 콜백 관리 클래스입니다.<br></p><p class="paragraph">This class manages TelephonyManager's callback system.<br><br> 이 클래스는 TelephonyManager의 콜백 시스템을 관리합니다.<br></p><p class="paragraph">Main Features:<br></p><ul><li><p class="paragraph">Simple callback API (Default SIM, 3 callbacks)<br></p></li><li><p class="paragraph">Advanced callback API (Slot selection, 8 callbacks)<br></p></li><li><p class="paragraph">Multi-SIM support<br></p></li><li><p class="paragraph">StateFlow integration<br></p></li><li><p class="paragraph">API compatibility handling<br><br> 주요 기능:<br></p></li><li><p class="paragraph">Simple callback API (기본 SIM, 3개 콜백)<br></p></li><li><p class="paragraph">Advanced callback API (슬롯 선택, 8개 콜백)<br></p></li><li><p class="paragraph">멀티 SIM 지원<br></p></li><li><p class="paragraph">StateFlow 통합<br></p></li><li><p class="paragraph">API 호환성 처리<br></p></li></ul><p class="paragraph">Required Permissions:<br></p><ul><li><p class="paragraph"><code class="lang-kotlin">android.permission.READ_PHONE_STATE</code> (Required)<br></p></li><li><p class="paragraph"><code class="lang-kotlin">android.permission.ACCESS_FINE_LOCATION</code> (Cell info)<br><br> 필수 권한:<br></p></li><li><p class="paragraph"><code class="lang-kotlin">android.permission.READ_PHONE_STATE</code> (필수)<br></p></li><li><p class="paragraph"><code class="lang-kotlin">android.permission.ACCESS_FINE_LOCATION</code> (셀 정보)<br></p></li></ul><p class="paragraph">Usage Example:<br></p><div class="sample-container"><pre><code class="block lang-kotlin" theme="idea">val callbackManager = TelephonyCallbackManager(context)<br><br>// Simple API<br>callbackManager.registerSimpleCallback(<br>    onSignalStrengthChanged = { signal -&gt; ... }<br>)<br><br>// Advanced API (API 31+)<br>callbackManager.registerAdvancedCallback(<br>    simSlotIndex = 0,<br>    onCellInfo = { info -&gt; ... }<br>)</code></pre><span class="copy-tooltip"><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div><span class="copy-icon"></span></span></div></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="tableheader">Constructors</h2>
+        <div class="table"><a data-name="863410726%2FConstructors%2F-1254007377" anchor-label="TelephonyCallbackManager" id="863410726%2FConstructors%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-togglable="CONSTRUCTOR" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-telephony-callback-manager.html"><span>Telephony</span><wbr></wbr><span>Callback</span><wbr></wbr><span><span>Manager</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="863410726%2FConstructors%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">context<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/content/Context.html">Context</a></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="PROPERTY">
+        <h2 class="tableheader">Properties</h2>
+        <div class="table"><a data-name="-993492275%2FProperties%2F-1254007377" anchor-label="currentNetworkState" id="-993492275%2FProperties%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="current-network-state.html"><span>current</span><wbr></wbr><span>Network</span><wbr></wbr><span><span>State</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-993492275%2FProperties%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="current-network-state.html">currentNetworkState</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><a href="../../kr.open.library.simple_ui.core.system_manager.info.network.telephony.data.state/-telephony-network-state/index.html">TelephonyNetworkState</a><span class="token operator">?</span><span class="token operator">&gt;</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1327003372%2FProperties%2F-1254007377" anchor-label="currentServiceState" id="-1327003372%2FProperties%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="current-service-state.html"><span>current</span><wbr></wbr><span>Service</span><wbr></wbr><span><span>State</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1327003372%2FProperties%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="current-service-state.html">currentServiceState</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><a href="https://developer.android.com/reference/kotlin/android/telephony/ServiceState.html">ServiceState</a><span class="token operator">?</span><span class="token operator">&gt;</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1470906567%2FProperties%2F-1254007377" anchor-label="currentSignalStrength" id="1470906567%2FProperties%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="current-signal-strength.html"><span>current</span><wbr></wbr><span>Signal</span><wbr></wbr><span><span>Strength</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1470906567%2FProperties%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="current-signal-strength.html">currentSignalStrength</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><a href="https://developer.android.com/reference/kotlin/android/telephony/SignalStrength.html">SignalStrength</a><span class="token operator">?</span><span class="token operator">&gt;</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-850002791%2FProperties%2F-1254007377" anchor-label="subscriptionManager" id="-850002791%2FProperties%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="subscription-manager.html"><span>subscription</span><wbr></wbr><span><span>Manager</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-850002791%2FProperties%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="subscription-manager.html">subscriptionManager</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/telephony/SubscriptionManager.html">SubscriptionManager</a></div><div class="brief "><p class="paragraph">SubscriptionManager for multi-SIM support.<br><br> 멀티 SIM 지원을 위한 SubscriptionManager입니다.<br></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1913333180%2FProperties%2F-1254007377" anchor-label="telephonyManager" id="1913333180%2FProperties%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="telephony-manager.html"><span>telephony</span><wbr></wbr><span><span>Manager</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1913333180%2FProperties%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="telephony-manager.html">telephonyManager</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/telephony/TelephonyManager.html">TelephonyManager</a></div><div class="brief "><p class="paragraph">Main TelephonyManager instance.<br><br> 기본 TelephonyManager 인스턴스입니다.<br></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="tableheader">Functions</h2>
+        <div class="table"><a data-name="-652587342%2FFunctions%2F-1254007377" anchor-label="getCurrentServiceState" id="-652587342%2FFunctions%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-current-service-state.html"><span>get</span><wbr></wbr><span>Current</span><wbr></wbr><span>Service</span><wbr></wbr><span><span>State</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-652587342%2FFunctions%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="get-current-service-state.html"><span class="token function">getCurrentServiceState</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/telephony/ServiceState.html">ServiceState</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Gets the current service state (cached from callbacks).<br><br> 현재 서비스 상태를 가져옵니다 (콜백에서 캐시된 값).<br></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1044649701%2FFunctions%2F-1254007377" anchor-label="getCurrentSignalStrength" id="1044649701%2FFunctions%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-current-signal-strength.html"><span>get</span><wbr></wbr><span>Current</span><wbr></wbr><span>Signal</span><wbr></wbr><span><span>Strength</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1044649701%2FFunctions%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="get-current-signal-strength.html"><span class="token function">getCurrentSignalStrength</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/telephony/SignalStrength.html">SignalStrength</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Gets the current signal strength (cached from callbacks).<br><br> 현재 신호 강도를 가져옵니다 (콜백에서 캐시된 값).<br></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1381586301%2FFunctions%2F-1254007377" anchor-label="getPermissionInfo" id="-1381586301%2FFunctions%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../kr.open.library.simple_ui.core.system_manager.base/-base-system-service/get-permission-info.html"><span>get</span><wbr></wbr><span>Permission</span><wbr></wbr><span><span>Info</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1381586301%2FFunctions%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../kr.open.library.simple_ui.core.system_manager.base/-base-system-service/get-permission-info.html"><span class="token function">getPermissionInfo</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-map/index.html">Map</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Gets information about required permissions and their status. 필요한 권한과 그 상태에 대한 정보를 가져옵니다.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1470612848%2FFunctions%2F-1254007377" anchor-label="getTelephonyManagerFromUSim" id="1470612848%2FFunctions%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-telephony-manager-from-u-sim.html"><span>get</span><wbr></wbr><span>Telephony</span><wbr></wbr><span>Manager</span><wbr></wbr><span>From</span><wbr></wbr><span><span>USim</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1470612848%2FFunctions%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="get-telephony-manager-from-u-sim.html"><span class="token function">getTelephonyManagerFromUSim</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">slotIndex<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/telephony/TelephonyManager.html">TelephonyManager</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Gets TelephonyManager for specific SIM slot.<br><br> 특정 SIM 슬롯의 TelephonyManager를 반환합니다.<br></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1026178000%2FFunctions%2F-1254007377" anchor-label="isPermissionGranted" id="-1026178000%2FFunctions%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../kr.open.library.simple_ui.core.system_manager.base/-base-system-service/is-permission-granted.html"><span>is</span><wbr></wbr><span>Permission</span><wbr></wbr><span><span>Granted</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1026178000%2FFunctions%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../kr.open.library.simple_ui.core.system_manager.base/-base-system-service/is-permission-granted.html"><span class="token function">isPermissionGranted</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">permission<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Checks if a specific permission is granted. 특정 권한이 부여되었는지 확인합니다.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-53554141%2FFunctions%2F-1254007377" anchor-label="isRegistered" id="-53554141%2FFunctions%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-registered.html"><span>is</span><wbr></wbr><span><span>Registered</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-53554141%2FFunctions%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="is-registered.html"><span class="token function">isRegistered</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">simSlotIndex<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Checks callback registration status.<br><br> 콜백 등록 상태를 확인합니다.<br></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2123677870%2FFunctions%2F-1254007377" anchor-label="onDestroy" id="2123677870%2FFunctions%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="on-destroy.html"><span>on</span><wbr></wbr><span><span>Destroy</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2123677870%2FFunctions%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="on-destroy.html"><span class="token function">onDestroy</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Called when the service is being destroyed. Override to perform cleanup. 서비스가 소멸될 때 호출됩니다. 정리 작업을 수행하려면 재정의하세요.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1576261413%2FFunctions%2F-1254007377" anchor-label="refreshPermissions" id="-1576261413%2FFunctions%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../kr.open.library.simple_ui.core.system_manager.base/-base-system-service/refresh-permissions.html"><span>refresh</span><wbr></wbr><span><span>Permissions</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1576261413%2FFunctions%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../kr.open.library.simple_ui.core.system_manager.base/-base-system-service/refresh-permissions.html"><span class="token function">refreshPermissions</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Refreshes the permission status. Call this after requesting permissions. 권한 상태를 새로고침합니다. 권한 요청 후 이를 호출하세요.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1035337887%2FFunctions%2F-1254007377" anchor-label="registerAdvancedCallback" id="1035337887%2FFunctions%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="register-advanced-callback.html"><span>register</span><wbr></wbr><span>Advanced</span><wbr></wbr><span><span>Callback</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1035337887%2FFunctions%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/RequiresApi.html"><span class="token annotation builtin">RequiresApi</span></a><span class="token punctuation">(</span><span>value<span class="token operator"> = </span><span class="breakable-word"><span class="token constant">31</span></span></span><wbr></wbr><span class="token punctuation">)</span></div><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/RequiresPermission.html"><span class="token annotation builtin">RequiresPermission</span></a><span class="token punctuation">(</span><span>value<span class="token operator"> = </span><span class="breakable-word"><span class="token string">&quot;android.permission.READ_PHONE_STATE&quot;</span></span></span><wbr></wbr><span class="token punctuation">)</span></div></div><span class="token keyword">fun </span><a href="register-advanced-callback.html"><span class="token function">registerAdvancedCallback</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">simSlotIndex<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">executor<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/util/concurrent/Executor.html">Executor</a><span class="token punctuation">, </span></span><span class="parameter ">isGpsOn<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token punctuation">, </span></span><span class="parameter ">onActiveDataSubId<span class="token operator">: </span><span class="token punctuation">(</span>subId<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">onDataConnectionState<span class="token operator">: </span><span class="token punctuation">(</span>state<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span>networkType<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">onCellInfo<span class="token operator">: </span><span class="token punctuation">(</span>currentCellInfo<span class="token operator">: </span><a href="../../kr.open.library.simple_ui.core.system_manager.info.network.telephony.data.current/-current-cell-info/index.html">CurrentCellInfo</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">onSignalStrength<span class="token operator">: </span><span class="token punctuation">(</span>currentSignalStrength<span class="token operator">: </span><a href="../../kr.open.library.simple_ui.core.system_manager.info.network.telephony.data.current/-current-signal-strength/index.html">CurrentSignalStrength</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">onServiceState<span class="token operator">: </span><span class="token punctuation">(</span>currentServiceState<span class="token operator">: </span><a href="../../kr.open.library.simple_ui.core.system_manager.info.network.telephony.data.current/-current-service-state/index.html">CurrentServiceState</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">onCallState<span class="token operator">: </span><span class="token punctuation">(</span>callState<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span>phoneNumber<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">onDisplayInfo<span class="token operator">: </span><span class="token punctuation">(</span>telephonyDisplayInfo<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/telephony/TelephonyDisplayInfo.html">TelephonyDisplayInfo</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">onTelephonyNetworkState<span class="token operator">: </span><span class="token punctuation">(</span>telephonyNetworkState<span class="token operator">: </span><a href="../../kr.open.library.simple_ui.core.system_manager.info.network.telephony.data.state/-telephony-network-state/index.html">TelephonyNetworkState</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Registers advanced telephony callback for specific SIM slot (API 31+).<br><br> 특정 SIM 슬롯에 대한 고급 Telephony 콜백을 등록합니다 (API 31+).<br></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="925891295%2FFunctions%2F-1254007377" anchor-label="registerAdvancedCallbackFromDefaultUSim" id="925891295%2FFunctions%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="register-advanced-callback-from-default-u-sim.html"><span>register</span><wbr></wbr><span>Advanced</span><wbr></wbr><span>Callback</span><wbr></wbr><span>From</span><wbr></wbr><span>Default</span><wbr></wbr><span><span>USim</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="925891295%2FFunctions%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/RequiresApi.html"><span class="token annotation builtin">RequiresApi</span></a><span class="token punctuation">(</span><span>value<span class="token operator"> = </span><span class="breakable-word"><span class="token constant">31</span></span></span><wbr></wbr><span class="token punctuation">)</span></div><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/RequiresPermission.html"><span class="token annotation builtin">RequiresPermission</span></a><span class="token punctuation">(</span><span>value<span class="token operator"> = </span><span class="breakable-word"><span class="token string">&quot;android.permission.READ_PHONE_STATE&quot;</span></span></span><wbr></wbr><span class="token punctuation">)</span></div></div><span class="token keyword">fun </span><a href="register-advanced-callback-from-default-u-sim.html"><span class="token function">registerAdvancedCallbackFromDefaultUSim</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">executor<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/java/util/concurrent/Executor.html">Executor</a><span class="token punctuation">, </span></span><span class="parameter ">isGpsOn<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token punctuation">, </span></span><span class="parameter ">onActiveDataSubId<span class="token operator">: </span><span class="token punctuation">(</span>subId<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">onDataConnectionState<span class="token operator">: </span><span class="token punctuation">(</span>state<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span>networkType<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">onCellInfo<span class="token operator">: </span><span class="token punctuation">(</span>currentCellInfo<span class="token operator">: </span><a href="../../kr.open.library.simple_ui.core.system_manager.info.network.telephony.data.current/-current-cell-info/index.html">CurrentCellInfo</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">onSignalStrength<span class="token operator">: </span><span class="token punctuation">(</span>currentSignalStrength<span class="token operator">: </span><a href="../../kr.open.library.simple_ui.core.system_manager.info.network.telephony.data.current/-current-signal-strength/index.html">CurrentSignalStrength</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">onServiceState<span class="token operator">: </span><span class="token punctuation">(</span>currentServiceState<span class="token operator">: </span><a href="../../kr.open.library.simple_ui.core.system_manager.info.network.telephony.data.current/-current-service-state/index.html">CurrentServiceState</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">onCallState<span class="token operator">: </span><span class="token punctuation">(</span>callState<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span>phoneNumber<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">onDisplayInfo<span class="token operator">: </span><span class="token punctuation">(</span>telephonyDisplayInfo<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/telephony/TelephonyDisplayInfo.html">TelephonyDisplayInfo</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">onTelephonyNetworkState<span class="token operator">: </span><span class="token punctuation">(</span>telephonyNetworkState<span class="token operator">: </span><a href="../../kr.open.library.simple_ui.core.system_manager.info.network.telephony.data.state/-telephony-network-state/index.html">TelephonyNetworkState</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Registers advanced telephony callback for default SIM (API 31+).<br><br> 기본 SIM에 대한 고급 Telephony 콜백을 등록합니다 (API 31+).<br></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1102025664%2FFunctions%2F-1254007377" anchor-label="registerSimpleCallback" id="-1102025664%2FFunctions%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="register-simple-callback.html"><span>register</span><wbr></wbr><span>Simple</span><wbr></wbr><span><span>Callback</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1102025664%2FFunctions%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/RequiresPermission.html"><span class="token annotation builtin">RequiresPermission</span></a><span class="token punctuation">(</span><span>value<span class="token operator"> = </span><span class="breakable-word"><span class="token string">&quot;android.permission.READ_PHONE_STATE&quot;</span></span></span><wbr></wbr><span class="token punctuation">)</span></div></div><span class="token keyword">fun </span><a href="register-simple-callback.html"><span class="token function">registerSimpleCallback</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">handler<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/os/Handler.html">Handler</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">onSignalStrengthChanged<span class="token operator">: </span><span class="token punctuation">(</span><a href="https://developer.android.com/reference/kotlin/android/telephony/SignalStrength.html">SignalStrength</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">onServiceStateChanged<span class="token operator">: </span><span class="token punctuation">(</span><a href="https://developer.android.com/reference/kotlin/android/telephony/ServiceState.html">ServiceState</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">onNetworkStateChanged<span class="token operator">: </span><span class="token punctuation">(</span><a href="../../kr.open.library.simple_ui.core.system_manager.info.network.telephony.data.state/-telephony-network-state/index.html">TelephonyNetworkState</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Registers simple telephony callback for real-time updates (Default SIM).<br><br> 실시간 업데이트를 위한 간단한 telephony 콜백을 등록합니다 (기본 SIM용).<br></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1360063536%2FFunctions%2F-1254007377" anchor-label="setOnActiveDataSubId" id="1360063536%2FFunctions%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-on-active-data-sub-id.html"><span>set</span><wbr></wbr><span>On</span><wbr></wbr><span>Active</span><wbr></wbr><span>Data</span><wbr></wbr><span>Sub</span><wbr></wbr><span><span>Id</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1360063536%2FFunctions%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/RequiresPermission.html"><span class="token annotation builtin">RequiresPermission</span></a><span class="token punctuation">(</span><span>value<span class="token operator"> = </span><span class="breakable-word"><span class="token string">&quot;android.permission.READ_PHONE_STATE&quot;</span></span></span><wbr></wbr><span class="token punctuation">)</span></div></div><span class="token keyword">fun </span><a href="set-on-active-data-sub-id.html"><span class="token function">setOnActiveDataSubId</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">simSlotIndex<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">onActiveDataSubId<span class="token operator">: </span><span class="token punctuation">(</span>subId<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets active data subscription ID callback.<br><br> 활성 데이터 구독 ID 콜백을 설정합니다.<br></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="252966782%2FFunctions%2F-1254007377" anchor-label="setOnCallState" id="252966782%2FFunctions%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-on-call-state.html"><span>set</span><wbr></wbr><span>On</span><wbr></wbr><span>Call</span><wbr></wbr><span><span>State</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="252966782%2FFunctions%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/RequiresPermission.html"><span class="token annotation builtin">RequiresPermission</span></a><span class="token punctuation">(</span><span>value<span class="token operator"> = </span><span class="breakable-word"><span class="token string">&quot;android.permission.READ_PHONE_STATE&quot;</span></span></span><wbr></wbr><span class="token punctuation">)</span></div></div><span class="token keyword">fun </span><a href="set-on-call-state.html"><span class="token function">setOnCallState</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">simSlotIndex<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">onCallState<span class="token operator">: </span><span class="token punctuation">(</span>callState<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span>phoneNumber<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets call state callback.<br><br> 통화 상태 콜백을 설정합니다.<br></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1430863798%2FFunctions%2F-1254007377" anchor-label="setOnCellInfo" id="-1430863798%2FFunctions%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-on-cell-info.html"><span>set</span><wbr></wbr><span>On</span><wbr></wbr><span>Cell</span><wbr></wbr><span><span>Info</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1430863798%2FFunctions%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/RequiresPermission.html"><span class="token annotation builtin">RequiresPermission</span></a><span class="token punctuation">(</span><span>value<span class="token operator"> = </span><span class="breakable-word"><span class="token string">&quot;android.permission.READ_PHONE_STATE&quot;</span></span></span><wbr></wbr><span class="token punctuation">)</span></div></div><span class="token keyword">fun </span><a href="set-on-cell-info.html"><span class="token function">setOnCellInfo</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">simSlotIndex<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">onCellInfo<span class="token operator">: </span><span class="token punctuation">(</span>currentCellInfo<span class="token operator">: </span><a href="../../kr.open.library.simple_ui.core.system_manager.info.network.telephony.data.current/-current-cell-info/index.html">CurrentCellInfo</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets cell info callback.<br><br> 셀 정보 콜백을 설정합니다.<br></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1067763149%2FFunctions%2F-1254007377" anchor-label="setOnDataConnectionState" id="-1067763149%2FFunctions%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-on-data-connection-state.html"><span>set</span><wbr></wbr><span>On</span><wbr></wbr><span>Data</span><wbr></wbr><span>Connection</span><wbr></wbr><span><span>State</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1067763149%2FFunctions%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/RequiresPermission.html"><span class="token annotation builtin">RequiresPermission</span></a><span class="token punctuation">(</span><span>value<span class="token operator"> = </span><span class="breakable-word"><span class="token string">&quot;android.permission.READ_PHONE_STATE&quot;</span></span></span><wbr></wbr><span class="token punctuation">)</span></div></div><span class="token keyword">fun </span><a href="set-on-data-connection-state.html"><span class="token function">setOnDataConnectionState</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">simSlotIndex<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">onDataConnectionState<span class="token operator">: </span><span class="token punctuation">(</span>state<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span>networkType<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets data connection state callback.<br><br> 데이터 연결 상태 콜백을 설정합니다.<br></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="223804695%2FFunctions%2F-1254007377" anchor-label="setOnDisplayState" id="223804695%2FFunctions%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-on-display-state.html"><span>set</span><wbr></wbr><span>On</span><wbr></wbr><span>Display</span><wbr></wbr><span><span>State</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="223804695%2FFunctions%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/RequiresPermission.html"><span class="token annotation builtin">RequiresPermission</span></a><span class="token punctuation">(</span><span>value<span class="token operator"> = </span><span class="breakable-word"><span class="token string">&quot;android.permission.READ_PHONE_STATE&quot;</span></span></span><wbr></wbr><span class="token punctuation">)</span></div></div><span class="token keyword">fun </span><a href="set-on-display-state.html"><span class="token function">setOnDisplayState</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">simSlotIndex<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">onDisplay<span class="token operator">: </span><span class="token punctuation">(</span>telephonyDisplayInfo<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/telephony/TelephonyDisplayInfo.html">TelephonyDisplayInfo</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets display info callback.<br><br> 디스플레이 정보 콜백을 설정합니다.<br></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-337369782%2FFunctions%2F-1254007377" anchor-label="setOnServiceState" id="-337369782%2FFunctions%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-on-service-state.html"><span>set</span><wbr></wbr><span>On</span><wbr></wbr><span>Service</span><wbr></wbr><span><span>State</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-337369782%2FFunctions%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/RequiresPermission.html"><span class="token annotation builtin">RequiresPermission</span></a><span class="token punctuation">(</span><span>value<span class="token operator"> = </span><span class="breakable-word"><span class="token string">&quot;android.permission.READ_PHONE_STATE&quot;</span></span></span><wbr></wbr><span class="token punctuation">)</span></div></div><span class="token keyword">fun </span><a href="set-on-service-state.html"><span class="token function">setOnServiceState</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">simSlotIndex<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">onServiceState<span class="token operator">: </span><span class="token punctuation">(</span>currentServiceState<span class="token operator">: </span><a href="../../kr.open.library.simple_ui.core.system_manager.info.network.telephony.data.current/-current-service-state/index.html">CurrentServiceState</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets service state callback.<br><br> 서비스 상태 콜백을 설정합니다.<br></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1714588438%2FFunctions%2F-1254007377" anchor-label="setOnSignalStrength" id="-1714588438%2FFunctions%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-on-signal-strength.html"><span>set</span><wbr></wbr><span>On</span><wbr></wbr><span>Signal</span><wbr></wbr><span><span>Strength</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1714588438%2FFunctions%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/RequiresPermission.html"><span class="token annotation builtin">RequiresPermission</span></a><span class="token punctuation">(</span><span>value<span class="token operator"> = </span><span class="breakable-word"><span class="token string">&quot;android.permission.READ_PHONE_STATE&quot;</span></span></span><wbr></wbr><span class="token punctuation">)</span></div></div><span class="token keyword">fun </span><a href="set-on-signal-strength.html"><span class="token function">setOnSignalStrength</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">simSlotIndex<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">onSignalStrength<span class="token operator">: </span><span class="token punctuation">(</span>currentSignalStrength<span class="token operator">: </span><a href="../../kr.open.library.simple_ui.core.system_manager.info.network.telephony.data.current/-current-signal-strength/index.html">CurrentSignalStrength</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets signal strength callback.<br><br> 신호 강도 콜백을 설정합니다.<br></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1182184672%2FFunctions%2F-1254007377" anchor-label="setOnTelephonyNetworkType" id="1182184672%2FFunctions%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-on-telephony-network-type.html"><span>set</span><wbr></wbr><span>On</span><wbr></wbr><span>Telephony</span><wbr></wbr><span>Network</span><wbr></wbr><span><span>Type</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1182184672%2FFunctions%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-on-telephony-network-type.html"><span class="token function">setOnTelephonyNetworkType</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">simSlotIndex<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">onTelephonyNetworkType<span class="token operator">: </span><span class="token punctuation">(</span>telephonyNetworkState<span class="token operator">: </span><a href="../../kr.open.library.simple_ui.core.system_manager.info.network.telephony.data.state/-telephony-network-state/index.html">TelephonyNetworkState</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets telephony network type callback.<br><br> 통신망 타입 콜백을 설정합니다.<br></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="142115372%2FFunctions%2F-1254007377" anchor-label="unregisterAdvancedCallback" id="142115372%2FFunctions%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="unregister-advanced-callback.html"><span>unregister</span><wbr></wbr><span>Advanced</span><wbr></wbr><span><span>Callback</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="142115372%2FFunctions%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/RequiresApi.html"><span class="token annotation builtin">RequiresApi</span></a><span class="token punctuation">(</span><span>value<span class="token operator"> = </span><span class="breakable-word"><span class="token constant">31</span></span></span><wbr></wbr><span class="token punctuation">)</span></div></div><span class="token keyword">fun </span><a href="unregister-advanced-callback.html"><span class="token function">unregisterAdvancedCallback</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">simSlotIndex<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Unregisters callback for specific SIM slot (API 31+).<br><br> 특정 SIM 슬롯의 콜백을 해제합니다 (API 31+).<br></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1431943042%2FFunctions%2F-1254007377" anchor-label="unregisterSimpleCallback" id="-1431943042%2FFunctions%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="unregister-simple-callback.html"><span>unregister</span><wbr></wbr><span>Simple</span><wbr></wbr><span><span>Callback</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1431943042%2FFunctions%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="unregister-simple-callback.html"><span class="token function">unregisterSimpleCallback</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Unregisters simple telephony callback.<br><br> 간단한 telephony 콜백을 해제합니다.<br></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>© 2025 Copyright</div>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

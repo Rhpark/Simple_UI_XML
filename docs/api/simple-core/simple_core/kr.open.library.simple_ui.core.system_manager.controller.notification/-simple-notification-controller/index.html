@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>SimpleNotificationController</title>
+    <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
+        <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+      if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      } else {
+        const savedDarkMode = JSON.parse(storage)
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/safe-local-storage_blocking.js"></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../../ui-kit/ui-kit.min.js" defer="defer"></script>
+</head>
+<body>
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+            <a class="library-name--link" href="../../../index.html" tabindex="1">
+                    simple_core
+            </a>
+        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle"
+                type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">
+        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector jvm-like" data-active="" aria-pressed="true"
+                        data-filter=":simple_core/main">androidJvm</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox"
+                        data-role="dropdown-toggle"
+                        aria-controls="platform-tags-listbox"
+                        aria-haspopup="listbox"
+                        aria-expanded="false"
+                        aria-label="Toggle source sets"
+                ></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":simple_core/main"
+                                       data-filter=":simple_core/main"/>
+                                <span class="checkbox--icon"></span>
+                                androidJvm
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button"
+                    type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config='{"defaultSize": 280, "minSize": 200, "maxSize": 400}'>
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list"
+                    data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    simple_core
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" data-page-type="classlike" id="content" pageIds="simple_core::kr.open.library.simple_ui.core.system_manager.controller.notification/SimpleNotificationController///PointingToDeclaration//-1254007377">
+  <div class="breadcrumbs"><a href="../../../index.html">simple_core</a><span class="delimiter">/</span><a href="../index.html">kr.open.library.simple_ui.core.system_manager.controller.notification</a><span class="delimiter">/</span><span class="current">SimpleNotificationController</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Simple</span><wbr></wbr><span>Notification</span><wbr></wbr><span><span>Controller</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">class </span><a href="index.html">SimpleNotificationController</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">context<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/content/Context.html">Context</a><span class="token punctuation">, </span></span><span class="parameter ">showType<span class="token operator">: </span><a href="../../kr.open.library.simple_ui.core.system_manager.controller.notification.vo/-simple-notification-type/index.html">SimpleNotificationType</a></span></span><span class="token punctuation">)</span> : <a href="../../kr.open.library.simple_ui.core.system_manager.base/-base-system-service/index.html">BaseSystemService</a></div><p class="paragraph">Controller for managing Android notifications with support for various styles and features.<br> Provides methods for creating channels, displaying notifications, and managing progress notifications.<br><br> 다양한 스타일과 기능을 지원하는 Android 알림 관리 컨트롤러입니다.<br> 채널 생성, 알림 표시, 진행률 알림 관리를 위한 메서드를 제공합니다.<br></p><p class="paragraph">Required permission:<br> <code class="lang-kotlin">&lt;uses-permission android:name=&quot;android.permission.POST_NOTIFICATIONS&quot; /&gt;</code><br><br> 필수 권한:<br> <code class="lang-kotlin">&lt;uses-permission android:name=&quot;android.permission.POST_NOTIFICATIONS&quot; /&gt;</code><br></p><p class="paragraph">Notification Importance Levels:<br></p><ul><li><p class="paragraph"><code class="lang-kotlin">IMPORTANCE_HIGH</code>: Urgent, makes sound and appears as heads-up<br></p></li><li><p class="paragraph"><code class="lang-kotlin">IMPORTANCE_DEFAULT</code>: High priority, makes sound<br></p></li><li><p class="paragraph"><code class="lang-kotlin">IMPORTANCE_LOW</code>: Medium priority, no sound<br></p></li><li><p class="paragraph"><code class="lang-kotlin">IMPORTANCE_MIN</code>: Low priority, no sound and not shown in status bar<br><br> 알림 중요도 레벨:<br></p></li><li><p class="paragraph"><code class="lang-kotlin">IMPORTANCE_HIGH</code>: 긴급, 알림음이 울리며 헤즈업으로 표시<br></p></li><li><p class="paragraph"><code class="lang-kotlin">IMPORTANCE_DEFAULT</code>: 높은 중요도, 알림음이 울림<br></p></li><li><p class="paragraph"><code class="lang-kotlin">IMPORTANCE_LOW</code>: 중간 중요도, 알림음이 울리지 않음<br></p></li><li><p class="paragraph"><code class="lang-kotlin">IMPORTANCE_MIN</code>: 낮은 중요도, 알림음이 없고 상태표시줄에 표시되지 않음<br></p></li></ul><h4 class="tableheader">Parameters</h4><div class="table"><div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>context</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The application context.<br><br>     애플리케이션 컨텍스트.</p></div></div></div></div><div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>show</span><wbr></wbr><span><span>Type</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Action type when notification is clicked (Activity, Service, Broadcast).<br><br>     알림 클릭 시 동작 유형 (Activity, Service, Broadcast).</p></div></div></div></div></div></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="tableheader">Constructors</h2>
+        <div class="table"><a data-name="1717822255%2FConstructors%2F-1254007377" anchor-label="SimpleNotificationController" id="1717822255%2FConstructors%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-togglable="CONSTRUCTOR" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-simple-notification-controller.html"><span>Simple</span><wbr></wbr><span>Notification</span><wbr></wbr><span><span>Controller</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1717822255%2FConstructors%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">context<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/content/Context.html">Context</a><span class="token punctuation">, </span></span><span class="parameter ">showType<span class="token operator">: </span><a href="../../kr.open.library.simple_ui.core.system_manager.controller.notification.vo/-simple-notification-type/index.html">SimpleNotificationType</a></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="TYPE">
+        <h2 class="tableheader">Types</h2>
+        <div class="table"><a data-name="802984297%2FClasslikes%2F-1254007377" anchor-label="Companion" id="802984297%2FClasslikes%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-companion/index.html"><span><span>Companion</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="802984297%2FClasslikes%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">object </span><a href="-companion/index.html">Companion</a></div><div class="brief "><p class="paragraph">Companion object containing default channel constants.<br><br> 기본 채널 상수를 포함하는 컴패니언 객체입니다.<br></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="PROPERTY">
+        <h2 class="tableheader">Properties</h2>
+        <div class="table"><a data-name="597058528%2FProperties%2F-1254007377" anchor-label="notificationManager" id="597058528%2FProperties%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="notification-manager.html"><span>notification</span><wbr></wbr><span><span>Manager</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="597058528%2FProperties%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">val </span><a href="notification-manager.html">notificationManager</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/app/NotificationManager.html">NotificationManager</a></div><div class="brief "><p class="paragraph">Lazy-initialized NotificationManager instance for managing notifications.<br><br> 알림 관리를 위한 지연 초기화된 NotificationManager 인스턴스입니다.<br></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="tableheader">Functions</h2>
+        <div class="table"><a data-name="1626395963%2FFunctions%2F-1254007377" anchor-label="cancelAll" id="1626395963%2FFunctions%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="cancel-all.html"><span>cancel</span><wbr></wbr><span><span>All</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1626395963%2FFunctions%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="cancel-all.html"><span class="token function">cancelAll</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Cancels all active notifications.<br><br> 모든 활성 알림을 취소합니다.<br></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1384418539%2FFunctions%2F-1254007377" anchor-label="cancelNotification" id="1384418539%2FFunctions%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="cancel-notification.html"><span>cancel</span><wbr></wbr><span><span>Notification</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1384418539%2FFunctions%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="cancel-notification.html"><span class="token function">cancelNotification</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">tag<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">notificationId<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Cancels a specific notification by ID.<br><br> ID로 특정 알림을 취소합니다.<br></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-498450626%2FFunctions%2F-1254007377" anchor-label="cleanup" id="-498450626%2FFunctions%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="cleanup.html"><span><span>cleanup</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-498450626%2FFunctions%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="cleanup.html"><span class="token function">cleanup</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Cleans up resources. Should be called when Activity/Service is destroyed.<br><br> 리소스를 정리합니다. Activity/Service가 종료될 때 호출해야 합니다.<br></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-932237938%2FFunctions%2F-1254007377" anchor-label="completeProgress" id="-932237938%2FFunctions%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="complete-progress.html"><span>complete</span><wbr></wbr><span><span>Progress</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-932237938%2FFunctions%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="complete-progress.html"><span class="token function">completeProgress</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">notificationId<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">completedContent<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Marks a progress notification as complete and optionally updates the message.<br><br> 진행률 알림을 완료 상태로 표시하고 선택적으로 메시지를 업데이트합니다.<br></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1035435550%2FFunctions%2F-1254007377" anchor-label="createChannel" id="1035435550%2FFunctions%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="create-channel.html"><span>create</span><wbr></wbr><span><span>Channel</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1035435550%2FFunctions%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="create-channel.html"><span class="token function">createChannel</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">notificationChannel<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/app/NotificationChannel.html">NotificationChannel</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Creates and registers a NotificationChannel, then sets it as the current channel.<br><br> NotificationChannel을 생성 및 등록하고 현재 채널로 설정합니다.<br></p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="create-channel.html"><span class="token function">createChannel</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">channelId<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">channelName<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">importance<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">description<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Creates and registers a notification channel with the specified parameters.<br><br> 지정된 파라미터로 알림 채널을 생성하여 등록합니다.<br></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-194256065%2FFunctions%2F-1254007377" anchor-label="getBuilder" id="-194256065%2FFunctions%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-builder.html"><span>get</span><wbr></wbr><span><span>Builder</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-194256065%2FFunctions%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="get-builder.html"><span class="token function">getBuilder</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">notificationOption<span class="token operator">: </span><a href="../../kr.open.library.simple_ui.core.system_manager.controller.notification.vo/-simple-notification-option-vo/index.html">SimpleNotificationOptionVo</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/core/app/NotificationCompat.Builder.html">NotificationCompat.Builder</a></div><div class="brief "><p class="paragraph">Creates a notification builder with standard configuration.<br><br> 표준 구성으로 알림 빌더를 생성합니다.<br></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1826725341%2FFunctions%2F-1254007377" anchor-label="getClickShowActivityPendingIntent" id="-1826725341%2FFunctions%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-click-show-activity-pending-intent.html"><span>get</span><wbr></wbr><span>Click</span><wbr></wbr><span>Show</span><wbr></wbr><span>Activity</span><wbr></wbr><span>Pending</span><wbr></wbr><span><span>Intent</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1826725341%2FFunctions%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="get-click-show-activity-pending-intent.html"><span class="token function">getClickShowActivityPendingIntent</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">pendingIntentOption<span class="token operator">: </span><a href="../../kr.open.library.simple_ui.core.system_manager.controller.notification.vo/-simple-pending-intent-option-vo/index.html">SimplePendingIntentOptionVo</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/app/PendingIntent.html">PendingIntent</a></div><div class="brief "><p class="paragraph">Creates a PendingIntent that launches an Activity when triggered.<br><br> 트리거될 때 Activity를 실행하는 PendingIntent를 생성합니다.<br></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1589639533%2FFunctions%2F-1254007377" anchor-label="getClickShowBroadcastPendingIntent" id="1589639533%2FFunctions%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-click-show-broadcast-pending-intent.html"><span>get</span><wbr></wbr><span>Click</span><wbr></wbr><span>Show</span><wbr></wbr><span>Broadcast</span><wbr></wbr><span>Pending</span><wbr></wbr><span><span>Intent</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1589639533%2FFunctions%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="get-click-show-broadcast-pending-intent.html"><span class="token function">getClickShowBroadcastPendingIntent</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">pendingIntentOption<span class="token operator">: </span><a href="../../kr.open.library.simple_ui.core.system_manager.controller.notification.vo/-simple-pending-intent-option-vo/index.html">SimplePendingIntentOptionVo</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/app/PendingIntent.html">PendingIntent</a></div><div class="brief "><p class="paragraph">Creates a PendingIntent that sends a Broadcast when triggered.<br><br> 트리거될 때 Broadcast를 전송하는 PendingIntent를 생성합니다.<br></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-963896991%2FFunctions%2F-1254007377" anchor-label="getClickShowServicePendingIntent" id="-963896991%2FFunctions%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-click-show-service-pending-intent.html"><span>get</span><wbr></wbr><span>Click</span><wbr></wbr><span>Show</span><wbr></wbr><span>Service</span><wbr></wbr><span>Pending</span><wbr></wbr><span><span>Intent</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-963896991%2FFunctions%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="get-click-show-service-pending-intent.html"><span class="token function">getClickShowServicePendingIntent</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">pendingIntentOption<span class="token operator">: </span><a href="../../kr.open.library.simple_ui.core.system_manager.controller.notification.vo/-simple-pending-intent-option-vo/index.html">SimplePendingIntentOptionVo</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/app/PendingIntent.html">PendingIntent</a></div><div class="brief "><p class="paragraph">Creates a PendingIntent that starts a Service when triggered.<br><br> 트리거될 때 Service를 시작하는 PendingIntent를 생성합니다.<br></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1381586301%2FFunctions%2F-1254007377" anchor-label="getPermissionInfo" id="-1381586301%2FFunctions%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../kr.open.library.simple_ui.core.system_manager.base/-base-system-service/get-permission-info.html"><span>get</span><wbr></wbr><span>Permission</span><wbr></wbr><span><span>Info</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1381586301%2FFunctions%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../kr.open.library.simple_ui.core.system_manager.base/-base-system-service/get-permission-info.html"><span class="token function">getPermissionInfo</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.collections/-map/index.html">Map</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Gets information about required permissions and their status. 필요한 권한과 그 상태에 대한 정보를 가져옵니다.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1953407077%2FFunctions%2F-1254007377" anchor-label="getProgressBuilder" id="1953407077%2FFunctions%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-progress-builder.html"><span>get</span><wbr></wbr><span>Progress</span><wbr></wbr><span><span>Builder</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1953407077%2FFunctions%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="get-progress-builder.html"><span class="token function">getProgressBuilder</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">notificationOption<span class="token operator">: </span><a href="../../kr.open.library.simple_ui.core.system_manager.controller.notification.vo/-simple-progress-notification-option-vo/index.html">SimpleProgressNotificationOptionVo</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/core/app/NotificationCompat.Builder.html">NotificationCompat.Builder</a></div><div class="brief "><p class="paragraph">Creates a notification builder with progress bar configuration.<br><br> 진행률 바 구성으로 알림 빌더를 생성합니다.<br></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1026178000%2FFunctions%2F-1254007377" anchor-label="isPermissionGranted" id="-1026178000%2FFunctions%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../kr.open.library.simple_ui.core.system_manager.base/-base-system-service/is-permission-granted.html"><span>is</span><wbr></wbr><span>Permission</span><wbr></wbr><span><span>Granted</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1026178000%2FFunctions%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../kr.open.library.simple_ui.core.system_manager.base/-base-system-service/is-permission-granted.html"><span class="token function">isPermissionGranted</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">permission<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Checks if a specific permission is granted. 특정 권한이 부여되었는지 확인합니다.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1210247355%2FFunctions%2F-1254007377" anchor-label="notify" id="1210247355%2FFunctions%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="notify.html"><span><span>notify</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1210247355%2FFunctions%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="notify.html"><span class="token function">notify</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">notificationId<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">build<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/app/Notification.html">Notification</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Directly displays a notification using a pre-built Notification object.<br><br> 미리 빌드된 Notification 객체를 사용하여 직접 알림을 표시합니다.<br></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1305458555%2FFunctions%2F-1254007377" anchor-label="onDestroy" id="1305458555%2FFunctions%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../kr.open.library.simple_ui.core.system_manager.base/-base-system-service/on-destroy.html"><span>on</span><wbr></wbr><span><span>Destroy</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1305458555%2FFunctions%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../../kr.open.library.simple_ui.core.system_manager.base/-base-system-service/on-destroy.html"><span class="token function">onDestroy</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Called when the service is being destroyed. Override to perform cleanup. 서비스가 소멸될 때 호출됩니다. 정리 작업을 수행하려면 재정의하세요.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1576261413%2FFunctions%2F-1254007377" anchor-label="refreshPermissions" id="-1576261413%2FFunctions%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../kr.open.library.simple_ui.core.system_manager.base/-base-system-service/refresh-permissions.html"><span>refresh</span><wbr></wbr><span><span>Permissions</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1576261413%2FFunctions%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../kr.open.library.simple_ui.core.system_manager.base/-base-system-service/refresh-permissions.html"><span class="token function">refreshPermissions</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Refreshes the permission status. Call this after requesting permissions. 권한 상태를 새로고침합니다. 권한 요청 후 이를 호출하세요.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="807073314%2FFunctions%2F-1254007377" anchor-label="showNotification" id="807073314%2FFunctions%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="show-notification.html"><span>show</span><wbr></wbr><span><span>Notification</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="807073314%2FFunctions%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="show-notification.html"><span class="token function">showNotification</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">notificationOption<span class="token operator">: </span><a href="../../kr.open.library.simple_ui.core.system_manager.controller.notification.vo/-simple-notification-option-vo/index.html">SimpleNotificationOptionVo</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Displays a notification with the appropriate style based on the option.<br><br> 옵션에 따라 적절한 스타일로 알림을 표시합니다.<br></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="548826877%2FFunctions%2F-1254007377" anchor-label="showNotificationBigImage" id="548826877%2FFunctions%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="show-notification-big-image.html"><span>show</span><wbr></wbr><span>Notification</span><wbr></wbr><span>Big</span><wbr></wbr><span><span>Image</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="548826877%2FFunctions%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="show-notification-big-image.html"><span class="token function"><strike>showNotificationBigImage</strike></span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">notificationOption<span class="token operator">: </span><a href="../../kr.open.library.simple_ui.core.system_manager.controller.notification.vo/-simple-notification-option-vo/index.html">SimpleNotificationOptionVo</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Displays a notification with BigPicture style.<br><br> BigPicture 스타일로 알림을 표시합니다.<br></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="466585813%2FFunctions%2F-1254007377" anchor-label="showNotificationBigText" id="466585813%2FFunctions%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="show-notification-big-text.html"><span>show</span><wbr></wbr><span>Notification</span><wbr></wbr><span>Big</span><wbr></wbr><span><span>Text</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="466585813%2FFunctions%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="show-notification-big-text.html"><span class="token function"><strike>showNotificationBigText</strike></span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">notificationOption<span class="token operator">: </span><a href="../../kr.open.library.simple_ui.core.system_manager.controller.notification.vo/-simple-notification-option-vo/index.html">SimpleNotificationOptionVo</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Displays a notification with BigText style.<br><br> BigText 스타일로 알림을 표시합니다.<br></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1987997182%2FFunctions%2F-1254007377" anchor-label="showProgressNotification" id="-1987997182%2FFunctions%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="show-progress-notification.html"><span>show</span><wbr></wbr><span>Progress</span><wbr></wbr><span><span>Notification</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1987997182%2FFunctions%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="show-progress-notification.html"><span class="token function">showProgressNotification</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">simpleProgressNotificationOption<span class="token operator">: </span><a href="../../kr.open.library.simple_ui.core.system_manager.controller.notification.vo/-simple-progress-notification-option-vo/index.html">SimpleProgressNotificationOptionVo</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Creates and displays a progress notification.<br><br> 진행률 알림을 생성하고 표시합니다.<br></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="100409629%2FFunctions%2F-1254007377" anchor-label="updateProgress" id="100409629%2FFunctions%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+          <div class="table-row table-row_content" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-progress.html"><span>update</span><wbr></wbr><span><span>Progress</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="100409629%2FFunctions%2F-1254007377"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":simple_core/main"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-progress.html"><span class="token function">updateProgress</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">notificationId<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">progressPercent<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Updates the progress percentage of an existing progress notification.<br><br> 기존 진행률 알림의 진행률을 업데이트합니다.<br></p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>© 2025 Copyright</div>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

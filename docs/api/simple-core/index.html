@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>simple_core</title>
+    <link href="images/logo-icon.svg" rel="icon" type="image/svg">
+        <script>var pathToRoot = "";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+      if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      } else {
+        const savedDarkMode = JSON.parse(storage)
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async="async"></script>
+<script type="text/javascript" src="scripts/sourceset_dependencies.js" async="async"></script>
+<link href="styles/style.css" rel="Stylesheet">
+<link href="styles/main.css" rel="Stylesheet">
+<link href="styles/prism.css" rel="Stylesheet">
+<link href="styles/logo-styles.css" rel="Stylesheet">
+<link href="ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="scripts/safe-local-storage_blocking.js"></script>
+<script type="text/javascript" src="scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="ui-kit/ui-kit.min.js" defer="defer"></script>
+</head>
+<body>
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+            <a class="library-name--link" href="index.html" tabindex="1">
+                    simple_core
+            </a>
+        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle"
+                type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">
+        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector jvm-like" data-active="" aria-pressed="true"
+                        data-filter=":simple_core/main">androidJvm</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox"
+                        data-role="dropdown-toggle"
+                        aria-controls="platform-tags-listbox"
+                        aria-haspopup="listbox"
+                        aria-expanded="false"
+                        aria-label="Toggle source sets"
+                ></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":simple_core/main"
+                                       data-filter=":simple_core/main"/>
+                                <span class="checkbox--icon"></span>
+                                androidJvm
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button"
+                    type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config='{"defaultSize": 280, "minSize": 200, "maxSize": 400}'>
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list"
+                    data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    simple_core
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" id="content" pageIds="simple_core::////PointingToDeclaration//-1254007377">
+  <div class="breadcrumbs"></div>
+  <div class="cover ">
+    <h1 class="cover"><span>simple_</span><wbr></wbr><span>core</span></h1>
+  </div>
+  <h2 class="">Packages</h2>
+  <div class="table"><a data-name="-1999595294%2FPackages%2F-1254007377" anchor-label="[root]" id="-1999595294%2FPackages%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="simple_core/[root]/index.html">[root]</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1999595294%2FPackages%2F-1254007377"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">androidJvm</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="-2013875860%2FPackages%2F-1254007377" anchor-label="kr.open.library.simple_ui.core.extensions.bundle" id="-2013875860%2FPackages%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="simple_core/kr.open.library.simple_ui.core.extensions.bundle/index.html">kr.open.library.simple_ui.core.extensions.bundle</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2013875860%2FPackages%2F-1254007377"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">androidJvm</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="-658314656%2FPackages%2F-1254007377" anchor-label="kr.open.library.simple_ui.core.extensions.conditional" id="-658314656%2FPackages%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="simple_core/kr.open.library.simple_ui.core.extensions.conditional/index.html">kr.open.library.simple_ui.core.extensions.conditional</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-658314656%2FPackages%2F-1254007377"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">androidJvm</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="-1519610984%2FPackages%2F-1254007377" anchor-label="kr.open.library.simple_ui.core.extensions.date" id="-1519610984%2FPackages%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="simple_core/kr.open.library.simple_ui.core.extensions.date/index.html">kr.open.library.simple_ui.core.extensions.date</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1519610984%2FPackages%2F-1254007377"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">androidJvm</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="-863318628%2FPackages%2F-1254007377" anchor-label="kr.open.library.simple_ui.core.extensions.display" id="-863318628%2FPackages%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="simple_core/kr.open.library.simple_ui.core.extensions.display/index.html">kr.open.library.simple_ui.core.extensions.display</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-863318628%2FPackages%2F-1254007377"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">androidJvm</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="-1144847050%2FPackages%2F-1254007377" anchor-label="kr.open.library.simple_ui.core.extensions.round_to" id="-1144847050%2FPackages%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="simple_core/kr.open.library.simple_ui.core.extensions.round_to/index.html">kr.open.library.simple_ui.core.extensions.round_to</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1144847050%2FPackages%2F-1254007377"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">androidJvm</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="-1547142085%2FPackages%2F-1254007377" anchor-label="kr.open.library.simple_ui.core.extensions.string" id="-1547142085%2FPackages%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="simple_core/kr.open.library.simple_ui.core.extensions.string/index.html">kr.open.library.simple_ui.core.extensions.string</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1547142085%2FPackages%2F-1254007377"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">androidJvm</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="1694449143%2FPackages%2F-1254007377" anchor-label="kr.open.library.simple_ui.core.extensions.time" id="1694449143%2FPackages%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="simple_core/kr.open.library.simple_ui.core.extensions.time/index.html">kr.open.library.simple_ui.core.extensions.time</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1694449143%2FPackages%2F-1254007377"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">androidJvm</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="-1128730806%2FPackages%2F-1254007377" anchor-label="kr.open.library.simple_ui.core.extensions.trycatch" id="-1128730806%2FPackages%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="simple_core/kr.open.library.simple_ui.core.extensions.trycatch/index.html">kr.open.library.simple_ui.core.extensions.trycatch</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1128730806%2FPackages%2F-1254007377"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">androidJvm</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="1335325480%2FPackages%2F-1254007377" anchor-label="kr.open.library.simple_ui.core.local.base" id="1335325480%2FPackages%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="simple_core/kr.open.library.simple_ui.core.local.base/index.html">kr.open.library.simple_ui.core.local.base</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1335325480%2FPackages%2F-1254007377"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">androidJvm</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="-944136890%2FPackages%2F-1254007377" anchor-label="kr.open.library.simple_ui.core.logcat" id="-944136890%2FPackages%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="simple_core/kr.open.library.simple_ui.core.logcat/index.html">kr.open.library.simple_ui.core.logcat</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-944136890%2FPackages%2F-1254007377"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">androidJvm</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="1747745006%2FPackages%2F-1254007377" anchor-label="kr.open.library.simple_ui.core.logcat.config" id="1747745006%2FPackages%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="simple_core/kr.open.library.simple_ui.core.logcat.config/index.html">kr.open.library.simple_ui.core.logcat.config</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1747745006%2FPackages%2F-1254007377"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">androidJvm</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="477522496%2FPackages%2F-1254007377" anchor-label="kr.open.library.simple_ui.core.logcat.extensions" id="477522496%2FPackages%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="simple_core/kr.open.library.simple_ui.core.logcat.extensions/index.html">kr.open.library.simple_ui.core.logcat.extensions</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="477522496%2FPackages%2F-1254007377"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">androidJvm</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="-844207791%2FPackages%2F-1254007377" anchor-label="kr.open.library.simple_ui.core.logcat.internal.file_writer" id="-844207791%2FPackages%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="simple_core/kr.open.library.simple_ui.core.logcat.internal.file_writer/index.html">kr.open.library.simple_ui.core.logcat.internal.file_writer</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-844207791%2FPackages%2F-1254007377"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">androidJvm</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="-376183534%2FPackages%2F-1254007377" anchor-label="kr.open.library.simple_ui.core.logcat.internal.file_writer.base" id="-376183534%2FPackages%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="simple_core/kr.open.library.simple_ui.core.logcat.internal.file_writer.base/index.html">kr.open.library.simple_ui.core.logcat.internal.file_writer.base</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-376183534%2FPackages%2F-1254007377"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">androidJvm</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="1557484385%2FPackages%2F-1254007377" anchor-label="kr.open.library.simple_ui.core.logcat.internal.filter" id="1557484385%2FPackages%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="simple_core/kr.open.library.simple_ui.core.logcat.internal.filter/index.html">kr.open.library.simple_ui.core.logcat.internal.filter</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1557484385%2FPackages%2F-1254007377"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">androidJvm</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="1266468098%2FPackages%2F-1254007377" anchor-label="kr.open.library.simple_ui.core.logcat.internal.filter.base" id="1266468098%2FPackages%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="simple_core/kr.open.library.simple_ui.core.logcat.internal.filter.base/index.html">kr.open.library.simple_ui.core.logcat.internal.filter.base</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1266468098%2FPackages%2F-1254007377"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">androidJvm</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="-234243387%2FPackages%2F-1254007377" anchor-label="kr.open.library.simple_ui.core.logcat.internal.formatter" id="-234243387%2FPackages%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="simple_core/kr.open.library.simple_ui.core.logcat.internal.formatter/index.html">kr.open.library.simple_ui.core.logcat.internal.formatter</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-234243387%2FPackages%2F-1254007377"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">androidJvm</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="1150639134%2FPackages%2F-1254007377" anchor-label="kr.open.library.simple_ui.core.logcat.internal.formatter.base" id="1150639134%2FPackages%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="simple_core/kr.open.library.simple_ui.core.logcat.internal.formatter.base/index.html">kr.open.library.simple_ui.core.logcat.internal.formatter.base</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1150639134%2FPackages%2F-1254007377"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">androidJvm</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="1655288806%2FPackages%2F-1254007377" anchor-label="kr.open.library.simple_ui.core.logcat.internal.stacktrace" id="1655288806%2FPackages%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="simple_core/kr.open.library.simple_ui.core.logcat.internal.stacktrace/index.html">kr.open.library.simple_ui.core.logcat.internal.stacktrace</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1655288806%2FPackages%2F-1254007377"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">androidJvm</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="1985816129%2FPackages%2F-1254007377" anchor-label="kr.open.library.simple_ui.core.logcat.model" id="1985816129%2FPackages%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="simple_core/kr.open.library.simple_ui.core.logcat.model/index.html">kr.open.library.simple_ui.core.logcat.model</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1985816129%2FPackages%2F-1254007377"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">androidJvm</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="1896442032%2FPackages%2F-1254007377" anchor-label="kr.open.library.simple_ui.core.logcat.runtime" id="1896442032%2FPackages%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="simple_core/kr.open.library.simple_ui.core.logcat.runtime/index.html">kr.open.library.simple_ui.core.logcat.runtime</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1896442032%2FPackages%2F-1254007377"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">androidJvm</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="-1136265165%2FPackages%2F-1254007377" anchor-label="kr.open.library.simple_ui.core.permissions.extentions" id="-1136265165%2FPackages%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="simple_core/kr.open.library.simple_ui.core.permissions.extentions/index.html">kr.open.library.simple_ui.core.permissions.extentions</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1136265165%2FPackages%2F-1254007377"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">androidJvm</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="737794647%2FPackages%2F-1254007377" anchor-label="kr.open.library.simple_ui.core.permissions.vo" id="737794647%2FPackages%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="simple_core/kr.open.library.simple_ui.core.permissions.vo/index.html">kr.open.library.simple_ui.core.permissions.vo</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="737794647%2FPackages%2F-1254007377"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">androidJvm</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="-498319534%2FPackages%2F-1254007377" anchor-label="kr.open.library.simple_ui.core.system_manager.base" id="-498319534%2FPackages%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="simple_core/kr.open.library.simple_ui.core.system_manager.base/index.html">kr.open.library.simple_ui.core.system_manager.base</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-498319534%2FPackages%2F-1254007377"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">androidJvm</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="148007424%2FPackages%2F-1254007377" anchor-label="kr.open.library.simple_ui.core.system_manager.controller.alarm" id="148007424%2FPackages%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="simple_core/kr.open.library.simple_ui.core.system_manager.controller.alarm/index.html">kr.open.library.simple_ui.core.system_manager.controller.alarm</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="148007424%2FPackages%2F-1254007377"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">androidJvm</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="768666465%2FPackages%2F-1254007377" anchor-label="kr.open.library.simple_ui.core.system_manager.controller.alarm.receiver" id="768666465%2FPackages%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="simple_core/kr.open.library.simple_ui.core.system_manager.controller.alarm.receiver/index.html">kr.open.library.simple_ui.core.system_manager.controller.alarm.receiver</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="768666465%2FPackages%2F-1254007377"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">androidJvm</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="588874667%2FPackages%2F-1254007377" anchor-label="kr.open.library.simple_ui.core.system_manager.controller.alarm.vo" id="588874667%2FPackages%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="simple_core/kr.open.library.simple_ui.core.system_manager.controller.alarm.vo/index.html">kr.open.library.simple_ui.core.system_manager.controller.alarm.vo</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="588874667%2FPackages%2F-1254007377"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">androidJvm</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="988086112%2FPackages%2F-1254007377" anchor-label="kr.open.library.simple_ui.core.system_manager.controller.notification" id="988086112%2FPackages%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="simple_core/kr.open.library.simple_ui.core.system_manager.controller.notification/index.html">kr.open.library.simple_ui.core.system_manager.controller.notification</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="988086112%2FPackages%2F-1254007377"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">androidJvm</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="598635083%2FPackages%2F-1254007377" anchor-label="kr.open.library.simple_ui.core.system_manager.controller.notification.vo" id="598635083%2FPackages%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="simple_core/kr.open.library.simple_ui.core.system_manager.controller.notification.vo/index.html">kr.open.library.simple_ui.core.system_manager.controller.notification.vo</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="598635083%2FPackages%2F-1254007377"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">androidJvm</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="-1889921906%2FPackages%2F-1254007377" anchor-label="kr.open.library.simple_ui.core.system_manager.controller.vibrator" id="-1889921906%2FPackages%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="simple_core/kr.open.library.simple_ui.core.system_manager.controller.vibrator/index.html">kr.open.library.simple_ui.core.system_manager.controller.vibrator</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1889921906%2FPackages%2F-1254007377"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">androidJvm</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="-998545398%2FPackages%2F-1254007377" anchor-label="kr.open.library.simple_ui.core.system_manager.controller.wifi" id="-998545398%2FPackages%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="simple_core/kr.open.library.simple_ui.core.system_manager.controller.wifi/index.html">kr.open.library.simple_ui.core.system_manager.controller.wifi</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-998545398%2FPackages%2F-1254007377"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">androidJvm</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="864543637%2FPackages%2F-1254007377" anchor-label="kr.open.library.simple_ui.core.system_manager.extensions" id="864543637%2FPackages%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="simple_core/kr.open.library.simple_ui.core.system_manager.extensions/index.html">kr.open.library.simple_ui.core.system_manager.extensions</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="864543637%2FPackages%2F-1254007377"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">androidJvm</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="1719122766%2FPackages%2F-1254007377" anchor-label="kr.open.library.simple_ui.core.system_manager.info.battery" id="1719122766%2FPackages%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="simple_core/kr.open.library.simple_ui.core.system_manager.info.battery/index.html">kr.open.library.simple_ui.core.system_manager.info.battery</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1719122766%2FPackages%2F-1254007377"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">androidJvm</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="-666021595%2FPackages%2F-1254007377" anchor-label="kr.open.library.simple_ui.core.system_manager.info.battery.power" id="-666021595%2FPackages%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="simple_core/kr.open.library.simple_ui.core.system_manager.info.battery.power/index.html">kr.open.library.simple_ui.core.system_manager.info.battery.power</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-666021595%2FPackages%2F-1254007377"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">androidJvm</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="-610891368%2FPackages%2F-1254007377" anchor-label="kr.open.library.simple_ui.core.system_manager.info.location" id="-610891368%2FPackages%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="simple_core/kr.open.library.simple_ui.core.system_manager.info.location/index.html">kr.open.library.simple_ui.core.system_manager.info.location</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-610891368%2FPackages%2F-1254007377"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">androidJvm</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="1458976602%2FPackages%2F-1254007377" anchor-label="kr.open.library.simple_ui.core.system_manager.info.network.connectivity" id="1458976602%2FPackages%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="simple_core/kr.open.library.simple_ui.core.system_manager.info.network.connectivity/index.html">kr.open.library.simple_ui.core.system_manager.info.network.connectivity</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1458976602%2FPackages%2F-1254007377"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">androidJvm</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="-1220636606%2FPackages%2F-1254007377" anchor-label="kr.open.library.simple_ui.core.system_manager.info.network.connectivity.data" id="-1220636606%2FPackages%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="simple_core/kr.open.library.simple_ui.core.system_manager.info.network.connectivity.data/index.html">kr.open.library.simple_ui.core.system_manager.info.network.connectivity.data</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1220636606%2FPackages%2F-1254007377"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">androidJvm</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="891274840%2FPackages%2F-1254007377" anchor-label="kr.open.library.simple_ui.core.system_manager.info.network.sim" id="891274840%2FPackages%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="simple_core/kr.open.library.simple_ui.core.system_manager.info.network.sim/index.html">kr.open.library.simple_ui.core.system_manager.info.network.sim</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="891274840%2FPackages%2F-1254007377"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">androidJvm</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="-289932519%2FPackages%2F-1254007377" anchor-label="kr.open.library.simple_ui.core.system_manager.info.network.telephony" id="-289932519%2FPackages%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="simple_core/kr.open.library.simple_ui.core.system_manager.info.network.telephony/index.html">kr.open.library.simple_ui.core.system_manager.info.network.telephony</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-289932519%2FPackages%2F-1254007377"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">androidJvm</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="-2105615042%2FPackages%2F-1254007377" anchor-label="kr.open.library.simple_ui.core.system_manager.info.network.telephony.callback" id="-2105615042%2FPackages%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="simple_core/kr.open.library.simple_ui.core.system_manager.info.network.telephony.callback/index.html">kr.open.library.simple_ui.core.system_manager.info.network.telephony.callback</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2105615042%2FPackages%2F-1254007377"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">androidJvm</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="-1043774666%2FPackages%2F-1254007377" anchor-label="kr.open.library.simple_ui.core.system_manager.info.network.telephony.data.cell.cdma" id="-1043774666%2FPackages%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="simple_core/kr.open.library.simple_ui.core.system_manager.info.network.telephony.data.cell.cdma/index.html">kr.open.library.simple_ui.core.system_manager.info.network.telephony.data.cell.cdma</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1043774666%2FPackages%2F-1254007377"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">androidJvm</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="-1177168412%2FPackages%2F-1254007377" anchor-label="kr.open.library.simple_ui.core.system_manager.info.network.telephony.data.cell.gsm" id="-1177168412%2FPackages%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="simple_core/kr.open.library.simple_ui.core.system_manager.info.network.telephony.data.cell.gsm/index.html">kr.open.library.simple_ui.core.system_manager.info.network.telephony.data.cell.gsm</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1177168412%2FPackages%2F-1254007377"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">androidJvm</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="-1364341312%2FPackages%2F-1254007377" anchor-label="kr.open.library.simple_ui.core.system_manager.info.network.telephony.data.cell.lte" id="-1364341312%2FPackages%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="simple_core/kr.open.library.simple_ui.core.system_manager.info.network.telephony.data.cell.lte/index.html">kr.open.library.simple_ui.core.system_manager.info.network.telephony.data.cell.lte</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1364341312%2FPackages%2F-1254007377"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">androidJvm</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="-1033080251%2FPackages%2F-1254007377" anchor-label="kr.open.library.simple_ui.core.system_manager.info.network.telephony.data.cell.nr" id="-1033080251%2FPackages%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="simple_core/kr.open.library.simple_ui.core.system_manager.info.network.telephony.data.cell.nr/index.html">kr.open.library.simple_ui.core.system_manager.info.network.telephony.data.cell.nr</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1033080251%2FPackages%2F-1254007377"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">androidJvm</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="-1739316773%2FPackages%2F-1254007377" anchor-label="kr.open.library.simple_ui.core.system_manager.info.network.telephony.data.cell.tdscdma" id="-1739316773%2FPackages%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="simple_core/kr.open.library.simple_ui.core.system_manager.info.network.telephony.data.cell.tdscdma/index.html">kr.open.library.simple_ui.core.system_manager.info.network.telephony.data.cell.tdscdma</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1739316773%2FPackages%2F-1254007377"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">androidJvm</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="-1641751665%2FPackages%2F-1254007377" anchor-label="kr.open.library.simple_ui.core.system_manager.info.network.telephony.data.cell.wcdma" id="-1641751665%2FPackages%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="simple_core/kr.open.library.simple_ui.core.system_manager.info.network.telephony.data.cell.wcdma/index.html">kr.open.library.simple_ui.core.system_manager.info.network.telephony.data.cell.wcdma</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1641751665%2FPackages%2F-1254007377"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">androidJvm</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="431841454%2FPackages%2F-1254007377" anchor-label="kr.open.library.simple_ui.core.system_manager.info.network.telephony.data.current" id="431841454%2FPackages%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="simple_core/kr.open.library.simple_ui.core.system_manager.info.network.telephony.data.current/index.html">kr.open.library.simple_ui.core.system_manager.info.network.telephony.data.current</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="431841454%2FPackages%2F-1254007377"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">androidJvm</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="-1114373498%2FPackages%2F-1254007377" anchor-label="kr.open.library.simple_ui.core.system_manager.info.network.telephony.data.state" id="-1114373498%2FPackages%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="simple_core/kr.open.library.simple_ui.core.system_manager.info.network.telephony.data.state/index.html">kr.open.library.simple_ui.core.system_manager.info.network.telephony.data.state</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1114373498%2FPackages%2F-1254007377"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">androidJvm</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+<a data-name="8337780%2FPackages%2F-1254007377" anchor-label="kr.open.library.simple_ui.core.viewmodel" id="8337780%2FPackages%2F-1254007377" data-filterable-set=":simple_core/main"></a>
+    <div class="table-row table-row_platform-tagged" data-filterable-current=":simple_core/main" data-filterable-set=":simple_core/main">
+      <div>
+        <div class="main-subrow ">
+          <div class=""><span class="inline-flex">
+              <div><a href="simple_core/kr.open.library.simple_ui.core.viewmodel/index.html">kr.open.library.simple_ui.core.viewmodel</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="8337780%2FPackages%2F-1254007377"></span>
+                <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+              </span></span></div>
+          <div class="pull-right platform-tags--wrapper">
+            <div class="platform-tags no-gutters">
+              <div class="platform-tag jvm-like">androidJvm</div>
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>© 2025 Copyright</div>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
