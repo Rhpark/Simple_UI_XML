@@ -11,26 +11,26 @@ import androidx.core.app.NotificationCompat.Action
  */
 public enum class NotificationStyle {
     /**
-     * 기본 알림 스타일
-     * Default notification style
+     * Default notification style.<br><br>
+     * 기본 알림 스타일.<br>
      */
     DEFAULT,
 
     /**
-     * 큰 이미지를 포함하는 알림 스타일
-     * Notification style with big picture
+     * Notification style with big picture.<br><br>
+     * 큰 이미지를 포함하는 알림 스타일.<br>
      */
     BIG_PICTURE,
 
     /**
-     * 긴 텍스트를 포함하는 알림 스타일
-     * Notification style with expanded text
+     * Notification style with expanded text.<br><br>
+     * 긴 텍스트를 포함하는 알림 스타일.<br>
      */
     BIG_TEXT,
 
     /**
-     * 진행률 바를 포함하는 알림 스타일
-     * Notification style with progress bar
+     * Notification style with progress bar.<br><br>
+     * 진행률 바를 포함하는 알림 스타일.<br>
      */
     PROGRESS
 }

@@ -2,24 +2,20 @@ package kr.open.library.simple_ui.xml.system_manager.controller.window.fixed
 
 import android.graphics.PixelFormat
 import android.graphics.Rect
-import android.os.Build
 import android.view.Gravity
 import android.view.View
 import android.view.WindowManager.LayoutParams
-import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
 import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
 
 /**
- * FloatingFixedView - 고정 플로팅 뷰 클래스
- * Fixed Floating View Class
- * 
- * 고정된 위치의 플로팅 뷰를 관리하며, 드래그 가능한 뷰의 기본 클래스입니다.
- * Manages floating views at fixed positions and serves as the base class for draggable views.
- * 
- * 주요 기능 / Main Features:
- * - API 레벨별 레이아웃 파라미터 설정 / API level-specific layout parameter configuration
- * - 뷰 영역 계산 / View bounds calculation
- * - 플로팅 오버레이 권한 처리 / Floating overlay permission handling
+ * Fixed floating view that anchors an overlay at a given position.<br><br>
+ * 지정한 위치에 오버레이를 고정하는 플로팅 뷰이며 드래그 뷰의 기반 클래스입니다.<br>
+ *
+ * Key features:<br><br>
+ * 주요 기능:<br>
+ * - API level-specific layout parameter configuration.<br>
+ * - View bounds calculation.<br>
+ * - Floating overlay permission handling.<br>
  */
 public open class FloatingFixedView(
     public val view: View,
@@ -28,8 +24,8 @@ public open class FloatingFixedView(
 ) {
 
     /**
-     * 플로팅 뷰의 레이아웃 파라미터
-     * Layout parameters for the floating view
+     * Layout parameters for the floating view.<br><br>
+     * 플로팅 뷰의 레이아웃 파라미터입니다.<br>
      */
     public val params: LayoutParams = getFloatingLayoutParam().apply {
         gravity = Gravity.TOP or Gravity.LEFT
@@ -38,16 +34,17 @@ public open class FloatingFixedView(
     }
 
     /**
-     * API 레벨에 따른 플로팅 레이아웃 파라미터를 생성합니다.
-     * Creates floating layout parameters based on API level.
+     * Creates floating layout parameters based on API level.<br><br>
+     * API 레벨에 따라 플로팅 레이아웃 파라미터를 생성합니다.<br>
      *
-     * SECURITY NOTE: 보안상의 이유로 가장 제한적인 윈도우 타입을 사용합니다.
-     * For security reasons, we use the most restrictive window type available.
+     * SECURITY NOTE: For security, uses the most restrictive window type available.<br><br>
+     * 보안상 가장 제한적인 윈도우 타입을 사용합니다.<br>
      *
-     * @return 플로팅 레이아웃 파라미터 / Floating layout parameters
+     * @return Floating layout parameters.<br><br>
+     *         플로팅 레이아웃 파라미터입니다.<br>
      */
     private fun getFloatingLayoutParam(): LayoutParams = safeCatch(defaultValue = getDefaultLayoutParam()) {
-        LayoutParams(
+        return LayoutParams(
             LayoutParams.WRAP_CONTENT,
             LayoutParams.WRAP_CONTENT,
             LayoutParams.TYPE_APPLICATION_OVERLAY,
@@ -57,22 +54,24 @@ public open class FloatingFixedView(
     }
 
     /**
-     * 플로팅 뷰의 영역을 계산합니다.
-     * Calculates the bounds of the floating view.
+     * Calculates the bounds of the floating view.<br><br>
+     * 플로팅 뷰의 영역을 계산합니다.<br>
      *
-     * @return 뷰의 영역 정보 / View bounds information
+     * @return View bounds information.<br><br>
+     *         뷰의 영역 정보입니다.<br>
      */
-    public fun getRect(): Rect = safeCatch(defaultValue =  Rect()) {
+    public fun getRect(): Rect = safeCatch(defaultValue = Rect()) {
         val width = if (view.width > 0) view.width else view.measuredWidth
         val height = if (view.height > 0) view.height else view.measuredHeight
-        Rect(params.x, params.y, params.x + width, params.y + height)
+        return Rect(params.x, params.y, params.x + width, params.y + height)
     }
 
     /**
-     * 기본 레이아웃 파라미터를 생성합니다 (오류 시 폴백).
-     * Creates default layout parameters (fallback for errors).
+     * Creates default layout parameters (fallback for errors).<br><br>
+     * 에러 대비용 기본 레이아웃 파라미터를 생성합니다.<br>
      *
-     * @return 기본 레이아웃 파라미터 / Default layout parameters
+     * @return Default layout parameters.<br><br>
+     *         기본 레이아웃 파라미터입니다.<br>
      */
     private fun getDefaultLayoutParam(): LayoutParams = LayoutParams(
         LayoutParams.WRAP_CONTENT,
@@ -81,5 +80,4 @@ public open class FloatingFixedView(
         LayoutParams.FLAG_NOT_FOCUSABLE,
         PixelFormat.TRANSLUCENT
     )
-
 }

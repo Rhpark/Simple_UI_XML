@@ -8,7 +8,7 @@ import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
-import kr.open.library.simple_ui.xml.extensions.view.toastShort
+import kr.open.library.simple_ui.xml.extensions.view.toastShowShort
 import kr.open.library.simple_ui.xml.ui.activity.BaseBindingActivity
 import kr.open.library.simple_ui.core.system_manager.extensions.getWifiController
 import kr.open.library.simpleui_xml.R
@@ -36,7 +36,7 @@ class WifiControllerActivity : BaseBindingActivity<ActivityWifiControllerBinding
         if (permissions.isNotEmpty()) {
             onRequestPermissions(permissions) { deniedPermissions ->
                 if (deniedPermissions.isNotEmpty()) {
-                    toastShort("Location permission required for WiFi scan")
+                    toastShowShort("Location permission required for WiFi scan")
                 }
             }
         }
@@ -79,10 +79,10 @@ class WifiControllerActivity : BaseBindingActivity<ActivityWifiControllerBinding
             result.append("BSSID: ${wifiInfo.bssid}\n")
 
             binding.tvResult.text = result.toString()
-            toastShort("WiFi info retrieved")
+            toastShowShort("WiFi info retrieved")
         } else {
             binding.tvResult.text = "No WiFi connection available"
-            toastShort("No WiFi connection")
+            toastShowShort("No WiFi connection")
         }
     }
 
@@ -100,7 +100,7 @@ class WifiControllerActivity : BaseBindingActivity<ActivityWifiControllerBinding
         result.append("Signal Level: $signalLevel / 5\n")
 
         binding.tvResult.text = result.toString()
-        toastShort("WiFi status checked")
+        toastShowShort("WiFi status checked")
     }
 
     @SuppressLint("MissingPermission")
@@ -131,18 +131,18 @@ class WifiControllerActivity : BaseBindingActivity<ActivityWifiControllerBinding
                         }
 
                         binding.tvResult.text = result.toString()
-                        toastShort("Found ${results.size} networks")
+                        toastShowShort("Found ${results.size} networks")
                     } else {
                         binding.tvResult.text = "No WiFi networks found"
-                        toastShort("No networks found")
+                        toastShowShort("No networks found")
                     }
                 } else {
                     binding.tvResult.text = "Failed to start WiFi scan"
-                    toastShort("Scan failed")
+                    toastShowShort("Scan failed")
                 }
             } else {
                 binding.tvResult.text = "Permissions required:\n${deniedPermissions.joinToString("\n")}"
-                toastShort("Permissions denied")
+                toastShowShort("Permissions denied")
             }
         }
     }
@@ -159,6 +159,6 @@ class WifiControllerActivity : BaseBindingActivity<ActivityWifiControllerBinding
         result.append("6GHz Band: ${if (is6GHz) "Supported" else checkSdkVersion(Build.VERSION_CODES.R, positiveWork = {"Not Supported"}, negativeWork = {"Requires Android 11" })}\n")
 
         binding.tvResult.text = result.toString()
-        toastShort("Band support checked")
+        toastShowShort("Band support checked")
     }
 }

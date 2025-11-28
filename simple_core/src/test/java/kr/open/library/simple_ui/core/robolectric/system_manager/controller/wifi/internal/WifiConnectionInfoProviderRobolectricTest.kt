@@ -1,5 +1,6 @@
 package kr.open.library.simple_ui.core.robolectric.system_manager.controller.wifi.internal
 
+import WifiNetworkDetails
 import android.content.Context
 import android.net.LinkProperties
 import android.net.Network
@@ -8,7 +9,6 @@ import android.net.wifi.WifiInfo
 import android.net.wifi.WifiManager
 import android.os.Build
 import androidx.test.core.app.ApplicationProvider
-import kr.open.library.simple_ui.core.system_manager.controller.wifi.WifiNetworkDetails
 import kr.open.library.simple_ui.core.system_manager.controller.wifi.internal.WifiConnectionInfoProvider
 import kr.open.library.simple_ui.core.system_manager.controller.wifi.internal.WifiOperationGuard
 import org.junit.Assert.assertEquals

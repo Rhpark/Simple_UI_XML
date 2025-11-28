@@ -185,7 +185,7 @@ onRequestPermissions(
     if (denied.isEmpty()) {
         startLocationTracking()
     } else {
-        toastShort("승인 되지 않은 권한: $denied")
+        toastShowShort("승인 되지 않은 권한: $denied")
     }
 }
 ```
@@ -381,7 +381,7 @@ override fun eventVmCollect() {
     lifecycleScope.launch {
         vm.eventFlow.collect { event ->
             when (event) {
-                is SampleEvent.ShowToast -> toastShort(event.message)
+                is SampleEvent.ShowToast -> toastShowShort(event.message)
             }
         }
     }

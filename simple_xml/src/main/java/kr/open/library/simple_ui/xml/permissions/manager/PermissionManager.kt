@@ -558,6 +558,21 @@ class PermissionManager private constructor() {
     // Private helpers<br><br>
     // 내부 헬퍼 함수 모음입니다.<br>
 
+    /**
+     * Launches a special-permission intent and retries once on transient failures.<br><br>
+     * 특수 권한 인텐트를 실행하고 일시적인 실패 시 한 번 재시도합니다.<br>
+     *
+     * @param context Host context for launching the intent.<br><br>
+     *                인텐트를 실행할 호스트 컨텍스트입니다.<br>
+     * @param permission Special permission to request.<br><br>
+     *                   요청할 특수 권한입니다.<br>
+     * @param launcher ActivityResultLauncher used for the special permission flow.<br><br>
+     *                 특수 권한 흐름에 사용하는 ActivityResultLauncher입니다.<br>
+     * @param requestId Identifier of the pending request.<br><br>
+     *                  대기 중인 요청의 식별자입니다.<br>
+     * @param retryCount Number of attempts already made for this permission.<br><br>
+     *                   해당 권한에 대해 이미 시도한 횟수입니다.<br>
+     */
     private fun launchSpecialPermissionWithRetry(
         context: Context,
         permission: String,
@@ -594,6 +609,17 @@ class PermissionManager private constructor() {
         }
     }
 
+    /**
+     * Handles failures when a special permission launcher is missing or fails to start.<br><br>
+     * 특수 권한 런처가 없거나 실행에 실패했을 때의 후속 처리를 담당합니다.<br>
+     *
+     * @param context Context used to attempt any remaining launches.<br><br>
+     *                남은 런처 실행을 시도할 때 사용할 컨텍스트입니다.<br>
+     * @param requestId Identifier of the affected request.<br><br>
+     *                  영향을 받는 요청의 식별자입니다.<br>
+     * @param permission Special permission that triggered the failure.<br><br>
+     *                   실패를 일으킨 특수 권한입니다.<br>
+     */
     private fun handleSpecialPermissionFailure(context: Context?, requestId: String, permission: String) {
         val request = pendingRequests[requestId] ?: return
 
@@ -622,6 +648,15 @@ class PermissionManager private constructor() {
         invokeAllCallbacks(request, deniedPermissions)
     }
 
+    /**
+     * Checks whether the provided context is no longer valid for permission launches.<br><br>
+     * 전달된 컨텍스트가 권한 실행에 사용할 수 없는 상태인지 확인합니다.<br>
+     *
+     * @param context Context to validate.<br><br>
+     *                확인할 컨텍스트입니다.<br>
+     * @return True when the activity is finishing or destroyed.<br><br>
+     *         액티비티가 종료 중이거나 파괴된 경우 true를 반환합니다.<br>
+     */
     private fun isContextDestroyed(context: Context): Boolean {
         return if (context is Activity) {
             context.isDestroyed || context.isFinishing
@@ -630,6 +665,17 @@ class PermissionManager private constructor() {
         }
     }
 
+    /**
+     * Builds an intent for the given special permission after checking API-level requirements.<br><br>
+     * API 레벨 요구사항을 확인한 뒤 지정된 특수 권한용 인텐트를 생성합니다.<br>
+     *
+     * @param context Host context used to resolve package information.<br><br>
+     *                패키지 정보를 확인할 호스트 컨텍스트입니다.<br>
+     * @param permission Special permission being requested.<br><br>
+     *                   요청하려는 특수 권한입니다.<br>
+     * @return Intent to launch the permission screen, or null if unsupported.<br><br>
+     *         권한 화면을 여는 인텐트이며, 지원되지 않으면 null을 반환합니다.<br>
+     */
     private fun createSpecialPermissionIntent(context: Context, permission: String): Intent? {
         // Validates API levels before creating the permission intent.<br><br>
         // 권한 인텐트를 만들기 전에 필요한 API 레벨을 확인합니다.<br>

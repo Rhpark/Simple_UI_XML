@@ -27,57 +27,77 @@ import kr.open.library.simple_ui.core.system_manager.info.network.telephony.data
 import java.util.concurrent.Executor
 
 /**
- * TelephonyInfo - 통합된 Telephony 정보 관리 클래스 (Facade)
- * Unified Telephony Information Management Class (Facade)
+ * Unified Telephony Information Management Class (Facade).<br><br>
+ * 통합된 Telephony 정보 관리 클래스 (Facade)입니다.<br>
  *
- * 이 클래스는 TelephonyManager의 복잡한 API를 단순화하고 통합된 인터페이스를 제공합니다.
- * This class simplifies TelephonyManager's complex APIs and provides a unified interface.
+ * This class simplifies TelephonyManager's complex APIs and provides a unified interface.<br><br>
+ * 이 클래스는 TelephonyManager의 복잡한 API를 단순화하고 통합된 인터페이스를 제공합니다.<br>
  *
- * 내부적으로 책임에 따라 두 개의 컴포넌트로 분리되어 있습니다:
- * Internally separated into two components by responsibility:
- * - TelephonyBasicInfo: 기본 정보 조회 / Basic information retrieval
- * - TelephonyCallbackManager: 콜백 관리 / Callback management
+ * Internally separated into two components by responsibility:<br>
+ * - TelephonyBasicInfo: Basic information retrieval<br>
+ * - TelephonyCallbackManager: Callback management<br><br>
+ * 내부적으로 책임에 따라 두 개의 컴포넌트로 분리되어 있습니다:<br>
+ * - TelephonyBasicInfo: 기본 정보 조회<br>
+ * - TelephonyCallbackManager: 콜백 관리<br>
  *
- * 주요 기능 / Main Features:
- * - SIM 카드 정보 관리 / SIM card information management
- * - 통신사 정보 조회 / Carrier information retrieval
- * - 신호 강도 모니터링 / Signal strength monitoring
- * - 네트워크 상태 추적 / Network state tracking
- * - API 호환성 처리 (TelephonyCallback vs PhoneStateListener) / API compatibility handling
- * - 멀티 SIM 지원 / Multi-SIM support
- * - 슬롯별 콜백 관리 / Per-slot callback management
- * - 고급 콜백 시스템 / Advanced callback system
+ * Main Features:<br>
+ * - SIM card information management<br>
+ * - Carrier information retrieval<br>
+ * - Signal strength monitoring<br>
+ * - Network state tracking<br>
+ * - API compatibility handling (TelephonyCallback vs PhoneStateListener)<br>
+ * - Multi-SIM support<br>
+ * - Per-slot callback management<br>
+ * - Advanced callback system<br><br>
+ * 주요 기능:<br>
+ * - SIM 카드 정보 관리<br>
+ * - 통신사 정보 조회<br>
+ * - 신호 강도 모니터링<br>
+ * - 네트워크 상태 추적<br>
+ * - API 호환성 처리 (TelephonyCallback vs PhoneStateListener)<br>
+ * - 멀티 SIM 지원<br>
+ * - 슬롯별 콜백 관리<br>
+ * - 고급 콜백 시스템<br>
  *
- * 필수 권한 / Required Permissions:
- * - android.permission.READ_PHONE_STATE (필수/Required)
- * - android.permission.ACCESS_FINE_LOCATION (셀 정보/Cell info)
- * - android.permission.READ_PHONE_NUMBERS (전화번호/Phone numbers)
+ * Required Permissions:<br>
+ * - `android.permission.READ_PHONE_STATE` (Required)<br>
+ * - `android.permission.ACCESS_FINE_LOCATION` (Cell info)<br>
+ * - `android.permission.READ_PHONE_NUMBERS` (Phone numbers)<br><br>
+ * 필수 권한:<br>
+ * - `android.permission.READ_PHONE_STATE` (필수)<br>
+ * - `android.permission.ACCESS_FINE_LOCATION` (셀 정보)<br>
+ * - `android.permission.READ_PHONE_NUMBERS` (전화번호)<br>
  *
- * ⚠️ Permission fallback:
- * - If any required permission is missing, public API calls return safe defaults
- *   (null, empty list, or false) via tryCatchSystemManager().
- * - Always call refreshPermissions() after the host Activity/Fragment obtains runtime permissions.
+ * ⚠️ Permission fallback:<br>
+ * - If any required permission is missing, public API calls return safe defaults (null, empty list, or false) via tryCatchSystemManager().<br>
+ * - Always call refreshPermissions() after the host Activity/Fragment obtains runtime permissions.<br><br>
+ * ⚠️ 권한 폴백:<br>
+ * - 필수 권한이 누락된 경우, 공개 API 호출은 tryCatchSystemManager()를 통해 안전한 기본값(null, 빈 리스트 또는 false)을 반환합니다.<br>
+ * - 호스트 Activity/Fragment가 런타임 권한을 획득한 후에는 항상 refreshPermissions()를 호출하세요.<br>
  *
- * 사용 예시 / Usage Example:
- * ```
+ * Usage Example:<br>
+ * ```kotlin
  * val telephonyInfo = TelephonyInfo(context)
  *
- * // 기본 정보 조회 / Basic info retrieval
+ * // Basic info retrieval
  * val carrierName = telephonyInfo.getCarrierName()
  * val simState = telephonyInfo.getSimState()
  *
- * // 실시간 모니터링 / Real-time monitoring
+ * // Real-time monitoring
  * telephonyInfo.registerCallback { state ->
- *     // 상태 변경 처리 / Handle state changes
+ *     // Handle state changes
  * }
  *
- * // 슬롯별 콜백 등록 / Per-slot callback registration
+ * // Per-slot callback registration
  * telephonyInfo.registerTelephonyCallBack(
  *     simSlotIndex = 0,
  *     executor = context.mainExecutor,
- *     onSignalStrength = { signal -> /* 신호 강도 변경 */ }
+ *     onSignalStrength = { signal -> /* Signal strength changed */ }
  * )
  * ```
+ *
+ * @param context The application context.<br><br>
+ *                애플리케이션 컨텍스트.
  */
 public class TelephonyInfo(context: Context) :
     BaseSystemService(context, listOf(READ_PHONE_STATE, ACCESS_FINE_LOCATION, READ_PHONE_NUMBERS)) {
@@ -88,22 +108,22 @@ public class TelephonyInfo(context: Context) :
 
 
     /**
-     * Main TelephonyManager instance
-     * 기본 TelephonyManager 인스턴스
+     * Main TelephonyManager instance.<br><br>
+     * 기본 TelephonyManager 인스턴스입니다.<br>
      */
     public val telephonyManager: TelephonyManager by lazy { context.getTelephonyManager() }
 
     /**
-     * SubscriptionManager for multi-SIM support
-     * 멀티 SIM 지원을 위한 SubscriptionManager
+     * SubscriptionManager for multi-SIM support.<br><br>
+     * 멀티 SIM 지원을 위한 SubscriptionManager입니다.<br>
      */
     public val subscriptionManager: SubscriptionManager by lazy {
         context.getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE) as SubscriptionManager
     }
 
     /**
-     * Callback management component
-     * 콜백 관리 컴포넌트
+     * Callback management component.<br><br>
+     * 콜백 관리 컴포넌트입니다.<br>
      */
     private val callbackManager = TelephonyCallbackManager(context)
 
@@ -113,33 +133,40 @@ public class TelephonyInfo(context: Context) :
     // =================================================
 
     /**
-     * Gets the carrier name for the default SIM.
-     * 기본 SIM의 통신사 이름을 가져옵니다.
+     * Gets the carrier name for the default SIM.<br><br>
+     * 기본 SIM의 통신사 이름을 가져옵니다.<br>
      *
-     * @return Carrier name or null if unavailable / 통신사 이름 또는 사용 불가 시 null
+     * @return Carrier name or null if unavailable.<br><br>
+     *         통신사 이름 또는 사용 불가 시 null.
      */
     @RequiresPermission(READ_PHONE_STATE)
     public fun getCarrierName(): String? = tryCatchSystemManager(null) {
-        telephonyManager.networkOperatorName?.takeIf { it.isNotBlank() }
+        return telephonyManager.networkOperatorName?.takeIf { it.isNotBlank() }
     }
 
     /**
-     * Gets the Mobile Country Code (MCC) from the default SIM.
-     * 기본 SIM에서 Mobile Country Code (MCC)를 가져옵니다.
+     * Gets the Mobile Country Code (MCC) from the default SIM.<br><br>
+     * 기본 SIM에서 Mobile Country Code (MCC)를 가져옵니다.<br>
+     *
+     * @return MCC string, or null if unavailable.<br><br>
+     *         MCC 문자열, 사용할 수 없는 경우 null.
      */
     @RequiresPermission(READ_PHONE_STATE)
     public fun getMobileCountryCode(): String? = tryCatchSystemManager(null) {
-        telephonyManager.networkOperator?.take(3)?.takeIf { it.length == 3 }
+        return telephonyManager.networkOperator?.take(3)?.takeIf { it.length == 3 }
     }
 
     /**
-     * Gets the Mobile Network Code (MNC) from the default SIM.
-     * 기본 SIM에서 Mobile Network Code (MNC)를 가져옵니다.
+     * Gets the Mobile Network Code (MNC) from the default SIM.<br><br>
+     * 기본 SIM에서 Mobile Network Code (MNC)를 가져옵니다.<br>
+     *
+     * @return MNC string, or null if unavailable.<br><br>
+     *         MNC 문자열, 사용할 수 없는 경우 null.
      */
     @RequiresPermission(READ_PHONE_STATE)
     public fun getMobileNetworkCode(): String? = tryCatchSystemManager(null) {
         val operator = telephonyManager.networkOperator
-        if (operator?.length in 5..6) {
+        return if (operator?.length in 5..6) {
             operator.substring(3)
         } else null
     }
@@ -149,39 +176,49 @@ public class TelephonyInfo(context: Context) :
     // =================================================
 
     /**
-     * Gets the SIM state of the default SIM.
-     * 기본 SIM의 상태를 가져옵니다.
+     * Gets the SIM state of the default SIM.<br><br>
+     * 기본 SIM의 상태를 가져옵니다.<br>
      *
-     * @return SIM state constant from TelephonyManager / TelephonyManager의 SIM 상태 상수
+     * @return SIM state constant from TelephonyManager.<br><br>
+     *         TelephonyManager의 SIM 상태 상수.
      */
     @RequiresPermission(READ_PHONE_STATE)
     public fun getSimState(): Int= tryCatchSystemManager(TelephonyManager.SIM_STATE_UNKNOWN) {
-        telephonyManager.simState
+        return telephonyManager.simState
     }
 
     /**
-     * Checks if SIM is ready.
-     * SIM이 준비되었는지 확인합니다.
+     * Checks if SIM is ready.<br><br>
+     * SIM이 준비되었는지 확인합니다.<br>
+     *
+     * @return `true` if SIM is ready, `false` otherwise.<br><br>
+     *         SIM이 준비되었으면 `true`, 그렇지 않으면 `false`.<br>
      */
     @RequiresPermission(READ_PHONE_STATE)
     public fun isSimReady(): Boolean = getSimState() == TelephonyManager.SIM_STATE_READY
 
     /**
-     * Gets the SIM operator name.
-     * SIM 운영자 이름을 가져옵니다.
+     * Gets the SIM operator name.<br><br>
+     * SIM 운영자 이름을 가져옵니다.<br>
+     *
+     * @return SIM operator name, or null if unavailable.<br><br>
+     *         SIM 운영자 이름, 사용할 수 없는 경우 null.
      */
     @RequiresPermission(READ_PHONE_STATE)
     public fun getSimOperatorName(): String? = tryCatchSystemManager(null) {
-        telephonyManager.simOperatorName?.takeIf { it.isNotBlank() }
+        return telephonyManager.simOperatorName?.takeIf { it.isNotBlank() }
     }
 
     /**
-     * Gets the ISO country code for the SIM provider.
-     * SIM 제공업체의 ISO 국가 코드를 가져옵니다.
+     * Gets the ISO country code for the SIM provider.<br><br>
+     * SIM 제공업체의 ISO 국가 코드를 가져옵니다.<br>
+     *
+     * @return ISO country code, or null if unavailable.<br><br>
+     *         ISO 국가 코드, 사용할 수 없는 경우 null.
      */
     @RequiresPermission(READ_PHONE_STATE)
     public fun getSimCountryIso(): String? = tryCatchSystemManager(null) {
-        telephonyManager.simCountryIso?.takeIf { it.isNotBlank() }
+        return telephonyManager.simCountryIso?.takeIf { it.isNotBlank() }
     }
 
     // =================================================
@@ -189,25 +226,31 @@ public class TelephonyInfo(context: Context) :
     // =================================================
 
     /**
-     * Gets the phone number of the default SIM.
-     * 기본 SIM의 전화번호를 가져옵니다.
+     * Gets the phone number of the default SIM.<br><br>
+     * 기본 SIM의 전화번호를 가져옵니다.<br>
      *
-     * Note: This may return null or empty string depending on SIM configuration
-     * 참고: SIM 구성에 따라 null이나 빈 문자열을 반환할 수 있습니다.
+     * Note: This may return null or empty string depending on SIM configuration.<br><br>
+     * 참고: SIM 구성에 따라 null이나 빈 문자열을 반환할 수 있습니다.<br>
+     *
+     * @return Phone number, or null if unavailable.<br><br>
+     *         전화번호, 사용할 수 없는 경우 null.
      */
     @SuppressLint("HardwareIds")
     @RequiresPermission(anyOf = [READ_PHONE_STATE, READ_PHONE_NUMBERS])
     public fun getPhoneNumber(): String? = tryCatchSystemManager(null) {
         @Suppress("DEPRECATION")
-        telephonyManager.line1Number?.takeIf { it.isNotBlank() }
+        return telephonyManager.line1Number?.takeIf { it.isNotBlank() }
     }
 
     /**
-     * Gets the call state.
-     * 통화 상태를 가져옵니다.
+     * Gets the call state.<br><br>
+     * 통화 상태를 가져옵니다.<br>
+     *
+     * @return Call state constant from TelephonyManager.<br><br>
+     *         TelephonyManager의 통화 상태 상수.
      */
     public fun getCallState(): Int = tryCatchSystemManager(TelephonyManager.CALL_STATE_IDLE) {
-        telephonyManager.callState
+        return telephonyManager.callState
     }
 
     // =================================================
@@ -215,12 +258,15 @@ public class TelephonyInfo(context: Context) :
     // =================================================
 
     /**
-     * Gets the current network type.
-     * 현재 네트워크 타입을 가져옵니다.
+     * Gets the current network type.<br><br>
+     * 현재 네트워크 타입을 가져옵니다.<br>
+     *
+     * @return Network type constant from TelephonyManager.<br><br>
+     *         TelephonyManager의 네트워크 타입 상수.
      */
     @RequiresPermission(READ_PHONE_STATE)
     public fun getNetworkType(): Int = tryCatchSystemManager(TelephonyManager.NETWORK_TYPE_UNKNOWN) {
-        checkSdkVersion(Build.VERSION_CODES.R,
+        return checkSdkVersion(Build.VERSION_CODES.R,
             positiveWork = { telephonyManager.dataNetworkType },
             negativeWork = {
                 @Suppress("DEPRECATION")
@@ -230,21 +276,27 @@ public class TelephonyInfo(context: Context) :
     }
 
     /**
-     * Gets the current data network type.
-     * 현재 데이터 네트워크 타입을 가져옵니다.
+     * Gets the current data network type.<br><br>
+     * 현재 데이터 네트워크 타입을 가져옵니다.<br>
+     *
+     * @return Data network type constant from TelephonyManager.<br><br>
+     *         TelephonyManager의 데이터 네트워크 타입 상수.
      */
     @RequiresPermission(READ_PHONE_STATE)
     public fun getDataNetworkType(): Int = tryCatchSystemManager(TelephonyManager.NETWORK_TYPE_UNKNOWN) {
-        telephonyManager.dataNetworkType
+        return telephonyManager.dataNetworkType
     }
 
     /**
-     * Checks if the device is roaming.
-     * 디바이스가 로밍 중인지 확인합니다.
+     * Checks if the device is roaming.<br><br>
+     * 디바이스가 로밍 중인지 확인합니다.<br>
+     *
+     * @return `true` if roaming, `false` otherwise.<br><br>
+     *         로밍 중이면 `true`, 그렇지 않으면 `false`.<br>
      */
     @RequiresPermission(READ_PHONE_STATE)
     public fun isNetworkRoaming(): Boolean = tryCatchSystemManager(false) {
-        telephonyManager.isNetworkRoaming
+        return telephonyManager.isNetworkRoaming
     }
 
     // =================================================
@@ -252,30 +304,39 @@ public class TelephonyInfo(context: Context) :
     // =================================================
 
     /**
-     * Gets the number of active SIM cards.
-     * 활성화된 SIM 카드 수를 가져옵니다.
+     * Gets the number of active SIM cards.<br><br>
+     * 활성화된 SIM 카드 수를 가져옵니다.<br>
+     *
+     * @return Number of active SIM cards.<br><br>
+     *         활성화된 SIM 카드 수.
      */
     @RequiresPermission(READ_PHONE_STATE)
     public fun getActiveSimCount(): Int = tryCatchSystemManager(0) {
-        subscriptionManager.activeSubscriptionInfoCount
+        return subscriptionManager.activeSubscriptionInfoCount
     }
 
     /**
-     * Gets active subscription info list.
-     * 활성 구독 정보 목록을 가져옵니다.
+     * Gets active subscription info list.<br><br>
+     * 활성 구독 정보 목록을 가져옵니다.<br>
+     *
+     * @return List of SubscriptionInfo.<br><br>
+     *         SubscriptionInfo 목록.
      */
     @RequiresPermission(READ_PHONE_STATE)
     public fun getActiveSubscriptionInfoList(): List<SubscriptionInfo> = tryCatchSystemManager(emptyList()) {
-        subscriptionManager.activeSubscriptionInfoList ?: emptyList()
+        return subscriptionManager.activeSubscriptionInfoList ?: emptyList()
     }
 
     /**
-     * Gets subscription info for the default data SIM.
-     * 기본 데이터 SIM의 구독 정보를 가져옵니다.
+     * Gets subscription info for the default data SIM.<br><br>
+     * 기본 데이터 SIM의 구독 정보를 가져옵니다.<br>
+     *
+     * @return SubscriptionInfo, or null if unavailable.<br><br>
+     *         SubscriptionInfo, 사용할 수 없는 경우 null.
      */
     @RequiresPermission(READ_PHONE_STATE)
     public fun getDefaultDataSubscriptionInfo(): SubscriptionInfo? = tryCatchSystemManager(null) {
-        checkSdkVersion(Build.VERSION_CODES.R,
+        return checkSdkVersion(Build.VERSION_CODES.R,
             positiveWork = { telephonyManager.subscriptionId },
             negativeWork = { getActiveSubscriptionInfoList().firstOrNull()?.subscriptionId }
         )?.let { subscriptionManager.getActiveSubscriptionInfo(it) }
@@ -286,8 +347,11 @@ public class TelephonyInfo(context: Context) :
     // =================================================
 
     /**
-     * Gets network type as human-readable string.
-     * 네트워크 타입을 읽기 쉬운 문자열로 가져옵니다.
+     * Gets network type as human-readable string.<br><br>
+     * 네트워크 타입을 읽기 쉬운 문자열로 가져옵니다.<br>
+     *
+     * @return Network type string (e.g., "LTE", "5G NR").<br><br>
+     *         네트워크 타입 문자열 (예: "LTE", "5G NR").
      */
     @RequiresPermission(READ_PHONE_STATE)
     public fun getNetworkTypeString(): String = when (getNetworkType()) {
@@ -315,8 +379,11 @@ public class TelephonyInfo(context: Context) :
     }
 
     /**
-     * Gets SIM state as human-readable string.
-     * SIM 상태를 읽기 쉬운 문자열로 가져옵니다.
+     * Gets SIM state as human-readable string.<br><br>
+     * SIM 상태를 읽기 쉬운 문자열로 가져옵니다.<br>
+     *
+     * @return SIM state string (e.g., "READY", "ABSENT").<br><br>
+     *         SIM 상태 문자열 (예: "READY", "ABSENT").
      */
     @RequiresPermission(READ_PHONE_STATE)
     public fun getSimStateString(): String = when (getSimState()) {
@@ -338,22 +405,22 @@ public class TelephonyInfo(context: Context) :
     // =================================================
 
     /**
-     * StateFlow for signal strength updates
-     * 신호 강도 업데이트를 위한 StateFlow
+     * StateFlow for signal strength updates.<br><br>
+     * 신호 강도 업데이트를 위한 StateFlow입니다.<br>
      */
     public val currentSignalStrength: StateFlow<SignalStrength?>
         get() = callbackManager.currentSignalStrength
 
     /**
-     * StateFlow for service state updates
-     * 서비스 상태 업데이트를 위한 StateFlow
+     * StateFlow for service state updates.<br><br>
+     * 서비스 상태 업데이트를 위한 StateFlow입니다.<br>
      */
     public val currentServiceState: StateFlow<ServiceState?>
         get() = callbackManager.currentServiceState
 
     /**
-     * StateFlow for network state updates
-     * 네트워크 상태 업데이트를 위한 StateFlow
+     * StateFlow for network state updates.<br><br>
+     * 네트워크 상태 업데이트를 위한 StateFlow입니다.<br>
      */
     public val currentNetworkState: StateFlow<TelephonyNetworkState?>
         get() = callbackManager.currentNetworkState
@@ -363,18 +430,24 @@ public class TelephonyInfo(context: Context) :
     // =================================================
 
     /**
-     * Gets the current signal strength.
-     * 현재 신호 강도를 가져옵니다.
+     * Gets the current signal strength.<br><br>
+     * 현재 신호 강도를 가져옵니다.<br>
      *
-     * Note: This returns the cached value from callbacks. Register callback first.
-     * 참고: 콜백에서 캐시된 값을 반환합니다. 먼저 콜백을 등록하세요.
+     * Note: This returns the cached value from callbacks. Register callback first.<br><br>
+     * 참고: 콜백에서 캐시된 값을 반환합니다. 먼저 콜백을 등록하세요.<br>
+     *
+     * @return Current SignalStrength, or null if unavailable.<br><br>
+     *         현재 SignalStrength, 사용할 수 없는 경우 null.
      */
     public fun getCurrentSignalStrength(): SignalStrength? =
         callbackManager.getCurrentSignalStrength()
 
     /**
-     * Gets the current service state.
-     * 현재 서비스 상태를 가져옵니다.
+     * Gets the current service state.<br><br>
+     * 현재 서비스 상태를 가져옵니다.<br>
+     *
+     * @return Current ServiceState, or null if unavailable.<br><br>
+     *         현재 ServiceState, 사용할 수 없는 경우 null.
      */
     public fun getCurrentServiceState(): ServiceState? =
         callbackManager.getCurrentServiceState()
@@ -384,8 +457,19 @@ public class TelephonyInfo(context: Context) :
     // =================================================
 
     /**
-     * Registers telephony callback for real-time updates.
-     * 실시간 업데이트를 위한 telephony 콜백을 등록합니다.
+     * Registers telephony callback for real-time updates.<br><br>
+     * 실시간 업데이트를 위한 telephony 콜백을 등록합니다.<br>
+     *
+     * @param handler Handler for callback execution (null for main thread).<br><br>
+     *                콜백 실행을 위한 핸들러 (null이면 메인 스레드).
+     * @param onSignalStrengthChanged Called when signal strength changes.<br><br>
+     *                                신호 강도 변경 시 호출.
+     * @param onServiceStateChanged Called when service state changes.<br><br>
+     *                              서비스 상태 변경 시 호출.
+     * @param onNetworkStateChanged Called when network state changes.<br><br>
+     *                              네트워크 상태 변경 시 호출.
+     * @return `true` if registration successful, `false` otherwise.<br><br>
+     *         등록에 성공하면 `true`, 그렇지 않으면 `false`.<br>
      */
     @RequiresPermission(READ_PHONE_STATE)
     public fun registerCallback(
@@ -398,8 +482,11 @@ public class TelephonyInfo(context: Context) :
     )
 
     /**
-     * Unregisters telephony callback.
-     * telephony 콜백을 해제합니다.
+     * Unregisters telephony callback.<br><br>
+     * telephony 콜백을 해제합니다.<br>
+     *
+     * @return `true` if unregistration successful, `false` otherwise.<br><br>
+     *         해제에 성공하면 `true`, 그렇지 않으면 `false`.<br>
      */
     @SuppressLint("MissingPermission")
     public fun unregisterCallback(): Boolean = callbackManager.unregisterSimpleCallback()
@@ -409,8 +496,15 @@ public class TelephonyInfo(context: Context) :
     // =================================================
 
     /**
-     * 기본 SIM에 대한 Telephony 콜백 등록 (API 31+)
-     * Register telephony callback for default SIM (API 31+)
+     * Register telephony callback for default SIM (API 31+).<br><br>
+     * 기본 SIM에 대한 Telephony 콜백을 등록합니다 (API 31+).<br>
+     *
+     * @param executor Executor for callback execution.<br><br>
+     *                 콜백 실행을 위한 Executor.
+     * @param isGpsOn Whether GPS is on.<br><br>
+     *                GPS 켜짐 여부.
+     * @return `true` if registration successful, `false` otherwise.<br><br>
+     *         등록에 성공하면 `true`, 그렇지 않으면 `false`.<br>
      */
     @RequiresApi(Build.VERSION_CODES.S)
     @RequiresPermission(READ_PHONE_STATE)
@@ -431,8 +525,17 @@ public class TelephonyInfo(context: Context) :
     )
 
     /**
-     * 특정 SIM 슬롯에 대한 Telephony 콜백 등록 (API 31+)
-     * Register telephony callback for specific SIM slot (API 31+)
+     * Register telephony callback for specific SIM slot (API 31+).<br><br>
+     * 특정 SIM 슬롯에 대한 Telephony 콜백을 등록합니다 (API 31+).<br>
+     *
+     * @param simSlotIndex SIM slot index.<br><br>
+     *                     SIM 슬롯 인덱스.
+     * @param executor Executor for callback execution.<br><br>
+     *                 콜백 실행을 위한 Executor.
+     * @param isGpsOn Whether GPS is on.<br><br>
+     *                GPS 켜짐 여부.
+     * @return `true` if registration successful, `false` otherwise.<br><br>
+     *         등록에 성공하면 `true`, 그렇지 않으면 `false`.<br>
      */
     @RequiresApi(Build.VERSION_CODES.S)
     @RequiresPermission(READ_PHONE_STATE)
@@ -454,8 +557,11 @@ public class TelephonyInfo(context: Context) :
     )
 
     /**
-     * 특정 SIM 슬롯의 콜백 해제 (API 31+)
-     * Unregister callback for specific SIM slot (API 31+)
+     * Unregister callback for specific SIM slot (API 31+).<br><br>
+     * 특정 SIM 슬롯의 콜백을 해제합니다 (API 31+).<br>
+     *
+     * @param simSlotIndex SIM slot index.<br><br>
+     *                     SIM 슬롯 인덱스.
      */
     @RequiresApi(Build.VERSION_CODES.S)
     public fun unregisterCallBack(simSlotIndex: Int) =
@@ -466,8 +572,13 @@ public class TelephonyInfo(context: Context) :
     // =================================================
 
     /**
-     * 신호 강도 콜백 설정
-     * Set signal strength callback
+     * Set signal strength callback.<br><br>
+     * 신호 강도 콜백을 설정합니다.<br>
+     *
+     * @param simSlotIndex SIM slot index.<br><br>
+     *                     SIM 슬롯 인덱스.
+     * @param onSignalStrength Callback function.<br><br>
+     *                         콜백 함수.
      */
     @RequiresPermission(READ_PHONE_STATE)
     public fun setOnSignalStrength(
@@ -476,8 +587,13 @@ public class TelephonyInfo(context: Context) :
     ) = callbackManager.setOnSignalStrength(simSlotIndex, onSignalStrength)
 
     /**
-     * 서비스 상태 콜백 설정
-     * Set service state callback
+     * Set service state callback.<br><br>
+     * 서비스 상태 콜백을 설정합니다.<br>
+     *
+     * @param simSlotIndex SIM slot index.<br><br>
+     *                     SIM 슬롯 인덱스.
+     * @param onServiceState Callback function.<br><br>
+     *                       콜백 함수.
      */
     @RequiresPermission(READ_PHONE_STATE)
     public fun setOnServiceState(
@@ -486,8 +602,13 @@ public class TelephonyInfo(context: Context) :
     ) = callbackManager.setOnServiceState(simSlotIndex, onServiceState)
 
     /**
-     * 활성 데이터 구독 ID 콜백 설정
-     * Set active data subscription ID callback
+     * Set active data subscription ID callback.<br><br>
+     * 활성 데이터 구독 ID 콜백을 설정합니다.<br>
+     *
+     * @param simSlotIndex SIM slot index.<br><br>
+     *                     SIM 슬롯 인덱스.
+     * @param onActiveDataSubId Callback function.<br><br>
+     *                          콜백 함수.
      */
     @RequiresPermission(READ_PHONE_STATE)
     public fun setOnActiveDataSubId(
@@ -496,8 +617,13 @@ public class TelephonyInfo(context: Context) :
     ) = callbackManager.setOnActiveDataSubId(simSlotIndex, onActiveDataSubId)
 
     /**
-     * 데이터 연결 상태 콜백 설정
-     * Set data connection state callback
+     * Set data connection state callback.<br><br>
+     * 데이터 연결 상태 콜백을 설정합니다.<br>
+     *
+     * @param simSlotIndex SIM slot index.<br><br>
+     *                     SIM 슬롯 인덱스.
+     * @param onDataConnectionState Callback function.<br><br>
+     *                              콜백 함수.
      */
     @RequiresPermission(READ_PHONE_STATE)
     public fun setOnDataConnectionState(
@@ -506,8 +632,13 @@ public class TelephonyInfo(context: Context) :
     ) = callbackManager.setOnDataConnectionState(simSlotIndex, onDataConnectionState)
 
     /**
-     * 셀 정보 콜백 설정
-     * Set cell info callback
+     * Set cell info callback.<br><br>
+     * 셀 정보 콜백을 설정합니다.<br>
+     *
+     * @param simSlotIndex SIM slot index.<br><br>
+     *                     SIM 슬롯 인덱스.
+     * @param onCellInfo Callback function.<br><br>
+     *                   콜백 함수.
      */
     @RequiresPermission(READ_PHONE_STATE)
     public fun setOnCellInfo(
@@ -516,8 +647,13 @@ public class TelephonyInfo(context: Context) :
     ) = callbackManager.setOnCellInfo(simSlotIndex, onCellInfo)
 
     /**
-     * 통화 상태 콜백 설정
-     * Set call state callback
+     * Set call state callback.<br><br>
+     * 통화 상태 콜백을 설정합니다.<br>
+     *
+     * @param simSlotIndex SIM slot index.<br><br>
+     *                     SIM 슬롯 인덱스.
+     * @param onCallState Callback function.<br><br>
+     *                    콜백 함수.
      */
     @RequiresPermission(READ_PHONE_STATE)
     public fun setOnCallState(
@@ -526,8 +662,13 @@ public class TelephonyInfo(context: Context) :
     ) = callbackManager.setOnCallState(simSlotIndex, onCallState)
 
     /**
-     * 디스플레이 정보 콜백 설정
-     * Set display info callback
+     * Set display info callback.<br><br>
+     * 디스플레이 정보 콜백을 설정합니다.<br>
+     *
+     * @param simSlotIndex SIM slot index.<br><br>
+     *                     SIM 슬롯 인덱스.
+     * @param onDisplay Callback function.<br><br>
+     *                  콜백 함수.
      */
     @RequiresPermission(READ_PHONE_STATE)
     public fun setOnDisplayState(
@@ -536,8 +677,13 @@ public class TelephonyInfo(context: Context) :
     ) = callbackManager.setOnDisplayState(simSlotIndex, onDisplay)
 
     /**
-     * 통신망 타입 콜백 설정
-     * Set telephony network type callback
+     * Set telephony network type callback.<br><br>
+     * 통신망 타입 콜백을 설정합니다.<br>
+     *
+     * @param simSlotIndex SIM slot index.<br><br>
+     *                     SIM 슬롯 인덱스.
+     * @param onTelephonyNetworkType Callback function.<br><br>
+     *                               콜백 함수.
      */
     public fun setOnTelephonyNetworkType(
         simSlotIndex: Int,
@@ -549,15 +695,25 @@ public class TelephonyInfo(context: Context) :
     // =================================================
 
     /**
-     * 콜백 등록 상태 확인
-     * Check callback registration status
+     * Check callback registration status.<br><br>
+     * 콜백 등록 상태를 확인합니다.<br>
+     *
+     * @param simSlotIndex SIM slot index.<br><br>
+     *                     SIM 슬롯 인덱스.
+     * @return `true` if registered, `false` otherwise.<br><br>
+     *         등록되어 있으면 `true`, 그렇지 않으면 `false`.<br>
      */
     public fun isRegistered(simSlotIndex: Int): Boolean =
         callbackManager.isRegistered(simSlotIndex)
 
     /**
-     * 특정 SIM 슬롯의 TelephonyManager 반환
-     * Get TelephonyManager for specific SIM slot
+     * Get TelephonyManager for specific SIM slot.<br><br>
+     * 특정 SIM 슬롯의 TelephonyManager를 반환합니다.<br>
+     *
+     * @param slotIndex SIM slot index.<br><br>
+     *                  SIM 슬롯 인덱스.
+     * @return TelephonyManager for the slot, or null if unavailable.<br><br>
+     *         해당 슬롯의 TelephonyManager, 사용할 수 없는 경우 null.
      */
     public fun getTelephonyManagerFromUSim(slotIndex: Int): TelephonyManager? =
         callbackManager.getTelephonyManagerFromUSim(slotIndex)

@@ -1,5 +1,12 @@
 package kr.open.library.simple_ui.core.system_manager.info.network.telephony.data.state
 
+/**
+ * Detailed network types for telephony.<br><br>
+ * Telephony를 위한 상세 네트워크 타입입니다.<br>
+ *
+ * Includes specific network technologies like GPRS, LTE, NR, etc.<br><br>
+ * GPRS, LTE, NR 등과 같은 특정 네트워크 기술을 포함합니다.<br>
+ */
 public enum class TelephonyNetworkDetailType {
     DISCONNECT,
     CONNECTING,

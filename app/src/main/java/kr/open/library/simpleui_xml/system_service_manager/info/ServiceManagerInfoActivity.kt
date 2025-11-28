@@ -13,7 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
 import kr.open.library.simple_ui.core.logcat.Logx
-import kr.open.library.simple_ui.xml.extensions.view.toastShort
+import kr.open.library.simple_ui.xml.extensions.view.toastShowShort
 import kr.open.library.simple_ui.xml.extensions.view.toastShowShort
 import kr.open.library.simple_ui.xml.ui.activity.BaseBindingActivity
 import kr.open.library.simple_ui.xml.ui.adapter.normal.simple.SimpleRcvAdapter
@@ -228,9 +228,9 @@ class ServiceManagerInfoActivity : BaseBindingActivity<ActivityServiceManagerInf
                         }
 
                         addItem("Telephony Callback Registered")
-                        toastShort("Telephony Registered")
+                        toastShowShort("Telephony Registered")
                     } else {
-                        toastShort("Permission Denied $deniedPermissions")
+                        toastShowShort("Permission Denied $deniedPermissions")
                     }
                 }
             }
@@ -238,7 +238,7 @@ class ServiceManagerInfoActivity : BaseBindingActivity<ActivityServiceManagerInf
             btnTelephonyUnregister.setOnClickListener {
                 telephonyInfo.unregisterCallback()
                 addItem("Telephony Callback Unregistered")
-                toastShort("Telephony Unregistered")
+                toastShowShort("Telephony Unregistered")
             }
 
             btnNetworkInfo.setOnClickListener {
@@ -305,13 +305,13 @@ class ServiceManagerInfoActivity : BaseBindingActivity<ActivityServiceManagerInf
                 )
 
                 addItem("Network Callback Registered")
-                toastShort("Network Registered")
+                toastShowShort("Network Registered")
             }
 
             btnNetworkUnregister.setOnClickListener {
                 networkInfo.unregisterDefaultNetworkCallback()
                 addItem("Network Callback Unregistered")
-                toastShort("Network Unregistered")
+                toastShowShort("Network Unregistered")
             }
 
             btnBatteryRegister.setOnClickListener {
@@ -346,7 +346,7 @@ class ServiceManagerInfoActivity : BaseBindingActivity<ActivityServiceManagerInf
                             }
                         }
                     } else {
-                        toastShort("Permission Denied $deniedPermissions")
+                        toastShowShort("Permission Denied $deniedPermissions")
                     }
                 }
 
@@ -371,7 +371,7 @@ class ServiceManagerInfoActivity : BaseBindingActivity<ActivityServiceManagerInf
                             }
                         }
                     } else {
-                        toastShort("Permission Denied $deniedPermissions")
+                        toastShowShort("Permission Denied $deniedPermissions")
                     }
                 }
             }
@@ -388,7 +388,7 @@ class ServiceManagerInfoActivity : BaseBindingActivity<ActivityServiceManagerInf
                             addItem("Last Location: null (위치를 아직 받지 못했습니다)")
                         }
                     } else {
-                        toastShort("Permission Denied $deniedPermissions")
+                        toastShowShort("Permission Denied $deniedPermissions")
                     }
                 }
             }
@@ -409,7 +409,7 @@ class ServiceManagerInfoActivity : BaseBindingActivity<ActivityServiceManagerInf
                             addItem("Current Location is null")
                         }
                     } else {
-                        toastShort("Permission Denied $deniedPermissions")
+                        toastShowShort("Permission Denied $deniedPermissions")
                     }
                 }
             }
@@ -430,7 +430,7 @@ class ServiceManagerInfoActivity : BaseBindingActivity<ActivityServiceManagerInf
                             addItem("Current Location is null")
                         }
                     } else {
-                        toastShort("Permission Denied $deniedPermissions")
+                        toastShowShort("Permission Denied $deniedPermissions")
                     }
                 }
             }
@@ -451,7 +451,7 @@ class ServiceManagerInfoActivity : BaseBindingActivity<ActivityServiceManagerInf
                             addItem("Current Location is null")
                         }
                     } else {
-                        toastShort("Permission Denied $deniedPermissions")
+                        toastShowShort("Permission Denied $deniedPermissions")
                     }
                 }
             }

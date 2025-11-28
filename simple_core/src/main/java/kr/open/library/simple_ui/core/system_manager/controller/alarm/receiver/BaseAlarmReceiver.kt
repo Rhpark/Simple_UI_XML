@@ -17,13 +17,13 @@ import kr.open.library.simple_ui.core.system_manager.extensions.getPowerManager
 
 
 /**
- * Base class for handling alarm broadcasts with safe WakeLock management.
- * Provides a template method pattern for alarm processing with proper resource management.
- * 
- * WakeLock을 안전하게 관리하며 알람 브로드캐스트를 처리하는 기본 클래스입니다.
- * 적절한 리소스 관리와 함께 알람 처리를 위한 템플릿 메서드 패턴을 제공합니다.
+ * Base class for handling alarm broadcasts with safe WakeLock management.<br>
+ * Provides a template method pattern for alarm processing with proper resource management.<br><br>
+ * WakeLock을 안전하게 관리하며 알람 브로드캐스트를 처리하는 기본 클래스입니다.<br>
+ * 적절한 리소스 관리와 함께 알람 처리를 위한 템플릿 메서드 패턴을 제공합니다.<br>
  *
- * @constructor Creates a BaseAlarmReceiver instance
+ * @constructor Creates a BaseAlarmReceiver instance.<br><br>
+ *              BaseAlarmReceiver 인스턴스를 생성합니다.
  */
 public abstract class BaseAlarmReceiver() : BroadcastReceiver() {
 
@@ -100,16 +100,22 @@ public abstract class BaseAlarmReceiver() : BroadcastReceiver() {
     protected abstract fun loadalarmVoList(context:Context, intent: Intent, key:Int): AlarmVo?
 
     /**
-     * The maximum time to hold the WakeLock (in milliseconds).
-     * Should be kept as short as possible to preserve battery life.
-     * WakeLock을 유지하는 최대 시간(밀리초 단위).
-     * 배터리 수명을 보존하기 위해 가능한 한 짧게 유지해야 합니다.
+     * The maximum time to hold the WakeLock (in milliseconds).<br>
+     * Should be kept as short as possible to preserve battery life.<br><br>
+     * WakeLock을 유지하는 최대 시간(밀리초 단위).<br>
+     * 배터리 수명을 보존하기 위해 가능한 한 짧게 유지해야 합니다.<br>
      */
     protected abstract val powerManagerAcquireTime: Long
 
     /**
-     * Handles alarm broadcasts with safe WakeLock management and proper error handling.
-     * WakeLock을 안전하게 관리하고 적절한 오류 처리로 알람 브로드캐스트를 처리합니다.
+     * Handles alarm broadcasts with safe WakeLock management and proper error handling.<br><br>
+     * WakeLock을 안전하게 관리하고 적절한 오류 처리로 알람 브로드캐스트를 처리합니다.<br>
+     *
+     * @param context The application context.<br><br>
+     *                애플리케이션 컨텍스트.
+     *
+     * @param intent The received broadcast intent.<br><br>
+     *               수신된 브로드캐스트 인텐트.
      */
     override fun onReceive(context: Context?, intent: Intent?) {
         Logx.d("BaseAlarmReceiver.onReceive called")
@@ -162,8 +168,14 @@ public abstract class BaseAlarmReceiver() : BroadcastReceiver() {
     }
     
     /**
-     * Processes the alarm intent based on its action.
-     * 액션에 따라 알람 인텐트를 처리합니다.
+     * Processes the alarm intent based on its action.<br><br>
+     * 액션에 따라 알람 인텐트를 처리합니다.<br>
+     *
+     * @param context The application context.<br><br>
+     *                애플리케이션 컨텍스트.
+     *
+     * @param intent The received broadcast intent.<br><br>
+     *               수신된 브로드캐스트 인텐트.
      */
     private fun processAlarmIntent(context: Context, intent: Intent) {
         try {
@@ -185,8 +197,14 @@ public abstract class BaseAlarmReceiver() : BroadcastReceiver() {
     }
     
     /**
-     * Handles device boot completion by re-registering all active alarms.
-     * 기기 부팅 완료를 처리하여 모든 활성 알람을 다시 등록합니다.
+     * Handles device boot completion by re-registering all active alarms.<br><br>
+     * 기기 부팅 완료를 처리하여 모든 활성 알람을 다시 등록합니다.<br>
+     *
+     * @param context The application context.<br><br>
+     *                애플리케이션 컨텍스트.
+     *
+     * @param alarmController The alarm controller instance.<br><br>
+     *                        알람 컨트롤러 인스턴스.
      */
     private fun handleBootCompleted(context: Context, alarmController: AlarmController) {
         try {
@@ -194,9 +212,7 @@ public abstract class BaseAlarmReceiver() : BroadcastReceiver() {
             Logx.d("Re-registering ${allAlarms.size} alarms after boot")
             
             allAlarms.forEach { alarmVo ->
-                if (alarmVo.isActive) {
-                    registerAlarm(alarmController, alarmVo)
-                }
+                if (alarmVo.isActive) { registerAlarm(alarmController, alarmVo) }
             }
         } catch (e: Exception) {
             Logx.e("Error re-registering alarms after boot: ${e.message}")
@@ -204,8 +220,14 @@ public abstract class BaseAlarmReceiver() : BroadcastReceiver() {
     }
     
     /**
-     * Handles alarm trigger by showing notification.
-     * 알람 트리거를 처리하여 알림을 표시합니다.
+     * Handles alarm trigger by showing notification.<br><br>
+     * 알람 트리거를 처리하여 알림을 표시합니다.<br>
+     *
+     * @param context The application context.<br><br>
+     *                애플리케이션 컨텍스트.
+     *
+     * @param intent The received broadcast intent.<br><br>
+     *               수신된 브로드캐스트 인텐트.
      */
     private fun handleAlarmTrigger(context: Context, intent: Intent) {
         try {

@@ -56,7 +56,8 @@ public open class SimpleNotificationController(context: Context, private val sho
         context,
         checkSdkVersion(Build.VERSION_CODES.TIRAMISU,
             positiveWork = { listOf(POST_NOTIFICATIONS) },
-            negativeWork = { null })
+            negativeWork = { null }
+        )
     ) {
 
     /**
@@ -181,7 +182,7 @@ public open class SimpleNotificationController(context: Context, private val sho
                 }
             }
             showNotification(notificationOption.notificationId, builder)
-            true
+            return true
         }
 
     /**
@@ -213,9 +214,13 @@ public open class SimpleNotificationController(context: Context, private val sho
     }
 
     /**
-     * Progress 알림 빌더를 생성합니다.
-     * @param notificationOption 진행률 알림 옵션
-     * @return NotificationCompat.Builder (진행률 바 포함)
+     * Creates a notification builder with progress bar configuration.<br><br>
+     * 진행률 바 구성으로 알림 빌더를 생성합니다.<br>
+     *
+     * @param notificationOption Progress notification configuration options.<br><br>
+     *                           진행률 알림 구성 옵션.
+     * @return NotificationCompat.Builder instance with progress bar.<br><br>
+     *         진행률 바가 포함된 NotificationCompat.Builder 인스턴스.<br>
      */
     public fun getProgressBuilder(notificationOption: SimpleProgressNotificationOptionVo):NotificationCompat.Builder {
         return with(notificationOption) {
@@ -246,40 +251,90 @@ public open class SimpleNotificationController(context: Context, private val sho
     }
 
     /**
-     * 알림을 실제로 표시하는 내부 메서드
+     * Internal method that actually displays the notification.<br><br>
+     * 알림을 실제로 표시하는 내부 메서드입니다.<br>
+     *
+     * @param notificationId Unique notification identifier.<br><br>
+     *                       고유 알림 식별자.
+     * @param builder Configured notification builder.<br><br>
+     *                구성된 알림 빌더.<br>
      */
     private fun showNotification(notificationId: Int, builder: NotificationCompat.Builder) {
         notificationManager.notify(notificationId, builder.build())
     }
 
+    /**
+     * Returns the appropriate PendingIntent based on the configured show type.<br><br>
+     * 구성된 표시 유형에 따라 적절한 PendingIntent를 반환합니다.<br>
+     *
+     * @param pendingIntentOption PendingIntent configuration options.<br><br>
+     *                            PendingIntent 구성 옵션.
+     * @return Configured PendingIntent instance.<br><br>
+     *         구성된 PendingIntent 인스턴스.<br>
+     */
     private fun getPendingIntentType(pendingIntentOption: SimplePendingIntentOptionVo) = when(showType) {
         SimpleNotificationType.ACTIVITY -> getClickShowActivityPendingIntent(pendingIntentOption)
         SimpleNotificationType.SERVICE -> getClickShowServicePendingIntent(pendingIntentOption)
         SimpleNotificationType.BROADCAST -> getClickShowBroadcastPendingIntent(pendingIntentOption)
     }
 
+    /**
+     * Creates a PendingIntent that launches an Activity when triggered.<br><br>
+     * 트리거될 때 Activity를 실행하는 PendingIntent를 생성합니다.<br>
+     *
+     * @param pendingIntentOption PendingIntent configuration options.<br><br>
+     *                            PendingIntent 구성 옵션.
+     * @return PendingIntent for Activity launch.<br><br>
+     *         Activity 실행을 위한 PendingIntent.<br>
+     */
     public fun getClickShowActivityPendingIntent(pendingIntentOption: SimplePendingIntentOptionVo): PendingIntent =
         with(pendingIntentOption) { PendingIntent.getActivity(context, actionId, clickIntent, flags) }
 
+    /**
+     * Creates a PendingIntent that starts a Service when triggered.<br><br>
+     * 트리거될 때 Service를 시작하는 PendingIntent를 생성합니다.<br>
+     *
+     * @param pendingIntentOption PendingIntent configuration options.<br><br>
+     *                            PendingIntent 구성 옵션.
+     * @return PendingIntent for Service start.<br><br>
+     *         Service 시작을 위한 PendingIntent.<br>
+     */
     public fun getClickShowServicePendingIntent(pendingIntentOption: SimplePendingIntentOptionVo): PendingIntent =
         with(pendingIntentOption) { PendingIntent.getService(context, actionId, clickIntent, flags) }
 
+    /**
+     * Creates a PendingIntent that sends a Broadcast when triggered.<br><br>
+     * 트리거될 때 Broadcast를 전송하는 PendingIntent를 생성합니다.<br>
+     *
+     * @param pendingIntentOption PendingIntent configuration options.<br><br>
+     *                            PendingIntent 구성 옵션.
+     * @return PendingIntent for Broadcast send.<br><br>
+     *         Broadcast 전송을 위한 PendingIntent.<br>
+     */
     public fun getClickShowBroadcastPendingIntent(pendingIntentOption: SimplePendingIntentOptionVo): PendingIntent =
         with(pendingIntentOption) { PendingIntent.getBroadcast(context, actionId, clickIntent, flags) }
 
     /**
-     * 직접 알림을 표시합니다.
-     * @param notificationId 알림 ID
-     * @param build 빌드된 알림 객체
+     * Directly displays a notification using a pre-built Notification object.<br><br>
+     * 미리 빌드된 Notification 객체를 사용하여 직접 알림을 표시합니다.<br>
+     *
+     * @param notificationId Unique notification identifier.<br><br>
+     *                       고유 알림 식별자.
+     * @param build Pre-built Notification object.<br><br>
+     *              미리 빌드된 알림 객체.<br>
      */
     public fun notify(notificationId: Int, build: Notification) {
         notificationManager.notify(notificationId, build)
     }
 
     /**
-     * 큰 이미지 스타일 알림 빌더를 생성합니다.
-     * @param notificationOption 알림 옵션
-     * @return NotificationCompat.Builder
+     * Creates a notification builder with BigPicture style.<br><br>
+     * BigPicture 스타일의 알림 빌더를 생성합니다.<br>
+     *
+     * @param notificationOption Notification configuration options.<br><br>
+     *                           알림 구성 옵션.
+     * @return NotificationCompat.Builder with BigPicture style.<br><br>
+     *         BigPicture 스타일이 적용된 NotificationCompat.Builder.<br>
      */
     private fun getBigPictureBuilder(notificationOption: SimpleNotificationOptionVo): NotificationCompat.Builder {
         return getBuilder(notificationOption).apply {
@@ -292,19 +347,28 @@ public open class SimpleNotificationController(context: Context, private val sho
     }
     
     /**
-     * 큰 이미지 스타일 알림을 표시합니다.
-     * @param notificationOption 알림 옵션
-     * @return 성공 여부
-     * @deprecated showNotification()을 style 파라미터와 함께 사용하세요
+     * Displays a notification with BigPicture style.<br><br>
+     * BigPicture 스타일로 알림을 표시합니다.<br>
+     *
+     * @param notificationOption Notification configuration options.<br><br>
+     *                           알림 구성 옵션.
+     * @return `true` if notification was shown successfully, `false` otherwise.<br><br>
+     *         알림 표시 성공 시 `true`, 그렇지 않으면 `false`.<br>
+     * @deprecated Use showNotification() with style parameter instead.<br><br>
+     *             style 파라미터와 함께 showNotification()을 사용하세요.
      */
     @Deprecated("Use showNotification() with style parameter instead", ReplaceWith("showNotification(notificationOption.copy(style = NotificationStyle.BIG_PICTURE))"))
     public fun showNotificationBigImage(notificationOption: SimpleNotificationOptionVo): Boolean =
         showNotification(notificationOption.copy(style = NotificationStyle.BIG_PICTURE))
 
     /**
-     * 긴 텍스트 스타일 알림 빌더를 생성합니다.
-     * @param notificationOption 알림 옵션
-     * @return NotificationCompat.Builder
+     * Creates a notification builder with BigText style.<br><br>
+     * BigText 스타일의 알림 빌더를 생성합니다.<br>
+     *
+     * @param notificationOption Notification configuration options.<br><br>
+     *                           알림 구성 옵션.
+     * @return NotificationCompat.Builder with BigText style.<br><br>
+     *         BigText 스타일이 적용된 NotificationCompat.Builder.<br>
      */
     private fun getBigTextBuilder(notificationOption: SimpleNotificationOptionVo): NotificationCompat.Builder {
         return getBuilder(notificationOption).apply {
@@ -317,19 +381,28 @@ public open class SimpleNotificationController(context: Context, private val sho
     }
     
     /**
-     * 긴 텍스트 스타일 알림을 표시합니다.
-     * @param notificationOption 알림 옵션
-     * @return 성공 여부
-     * @deprecated showNotification()을 style 파라미터와 함께 사용하세요
+     * Displays a notification with BigText style.<br><br>
+     * BigText 스타일로 알림을 표시합니다.<br>
+     *
+     * @param notificationOption Notification configuration options.<br><br>
+     *                           알림 구성 옵션.
+     * @return `true` if notification was shown successfully, `false` otherwise.<br><br>
+     *         알림 표시 성공 시 `true`, 그렇지 않으면 `false`.<br>
+     * @deprecated Use showNotification() with style parameter instead.<br><br>
+     *             style 파라미터와 함께 showNotification()을 사용하세요.
      */
     @Deprecated("Use showNotification() with style parameter instead", ReplaceWith("showNotification(notificationOption.copy(style = NotificationStyle.BIG_TEXT))"))
     public fun showNotificationBigText(notificationOption: SimpleNotificationOptionVo): Boolean =
         showNotification(notificationOption.copy(style = NotificationStyle.BIG_TEXT))
 
     /**
-     * 진행률 알림을 생성합니다.
-     * @param simpleProgressNotificationOption 진행률 알림 옵션
-     * @return 생성 성공 여부
+     * Creates and displays a progress notification.<br><br>
+     * 진행률 알림을 생성하고 표시합니다.<br>
+     *
+     * @param simpleProgressNotificationOption Progress notification configuration options.<br><br>
+     *                                         진행률 알림 구성 옵션.
+     * @return `true` if notification was created successfully, `false` otherwise.<br><br>
+     *         알림 생성 성공 시 `true`, 그렇지 않으면 `false`.<br>
      */
     public fun showProgressNotification(
         simpleProgressNotificationOption: SimpleProgressNotificationOptionVo
@@ -338,14 +411,19 @@ public open class SimpleNotificationController(context: Context, private val sho
             val builder = getProgressBuilder(simpleProgressNotificationOption)
             showNotification(notificationId, builder)
         }
-        true
+        return true
     }
 
     /**
-     * 진행률을 업데이트합니다.
-     * @param notificationId 알림 ID
-     * @param progressPercent 진행률 (0~100)
-     * @return 업데이트 성공 여부
+     * Updates the progress percentage of an existing progress notification.<br><br>
+     * 기존 진행률 알림의 진행률을 업데이트합니다.<br>
+     *
+     * @param notificationId Unique notification identifier.<br><br>
+     *                       고유 알림 식별자.
+     * @param progressPercent Progress percentage (0-100).<br><br>
+     *                        진행률 (0-100).
+     * @return `true` if update was successful, `false` otherwise.<br><br>
+     *         업데이트 성공 시 `true`, 그렇지 않으면 `false`.<br>
      */
     public fun updateProgress(notificationId: Int, progressPercent: Int): Boolean {
         // 진행률 범위 검증
@@ -353,7 +431,7 @@ public open class SimpleNotificationController(context: Context, private val sho
             Logx.w("Invalid progress: $progressPercent (must be 0 ~ 100)")
             return false
         }
-        return tryCatchSystemManager( false) {
+        return tryCatchSystemManager(false) {
             progressBuilders[notificationId]?.let { info ->
                 info.builder.setProgress(100, progressPercent, false)
                 showNotification(notificationId, info.builder)
@@ -368,10 +446,15 @@ public open class SimpleNotificationController(context: Context, private val sho
     }
 
     /**
-     * 진행률 알림을 완료 상태로 변경합니다.
-     * @param notificationId 알림 ID
-     * @param completedContent 완료 메시지
-     * @return 완료 처리 성공 여부
+     * Marks a progress notification as complete and optionally updates the message.<br><br>
+     * 진행률 알림을 완료 상태로 표시하고 선택적으로 메시지를 업데이트합니다.<br>
+     *
+     * @param notificationId Unique notification identifier.<br><br>
+     *                       고유 알림 식별자.
+     * @param completedContent Completion message (optional).<br><br>
+     *                         완료 메시지 (선택사항).
+     * @return `true` if completion was successful, `false` otherwise.<br><br>
+     *         완료 처리 성공 시 `true`, 그렇지 않으면 `false`.<br>
      */
     public fun completeProgress(notificationId: Int, completedContent: String? = null): Boolean =
         tryCatchSystemManager(false) {
@@ -380,29 +463,35 @@ public open class SimpleNotificationController(context: Context, private val sho
                 completedContent?.let { info.builder.setContentText(it) }
                 showNotification(notificationId, info.builder)
                 progressBuilders.remove(notificationId) // 빌더 제거로 메모리 정리
-                true
+                return true
             } ?: run {
                 Logx.w("Progress notification not found for ID: $notificationId")
-                false
+                return false
             }
         }
 
     /**
-     * 특정 알림을 취소합니다.
-     * @param tag 알림 태그 (선택사항)
-     * @param notificationId 알림 ID
-     * @return 취소 성공 여부
+     * Cancels a specific notification by ID.<br><br>
+     * ID로 특정 알림을 취소합니다.<br>
+     *
+     * @param tag Notification tag (optional).<br><br>
+     *            알림 태그 (선택사항).
+     * @param notificationId Unique notification identifier.<br><br>
+     *                       고유 알림 식별자.
+     * @return `true` if cancellation was successful, `false` otherwise.<br><br>
+     *         취소 성공 시 `true`, 그렇지 않으면 `false`.<br>
      */
     public fun cancelNotification(tag: String? = null, notificationId: Int): Boolean =
-        tryCatchSystemManager( false) {
+        tryCatchSystemManager(false) {
             tag?.let { notificationManager.cancel(tag, notificationId) }
                 ?: notificationManager.cancel(notificationId)
             progressBuilders.remove(notificationId) // 진행률 빌더도 함께 제거
-            true
+            return true
         }
 
     /**
-     * 모든 알림을 취소합니다.
+     * Cancels all active notifications.<br><br>
+     * 모든 활성 알림을 취소합니다.<br>
      */
     public fun cancelAll() {
         notificationManager.cancelAll()
@@ -410,7 +499,8 @@ public open class SimpleNotificationController(context: Context, private val sho
     }
 
     /**
-     * 리소스를 정리합니다. Activity/Service가 종료될 때 호출해야 합니다.
+     * Cleans up resources. Should be called when Activity/Service is destroyed.<br><br>
+     * 리소스를 정리합니다. Activity/Service가 종료될 때 호출해야 합니다.<br>
      */
     public fun cleanup() {
         try {
@@ -430,17 +520,19 @@ public open class SimpleNotificationController(context: Context, private val sho
     }
     
     /**
-     * 기본 채널이 존재하는지 확인하고 없으면 생성합니다.
+     * Ensures that a default channel exists, creating it if necessary.<br><br>
+     * 기본 채널이 존재하는지 확인하고 필요한 경우 생성합니다.<br>
      */
     private fun ensureDefaultChannel() {
-        if (currentChannel == null) {
-            getOrCreateDefaultChannel()
-        }
+        if (currentChannel == null) { getOrCreateDefaultChannel() }
     }
     
     /**
-     * 기본 채널을 가져오거나 생성합니다.
-     * @return 기본 NotificationChannel
+     * Gets the default channel or creates it if it doesn't exist.<br><br>
+     * 기본 채널을 가져오거나 존재하지 않으면 생성합니다.<br>
+     *
+     * @return The default NotificationChannel instance.<br><br>
+     *         기본 NotificationChannel 인스턴스.<br>
      */
     private fun getOrCreateDefaultChannel(): NotificationChannel {
         return currentChannel ?: run {
@@ -457,8 +549,10 @@ public open class SimpleNotificationController(context: Context, private val sho
     }
     
     /**
-     * 진행률 알림 정리 스케줄러를 시작합니다.
-     * 오래된 진행률 알림 빌더를 주기적으로 정리하여 메모리 누수를 방지합니다.
+     * Starts a scheduler that periodically cleans up stale progress notifications.<br>
+     * Removes progress notification builders that haven't been updated for 30 minutes.<br><br>
+     * 오래된 진행률 알림을 주기적으로 정리하는 스케줄러를 시작합니다.<br>
+     * 30분 동안 업데이트되지 않은 진행률 알림 빌더를 제거하여 메모리 누수를 방지합니다.<br>
      */
     private fun startProgressCleanupScheduler() {
         if (cleanupScheduler == null) {

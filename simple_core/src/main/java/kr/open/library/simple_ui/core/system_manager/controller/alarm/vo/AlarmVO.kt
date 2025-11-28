@@ -4,14 +4,12 @@ import android.net.Uri
 import java.util.Locale
 
 /**
- * Constants for alarm functionality throughout the system
- * 시스템 전체에서 사용되는 알람 관련 상수들
+ * Constants for alarm functionality throughout the system.<br><br>
+ * 시스템 전체에서 사용되는 알람 관련 상수들.<br>
  */
 public object AlarmConstants {
     
-    /**
-     * Intent extras
-     */
+    // Intent extras
     /**
      * Key for storing alarm identifier in Intent extras.<br><br>
      * Intent extras에 알람 식별자를 저장하기 위한 키입니다.<br>
@@ -23,10 +21,8 @@ public object AlarmConstants {
      * Intent extras에서 찾을 수 없을 때 알람 키의 기본값입니다.<br>
      */
     public const val ALARM_KEY_DEFAULT_VALUE: Int = -1
-    
-    /**
-     * WakeLock settings
-     */
+
+    //WakeLock settings
     /**
      * Tag identifier for WakeLock instances.<br><br>
      * WakeLock 인스턴스의 태그 식별자입니다.<br>
@@ -44,10 +40,8 @@ public object AlarmConstants {
      * 알람 처리를 위해 WakeLock을 유지하는 기본 시간(3초)입니다.<br>
      */
     public const val DEFAULT_ACQUIRE_TIME_MS: Long = 3000L // 3 seconds
-    
-    /**
-     * Calendar settings
-     */
+
+    //Calendar settings
     /**
      * Milliseconds in one second for time calculations.<br><br>
      * 시간 계산을 위한 1초당 밀리초입니다.<br>
@@ -65,10 +59,8 @@ public object AlarmConstants {
      * 시간 계산을 위한 1시간당 분입니다.<br>
      */
     public const val MINUTES_IN_HOUR: Long = 60L
-    
-    /**
-     * Alarm type identifiers
-     */
+
+    //Alarm type identifiers
     /**
      * Identifier for standard alarm clock type.<br><br>
      * 표준 알람 시계 타입의 식별자입니다.<br>
@@ -86,10 +78,8 @@ public object AlarmConstants {
      * 정확한 유휴 모드 허용 알람 타입의 식별자입니다.<br>
      */
     public const val ALARM_TYPE_EXACT_IDLE: String = "EXACT_AND_ALLOW_WHILE_IDLE"
-    
-    /**
-     * Error codes
-     */
+
+    //Error codes
     /**
      * Error code for invalid time values.<br><br>
      * 유효하지 않은 시간 값에 대한 오류 코드입니다.<br>
@@ -111,23 +101,43 @@ public object AlarmConstants {
 
 
 /**
- * Data Transfer Object for alarm information with input validation and immutable design.
- * Represents all necessary data for creating and managing alarms in the system.
+ * Data Transfer Object for alarm information with input validation and immutable design.<br>
+ * Represents all necessary data for creating and managing alarms in the system.<br><br>
+ * 입력 유효성 검증과 불변 설계를 가진 알람 정보용 데이터 전송 객체입니다.<br>
+ * 시스템에서 알람을 생성하고 관리하는 데 필요한 모든 데이터를 나타냅니다.<br>
  *
- * 입력 유효성 검증과 불변 설계를 가진 알람 정보용 데이터 전송 객체입니다.
- * 시스템에서 알람을 생성하고 관리하는 데 필요한 모든 데이터를 나타냅니다.
+ * @param key Unique identifier for the alarm (must be positive).<br><br>
+ *            알람의 고유 식별자 (양수여야 함).
  *
- * @param key Unique identifier for the alarm (must be positive)
- * @param title Display title for the alarm notification
- * @param message Detailed message for the alarm notification
- * @param isActive Whether the alarm is currently active
- * @param isAllowIdle Whether the alarm can fire during device idle time
- * @param vibrationPattern Vibration pattern as an immutable list (null for no vibration)
- * @param soundUri URI for alarm sound (null for default system sound)
- * @param hour Hour of day (0-23)
- * @param minute Minute of hour (0-59)
- * @param second Second of minute (0-59)
- * @param acquireTime Maximum WakeLock acquire time in milliseconds
+ * @param title Display title for the alarm notification.<br><br>
+ *              알람 알림의 표시 제목.
+ *
+ * @param message Detailed message for the alarm notification.<br><br>
+ *                알람 알림의 상세 메시지.
+ *
+ * @param isActive Whether the alarm is currently active.<br><br>
+ *                 알람이 현재 활성 상태인지 여부.
+ *
+ * @param isAllowIdle Whether the alarm can fire during device idle time.<br><br>
+ *                    기기 유휴 시간에 알람이 실행될 수 있는지 여부.
+ *
+ * @param vibrationPattern Vibration pattern as an immutable list (null for no vibration).<br><br>
+ *                         불변 리스트로서의 진동 패턴 (진동 없음은 null).
+ *
+ * @param soundUri URI for alarm sound (null for default system sound).<br><br>
+ *                 알람 소리의 URI (기본 시스템 소리는 null).
+ *
+ * @param hour Hour of day (0-23).<br><br>
+ *             시간 (0-23).
+ *
+ * @param minute Minute of hour (0-59).<br><br>
+ *               분 (0-59).
+ *
+ * @param second Second of minute (0-59).<br><br>
+ *               초 (0-59).
+ *
+ * @param acquireTime Maximum WakeLock acquire time in milliseconds.<br><br>
+ *                    WakeLock 획득 최대 시간 (밀리초 단위).
  */
 public data class AlarmVo(
     public val key: Int,
@@ -167,47 +177,64 @@ public data class AlarmVo(
     }
 
     /**
-     * Creates a copy of this alarmVo with modified active state.
-     * 활성 상태가 수정된 이 alarmVo의 복사본을 생성합니다.
+     * Creates a copy of this alarmVo with modified active state.<br><br>
+     * 활성 상태가 수정된 이 alarmVo의 복사본을 생성합니다.<br>
+     *
+     * @param active The new active state.<br><br>
+     *               새로운 활성 상태.
+     *
+     * @return A copy of this AlarmVo with the specified active state.<br><br>
+     *         지정된 활성 상태를 가진 AlarmVo의 복사본.<br>
      */
     public fun withActiveState(active: Boolean): AlarmVo = copy(isActive = active)
 
     /**
-     * Creates a copy of this alarmVo with modified time.
-     * 시간이 수정된 이 alarmVo의 복사본을 생성합니다.
+     * Creates a copy of this alarmVo with modified time.<br><br>
+     * 시간이 수정된 이 alarmVo의 복사본을 생성합니다.<br>
+     *
+     * @param hour The new hour (0-23).<br><br>
+     *             새로운 시간 (0-23).
+     *
+     * @param minute The new minute (0-59).<br><br>
+     *               새로운 분 (0-59).
+     *
+     * @param second The new second (0-59), defaults to current second.<br><br>
+     *               새로운 초 (0-59), 기본값은 현재 초.
+     *
+     * @return A copy of this AlarmVo with the specified time.<br><br>
+     *         지정된 시간을 가진 AlarmVo의 복사본.<br>
      */
     public fun withTime(hour: Int, minute: Int, second: Int = this.second): AlarmVo {
         return copy(hour = hour, minute = minute, second = second)
     }
 
     /**
-     * Formats the alarm time as HH:MM:SS string.
-     * 알람 시간을 HH:MM:SS 문자열로 형식화합니다.
+     * Formats the alarm time as HH:MM:SS string.<br><br>
+     * 알람 시간을 HH:MM:SS 문자열로 형식화합니다.<br>
+     *
+     * @return Formatted time string in HH:MM:SS format.<br><br>
+     *         HH:MM:SS 형식의 형식화된 시간 문자열.<br>
      */
     public fun getFormattedTime(): String = String.format(Locale.getDefault(),"%02d:%02d:%02d", hour, minute, second)
 
     /**
-     * Calculates total seconds since midnight for easy comparison.
-     * 자정 이후 총 초를 계산하여 쉬운 비교를 가능하게 합니다.
+     * Calculates total seconds since midnight for easy comparison.<br><br>
+     * 자정 이후 총 초를 계산하여 쉬운 비교를 가능하게 합니다.<br>
+     *
+     * @return Total seconds since midnight.<br><br>
+     *         자정 이후 총 초.<br>
      */
     public fun getTotalSeconds(): Int = hour * 3600 + minute * 60 + second
 
     /**
-     * Returns a brief description of the alarm for logging purposes.
-     * 로깅 목적으로 알람의 간단한 설명을 반환합니다.
+     * Returns a brief description of the alarm for logging purposes.<br><br>
+     * 로깅 목적으로 알람의 간단한 설명을 반환합니다.<br>
+     *
+     * @return A brief description string.<br><br>
+     *         간단한 설명 문자열.<br>
      */
     public fun getDescription(): String = "Alarm[$key]: '$title' at ${getFormattedTime()}, active: $isActive"
 
-    /**
-     * Legacy compatibility property for vibrationEffect.
-     * @deprecated Use vibrationPattern instead
-     */
-    @Deprecated(
-        message = "Use vibrationPattern instead",
-        replaceWith = ReplaceWith("vibrationPattern?.toLongArray()")
-    )
-    public val vibrationEffect: LongArray?
-        get() = vibrationPattern?.toLongArray()
 
     /**
      * Legacy compatibility property for msg.
@@ -217,13 +244,29 @@ public data class AlarmVo(
         message = "Use message instead",
         replaceWith = ReplaceWith("message")
     )
-    public val msg: String
-        get() = message
 
     companion object {
         /**
-         * Creates a simple alarm with minimal configuration.
-         * 최소한의 구성으로 간단한 알람을 생성합니다.
+         * Creates a simple alarm with minimal configuration.<br><br>
+         * 최소한의 구성으로 간단한 알람을 생성합니다.<br>
+         *
+         * @param key Unique identifier for the alarm.<br><br>
+         *            알람의 고유 식별자.
+         *
+         * @param title Display title for the alarm.<br><br>
+         *              알람의 표시 제목.
+         *
+         * @param message Alarm message.<br><br>
+         *                알람 메시지.
+         *
+         * @param hour Hour of day (0-23).<br><br>
+         *             시간 (0-23).
+         *
+         * @param minute Minute of hour (0-59).<br><br>
+         *               분 (0-59).
+         *
+         * @return A simple AlarmVo instance.<br><br>
+         *         간단한 AlarmVo 인스턴스.<br>
          */
         public fun createSimple(
             key: Int,
@@ -242,8 +285,29 @@ public data class AlarmVo(
         }
 
         /**
-         * Creates an alarm that can fire during device idle time.
-         * 기기 유휴 시간에도 실행될 수 있는 알람을 생성합니다.
+         * Creates an alarm that can fire during device idle time.<br><br>
+         * 기기 유휴 시간에도 실행될 수 있는 알람을 생성합니다.<br>
+         *
+         * @param key Unique identifier for the alarm.<br><br>
+         *            알람의 고유 식별자.
+         *
+         * @param title Display title for the alarm.<br><br>
+         *              알람의 표시 제목.
+         *
+         * @param message Alarm message.<br><br>
+         *                알람 메시지.
+         *
+         * @param hour Hour of day (0-23).<br><br>
+         *             시간 (0-23).
+         *
+         * @param minute Minute of hour (0-59).<br><br>
+         *               분 (0-59).
+         *
+         * @param second Second of minute (0-59), defaults to 0.<br><br>
+         *               초 (0-59), 기본값은 0.
+         *
+         * @return An idle-allowed AlarmVo instance.<br><br>
+         *         유휴 모드 허용 AlarmVo 인스턴스.<br>
          */
         public fun createIdleAllowed(
             key: Int,

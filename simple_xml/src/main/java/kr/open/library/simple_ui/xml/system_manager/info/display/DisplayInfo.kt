@@ -17,16 +17,11 @@ import kr.open.library.simple_ui.core.system_manager.base.BaseSystemService
 import kr.open.library.simple_ui.core.system_manager.extensions.getWindowManager
 
 /**
- * This class provides information about the display of an Android device.
- * DisplayInfo 클래스는 Android 기기의 디스플레이 정보를 제공.
+ * Provides display-related metrics such as full screen, status bar, and navigation bar sizes.<br><br>
+ * 전체 화면, 상태 바, 내비게이션 바 크기 등 디스플레이 정보를 제공합니다.<br>
  *
- * Screen Size,
- * Full Screen Size,
- * Status Bar Size,
- * Navigation Bar Size,
- *
- * @param context The application context.
- * @param context 애플리케이션 컨텍스트.
+ * @param context Application context used to access system services.<br><br>
+ *                시스템 서비스를 사용하기 위한 애플리케이션 컨텍스트입니다.<br>
  */
 public open class DisplayInfo(context: Context) : BaseSystemService(context, null) {
 
@@ -47,11 +42,11 @@ public open class DisplayInfo(context: Context) : BaseSystemService(context, nul
     }
 
     /**
-     * Returns the full screen size(Pixel).
-     * 전체 화면 크기를 반환.
+     * Returns the full screen size in pixels.<br><br>
+     * 전체 화면 크기(픽셀)를 반환합니다.<br>
      *
-     * @return  The full screen size (width, height).
-     * @return 전체 화면 크기 (너비, 높이)
+     * @return `Point(width, height)` representing the full screen size.<br><br>
+     *         전체 화면 너비와 높이를 담은 `Point`입니다.<br>
      */
     public fun getFullScreenSize(): Point = checkSdkVersion(Build.VERSION_CODES.R,
         positiveWork = { with(getCurrentWindowMetricsSdkR().bounds) { Point(width(), height()) } },
@@ -59,25 +54,21 @@ public open class DisplayInfo(context: Context) : BaseSystemService(context, nul
     )
 
     /**
-     * Returns the total display width in pixels.
-     * 전체 화면의 가로 픽셀 크기를 반환합니다.
+     * Returns the total display width in pixels.<br><br>
+     * 전체 화면의 가로 픽셀 크기를 반환합니다.<br>
      */
     public fun getFullScreenWidth(): Int = getFullScreenSize().x
 
     /**
-     * Returns the total display height in pixels.
-     * 전체 화면의 세로 픽셀 크기를 반환합니다.
+     * Returns the total display height in pixels.<br><br>
+     * 전체 화면의 세로 픽셀 크기를 반환합니다.<br>
      */
     public fun getFullScreenHeight(): Int = getFullScreenSize().y
 
 
     /**
-     * Returns the status bar bounding box as `Point(width, height)`.
-     * - Width uses the current content width (`screenWidth`), 실제 상태바 뷰 폭과는 다를 수 있습니다.
-     * - Height 는 WindowInsets(R+) 또는 legacy `status_bar_height` dimen 으로 계산됩니다.
-     *
-     * 가로/세로 회전이나 네비게이션 위치 변화에도 실제 상태바가 차지하는 뷰 영역을 그대로 참고할 수 있습니다.
-     * 단, 일부 제조사/커스터마이징에서는 상태바가 화면 전체 폭을 덮는 구조라 UI 배치 폭과 다를 수 있으니 참고용으로만 사용하세요.
+     * Returns the status bar bounding box as `Point(width, height)`; width uses the current screen width.<br><br>
+     * 상태 바 크기를 `Point(가로, 세로)`로 반환하며, 가로 값은 현재 화면 너비를 사용합니다.<br>
      */
     @SuppressLint("InternalInsetResource")
     public open fun getStatusBarSize(): Point = checkSdkVersion(Build.VERSION_CODES.R,
@@ -98,17 +89,14 @@ public open class DisplayInfo(context: Context) : BaseSystemService(context, nul
     )
 
     /**
-     * Returns the status bar height(Pixel).
-     * 상태 표시줄 높이를 반환.
-     *
-     * @return The status bar height.
-     * @return 상태 표시줄 높이.
+     * Returns the status bar height wrapped in `Result`.<br><br>
+     * 상태 표시줄 높이를 `Result`로 반환합니다.<br>
      */
     public fun getStatusBarHeight(): Result<Int> = runCatching { getStatusBarSize().y }
 
     /**
-     * Returns the status bar width wrapped in Result.
-     * 상태바 가로 길이를 Result 로 반환합니다.
+     * Returns the status bar width wrapped in `Result`.<br><br>
+     * 상태 표시줄 너비를 `Result`로 반환합니다.<br>
      */
     public fun getStatusBarWidth(): Result<Int> = runCatching { getStatusBarSize().x }
 
@@ -183,21 +171,8 @@ public open class DisplayInfo(context: Context) : BaseSystemService(context, nul
 
 
     /**
-     * Returns the navigation bar size (thickness).
-     * This returns the largest inset dimension where the navigation bar is located.
-     * For bottom navigation bars, this is the height.
-     * For side navigation bars (tablets/foldables), this is the width.
-     *
-     * 탐색 표시줄 크기(두께)를 반환.
-     * 네비게이션 바가 위치한 방향의 가장 큰 inset 크기를 반환합니다.
-     * 하단 네비게이션 바의 경우 높이, 측면 네비게이션 바의 경우 너비를 반환합니다.
-     *
-     * @return The navigation bar size (thickness in pixels).
-     * @return 탐색 표시줄 크기 (픽셀 단위 두께).
-     */
-    /**
-     * Returns the navigation bar bounding size (width/height) as a Point.
-     * 네비게이션 바의 가로/세로 크기를 Point 로 반환합니다.
+     * Returns the navigation bar bounding size as `Point(width, height)`.<br><br>
+     * 내비게이션 바의 가로·세로 크기를 `Point`로 반환합니다.<br>
      */
     @SuppressLint("InternalInsetResource")
     public fun getNavigationBarSize(): Point = checkSdkVersion(Build.VERSION_CODES.R,
@@ -206,20 +181,20 @@ public open class DisplayInfo(context: Context) : BaseSystemService(context, nul
     )
 
     /**
-     * Returns the navigation bar width component.
-     * 네비게이션 바의 가로 크기를 반환합니다.
+     * Returns the navigation bar width component.<br><br>
+     * 내비게이션 바의 가로 크기를 반환합니다.<br>
      */
     public fun getNavigationBarWidth(): Int = getNavigationBarSize().x
 
     /**
-     * Returns the navigation bar height component.
-     * 네비게이션 바의 세로 크기를 반환합니다.
+     * Returns the navigation bar height component.<br><br>
+     * 내비게이션 바의 세로 크기를 반환합니다.<br>
      */
     public fun getNavigationBarHeight(): Int = getNavigationBarSize().y
 
     /**
-     * Returns the available screen width after excluding navigation insets.
-     * 네비게이션 영역을 제외한 실제 사용 가능한 가로 픽셀을 반환합니다.
+     * Returns the available screen width after excluding navigation insets.<br><br>
+     * 내비게이션 영역을 제외한 가용 가로 픽셀 크기를 반환합니다.<br>
      */
     public fun getScreenWidth(): Int {
         val navSize = getNavigationBarSize()
@@ -229,8 +204,8 @@ public open class DisplayInfo(context: Context) : BaseSystemService(context, nul
     }
 
     /**
-     * Returns the available screen height after excluding system bars.
-     * 상태바/네비게이션 바를 제외한 실제 사용 가능한 세로 픽셀을 반환합니다.
+     * Returns the available screen height after excluding system bars.<br><br>
+     * 상태바와 내비게이션 바를 제외한 가용 세로 픽셀 크기를 반환합니다.<br>
      */
     public fun getScreenHeight(): Int {
         val navSize = getNavigationBarSize()
@@ -241,20 +216,20 @@ public open class DisplayInfo(context: Context) : BaseSystemService(context, nul
     }
 
     /**
-     * Returns the usable screen size as Point(width, height).
-     * 사용 가능한 화면 크기를 Point 로 반환합니다.
+     * Returns the usable screen size as `Point(width, height)`.<br><br>
+     * 사용 가능한 화면 크기를 `Point(가로, 세로)`로 반환합니다.<br>
      */
     public fun getScreenSize() = Point(getScreenWidth(), getScreenHeight())
 
     /**
-     * Indicates whether the navigation bar is hidden.
-     * 네비게이션 바가 숨겨졌는지 여부를 반환합니다.
+     * Indicates whether the navigation bar is hidden.<br><br>
+     * 내비게이션 바가 숨김 상태인지 여부를 반환합니다.<br>
      */
     public fun isNavigationBarHided(): Boolean = getNavigationBarHeight() == 0
 
     /**
-     * Indicates whether the status bar is hidden.
-     * 상태바가 숨겨졌는지 여부를 반환합니다.
+     * Indicates whether the status bar is hidden.<br><br>
+     * 상태 표시줄이 숨김 상태인지 여부를 반환합니다.<br>
      */
     public fun isStatusBarHided(): Boolean = getStatusBarHeight().getOrElse {
         Logx.e(it)
@@ -262,8 +237,8 @@ public open class DisplayInfo(context: Context) : BaseSystemService(context, nul
     } == 0
 
     /**
-     * Indicates whether the window is occupying the full screen (no insets).
-     * 현재 창이 인셋 없이 전체 화면을 사용 중인지 여부를 반환합니다.
+     * Indicates whether the window uses the full screen with no insets.<br><br>
+     * 현재 창이 인셋 없이 전체 화면을 사용하는지 여부를 반환합니다.<br>
      */
     public fun isFullScreen(): Boolean = getFullScreenHeight() == getScreenHeight() && getFullScreenWidth() == getScreenWidth()
 }

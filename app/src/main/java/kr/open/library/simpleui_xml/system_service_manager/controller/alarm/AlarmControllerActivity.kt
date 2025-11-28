@@ -2,7 +2,7 @@ package kr.open.library.simpleui_xml.system_service_manager.controller.alarm
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import kr.open.library.simple_ui.xml.extensions.view.toastShort
+import kr.open.library.simple_ui.xml.extensions.view.toastShowShort
 import kr.open.library.simple_ui.xml.ui.activity.BaseActivity
 import kr.open.library.simple_ui.core.system_manager.controller.alarm.vo.AlarmVo
 import kr.open.library.simple_ui.core.system_manager.extensions.getAlarmController
@@ -43,10 +43,10 @@ class AlarmControllerActivity : BaseActivity(R.layout.activity_alarm_controller)
                 val result = getAlarmController().registerAlarmClock(AlarmReceiver::class.java, alarmVo)
                 if (result) {
                     tvResult.text = "AlarmClock registered at $hour:$minute"
-                    toastShort("AlarmClock registered")
+                    toastShowShort("AlarmClock registered")
                 } else {
                     tvResult.text = "Failed to register AlarmClock"
-                    toastShort("Failed to register")
+                    toastShowShort("Failed to register")
                 }
             }
 
@@ -67,10 +67,10 @@ class AlarmControllerActivity : BaseActivity(R.layout.activity_alarm_controller)
                 val result = getAlarmController().registerAlarmExactAndAllowWhileIdle(AlarmReceiver::class.java, alarmVo)
                 if (result) {
                     tvResult.text = "Exact Alarm registered at $hour:$minute"
-                    toastShort("Exact Alarm registered")
+                    toastShowShort("Exact Alarm registered")
                 } else {
                     tvResult.text = "Failed to register Exact Alarm"
-                    toastShort("Failed to register")
+                    toastShowShort("Failed to register")
                 }
             }
 
@@ -91,10 +91,10 @@ class AlarmControllerActivity : BaseActivity(R.layout.activity_alarm_controller)
                 val result = getAlarmController().registerAlarmAndAllowWhileIdle(AlarmReceiver::class.java, alarmVo)
                 if (result) {
                     tvResult.text = "Allow While Idle Alarm registered at $hour:$minute"
-                    toastShort("Alarm registered")
+                    toastShowShort("Alarm registered")
                 } else {
                     tvResult.text = "Failed to register Alarm"
-                    toastShort("Failed to register")
+                    toastShowShort("Failed to register")
                 }
             }
 
@@ -104,10 +104,10 @@ class AlarmControllerActivity : BaseActivity(R.layout.activity_alarm_controller)
 
                 if (result) {
                     tvResult.text = "Alarm with key $key removed"
-                    toastShort("Alarm removed")
+                    toastShowShort("Alarm removed")
                 } else {
                     tvResult.text = "Failed to remove alarm with key $key"
-                    toastShort("Failed to remove")
+                    toastShowShort("Failed to remove")
                 }
             }
 
@@ -116,7 +116,7 @@ class AlarmControllerActivity : BaseActivity(R.layout.activity_alarm_controller)
                 val exists = getAlarmController().exists(key, AlarmReceiver::class.java)
 
                 tvResult.text = "Alarm with key $key exists: $exists"
-                toastShort("Exists: $exists")
+                toastShowShort("Exists: $exists")
             }
         }
     }

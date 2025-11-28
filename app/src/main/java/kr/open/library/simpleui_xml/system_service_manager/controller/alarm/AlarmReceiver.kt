@@ -68,9 +68,9 @@ public class AlarmReceiver() : BaseAlarmReceiver() {
             createChannel(
                 NotificationChannel("Alarm_ID", "Alarm_Name", NotificationManager.IMPORTANCE_HIGH).apply {
 //            setShowBadge(true)
-                    alarmVo.vibrationEffect?.let {
+                    alarmVo.vibrationPattern?.let {
                         enableVibration(true)
-                        vibrationPattern = it
+                        vibrationPattern = it.toLongArray()
                     }
                     alarmVo.soundUri?.let {
                         setSound(
@@ -90,7 +90,7 @@ public class AlarmReceiver() : BaseAlarmReceiver() {
             SimpleNotificationOptionVo(
                 alarmVo.key,
                 alarmVo.title,
-                alarmVo.msg,
+                alarmVo.message,
                 false,
                 R.drawable.ic_launcher_foreground,
             )

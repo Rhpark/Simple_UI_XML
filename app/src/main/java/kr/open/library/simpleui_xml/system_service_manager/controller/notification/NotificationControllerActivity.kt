@@ -11,7 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
 import kr.open.library.simple_ui.core.logcat.Logx
-import kr.open.library.simple_ui.xml.extensions.view.toastShort
+import kr.open.library.simple_ui.xml.extensions.view.toastShowShort
 import kr.open.library.simple_ui.xml.ui.activity.BaseBindingActivity
 import kr.open.library.simple_ui.core.system_manager.controller.notification.vo.NotificationStyle
 import kr.open.library.simple_ui.core.system_manager.controller.notification.vo.SimpleNotificationOptionVo
@@ -53,7 +53,7 @@ class NotificationControllerActivity : BaseBindingActivity<ActivityNotificationC
         checkSdkVersion(Build.VERSION_CODES.TIRAMISU) {
             onRequestPermissions(listOf(Manifest.permission.POST_NOTIFICATIONS)) { deniedPermissions ->
                 if (deniedPermissions.isNotEmpty()) {
-                    toastShort("Notification permission denied")
+                    toastShowShort("Notification permission denied")
                 }
             }
         }
@@ -101,7 +101,7 @@ class NotificationControllerActivity : BaseBindingActivity<ActivityNotificationC
         )
 
         notificationController.showNotification(option)
-        toastShort("Basic notification shown")
+        toastShowShort("Basic notification shown")
     }
 
     private fun showBigTextNotification() {
@@ -118,7 +118,7 @@ class NotificationControllerActivity : BaseBindingActivity<ActivityNotificationC
         )
 
         notificationController.showNotification(option)
-        toastShort("BigText notification shown")
+        toastShowShort("BigText notification shown")
     }
 
     private fun showProgressNotification() {
@@ -132,26 +132,26 @@ class NotificationControllerActivity : BaseBindingActivity<ActivityNotificationC
         )
 
         notificationController.showProgressNotification(option)
-        toastShort("Progress notification shown")
+        toastShowShort("Progress notification shown")
     }
 
     private fun updateProgress() {
         notificationController.updateProgress(3, 50)
-        toastShort("Progress updated to 50%")
+        toastShowShort("Progress updated to 50%")
     }
 
     private fun completeProgress() {
         notificationController.completeProgress(3, "Download complete!")
-        toastShort("Progress completed")
+        toastShowShort("Progress completed")
     }
 
     private fun cancelNotification() {
         notificationController.cancelNotification(tag = null , notificationId = 1)
-        toastShort("Notification (ID: 1) cancelled")
+        toastShowShort("Notification (ID: 1) cancelled")
     }
 
     private fun cancelAllNotifications() {
         notificationController.cancelAll()
-        toastShort("All notifications cancelled")
+        toastShowShort("All notifications cancelled")
     }
 }

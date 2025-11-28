@@ -1,49 +1,43 @@
 package kr.open.library.simple_ui.xml.system_manager.controller.window.vo
 
 /**
- * FloatingViewCollisionsType - 플로팅 뷰 충돌 상태 열거형
- * Floating View Collision State Enum
- * 
- * 플로팅 뷰 간의 충돌 상태를 나타냅니다.
- * Represents collision states between floating views.
+ * Collision state between floating views.<br><br>
+ * 플로팅 뷰 간 충돌 상태를 나타냅니다.<br>
  */
 public enum class FloatingViewCollisionsType {
     /**
-     * 충돌 발생 중
-     * Collision occurring
+     * Collision occurring.<br><br>
+     * 충돌이 발생한 상태입니다.<br>
      */
     OCCURING,
-    
+
     /**
-     * 충돌 없음
-     * No collision
+     * No collision.<br><br>
+     * 충돌이 없는 상태입니다.<br>
      */
     UNCOLLISIONS,
 }
 
 /**
- * FloatingViewTouchType - 플로팅 뷰 터치 상태 열거형
- * Floating View Touch State Enum
- * 
- * 플로팅 뷰의 터치 이벤트 단계를 나타냅니다.
- * Represents touch event phases for floating views.
+ * Touch event phases for floating views.<br><br>
+ * 플로팅 뷰의 터치 이벤트 단계를 나타냅니다.<br>
  */
 public enum class FloatingViewTouchType {
     /**
-     * 터치 시작 (손가락이 화면에 닿음)
-     * Touch start (finger touches screen)
+     * Touch start (finger touches screen).<br><br>
+     * 터치 시작 상태입니다.<br>
      */
     TOUCH_DOWN,
-    
+
     /**
-     * 터치 이동 (드래그 중)
-     * Touch move (dragging)
+     * Touch move (dragging).<br><br>
+     * 터치 이동(드래그) 상태입니다.<br>
      */
     TOUCH_MOVE,
-    
+
     /**
-     * 터치 종료 (손가락이 화면에서 떨어짐)
-     * Touch end (finger leaves screen)
+     * Touch end (finger leaves screen).<br><br>
+     * 터치 종료 상태입니다.<br>
      */
     TOUCH_UP,
 }

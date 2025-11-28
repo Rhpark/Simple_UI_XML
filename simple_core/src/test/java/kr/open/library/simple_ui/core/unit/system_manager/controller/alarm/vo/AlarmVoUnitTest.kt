@@ -452,7 +452,7 @@ class AlarmVoUnitTest {
         )
 
         @Suppress("DEPRECATION")
-        val effect = alarm.vibrationEffect
+        val effect = alarm.vibrationPattern?.toLongArray()
 
         assertNotNull(effect)
         assertEquals(4, effect!!.size)
@@ -472,7 +472,7 @@ class AlarmVoUnitTest {
         )
 
         @Suppress("DEPRECATION")
-        val effect = alarm.vibrationEffect
+        val effect = alarm.vibrationPattern?.toLongArray()
 
         assertNull(effect)
     }
@@ -488,6 +488,6 @@ class AlarmVoUnitTest {
         )
 
         @Suppress("DEPRECATION")
-        assertEquals("Original message", alarm.msg)
+        assertEquals("Original message", alarm.message)
     }
 }
