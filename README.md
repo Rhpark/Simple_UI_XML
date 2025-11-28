@@ -55,11 +55,11 @@ android {
 dependencies {
     //..
     // Version 0.3.0+ (Modular Structure)
-    implementation("com.github.Rhpark:Simple_UI_Core:0.3.0")  // Core functionality only
-    implementation("com.github.Rhpark:Simple_UI_XML:0.3.0")   // XML UI components (includes Core)
+    implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_Core:0.3.2")  // Core functionality only
+    implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_XML:0.3.2")   // XML UI components (includes Core)
 
     // Or use XML module only (it automatically includes Core as transitive dependency)
-    // implementation("com.github.Rhpark:Simple_UI_XML:0.3.0")
+    // implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_XML:0.3.2")
     //..
 }
 ```
@@ -68,7 +68,8 @@ dependencies {
 </br>
 
 ## More Information (더 많은 정보 보기)
-**[README_START.md](README_START.md)**
+- **[Getting Started Guide](README_START.md)** - 시작 가이드
+- **[📚 API Documentation](https://rhpark.github.io/Simple_UI_XML/)** - Dokka로 생성된 API 문서
 
 
 <br>
