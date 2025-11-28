@@ -19,28 +19,24 @@ public open class BaseBindingRcvViewHolder<BINDING : ViewDataBinding>(
     }
 
     /**
-     * Verification of the existence of an item
-     * for listener(ex OnItemClickListener...)
+     * Verifies whether the adapter position is valid (for listeners).<br><br>
+     * 어댑터 포지션이 유효한지 확인합니다(리스너용).<br>
      */
     protected fun isValidPosition(): Boolean = (adapterPosition > RecyclerView.NO_POSITION)
 
     /**
-     * Get current adapter position safely
-     * @return adapter position or -1 if invalid
+     * Gets the current adapter position safely.<br><br>
+     * 현재 어댑터 포지션을 안전하게 반환합니다.<br>
+     *
+     * @return Adapter position, or -1 if invalid.<br><br>
+     *         유효하지 않으면 -1을 반환합니다.<br>
      */
     protected fun getAdapterPositionSafe(): Int =
         if (isValidPosition()) adapterPosition else RecyclerView.NO_POSITION
 
     /**
-     * Abstract method to bind data to the ViewHolder
-     * @param item Data item to bind
-     * @param position Position of the item
-     */
-//    public abstract fun bind(item: ITEM, position: Int)
-
-    /**
-     * Execute pending bindings for DataBinding
-     * Call this after setting data to binding variables
+     * Executes pending bindings for DataBinding.<br><br>
+     * DataBinding의 pending 바인딩을 실행합니다.<br>
      */
     protected fun executePendingBindings() {
         binding.executePendingBindings()
