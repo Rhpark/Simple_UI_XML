@@ -1,5 +1,9 @@
-# Logx vs Android Log - Complete Comparison Guide 
+# Logx vs Android Log - Complete Comparison Guide
 > **Logx vs Android Log - 완벽 비교 가이드**
+
+## 📦 Module Information (모듈 정보)
+- **Module**: `simple_core` (UI-independent core module / UI 비의존 코어 모듈)
+- **Package**: `kr.open.library.simple_ui.core.logcat`
 
 <br></br>
 
@@ -149,7 +153,7 @@ Logx.t("Thread 정보")         // 스레드 정보
 
 #### 📂 File saving configuration (파일 저장 설정)
 
-> **Note:** Storage helper APIs are provided through `LogxPathUtils` (import `kr.open.library.simple_ui.logcat.config.LogxPathUtils`) and require an Android `Context` such as `applicationContext`.
+> **Note:** Storage helper APIs are provided through `LogxPathUtils` (import `kr.open.library.simple_ui.core.logcat.config.LogxPathUtils`) and require an Android `Context` such as `applicationContext`.
 
 **Default setup (no permission required) (기본 설정, 권한 불필요):**
 ```kotlin

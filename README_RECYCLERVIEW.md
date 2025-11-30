@@ -1,5 +1,13 @@
-# 📱 Simple UI RecyclerView vs Plain Android – Complete Comparison Guide 
+# 📱 Simple UI RecyclerView vs Plain Android – Complete Comparison Guide
 > **Simple UI RecyclerView vs 기본 Android - 완벽 비교 가이드**
+
+## 📦 Module Information (모듈 정보)
+- **Module**: `simple_xml` (UI-dependent module / UI 의존 모듈)
+- **Package**: `kr.open.library.simple_ui.xml.ui.recyclerview.*`
+- **Provides**: Base classes for RecyclerView
+  - Adapters with built-in DiffUtil support
+  - BaseViewHolder for simplified ViewHolder implementation
+  - RecyclerScrollStateView for scroll state management
 
 ### RecyclerView Example (RecyclerView 예시)
 ![recyclerview.gif](example_gif%2Frecyclerview.gif)

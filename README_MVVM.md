@@ -1,5 +1,19 @@
-# 📱 Simple UI MVVM Pattern – Complete Guide 
+# 📱 Simple UI MVVM Pattern – Complete Guide
 > **Simple UI MVVM 패턴 - 완벽 가이드**
+
+## 📦 Module Information (모듈 정보)
+
+This feature **spans two modules** (이 기능은 **두 모듈**에 걸쳐 있습니다):
+
+### **simple_core** - ViewModel Base Classes (ViewModel 베이스 클래스)
+- **Package**: `kr.open.library.simple_ui.core.viewmodel.*`
+- **Provides**: BaseViewModel, BaseViewModelEvent
+- **Purpose**: UI-independent ViewModel logic and event system
+
+### **simple_xml** - MVVM Integration (MVVM 통합)
+- **Package**: `kr.open.library.simple_ui.xml.ui.*`
+- **Provides**: BaseBindingActivity, BaseBindingFragment with ViewModel integration
+- **Purpose**: Seamless DataBinding + ViewModel connection
 
 <br></br>
 

@@ -1,6 +1,28 @@
 # 📦 Simple UI Extensions & Style vs Plain Android - Complete Comparison Guide
 > **"Simple UI Extensions & Style vs 순수 Android - 완벽 비교 가이드"**
 
+## 📦 Module Information (모듈 정보)
+
+This feature **spans two modules** (이 기능은 **두 모듈**에 걸쳐 있습니다):
+
+### **simple_core** - UI-Independent Extensions (UI 비의존 확장 함수)
+- **Package**: `kr.open.library.simple_ui.core.extensions.*`
+- **Provides**:
+  - `bundle/` - Type-safe Bundle access
+  - `conditional/` - SDK checks, conditional execution
+  - `date/` - Date formatting
+  - `display/` - Unit conversions (dp↔px, sp↔px) ⚠️ *Requires Context*
+  - `round_to/` - Number rounding
+  - `string/` - String validation & processing
+  - `time/` - Time manipulation
+  - `trycatch/` - Exception handling
+
+### **simple_xml** - UI-Dependent Extensions (UI 의존 확장 함수)
+- **Package**: `kr.open.library.simple_ui.xml.extensions.*`
+- **Provides**:
+  - `view/` - View manipulation (Toast, SnackBar, TextView, ImageView, animations, etc.)
+  - `resource/` - Resource access (Drawable, Color)
+
 <br></br>
 ![extensions_style_example.gif](example%2Fextensions_style_example.gif)
 
@@ -81,7 +103,12 @@
 
 ### 📂 **Available Extension Packages (제공되는 Extensions 패키지)** — organized by package
 
+---
+
+## 🟦 simple_xml Extensions (UI-Dependent / UI 의존)
+
 #### **🎨 view/** — UI manipulation extensions (UI 조작 Extensions)
+**Module**: `simple_xml`
 - **Toast/SnackBar:** lightweight message helpers(간단한 메시지 표시)
 - **TextView:** chainable `bold()`, `underline()`, `italic()`
 - **EditText:** `getTextToString()`, `textToInt()`, `isTextEmpty()`
@@ -91,7 +118,12 @@
 <br>
 </br>
 
+---
+
+## 🟩 simple_core Extensions (UI-Independent / UI 비의존)
+
 #### **📏 display/** — Unit conversion extensions (단위 변환 Extensions)
+**Module**: `simple_core` ⚠️ *Requires Context*
 - **dp ↔ px conversions(변환):** `16.dpToPx()`, `48.pxToDp()`
 - **sp ↔ px conversions(변환):** `14.spToPx()`, `42.pxToSp()`
 - **Drop-in usage:(즉시 사용)** `view.setWidth(100.dpToPx(this))`
@@ -99,6 +131,7 @@
 </br>
 
 #### **🔢 round_to/** — Number rounding extensions (숫자 반올림 Extensions)
+**Module**: `simple_core`
 - **Decimal rounding(소수점 반올림):** `3.14159.roundTo(2)` → `3.14`
 - **Round up/down(올림/내림):** `price.roundUp(2)`, `price.roundDown(2)`
 - **Integer rounding(정수 반올림):** `1234.roundTo(2)` → `1200`
@@ -106,6 +139,7 @@
 </br>
 
 #### **🎯 conditional/** — Conditional execution extensions (조건부 실행 Extensions)
+**Module**: `simple_core`
 - **SDK check:** `checkSdkVersion(S) { ... }`
 - **Number comparisons:** `score.ifGreaterThan(80)`, `age.ifGreaterThanOrEqual(18)`, `value.ifEquals(100)`, `errorCode.ifNotEquals(0)`
 - **Boolean helpers:** `isLoggedIn.ifTrue { ... }.ifFalse { ... }`
@@ -114,12 +148,14 @@
 </br>
 
 #### **📦 bundle/** — Type-safe Bundle extensions (Bundle 타입 안전 Extensions)
+**Module**: `simple_core`
 - **Type-safe access(타입 안전):** `bundle.getValue<Int>("id", 0)`
 - **Automatic type inference(자동 타입 추론):** compile-time guarantees via reified types
 <br>
 </br>
 
 #### **📝 string/** — String validation & processing extensions (문자열 검증/가공 Extensions)
+**Module**: `simple_core`
 - **Email validation(검증):** `email.isEmailValid()`
 - **Phone validation(검증):** `phone.isPhoneNumberValid()`
 - **URL validation(검증):** `url.isUrlValid()`
@@ -130,11 +166,13 @@
 </br>
 
 #### **📅 date/** — Date formatting extensions (날짜 포맷 Extensions)
+**Module**: `simple_core`
 - **Long → String:** `timestamp.timeDateToString("yyyy-MM-dd")`
 <br>
 </br>
 
 #### **⚠️ trycatch/** — Exception handling extensions (예외 처리 Extensions)
+**Module**: `simple_core`
 - **Three overloads(3가지 오버로드):** `safeCatch(block)`, `safeCatch(defaultValue, block)`, `safeCatch(block, onCatch)`
 - **Coroutine friendly(코루틴 안전):** automatically rethrows `CancellationException`(자동전파)
 - **Auto logging(자동 로깅):** prints stack traces when exceptions occur
@@ -142,12 +180,14 @@
 </br>
 
 #### **🔐 permissions/** — Permission check extensions (권한 확인 Extensions)
+**Module**: `simple_core`
 - **Unified permission check(통합 권한 체크):** `hasPermission(Manifest.permission.CAMERA)`
 - **Supports both normal and special permissions(일반/특수 권한 모두 지원)**
 <br>
 </br>
 
 #### **🎨 resource/** — Resource access extensions (리소스 접근 Extensions)
+**Module**: `simple_xml`
 - **Safe access:** `getDrawableCompat(R.drawable.icon)`
 - **Automatic SDK branching:** handles version differences internally
 <br>
@@ -684,18 +724,22 @@ imageView.load(R.drawable.icon) {
 
 ### 8. 📦 Organized Package Structure — Easy to Find, Easy to Learn (**체계적 패키지 구조** - 찾기 쉽고 배우기 쉬운 구조)
 
+#### simple_core Extensions (UI-Independent / UI 비의존)
 ```
-kr.open.library.simple_ui.extensions/
+kr.open.library.simple_ui.core.extensions/
 ├─ bundle/         → Bundle 타입 안전 접근
 ├─ conditional/    → 조건부 실행 (SDK 체크, ifTrue, ifGreaterThan)
 ├─ date/           → 날짜 포맷팅
+├─ display/        → 단위 변환 (dp↔px, sp↔px) ⚠️ Requires Context
 ├─ round_to/       → 숫자 반올림 (roundTo, roundUp, roundDown)
 ├─ string/         → 문자열 검증/가공 (isEmailValid, isPhoneNumberValid, isUrlValid, isNumeric, isAlphaNumeric, stripHtmlTags)
 ├─ time/           → 시간 조작/포맷팅
 └─ trycatch/       → 예외 처리 (safeCatch, runCatching 확장)
+```
 
-kr.open.library.simple_ui.presenter.extensions/
-├─ display/        → 단위 변환 (dp↔px, sp↔px)
+#### simple_xml Extensions (UI-Dependent / UI 의존)
+```
+kr.open.library.simple_ui.xml.extensions/
 ├─ resource/       → 리소스 안전 접근
 └─ view/           → UI 조작 (Toast, TextView, ImageView, 애니메이션, SnackBar 등)
 ```

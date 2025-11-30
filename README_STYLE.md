@@ -1,5 +1,14 @@
-# 📦 Simple Style vs Plain Android - Complete Comparison Guide 
+# 📦 Simple Style vs Plain Android - Complete Comparison Guide
 > **Simple Style vs 순수 Android - 완벽 비교 가이드**
+
+## 📦 Module Information (모듈 정보)
+- **Module**: `simple_xml` (UI-dependent module / UI 의존 모듈)
+- **Location**: `simple_xml/src/main/res/values/style.xml`
+- **Provides**: Comprehensive XML style library
+  - Layout styles (MatchWrap, WrapWrap, MatchMatch, etc.)
+  - View size combinations
+  - RecyclerView LayoutManager orientations
+  - Weight-based layouts
 
 ### Style Output Example (style 출력 예시)
 ![xml_style.png](example_gif%2Fxml_style.png)

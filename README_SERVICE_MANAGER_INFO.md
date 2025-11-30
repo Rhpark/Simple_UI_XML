@@ -1,6 +1,10 @@
 # System Service Manager Info vs Plain Android - Complete Comparison Guide
 > **System Service Manager Info vs 순수 Android - 완벽 비교 가이드**
 
+## 📦 Module Information (모듈 정보)
+- **Module**: `simple_core` (UI-independent core module / UI 비의존 코어 모듈)
+- **Package**: `kr.open.library.simple_ui.core.system_manager.info.*`
+
 <br></br>
 
 **"Simplify complex System Service information collection!"** See the immediate difference Simple UI Info makes compared to traditional Android System Service data retrieval.

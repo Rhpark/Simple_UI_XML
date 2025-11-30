@@ -1,5 +1,19 @@
-# System Service Manager Controller vs Plain Android - Complete Comparison Guide 
+# System Service Manager Controller vs Plain Android - Complete Comparison Guide
 > **System Service Manager Controller vs 순수 Android - 완벽 비교 가이드**
+
+## 📦 Module Information (모듈 정보)
+
+This feature **spans two modules** (이 기능은 **두 모듈**에 걸쳐 있습니다):
+
+### **simple_core** - Core Controller Logic (핵심 컨트롤러 로직)
+- **Package**: `kr.open.library.simple_ui.core.system_manager.controller.*`
+- **Provides**: Controller classes (SoftKeyboardController, VibratorController, etc.)
+- **Purpose**: UI-independent system service control logic
+
+### **simple_xml** - Context Extension Functions (Context 확장 함수)
+- **Package**: `kr.open.library.simple_ui.xml.system_manager.extensions.*`
+- **Provides**: Extension functions (`getSoftKeyboardController()`, `getVibratorController()`, etc.)
+- **Purpose**: Convenient access to controllers from Activities/Fragments
 
 <br></br>
 
