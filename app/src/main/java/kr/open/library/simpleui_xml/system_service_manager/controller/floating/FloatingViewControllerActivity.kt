@@ -13,7 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import kr.open.library.simple_ui.xml.extensions.view.setGone
 import kr.open.library.simple_ui.xml.extensions.view.setVisible
-import kr.open.library.simple_ui.xml.extensions.view.toastShort
+import kr.open.library.simple_ui.xml.extensions.view.toastShowShort
 import kr.open.library.simple_ui.xml.ui.activity.BaseActivity
 import kr.open.library.simple_ui.xml.system_manager.controller.window.FloatingViewController
 import kr.open.library.simple_ui.xml.system_manager.controller.window.drag.FloatingDragView
@@ -65,9 +65,9 @@ class FloatingViewControllerActivity : BaseActivity(R.layout.activity_floating_c
                             }
                         }
                         floatingViewController.addFloatingDragView(dragView)
-                        toastShort("Drag view added")
+                        toastShowShort("Drag view added")
                     } else {
-                        toastShort("Permission Denied: $deniedPermissions")
+                        toastShowShort("Permission Denied: $deniedPermissions")
                     }
                 }
             }
@@ -81,16 +81,16 @@ class FloatingViewControllerActivity : BaseActivity(R.layout.activity_floating_c
                         }
                         val fixedView = FloatingFixedView(icon, 200, 300)
                         floatingViewController.setFloatingFixedView(fixedView)
-                        toastShort("Fixed view set")
+                        toastShowShort("Fixed view set")
                     } else {
-                        toastShort("Permission Denied: $deniedPermissions")
+                        toastShowShort("Permission Denied: $deniedPermissions")
                     }
                 }
             }
 
             btnFloatingViewRemove.setOnClickListener {
                 floatingViewController.removeAllFloatingView()
-                toastShort("All floating views removed")
+                toastShowShort("All floating views removed")
             }
         }
     }

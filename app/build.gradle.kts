@@ -47,7 +47,7 @@ android {
             initWith(getByName(AppConfig.DEBUG))
             applicationIdSuffix = AppConfig.VERIFICATION_SUFFIX
 
-            // simple_ui 모듈에 verification이 없으면 debug를 사용
+            // verification 빌드타입이 없을 때 debug 설정을 재사용
             matchingFallbacks += listOf(AppConfig.DEBUG)
 
             // Testing 모드: Crashlytics 비활성화

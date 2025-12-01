@@ -43,7 +43,7 @@ fi
 FAILURE_ENVIRONMENT_INPUT="${FAILURE_ENVIRONMENT:-Runner: ${RUNNER_NAME:-unknown} | Event: ${EVENT_NAME}}"
 APP_VERSION_INPUT="${APPLICATION_VERSION:-}"
 if [[ -z "${APP_VERSION_INPUT}" ]]; then
-    VERSION_FILE="${APPLICATION_VERSION_FILE:-simple_ui/build.gradle.kts}"
+    VERSION_FILE="${APPLICATION_VERSION_FILE:-simple_core/build.gradle.kts}"
     if [[ -f "${VERSION_FILE}" ]]; then
         APP_VERSION_INPUT="$(python3 - "${VERSION_FILE}" <<'PY'
 import pathlib
@@ -266,4 +266,3 @@ if [[ -n "${ISSUE_NUMBER}" ]]; then
 else
   create_issue
 fi
-

@@ -320,7 +320,7 @@ jobs:
           python3 .github/scripts/extract_gradle_failure.py robolectric-test.log robolectric-failure-snippet.log
           SUMMARY="$(head -n 1 robolectric-failure-snippet.log | tr -d '\r')"
           if [ -z "$SUMMARY" ]; then
-            SUMMARY="Robolectric Tests job failed. Check Gradle task :simple_ui:testRobolectric."
+            SUMMARY="Robolectric Tests job failed. Check Gradle tasks :simple_core:testRobolectric and :simple_xml:testRobolectric."
           fi
           {
             echo "ROBO_FAILURE_SUMMARY<<EOF"
