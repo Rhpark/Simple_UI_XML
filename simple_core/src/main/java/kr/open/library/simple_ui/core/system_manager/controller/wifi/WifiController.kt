@@ -1,6 +1,5 @@
 package kr.open.library.simple_ui.core.system_manager.controller.wifi
 
-import WifiNetworkDetails
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.Manifest.permission.ACCESS_NETWORK_STATE
 import android.Manifest.permission.ACCESS_WIFI_STATE

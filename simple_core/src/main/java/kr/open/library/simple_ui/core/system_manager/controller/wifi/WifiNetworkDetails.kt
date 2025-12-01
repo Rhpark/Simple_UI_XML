@@ -1,3 +1,5 @@
+package kr.open.library.simple_ui.core.system_manager.controller.wifi
+
 /**
  * Data class containing detailed WiFi network information.<br><br>
  * WiFi 네트워크의 상세 정보를 포함하는 데이터 클래스입니다.<br>

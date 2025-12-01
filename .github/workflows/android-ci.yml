@@ -1,5 +1,5 @@
 # .github/workflows/android-ci.yml
-name: Android CI
+name: 1. Android CI
 
 on:
   push:

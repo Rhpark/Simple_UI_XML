@@ -1,9 +1,9 @@
 # .github/workflows/dokka-deploy.yml
-name: Dokka Documentation Deploy
+name: 3. Dokka Documentation Deploy
 
 on:
   workflow_run:
-    workflows: ["Android CD"]
+    workflows: ["2. Android CD"]
     types:
       - completed
     branches:
@@ -89,7 +89,7 @@ jobs:
       - name: Upload artifact to Pages
         uses: actions/upload-pages-artifact@v3
         with:
-          path: docs/api
+          path: docs
 
       - name: Deploy to GitHub Pages
         id: deployment
@@ -102,7 +102,7 @@ jobs:
           python3 .github/scripts/extract_gradle_failure.py "$LOG_FILE" dokka-deploy-failure.log || true
           SUMMARY="$(head -n 1 dokka-deploy-failure.log | tr -d '\r')"
           if [ -z "$SUMMARY" ]; then
-            SUMMARY="Dokka documentation deployment failed."
+            SUMMARY="3. Dokka documentation deployment failed."
           fi
           {
             echo "DOKKA_FAILURE_SUMMARY<<EOF"
@@ -115,8 +115,8 @@ jobs:
         if: failure()
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          STAGE_NAME: "Dokka Documentation Deploy"
-          FAILURE_MESSAGE: ${{ env.DOKKA_FAILURE_SUMMARY || 'Dokka documentation deployment failed.' }}
+          STAGE_NAME: "3. Dokka Documentation Deploy"
+          FAILURE_MESSAGE: ${{ env.DOKKA_FAILURE_SUMMARY || '3. Dokka documentation deployment failed.' }}
           FAILURE_LOG_PATH: ${{ env.DOKKA_FAILURE_LOG_PATH }}
           FAILURE_ENVIRONMENT: |
             Runner: ${{ runner.os }}

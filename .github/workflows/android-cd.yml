@@ -1,9 +1,9 @@
 # .github/workflows/android-cd.yml
-name: Android CD
+name: 2. Android CD
 
 on:
   workflow_run:
-    workflows: ["Android CI"]
+    workflows: ["1. Android CI"]
     types:
       - completed
     branches:

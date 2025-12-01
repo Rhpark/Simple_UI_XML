@@ -1,6 +1,6 @@
 package kr.open.library.simple_ui.core.system_manager.controller.wifi.internal
 
-import WifiNetworkDetails
+
 import android.Manifest.permission.ACCESS_NETWORK_STATE
 import android.net.LinkProperties
 import android.net.Network
@@ -10,6 +10,7 @@ import android.net.wifi.WifiManager
 import android.os.Build
 import androidx.annotation.RequiresPermission
 import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
+import kr.open.library.simple_ui.core.system_manager.controller.wifi.WifiNetworkDetails
 
 /**
  * Internal class for providing WiFi connection information.<br><br>
