@@ -8,6 +8,7 @@ on:
       - completed
     branches:
       - master
+  workflow_dispatch:
 
 jobs:
   check-ci-success:

@@ -1,5 +1,5 @@
 # .github/workflows/dokka-deploy.yml
-name: 3. Dokka Documentation Deploy
+name: 3. Documentation (Dokka)
 
 on:
   workflow_run:
@@ -8,6 +8,7 @@ on:
       - completed
     branches:
       - master
+  workflow_dispatch:
 
 jobs:
   check-cd-success:
@@ -102,7 +103,7 @@ jobs:
           python3 .github/scripts/extract_gradle_failure.py "$LOG_FILE" dokka-deploy-failure.log || true
           SUMMARY="$(head -n 1 dokka-deploy-failure.log | tr -d '\r')"
           if [ -z "$SUMMARY" ]; then
-            SUMMARY="3. Dokka documentation deployment failed."
+            SUMMARY="3. Documentation (Dokka) failed."
           fi
           {
             echo "DOKKA_FAILURE_SUMMARY<<EOF"
@@ -115,8 +116,8 @@ jobs:
         if: failure()
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          STAGE_NAME: "3. Dokka Documentation Deploy"
-          FAILURE_MESSAGE: ${{ env.DOKKA_FAILURE_SUMMARY || '3. Dokka documentation deployment failed.' }}
+          STAGE_NAME: "3. Documentation (Dokka)"
+          FAILURE_MESSAGE: ${{ env.DOKKA_FAILURE_SUMMARY || '3. Documentation (Dokka) failed.' }}
           FAILURE_LOG_PATH: ${{ env.DOKKA_FAILURE_LOG_PATH }}
           FAILURE_ENVIRONMENT: |
             Runner: ${{ runner.os }}
