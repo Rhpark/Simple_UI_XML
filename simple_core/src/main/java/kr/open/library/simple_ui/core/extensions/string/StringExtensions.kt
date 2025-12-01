@@ -26,7 +26,10 @@ private val ALPHANUMERIC_REGEX = "^[a-zA-Z0-9]*$".toRegex()
  * ```
  */
 @CheckResult
-public fun String.isEmailValid(): Boolean = android.util.Patterns.EMAIL_ADDRESS.matcher(this).matches()
+public fun String.isEmailValid(): Boolean =
+    android.util.Patterns.EMAIL_ADDRESS
+        .matcher(this)
+        .matches()
 
 /**
  * Validates the string against Android's built-in phone number pattern.<br><br>
@@ -42,7 +45,10 @@ public fun String.isEmailValid(): Boolean = android.util.Patterns.EMAIL_ADDRESS.
  * ```
  */
 @CheckResult
-public fun String.isPhoneNumberValid(): Boolean = android.util.Patterns.PHONE.matcher(this).matches()
+public fun String.isPhoneNumberValid(): Boolean =
+    android.util.Patterns.PHONE
+        .matcher(this)
+        .matches()
 
 /**
  * Validates the string against Android's built-in web URL pattern.<br><br>
@@ -58,7 +64,10 @@ public fun String.isPhoneNumberValid(): Boolean = android.util.Patterns.PHONE.ma
  * ```
  */
 @CheckResult
-public fun String.isUrlValid(): Boolean = android.util.Patterns.WEB_URL.matcher(this).matches()
+public fun String.isUrlValid(): Boolean =
+    android.util.Patterns.WEB_URL
+        .matcher(this)
+        .matches()
 
 /**
  * Checks whether the string contains only digits (0-9); empty strings count as numeric.<br><br>

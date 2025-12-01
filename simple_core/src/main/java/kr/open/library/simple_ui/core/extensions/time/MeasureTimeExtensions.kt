@@ -13,8 +13,7 @@ package kr.open.library.simple_ui.core.extensions.time
  * @return Pair containing the block result and elapsed milliseconds.<br><br>
  *         블록 실행 결과와 밀리초 단위 실행 시간이 들어 있는 Pair 입니다.<br>
  */
-public inline fun <T> measureTimeMillis(block: () -> T): Pair<T, Long> =
-    measureTimeWithResult(System::currentTimeMillis, block)
+public inline fun <T> measureTimeMillis(block: () -> T): Pair<T, Long> = measureTimeWithResult(System::currentTimeMillis, block)
 
 /**
  * Measures execution time in nanoseconds and returns both the result and elapsed duration.<br><br>
@@ -29,8 +28,7 @@ public inline fun <T> measureTimeMillis(block: () -> T): Pair<T, Long> =
  * @return Pair containing the block result and elapsed nanoseconds.<br><br>
  *         블록 실행 결과와 나노초 단위 실행 시간이 들어 있는 Pair 입니다.<br>
  */
-public inline fun <T> measureTimeNanos(block: () -> T): Pair<T, Long> =
-    measureTimeWithResult(System::nanoTime, block)
+public inline fun <T> measureTimeNanos(block: () -> T): Pair<T, Long> = measureTimeWithResult(System::nanoTime, block)
 
 /**
  * Measures the execution time of a code block through a supplied time source.<br><br>
@@ -45,7 +43,10 @@ public inline fun <T> measureTimeNanos(block: () -> T): Pair<T, Long> =
  * @return Elapsed time computed from the difference between consecutive timeProvider calls.<br><br>
  *         두 번 호출한 timeProvider 값의 차이로 계산된 경과 시간입니다.<br>
  */
-public inline fun measureTime(timeProvider: () -> Long, block: () -> Unit): Long {
+public inline fun measureTime(
+    timeProvider: () -> Long,
+    block: () -> Unit,
+): Long {
     val start = timeProvider()
     block()
     return timeProvider() - start
@@ -69,7 +70,7 @@ public inline fun measureTime(timeProvider: () -> Long, block: () -> Unit): Long
  */
 public inline fun <T> measureTimeWithResult(
     timeProvider: () -> Long,
-    block: () -> T
+    block: () -> T,
 ): Pair<T, Long> {
     val start = timeProvider()
     val result = block()

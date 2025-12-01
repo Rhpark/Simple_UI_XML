@@ -1,14 +1,3 @@
-package kr.open.library.simple_ui.xml.extensions.view
-
-import android.graphics.ColorMatrix
-import android.graphics.ColorMatrixColorFilter
-import android.graphics.PorterDuff
-import android.widget.ImageView
-import androidx.annotation.ColorRes
-import androidx.annotation.DrawableRes
-import androidx.core.content.ContextCompat
-import kr.open.library.simple_ui.xml.extensions.resource.getDrawableSafe
-
 /**
  * ImageView extension functions for image manipulation and styling.<br>
  * Provides convenient methods for setting images, tints, filters, and scale types.<br><br>
@@ -36,6 +25,16 @@ import kr.open.library.simple_ui.xml.extensions.resource.getDrawableSafe
  * }
  * ```
  */
+package kr.open.library.simple_ui.xml.extensions.view
+
+import android.graphics.ColorMatrix
+import android.graphics.ColorMatrixColorFilter
+import android.graphics.PorterDuff
+import android.widget.ImageView
+import androidx.annotation.ColorRes
+import androidx.annotation.DrawableRes
+import androidx.core.content.ContextCompat
+import kr.open.library.simple_ui.xml.extensions.resource.getDrawableSafe
 
 /**
  * Sets drawable resource to ImageView.<br><br>
@@ -47,9 +46,12 @@ import kr.open.library.simple_ui.xml.extensions.resource.getDrawableSafe
  * @return The ImageView instance for method chaining.<br><br>
  *         메서드 체이닝을 위한 ImageView 인스턴스.<br>
  */
-public fun ImageView.setImageDrawableRes(@DrawableRes drawableRes: Int): ImageView = apply {
-    setImageDrawable(context.getDrawableSafe(drawableRes))
-}
+public fun ImageView.setImageDrawableRes(
+    @DrawableRes drawableRes: Int,
+): ImageView =
+    apply {
+        setImageDrawable(context.getDrawableSafe(drawableRes))
+    }
 
 /**
  * Sets tint color to ImageView using color resource.<br><br>
@@ -64,10 +66,14 @@ public fun ImageView.setImageDrawableRes(@DrawableRes drawableRes: Int): ImageVi
  * @return The ImageView instance for method chaining.<br><br>
  *         메서드 체이닝을 위한 ImageView 인스턴스.<br>
  */
-public fun ImageView.setTint(@ColorRes colorRes: Int, mode: PorterDuff.Mode = PorterDuff.Mode.SRC_IN): ImageView = apply {
-    val color = ContextCompat.getColor(context, colorRes)
-    setColorFilter(color, mode)
-}
+public fun ImageView.setTint(
+    @ColorRes colorRes: Int,
+    mode: PorterDuff.Mode = PorterDuff.Mode.SRC_IN,
+): ImageView =
+    apply {
+        val color = ContextCompat.getColor(context, colorRes)
+        setColorFilter(color, mode)
+    }
 
 /**
  * Clears tint from ImageView.<br><br>
@@ -76,9 +82,10 @@ public fun ImageView.setTint(@ColorRes colorRes: Int, mode: PorterDuff.Mode = Po
  * @return The ImageView instance for method chaining.<br><br>
  *         메서드 체이닝을 위한 ImageView 인스턴스.<br>
  */
-public fun ImageView.clearTint(): ImageView = apply {
-    clearColorFilter()
-}
+public fun ImageView.clearTint(): ImageView =
+    apply {
+        clearColorFilter()
+    }
 
 /**
  * Makes ImageView grayscale by setting saturation to 0.<br><br>
@@ -87,11 +94,12 @@ public fun ImageView.clearTint(): ImageView = apply {
  * @return The ImageView instance for method chaining.<br><br>
  *         메서드 체이닝을 위한 ImageView 인스턴스.<br>
  */
-public fun ImageView.makeGrayscale(): ImageView = apply {
-    val matrix = ColorMatrix()
-    matrix.setSaturation(0f)
-    colorFilter = ColorMatrixColorFilter(matrix)
-}
+public fun ImageView.makeGrayscale(): ImageView =
+    apply {
+        val matrix = ColorMatrix()
+        matrix.setSaturation(0f)
+        colorFilter = ColorMatrixColorFilter(matrix)
+    }
 
 /**
  * Removes grayscale filter from ImageView.<br><br>
@@ -100,10 +108,10 @@ public fun ImageView.makeGrayscale(): ImageView = apply {
  * @return The ImageView instance for method chaining.<br><br>
  *         메서드 체이닝을 위한 ImageView 인스턴스.<br>
  */
-public fun ImageView.removeGrayscale(): ImageView = apply {
-    colorFilter = null
-}
-
+public fun ImageView.removeGrayscale(): ImageView =
+    apply {
+        colorFilter = null
+    }
 
 /**
  * Sets ScaleType to CENTER_CROP.<br><br>
@@ -112,9 +120,10 @@ public fun ImageView.removeGrayscale(): ImageView = apply {
  * @return The ImageView instance for method chaining.<br><br>
  *         메서드 체이닝을 위한 ImageView 인스턴스.<br>
  */
-public fun ImageView.centerCrop(): ImageView = apply {
-    scaleType = ImageView.ScaleType.CENTER_CROP
-}
+public fun ImageView.centerCrop(): ImageView =
+    apply {
+        scaleType = ImageView.ScaleType.CENTER_CROP
+    }
 
 /**
  * Sets ScaleType to CENTER_INSIDE.<br><br>
@@ -123,9 +132,10 @@ public fun ImageView.centerCrop(): ImageView = apply {
  * @return The ImageView instance for method chaining.<br><br>
  *         메서드 체이닝을 위한 ImageView 인스턴스.<br>
  */
-public fun ImageView.centerInside(): ImageView = apply {
-    scaleType = ImageView.ScaleType.CENTER_INSIDE
-}
+public fun ImageView.centerInside(): ImageView =
+    apply {
+        scaleType = ImageView.ScaleType.CENTER_INSIDE
+    }
 
 /**
  * Sets ScaleType to FIT_CENTER.<br><br>
@@ -134,9 +144,10 @@ public fun ImageView.centerInside(): ImageView = apply {
  * @return The ImageView instance for method chaining.<br><br>
  *         메서드 체이닝을 위한 ImageView 인스턴스.<br>
  */
-public fun ImageView.fitCenter(): ImageView = apply {
-    scaleType = ImageView.ScaleType.FIT_CENTER
-}
+public fun ImageView.fitCenter(): ImageView =
+    apply {
+        scaleType = ImageView.ScaleType.FIT_CENTER
+    }
 
 /**
  * Sets ScaleType to FIT_XY (stretches to fill).<br><br>
@@ -145,9 +156,10 @@ public fun ImageView.fitCenter(): ImageView = apply {
  * @return The ImageView instance for method chaining.<br><br>
  *         메서드 체이닝을 위한 ImageView 인스턴스.<br>
  */
-public fun ImageView.fitXY(): ImageView = apply {
-    scaleType = ImageView.ScaleType.FIT_XY
-}
+public fun ImageView.fitXY(): ImageView =
+    apply {
+        scaleType = ImageView.ScaleType.FIT_XY
+    }
 
 /**
  * Chains multiple ImageView operations using a DSL-style block.<br><br>
@@ -174,7 +186,11 @@ public fun ImageView.style(block: ImageView.() -> Unit): ImageView = apply(block
  * @return The ImageView instance for method chaining.<br><br>
  *         메서드 체이닝을 위한 ImageView 인스턴스.<br>
  */
-public fun ImageView.load(@DrawableRes drawableRes: Int, block: (ImageView.() -> Unit)? = null): ImageView = apply {
-    setImageDrawableRes(drawableRes)
-    block?.invoke(this)
-}
+public fun ImageView.load(
+    @DrawableRes drawableRes: Int,
+    block: (ImageView.() -> Unit)? = null,
+): ImageView =
+    apply {
+        setImageDrawableRes(drawableRes)
+        block?.invoke(this)
+    }

@@ -3,7 +3,6 @@ package kr.open.library.simple_ui.core.extensions.trycatch
 import kotlinx.coroutines.CancellationException
 import kr.open.library.simple_ui.core.logcat.Logx
 
-
 /**
  * Executes a code block with safe exception handling, logging exceptions without returning a value.<br><br>
  * 안전한 예외 처리로 코드 블록을 실행하고, 반환값 없이 예외를 로깅합니다.<br>
@@ -23,15 +22,16 @@ import kr.open.library.simple_ui.core.logcat.Logx
 public inline fun safeCatch(block: () -> Unit) {
     try {
         block()
-    } catch (e: CancellationException) { // Coroutine cancellation must propagate | 코루틴 취소는 반드시 전파
+    } catch (e: CancellationException) {
+        // Coroutine cancellation must propagate | 코루틴 취소는 반드시 전파
         throw e
-    } catch (e: Error) { // Critical errors like OOM must not be caught | OOM 등은 절대 삼키지 않음
+    } catch (e: Error) {
+        // Critical errors like OOM must not be caught | OOM 등은 절대 삼키지 않음
         throw e
     } catch (e: Exception) {
         Logx.e("safeCatch(Unit): ${e.message}", e)
     }
 }
-
 
 /**
  * Executes a code block with safe exception handling, returning a default value on exception.<br><br>
@@ -58,19 +58,22 @@ public inline fun safeCatch(block: () -> Unit) {
  * @return The result of the block execution, or the default value if an exception occurs.<br><br>
  *         블록 실행 결과, 또는 예외 발생 시 기본값.<br>
  */
-public inline fun <T> safeCatch(defaultValue: T, block: () -> T): T {
-    return try {
+public inline fun <T> safeCatch(
+    defaultValue: T,
+    block: () -> T,
+): T =
+    try {
         block()
-    } catch (e: CancellationException) { // Coroutine cancellation must propagate | 코루틴 취소는 반드시 전파
+    } catch (e: CancellationException) {
+        // Coroutine cancellation must propagate | 코루틴 취소는 반드시 전파
         throw e
-    } catch (e: Error) { // Critical errors like OOM must not be caught | OOM 등은 절대 삼키지 않음
+    } catch (e: Error) {
+        // Critical errors like OOM must not be caught | OOM 등은 절대 삼키지 않음
         throw e
     } catch (e: Exception) {
         Logx.e("safeCatch(defaultValue): ${e.message}", e)
         defaultValue
     }
-}
-
 
 /**
  * Executes a code block with safe exception handling, using a custom exception handler on exception.<br><br>
@@ -97,18 +100,19 @@ public inline fun <T> safeCatch(defaultValue: T, block: () -> T): T {
  * @return The result of the block execution, or the result of the exception handler if an exception occurs.<br><br>
  *         블록 실행 결과, 또는 예외 발생 시 예외 핸들러의 결과.<br>
  */
-public inline fun <T> safeCatch(block: () -> T, onCatch: ((Exception) -> T)): T {
-    return try {
+public inline fun <T> safeCatch(
+    block: () -> T,
+    onCatch: ((Exception) -> T),
+): T =
+    try {
         block()
-    } catch (e: CancellationException) { // Coroutine cancellation must propagate | 코루틴 취소는 반드시 전파
+    } catch (e: CancellationException) {
+        // Coroutine cancellation must propagate | 코루틴 취소는 반드시 전파
         throw e
-    } catch (e: Error) { // Critical errors like OOM must not be caught | OOM 등은 절대 삼키지 않음
+    } catch (e: Error) {
+        // Critical errors like OOM must not be caught | OOM 등은 절대 삼키지 않음
         throw e
     } catch (e: Exception) {
         Logx.e("safeCatch(onCatch): ${e.message}", e)
         onCatch(e)
     }
-}
-
-
-

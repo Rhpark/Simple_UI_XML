@@ -11,14 +11,13 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
+import org.mockito.Mockito.`when`
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
 class WifiCapabilityCheckerRobolectricTest {
-
     private val context: Context = ApplicationProvider.getApplicationContext()
     private val realWifiManager: WifiManager =
         context.getSystemService(Context.WIFI_SERVICE) as WifiManager
@@ -27,13 +26,14 @@ class WifiCapabilityCheckerRobolectricTest {
 
     @Before
     fun setUp() {
-        guard = WifiOperationGuard { defaultValue, block ->
-            try {
-                block()
-            } catch (e: Exception) {
-                defaultValue
+        guard =
+            WifiOperationGuard { defaultValue, block ->
+                try {
+                    block()
+                } catch (e: Exception) {
+                    defaultValue
+                }
             }
-        }
     }
 
     @Test
@@ -128,9 +128,10 @@ class WifiCapabilityCheckerRobolectricTest {
 
     @Test
     fun isWpa3SaeSupported_whenInvokerThrows_returnsFalse() {
-        val throwingInvoker = WifiCapabilityChecker.CapabilityInvoker { _, _ ->
-            throw NoSuchMethodException("missing")
-        }
+        val throwingInvoker =
+            WifiCapabilityChecker.CapabilityInvoker { _, _ ->
+                throw NoSuchMethodException("missing")
+            }
         val checker = WifiCapabilityChecker(realWifiManager, guard, throwingInvoker)
 
         val supported = checker.isWpa3SaeSupported()

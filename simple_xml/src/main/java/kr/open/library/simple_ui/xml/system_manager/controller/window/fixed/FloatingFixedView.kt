@@ -20,18 +20,18 @@ import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
 public open class FloatingFixedView(
     public val view: View,
     public val startX: Int,
-    public val startY: Int
+    public val startY: Int,
 ) {
-
     /**
      * Layout parameters for the floating view.<br><br>
      * 플로팅 뷰의 레이아웃 파라미터입니다.<br>
      */
-    public val params: LayoutParams = getFloatingLayoutParam().apply {
-        gravity = Gravity.TOP or Gravity.LEFT
-        this.x = startX
-        this.y = startY
-    }
+    public val params: LayoutParams =
+        getFloatingLayoutParam().apply {
+            gravity = Gravity.TOP or Gravity.LEFT
+            this.x = startX
+            this.y = startY
+        }
 
     /**
      * Creates floating layout parameters based on API level.<br><br>
@@ -43,15 +43,16 @@ public open class FloatingFixedView(
      * @return Floating layout parameters.<br><br>
      *         플로팅 레이아웃 파라미터입니다.<br>
      */
-    private fun getFloatingLayoutParam(): LayoutParams = safeCatch(defaultValue = getDefaultLayoutParam()) {
-        return LayoutParams(
-            LayoutParams.WRAP_CONTENT,
-            LayoutParams.WRAP_CONTENT,
-            LayoutParams.TYPE_APPLICATION_OVERLAY,
-            LayoutParams.FLAG_NOT_FOCUSABLE,
-            PixelFormat.TRANSLUCENT
-        )
-    }
+    private fun getFloatingLayoutParam(): LayoutParams =
+        safeCatch(defaultValue = getDefaultLayoutParam()) {
+            return LayoutParams(
+                LayoutParams.WRAP_CONTENT,
+                LayoutParams.WRAP_CONTENT,
+                LayoutParams.TYPE_APPLICATION_OVERLAY,
+                LayoutParams.FLAG_NOT_FOCUSABLE,
+                PixelFormat.TRANSLUCENT,
+            )
+        }
 
     /**
      * Calculates the bounds of the floating view.<br><br>
@@ -60,11 +61,12 @@ public open class FloatingFixedView(
      * @return View bounds information.<br><br>
      *         뷰의 영역 정보입니다.<br>
      */
-    public fun getRect(): Rect = safeCatch(defaultValue = Rect()) {
-        val width = if (view.width > 0) view.width else view.measuredWidth
-        val height = if (view.height > 0) view.height else view.measuredHeight
-        return Rect(params.x, params.y, params.x + width, params.y + height)
-    }
+    public fun getRect(): Rect =
+        safeCatch(defaultValue = Rect()) {
+            val width = if (view.width > 0) view.width else view.measuredWidth
+            val height = if (view.height > 0) view.height else view.measuredHeight
+            return Rect(params.x, params.y, params.x + width, params.y + height)
+        }
 
     /**
      * Creates default layout parameters (fallback for errors).<br><br>
@@ -73,11 +75,12 @@ public open class FloatingFixedView(
      * @return Default layout parameters.<br><br>
      *         기본 레이아웃 파라미터입니다.<br>
      */
-    private fun getDefaultLayoutParam(): LayoutParams = LayoutParams(
-        LayoutParams.WRAP_CONTENT,
-        LayoutParams.WRAP_CONTENT,
-        LayoutParams.TYPE_APPLICATION_OVERLAY,
-        LayoutParams.FLAG_NOT_FOCUSABLE,
-        PixelFormat.TRANSLUCENT
-    )
+    private fun getDefaultLayoutParam(): LayoutParams =
+        LayoutParams(
+            LayoutParams.WRAP_CONTENT,
+            LayoutParams.WRAP_CONTENT,
+            LayoutParams.TYPE_APPLICATION_OVERLAY,
+            LayoutParams.FLAG_NOT_FOCUSABLE,
+            PixelFormat.TRANSLUCENT,
+        )
 }

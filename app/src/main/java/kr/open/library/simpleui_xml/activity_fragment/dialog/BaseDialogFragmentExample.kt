@@ -11,17 +11,19 @@ import kr.open.library.simple_ui.xml.ui.fragment.dialog.BaseDialogFragment
 import kr.open.library.simpleui_xml.R
 
 class BaseDialogFragmentExample : BaseDialogFragment(R.layout.dialog_base_dialog_fragment) {
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         Logx.d("BaseDialogFragmentExample - onCreateView() called")
         return super.onCreateView(inflater, container, savedInstanceState)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
         Logx.d("BaseDialogFragmentExample - onViewCreated() called")
 

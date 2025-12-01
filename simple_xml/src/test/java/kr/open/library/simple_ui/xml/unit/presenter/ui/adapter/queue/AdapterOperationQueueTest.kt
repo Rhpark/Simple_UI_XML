@@ -5,7 +5,6 @@ import org.junit.Assert.assertThrows
 import org.junit.Test
 
 class AdapterOperationQueueTest {
-
     private val sampleList = listOf("a", "b", "c")
 
     @Test

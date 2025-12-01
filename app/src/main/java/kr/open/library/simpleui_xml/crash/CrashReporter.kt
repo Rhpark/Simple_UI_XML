@@ -11,7 +11,8 @@ import java.io.StringWriter
 import java.net.HttpURLConnection
 import java.net.URL
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 
 /**
  * Crash Reporter for Verification Build
@@ -26,12 +27,14 @@ import java.util.*
 class CrashReporter(
     private val cloudFunctionUrl: String,
     private val apiKey: String,
-    private val appVersion: String
+    private val appVersion: String,
 ) : Thread.UncaughtExceptionHandler {
-
     private val defaultHandler = Thread.getDefaultUncaughtExceptionHandler()
 
-    override fun uncaughtException(thread: Thread, throwable: Throwable) {
+    override fun uncaughtException(
+        thread: Thread,
+        throwable: Throwable,
+    ) {
         try {
             // Collect crash information
             // 크래시 정보 수집
@@ -41,7 +44,6 @@ class CrashReporter(
             // Send crash report to Cloud Functions
             // Cloud Functions로 크래시 보고 전송
             sendCrashReport(crashData)
-
         } catch (e: Exception) {
             Log.e(TAG, "Failed to report crash", e)
         } finally {
@@ -61,9 +63,11 @@ class CrashReporter(
      * @return JSON object containing crash information<br><br>크래시 정보를 담은 JSON 객체<br>
      */
     private fun collectCrashData(throwable: Throwable): JSONObject {
-        val stackTrace = StringWriter().apply {
-            throwable.printStackTrace(PrintWriter(this))
-        }.toString()
+        val stackTrace =
+            StringWriter()
+                .apply {
+                    throwable.printStackTrace(PrintWriter(this))
+                }.toString()
 
         return JSONObject().apply {
             put("exceptionType", throwable.javaClass.simpleName)
@@ -109,7 +113,6 @@ class CrashReporter(
 
                 val responseCode = connection.responseCode
                 Log.d(TAG, "Crash report sent: $responseCode")
-
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to send crash report", e)
             }

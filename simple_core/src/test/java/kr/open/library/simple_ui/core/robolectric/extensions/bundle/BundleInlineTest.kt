@@ -11,7 +11,6 @@ import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
 class BundleInlineTest {
-
     @Test
     fun `getValue returns stored primitive`() {
         val bundle = Bundle().apply { putInt("count", 42) }
@@ -52,15 +51,16 @@ class BundleInlineTest {
 
     @Test
     fun `getValue supports all numeric primitives`() {
-        val bundle = Bundle().apply {
-            putBoolean("bool", true)
-            putFloat("float", 3.14f)
-            putLong("long", 1234L)
-            putDouble("double", 9.81)
-            putChar("char", 'Z')
-            putShort("short", 7.toShort())
-            putByte("byte", 1.toByte())
-        }
+        val bundle =
+            Bundle().apply {
+                putBoolean("bool", true)
+                putFloat("float", 3.14f)
+                putLong("long", 1234L)
+                putDouble("double", 9.81)
+                putChar("char", 'Z')
+                putShort("short", 7.toShort())
+                putByte("byte", 1.toByte())
+            }
 
         assertEquals(true, bundle.getValue("bool", false))
         assertEquals(3.14f, bundle.getValue("float", 0f))
@@ -74,10 +74,11 @@ class BundleInlineTest {
     @Test
     fun `getValue returns byte array or default when missing`() {
         val payload = byteArrayOf(1, 2, 3)
-        val bundle = Bundle().apply {
-            putByteArray("data", payload)
-            putByteArray("empty", null)
-        }
+        val bundle =
+            Bundle().apply {
+                putByteArray("data", payload)
+                putByteArray("empty", null)
+            }
 
         val retrieved: ByteArray = bundle.getValue("data", ByteArray(0))
         assertArrayEquals(payload, retrieved)

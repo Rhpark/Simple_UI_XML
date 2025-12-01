@@ -1,11 +1,3 @@
-package kr.open.library.simple_ui.xml.extensions.view
-
-import android.content.Context
-import android.widget.Toast
-import androidx.fragment.app.Fragment
-import kr.open.library.simple_ui.core.logcat.Logx
-
-
 /**
  * Toast display extension functions for Context and Fragment.<br>
  * Provides convenient methods to show short and long duration Toast messages.<br><br>
@@ -32,6 +24,12 @@ import kr.open.library.simple_ui.core.logcat.Logx
  * fragment.toastShowShort("Fragment 토스트")
  * ```
  */
+package kr.open.library.simple_ui.xml.extensions.view
+
+import android.content.Context
+import android.widget.Toast
+import androidx.fragment.app.Fragment
+import kr.open.library.simple_ui.core.logcat.Logx
 
 /**
  * Creates and shows a short duration Toast message.<br><br>
@@ -40,7 +38,9 @@ import kr.open.library.simple_ui.core.logcat.Logx
  * @param msg The message to display in the Toast.<br><br>
  *            Toast에 표시할 메시지.<br>
  */
-public fun Context.toastShowShort(msg: CharSequence) { toastShort(msg).show() }
+public fun Context.toastShowShort(msg: CharSequence) {
+    toastShort(msg).show()
+}
 
 /**
  * Creates and shows a long duration Toast message.<br><br>
@@ -49,7 +49,9 @@ public fun Context.toastShowShort(msg: CharSequence) { toastShort(msg).show() }
  * @param msg The message to display in the Toast.<br><br>
  *            Toast에 표시할 메시지.<br>
  */
-public fun Context.toastShowLong(msg: CharSequence) { toastLong(msg).show() }
+public fun Context.toastShowLong(msg: CharSequence) {
+    toastLong(msg).show()
+}
 
 /**
  * Creates a short duration Toast without showing it.<br>

@@ -19,7 +19,6 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [Build.VERSION_CODES.TIRAMISU])
 class LogxLifecycleFlushManagerTest {
-
     private lateinit var application: Application
 
     @Before

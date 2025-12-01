@@ -1,24 +1,19 @@
 package kr.open.library.simpleui_xml.logx
 
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.core.logcat.config.LogxStorageType
-import kr.open.library.simple_ui.core.logcat.config.logxConfig
 import kr.open.library.simple_ui.core.logcat.extensions.logxD
 import kr.open.library.simple_ui.core.logcat.model.LogxType
 import kr.open.library.simple_ui.xml.ui.activity.BaseBindingActivity
 import kr.open.library.simpleui_xml.R
 import kr.open.library.simpleui_xml.databinding.ActivityLogxBinding
-import java.util.EnumSet
 
 class LogxActivity : BaseBindingActivity<ActivityLogxBinding>(R.layout.activity_logx) {
-
     private val vm: LogxActivityVm by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,11 +32,11 @@ class LogxActivity : BaseBindingActivity<ActivityLogxBinding>(R.layout.activity_
         lifecycleScope.launch {
             vm.mEventVm.collect { event ->
                 when (event) {
-                    is LogxActivityVmEvent.OnClickBasicLogging  -> demonstrateBasicLogging()
-                    is LogxActivityVmEvent.OnClickJsonLogging   -> demonstrateJsonLogging()
+                    is LogxActivityVmEvent.OnClickBasicLogging -> demonstrateBasicLogging()
+                    is LogxActivityVmEvent.OnClickJsonLogging -> demonstrateJsonLogging()
                     is LogxActivityVmEvent.OnClickParentTracking -> parentMethodExample()
                     is LogxActivityVmEvent.OnClickThreadTracking -> demonstrateThreadTracking()
-                    is LogxActivityVmEvent.OnClickFileLogging   -> demonstrateFileLogging()
+                    is LogxActivityVmEvent.OnClickFileLogging -> demonstrateFileLogging()
                     is LogxActivityVmEvent.OnClickStorageConfig -> demonstrateStorageConfig()
                     is LogxActivityVmEvent.OnClickAdvancedConfig -> demonstrateAdvancedConfig()
                     is LogxActivityVmEvent.OnClickLogFiltering -> demonstrateLogFiltering()
@@ -65,8 +60,10 @@ class LogxActivity : BaseBindingActivity<ActivityLogxBinding>(R.layout.activity_
      * JSON 포맷팅 기능 시연
      */
     private fun demonstrateJsonLogging() {
-        val jsonData = """
-            {"user": {"name": "홍길동","age": 30,"skills": ["Kotlin", "Android", "Java"]},"timestamp": "${System.currentTimeMillis()}"}""".trimIndent()
+        val jsonData =
+            """
+            {"user": {"name": "홍길동","age": 30,"skills": ["Kotlin", "Android", "Java"]},"timestamp": "${System.currentTimeMillis()}"}
+            """.trimIndent()
 
         Logx.j("JSON_DEMO", jsonData)
         Logx.d("NORMAL LOG: $jsonData")
@@ -107,7 +104,7 @@ class LogxActivity : BaseBindingActivity<ActivityLogxBinding>(R.layout.activity_
 
         val storageInfo = Logx.getStorageInfo()
         val currentPath = storageInfo[LogxStorageType.APP_EXTERNAL] ?: "Unknown"
-        Logx.i("FILE_SAVE","파일 저장 완료!\n경로: $currentPath")
+        Logx.i("FILE_SAVE", "파일 저장 완료!\n경로: $currentPath")
     }
 
     /**
@@ -203,8 +200,8 @@ class LogxActivity : BaseBindingActivity<ActivityLogxBinding>(R.layout.activity_
                     clear() // 필터 제거
                 }
             }
-            Logx.i( "필터링 해제됨")
+            Logx.i("필터링 해제됨")
         }
-        Logx.i( "로그 필터링 시연 완료!\n3초 후 필터 해제")
+        Logx.i("로그 필터링 시연 완료!\n3초 후 필터 해제")
     }
 }

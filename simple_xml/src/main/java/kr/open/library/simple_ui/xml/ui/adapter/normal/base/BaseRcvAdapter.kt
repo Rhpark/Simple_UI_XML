@@ -25,9 +25,8 @@ import java.util.concurrent.Executor
  *                     테스트에서 동기 실행을 강제할 때 주입할 수 있는 Executor입니다.
  */
 public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder>(
-    private val testExecutor: Executor? = null
+    private val testExecutor: Executor? = null,
 ) : RecyclerView.Adapter<VH>() {
-
     /**
      * Listener for item click events.<br><br>
      * 아이템 클릭 이벤트를 위한 리스너입니다.<br>
@@ -44,10 +43,11 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder>(
      * Operation Queue for handling consecutive operations safely.<br><br>
      * 연속적인 작업을 안전하게 처리하기 위한 작업 큐입니다.<br>
      */
-    private val operationQueue = AdapterOperationQueue<ITEM>(
-        getCurrentList = { differ.currentList },
-        submitList = { list, callback -> differ.submitList(list, callback) }
-    )
+    private val operationQueue =
+        AdapterOperationQueue<ITEM>(
+            getCurrentList = { differ.currentList },
+            submitList = { list, callback -> differ.submitList(list, callback) },
+        )
 
     /**
      * Whether DiffUtil should detect moved items. Recreating the differ ensures the updated flag is respected.<br><br>
@@ -119,8 +119,10 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder>(
      * @return True if items are the same, false otherwise.<br><br>
      *         아이템이 같으면 true, 그렇지 않으면 false.<br>
      */
-    protected open fun diffUtilAreItemsTheSame(oldItem: ITEM, newItem: ITEM): Boolean =
-        diffUtilItemSame?.invoke(oldItem, newItem) ?: (oldItem === newItem)
+    protected open fun diffUtilAreItemsTheSame(
+        oldItem: ITEM,
+        newItem: ITEM,
+    ): Boolean = diffUtilItemSame?.invoke(oldItem, newItem) ?: (oldItem === newItem)
 
     /**
      * Item content comparison used by DiffUtil.<br><br>
@@ -129,8 +131,10 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder>(
      * @return True if contents are the same, false otherwise.<br><br>
      *         내용이 같으면 true, 그렇지 않으면 false.<br>
      */
-    protected open fun diffUtilAreContentsTheSame(oldItem: ITEM, newItem: ITEM): Boolean =
-        diffUtilContentsSame?.invoke(oldItem, newItem) ?: (oldItem == newItem)
+    protected open fun diffUtilAreContentsTheSame(
+        oldItem: ITEM,
+        newItem: ITEM,
+    ): Boolean = diffUtilContentsSame?.invoke(oldItem, newItem) ?: (oldItem == newItem)
 
     /**
      * Provides payload when items match but contents differ.<br><br>
@@ -139,20 +143,31 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder>(
      * @return Change payload object, or null if none.<br><br>
      *         변경 payload 객체, 없으면 null.<br>
      */
-    protected open fun diffUtilGetChangePayload(oldItem: ITEM, newItem: ITEM): Any? =
-        diffUtilChangePayload?.invoke(oldItem, newItem)
+    protected open fun diffUtilGetChangePayload(
+        oldItem: ITEM,
+        newItem: ITEM,
+    ): Any? = diffUtilChangePayload?.invoke(oldItem, newItem)
 
     /**
      * Binds data to the ViewHolder (must be implemented by subclasses).<br><br>
      * 서브클래스가 ViewHolder에 데이터를 바인딩해야 합니다.<br>
      */
-    protected abstract fun onBindViewHolder(holder: VH, position: Int, item: ITEM)
+    protected abstract fun onBindViewHolder(
+        holder: VH,
+        position: Int,
+        item: ITEM,
+    )
 
     /**
      * Binds with payloads for partial updates.<br><br>
      * 부분 갱신 payload와 함께 바인딩합니다.<br>
      */
-    protected open fun onBindViewHolder(holder: VH, position: Int, item: ITEM, payloads: List<Any>) {
+    protected open fun onBindViewHolder(
+        holder: VH,
+        position: Int,
+        item: ITEM,
+        payloads: List<Any>,
+    ) {
         onBindViewHolder(holder, position, item)
     }
 
@@ -194,7 +209,10 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder>(
      * Replaces items using AsyncListDiffer for efficient updates.<br><br>
      * AsyncListDiffer로 아이템을 교체해 효율적으로 갱신합니다.<br>
      */
-    public fun setItems(newItems: List<ITEM>, commitCallback: (() -> Unit)? = null) {
+    public fun setItems(
+        newItems: List<ITEM>,
+        commitCallback: (() -> Unit)? = null,
+    ) {
         operationQueue.clearQueueAndExecute(AdapterOperationQueue.SetItemsOp(newItems, commitCallback))
     }
 
@@ -205,7 +223,10 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder>(
      * @return True if operation was enqueued, false otherwise.<br><br>
      *         작업이 큐에 추가되면 true, 그렇지 않으면 false.<br>
      */
-    public open fun addItems(items: List<ITEM>, commitCallback: (() -> Unit)? = null): Boolean {
+    public open fun addItems(
+        items: List<ITEM>,
+        commitCallback: (() -> Unit)? = null,
+    ): Boolean {
         if (items.isEmpty()) {
             Logx.d("addItems() items is empty")
             return true
@@ -230,7 +251,10 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder>(
      * @return True if operation was enqueued.<br><br>
      *         작업이 큐에 추가되면 true.<br>
      */
-    public open fun addItem(item: ITEM, commitCallback: (() -> Unit)? = null): Boolean {
+    public open fun addItem(
+        item: ITEM,
+        commitCallback: (() -> Unit)? = null,
+    ): Boolean {
         operationQueue.enqueueOperation(AdapterOperationQueue.AddItemOp(item, commitCallback))
         return true
     }
@@ -242,7 +266,11 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder>(
      * @return True if operation was enqueued, false if position is invalid.<br><br>
      *         작업이 큐에 추가되면 true, 위치가 잘못되었으면 false.<br>
      */
-    public fun addItemAt(position: Int, item: ITEM, commitCallback: (() -> Unit)? = null): Boolean {
+    public fun addItemAt(
+        position: Int,
+        item: ITEM,
+        commitCallback: (() -> Unit)? = null,
+    ): Boolean {
         if (position < 0 || position > itemCount) {
             Logx.e("Cannot add item at position $position. Valid range: 0..$itemCount")
             return false
@@ -270,7 +298,10 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder>(
      * @return True if operation was enqueued, false if position is invalid.<br><br>
      *         작업이 큐에 추가되면 true, 위치가 잘못되었으면 false.<br>
      */
-    public open fun removeAt(position: Int, commitCallback: (() -> Unit)? = null): Boolean {
+    public open fun removeAt(
+        position: Int,
+        commitCallback: (() -> Unit)? = null,
+    ): Boolean {
         if (position < 0 || position >= itemCount) {
             Logx.e("Cannot remove item at position $position. Valid range: 0 until $itemCount")
             return false
@@ -286,7 +317,10 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder>(
      * @return True if operation was enqueued, false if item not found.<br><br>
      *         작업이 큐에 추가되면 true, 아이템을 찾지 못했으면 false.<br>
      */
-    public open fun removeItem(item: ITEM, commitCallback: (() -> Unit)? = null): Boolean {
+    public open fun removeItem(
+        item: ITEM,
+        commitCallback: (() -> Unit)? = null,
+    ): Boolean {
         if (!differ.currentList.contains(item)) {
             Logx.e("Item not found in the list")
             return false
@@ -299,7 +333,10 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder>(
      * Binds holder without payloads and wires click listeners.<br><br>
      * payload 없이 바인딩하며 클릭 리스너를 설정합니다.<br>
      */
-    override fun onBindViewHolder(holder: VH, position: Int) {
+    override fun onBindViewHolder(
+        holder: VH,
+        position: Int,
+    ) {
         if (!isPositionValid(position)) {
             Logx.e("Cannot bind item, position is $position, itemcount $itemCount")
             return
@@ -331,7 +368,11 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder>(
      * Binds holder with payloads when provided.<br><br>
      * payload가 있을 때 ViewHolder를 바인딩합니다.<br>
      */
-    override fun onBindViewHolder(holder: VH, position: Int, payloads: MutableList<Any>) {
+    override fun onBindViewHolder(
+        holder: VH,
+        position: Int,
+        payloads: MutableList<Any>,
+    ) {
         if (payloads.isEmpty()) {
             onBindViewHolder(holder, position)
         } else {
@@ -352,8 +393,7 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder>(
      * @return True if position is valid, false otherwise.<br><br>
      *         위치가 유효하면 true, 그렇지 않으면 false.<br>
      */
-    protected fun isPositionValid(position: Int): Boolean =
-        position > RecyclerView.NO_POSITION && position < differ.currentList.size
+    protected fun isPositionValid(position: Int): Boolean = position > RecyclerView.NO_POSITION && position < differ.currentList.size
 
     /**
      * Builds DiffUtil.ItemCallback using current comparison logic.<br><br>
@@ -368,22 +408,28 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder>(
              * DiffUtil identity check.<br><br>
              * DiffUtil의 동일성 비교입니다.<br>
              */
-            override fun areItemsTheSame(oldItem: ITEM, newItem: ITEM): Boolean =
-                diffUtilAreItemsTheSame(oldItem, newItem)
+            override fun areItemsTheSame(
+                oldItem: ITEM,
+                newItem: ITEM,
+            ): Boolean = diffUtilAreItemsTheSame(oldItem, newItem)
 
             /**
              * DiffUtil content equality check.<br><br>
              * DiffUtil의 내용 비교입니다.<br>
              */
-            override fun areContentsTheSame(oldItem: ITEM, newItem: ITEM): Boolean =
-                diffUtilAreContentsTheSame(oldItem, newItem)
+            override fun areContentsTheSame(
+                oldItem: ITEM,
+                newItem: ITEM,
+            ): Boolean = diffUtilAreContentsTheSame(oldItem, newItem)
 
             /**
              * DiffUtil payload provider.<br><br>
              * DiffUtil payload 제공자입니다.<br>
              */
-            override fun getChangePayload(oldItem: ITEM, newItem: ITEM): Any? =
-                diffUtilGetChangePayload(oldItem, newItem)
+            override fun getChangePayload(
+                oldItem: ITEM,
+                newItem: ITEM,
+            ): Any? = diffUtilGetChangePayload(oldItem, newItem)
         }
 
     /**
@@ -394,36 +440,40 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder>(
      *         AsyncDifferConfig 인스턴스.<br>
      */
     private fun buildDifferConfig(): AsyncDifferConfig<ITEM> =
-        AsyncDifferConfig.Builder(createDiffCallback()).apply {
-            // Set test executor for synchronous execution in tests
-            testExecutor?.let { executor ->
-                try {
-                    val method = AsyncDifferConfig.Builder::class.java.getMethod(
-                        "setBackgroundThreadExecutor",
-                        Executor::class.java
-                    )
-                    method.invoke(this, executor)
-                } catch (_: NoSuchMethodException) {
-                    Logx.w("AsyncListDiffer", "setBackgroundThreadExecutor not available")
-                } catch (e: Exception) {
-                    Logx.w("AsyncListDiffer", "Failed to set test executor: ${e.message}")
+        AsyncDifferConfig
+            .Builder(createDiffCallback())
+            .apply {
+                // Set test executor for synchronous execution in tests
+                testExecutor?.let { executor ->
+                    try {
+                        val method =
+                            AsyncDifferConfig.Builder::class.java.getMethod(
+                                "setBackgroundThreadExecutor",
+                                Executor::class.java,
+                            )
+                        method.invoke(this, executor)
+                    } catch (_: NoSuchMethodException) {
+                        Logx.w("AsyncListDiffer", "setBackgroundThreadExecutor not available")
+                    } catch (e: Exception) {
+                        Logx.w("AsyncListDiffer", "Failed to set test executor: ${e.message}")
+                    }
                 }
-            }
 
-            try {
-                val method = AsyncDifferConfig.Builder::class.java.getMethod(
-                    "setDetectMoves",
-                    Boolean::class.javaPrimitiveType
-                )
-                method.invoke(this, detectMoves)
-            } catch (_: NoSuchMethodException) {
-                if (!detectMoves) {
-                    Logx.w("AsyncListDiffer", "setDetectMoves not available; detectMoves flag is ignored on this version.")
+                try {
+                    val method =
+                        AsyncDifferConfig.Builder::class.java.getMethod(
+                            "setDetectMoves",
+                            Boolean::class.javaPrimitiveType,
+                        )
+                    method.invoke(this, detectMoves)
+                } catch (_: NoSuchMethodException) {
+                    if (!detectMoves) {
+                        Logx.w("AsyncListDiffer", "setDetectMoves not available; detectMoves flag is ignored on this version.")
+                    }
+                } catch (e: Exception) {
+                    Logx.w("AsyncListDiffer", "Failed to reflectively set detectMoves: ${e.message}")
                 }
-            } catch (e: Exception) {
-                Logx.w("AsyncListDiffer", "Failed to reflectively set detectMoves: ${e.message}")
-            }
-        }.build()
+            }.build()
 
     /**
      * Recreates differ to apply updated config while keeping current list.<br><br>

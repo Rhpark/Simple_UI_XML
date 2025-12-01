@@ -10,10 +10,9 @@ import android.telephony.ServiceState
 import android.telephony.SignalStrength
 import android.telephony.SubscriptionInfo
 import android.telephony.SubscriptionManager
-import android.telephony.TelephonyManager
 import android.telephony.TelephonyDisplayInfo
+import android.telephony.TelephonyManager
 import androidx.test.core.app.ApplicationProvider
-import java.util.concurrent.Executor
 import kr.open.library.simple_ui.core.system_manager.info.network.telephony.TelephonyInfo
 import kr.open.library.simple_ui.core.system_manager.info.network.telephony.callback.TelephonyCallbackManager
 import kr.open.library.simple_ui.core.system_manager.info.network.telephony.data.current.CurrentCellInfo
@@ -35,6 +34,7 @@ import org.mockito.Mockito.verify
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows
 import org.robolectric.annotation.Config
+import java.util.concurrent.Executor
 
 /**
  * Focused Robolectric tests covering TelephonyInfo's basic getter behaviour.
@@ -44,7 +44,6 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [Build.VERSION_CODES.S])
 class TelephonyInfoBasicRobolectricTest {
-
     private lateinit var application: Application
     private lateinit var context: Context
     private lateinit var telephonyManager: TelephonyManager
@@ -63,7 +62,7 @@ class TelephonyInfoBasicRobolectricTest {
         shadowApp.grantPermissions(
             Manifest.permission.READ_PHONE_STATE,
             Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.READ_PHONE_NUMBERS
+            Manifest.permission.READ_PHONE_NUMBERS,
         )
         shadowApp.setSystemService(Context.TELEPHONY_SERVICE, telephonyManager)
         shadowApp.setSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE, subscriptionManager)
@@ -239,28 +238,29 @@ class TelephonyInfoBasicRobolectricTest {
     // Utility mapping coverage
     @Test
     fun getNetworkTypeString_coversAllMappings() {
-        val cases = listOf(
-            TelephonyManager.NETWORK_TYPE_GPRS to "GPRS",
-            TelephonyManager.NETWORK_TYPE_EDGE to "EDGE",
-            TelephonyManager.NETWORK_TYPE_UMTS to "UMTS",
-            TelephonyManager.NETWORK_TYPE_HSDPA to "HSDPA",
-            TelephonyManager.NETWORK_TYPE_HSUPA to "HSUPA",
-            TelephonyManager.NETWORK_TYPE_HSPA to "HSPA",
-            TelephonyManager.NETWORK_TYPE_CDMA to "CDMA",
-            TelephonyManager.NETWORK_TYPE_EVDO_0 to "EVDO_0",
-            TelephonyManager.NETWORK_TYPE_EVDO_A to "EVDO_A",
-            TelephonyManager.NETWORK_TYPE_EVDO_B to "EVDO_B",
-            TelephonyManager.NETWORK_TYPE_1xRTT to "1xRTT",
-            TelephonyManager.NETWORK_TYPE_IDEN to "IDEN",
-            TelephonyManager.NETWORK_TYPE_EHRPD to "EHRPD",
-            TelephonyManager.NETWORK_TYPE_HSPAP to "HSPA+",
-            TelephonyManager.NETWORK_TYPE_GSM to "GSM",
-            TelephonyManager.NETWORK_TYPE_TD_SCDMA to "TD_SCDMA",
-            TelephonyManager.NETWORK_TYPE_IWLAN to "IWLAN",
-            19 to "LTE_CA",
-            20 to "5G NR",
-            TelephonyManager.NETWORK_TYPE_UNKNOWN to "UNKNOWN"
-        )
+        val cases =
+            listOf(
+                TelephonyManager.NETWORK_TYPE_GPRS to "GPRS",
+                TelephonyManager.NETWORK_TYPE_EDGE to "EDGE",
+                TelephonyManager.NETWORK_TYPE_UMTS to "UMTS",
+                TelephonyManager.NETWORK_TYPE_HSDPA to "HSDPA",
+                TelephonyManager.NETWORK_TYPE_HSUPA to "HSUPA",
+                TelephonyManager.NETWORK_TYPE_HSPA to "HSPA",
+                TelephonyManager.NETWORK_TYPE_CDMA to "CDMA",
+                TelephonyManager.NETWORK_TYPE_EVDO_0 to "EVDO_0",
+                TelephonyManager.NETWORK_TYPE_EVDO_A to "EVDO_A",
+                TelephonyManager.NETWORK_TYPE_EVDO_B to "EVDO_B",
+                TelephonyManager.NETWORK_TYPE_1xRTT to "1xRTT",
+                TelephonyManager.NETWORK_TYPE_IDEN to "IDEN",
+                TelephonyManager.NETWORK_TYPE_EHRPD to "EHRPD",
+                TelephonyManager.NETWORK_TYPE_HSPAP to "HSPA+",
+                TelephonyManager.NETWORK_TYPE_GSM to "GSM",
+                TelephonyManager.NETWORK_TYPE_TD_SCDMA to "TD_SCDMA",
+                TelephonyManager.NETWORK_TYPE_IWLAN to "IWLAN",
+                19 to "LTE_CA",
+                20 to "5G NR",
+                TelephonyManager.NETWORK_TYPE_UNKNOWN to "UNKNOWN",
+            )
         cases.forEach { (type, label) ->
             doReturn(type).`when`(telephonyManager).dataNetworkType
             assertEquals(label, telephonyInfo.getNetworkTypeString())
@@ -269,19 +269,20 @@ class TelephonyInfoBasicRobolectricTest {
 
     @Test
     fun getSimStateString_coversAllMappings() {
-        val cases = listOf(
-            TelephonyManager.SIM_STATE_UNKNOWN to "UNKNOWN",
-            TelephonyManager.SIM_STATE_ABSENT to "ABSENT",
-            TelephonyManager.SIM_STATE_PIN_REQUIRED to "PIN_REQUIRED",
-            TelephonyManager.SIM_STATE_PUK_REQUIRED to "PUK_REQUIRED",
-            TelephonyManager.SIM_STATE_NETWORK_LOCKED to "NETWORK_LOCKED",
-            TelephonyManager.SIM_STATE_READY to "READY",
-            TelephonyManager.SIM_STATE_NOT_READY to "NOT_READY",
-            TelephonyManager.SIM_STATE_PERM_DISABLED to "PERM_DISABLED",
-            TelephonyManager.SIM_STATE_CARD_IO_ERROR to "CARD_IO_ERROR",
-            TelephonyManager.SIM_STATE_CARD_RESTRICTED to "CARD_RESTRICTED",
-            999 to "UNKNOWN"
-        )
+        val cases =
+            listOf(
+                TelephonyManager.SIM_STATE_UNKNOWN to "UNKNOWN",
+                TelephonyManager.SIM_STATE_ABSENT to "ABSENT",
+                TelephonyManager.SIM_STATE_PIN_REQUIRED to "PIN_REQUIRED",
+                TelephonyManager.SIM_STATE_PUK_REQUIRED to "PUK_REQUIRED",
+                TelephonyManager.SIM_STATE_NETWORK_LOCKED to "NETWORK_LOCKED",
+                TelephonyManager.SIM_STATE_READY to "READY",
+                TelephonyManager.SIM_STATE_NOT_READY to "NOT_READY",
+                TelephonyManager.SIM_STATE_PERM_DISABLED to "PERM_DISABLED",
+                TelephonyManager.SIM_STATE_CARD_IO_ERROR to "CARD_IO_ERROR",
+                TelephonyManager.SIM_STATE_CARD_RESTRICTED to "CARD_RESTRICTED",
+                999 to "UNKNOWN",
+            )
         cases.forEach { (state, label) ->
             doReturn(state).`when`(telephonyManager).simState
             assertEquals(label, telephonyInfo.getSimStateString())
@@ -359,7 +360,7 @@ class TelephonyInfoBasicRobolectricTest {
             onServiceState,
             onCallState,
             onDisplayInfo,
-            onTelephonyNetworkState
+            onTelephonyNetworkState,
         )
 
         verify(callbackManager).registerAdvancedCallbackFromDefaultUSim(
@@ -372,7 +373,7 @@ class TelephonyInfoBasicRobolectricTest {
             onServiceState,
             onCallState,
             onDisplayInfo,
-            onTelephonyNetworkState
+            onTelephonyNetworkState,
         )
     }
 
@@ -400,7 +401,7 @@ class TelephonyInfoBasicRobolectricTest {
             onServiceState,
             onCallState,
             onDisplayInfo,
-            onTelephonyNetworkState
+            onTelephonyNetworkState,
         )
 
         verify(callbackManager).registerAdvancedCallback(
@@ -414,7 +415,7 @@ class TelephonyInfoBasicRobolectricTest {
             onServiceState,
             onCallState,
             onDisplayInfo,
-            onTelephonyNetworkState
+            onTelephonyNetworkState,
         )
     }
 

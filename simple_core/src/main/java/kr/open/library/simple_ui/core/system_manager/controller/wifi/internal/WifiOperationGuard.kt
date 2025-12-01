@@ -8,9 +8,8 @@ package kr.open.library.simple_ui.core.system_manager.controller.wifi.internal
  *                 기본값 폴백과 함께 작업을 실행하는 함수.
  */
 internal class WifiOperationGuard(
-    private val executor: (defaultValue: Any?, block: () -> Any?) -> Any?
+    private val executor: (defaultValue: Any?, block: () -> Any?) -> Any?,
 ) {
-
     /**
      * Executes a block of code safely, returning defaultValue on exception.<br><br>
      * 코드 블록을 안전하게 실행하며, 예외 발생 시 defaultValue를 반환합니다.<br>
@@ -25,6 +24,8 @@ internal class WifiOperationGuard(
      *         블록 실행 결과 또는 실패 시 defaultValue.<br>
      */
     @Suppress("UNCHECKED_CAST")
-    fun <T> run(defaultValue: T, block: () -> T): T =
-        executor(defaultValue, block) as T
+    fun <T> run(
+        defaultValue: T,
+        block: () -> T,
+    ): T = executor(defaultValue, block) as T
 }

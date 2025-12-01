@@ -21,7 +21,11 @@ import kr.open.library.simple_ui.core.system_manager.info.network.telephony.data
 import kr.open.library.simple_ui.core.system_manager.info.network.telephony.data.current.CurrentSignalStrength
 import kr.open.library.simple_ui.core.system_manager.info.network.telephony.data.state.TelephonyNetworkState
 import kr.open.library.simple_ui.core.system_manager.info.network.telephony.data.state.TelephonyNetworkType
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertSame
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -41,7 +45,6 @@ import java.util.concurrent.Executor
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [Build.VERSION_CODES.S])
 class TelephonyCallbackManagerRobolectricTest {
-
     private lateinit var application: Application
     private lateinit var context: Context
     private lateinit var telephonyManager: TelephonyManager
@@ -59,7 +62,7 @@ class TelephonyCallbackManagerRobolectricTest {
         shadowApp.grantPermissions(
             Manifest.permission.READ_PHONE_STATE,
             Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.READ_PHONE_NUMBERS
+            Manifest.permission.READ_PHONE_NUMBERS,
         )
         shadowApp.setSystemService(Context.TELEPHONY_SERVICE, telephonyManager)
         shadowApp.setSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE, subscriptionManager)
@@ -76,11 +79,12 @@ class TelephonyCallbackManagerRobolectricTest {
         var emittedService: ServiceState? = null
         var emittedNetwork: TelephonyNetworkState? = null
 
-        val registered = callbackManager.registerSimpleCallback(
-            onSignalStrengthChanged = { emittedSignal = it },
-            onServiceStateChanged = { emittedService = it },
-            onNetworkStateChanged = { emittedNetwork = it }
-        )
+        val registered =
+            callbackManager.registerSimpleCallback(
+                onSignalStrengthChanged = { emittedSignal = it },
+                onServiceStateChanged = { emittedService = it },
+                onNetworkStateChanged = { emittedNetwork = it },
+            )
         assertTrue(registered)
 
         val executorCaptor = ArgumentCaptor.forClass(Executor::class.java)
@@ -92,7 +96,8 @@ class TelephonyCallbackManagerRobolectricTest {
         telephonyCallback.onServiceStateChanged(serviceState)
         val displayInfo = mock(TelephonyDisplayInfo::class.java)
         doReturn(TelephonyDisplayInfo.OVERRIDE_NETWORK_TYPE_NR_ADVANCED)
-            .`when`(displayInfo).overrideNetworkType
+            .`when`(displayInfo)
+            .overrideNetworkType
         telephonyCallback.onDisplayInfoChanged(displayInfo)
 
         assertSame(signal, emittedSignal)
@@ -118,8 +123,8 @@ class TelephonyCallbackManagerRobolectricTest {
 
         val expectedEvents =
             PhoneStateListener.LISTEN_SIGNAL_STRENGTHS or
-                    PhoneStateListener.LISTEN_SERVICE_STATE or
-                    PhoneStateListener.LISTEN_DATA_CONNECTION_STATE
+                PhoneStateListener.LISTEN_SERVICE_STATE or
+                PhoneStateListener.LISTEN_DATA_CONNECTION_STATE
         assertEquals(expectedEvents, eventsCaptor.value.toInt())
         assertTrue(listenerCaptor.value is PhoneStateListener)
     }
@@ -165,11 +170,12 @@ class TelephonyCallbackManagerRobolectricTest {
         callbackManager.clearMultiSimState()
         callbackManager.forceUpdateMultiSimData()
 
-        val registered = callbackManager.registerAdvancedCallbackFromDefaultUSim(
-            executor = executor,
-            isGpsOn = false,
-            onActiveDataSubId = { collectedSubId = it }
-        )
+        val registered =
+            callbackManager.registerAdvancedCallbackFromDefaultUSim(
+                executor = executor,
+                isGpsOn = false,
+                onActiveDataSubId = { collectedSubId = it },
+            )
         assertTrue(registered)
 
         val callbackCaptor = ArgumentCaptor.forClass(TelephonyCallback::class.java)
@@ -199,10 +205,11 @@ class TelephonyCallbackManagerRobolectricTest {
         callbackManager.clearMultiSimState()
         callbackManager.forceUpdateMultiSimData()
 
-        val registered = callbackManager.registerAdvancedCallbackFromDefaultUSim(
-            executor = executor,
-            isGpsOn = true
-        )
+        val registered =
+            callbackManager.registerAdvancedCallbackFromDefaultUSim(
+                executor = executor,
+                isGpsOn = true,
+            )
         assertTrue(registered)
 
         val callbackCaptor = ArgumentCaptor.forClass(TelephonyCallback::class.java)
@@ -219,8 +226,8 @@ class TelephonyCallbackManagerRobolectricTest {
         assertFalse(
             callbackManager.registerAdvancedCallbackFromDefaultUSim(
                 executor = Executor { it.run() },
-                isGpsOn = false
-            )
+                isGpsOn = false,
+            ),
         )
     }
 
@@ -230,7 +237,7 @@ class TelephonyCallbackManagerRobolectricTest {
         callbackManager.registerAdvancedCallback(
             simSlotIndex = 10,
             executor = Executor { it.run() },
-            isGpsOn = false
+            isGpsOn = false,
         )
     }
 
@@ -305,7 +312,7 @@ class TelephonyCallbackManagerRobolectricTest {
             onServiceState = {},
             onCallState = { _, _ -> },
             onDisplayInfo = {},
-            onTelephonyNetworkState = {}
+            onTelephonyNetworkState = {},
         )
 
         val callbackCaptor = ArgumentCaptor.forClass(TelephonyCallback::class.java)
@@ -333,7 +340,7 @@ class TelephonyCallbackManagerRobolectricTest {
             onServiceState = {},
             onCallState = { _, _ -> },
             onDisplayInfo = {},
-            onTelephonyNetworkState = {}
+            onTelephonyNetworkState = {},
         )
 
         val gpsCallbackCaptor = ArgumentCaptor.forClass(TelephonyCallback::class.java)
@@ -393,7 +400,7 @@ class TelephonyCallbackManagerRobolectricTest {
         callbackManager.registerAdvancedCallback(
             simSlotIndex = 0,
             executor = Executor { it.run() },
-            isGpsOn = false
+            isGpsOn = false,
         )
     }
 
@@ -402,8 +409,10 @@ class TelephonyCallbackManagerRobolectricTest {
         val slotTelephonyManager = prepareMultiSimSlot(subscriptionId = 40)
         callbackManager.registerAdvancedCallback(0, Executor { it.run() }, isGpsOn = false)
 
-        doThrow(SecurityException("base")).doThrow(IllegalArgumentException("gps"))
-            .`when`(slotTelephonyManager).unregisterTelephonyCallback(any())
+        doThrow(SecurityException("base"))
+            .doThrow(IllegalArgumentException("gps"))
+            .`when`(slotTelephonyManager)
+            .unregisterTelephonyCallback(any())
 
         callbackManager.unregisterAdvancedCallback(0)
     }
@@ -413,13 +422,18 @@ class TelephonyCallbackManagerRobolectricTest {
         val slotTelephonyManager = prepareMultiSimSlot(subscriptionId = 41)
         callbackManager.registerAdvancedCallback(0, Executor { it.run() }, isGpsOn = true)
 
-        doThrow(IllegalArgumentException("base")).doThrow(SecurityException("gps"))
-            .`when`(slotTelephonyManager).unregisterTelephonyCallback(any())
+        doThrow(IllegalArgumentException("base"))
+            .doThrow(SecurityException("gps"))
+            .`when`(slotTelephonyManager)
+            .unregisterTelephonyCallback(any())
 
         callbackManager.unregisterAdvancedCallback(0)
     }
 
-    private fun prepareMultiSimSlot(slotIndex: Int = 0, subscriptionId: Int = 1): TelephonyManager {
+    private fun prepareMultiSimSlot(
+        slotIndex: Int = 0,
+        subscriptionId: Int = 1,
+    ): TelephonyManager {
         val subscriptionInfo = mock(SubscriptionInfo::class.java)
         val slotTelephonyManager = mock(TelephonyManager::class.java)
         doReturn(slotIndex).`when`(subscriptionInfo).simSlotIndex
@@ -460,7 +474,7 @@ class TelephonyCallbackManagerRobolectricTest {
     private fun TelephonyCallbackManager.injectSlot(
         slotIndex: Int,
         callback: CommonTelephonyCallback,
-        manager: TelephonyManager
+        manager: TelephonyManager,
     ) {
         val managerField = TelephonyCallbackManager::class.java.getDeclaredField("uSimTelephonyManagerList")
         managerField.isAccessible = true

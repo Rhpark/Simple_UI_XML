@@ -5,7 +5,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.test.core.app.ApplicationProvider
-import java.time.Duration
 import kr.open.library.simple_ui.xml.extensions.view.forEachChild
 import kr.open.library.simple_ui.xml.extensions.view.setGone
 import kr.open.library.simple_ui.xml.extensions.view.setHeight
@@ -28,11 +27,11 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import org.robolectric.shadows.ShadowSystemClock
+import java.time.Duration
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [33])
 class ViewExtensionsRobolectricTest {
-
     private lateinit var context: Context
 
     @Before
@@ -174,10 +173,11 @@ class ViewExtensionsRobolectricTest {
     @Test
     fun setMarginsUpdatesLayoutParams() {
         val view = View(context)
-        view.layoutParams = ViewGroup.MarginLayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-        )
+        view.layoutParams =
+            ViewGroup.MarginLayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+            )
 
         view.setMargins(left = 12, top = 8, right = 4, bottom = 16)
 
@@ -192,10 +192,11 @@ class ViewExtensionsRobolectricTest {
     @Test
     fun setMarginAppliesUniformMargins() {
         val view = View(context)
-        view.layoutParams = ViewGroup.MarginLayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-        )
+        view.layoutParams =
+            ViewGroup.MarginLayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+            )
 
         view.setMargin(20)
 
@@ -231,10 +232,11 @@ class ViewExtensionsRobolectricTest {
     @Test
     fun setWidthUpdatesLayoutParams() {
         val view = View(context)
-        view.layoutParams = ViewGroup.LayoutParams(
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-        )
+        view.layoutParams =
+            ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+            )
 
         view.setWidth(180)
 
@@ -254,10 +256,11 @@ class ViewExtensionsRobolectricTest {
     @Test
     fun setHeightUpdatesLayoutParams() {
         val view = View(context)
-        view.layoutParams = ViewGroup.LayoutParams(
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-        )
+        view.layoutParams =
+            ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+            )
 
         view.setHeight(220)
 
@@ -277,10 +280,11 @@ class ViewExtensionsRobolectricTest {
     @Test
     fun setSizeUpdatesWidthAndHeightTogether() {
         val view = View(context)
-        view.layoutParams = ViewGroup.LayoutParams(
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-        )
+        view.layoutParams =
+            ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+            )
 
         view.setSize(width = 160, height = 140)
 
@@ -301,10 +305,11 @@ class ViewExtensionsRobolectricTest {
     @Test
     fun setWidthMatchParentAppliesMatchParent() {
         val view = View(context)
-        view.layoutParams = ViewGroup.LayoutParams(
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-        )
+        view.layoutParams =
+            ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+            )
 
         view.setWidthMatchParent()
 
@@ -315,10 +320,11 @@ class ViewExtensionsRobolectricTest {
     @Test
     fun setHeightMatchParentAppliesMatchParent() {
         val view = View(context)
-        view.layoutParams = ViewGroup.LayoutParams(
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-        )
+        view.layoutParams =
+            ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+            )
 
         view.setHeightMatchParent()
 
@@ -329,10 +335,11 @@ class ViewExtensionsRobolectricTest {
     @Test
     fun setWidthWrapContentAppliesWrapContent() {
         val view = View(context)
-        view.layoutParams = ViewGroup.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.MATCH_PARENT,
-        )
+        view.layoutParams =
+            ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT,
+            )
 
         view.setWidthWrapContent()
 
@@ -343,10 +350,11 @@ class ViewExtensionsRobolectricTest {
     @Test
     fun setHeightWrapContentAppliesWrapContent() {
         val view = View(context)
-        view.layoutParams = ViewGroup.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.MATCH_PARENT,
-        )
+        view.layoutParams =
+            ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT,
+            )
 
         view.setHeightWrapContent()
 

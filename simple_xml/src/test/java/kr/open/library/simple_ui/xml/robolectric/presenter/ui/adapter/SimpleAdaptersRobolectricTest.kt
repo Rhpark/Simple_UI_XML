@@ -21,7 +21,6 @@ import org.robolectric.Shadows
 
 @RunWith(RobolectricTestRunner::class)
 class SimpleAdaptersRobolectricTest {
-
     private lateinit var parent: FrameLayout
 
     @Before
@@ -33,13 +32,14 @@ class SimpleAdaptersRobolectricTest {
     fun simpleRcvListAdapter_bindsUsingLambda() {
         var capturedItem: String? = null
         var capturedPos = -1
-        val adapter = SimpleRcvListAdapter(
-            android.R.layout.simple_list_item_1,
-            RcvListDiffUtilCallBack({ old, new -> old == new }, { old, new -> old == new })
-        ) { _, item: String, position ->
-            capturedItem = item
-            capturedPos = position
-        }
+        val adapter =
+            SimpleRcvListAdapter(
+                android.R.layout.simple_list_item_1,
+                RcvListDiffUtilCallBack({ old, new -> old == new }, { old, new -> old == new }),
+            ) { _, item: String, position ->
+                capturedItem = item
+                capturedPos = position
+            }
 
         val holder = adapter.onCreateViewHolder(parent, 0)
         adapter.submitList(listOf("alpha"))
@@ -52,10 +52,11 @@ class SimpleAdaptersRobolectricTest {
 
     @Test
     fun simpleBindingRcvListAdapter_createsHolder() {
-        val adapter = SimpleBindingRcvListAdapter<String, ViewDataBinding>(
-            android.R.layout.simple_list_item_1,
-            RcvListDiffUtilCallBack({ old, new -> old == new }, { old, new -> old == new })
-        ) { _, _, _ -> }
+        val adapter =
+            SimpleBindingRcvListAdapter<String, ViewDataBinding>(
+                android.R.layout.simple_list_item_1,
+                RcvListDiffUtilCallBack({ old, new -> old == new }, { old, new -> old == new }),
+            ) { _, _, _ -> }
 
         val holder = adapter.onCreateViewHolder(parent, 0)
         assertNotNull(holder)
@@ -64,12 +65,13 @@ class SimpleAdaptersRobolectricTest {
     @Test
     fun simpleBindingRcvListAdapter_bindsUsingLambda() {
         var capturedItem: String? = null
-        val adapter = SimpleBindingRcvListAdapter<String, ViewDataBinding>(
-            android.R.layout.simple_list_item_1,
-            RcvListDiffUtilCallBack({ old, new -> old == new }, { old, new -> old == new })
-        ) { _, item: String, _ ->
-            capturedItem = item
-        }
+        val adapter =
+            SimpleBindingRcvListAdapter<String, ViewDataBinding>(
+                android.R.layout.simple_list_item_1,
+                RcvListDiffUtilCallBack({ old, new -> old == new }, { old, new -> old == new }),
+            ) { _, item: String, _ ->
+                capturedItem = item
+            }
 
         val holder = adapter.onCreateViewHolder(parent, 0)
         adapter.submitList(listOf("beta"))
@@ -82,9 +84,10 @@ class SimpleAdaptersRobolectricTest {
     @Test
     fun simpleRcvAdapter_invokesOnBindLambda() {
         var capturedItem: String? = null
-        val adapter = SimpleRcvAdapter<String>(android.R.layout.simple_list_item_1) { _, item: String, _ ->
-            capturedItem = item
-        }
+        val adapter =
+            SimpleRcvAdapter<String>(android.R.layout.simple_list_item_1) { _, item: String, _ ->
+                capturedItem = item
+            }
         val holder = adapter.onCreateViewHolder(parent, 0)
         invokeSimpleAdapterBind(adapter, holder, "gamma")
 
@@ -94,9 +97,10 @@ class SimpleAdaptersRobolectricTest {
     @Test
     fun simpleBindingRcvAdapter_invokesOnBindLambda() {
         var capturedItem: String? = null
-        val adapter = SimpleBindingRcvAdapter<String, ViewDataBinding>(android.R.layout.simple_list_item_1) { _, item: String, _ ->
-            capturedItem = item
-        }
+        val adapter =
+            SimpleBindingRcvAdapter<String, ViewDataBinding>(android.R.layout.simple_list_item_1) { _, item: String, _ ->
+                capturedItem = item
+            }
         val holder = adapter.onCreateViewHolder(parent, 0)
         invokeBindingAdapterBind(adapter, holder, "delta")
 
@@ -106,14 +110,15 @@ class SimpleAdaptersRobolectricTest {
     private fun invokeSimpleAdapterBind(
         adapter: SimpleRcvAdapter<String>,
         holder: BaseRcvViewHolder,
-        item: String
+        item: String,
     ) {
-        val method = SimpleRcvAdapter::class.java.getDeclaredMethod(
-            "onBindViewHolder",
-            BaseRcvViewHolder::class.java,
-            Int::class.javaPrimitiveType,
-            Any::class.java
-        )
+        val method =
+            SimpleRcvAdapter::class.java.getDeclaredMethod(
+                "onBindViewHolder",
+                BaseRcvViewHolder::class.java,
+                Int::class.javaPrimitiveType,
+                Any::class.java,
+            )
         method.isAccessible = true
         method.invoke(adapter, holder, 0, item)
     }
@@ -121,14 +126,15 @@ class SimpleAdaptersRobolectricTest {
     private fun invokeBindingAdapterBind(
         adapter: SimpleBindingRcvAdapter<String, ViewDataBinding>,
         holder: BaseBindingRcvViewHolder<ViewDataBinding>,
-        item: String
+        item: String,
     ) {
-        val method = SimpleBindingRcvAdapter::class.java.getDeclaredMethod(
-            "onBindViewHolder",
-            BaseBindingRcvViewHolder::class.java,
-            Int::class.javaPrimitiveType,
-            Any::class.java
-        )
+        val method =
+            SimpleBindingRcvAdapter::class.java.getDeclaredMethod(
+                "onBindViewHolder",
+                BaseBindingRcvViewHolder::class.java,
+                Int::class.javaPrimitiveType,
+                Any::class.java,
+            )
         method.isAccessible = true
         method.invoke(adapter, holder, 0, item)
     }

@@ -13,7 +13,6 @@ import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
 class LogxConfigFactoryTest {
-
     private val context: Context = ApplicationProvider.getApplicationContext()
 
     @Test

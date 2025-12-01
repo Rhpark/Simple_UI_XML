@@ -12,8 +12,8 @@ import androidx.annotation.StyleRes
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import kr.open.library.simple_ui.core.logcat.Logx
-import kr.open.library.simple_ui.xml.permissions.register.PermissionRequester
 import kr.open.library.simple_ui.xml.permissions.register.PermissionDelegate
+import kr.open.library.simple_ui.xml.permissions.register.PermissionRequester
 import kr.open.library.simple_ui.xml.system_manager.extensions.getDisplayInfo
 
 /**
@@ -47,8 +47,9 @@ import kr.open.library.simple_ui.xml.system_manager.extensions.getDisplayInfo
  * @see BaseBindingDialogFragment For DataBinding-enabled DialogFragment.<br><br>
  *      DataBinding을 사용하는 DialogFragment는 BaseBindingDialogFragment를 참조하세요.<br>
  */
-public abstract class RootDialogFragment() : DialogFragment(), PermissionRequester {
-
+public abstract class RootDialogFragment :
+    DialogFragment(),
+    PermissionRequester {
     /**
      * Callback for positive button click events.<br><br>
      * 긍정 버튼 클릭 이벤트에 대한 콜백입니다.<br>
@@ -119,7 +120,9 @@ public abstract class RootDialogFragment() : DialogFragment(), PermissionRequest
      * @param color The color value to set as background.<br><br>
      *              배경으로 설정할 색상 값.<br>
      */
-    public open fun setBackgroundColor(@ColorInt color: Int) {
+    public open fun setBackgroundColor(
+        @ColorInt color: Int,
+    ) {
         this.backgroundColor = color
         this.backgroundResId = null
     }
@@ -133,7 +136,9 @@ public abstract class RootDialogFragment() : DialogFragment(), PermissionRequest
      * @param resId The drawable resource ID to set as background.<br><br>
      *              배경으로 설정할 drawable 리소스 ID.<br>
      */
-    public open fun setBackgroundDrawable(@DrawableRes resId: Int) {
+    public open fun setBackgroundDrawable(
+        @DrawableRes resId: Int,
+    ) {
         this.backgroundColor = null
         this.backgroundResId = resId
     }
@@ -159,9 +164,8 @@ public abstract class RootDialogFragment() : DialogFragment(), PermissionRequest
         permissionDelegate.onRestoreInstanceState(savedInstanceState)
     }
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-
-        return super.onCreateDialog(savedInstanceState).apply {
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog =
+        super.onCreateDialog(savedInstanceState).apply {
             window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             setCancelable(dialogCancelable)
 
@@ -175,7 +179,6 @@ public abstract class RootDialogFragment() : DialogFragment(), PermissionRequest
                 window?.setGravity(dialogGravity)
             }
         }
-    }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -196,14 +199,17 @@ public abstract class RootDialogFragment() : DialogFragment(), PermissionRequest
      * @param heightRatio The ratio of screen height (currently unused, height is WRAP_CONTENT).<br><br>
      *                    화면 높이 비율 (현재 사용되지 않음, 높이는 WRAP_CONTENT).<br>
      */
-    protected fun resizeDialog(widthRatio: Float, heightRatio: Float) {
+    protected fun resizeDialog(
+        widthRatio: Float,
+        heightRatio: Float,
+    ) {
         dialog?.window?.let {
             val screenSize = requireContext().getDisplayInfo().getScreenSize()
             Logx.d("Screen Size $screenSize, " + requireContext().getDisplayInfo().getFullScreenSize())
             val x = (screenSize.x * widthRatio).toInt()
             val y = (screenSize.y * heightRatio).toInt()
 //            it.setLayout(x, y)
-            it.setLayout(x, -2) //WARP_
+            it.setLayout(x, -2) // WARP_
         } ?: Logx.e("Error dialog window is null!")
     }
 
@@ -216,7 +222,9 @@ public abstract class RootDialogFragment() : DialogFragment(), PermissionRequest
      * @param style The animation style resource ID.<br><br>
      *              애니메이션 스타일 리소스 ID.<br>
      */
-    public fun setAnimationStyle(@StyleRes style: Int) {
+    public fun setAnimationStyle(
+        @StyleRes style: Int,
+    ) {
         this.animationStyle = style
         dialog?.window?.attributes?.windowAnimations = style
     }
@@ -308,7 +316,10 @@ public abstract class RootDialogFragment() : DialogFragment(), PermissionRequest
      * @param tag The tag for this fragment, as per FragmentTransaction.add.<br><br>
      *            FragmentTransaction.add에 따른 이 프래그먼트의 태그.<br>
      */
-    public fun safeShow(fragmentManager: FragmentManager, tag: String) {
+    public fun safeShow(
+        fragmentManager: FragmentManager,
+        tag: String,
+    ) {
         try {
             show(fragmentManager, tag)
         } catch (e: Exception) {
@@ -316,7 +327,10 @@ public abstract class RootDialogFragment() : DialogFragment(), PermissionRequest
         }
     }
 
-    override fun onRequestPermissions(permissions: List<String>, onResult: (deniedPermissions: List<String>) -> Unit) {
+    override fun onRequestPermissions(
+        permissions: List<String>,
+        onResult: (deniedPermissions: List<String>) -> Unit,
+    ) {
         permissionDelegate.requestPermissions(permissions, onResult)
     }
 

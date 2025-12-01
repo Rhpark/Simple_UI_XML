@@ -1,8 +1,14 @@
 package kr.open.library.simple_ui.core.unit.extensions
 
-import kr.open.library.simple_ui.core.extensions.string.*
+import kr.open.library.simple_ui.core.extensions.string.isAlphaNumeric
+import kr.open.library.simple_ui.core.extensions.string.isNumeric
+import kr.open.library.simple_ui.core.extensions.string.removeHtmlTags
+import kr.open.library.simple_ui.core.extensions.string.removeWhitespace
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
-import org.junit.Assert.*
 
 /**
  * String Extensions에 대한 단위 테스트
@@ -18,7 +24,6 @@ import org.junit.Assert.*
  *       해당 기능은 androidTest/ 폴더에서 테스트 가능합니다.
  */
 class StringExtensionsTest {
-
     // ========== 1. 숫자 검증 테스트 ==========
 
     /**
@@ -27,12 +32,13 @@ class StringExtensionsTest {
     @Test
     fun testIsNumericWithOnlyDigitsReturnsTrue() {
         // Given
-        val numericStrings = listOf(
-            "12345",
-            "0",
-            "999",
-            ""  // 빈 문자열은 숫자로 간주
-        )
+        val numericStrings =
+            listOf(
+                "12345",
+                "0",
+                "999",
+                "", // 빈 문자열은 숫자로 간주
+            )
 
         // When & Then
         numericStrings.forEach { str ->
@@ -46,12 +52,13 @@ class StringExtensionsTest {
     @Test
     fun testIsNumericWithNonDigitsReturnsFalse() {
         // Given
-        val nonNumericStrings = listOf(
-            "123a45",
-            "abc",
-            "12.34",  // 소수점 포함
-            "12-34"   // 하이픈 포함
-        )
+        val nonNumericStrings =
+            listOf(
+                "123a45",
+                "abc",
+                "12.34", // 소수점 포함
+                "12-34", // 하이픈 포함
+            )
 
         // When & Then
         nonNumericStrings.forEach { str ->
@@ -67,13 +74,14 @@ class StringExtensionsTest {
     @Test
     fun testIsAlphaNumericWithValidCharsReturnsTrue() {
         // Given
-        val alphanumericStrings = listOf(
-            "abc123",
-            "ABC123",
-            "test",
-            "123",
-            ""  // 빈 문자열은 영숫자로 간주
-        )
+        val alphanumericStrings =
+            listOf(
+                "abc123",
+                "ABC123",
+                "test",
+                "123",
+                "", // 빈 문자열은 영숫자로 간주
+            )
 
         // When & Then
         alphanumericStrings.forEach { str ->
@@ -87,12 +95,13 @@ class StringExtensionsTest {
     @Test
     fun testIsAlphaNumericWithSpecialCharsReturnsFalse() {
         // Given
-        val nonAlphanumericStrings = listOf(
-            "abc-123",
-            "test@123",
-            "hello world",  // 공백 포함
-            "test!"
-        )
+        val nonAlphanumericStrings =
+            listOf(
+                "abc-123",
+                "test@123",
+                "hello world", // 공백 포함
+                "test!",
+            )
 
         // When & Then
         nonAlphanumericStrings.forEach { str ->
@@ -289,12 +298,13 @@ class StringExtensionsTest {
     @Test
     fun testIsAlphaNumericWithMixedSpecialChars() {
         // Given
-        val complexStrings = listOf(
-            "abc123!@#",
-            "test_123",
-            "hello-world123",
-            "user@domain.com"
-        )
+        val complexStrings =
+            listOf(
+                "abc123!@#",
+                "test_123",
+                "hello-world123",
+                "user@domain.com",
+            )
 
         // When & Then
         complexStrings.forEach { str ->
@@ -308,11 +318,12 @@ class StringExtensionsTest {
     @Test
     fun testIsAlphaNumericWithMixedCase() {
         // Given
-        val mixedCaseStrings = listOf(
-            "AbC123",
-            "TeSt456XyZ",
-            "MiXeD"
-        )
+        val mixedCaseStrings =
+            listOf(
+                "AbC123",
+                "TeSt456XyZ",
+                "MiXeD",
+            )
 
         // When & Then
         mixedCaseStrings.forEach { str ->
@@ -406,12 +417,13 @@ class StringExtensionsTest {
     @Test
     fun testStripHtmlTagsWithMalformedHtml() {
         // Given
-        val malformedHtml = listOf(
-            "<div>Unclosed",
-            "No tags here",
-            "<>Empty tag<>",
-            "<<<Multiple brackets>>>"
-        )
+        val malformedHtml =
+            listOf(
+                "<div>Unclosed",
+                "No tags here",
+                "<>Empty tag<>",
+                "<<<Multiple brackets>>>",
+            )
 
         // When & Then
         malformedHtml.forEach { html ->

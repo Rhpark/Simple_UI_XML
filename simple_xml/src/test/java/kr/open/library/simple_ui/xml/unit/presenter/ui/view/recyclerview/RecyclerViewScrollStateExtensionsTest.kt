@@ -4,12 +4,9 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kr.open.library.simple_ui.xml.ui.view.recyclerview.safeEmit
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
-import org.junit.Ignore
 import org.junit.Test
 
-
 class RecyclerViewScrollStateExtensionsTest {
-
     @Test
     fun safeEmit_emitsWhenBufferAvailable() {
         val flow = MutableSharedFlow<String>(replay = 0, extraBufferCapacity = 1)

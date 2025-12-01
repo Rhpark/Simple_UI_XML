@@ -8,7 +8,6 @@ import kotlinx.coroutines.launch
 import kr.open.library.simple_ui.core.viewmodel.BaseViewModelEvent
 
 class BaseBindingActivityExampleVm : BaseViewModelEvent<BaseBindingActivityExampleVmEvent>() {
-
     private val _counter = MutableStateFlow(0)
     val counter: StateFlow<Int> = _counter.asStateFlow()
 

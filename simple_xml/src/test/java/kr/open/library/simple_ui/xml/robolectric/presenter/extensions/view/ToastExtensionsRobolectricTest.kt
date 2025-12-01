@@ -24,7 +24,6 @@ import org.robolectric.shadows.ShadowToast
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [33])
 class ToastExtensionsRobolectricTest {
-
     private lateinit var context: Context
 
     @Before
@@ -121,9 +120,16 @@ class ToastExtensionsRobolectricTest {
 
     @Test
     fun fragment_toastShowShort_withContext_showsToast() {
-        val activity = Robolectric.buildActivity(FragmentActivity::class.java).create().start().resume().get()
+        val activity =
+            Robolectric
+                .buildActivity(FragmentActivity::class.java)
+                .create()
+                .start()
+                .resume()
+                .get()
         val fragment = Fragment()
-        activity.supportFragmentManager.beginTransaction()
+        activity.supportFragmentManager
+            .beginTransaction()
             .add(fragment, "test")
             .commitNow()
 
@@ -135,9 +141,16 @@ class ToastExtensionsRobolectricTest {
 
     @Test
     fun fragment_toastShowLong_withContext_showsToast() {
-        val activity = Robolectric.buildActivity(FragmentActivity::class.java).create().start().resume().get()
+        val activity =
+            Robolectric
+                .buildActivity(FragmentActivity::class.java)
+                .create()
+                .start()
+                .resume()
+                .get()
         val fragment = Fragment()
-        activity.supportFragmentManager.beginTransaction()
+        activity.supportFragmentManager
+            .beginTransaction()
             .add(fragment, "test")
             .commitNow()
 

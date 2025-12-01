@@ -16,7 +16,6 @@ import kr.open.library.simpleui_xml.activity_fragment.fragment.FragmentContainer
 import kr.open.library.simpleui_xml.databinding.ActivityActivityFragmentBinding
 
 class ActivityFragmentActivity : BaseBindingActivity<ActivityActivityFragmentBinding>(R.layout.activity_activity_fragment) {
-
     private val vm: ActivityFragmentActivityVm by viewModels()
 
     companion object {
@@ -52,10 +51,20 @@ class ActivityFragmentActivity : BaseBindingActivity<ActivityActivityFragmentBin
                         startActivity(intent)
                     }
                     is ActivityFragmentActivityVmEvent.OnClickBaseDialogFragment -> {
-                        BaseDialogFragmentExample().apply { setBackgroundColor(Color.WHITE) }.safeShow(supportFragmentManager, "BaseDialogFragment")
+                        BaseDialogFragmentExample()
+                            .apply {
+                                setBackgroundColor(
+                                    Color.WHITE,
+                                )
+                            }.safeShow(supportFragmentManager, "BaseDialogFragment")
                     }
                     is ActivityFragmentActivityVmEvent.OnClickBaseBindingDialogFragment -> {
-                        BaseBindingDialogFragmentExample().apply { setBackgroundColor(Color.WHITE) }.safeShow(supportFragmentManager, "BaseBindingDialogFragment")
+                        BaseBindingDialogFragmentExample()
+                            .apply {
+                                setBackgroundColor(
+                                    Color.WHITE,
+                                )
+                            }.safeShow(supportFragmentManager, "BaseBindingDialogFragment")
                     }
                 }
             }

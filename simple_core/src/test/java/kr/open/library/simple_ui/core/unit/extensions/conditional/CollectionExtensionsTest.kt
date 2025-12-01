@@ -9,7 +9,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class CollectionExtensionsTest {
-
     @Test
     fun filterIf_appliesPredicateWhenConditionTrue() {
         val numbers = listOf(1, 2, 3, 4, 5)
@@ -114,9 +113,10 @@ class CollectionExtensionsTest {
         val source = listOf("a", "b", "c")
         var receivedList: List<String>? = null
 
-        val result = source.ifNotEmpty { list ->
-            receivedList = list
-        }
+        val result =
+            source.ifNotEmpty { list ->
+                receivedList = list
+            }
 
         assertSame(source, receivedList)
         assertSame(source, result)
@@ -127,9 +127,10 @@ class CollectionExtensionsTest {
         val source = listOf(1, 2, 3)
         var executed = false
 
-        val result = source.ifNotEmpty { _: List<Int> ->
-            executed = true
-        }
+        val result =
+            source.ifNotEmpty { _: List<Int> ->
+                executed = true
+            }
 
         assertTrue(executed)
         assertSame(source, result)
@@ -173,9 +174,10 @@ class CollectionExtensionsTest {
         val source = mapOf("a" to 1, "b" to 2)
         var receivedMap: Map<String, Int>? = null
 
-        val result = source.ifNotEmpty { map ->
-            receivedMap = map
-        }
+        val result =
+            source.ifNotEmpty { map ->
+                receivedMap = map
+            }
 
         assertSame(source, receivedMap)
         assertSame(source, result)
@@ -186,9 +188,10 @@ class CollectionExtensionsTest {
         val emptyMap = emptyMap<String, Int>()
         var receivedMap: Map<String, Int>? = null
 
-        val result = emptyMap.ifEmpty { map ->
-            receivedMap = map
-        }
+        val result =
+            emptyMap.ifEmpty { map ->
+                receivedMap = map
+            }
 
         assertSame(emptyMap, receivedMap)
         assertSame(emptyMap, result)

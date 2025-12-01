@@ -11,15 +11,20 @@ import org.junit.Test
  * Android Manifest 의존성이 있지만 컴파일 타임 상수이므로 Unit Test 가능
  */
 class PermissionSpecialTypeUnitTest {
-
     @Test
     fun allEnumValues_haveCorrectPermissionStrings() {
         assertEquals(Manifest.permission.SYSTEM_ALERT_WINDOW, PermissionSpecialType.SYSTEM_ALERT_WINDOW.permission)
         assertEquals(Manifest.permission.WRITE_SETTINGS, PermissionSpecialType.WRITE_SETTINGS.permission)
         assertEquals(Manifest.permission.PACKAGE_USAGE_STATS, PermissionSpecialType.PACKAGE_USAGE_STATS.permission)
-        assertEquals(Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS, PermissionSpecialType.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS.permission)
+        assertEquals(
+            Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
+            PermissionSpecialType.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS.permission,
+        )
         assertEquals(Manifest.permission.BIND_ACCESSIBILITY_SERVICE, PermissionSpecialType.BIND_ACCESSIBILITY_SERVICE.permission)
-        assertEquals(Manifest.permission.BIND_NOTIFICATION_LISTENER_SERVICE, PermissionSpecialType.BIND_NOTIFICATION_LISTENER_SERVICE.permission)
+        assertEquals(
+            Manifest.permission.BIND_NOTIFICATION_LISTENER_SERVICE,
+            PermissionSpecialType.BIND_NOTIFICATION_LISTENER_SERVICE.permission,
+        )
         assertEquals(Manifest.permission.REQUEST_INSTALL_PACKAGES, PermissionSpecialType.REQUEST_INSTALL_PACKAGES.permission)
         assertEquals(Manifest.permission.ACCESS_NOTIFICATION_POLICY, PermissionSpecialType.ACCESS_NOTIFICATION_POLICY.permission)
         assertEquals(Manifest.permission.MANAGE_EXTERNAL_STORAGE, PermissionSpecialType.MANAGE_EXTERNAL_STORAGE.permission)

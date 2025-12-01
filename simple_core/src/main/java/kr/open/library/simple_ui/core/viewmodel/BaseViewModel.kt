@@ -51,6 +51,8 @@ import androidx.lifecycle.ViewModel
  * @see BaseViewModelEvent For ViewModel with event emission capability.<br><br>
  *      이벤트 발행 기능이 있는 ViewModel은 BaseViewModelEvent를 참조하세요.<br>
  */
-public abstract class BaseViewModel : ViewModel(), DefaultLifecycleObserver {
+public abstract class BaseViewModel :
+    ViewModel(),
+    DefaultLifecycleObserver {
     // Override lifecycle methods as needed
 }

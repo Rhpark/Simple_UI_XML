@@ -6,7 +6,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
 import kr.open.library.simple_ui.core.logcat.internal.file_writer.base.LogxFileWriterImp
 import kr.open.library.simple_ui.core.logcat.model.LogxType
 import java.io.BufferedWriter
@@ -24,9 +23,8 @@ import kotlin.concurrent.write
  */
 class LogxFileWriter(
     private val filePath: String,
-    private val context: Context? = null
+    private val context: Context? = null,
 ) : LogxFileWriterImp {
-
     private val lock = ReentrantReadWriteLock()
     private val dateFormatter = SimpleDateFormat("yy-MM-dd, HH:mm:ss.SSS", Locale.getDefault())
     private val fileNameFormatter = SimpleDateFormat("yy-MM-dd", Locale.getDefault())
@@ -38,40 +36,46 @@ class LogxFileWriter(
     /**
      * 로그 파일 작성 시 발생할 수 있는 예외
      */
-    class LogFileWriteException(message: String, cause: Throwable? = null) : Exception(message, cause)
+    class LogFileWriteException(
+        message: String,
+        cause: Throwable? = null,
+    ) : Exception(message, cause)
 
     init {
         createDirectoryIfNeeded()
         setupAndroidLifecycleFlush()
     }
-    
-    override fun writeLog(logType: LogxType, tag: String, message: String) {
+
+    override fun writeLog(
+        logType: LogxType,
+        tag: String,
+        message: String,
+    ) {
         lock.write {
             try {
                 val timestamp = dateFormatter.format(Date())
                 val logFile = createLogFile()
                 val logLine = "$timestamp/${logType.logTypeString}/$tag : $message"
-                
+
                 writeToFile(logFile, logLine)
-                
             } catch (e: Exception) {
                 Log.e("ImmediateLogFileWriter", "Failed to write log immediately: ${e.message}", e)
                 throw LogFileWriteException("Failed to write log immediately", e)
             }
         }
     }
-    
+
     override fun cleanup() {
         lock.write {
             // 즉시 저장 방식에서는 특별한 정리 작업이 필요하지 않음
             Log.d("ImmediateLogFileWriter", "Cleanup completed")
         }
     }
-    
+
     private fun createDirectoryIfNeeded() {
         val directory = File(filePath)
         if (directory.exists()) return
-        
+
         try {
             if (directory.mkdirs()) {
                 Log.d("ImmediateLogFileWriter", "Directory created: $filePath")
@@ -84,11 +88,11 @@ class LogxFileWriter(
             throw LogFileWriteException("Exception while creating directory", e)
         }
     }
-    
+
     private fun createLogFile(): File {
         val fileName = "${fileNameFormatter.format(Date())}_Log.txt"
         val logFile = File(filePath, fileName)
-        
+
         if (!logFile.exists()) {
             try {
                 if (logFile.createNewFile()) {
@@ -102,11 +106,14 @@ class LogxFileWriter(
                 throw LogFileWriteException("IOException creating file: ${logFile.path}", e)
             }
         }
-        
+
         return logFile
     }
-    
-    private fun writeToFile(file: File, logLine: String) {
+
+    private fun writeToFile(
+        file: File,
+        logLine: String,
+    ) {
         try {
             BufferedWriter(FileWriter(file, true)).use { writer ->
                 writer.write(logLine)

@@ -49,9 +49,8 @@ import androidx.annotation.LayoutRes
  */
 abstract class BaseFragment(
     @LayoutRes private val layoutRes: Int,
-    private val isAttachToParent: Boolean = false
+    private val isAttachToParent: Boolean = false,
 ) : RootFragment() {
-
     /**
      * Internal backing field for rootView.<br><br>
      * rootView의 내부 백킹 필드입니다.<br>
@@ -64,11 +63,16 @@ abstract class BaseFragment(
      * Fragment 레이아웃의 루트 뷰입니다.<br>
      * onDestroyView() 이후에 접근하면 IllegalStateException이 발생합니다.<br>
      */
-    protected val rootView: View
-        get() = _rootView
-            ?: throw IllegalStateException("View accessed after onDestroyView()")
+    public val rootView: View
+        get() =
+            _rootView
+                ?: throw IllegalStateException("View accessed after onDestroyView()")
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
+    ): View? {
         _rootView = inflater.inflate(layoutRes, container, isAttachToParent)
         return rootView
     }

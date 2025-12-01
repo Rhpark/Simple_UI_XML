@@ -21,7 +21,6 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [33])
 class TelephonyInfoRobolectricTest {
-
     private lateinit var context: Context
     private lateinit var telephonyInfo: TelephonyInfo
 
@@ -223,12 +222,13 @@ class TelephonyInfoRobolectricTest {
     @Test
     fun registerCallback_doesNotCrash() {
         // When
-        val result = telephonyInfo.registerCallback(
-            handler = null,
-            onSignalStrengthChanged = {},
-            onServiceStateChanged = {},
-            onNetworkStateChanged = {}
-        )
+        val result =
+            telephonyInfo.registerCallback(
+                handler = null,
+                onSignalStrengthChanged = {},
+                onServiceStateChanged = {},
+                onNetworkStateChanged = {},
+            )
 
         // Then: 등록 성공 (true) 또는 권한 없음 (false)
         // Cleanup

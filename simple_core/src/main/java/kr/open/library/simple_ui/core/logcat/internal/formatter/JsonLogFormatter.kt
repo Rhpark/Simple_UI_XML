@@ -6,13 +6,13 @@ import kr.open.library.simple_ui.core.logcat.internal.formatter.base.LogxBaseFor
 import kr.open.library.simple_ui.core.logcat.internal.formatter.base.LogxFormatterImp
 import kr.open.library.simple_ui.core.logcat.model.LogxType
 
-
 /**
  * logcat JSON 전용 포맷터 부분 설정 및 반환
  */
-class JsonLogFormatter(config: LogxConfig) :
-    LogxBaseFormatter(config), LogxFormatterImp {
-
+class JsonLogFormatter(
+    config: LogxConfig,
+) : LogxBaseFormatter(config),
+    LogxFormatterImp {
     override fun isIncludeLogType(logType: LogxType): Boolean = logType == LogxType.JSON
 
     override fun getTagSuffix(): String = "[JSON]"
@@ -20,8 +20,10 @@ class JsonLogFormatter(config: LogxConfig) :
     /**
      * JSON 문자열을 보기 좋게 포맷팅
      */
-    override fun formatMessage(message: Any?, stackInfo: String): String = formatJsonMessage(message.toString())
-    
+    override fun formatMessage(
+        message: Any?,
+        stackInfo: String,
+    ): String = formatJsonMessage(message.toString())
 
     private fun formatJsonMessage(jsonString: String): String {
         val trimmed = jsonString.trim()

@@ -16,7 +16,6 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [33])
 class LogxStackTraceMetaDataRobolectricTest {
-
     // ==============================================
     // Helper Methods
     // ==============================================
@@ -25,10 +24,8 @@ class LogxStackTraceMetaDataRobolectricTest {
         className: String = "com.example.TestClass",
         methodName: String = "testMethod",
         fileName: String = "TestClass.kt",
-        lineNumber: Int = 42
-    ): StackTraceElement {
-        return StackTraceElement(className, methodName, fileName, lineNumber)
-    }
+        lineNumber: Int = 42,
+    ): StackTraceElement = StackTraceElement(className, methodName, fileName, lineNumber)
 
     // ==============================================
     // FileName Edge Cases with Android Log
@@ -38,10 +35,11 @@ class LogxStackTraceMetaDataRobolectricTest {
     fun fileName_fallsBackToClassName_whenFileNameIsNull() {
         // Create a StackTraceElement where fileName might be null
         // Using a real Java class that exists in the test classpath
-        val element = createStackTraceElement(
-            className = "java.lang.String",
-            fileName = "String.java" // Java classes have fileName
-        )
+        val element =
+            createStackTraceElement(
+                className = "java.lang.String",
+                fileName = "String.java", // Java classes have fileName
+            )
         val metaData = LogxStackTraceMetaData(element)
 
         // Should use fileName if available
@@ -54,10 +52,11 @@ class LogxStackTraceMetaDataRobolectricTest {
         // Using a non-existent class to trigger ClassNotFoundException path
         // Note: We can't create StackTraceElement with null fileName in Kotlin
         // So we test with a class that won't be found when trying fallback
-        val element = createStackTraceElement(
-            className = "this.class.does.not.exist.Nowhere",
-            fileName = "Nowhere.kt"
-        )
+        val element =
+            createStackTraceElement(
+                className = "this.class.does.not.exist.Nowhere",
+                fileName = "Nowhere.kt",
+            )
         val metaData = LogxStackTraceMetaData(element)
 
         // Should use provided fileName
@@ -67,10 +66,11 @@ class LogxStackTraceMetaDataRobolectricTest {
 
     @Test
     fun fileName_handlesInnerClassWithDollarSign() {
-        val element = createStackTraceElement(
-            className = "com.example.OuterClass\$InnerClass\$DeepInner",
-            fileName = "OuterClass.kt"
-        )
+        val element =
+            createStackTraceElement(
+                className = "com.example.OuterClass\$InnerClass\$DeepInner",
+                fileName = "OuterClass.kt",
+            )
         val metaData = LogxStackTraceMetaData(element)
 
         assertEquals("OuterClass.kt", metaData.fileName)
@@ -79,10 +79,11 @@ class LogxStackTraceMetaDataRobolectricTest {
     @Test
     fun fileName_handlesLambdaClassName() {
         // Lambda classes often have $ in their names
-        val element = createStackTraceElement(
-            className = "com.example.MyClass\$lambda\$1",
-            fileName = "MyClass.kt"
-        )
+        val element =
+            createStackTraceElement(
+                className = "com.example.MyClass\$lambda\$1",
+                fileName = "MyClass.kt",
+            )
         val metaData = LogxStackTraceMetaData(element)
 
         assertEquals("MyClass.kt", metaData.fileName)
@@ -90,10 +91,11 @@ class LogxStackTraceMetaDataRobolectricTest {
 
     @Test
     fun fileName_handlesAnonymousInnerClass() {
-        val element = createStackTraceElement(
-            className = "com.example.MyClass\$1",
-            fileName = "MyClass.kt"
-        )
+        val element =
+            createStackTraceElement(
+                className = "com.example.MyClass\$1",
+                fileName = "MyClass.kt",
+            )
         val metaData = LogxStackTraceMetaData(element)
 
         assertEquals("MyClass.kt", metaData.fileName)
@@ -105,12 +107,13 @@ class LogxStackTraceMetaDataRobolectricTest {
 
     @Test
     fun getMsgFrontNormal_withNegativeLineNumber_handlesNativeMethod() {
-        val element = StackTraceElement(
-            "java.lang.Thread",
-            "run",
-            "Thread.java",
-            -1 // Native method
-        )
+        val element =
+            StackTraceElement(
+                "java.lang.Thread",
+                "run",
+                "Thread.java",
+                -1, // Native method
+            )
         val metaData = LogxStackTraceMetaData(element)
 
         val result = metaData.getMsgFrontNormal()
@@ -146,11 +149,12 @@ class LogxStackTraceMetaDataRobolectricTest {
     @Test
     fun getMsgFrontParent_withVeryLongClassName() {
         val longClassName = "com.very.long.package.name.with.many.segments.MyVeryLongClassNameThatIsReallyLong"
-        val element = createStackTraceElement(
-            className = longClassName,
-            fileName = "MyVeryLongClassNameThatIsReallyLong.kt",
-            lineNumber = 123
-        )
+        val element =
+            createStackTraceElement(
+                className = longClassName,
+                fileName = "MyVeryLongClassNameThatIsReallyLong.kt",
+                lineNumber = 123,
+            )
         val metaData = LogxStackTraceMetaData(element)
 
         val result = metaData.getMsgFrontParent()
@@ -161,10 +165,11 @@ class LogxStackTraceMetaDataRobolectricTest {
 
     @Test
     fun getMsgFrontParent_withSpecialCharactersInMethodName() {
-        val element = createStackTraceElement(
-            methodName = "<init>", // Constructor
-            fileName = "Test.kt"
-        )
+        val element =
+            createStackTraceElement(
+                methodName = "<init>", // Constructor
+                fileName = "Test.kt",
+            )
         val metaData = LogxStackTraceMetaData(element)
 
         val result = metaData.getMsgFrontParent()
@@ -174,10 +179,11 @@ class LogxStackTraceMetaDataRobolectricTest {
 
     @Test
     fun getMsgFrontParent_withGetterMethod() {
-        val element = createStackTraceElement(
-            methodName = "getValue",
-            fileName = "Property.kt"
-        )
+        val element =
+            createStackTraceElement(
+                methodName = "getValue",
+                fileName = "Property.kt",
+            )
         val metaData = LogxStackTraceMetaData(element)
 
         val result = metaData.getMsgFrontParent()
@@ -191,10 +197,11 @@ class LogxStackTraceMetaDataRobolectricTest {
 
     @Test
     fun getMsgFrontJson_withSpecialCharactersInFileName() {
-        val element = createStackTraceElement(
-            fileName = "Test-File_Name.kt",
-            lineNumber = 50
-        )
+        val element =
+            createStackTraceElement(
+                fileName = "Test-File_Name.kt",
+                lineNumber = 50,
+            )
         val metaData = LogxStackTraceMetaData(element)
 
         val result = metaData.getMsgFrontJson()
@@ -205,10 +212,11 @@ class LogxStackTraceMetaDataRobolectricTest {
 
     @Test
     fun getMsgFrontJson_withJavaFile() {
-        val element = createStackTraceElement(
-            fileName = "JavaClass.java",
-            lineNumber = 100
-        )
+        val element =
+            createStackTraceElement(
+                fileName = "JavaClass.java",
+                lineNumber = 100,
+            )
         val metaData = LogxStackTraceMetaData(element)
 
         val result = metaData.getMsgFrontJson()
@@ -236,12 +244,13 @@ class LogxStackTraceMetaDataRobolectricTest {
 
     @Test
     fun allMessageFormats_useSameLazyFileLocation() {
-        val element = createStackTraceElement(
-            fileName = "SharedLocation.kt",
-            lineNumber = 777,
-            methodName = "sharedMethod",
-            className = "com.test.SharedClass"
-        )
+        val element =
+            createStackTraceElement(
+                fileName = "SharedLocation.kt",
+                lineNumber = 777,
+                methodName = "sharedMethod",
+                className = "com.test.SharedClass",
+            )
         val metaData = LogxStackTraceMetaData(element)
 
         val normal = metaData.getMsgFrontNormal()
@@ -260,12 +269,13 @@ class LogxStackTraceMetaDataRobolectricTest {
 
     @Test
     fun realWorld_kotlinCoroutineStackTrace() {
-        val element = createStackTraceElement(
-            className = "kotlinx.coroutines.DeferredCoroutine",
-            methodName = "await",
-            fileName = "Deferred.kt",
-            lineNumber = 52
-        )
+        val element =
+            createStackTraceElement(
+                className = "kotlinx.coroutines.DeferredCoroutine",
+                methodName = "await",
+                fileName = "Deferred.kt",
+                lineNumber = 52,
+            )
         val metaData = LogxStackTraceMetaData(element)
 
         assertEquals("Deferred.kt", metaData.fileName)
@@ -275,12 +285,13 @@ class LogxStackTraceMetaDataRobolectricTest {
 
     @Test
     fun realWorld_androidFrameworkStackTrace() {
-        val element = createStackTraceElement(
-            className = "android.app.Activity",
-            methodName = "onCreate",
-            fileName = "Activity.java",
-            lineNumber = 1024
-        )
+        val element =
+            createStackTraceElement(
+                className = "android.app.Activity",
+                methodName = "onCreate",
+                fileName = "Activity.java",
+                lineNumber = 1024,
+            )
         val metaData = LogxStackTraceMetaData(element)
 
         assertEquals("Activity.java", metaData.fileName)
@@ -289,12 +300,13 @@ class LogxStackTraceMetaDataRobolectricTest {
 
     @Test
     fun realWorld_proguardObfuscatedStackTrace() {
-        val element = createStackTraceElement(
-            className = "a.b.c",
-            methodName = "a",
-            fileName = "SourceFile",
-            lineNumber = 10
-        )
+        val element =
+            createStackTraceElement(
+                className = "a.b.c",
+                methodName = "a",
+                fileName = "SourceFile",
+                lineNumber = 10,
+            )
         val metaData = LogxStackTraceMetaData(element)
 
         assertEquals("SourceFile", metaData.fileName)
@@ -352,12 +364,13 @@ class LogxStackTraceMetaDataRobolectricTest {
 
     @Test
     fun stress_multipleInstances_independentLazyInitialization() {
-        val elements = (1..10).map { i ->
-            createStackTraceElement(
-                fileName = "File$i.kt",
-                lineNumber = i * 10
-            )
-        }
+        val elements =
+            (1..10).map { i ->
+                createStackTraceElement(
+                    fileName = "File$i.kt",
+                    lineNumber = i * 10,
+                )
+            }
 
         val metaDataList = elements.map { LogxStackTraceMetaData(it) }
 

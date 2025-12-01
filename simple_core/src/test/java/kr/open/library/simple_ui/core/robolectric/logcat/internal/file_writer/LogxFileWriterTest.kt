@@ -19,16 +19,16 @@ import java.io.File
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [Build.VERSION_CODES.TIRAMISU])
 class LogxFileWriterTest {
-
     private lateinit var application: Application
     private lateinit var tempDir: File
 
     @Before
     fun setUp() {
         application = ApplicationProvider.getApplicationContext()
-        tempDir = createTempDir(prefix = "logxWriter").apply {
-            deleteOnExit()
-        }
+        tempDir =
+            createTempDir(prefix = "logxWriter").apply {
+                deleteOnExit()
+            }
         LogxLifecycleFlushManager.getInstance().forceCleanup()
     }
 
@@ -159,8 +159,10 @@ class LogxFileWriterTest {
         assertNotNull("Log file should exist", logFile)
 
         // 파일명이 날짜 형식을 포함하는지 확인 (yy-MM-dd 형식)
-        assertTrue("Filename should contain date pattern",
-            logFile!!.name.matches(Regex("\\d{2}-\\d{2}-\\d{2}_Log\\.txt")))
+        assertTrue(
+            "Filename should contain date pattern",
+            logFile!!.name.matches(Regex("\\d{2}-\\d{2}-\\d{2}_Log\\.txt")),
+        )
     }
 
     @Test
@@ -180,11 +182,15 @@ class LogxFileWriterTest {
         val messageLines = lines.filter { it.isNotBlank() }
 
         assertTrue("Should have at least 3 log entries", messageLines.size >= 3)
-        assertTrue("First message should appear first",
+        assertTrue(
+            "First message should appear first",
             messageLines.indexOfFirst { it.contains("message 1") } <
-            messageLines.indexOfFirst { it.contains("message 2") })
-        assertTrue("Second message should appear before third",
+                messageLines.indexOfFirst { it.contains("message 2") },
+        )
+        assertTrue(
+            "Second message should appear before third",
             messageLines.indexOfFirst { it.contains("message 2") } <
-            messageLines.indexOfFirst { it.contains("message 3") })
+                messageLines.indexOfFirst { it.contains("message 3") },
+        )
     }
 }

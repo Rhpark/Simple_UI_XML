@@ -13,7 +13,6 @@ import org.junit.Test
  * Unit tests for AlarmVo and AlarmConstants
  */
 class AlarmVoUnitTest {
-
     // ==============================================
     // AlarmConstants Tests
     // ==============================================
@@ -58,13 +57,14 @@ class AlarmVoUnitTest {
 
     @Test
     fun alarmVo_createsSuccessfullyWithValidData() {
-        val alarm = AlarmVo(
-            key = 1,
-            title = "Wake Up",
-            message = "Time to wake up!",
-            hour = 7,
-            minute = 30
-        )
+        val alarm =
+            AlarmVo(
+                key = 1,
+                title = "Wake Up",
+                message = "Time to wake up!",
+                hour = 7,
+                minute = 30,
+            )
 
         assertEquals(1, alarm.key)
         assertEquals("Wake Up", alarm.title)
@@ -82,19 +82,20 @@ class AlarmVoUnitTest {
     @Test
     fun alarmVo_createsWithAllParameters() {
         val vibrationPattern = listOf(0L, 100L, 200L, 100L)
-        val alarm = AlarmVo(
-            key = 2,
-            title = "Meeting",
-            message = "Team meeting in 5 minutes",
-            isActive = false,
-            isAllowIdle = true,
-            vibrationPattern = vibrationPattern,
-            soundUri = null,
-            hour = 14,
-            minute = 55,
-            second = 30,
-            acquireTime = 5000L
-        )
+        val alarm =
+            AlarmVo(
+                key = 2,
+                title = "Meeting",
+                message = "Team meeting in 5 minutes",
+                isActive = false,
+                isAllowIdle = true,
+                vibrationPattern = vibrationPattern,
+                soundUri = null,
+                hour = 14,
+                minute = 55,
+                second = 30,
+                acquireTime = 5000L,
+            )
 
         assertEquals(2, alarm.key)
         assertFalse(alarm.isActive)
@@ -117,7 +118,7 @@ class AlarmVoUnitTest {
             title = "Test",
             message = "Test message",
             hour = 10,
-            minute = 0
+            minute = 0,
         )
     }
 
@@ -128,7 +129,7 @@ class AlarmVoUnitTest {
             title = "Test",
             message = "Test message",
             hour = 10,
-            minute = 0
+            minute = 0,
         )
     }
 
@@ -139,7 +140,7 @@ class AlarmVoUnitTest {
             title = "   ",
             message = "Test message",
             hour = 10,
-            minute = 0
+            minute = 0,
         )
     }
 
@@ -150,7 +151,7 @@ class AlarmVoUnitTest {
             title = "Test",
             message = "",
             hour = 10,
-            minute = 0
+            minute = 0,
         )
     }
 
@@ -161,7 +162,7 @@ class AlarmVoUnitTest {
             title = "Test",
             message = "Test message",
             hour = -1,
-            minute = 0
+            minute = 0,
         )
     }
 
@@ -172,7 +173,7 @@ class AlarmVoUnitTest {
             title = "Test",
             message = "Test message",
             hour = 24,
-            minute = 0
+            minute = 0,
         )
     }
 
@@ -183,7 +184,7 @@ class AlarmVoUnitTest {
             title = "Test",
             message = "Test message",
             hour = 10,
-            minute = -1
+            minute = -1,
         )
     }
 
@@ -194,7 +195,7 @@ class AlarmVoUnitTest {
             title = "Test",
             message = "Test message",
             hour = 10,
-            minute = 60
+            minute = 60,
         )
     }
 
@@ -206,7 +207,7 @@ class AlarmVoUnitTest {
             message = "Test message",
             hour = 10,
             minute = 30,
-            second = -1
+            second = -1,
         )
     }
 
@@ -218,7 +219,7 @@ class AlarmVoUnitTest {
             message = "Test message",
             hour = 10,
             minute = 30,
-            second = 60
+            second = 60,
         )
     }
 
@@ -230,7 +231,7 @@ class AlarmVoUnitTest {
             message = "Test message",
             hour = 10,
             minute = 0,
-            acquireTime = 0L
+            acquireTime = 0L,
         )
     }
 
@@ -242,7 +243,7 @@ class AlarmVoUnitTest {
             message = "Test message",
             hour = 10,
             minute = 0,
-            acquireTime = -1000L
+            acquireTime = -1000L,
         )
     }
 
@@ -254,7 +255,7 @@ class AlarmVoUnitTest {
             message = "Test message",
             hour = 10,
             minute = 0,
-            vibrationPattern = emptyList()
+            vibrationPattern = emptyList(),
         )
     }
 
@@ -266,7 +267,7 @@ class AlarmVoUnitTest {
             message = "Test message",
             hour = 10,
             minute = 0,
-            vibrationPattern = listOf(0L, -100L, 200L)
+            vibrationPattern = listOf(0L, -100L, 200L),
         )
     }
 
@@ -276,14 +277,15 @@ class AlarmVoUnitTest {
 
     @Test
     fun withActiveState_createsNewAlarmWithModifiedState() {
-        val original = AlarmVo(
-            key = 1,
-            title = "Test",
-            message = "Test message",
-            isActive = true,
-            hour = 10,
-            minute = 0
-        )
+        val original =
+            AlarmVo(
+                key = 1,
+                title = "Test",
+                message = "Test message",
+                isActive = true,
+                hour = 10,
+                minute = 0,
+            )
 
         val modified = original.withActiveState(false)
 
@@ -294,14 +296,15 @@ class AlarmVoUnitTest {
 
     @Test
     fun withTime_createsNewAlarmWithModifiedTime() {
-        val original = AlarmVo(
-            key = 1,
-            title = "Test",
-            message = "Test message",
-            hour = 10,
-            minute = 30,
-            second = 15
-        )
+        val original =
+            AlarmVo(
+                key = 1,
+                title = "Test",
+                message = "Test message",
+                hour = 10,
+                minute = 30,
+                second = 15,
+            )
 
         val modified = original.withTime(14, 45)
 
@@ -312,13 +315,14 @@ class AlarmVoUnitTest {
 
     @Test
     fun withTime_canModifySeconds() {
-        val original = AlarmVo(
-            key = 1,
-            title = "Test",
-            message = "Test message",
-            hour = 10,
-            minute = 30
-        )
+        val original =
+            AlarmVo(
+                key = 1,
+                title = "Test",
+                message = "Test message",
+                hour = 10,
+                minute = 30,
+            )
 
         val modified = original.withTime(14, 45, 30)
 
@@ -329,28 +333,30 @@ class AlarmVoUnitTest {
 
     @Test
     fun getFormattedTime_returnsCorrectFormat() {
-        val alarm = AlarmVo(
-            key = 1,
-            title = "Test",
-            message = "Test message",
-            hour = 7,
-            minute = 5,
-            second = 3
-        )
+        val alarm =
+            AlarmVo(
+                key = 1,
+                title = "Test",
+                message = "Test message",
+                hour = 7,
+                minute = 5,
+                second = 3,
+            )
 
         assertEquals("07:05:03", alarm.getFormattedTime())
     }
 
     @Test
     fun getTotalSeconds_calculatesCorrectly() {
-        val alarm = AlarmVo(
-            key = 1,
-            title = "Test",
-            message = "Test message",
-            hour = 2,
-            minute = 30,
-            second = 45
-        )
+        val alarm =
+            AlarmVo(
+                key = 1,
+                title = "Test",
+                message = "Test message",
+                hour = 2,
+                minute = 30,
+                second = 45,
+            )
 
         // 2 * 3600 + 30 * 60 + 45 = 7200 + 1800 + 45 = 9045
         assertEquals(9045, alarm.getTotalSeconds())
@@ -358,14 +364,15 @@ class AlarmVoUnitTest {
 
     @Test
     fun getDescription_returnsCorrectFormat() {
-        val alarm = AlarmVo(
-            key = 123,
-            title = "Morning Alarm",
-            message = "Test message",
-            hour = 6,
-            minute = 30,
-            isActive = true
-        )
+        val alarm =
+            AlarmVo(
+                key = 123,
+                title = "Morning Alarm",
+                message = "Test message",
+                hour = 6,
+                minute = 30,
+                isActive = true,
+            )
 
         val description = alarm.getDescription()
 
@@ -381,13 +388,14 @@ class AlarmVoUnitTest {
 
     @Test
     fun createSimple_createsAlarmWithMinimalConfiguration() {
-        val alarm = AlarmVo.createSimple(
-            key = 5,
-            title = "Simple Alarm",
-            message = "Simple message",
-            hour = 8,
-            minute = 0
-        )
+        val alarm =
+            AlarmVo.createSimple(
+                key = 5,
+                title = "Simple Alarm",
+                message = "Simple message",
+                hour = 8,
+                minute = 0,
+            )
 
         assertEquals(5, alarm.key)
         assertEquals("Simple Alarm", alarm.title)
@@ -401,14 +409,15 @@ class AlarmVoUnitTest {
 
     @Test
     fun createIdleAllowed_createsAlarmWithIdlePermission() {
-        val alarm = AlarmVo.createIdleAllowed(
-            key = 10,
-            title = "Idle Alarm",
-            message = "Idle message",
-            hour = 12,
-            minute = 30,
-            second = 15
-        )
+        val alarm =
+            AlarmVo.createIdleAllowed(
+                key = 10,
+                title = "Idle Alarm",
+                message = "Idle message",
+                hour = 12,
+                minute = 30,
+                second = 15,
+            )
 
         assertEquals(10, alarm.key)
         assertTrue(alarm.isAllowIdle)
@@ -419,14 +428,15 @@ class AlarmVoUnitTest {
 
     @Test
     fun createIdleAllowed_usesDefaultSecondWhenNotProvided() {
-        val alarm = AlarmVo.createIdleAllowed(
-            key = 11,
-            title = "Idle Alarm Default",
-            message = "Default second test",
-            hour = 15,
-            minute = 45
-            // second parameter omitted to test default value
-        )
+        val alarm =
+            AlarmVo.createIdleAllowed(
+                key = 11,
+                title = "Idle Alarm Default",
+                message = "Default second test",
+                hour = 15,
+                minute = 45,
+                // second parameter omitted to test default value
+            )
 
         assertEquals(11, alarm.key)
         assertTrue(alarm.isAllowIdle)
@@ -442,14 +452,15 @@ class AlarmVoUnitTest {
     @Test
     fun vibrationEffect_returnsLongArrayFromPattern() {
         val pattern = listOf(0L, 100L, 200L, 100L)
-        val alarm = AlarmVo(
-            key = 1,
-            title = "Test",
-            message = "Test message",
-            hour = 10,
-            minute = 0,
-            vibrationPattern = pattern
-        )
+        val alarm =
+            AlarmVo(
+                key = 1,
+                title = "Test",
+                message = "Test message",
+                hour = 10,
+                minute = 0,
+                vibrationPattern = pattern,
+            )
 
         @Suppress("DEPRECATION")
         val effect = alarm.vibrationPattern?.toLongArray()
@@ -462,14 +473,15 @@ class AlarmVoUnitTest {
 
     @Test
     fun vibrationEffect_returnsNullWhenPatternIsNull() {
-        val alarm = AlarmVo(
-            key = 1,
-            title = "Test",
-            message = "Test message",
-            hour = 10,
-            minute = 0,
-            vibrationPattern = null
-        )
+        val alarm =
+            AlarmVo(
+                key = 1,
+                title = "Test",
+                message = "Test message",
+                hour = 10,
+                minute = 0,
+                vibrationPattern = null,
+            )
 
         @Suppress("DEPRECATION")
         val effect = alarm.vibrationPattern?.toLongArray()
@@ -479,13 +491,14 @@ class AlarmVoUnitTest {
 
     @Test
     fun msg_returnsMessageValue() {
-        val alarm = AlarmVo(
-            key = 1,
-            title = "Test",
-            message = "Original message",
-            hour = 10,
-            minute = 0
-        )
+        val alarm =
+            AlarmVo(
+                key = 1,
+                title = "Test",
+                message = "Original message",
+                hour = 10,
+                minute = 0,
+            )
 
         @Suppress("DEPRECATION")
         assertEquals("Original message", alarm.message)

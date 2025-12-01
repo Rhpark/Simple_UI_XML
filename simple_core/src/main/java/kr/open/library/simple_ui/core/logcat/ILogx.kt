@@ -2,7 +2,6 @@ package kr.open.library.simple_ui.core.logcat
 
 import android.content.Context
 import kr.open.library.simple_ui.core.logcat.model.LogxType
-
 import java.util.EnumSet
 
 /**
@@ -12,7 +11,6 @@ import java.util.EnumSet
  * 테스트 가능성과 확장성을 위한 추상화 레이어를 제공합니다.<br>
  */
 interface ILogx {
-
     /**
      * Initializes the Logx logging system with Android Context.<br>
      * This enables Context-dependent features such as file logging with optimal storage paths and lifecycle-based flush management.<br><br>
@@ -53,7 +51,10 @@ interface ILogx {
      * @param msg The message to log.<br><br>
      *            로깅할 메시지.
      */
-    fun v(tag: String, msg: Any?)
+    fun v(
+        tag: String,
+        msg: Any?,
+    )
 
     /**
      * Logs a debug message with current stack trace information.<br><br>
@@ -80,7 +81,10 @@ interface ILogx {
      * @param msg The message to log.<br><br>
      *            로깅할 메시지.
      */
-    fun d(tag: String, msg: Any?)
+    fun d(
+        tag: String,
+        msg: Any?,
+    )
 
     /**
      * Logs an info message with current stack trace information.<br><br>
@@ -107,7 +111,10 @@ interface ILogx {
      * @param msg The message to log.<br><br>
      *            로깅할 메시지.
      */
-    fun i(tag: String, msg: Any?)
+    fun i(
+        tag: String,
+        msg: Any?,
+    )
 
     /**
      * Logs a warning message with current stack trace information.<br><br>
@@ -134,7 +141,10 @@ interface ILogx {
      * @param msg The message to log.<br><br>
      *            로깅할 메시지.
      */
-    fun w(tag: String, msg: Any?)
+    fun w(
+        tag: String,
+        msg: Any?,
+    )
 
     /**
      * Logs an error message with current stack trace information.<br><br>
@@ -161,7 +171,10 @@ interface ILogx {
      * @param msg The message to log.<br><br>
      *            로깅할 메시지.
      */
-    fun e(tag: String, msg: Any?)
+    fun e(
+        tag: String,
+        msg: Any?,
+    )
 
     // ============================================================
     // Extended Features | 확장 기능
@@ -192,7 +205,10 @@ interface ILogx {
      * @param msg The message to log.<br><br>
      *            로깅할 메시지.
      */
-    fun p(tag: String, msg: Any?)
+    fun p(
+        tag: String,
+        msg: Any?,
+    )
 
     /**
      * Logs the current thread ID with stack trace information.<br><br>
@@ -219,7 +235,10 @@ interface ILogx {
      * @param msg The message to log.<br><br>
      *            로깅할 메시지.
      */
-    fun t(tag: String, msg: Any?)
+    fun t(
+        tag: String,
+        msg: Any?,
+    )
 
     /**
      * Logs a JSON string with proper formatting and visual markers.<br><br>
@@ -240,7 +259,10 @@ interface ILogx {
      * @param msg The JSON string to log and format.<br><br>
      *            로깅하고 포맷할 JSON 문자열.
      */
-    fun j(tag: String, msg: String)
+    fun j(
+        tag: String,
+        msg: String,
+    )
 
     // ============================================================
     // Configuration Methods | 설정 메서드

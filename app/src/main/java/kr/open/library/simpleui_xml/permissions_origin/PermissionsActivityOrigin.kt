@@ -6,7 +6,6 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
-import com.google.android.material.snackbar.Snackbar
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -14,25 +13,27 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import kr.open.library.simpleui_xml.R
 import kr.open.library.simpleui_xml.databinding.ActivityPermissionsOriginBinding
 
 class PermissionsActivityOrigin : AppCompatActivity() {
-
     private lateinit var binding: ActivityPermissionsOriginBinding
     private val viewModel: PermissionsViewModelOrigin by viewModels()
     private lateinit var adapter: PermissionResultAdapter
 
     // Permission Launchers
-    private val requestMultiplePermissionsLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()
-    ) { permissions -> handlePermissionResults(permissions) }
+    private val requestMultiplePermissionsLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.RequestMultiplePermissions(),
+        ) { permissions -> handlePermissionResults(permissions) }
 
     // Overlay Permission Launcher (SYSTEM_ALERT_WINDOW)
-    private val requestOverlayPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) { handleOverlayPermissionResult() }
+    private val requestOverlayPermissionLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult(),
+        ) { handleOverlayPermissionResult() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,8 +70,8 @@ class PermissionsActivityOrigin : AppCompatActivity() {
                         requestPermissions(
                             listOf(
                                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                                Manifest.permission.SYSTEM_ALERT_WINDOW
-                            )
+                                Manifest.permission.SYSTEM_ALERT_WINDOW,
+                            ),
                         )
                     }
                 }
@@ -87,9 +88,10 @@ class PermissionsActivityOrigin : AppCompatActivity() {
         val hasOverlayPermission = permissions.contains(Manifest.permission.SYSTEM_ALERT_WINDOW)
 
         // 일반 권한 처리
-        val normalPermissionsToRequest = normalPermissions.filter { permission ->
-            ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED
-        }
+        val normalPermissionsToRequest =
+            normalPermissions.filter { permission ->
+                ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED
+            }
 
         // 오버레이 권한 상태 확인
         val overlayPermissionGranted = Settings.canDrawOverlays(this)
@@ -125,37 +127,51 @@ class PermissionsActivityOrigin : AppCompatActivity() {
         val grantedPermissions = permissions.filterValues { it }.keys
         val deniedPermissions = permissions.filterValues { !it }.keys
 
-        val message = buildString {
-            append("Requested: ${permissions.keys.joinToString(", ")}\n")
-            if (grantedPermissions.isNotEmpty()) {
-                append("✅ Granted: ${grantedPermissions.joinToString(", ")}\n")
+        val message =
+            buildString {
+                append("Requested: ${permissions.keys.joinToString(", ")}\n")
+                if (grantedPermissions.isNotEmpty()) {
+                    append("✅ Granted: ${grantedPermissions.joinToString(", ")}\n")
+                }
+                if (deniedPermissions.isNotEmpty()) {
+                    append("❌ Denied: ${deniedPermissions.joinToString(", ")}")
+                }
             }
-            if (deniedPermissions.isNotEmpty()) {
-                append("❌ Denied: ${deniedPermissions.joinToString(", ")}")
-            }
-        }
 
         viewModel.addPermissionResult(message)
 
-        val snackbarMessage = if (deniedPermissions.isEmpty()) { "All permissions granted!" }
-        else { "Some permissions denied" }
-        Snackbar.make(binding.root, snackbarMessage, Snackbar.LENGTH_SHORT)
+        val snackbarMessage =
+            if (deniedPermissions.isEmpty()) {
+                "All permissions granted!"
+            } else {
+                "Some permissions denied"
+            }
+        Snackbar
+            .make(binding.root, snackbarMessage, Snackbar.LENGTH_SHORT)
             .setAction("OK") { /* 확인 */ }
             .show()
     }
 
     private fun handleOverlayPermissionResult() {
         val isGranted = Settings.canDrawOverlays(this)
-        val message = buildString {
-            append("Special Permission Request Result:\n")
-            if (isGranted) { append("✅ SYSTEM_ALERT_WINDOW: Granted") }
-            else { append("❌ SYSTEM_ALERT_WINDOW: Denied") }
-        }
+        val message =
+            buildString {
+                append("Special Permission Request Result:\n")
+                if (isGranted) {
+                    append("✅ SYSTEM_ALERT_WINDOW: Granted")
+                } else {
+                    append("❌ SYSTEM_ALERT_WINDOW: Denied")
+                }
+            }
 
         viewModel.addPermissionResult(message)
 
-        val snackbarMessage = if (isGranted) { "Overlay permission granted!" }
-                            else { "Overlay permission denied" }
+        val snackbarMessage =
+            if (isGranted) {
+                "Overlay permission granted!"
+            } else {
+                "Overlay permission denied"
+            }
         Snackbar.make(binding.root, snackbarMessage, Snackbar.LENGTH_SHORT).setAction("OK") { /* 확인 */ }.show()
     }
 }

@@ -14,26 +14,27 @@ import org.junit.Test
 import org.mockito.Mockito.mock
 
 class NotificationVoTest {
-
     @Test
     fun notificationStyle_hasAllEntries() {
-        val styles = listOf(
-            NotificationStyle.DEFAULT,
-            NotificationStyle.BIG_PICTURE,
-            NotificationStyle.BIG_TEXT,
-            NotificationStyle.PROGRESS,
-        )
+        val styles =
+            listOf(
+                NotificationStyle.DEFAULT,
+                NotificationStyle.BIG_PICTURE,
+                NotificationStyle.BIG_TEXT,
+                NotificationStyle.PROGRESS,
+            )
 
         assertEquals(4, styles.toSet().size)
     }
 
     @Test
     fun simpleNotificationType_hasAllEntries() {
-        val types = listOf(
-            SimpleNotificationType.ACTIVITY,
-            SimpleNotificationType.SERVICE,
-            SimpleNotificationType.BROADCAST,
-        )
+        val types =
+            listOf(
+                SimpleNotificationType.ACTIVITY,
+                SimpleNotificationType.SERVICE,
+                SimpleNotificationType.BROADCAST,
+            )
 
         assertEquals(3, types.toSet().size)
     }
@@ -57,19 +58,20 @@ class NotificationVoTest {
 
     @Test
     fun simpleNotificationOptionVo_allFieldsStored() {
-        val option = SimpleNotificationOptionVo(
-            notificationId = 2,
-            title = "Title",
-            content = "Content",
-            isAutoCancel = true,
-            smallIcon = 101,
-            largeIcon = null,
-            clickIntent = null,
-            snippet = "Snippet",
-            actions = emptyList(),
-            onGoing = true,
-            style = NotificationStyle.BIG_TEXT,
-        )
+        val option =
+            SimpleNotificationOptionVo(
+                notificationId = 2,
+                title = "Title",
+                content = "Content",
+                isAutoCancel = true,
+                smallIcon = 101,
+                largeIcon = null,
+                clickIntent = null,
+                snippet = "Snippet",
+                actions = emptyList(),
+                onGoing = true,
+                style = NotificationStyle.BIG_TEXT,
+            )
 
         assertEquals(2, option.notificationId)
         assertEquals("Title", option.title)
@@ -86,10 +88,11 @@ class NotificationVoTest {
 
     @Test
     fun simpleProgressNotificationOptionVo_defaultsAreApplied() {
-        val option = SimpleProgressNotificationOptionVo(
-            notificationId = 3,
-            progressPercent = 50,
-        )
+        val option =
+            SimpleProgressNotificationOptionVo(
+                notificationId = 3,
+                progressPercent = 50,
+            )
 
         assertEquals(3, option.notificationId)
         assertNull(option.title)
@@ -105,18 +108,19 @@ class NotificationVoTest {
 
     @Test
     fun simpleProgressNotificationOptionVo_storesValues() {
-        val option = SimpleProgressNotificationOptionVo(
-            notificationId = 4,
-            title = "Download",
-            content = "50%",
-            isAutoCancel = true,
-            smallIcon = 202,
-            clickIntent = null,
-            actions = null,
-            progressPercent = 75,
-            onGoing = true,
-            style = NotificationStyle.BIG_PICTURE,
-        )
+        val option =
+            SimpleProgressNotificationOptionVo(
+                notificationId = 4,
+                title = "Download",
+                content = "50%",
+                isAutoCancel = true,
+                smallIcon = 202,
+                clickIntent = null,
+                actions = null,
+                progressPercent = 75,
+                onGoing = true,
+                style = NotificationStyle.BIG_PICTURE,
+            )
 
         assertEquals(4, option.notificationId)
         assertEquals("Download", option.title)

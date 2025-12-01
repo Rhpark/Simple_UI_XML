@@ -5,8 +5,8 @@ import kr.open.library.simple_ui.core.extensions.string.isEmailValid
 import kr.open.library.simple_ui.core.extensions.string.isNumeric
 import kr.open.library.simple_ui.core.extensions.string.isPhoneNumberValid
 import kr.open.library.simple_ui.core.extensions.string.isUrlValid
-import kr.open.library.simple_ui.core.extensions.string.removeWhitespace
 import kr.open.library.simple_ui.core.extensions.string.removeHtmlTags
+import kr.open.library.simple_ui.core.extensions.string.removeWhitespace
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -22,7 +22,6 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [android.os.Build.VERSION_CODES.TIRAMISU])
 class StringExtensionsRobolectricTest {
-
     // ==============================================
     // isEmailValid() Tests
     // ==============================================
@@ -172,8 +171,10 @@ class StringExtensionsRobolectricTest {
 
     @Test
     fun stripHtmlTags_removesMultipleTags() {
-        assertEquals("TitleContentFooter",
-            "<h1>Title</h1><p>Content</p><footer>Footer</footer>".removeHtmlTags())
+        assertEquals(
+            "TitleContentFooter",
+            "<h1>Title</h1><p>Content</p><footer>Footer</footer>".removeHtmlTags(),
+        )
     }
 
     @Test
@@ -191,8 +192,10 @@ class StringExtensionsRobolectricTest {
     @Test
     fun stripHtmlTags_handlesTagsWithAttributes() {
         assertEquals("Link", "<a href='http://example.com'>Link</a>".removeHtmlTags())
-        assertEquals("Styled Text",
-            "<span style='color: red;'>Styled Text</span>".removeHtmlTags())
+        assertEquals(
+            "Styled Text",
+            "<span style='color: red;'>Styled Text</span>".removeHtmlTags(),
+        )
     }
 
     @Test

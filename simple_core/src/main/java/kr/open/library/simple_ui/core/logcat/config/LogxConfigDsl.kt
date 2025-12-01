@@ -40,9 +40,7 @@ annotation class LogxConfigDsl
  * @return A configured LogxConfig instance.<br><br>
  *         구성된 LogxConfig 인스턴스.<br>
  */
-fun logxConfig(block: LogxDslBuilder.() -> Unit): LogxConfig {
-    return LogxDslBuilder().apply(block).build()
-}
+fun logxConfig(block: LogxDslBuilder.() -> Unit): LogxConfig = LogxDslBuilder().apply(block).build()
 
 /**
  * Main DSL builder class for configuring Logx logging system with a fluent API.<br><br>
@@ -119,7 +117,7 @@ class LogxDslBuilder {
             saveFilePath = fileConfig.filePath,
             appName = appName,
             debugFilterList = filterConfig.filters,
-            debugLogTypeList = logTypeConfig.types
+            debugLogTypeList = logTypeConfig.types,
         )
     }
 }

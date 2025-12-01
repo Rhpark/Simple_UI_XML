@@ -8,7 +8,11 @@ import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ApplicationProvider
 import kr.open.library.simple_ui.xml.ui.adapter.viewholder.BaseBindingRcvViewHolder
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
+import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -27,7 +31,6 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [Build.VERSION_CODES.TIRAMISU])
 class BaseBindingRcvViewHolderRobolectricTest {
-
     private lateinit var context: Context
     private lateinit var parent: ViewGroup
 
@@ -54,11 +57,12 @@ class BaseBindingRcvViewHolderRobolectricTest {
     @Test
     fun viewHolder_createsWithAttachToRootFalse() {
         // Given & When
-        val viewHolder = TestBindingViewHolder(
-            android.R.layout.simple_list_item_1,
-            parent,
-            attachToRoot = false
-        )
+        val viewHolder =
+            TestBindingViewHolder(
+                android.R.layout.simple_list_item_1,
+                parent,
+                attachToRoot = false,
+            )
 
         // Then
         assertNotNull(viewHolder)
@@ -68,11 +72,12 @@ class BaseBindingRcvViewHolderRobolectricTest {
     @Test
     fun viewHolder_createsWithAttachToRootTrue() {
         // Given & When
-        val viewHolder = TestBindingViewHolder(
-            android.R.layout.simple_list_item_1,
-            parent,
-            attachToRoot = true
-        )
+        val viewHolder =
+            TestBindingViewHolder(
+                android.R.layout.simple_list_item_1,
+                parent,
+                attachToRoot = true,
+            )
 
         // Then
         assertNotNull(viewHolder)
@@ -188,9 +193,10 @@ class BaseBindingRcvViewHolderRobolectricTest {
     @Test
     fun multipleViewHolders_canExistSimultaneously() {
         // When
-        val viewHolders = List(5) {
-            TestBindingViewHolder(android.R.layout.simple_list_item_1, parent)
-        }
+        val viewHolders =
+            List(5) {
+                TestBindingViewHolder(android.R.layout.simple_list_item_1, parent)
+            }
 
         // Then
         assertEquals(5, viewHolders.size)
@@ -225,21 +231,21 @@ class BaseBindingRcvViewHolderRobolectricTest {
     private class TestBindingViewHolder(
         xmlRes: Int,
         parent: ViewGroup,
-        attachToRoot: Boolean = false
+        attachToRoot: Boolean = false,
     ) : BaseBindingRcvViewHolder<ViewDataBinding>(xmlRes, parent, attachToRoot) {
-
         fun testIsValidPosition(): Boolean = isValidPosition()
+
         fun testGetAdapterPositionSafe(): Int = getAdapterPositionSafe()
+
         fun testExecutePendingBindings() = executePendingBindings()
 
-        fun getBindingForTest(): ViewDataBinding? {
-            return try {
+        fun getBindingForTest(): ViewDataBinding? =
+            try {
                 binding
             } catch (e: IllegalStateException) {
                 // In Robolectric, some layouts might not have DataBinding
                 null
             }
-        }
 
         fun forceBindingAccess(): ViewDataBinding {
             // This will throw if binding is null (tests the exception path)

@@ -15,83 +15,93 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kr.open.library.simple_ui.core.logcat.Logx
-import kr.open.library.simple_ui.xml.permissions.manager.PermissionManager
 import kr.open.library.simple_ui.core.permissions.extentions.hasPermission
-import kr.open.library.simple_ui.xml.permissions.manager.CallbackAddResult
 import kr.open.library.simple_ui.core.permissions.vo.PermissionSpecialType
+import kr.open.library.simple_ui.xml.permissions.manager.CallbackAddResult
+import kr.open.library.simple_ui.xml.permissions.manager.PermissionManager
 
 /**
  * Coordinates permission requests while surviving configuration changes.<br><br>
  * 구성 변경 동안에도 권한 요청을 안전하게 이어 주는 조정자입니다.<br>
  */
-public class PermissionDelegate<T : Any>(private val contextProvider: T) {
-
+public class PermissionDelegate<T : Any>(
+    private val contextProvider: T,
+) {
     protected val permissionManager = PermissionManager.getInstance()
     private var currentRequestId: String? = null
     private var hasRestoredState = false
-    private val KEY_REQUEST_ID = "KEY_PERMISSIONS_REQUEST_ID"
+    private val keyRequestId = "KEY_PERMISSIONS_REQUEST_ID"
 
     // Self-managed CoroutineScope for calling suspend functions.<br><br>
     // suspend 함수 호출을 위한 자체 관리 CoroutineScope입니다.<br>
     private val delegateScope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
 
-    private val specialPermissionLauncher = buildMap<String, ActivityResultLauncher<Intent>> {
-        PermissionSpecialType.entries.forEach { put(it.permission, createSpecialLauncher(it.permission)) }
-    }
-
-    private val normalPermissionLauncher: ActivityResultLauncher<Array<String>> = when (contextProvider) {
-        is ComponentActivity -> contextProvider.registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-            delegateScope.launch {
-                permissionManager.result(getContext(), permissions, currentRequestId)
-            }
+    private val specialPermissionLauncher =
+        buildMap<String, ActivityResultLauncher<Intent>> {
+            PermissionSpecialType.entries.forEach { put(it.permission, createSpecialLauncher(it.permission)) }
         }
 
-        is Fragment -> contextProvider.registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-            delegateScope.launch {
-                permissionManager.result(getContext(), permissions, currentRequestId)
-            }
-        }
+    private val normalPermissionLauncher: ActivityResultLauncher<Array<String>> =
+        when (contextProvider) {
+            is ComponentActivity ->
+                contextProvider.registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+                    delegateScope.launch {
+                        permissionManager.result(getContext(), permissions, currentRequestId)
+                    }
+                }
 
-        else -> throw IllegalArgumentException("Unsupported context provider type")
-    }
+            is Fragment ->
+                contextProvider.registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+                    delegateScope.launch {
+                        permissionManager.result(getContext(), permissions, currentRequestId)
+                    }
+                }
+
+            else -> throw IllegalArgumentException("Unsupported context provider type")
+        }
 
     init {
         /*
          * Observes lifecycle transitions to automatically re-register or clean up delegates.<br><br>
          * 라이프사이클 변화를 감시해 Delegate를 자동으로 재등록하거나 정리합니다.<br>
          */
-        val lifecycleOwner = when (contextProvider) {
-            is ComponentActivity -> contextProvider.lifecycle
-            is Fragment -> contextProvider.lifecycle
-            else -> throw IllegalArgumentException("Unsupported context provider type")
-        }
-        lifecycleOwner.addObserver(object : LifecycleEventObserver {
-            override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
-                when (event) {
-                    Lifecycle.Event.ON_START -> {
+        val lifecycleOwner =
+            when (contextProvider) {
+                is ComponentActivity -> contextProvider.lifecycle
+                is Fragment -> contextProvider.lifecycle
+                else -> throw IllegalArgumentException("Unsupported context provider type")
+            }
+        lifecycleOwner.addObserver(
+            object : LifecycleEventObserver {
+                override fun onStateChanged(
+                    source: LifecycleOwner,
+                    event: Lifecycle.Event,
+                ) {
+                    when (event) {
+                        Lifecycle.Event.ON_START -> {
                         /*
                          * onRestoreInstanceState() runs between onCreate() and onStart().<br><br>
                          * onRestoreInstanceState()는 onCreate()와 onStart() 사이에 실행됩니다.<br>
                          */
-                        if (hasRestoredState) {
-                            attemptAutoReregistration()
-                            hasRestoredState = false
+                            if (hasRestoredState) {
+                                attemptAutoReregistration()
+                                hasRestoredState = false
+                            }
                         }
-                    }
-                    Lifecycle.Event.ON_DESTROY -> {
+                        Lifecycle.Event.ON_DESTROY -> {
                         /*
                          * Ensures pending requests are disposed when the owner is destroyed.<br><br>
                          * 소유자가 파괴될 때 진행 중인 요청을 정리합니다.<br>
                          */
-                        cleanup()
-                        delegateScope.cancel()
+                            cleanup()
+                            delegateScope.cancel()
+                        }
+                        else -> {}
                     }
-                    else -> {}
                 }
-            }
-        })
+            },
+        )
     }
-
 
     /**
      * Releases any pending request when the host is no longer valid.<br><br>
@@ -120,15 +130,16 @@ public class PermissionDelegate<T : Any>(private val contextProvider: T) {
      * @return True if configuration is not changing and cleanup is safe.<br><br>
      *         구성 변경 중이 아니어서 정리해도 안전할 때 true 를 반환합니다.<br>
      */
-    private fun shouldClearRequestId(): Boolean = when (contextProvider) {
-        is ComponentActivity -> contextProvider.isFinishing && !contextProvider.isChangingConfigurations
-        is Fragment -> {
-            val hostActivity = contextProvider.activity
-            val isChanging = hostActivity?.isChangingConfigurations ?: false
-            contextProvider.isRemoving && !isChanging
+    private fun shouldClearRequestId(): Boolean =
+        when (contextProvider) {
+            is ComponentActivity -> contextProvider.isFinishing && !contextProvider.isChangingConfigurations
+            is Fragment -> {
+                val hostActivity = contextProvider.activity
+                val isChanging = hostActivity?.isChangingConfigurations ?: false
+                contextProvider.isRemoving && !isChanging
+            }
+            else -> true
         }
-        else -> true
-    }
 
     /**
      * Saves the active request identifier so it can be restored later.<br><br>
@@ -138,7 +149,7 @@ public class PermissionDelegate<T : Any>(private val contextProvider: T) {
      *                 프로세스 재생성 시 유지되는 Bundle 입니다.<br>
      */
     fun onSaveInstanceState(outState: Bundle) {
-        currentRequestId?.let { outState.putString(KEY_REQUEST_ID, it) }
+        currentRequestId?.let { outState.putString(keyRequestId, it) }
     }
 
     /**
@@ -149,7 +160,7 @@ public class PermissionDelegate<T : Any>(private val contextProvider: T) {
      *                   호스트 라이프사이클에서 전달된 Bundle 입니다.<br>
      */
     fun onRestoreInstanceState(savedState: Bundle?) {
-        currentRequestId = savedState?.getString(KEY_REQUEST_ID)
+        currentRequestId = savedState?.getString(keyRequestId)
         hasRestoredState = true
 
         /*
@@ -197,10 +208,7 @@ public class PermissionDelegate<T : Any>(private val contextProvider: T) {
      * @return Launcher instance or null if none exists.<br><br>
      *         등록된 런처가 없으면 null 을 반환합니다.<br>
      */
-    internal fun getSpecialLauncher(permission: String): ActivityResultLauncher<Intent>? {
-        return specialPermissionLauncher[permission]
-    }
-
+    internal fun getSpecialLauncher(permission: String): ActivityResultLauncher<Intent>? = specialPermissionLauncher[permission]
 
     /**
      * Requests one or more permissions, deduplicating concurrent calls.<br><br>
@@ -213,7 +221,7 @@ public class PermissionDelegate<T : Any>(private val contextProvider: T) {
      */
     public fun requestPermissions(
         permissions: List<String>,
-        onResult: (deniedPermissions: List<String>) -> Unit
+        onResult: (deniedPermissions: List<String>) -> Unit,
     ) {
         delegateScope.launch {
             /*
@@ -225,11 +233,12 @@ public class PermissionDelegate<T : Any>(private val contextProvider: T) {
                  * Verifies whether the new request matches the existing permission set.<br><br>
                  * 새 요청이 기존 권한 집합과 동일한지 재검증합니다.<br>
                  */
-                val result = permissionManager.addCallbackToRequest(
-                    requestId = currentRequestId!!,
-                    callback = onResult,
-                    requestedPermissions = permissions
-                )
+                val result =
+                    permissionManager.addCallbackToRequest(
+                        requestId = currentRequestId!!,
+                        callback = onResult,
+                        requestedPermissions = permissions,
+                    )
 
                 when (result) {
                     CallbackAddResult.SUCCESS -> {
@@ -242,7 +251,9 @@ public class PermissionDelegate<T : Any>(private val contextProvider: T) {
                          * 일치하지 않는 요청은 무시하여 잘못된 콜백 연결을 방지합니다.<br>
                          */
                         val existingPermissions = permissionManager.getRequestPermissions(currentRequestId!!)
-                        Logx.w("Cannot add callback: permission mismatch. Existing: $existingPermissions, Requested: ${permissions.toSet()}")
+                        Logx.w(
+                            "Cannot add callback: permission mismatch. Existing: $existingPermissions, Requested: ${permissions.toSet()}",
+                        )
                         Logx.w("Ignoring duplicate request with different permissions. Please wait for current request to complete.")
                         return@launch
                     }
@@ -265,20 +276,24 @@ public class PermissionDelegate<T : Any>(private val contextProvider: T) {
              * Pre-registers a delegate so PermissionManager can look it up immediately.<br><br>
              * PermissionManager 가 바로 찾을 수 있도록 먼저 Delegate를 등록합니다.<br>
              */
-            val tempRequestId = java.util.UUID.randomUUID().toString()
+            val tempRequestId =
+                java.util.UUID
+                    .randomUUID()
+                    .toString()
             permissionManager.registerDelegate(tempRequestId, this@PermissionDelegate)
 
-            currentRequestId = permissionManager.request(
-                context = getContext(),
-                requestPermissionLauncher = normalPermissionLauncher,
-                permissions = permissions,
-                callback = onResult,
+            currentRequestId =
+                permissionManager.request(
+                    context = getContext(),
+                    requestPermissionLauncher = normalPermissionLauncher,
+                    permissions = permissions,
+                    callback = onResult,
                 /*
                  * Supplies the pre-generated ID so PermissionManager can reuse it.<br><br>
                  * PermissionManager 가 재사용할 수 있도록 선 생성한 ID를 전달합니다.<br>
                  */
-                preGeneratedRequestId = tempRequestId
-            )
+                    preGeneratedRequestId = tempRequestId,
+                )
 
             /*
              * Clean up the delegate if the request failed to launch and returned empty.<br><br>
@@ -290,7 +305,6 @@ public class PermissionDelegate<T : Any>(private val contextProvider: T) {
             }
         }
     }
-
 
     /**
      * Checks whether every permission in the list is already granted.<br><br>
@@ -312,9 +326,7 @@ public class PermissionDelegate<T : Any>(private val contextProvider: T) {
      * @return Permissions that are not yet granted.<br><br>
      *         아직 허용되지 않은 권한 목록입니다.<br>
      */
-    fun getDeniedPermissions(permissions: List<String>): List<String> =
-        permissions.filter { !isPermissionGranted(it) }
-
+    fun getDeniedPermissions(permissions: List<String>): List<String> = permissions.filter { !isPermissionGranted(it) }
 
     /**
      * Resolves the Android Context from the backing provider.<br><br>
@@ -323,11 +335,12 @@ public class PermissionDelegate<T : Any>(private val contextProvider: T) {
      * @return Host context used for permission APIs.<br><br>
      *         권한 API 호출에 사용할 호스트 Context 입니다.<br>
      */
-    private fun getContext() = when (contextProvider) {
-        is ComponentActivity -> contextProvider
-        is Fragment -> contextProvider.requireContext()
-        else -> throw IllegalArgumentException("Unsupported context provider type")
-    }
+    private fun getContext() =
+        when (contextProvider) {
+            is ComponentActivity -> contextProvider
+            is Fragment -> contextProvider.requireContext()
+            else -> throw IllegalArgumentException("Unsupported context provider type")
+        }
 
     /**
      * Checks whether a single permission has already been granted.<br><br>
@@ -340,7 +353,6 @@ public class PermissionDelegate<T : Any>(private val contextProvider: T) {
      */
     fun isPermissionGranted(permission: String): Boolean = getContext().hasPermission(permission)
 
-
     /**
      * Registers a launcher dedicated to a special permission.<br><br>
      * 특정 특수 권한을 처리할 런처를 등록합니다.<br>
@@ -350,18 +362,21 @@ public class PermissionDelegate<T : Any>(private val contextProvider: T) {
      * @return ActivityResultLauncher instance scoped to the host.<br><br>
      *         호스트 범위에 묶인 ActivityResultLauncher 를 반환합니다.<br>
      */
-    protected fun createSpecialLauncher(permission: String) = when (contextProvider) {
-        is ComponentActivity -> contextProvider.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            delegateScope.launch {
-                permissionManager.resultSpecialPermission(getContext(), permission, currentRequestId)
-            }
-        }
+    protected fun createSpecialLauncher(permission: String) =
+        when (contextProvider) {
+            is ComponentActivity ->
+                contextProvider.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+                    delegateScope.launch {
+                        permissionManager.resultSpecialPermission(getContext(), permission, currentRequestId)
+                    }
+                }
 
-        is Fragment -> contextProvider.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            delegateScope.launch {
-                permissionManager.resultSpecialPermission(getContext(), permission, currentRequestId)
-            }
+            is Fragment ->
+                contextProvider.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+                    delegateScope.launch {
+                        permissionManager.resultSpecialPermission(getContext(), permission, currentRequestId)
+                    }
+                }
+            else -> throw IllegalArgumentException("Unsupported context provider type")
         }
-        else -> throw IllegalArgumentException("Unsupported context provider type")
-    }
 }

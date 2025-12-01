@@ -1,7 +1,3 @@
-package kr.open.library.simple_ui.xml.extensions.view
-
-import android.widget.EditText
-
 /**
  * EditText extension functions for convenient text extraction and type conversion.<br>
  * Provides methods to safely convert EditText content to various data types.<br><br>
@@ -24,6 +20,9 @@ import android.widget.EditText
  * val price = editText.textToDouble() ?: 0.0
  * ```
  */
+package kr.open.library.simple_ui.xml.extensions.view
+
+import android.widget.EditText
 
 /**
  * Converts EditText content to String.<br><br>

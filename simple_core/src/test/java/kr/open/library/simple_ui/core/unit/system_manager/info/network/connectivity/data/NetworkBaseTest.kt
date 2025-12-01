@@ -8,13 +8,29 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class NetworkBaseTest {
+    private class TestNetworkBase(
+        res: String,
+    ) : NetworkBase(res) {
+        fun splitWithDelimiter(
+            start: String,
+            end: String,
+            delimiter: String,
+        ) = splitStr(start, end, delimiter)
 
-    private class TestNetworkBase(res: String) : NetworkBase(res) {
-        fun splitWithDelimiter(start: String, end: String, delimiter: String) = splitStr(start, end, delimiter)
-        fun splitSingle(start: String, end: String) = splitStr(start, end)
+        fun splitSingle(
+            start: String,
+            end: String,
+        ) = splitStr(start, end)
+
         fun containsText(text: String) = isContains(text)
+
         fun exposedRes() = getResStr()
-        fun useInnerSplit(target: String, start: String, end: String): String? = with(target) { split(start, end) }
+
+        fun useInnerSplit(
+            target: String,
+            start: String,
+            end: String,
+        ): String? = with(target) { split(start, end) }
     }
 
     @Test

@@ -1,9 +1,7 @@
 package kr.open.library.simple_ui.core.logcat.config
 
-
 import kr.open.library.simple_ui.core.logcat.model.LogxType
 import java.util.EnumSet
-
 
 /**
  * DSL builder for configuring log file settings.<br><br>
@@ -82,10 +80,15 @@ class LogxTypeConfigBuilder {
      * 기본 로그 타입을 추가합니다: VERBOSE, DEBUG, INFO, WARN, ERROR.<br>
      */
     fun basic() {
-        _types.addAll(listOf(
-            LogxType.VERBOSE, LogxType.DEBUG, LogxType.INFO,
-            LogxType.WARN, LogxType.ERROR
-        ))
+        _types.addAll(
+            listOf(
+                LogxType.VERBOSE,
+                LogxType.DEBUG,
+                LogxType.INFO,
+                LogxType.WARN,
+                LogxType.ERROR,
+            ),
+        )
     }
 
     /**
@@ -93,9 +96,13 @@ class LogxTypeConfigBuilder {
      * 확장 로그 타입을 추가합니다: PARENT, JSON, THREAD_ID.<br>
      */
     fun extended() {
-        _types.addAll(listOf(
-            LogxType.PARENT, LogxType.JSON, LogxType.THREAD_ID
-        ))
+        _types.addAll(
+            listOf(
+                LogxType.PARENT,
+                LogxType.JSON,
+                LogxType.THREAD_ID,
+            ),
+        )
     }
 
     init {

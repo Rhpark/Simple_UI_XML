@@ -11,11 +11,14 @@ import kr.open.library.simple_ui.xml.ui.activity.BaseBindingActivity
 import kr.open.library.simpleui_xml.R
 import kr.open.library.simpleui_xml.databinding.ActivityBaseBindingActivityExampleBinding
 
-class BaseBindingActivityExample : BaseBindingActivity<ActivityBaseBindingActivityExampleBinding>(R.layout.activity_base_binding_activity_example) {
-
+class BaseBindingActivityExample :
+    BaseBindingActivity<ActivityBaseBindingActivityExampleBinding>(R.layout.activity_base_binding_activity_example) {
     private val vm: BaseBindingActivityExampleVm by viewModels()
 
-    override fun onCreateView(rootView: View, savedInstanceState: Bundle?) {
+    override fun onCreateView(
+        rootView: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onCreateView(rootView, savedInstanceState)
         Logx.d("BaseBindingActivityExample - onCreateView() called")
     }

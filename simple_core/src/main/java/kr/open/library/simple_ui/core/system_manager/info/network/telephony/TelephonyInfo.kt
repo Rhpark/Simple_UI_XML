@@ -99,13 +99,12 @@ import java.util.concurrent.Executor
  * @param context The application context.<br><br>
  *                애플리케이션 컨텍스트.
  */
-public class TelephonyInfo(context: Context) :
-    BaseSystemService(context, listOf(READ_PHONE_STATE, ACCESS_FINE_LOCATION, READ_PHONE_NUMBERS)) {
-
+public class TelephonyInfo(
+    context: Context,
+) : BaseSystemService(context, listOf(READ_PHONE_STATE, ACCESS_FINE_LOCATION, READ_PHONE_NUMBERS)) {
     // =================================================
     // Core Components (Delegation)
     // =================================================
-
 
     /**
      * Main TelephonyManager instance.<br><br>
@@ -127,7 +126,6 @@ public class TelephonyInfo(context: Context) :
      */
     private val callbackManager = TelephonyCallbackManager(context)
 
-
     // =================================================
     // Carrier Information / 통신사 정보
     // =================================================
@@ -140,9 +138,10 @@ public class TelephonyInfo(context: Context) :
      *         통신사 이름 또는 사용 불가 시 null.
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun getCarrierName(): String? = tryCatchSystemManager(null) {
-        return telephonyManager.networkOperatorName?.takeIf { it.isNotBlank() }
-    }
+    public fun getCarrierName(): String? =
+        tryCatchSystemManager(null) {
+            return telephonyManager.networkOperatorName?.takeIf { it.isNotBlank() }
+        }
 
     /**
      * Gets the Mobile Country Code (MCC) from the default SIM.<br><br>
@@ -152,9 +151,10 @@ public class TelephonyInfo(context: Context) :
      *         MCC 문자열, 사용할 수 없는 경우 null.
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun getMobileCountryCode(): String? = tryCatchSystemManager(null) {
-        return telephonyManager.networkOperator?.take(3)?.takeIf { it.length == 3 }
-    }
+    public fun getMobileCountryCode(): String? =
+        tryCatchSystemManager(null) {
+            return telephonyManager.networkOperator?.take(3)?.takeIf { it.length == 3 }
+        }
 
     /**
      * Gets the Mobile Network Code (MNC) from the default SIM.<br><br>
@@ -164,12 +164,15 @@ public class TelephonyInfo(context: Context) :
      *         MNC 문자열, 사용할 수 없는 경우 null.
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun getMobileNetworkCode(): String? = tryCatchSystemManager(null) {
-        val operator = telephonyManager.networkOperator
-        return if (operator?.length in 5..6) {
-            operator.substring(3)
-        } else null
-    }
+    public fun getMobileNetworkCode(): String? =
+        tryCatchSystemManager(null) {
+            val operator = telephonyManager.networkOperator
+            return if (operator?.length in 5..6) {
+                operator.substring(3)
+            } else {
+                null
+            }
+        }
 
     // =================================================
     // SIM Information / SIM 정보
@@ -183,9 +186,10 @@ public class TelephonyInfo(context: Context) :
      *         TelephonyManager의 SIM 상태 상수.
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun getSimState(): Int= tryCatchSystemManager(TelephonyManager.SIM_STATE_UNKNOWN) {
-        return telephonyManager.simState
-    }
+    public fun getSimState(): Int =
+        tryCatchSystemManager(TelephonyManager.SIM_STATE_UNKNOWN) {
+            return telephonyManager.simState
+        }
 
     /**
      * Checks if SIM is ready.<br><br>
@@ -205,9 +209,10 @@ public class TelephonyInfo(context: Context) :
      *         SIM 운영자 이름, 사용할 수 없는 경우 null.
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun getSimOperatorName(): String? = tryCatchSystemManager(null) {
-        return telephonyManager.simOperatorName?.takeIf { it.isNotBlank() }
-    }
+    public fun getSimOperatorName(): String? =
+        tryCatchSystemManager(null) {
+            return telephonyManager.simOperatorName?.takeIf { it.isNotBlank() }
+        }
 
     /**
      * Gets the ISO country code for the SIM provider.<br><br>
@@ -217,9 +222,10 @@ public class TelephonyInfo(context: Context) :
      *         ISO 국가 코드, 사용할 수 없는 경우 null.
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun getSimCountryIso(): String? = tryCatchSystemManager(null) {
-        return telephonyManager.simCountryIso?.takeIf { it.isNotBlank() }
-    }
+    public fun getSimCountryIso(): String? =
+        tryCatchSystemManager(null) {
+            return telephonyManager.simCountryIso?.takeIf { it.isNotBlank() }
+        }
 
     // =================================================
     // Phone Information / 전화 정보
@@ -237,10 +243,11 @@ public class TelephonyInfo(context: Context) :
      */
     @SuppressLint("HardwareIds")
     @RequiresPermission(anyOf = [READ_PHONE_STATE, READ_PHONE_NUMBERS])
-    public fun getPhoneNumber(): String? = tryCatchSystemManager(null) {
-        @Suppress("DEPRECATION")
-        return telephonyManager.line1Number?.takeIf { it.isNotBlank() }
-    }
+    public fun getPhoneNumber(): String? =
+        tryCatchSystemManager(null) {
+            @Suppress("DEPRECATION")
+            return telephonyManager.line1Number?.takeIf { it.isNotBlank() }
+        }
 
     /**
      * Gets the call state.<br><br>
@@ -249,9 +256,10 @@ public class TelephonyInfo(context: Context) :
      * @return Call state constant from TelephonyManager.<br><br>
      *         TelephonyManager의 통화 상태 상수.
      */
-    public fun getCallState(): Int = tryCatchSystemManager(TelephonyManager.CALL_STATE_IDLE) {
-        return telephonyManager.callState
-    }
+    public fun getCallState(): Int =
+        tryCatchSystemManager(TelephonyManager.CALL_STATE_IDLE) {
+            return telephonyManager.callState
+        }
 
     // =================================================
     // Network Information / 네트워크 정보
@@ -265,15 +273,17 @@ public class TelephonyInfo(context: Context) :
      *         TelephonyManager의 네트워크 타입 상수.
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun getNetworkType(): Int = tryCatchSystemManager(TelephonyManager.NETWORK_TYPE_UNKNOWN) {
-        return checkSdkVersion(Build.VERSION_CODES.R,
-            positiveWork = { telephonyManager.dataNetworkType },
-            negativeWork = {
-                @Suppress("DEPRECATION")
-                telephonyManager.networkType
-            }
-        )
-    }
+    public fun getNetworkType(): Int =
+        tryCatchSystemManager(TelephonyManager.NETWORK_TYPE_UNKNOWN) {
+            return checkSdkVersion(
+                Build.VERSION_CODES.R,
+                positiveWork = { telephonyManager.dataNetworkType },
+                negativeWork = {
+                    @Suppress("DEPRECATION")
+                    telephonyManager.networkType
+                },
+            )
+        }
 
     /**
      * Gets the current data network type.<br><br>
@@ -283,9 +293,10 @@ public class TelephonyInfo(context: Context) :
      *         TelephonyManager의 데이터 네트워크 타입 상수.
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun getDataNetworkType(): Int = tryCatchSystemManager(TelephonyManager.NETWORK_TYPE_UNKNOWN) {
-        return telephonyManager.dataNetworkType
-    }
+    public fun getDataNetworkType(): Int =
+        tryCatchSystemManager(TelephonyManager.NETWORK_TYPE_UNKNOWN) {
+            return telephonyManager.dataNetworkType
+        }
 
     /**
      * Checks if the device is roaming.<br><br>
@@ -295,9 +306,10 @@ public class TelephonyInfo(context: Context) :
      *         로밍 중이면 `true`, 그렇지 않으면 `false`.<br>
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun isNetworkRoaming(): Boolean = tryCatchSystemManager(false) {
-        return telephonyManager.isNetworkRoaming
-    }
+    public fun isNetworkRoaming(): Boolean =
+        tryCatchSystemManager(false) {
+            return telephonyManager.isNetworkRoaming
+        }
 
     // =================================================
     // Multi-SIM Support / 멀티 SIM 지원
@@ -311,9 +323,10 @@ public class TelephonyInfo(context: Context) :
      *         활성화된 SIM 카드 수.
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun getActiveSimCount(): Int = tryCatchSystemManager(0) {
-        return subscriptionManager.activeSubscriptionInfoCount
-    }
+    public fun getActiveSimCount(): Int =
+        tryCatchSystemManager(0) {
+            return subscriptionManager.activeSubscriptionInfoCount
+        }
 
     /**
      * Gets active subscription info list.<br><br>
@@ -323,9 +336,10 @@ public class TelephonyInfo(context: Context) :
      *         SubscriptionInfo 목록.
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun getActiveSubscriptionInfoList(): List<SubscriptionInfo> = tryCatchSystemManager(emptyList()) {
-        return subscriptionManager.activeSubscriptionInfoList ?: emptyList()
-    }
+    public fun getActiveSubscriptionInfoList(): List<SubscriptionInfo> =
+        tryCatchSystemManager(emptyList()) {
+            return subscriptionManager.activeSubscriptionInfoList ?: emptyList()
+        }
 
     /**
      * Gets subscription info for the default data SIM.<br><br>
@@ -335,12 +349,14 @@ public class TelephonyInfo(context: Context) :
      *         SubscriptionInfo, 사용할 수 없는 경우 null.
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun getDefaultDataSubscriptionInfo(): SubscriptionInfo? = tryCatchSystemManager(null) {
-        return checkSdkVersion(Build.VERSION_CODES.R,
-            positiveWork = { telephonyManager.subscriptionId },
-            negativeWork = { getActiveSubscriptionInfoList().firstOrNull()?.subscriptionId }
-        )?.let { subscriptionManager.getActiveSubscriptionInfo(it) }
-    }
+    public fun getDefaultDataSubscriptionInfo(): SubscriptionInfo? =
+        tryCatchSystemManager(null) {
+            return checkSdkVersion(
+                Build.VERSION_CODES.R,
+                positiveWork = { telephonyManager.subscriptionId },
+                negativeWork = { getActiveSubscriptionInfoList().firstOrNull()?.subscriptionId },
+            )?.let { subscriptionManager.getActiveSubscriptionInfo(it) }
+        }
 
     // =================================================
     // Utility Methods / 유틸리티 메서드
@@ -354,29 +370,30 @@ public class TelephonyInfo(context: Context) :
      *         네트워크 타입 문자열 (예: "LTE", "5G NR").
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun getNetworkTypeString(): String = when (getNetworkType()) {
-        TelephonyManager.NETWORK_TYPE_GPRS -> "GPRS"
-        TelephonyManager.NETWORK_TYPE_EDGE -> "EDGE"
-        TelephonyManager.NETWORK_TYPE_UMTS -> "UMTS"
-        TelephonyManager.NETWORK_TYPE_HSDPA -> "HSDPA"
-        TelephonyManager.NETWORK_TYPE_HSUPA -> "HSUPA"
-        TelephonyManager.NETWORK_TYPE_HSPA -> "HSPA"
-        TelephonyManager.NETWORK_TYPE_CDMA -> "CDMA"
-        TelephonyManager.NETWORK_TYPE_EVDO_0 -> "EVDO_0"
-        TelephonyManager.NETWORK_TYPE_EVDO_A -> "EVDO_A"
-        TelephonyManager.NETWORK_TYPE_EVDO_B -> "EVDO_B"
-        TelephonyManager.NETWORK_TYPE_1xRTT -> "1xRTT"
-        TelephonyManager.NETWORK_TYPE_IDEN -> "IDEN"
-        TelephonyManager.NETWORK_TYPE_LTE -> "LTE"
-        TelephonyManager.NETWORK_TYPE_EHRPD -> "EHRPD"
-        TelephonyManager.NETWORK_TYPE_HSPAP -> "HSPA+"
-        TelephonyManager.NETWORK_TYPE_GSM -> "GSM"
-        TelephonyManager.NETWORK_TYPE_TD_SCDMA -> "TD_SCDMA"
-        TelephonyManager.NETWORK_TYPE_IWLAN -> "IWLAN"
-        20 /* NETWORK_TYPE_NR */ -> "5G NR"
-        19 /* NETWORK_TYPE_LTE_CA */ -> "LTE_CA"
-        else -> "UNKNOWN"
-    }
+    public fun getNetworkTypeString(): String =
+        when (getNetworkType()) {
+            TelephonyManager.NETWORK_TYPE_GPRS -> "GPRS"
+            TelephonyManager.NETWORK_TYPE_EDGE -> "EDGE"
+            TelephonyManager.NETWORK_TYPE_UMTS -> "UMTS"
+            TelephonyManager.NETWORK_TYPE_HSDPA -> "HSDPA"
+            TelephonyManager.NETWORK_TYPE_HSUPA -> "HSUPA"
+            TelephonyManager.NETWORK_TYPE_HSPA -> "HSPA"
+            TelephonyManager.NETWORK_TYPE_CDMA -> "CDMA"
+            TelephonyManager.NETWORK_TYPE_EVDO_0 -> "EVDO_0"
+            TelephonyManager.NETWORK_TYPE_EVDO_A -> "EVDO_A"
+            TelephonyManager.NETWORK_TYPE_EVDO_B -> "EVDO_B"
+            TelephonyManager.NETWORK_TYPE_1xRTT -> "1xRTT"
+            TelephonyManager.NETWORK_TYPE_IDEN -> "IDEN"
+            TelephonyManager.NETWORK_TYPE_LTE -> "LTE"
+            TelephonyManager.NETWORK_TYPE_EHRPD -> "EHRPD"
+            TelephonyManager.NETWORK_TYPE_HSPAP -> "HSPA+"
+            TelephonyManager.NETWORK_TYPE_GSM -> "GSM"
+            TelephonyManager.NETWORK_TYPE_TD_SCDMA -> "TD_SCDMA"
+            TelephonyManager.NETWORK_TYPE_IWLAN -> "IWLAN"
+            20 -> "5G NR" // NETWORK_TYPE_NR
+            19 -> "LTE_CA" // NETWORK_TYPE_LTE_CA
+            else -> "UNKNOWN"
+        }
 
     /**
      * Gets SIM state as human-readable string.<br><br>
@@ -386,19 +403,20 @@ public class TelephonyInfo(context: Context) :
      *         SIM 상태 문자열 (예: "READY", "ABSENT").
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun getSimStateString(): String = when (getSimState()) {
-        TelephonyManager.SIM_STATE_UNKNOWN -> "UNKNOWN"
-        TelephonyManager.SIM_STATE_ABSENT -> "ABSENT"
-        TelephonyManager.SIM_STATE_PIN_REQUIRED -> "PIN_REQUIRED"
-        TelephonyManager.SIM_STATE_PUK_REQUIRED -> "PUK_REQUIRED"
-        TelephonyManager.SIM_STATE_NETWORK_LOCKED -> "NETWORK_LOCKED"
-        TelephonyManager.SIM_STATE_READY -> "READY"
-        TelephonyManager.SIM_STATE_NOT_READY -> "NOT_READY"
-        TelephonyManager.SIM_STATE_PERM_DISABLED -> "PERM_DISABLED"
-        TelephonyManager.SIM_STATE_CARD_IO_ERROR -> "CARD_IO_ERROR"
-        TelephonyManager.SIM_STATE_CARD_RESTRICTED -> "CARD_RESTRICTED"
-        else -> "UNKNOWN"
-    }
+    public fun getSimStateString(): String =
+        when (getSimState()) {
+            TelephonyManager.SIM_STATE_UNKNOWN -> "UNKNOWN"
+            TelephonyManager.SIM_STATE_ABSENT -> "ABSENT"
+            TelephonyManager.SIM_STATE_PIN_REQUIRED -> "PIN_REQUIRED"
+            TelephonyManager.SIM_STATE_PUK_REQUIRED -> "PUK_REQUIRED"
+            TelephonyManager.SIM_STATE_NETWORK_LOCKED -> "NETWORK_LOCKED"
+            TelephonyManager.SIM_STATE_READY -> "READY"
+            TelephonyManager.SIM_STATE_NOT_READY -> "NOT_READY"
+            TelephonyManager.SIM_STATE_PERM_DISABLED -> "PERM_DISABLED"
+            TelephonyManager.SIM_STATE_CARD_IO_ERROR -> "CARD_IO_ERROR"
+            TelephonyManager.SIM_STATE_CARD_RESTRICTED -> "CARD_RESTRICTED"
+            else -> "UNKNOWN"
+        }
 
     // =================================================
     // State Management (Simple API)
@@ -439,8 +457,7 @@ public class TelephonyInfo(context: Context) :
      * @return Current SignalStrength, or null if unavailable.<br><br>
      *         현재 SignalStrength, 사용할 수 없는 경우 null.
      */
-    public fun getCurrentSignalStrength(): SignalStrength? =
-        callbackManager.getCurrentSignalStrength()
+    public fun getCurrentSignalStrength(): SignalStrength? = callbackManager.getCurrentSignalStrength()
 
     /**
      * Gets the current service state.<br><br>
@@ -449,8 +466,7 @@ public class TelephonyInfo(context: Context) :
      * @return Current ServiceState, or null if unavailable.<br><br>
      *         현재 ServiceState, 사용할 수 없는 경우 null.
      */
-    public fun getCurrentServiceState(): ServiceState? =
-        callbackManager.getCurrentServiceState()
+    public fun getCurrentServiceState(): ServiceState? = callbackManager.getCurrentServiceState()
 
     // =================================================
     // Callback Management (Simple API)
@@ -476,10 +492,14 @@ public class TelephonyInfo(context: Context) :
         handler: Handler? = null,
         onSignalStrengthChanged: ((SignalStrength) -> Unit)? = null,
         onServiceStateChanged: ((ServiceState) -> Unit)? = null,
-        onNetworkStateChanged: ((TelephonyNetworkState) -> Unit)? = null
-    ): Boolean = callbackManager.registerSimpleCallback(
-        handler, onSignalStrengthChanged, onServiceStateChanged, onNetworkStateChanged
-    )
+        onNetworkStateChanged: ((TelephonyNetworkState) -> Unit)? = null,
+    ): Boolean =
+        callbackManager.registerSimpleCallback(
+            handler,
+            onSignalStrengthChanged,
+            onServiceStateChanged,
+            onNetworkStateChanged,
+        )
 
     /**
      * Unregisters telephony callback.<br><br>
@@ -518,11 +538,20 @@ public class TelephonyInfo(context: Context) :
         onServiceState: ((currentServiceState: CurrentServiceState) -> Unit)? = null,
         onCallState: ((callState: Int, phoneNumber: String?) -> Unit)? = null,
         onDisplayInfo: ((telephonyDisplayInfo: TelephonyDisplayInfo) -> Unit)? = null,
-        onTelephonyNetworkState: ((telephonyNetworkState: TelephonyNetworkState) -> Unit)? = null
-    ): Boolean = callbackManager.registerAdvancedCallbackFromDefaultUSim(
-        executor, isGpsOn, onActiveDataSubId, onDataConnectionState, onCellInfo,
-        onSignalStrength, onServiceState, onCallState, onDisplayInfo, onTelephonyNetworkState
-    )
+        onTelephonyNetworkState: ((telephonyNetworkState: TelephonyNetworkState) -> Unit)? = null,
+    ): Boolean =
+        callbackManager.registerAdvancedCallbackFromDefaultUSim(
+            executor,
+            isGpsOn,
+            onActiveDataSubId,
+            onDataConnectionState,
+            onCellInfo,
+            onSignalStrength,
+            onServiceState,
+            onCallState,
+            onDisplayInfo,
+            onTelephonyNetworkState,
+        )
 
     /**
      * Register telephony callback for specific SIM slot (API 31+).<br><br>
@@ -550,10 +579,19 @@ public class TelephonyInfo(context: Context) :
         onServiceState: ((currentServiceState: CurrentServiceState) -> Unit)? = null,
         onCallState: ((callState: Int, phoneNumber: String?) -> Unit)? = null,
         onDisplayInfo: ((telephonyDisplayInfo: TelephonyDisplayInfo) -> Unit)? = null,
-        onTelephonyNetworkState: ((telephonyNetworkState: TelephonyNetworkState) -> Unit)? = null
+        onTelephonyNetworkState: ((telephonyNetworkState: TelephonyNetworkState) -> Unit)? = null,
     ) = callbackManager.registerAdvancedCallback(
-        simSlotIndex, executor, isGpsOn, onActiveDataSubId, onDataConnectionState,
-        onCellInfo, onSignalStrength, onServiceState, onCallState, onDisplayInfo, onTelephonyNetworkState
+        simSlotIndex,
+        executor,
+        isGpsOn,
+        onActiveDataSubId,
+        onDataConnectionState,
+        onCellInfo,
+        onSignalStrength,
+        onServiceState,
+        onCallState,
+        onDisplayInfo,
+        onTelephonyNetworkState,
     )
 
     /**
@@ -564,8 +602,7 @@ public class TelephonyInfo(context: Context) :
      *                     SIM 슬롯 인덱스.
      */
     @RequiresApi(Build.VERSION_CODES.S)
-    public fun unregisterCallBack(simSlotIndex: Int) =
-        callbackManager.unregisterAdvancedCallback(simSlotIndex)
+    public fun unregisterCallBack(simSlotIndex: Int) = callbackManager.unregisterAdvancedCallback(simSlotIndex)
 
     // =================================================
     // Individual Callback Setters (Advanced API)
@@ -583,7 +620,7 @@ public class TelephonyInfo(context: Context) :
     @RequiresPermission(READ_PHONE_STATE)
     public fun setOnSignalStrength(
         simSlotIndex: Int,
-        onSignalStrength: ((currentSignalStrength: CurrentSignalStrength) -> Unit)? = null
+        onSignalStrength: ((currentSignalStrength: CurrentSignalStrength) -> Unit)? = null,
     ) = callbackManager.setOnSignalStrength(simSlotIndex, onSignalStrength)
 
     /**
@@ -598,7 +635,7 @@ public class TelephonyInfo(context: Context) :
     @RequiresPermission(READ_PHONE_STATE)
     public fun setOnServiceState(
         simSlotIndex: Int,
-        onServiceState: ((currentServiceState: CurrentServiceState) -> Unit)? = null
+        onServiceState: ((currentServiceState: CurrentServiceState) -> Unit)? = null,
     ) = callbackManager.setOnServiceState(simSlotIndex, onServiceState)
 
     /**
@@ -613,7 +650,7 @@ public class TelephonyInfo(context: Context) :
     @RequiresPermission(READ_PHONE_STATE)
     public fun setOnActiveDataSubId(
         simSlotIndex: Int,
-        onActiveDataSubId: ((subId: Int) -> Unit)? = null
+        onActiveDataSubId: ((subId: Int) -> Unit)? = null,
     ) = callbackManager.setOnActiveDataSubId(simSlotIndex, onActiveDataSubId)
 
     /**
@@ -628,7 +665,7 @@ public class TelephonyInfo(context: Context) :
     @RequiresPermission(READ_PHONE_STATE)
     public fun setOnDataConnectionState(
         simSlotIndex: Int,
-        onDataConnectionState: ((state: Int, networkType: Int) -> Unit)? = null
+        onDataConnectionState: ((state: Int, networkType: Int) -> Unit)? = null,
     ) = callbackManager.setOnDataConnectionState(simSlotIndex, onDataConnectionState)
 
     /**
@@ -643,7 +680,7 @@ public class TelephonyInfo(context: Context) :
     @RequiresPermission(READ_PHONE_STATE)
     public fun setOnCellInfo(
         simSlotIndex: Int,
-        onCellInfo: ((currentCellInfo: CurrentCellInfo) -> Unit)? = null
+        onCellInfo: ((currentCellInfo: CurrentCellInfo) -> Unit)? = null,
     ) = callbackManager.setOnCellInfo(simSlotIndex, onCellInfo)
 
     /**
@@ -658,7 +695,7 @@ public class TelephonyInfo(context: Context) :
     @RequiresPermission(READ_PHONE_STATE)
     public fun setOnCallState(
         simSlotIndex: Int,
-        onCallState: ((callState: Int, phoneNumber: String?) -> Unit)? = null
+        onCallState: ((callState: Int, phoneNumber: String?) -> Unit)? = null,
     ) = callbackManager.setOnCallState(simSlotIndex, onCallState)
 
     /**
@@ -673,7 +710,7 @@ public class TelephonyInfo(context: Context) :
     @RequiresPermission(READ_PHONE_STATE)
     public fun setOnDisplayState(
         simSlotIndex: Int,
-        onDisplay: ((telephonyDisplayInfo: TelephonyDisplayInfo) -> Unit)? = null
+        onDisplay: ((telephonyDisplayInfo: TelephonyDisplayInfo) -> Unit)? = null,
     ) = callbackManager.setOnDisplayState(simSlotIndex, onDisplay)
 
     /**
@@ -687,7 +724,7 @@ public class TelephonyInfo(context: Context) :
      */
     public fun setOnTelephonyNetworkType(
         simSlotIndex: Int,
-        onTelephonyNetworkType: ((telephonyNetworkState: TelephonyNetworkState) -> Unit)? = null
+        onTelephonyNetworkType: ((telephonyNetworkState: TelephonyNetworkState) -> Unit)? = null,
     ) = callbackManager.setOnTelephonyNetworkType(simSlotIndex, onTelephonyNetworkType)
 
     // =================================================
@@ -703,8 +740,7 @@ public class TelephonyInfo(context: Context) :
      * @return `true` if registered, `false` otherwise.<br><br>
      *         등록되어 있으면 `true`, 그렇지 않으면 `false`.<br>
      */
-    public fun isRegistered(simSlotIndex: Int): Boolean =
-        callbackManager.isRegistered(simSlotIndex)
+    public fun isRegistered(simSlotIndex: Int): Boolean = callbackManager.isRegistered(simSlotIndex)
 
     /**
      * Get TelephonyManager for specific SIM slot.<br><br>
@@ -715,8 +751,7 @@ public class TelephonyInfo(context: Context) :
      * @return TelephonyManager for the slot, or null if unavailable.<br><br>
      *         해당 슬롯의 TelephonyManager, 사용할 수 없는 경우 null.
      */
-    public fun getTelephonyManagerFromUSim(slotIndex: Int): TelephonyManager? =
-        callbackManager.getTelephonyManagerFromUSim(slotIndex)
+    public fun getTelephonyManagerFromUSim(slotIndex: Int): TelephonyManager? = callbackManager.getTelephonyManagerFromUSim(slotIndex)
 
     // =================================================
     // Cleanup / 정리

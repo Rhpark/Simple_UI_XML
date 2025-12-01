@@ -5,7 +5,6 @@ import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.core.viewmodel.BaseViewModelEvent
 
 class ActivityFragmentActivityVm : BaseViewModelEvent<ActivityFragmentActivityVmEvent>() {
-
     fun onClickBaseActivity() = sendEventVm(ActivityFragmentActivityVmEvent.OnClickBaseActivity)
 
     fun onClickBaseBindingActivity() = sendEventVm(ActivityFragmentActivityVmEvent.OnClickBaseBindingActivity)

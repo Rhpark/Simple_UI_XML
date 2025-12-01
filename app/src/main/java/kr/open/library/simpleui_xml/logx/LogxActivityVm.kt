@@ -3,7 +3,6 @@ package kr.open.library.simpleui_xml.logx
 import kr.open.library.simple_ui.core.viewmodel.BaseViewModelEvent
 
 class LogxActivityVm : BaseViewModelEvent<LogxActivityVmEvent>() {
-
     fun onClickBasicLogging() = sendEventVm(LogxActivityVmEvent.OnClickBasicLogging)
 
     fun onClickJsonLogging() = sendEventVm(LogxActivityVmEvent.OnClickJsonLogging)

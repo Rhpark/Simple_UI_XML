@@ -9,7 +9,6 @@ import android.content.Context
  * 이 메서드들은 Robolectric 없이 단위 테스트를 용이하게 하기 위해 핵심 LogxConfig 클래스에서 분리되었습니다.<br>
  */
 object LogxConfigFactory {
-
     /**
      * Creates a LogxConfig with the specified storage type.<br>
      * Defaults to APP_EXTERNAL storage if not specified.<br><br>
@@ -28,10 +27,11 @@ object LogxConfigFactory {
     fun createDefault(
         context: Context,
         storageType: LogxStorageType = LogxStorageType.APP_EXTERNAL,
-    ): LogxConfig = LogxConfig(
-        saveFilePath = LogxPathUtils.getLogPath(context, storageType),
-        storageType = storageType,
-    )
+    ): LogxConfig =
+        LogxConfig(
+            saveFilePath = LogxPathUtils.getLogPath(context, storageType),
+            storageType = storageType,
+        )
 
     /**
      * Creates a LogxConfig configured for internal storage.<br>
@@ -45,10 +45,11 @@ object LogxConfigFactory {
      * @return A LogxConfig instance for internal storage.<br><br>
      *         내부 저장소용 LogxConfig 인스턴스.<br>
      */
-    fun createInternal(context: Context): LogxConfig = LogxConfig(
-        saveFilePath = LogxPathUtils.getInternalLogPath(context),
-        storageType = LogxStorageType.INTERNAL,
-    )
+    fun createInternal(context: Context): LogxConfig =
+        LogxConfig(
+            saveFilePath = LogxPathUtils.getInternalLogPath(context),
+            storageType = LogxStorageType.INTERNAL,
+        )
 
     /**
      * Creates a LogxConfig configured for app-specific external storage.<br>
@@ -62,10 +63,11 @@ object LogxConfigFactory {
      * @return A LogxConfig instance for app-specific external storage.<br><br>
      *         앱 전용 외부 저장소용 LogxConfig 인스턴스.<br>
      */
-    fun createAppExternal(context: Context): LogxConfig = LogxConfig(
-        saveFilePath = LogxPathUtils.getAppExternalLogPath(context),
-        storageType = LogxStorageType.APP_EXTERNAL,
-    )
+    fun createAppExternal(context: Context): LogxConfig =
+        LogxConfig(
+            saveFilePath = LogxPathUtils.getAppExternalLogPath(context),
+            storageType = LogxStorageType.APP_EXTERNAL,
+        )
 
     /**
      * Creates a LogxConfig configured for public external storage.<br>
@@ -79,10 +81,11 @@ object LogxConfigFactory {
      * @return A LogxConfig instance for public external storage.<br><br>
      *         공용 외부 저장소용 LogxConfig 인스턴스.<br>
      */
-    fun createPublicExternal(context: Context): LogxConfig = LogxConfig(
-        saveFilePath = LogxPathUtils.getPublicExternalLogPath(context),
-        storageType = LogxStorageType.PUBLIC_EXTERNAL,
-    )
+    fun createPublicExternal(context: Context): LogxConfig =
+        LogxConfig(
+            saveFilePath = LogxPathUtils.getPublicExternalLogPath(context),
+            storageType = LogxStorageType.PUBLIC_EXTERNAL,
+        )
 
     /**
      * Creates a LogxConfig for the specified storage type using a factory pattern.<br><br>
@@ -100,9 +103,10 @@ object LogxConfigFactory {
     fun create(
         context: Context,
         storageType: LogxStorageType,
-    ): LogxConfig = when (storageType) {
-        LogxStorageType.INTERNAL -> createInternal(context)
-        LogxStorageType.APP_EXTERNAL -> createAppExternal(context)
-        LogxStorageType.PUBLIC_EXTERNAL -> createPublicExternal(context)
-    }
+    ): LogxConfig =
+        when (storageType) {
+            LogxStorageType.INTERNAL -> createInternal(context)
+            LogxStorageType.APP_EXTERNAL -> createAppExternal(context)
+            LogxStorageType.PUBLIC_EXTERNAL -> createPublicExternal(context)
+        }
 }

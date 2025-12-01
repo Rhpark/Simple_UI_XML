@@ -32,7 +32,7 @@ public enum class NotificationStyle {
      * Notification style with progress bar.<br><br>
      * 진행률 바를 포함하는 알림 스타일.<br>
      */
-    PROGRESS
+    PROGRESS,
 }
 
 /**
@@ -97,7 +97,7 @@ public data class SimpleNotificationOptionVo(
     public val snippet: String? = null,
     public val actions: List<Action>? = null,
     public val onGoing: Boolean = false,
-    public val style: NotificationStyle = NotificationStyle.DEFAULT
+    public val style: NotificationStyle = NotificationStyle.DEFAULT,
 )
 
 /**
@@ -135,7 +135,7 @@ public data class SimpleProgressNotificationOptionVo(
     public val actions: List<Action>? = null,
     public val progressPercent: Int,
     public val onGoing: Boolean = false,
-    public val style: NotificationStyle = NotificationStyle.PROGRESS
+    public val style: NotificationStyle = NotificationStyle.PROGRESS,
 )
 
 /**
@@ -152,5 +152,5 @@ public data class SimpleProgressNotificationOptionVo(
 public data class SimplePendingIntentOptionVo(
     public val actionId: Int,
     public val clickIntent: Intent,
-    public val flags: Int = PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+    public val flags: Int = PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
 )

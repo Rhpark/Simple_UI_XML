@@ -2,8 +2,8 @@ package kr.open.library.simple_ui.xml.ui.adapter.list.simple
 
 import android.view.ViewGroup
 import androidx.annotation.LayoutRes
-import kr.open.library.simple_ui.xml.ui.adapter.list.diffutil.RcvListDiffUtilCallBack
 import kr.open.library.simple_ui.xml.ui.adapter.list.base.BaseRcvListAdapter
+import kr.open.library.simple_ui.xml.ui.adapter.list.diffutil.RcvListDiffUtilCallBack
 import kr.open.library.simple_ui.xml.ui.adapter.viewholder.BaseRcvViewHolder
 
 /**
@@ -59,9 +59,8 @@ import kr.open.library.simple_ui.xml.ui.adapter.viewholder.BaseRcvViewHolder
 public open class SimpleRcvListAdapter<ITEM : Any>(
     @LayoutRes private val layoutRes: Int,
     listDiffUtil: RcvListDiffUtilCallBack<ITEM>,
-    private val onBind: (BaseRcvViewHolder, ITEM, position: Int) -> Unit
+    private val onBind: (BaseRcvViewHolder, ITEM, position: Int) -> Unit,
 ) : BaseRcvListAdapter<ITEM, BaseRcvViewHolder>(listDiffUtil) {
-
     /**
      * Creates a new ViewHolder for the given view type.<br><br>
      * 주어진 뷰 타입에 대한 새로운 ViewHolder를 생성합니다.<br>
@@ -75,8 +74,10 @@ public open class SimpleRcvListAdapter<ITEM : Any>(
      * @return A new BaseRcvViewHolder that holds a view.<br><br>
      *         뷰를 보유하는 새로운 BaseRcvViewHolder.<br>
      */
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseRcvViewHolder =
-        BaseRcvViewHolder(layoutRes, parent)
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int,
+    ): BaseRcvViewHolder = BaseRcvViewHolder(layoutRes, parent)
 
     /**
      * Binds data to the ViewHolder at the specified position.<br>
@@ -93,7 +94,11 @@ public open class SimpleRcvListAdapter<ITEM : Any>(
      * @param item The item to bind.<br><br>
      *             바인딩할 아이템.<br>
      */
-    override fun onBindViewHolder(holder: BaseRcvViewHolder, position: Int, item: ITEM) {
+    override fun onBindViewHolder(
+        holder: BaseRcvViewHolder,
+        position: Int,
+        item: ITEM,
+    ) {
         onBind(holder, item, position)
     }
 }

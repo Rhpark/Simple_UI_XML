@@ -24,10 +24,10 @@ import kr.open.library.simple_ui.core.system_manager.extensions.getTelephonyMana
 /**
  * SIM Card and Subscription Information Management Class.<br><br>
  * SIM 카드 및 구독 정보 전문 관리 클래스입니다.<br>
- * 
+ *
  * This class manages the physical/logical state of SIM cards and subscription information.<br><br>
  * 이 클래스는 SIM 카드의 물리적/논리적 상태와 구독 정보를 관리합니다.<br>
- * 
+ *
  * Main Features:<br>
  * - SIM card state management<br>
  * - Multi-SIM support<br>
@@ -42,7 +42,7 @@ import kr.open.library.simple_ui.core.system_manager.extensions.getTelephonyMana
  * - 구독 정보 조회<br>
  * - 통신사 정보 (MCC/MNC)<br>
  * - 전화번호 조회<br>
- * 
+ *
  * Required Permissions:<br>
  * - `android.permission.READ_PHONE_STATE` (Required)<br>
  * - `android.permission.READ_PHONE_NUMBERS` (Phone numbers)<br>
@@ -62,15 +62,15 @@ import kr.open.library.simple_ui.core.system_manager.extensions.getTelephonyMana
  * Usage Example:<br>
  * ```kotlin
  * val simInfo = SimInfo(context)
- * 
+ *
  * // Basic info
  * val simCount = simInfo.getActiveSimCount()
  * val isDualSim = simInfo.isDualSim()
- * 
+ *
  * // Subscription info
  * val subscriptions = simInfo.getActiveSubscriptionInfoList()
  * val defaultSubId = simInfo.getSubIdFromDefaultUSim()
- * 
+ *
  * // eSIM support check
  * val isESimSupported = simInfo.isESimSupported()
  * ```
@@ -78,25 +78,25 @@ import kr.open.library.simple_ui.core.system_manager.extensions.getTelephonyMana
  * @param context The application context.<br><br>
  *                애플리케이션 컨텍스트.
  */
-public class SimInfo(context: Context) :
-    BaseSystemService(context, listOf(READ_PHONE_STATE, READ_PHONE_NUMBERS, ACCESS_FINE_LOCATION)) {
-
+public class SimInfo(
+    context: Context,
+) : BaseSystemService(context, listOf(READ_PHONE_STATE, READ_PHONE_NUMBERS, ACCESS_FINE_LOCATION)) {
     // =================================================
     // Core System Services
     // =================================================
-    
+
     /**
      * TelephonyManager for telephony operations.<br><br>
      * 기본 TelephonyManager입니다.<br>
      */
     public val telephonyManager: TelephonyManager by lazy { context.getTelephonyManager() }
-    
+
     /**
      * SubscriptionManager for subscription operations.<br><br>
      * 구독 관리를 위한 SubscriptionManager입니다.<br>
      */
     public val subscriptionManager: SubscriptionManager by lazy { context.getSubscriptionManager() }
-    
+
     /**
      * EuiccManager for eSIM operations.<br><br>
      * eSIM 관리를 위한 EuiccManager입니다.<br>
@@ -106,7 +106,7 @@ public class SimInfo(context: Context) :
     // =================================================
     // Internal State Management
     // =================================================
-    
+
     /**
      * Stores TelephonyManager instances per SIM slot.<br><br>
      * SIM 슬롯별 TelephonyManager 인스턴스를 저장합니다.<br>
@@ -122,7 +122,7 @@ public class SimInfo(context: Context) :
     // =================================================
     // Initialization
     // =================================================
-    
+
     init {
         initialization()
     }
@@ -144,7 +144,7 @@ public class SimInfo(context: Context) :
     // =================================================
     // Basic SIM Information / 기본 SIM 정보
     // =================================================
-    
+
     /**
      * Checks if SIM information can be read.<br><br>
      * SIM 정보를 읽을 수 있는지 확인합니다.<br>
@@ -198,9 +198,10 @@ public class SimInfo(context: Context) :
      *         활성화된 SIM 카드 수.
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun getActiveSimCount(): Int = safeCatch(defaultValue = 0) {
-        return subscriptionManager.activeSubscriptionInfoCount
-    }
+    public fun getActiveSimCount(): Int =
+        safeCatch(defaultValue = 0) {
+            return subscriptionManager.activeSubscriptionInfoCount
+        }
 
     /**
      * Gets active SIM slot index list.<br><br>
@@ -210,8 +211,7 @@ public class SimInfo(context: Context) :
      *         활성화된 SIM 슬롯 인덱스 목록.
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun getActiveSimSlotIndexList(): List<Int> = 
-        getActiveSubscriptionInfoList().map { it.simSlotIndex }
+    public fun getActiveSimSlotIndexList(): List<Int> = getActiveSubscriptionInfoList().map { it.simSlotIndex }
 
     /**
      * Updates TelephonyManager list per SIM slot.<br><br>
@@ -221,7 +221,7 @@ public class SimInfo(context: Context) :
     public fun updateUSimTelephonyManagerList() {
         Logx.d("SimInfo", "activeSubscriptionInfoList size ${getActiveSubscriptionInfoList().size}")
         getActiveSubscriptionInfoList().forEach {
-            Logx.d("SimInfo", "SubID ${it}")
+            Logx.d("SimInfo", "SubID $it")
             uSimTelephonyManagerList[it.simSlotIndex] = telephonyManager.createForSubscriptionId(it.subscriptionId)
         }
     }
@@ -235,13 +235,12 @@ public class SimInfo(context: Context) :
      * @return TelephonyManager for the slot, or null if unavailable.<br><br>
      *         해당 슬롯의 TelephonyManager, 사용할 수 없는 경우 null.
      */
-    public fun getTelephonyManagerFromUSim(slotIndex: Int): TelephonyManager? = 
-        uSimTelephonyManagerList[slotIndex]
+    public fun getTelephonyManagerFromUSim(slotIndex: Int): TelephonyManager? = uSimTelephonyManagerList[slotIndex]
 
     // =================================================
     // Subscription Information / 구독 정보
     // =================================================
-    
+
     /**
      * Gets default subscription ID.<br><br>
      * 기본 subscription ID를 반환합니다.<br>
@@ -252,7 +251,6 @@ public class SimInfo(context: Context) :
     @RequiresPermission(READ_PHONE_STATE)
     public fun getSubIdFromDefaultUSim(): Int? = getSubIdFromDefaultUSimInternal()
 
-
     /**
      * Gets default subscription ID (Result pattern).<br><br>
      * 기본 subscription ID를 반환합니다 (Result 패턴).<br>
@@ -261,16 +259,19 @@ public class SimInfo(context: Context) :
      *         기본 subscription ID, 사용할 수 없는 경우 null.
      */
     @RequiresPermission(READ_PHONE_STATE)
-    private fun getSubIdFromDefaultUSimInternal(): Int? = safeCatch(null) {
-        isReadSimInfoFromDefaultUSim = false
+    private fun getSubIdFromDefaultUSimInternal(): Int? =
+        safeCatch(null) {
+            isReadSimInfoFromDefaultUSim = false
 
-        val id = checkSdkVersion(Build.VERSION_CODES.R,
-            positiveWork = { telephonyManager.subscriptionId },
-            negativeWork = { getActiveSubscriptionInfoList().firstOrNull()?.subscriptionId }
-        )
-        isReadSimInfoFromDefaultUSim = id != null
-        return id
-    }
+            val id =
+                checkSdkVersion(
+                    Build.VERSION_CODES.R,
+                    positiveWork = { telephonyManager.subscriptionId },
+                    negativeWork = { getActiveSubscriptionInfoList().firstOrNull()?.subscriptionId },
+                )
+            isReadSimInfoFromDefaultUSim = id != null
+            return id
+        }
 
     /**
      * Gets subscription ID for specific SIM slot.<br><br>
@@ -282,12 +283,14 @@ public class SimInfo(context: Context) :
      *         Subscription ID, 사용할 수 없는 경우 null.
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun getSubId(simSlotIndex: Int): Int? = tryCatchSystemManager(null) {
-        checkSdkVersion(Build.VERSION_CODES.R,
-            positiveWork = { uSimTelephonyManagerList[simSlotIndex]?.subscriptionId },
-            negativeWork = { getActiveSubscriptionInfoSimSlot(simSlotIndex)?.subscriptionId }
-        )
-    }
+    public fun getSubId(simSlotIndex: Int): Int? =
+        tryCatchSystemManager(null) {
+            checkSdkVersion(
+                Build.VERSION_CODES.R,
+                positiveWork = { uSimTelephonyManagerList[simSlotIndex]?.subscriptionId },
+                negativeWork = { getActiveSubscriptionInfoSimSlot(simSlotIndex)?.subscriptionId },
+            )
+        }
 
     /**
      * Converts subscription ID to SIM slot index.<br><br>
@@ -299,8 +302,7 @@ public class SimInfo(context: Context) :
      *         SIM 슬롯 인덱스, 찾을 수 없는 경우 null.
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun subIdToSimSlotIndex(currentSubId: Int): Int? = 
-        getActiveSubscriptionInfoSubId(currentSubId)?.simSlotIndex
+    public fun subIdToSimSlotIndex(currentSubId: Int): Int? = getActiveSubscriptionInfoSubId(currentSubId)?.simSlotIndex
 
     /**
      * Gets all active subscription information list.<br><br>
@@ -310,9 +312,10 @@ public class SimInfo(context: Context) :
      *         SubscriptionInfo 목록.
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun getActiveSubscriptionInfoList(): List<SubscriptionInfo> = safeCatch(defaultValue = emptyList()) {
-        return subscriptionManager.activeSubscriptionInfoList ?: emptyList()
-    }
+    public fun getActiveSubscriptionInfoList(): List<SubscriptionInfo> =
+        safeCatch(defaultValue = emptyList()) {
+            return subscriptionManager.activeSubscriptionInfoList ?: emptyList()
+        }
 
     /**
      * Gets SubscriptionInfo for default subscription.<br><br>
@@ -336,8 +339,7 @@ public class SimInfo(context: Context) :
      *         SubscriptionInfo, 찾을 수 없는 경우 null.
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun getActiveSubscriptionInfoSubId(subId: Int): SubscriptionInfo? =
-        subscriptionManager.getActiveSubscriptionInfo(subId)
+    public fun getActiveSubscriptionInfoSubId(subId: Int): SubscriptionInfo? = subscriptionManager.getActiveSubscriptionInfo(subId)
 
     /**
      * Gets SubscriptionInfo for specific SIM slot.<br><br>
@@ -365,9 +367,9 @@ public class SimInfo(context: Context) :
             ?: throw NoSuchMethodError("Cannot read uSim Chip")
 
     // =================================================
-    // SIM State Information / SIM 상태 정보  
+    // SIM State Information / SIM 상태 정보
     // =================================================
-    
+
     /**
      * Gets default SIM state.<br><br>
      * 기본 SIM의 상태를 반환합니다.<br>
@@ -385,12 +387,14 @@ public class SimInfo(context: Context) :
      *         MCC 문자열, 사용할 수 없는 경우 null.
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun getMccFromDefaultUSimString(): String? = getSubscriptionInfoSubIdFromDefaultUSim()?.let {
-        checkSdkVersion(Build.VERSION_CODES.Q,
-            positiveWork = { it.mccString },
-            negativeWork = { it.mcc.toString() }
-        )
-    }
+    public fun getMccFromDefaultUSimString(): String? =
+        getSubscriptionInfoSubIdFromDefaultUSim()?.let {
+            checkSdkVersion(
+                Build.VERSION_CODES.Q,
+                positiveWork = { it.mccString },
+                negativeWork = { it.mcc.toString() },
+            )
+        }
 
     /**
      * Gets MNC (Mobile Network Code) from default SIM.<br><br>
@@ -400,12 +404,14 @@ public class SimInfo(context: Context) :
      *         MNC 문자열, 사용할 수 없는 경우 null.
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun getMncFromDefaultUSimString(): String? = getSubscriptionInfoSubIdFromDefaultUSim()?.let {
-        checkSdkVersion(Build.VERSION_CODES.Q,
-            positiveWork = { it.mncString },
-            negativeWork = { it.mnc.toString() }
-        )
-    }
+    public fun getMncFromDefaultUSimString(): String? =
+        getSubscriptionInfoSubIdFromDefaultUSim()?.let {
+            checkSdkVersion(
+                Build.VERSION_CODES.Q,
+                positiveWork = { it.mncString },
+                negativeWork = { it.mnc.toString() },
+            )
+        }
 
     /**
      * Gets MCC for specific SIM slot.<br><br>
@@ -417,12 +423,14 @@ public class SimInfo(context: Context) :
      *         MCC 문자열, 사용할 수 없는 경우 null.
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun getMcc(slotIndex: Int): String? = getActiveSubscriptionInfoSimSlot(slotIndex)?.let {
-        checkSdkVersion(Build.VERSION_CODES.Q,
-            positiveWork = { it.mccString },
-            negativeWork = { it.mcc.toString() }
-        )
-    }
+    public fun getMcc(slotIndex: Int): String? =
+        getActiveSubscriptionInfoSimSlot(slotIndex)?.let {
+            checkSdkVersion(
+                Build.VERSION_CODES.Q,
+                positiveWork = { it.mccString },
+                negativeWork = { it.mcc.toString() },
+            )
+        }
 
     /**
      * Gets MNC for specific SIM slot.<br><br>
@@ -434,17 +442,19 @@ public class SimInfo(context: Context) :
      *         MNC 문자열, 사용할 수 없는 경우 null.
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun getMnc(slotIndex: Int): String? = getActiveSubscriptionInfoSimSlot(slotIndex)?.let {
-        checkSdkVersion(Build.VERSION_CODES.Q,
-            positiveWork = { it.mncString },
-            negativeWork = { it.mnc.toString() }
-        )
-    }
+    public fun getMnc(slotIndex: Int): String? =
+        getActiveSubscriptionInfoSimSlot(slotIndex)?.let {
+            checkSdkVersion(
+                Build.VERSION_CODES.Q,
+                positiveWork = { it.mncString },
+                negativeWork = { it.mnc.toString() },
+            )
+        }
 
     // =================================================
     // Phone Number Information / 전화번호 정보
     // =================================================
-    
+
     /**
      * Gets phone number from default SIM.<br><br>
      * 기본 SIM의 전화번호를 반환합니다.<br>
@@ -476,7 +486,7 @@ public class SimInfo(context: Context) :
     // =================================================
     // Display Information / 표시 정보
     // =================================================
-    
+
     /**
      * Gets display name from default SIM.<br><br>
      * 기본 SIM의 표시 이름을 반환합니다.<br>
@@ -485,8 +495,7 @@ public class SimInfo(context: Context) :
      *         표시 이름, 사용할 수 없는 경우 null.
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun getDisplayNameFromDefaultUSim(): String? = 
-        getSubscriptionInfoSubIdFromDefaultUSim()?.displayName?.toString()
+    public fun getDisplayNameFromDefaultUSim(): String? = getSubscriptionInfoSubIdFromDefaultUSim()?.displayName?.toString()
 
     /**
      * Gets country ISO from default SIM.<br><br>
@@ -496,8 +505,7 @@ public class SimInfo(context: Context) :
      *         국가 ISO 코드, 사용할 수 없는 경우 null.
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun getCountryIsoFromDefaultUSim(): String? = 
-        getSubscriptionInfoSimSlotFromDefaultUSim()?.countryIso
+    public fun getCountryIsoFromDefaultUSim(): String? = getSubscriptionInfoSimSlotFromDefaultUSim()?.countryIso
 
     /**
      * Checks if default SIM is roaming.<br><br>
@@ -513,7 +521,7 @@ public class SimInfo(context: Context) :
     // =================================================
     // eSIM Support / eSIM 지원
     // =================================================
-    
+
     /**
      * Checks if eSIM is supported.<br><br>
      * eSIM 지원 여부를 확인합니다.<br>
@@ -521,8 +529,7 @@ public class SimInfo(context: Context) :
      * @return `true` if eSIM is supported, `false` otherwise.<br><br>
      *         eSIM이 지원되면 `true`, 그렇지 않으면 `false`.<br>
      */
-    public fun isESimSupported(): Boolean = 
-        (euiccManager.euiccInfo != null && euiccManager.isEnabled)
+    public fun isESimSupported(): Boolean = (euiccManager.euiccInfo != null && euiccManager.isEnabled)
 
     /**
      * Checks if eSIM is registered.<br><br>
@@ -545,14 +552,17 @@ public class SimInfo(context: Context) :
      * @return SIM status constant.<br><br>
      *         SIM 상태 상수.
      */
-    public fun getActiveSimStatus(slotIndex: Int): Int =
-        getActiveSimStatus(isESimSupported(), isRegisterESim(slotIndex), slotIndex)
+    public fun getActiveSimStatus(slotIndex: Int): Int = getActiveSimStatus(isESimSupported(), isRegisterESim(slotIndex), slotIndex)
 
     /**
      * Detailed SIM status check (internal method).<br><br>
      * SIM 상태 상세 확인 (내부 메서드)입니다.<br>
      */
-    private fun getActiveSimStatus(isAbleEsim: Boolean, isRegisterESim: Boolean, slotIndex: Int): Int {
+    private fun getActiveSimStatus(
+        isAbleEsim: Boolean,
+        isRegisterESim: Boolean,
+        slotIndex: Int,
+    ): Int {
         val status = telephonyManager.getSimState(slotIndex)
 
         return if (isAbleEsim && slotIndex == 0 && status == TelephonyManager.SIM_STATE_UNKNOWN) {
@@ -561,13 +571,15 @@ public class SimInfo(context: Context) :
         } else if (!isRegisterESim) {
             Logx.w("SimInfo: SimSlot $slotIndex, may be eSim is not register")
             TelephonyManager.SIM_STATE_UNKNOWN
-        } else status
+        } else {
+            status
+        }
     }
 
     // =================================================
     // Cleanup / 정리
     // =================================================
-    
+
     /**
      * Cleans up resources used by SimInfo.<br><br>
      * SimInfo에서 사용한 리소스를 정리합니다.<br>

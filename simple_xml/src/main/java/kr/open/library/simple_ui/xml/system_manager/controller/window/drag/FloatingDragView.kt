@@ -38,17 +38,17 @@ public open class FloatingDragView(
      * Collision callback invoked on touch up.<br><br>
      * 터치 업 시 호출되는 충돌 콜백입니다.<br>
      */
-    public var collisionsWhileTouchUp: ((FloatingDragView, FloatingViewCollisionsType) -> Unit)? = null
+    public var collisionsWhileTouchUp: ((FloatingDragView, FloatingViewCollisionsType) -> Unit)? = null,
 ) : FloatingFixedView(view, startX, startY) {
-
     /**
      * Internal collision state flow (mutable).<br><br>
      * 내부 충돌 상태 플로우입니다(변경 가능).<br>
      */
-    private val msfCollisionStateFlow = MutableStateFlow<Pair<FloatingViewTouchType, FloatingViewCollisionsType>>(
-        FloatingViewTouchType.TOUCH_UP to FloatingViewCollisionsType.UNCOLLISIONS
-    )
-    
+    private val msfCollisionStateFlow =
+        MutableStateFlow<Pair<FloatingViewTouchType, FloatingViewCollisionsType>>(
+            FloatingViewTouchType.TOUCH_UP to FloatingViewCollisionsType.UNCOLLISIONS,
+        )
+
     /**
      * External collision state flow (read-only).<br><br>
      * 외부에 노출되는 읽기 전용 충돌 상태 플로우입니다.<br>
@@ -70,7 +70,10 @@ public open class FloatingDragView(
      * @return true if the state was updated successfully.<br><br>
      *         상태 업데이트에 성공하면 true를 반환합니다.<br>
      */
-    public fun updateCollisionState(phase: FloatingViewTouchType, type: FloatingViewCollisionsType): Boolean =
+    public fun updateCollisionState(
+        phase: FloatingViewTouchType,
+        type: FloatingViewCollisionsType,
+    ): Boolean =
         safeCatch(false) {
             Logx.d("Collision State Updated: $phase -> $type")
             msfCollisionStateFlow.value = phase to type

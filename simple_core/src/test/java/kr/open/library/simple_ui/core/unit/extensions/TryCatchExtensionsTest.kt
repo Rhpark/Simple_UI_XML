@@ -1,13 +1,16 @@
 package kr.open.library.simple_ui.core.unit.extensions
 
 import android.util.Log
-import kr.open.library.simple_ui.core.extensions.trycatch.*
 import kotlinx.coroutines.CancellationException
+import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
 import org.junit.After
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import org.junit.Assert.*
-import org.junit.Ignore
 import org.mockito.MockedStatic
 import org.mockito.Mockito
 import org.mockito.Mockito.mockStatic
@@ -21,7 +24,6 @@ import org.mockito.Mockito.mockStatic
  * - safeCatch(block, onCatch) - 예외 발생 시 커스텀 핸들러 실행
  */
 class TryCatchExtensionsTest {
-
     private lateinit var logMock: MockedStatic<Log>
 
     @Before
@@ -126,9 +128,10 @@ class TryCatchExtensionsTest {
         val expectedValue = 42
 
         // When
-        val result = safeCatch(defaultValue = 0) {
-            expectedValue
-        }
+        val result =
+            safeCatch(defaultValue = 0) {
+                expectedValue
+            }
 
         // Then
         assertEquals("정상 실행 시 결과값을 반환해야 합니다", expectedValue, result)
@@ -143,9 +146,10 @@ class TryCatchExtensionsTest {
         val defaultValue = "기본값"
 
         // When - 일부러 예외를 발생시킴
-        val result = safeCatch(defaultValue) {
-            throw RuntimeException("에러 발생!")
-        }
+        val result =
+            safeCatch(defaultValue) {
+                throw RuntimeException("에러 발생!")
+            }
 
         // Then - 에러가 나도 기본값을 받아야 함
         assertEquals("예외 발생 시 기본값을 반환해야 합니다", defaultValue, result)
@@ -160,9 +164,7 @@ class TryCatchExtensionsTest {
         val defaultValue: String? = null
 
         // When
-        val result = safeCatch(defaultValue) {
-            throw RuntimeException("에러")
-        }
+        val result = safeCatch(defaultValue) { throw RuntimeException("에러") }
 
         // Then
         assertNull("null 기본값이 반환되어야 합니다", result)
@@ -177,9 +179,10 @@ class TryCatchExtensionsTest {
         val defaultValue = -1
 
         // When
-        val result = safeCatch(defaultValue) {
-            "abc".toInt()  // NumberFormatException 발생
-        }
+        val result =
+            safeCatch(defaultValue) {
+                "abc".toInt() // NumberFormatException 발생
+            }
 
         // Then
         assertEquals("NumberFormatException 발생 시 기본값 반환", defaultValue, result)
@@ -208,13 +211,14 @@ class TryCatchExtensionsTest {
         val expectedValue = "성공"
 
         // When
-        val result = safeCatch(
-            block = { expectedValue },
-            onCatch = {
-                catchCalled = true
-                "실패"
-            }
-        )
+        val result =
+            safeCatch(
+                block = { expectedValue },
+                onCatch = {
+                    catchCalled = true
+                    "실패"
+                },
+            )
 
         // Then
         assertEquals("정상 실행 시 결과값을 반환해야 합니다", expectedValue, result)
@@ -231,15 +235,16 @@ class TryCatchExtensionsTest {
         val exceptionMessage = "테스트 에러"
 
         // When
-        val result = safeCatch(
-            block = {
-                throw RuntimeException(exceptionMessage)
-            },
-            onCatch = { exception ->
-                catchCalled = true
-                "에러 처리됨: ${exception.message}"
-            }
-        )
+        val result =
+            safeCatch(
+                block = {
+                    throw RuntimeException(exceptionMessage)
+                },
+                onCatch = { exception ->
+                    catchCalled = true
+                    "에러 처리됨: ${exception.message}"
+                },
+            )
 
         // Then
         assertTrue("onCatch가 호출되어야 합니다", catchCalled)
@@ -262,15 +267,20 @@ class TryCatchExtensionsTest {
             onCatch = { exception ->
                 caughtException = exception
                 "처리됨"
-            }
+            },
         )
 
         // Then
         assertNotNull("예외가 전달되어야 합니다", caughtException)
-        assertTrue("IllegalArgumentException 타입이어야 합니다",
-            caughtException is IllegalArgumentException)
-        assertEquals("예외 메시지가 일치해야 합니다",
-            "잘못된 인자", caughtException?.message)
+        assertTrue(
+            "IllegalArgumentException 타입이어야 합니다",
+            caughtException is IllegalArgumentException,
+        )
+        assertEquals(
+            "예외 메시지가 일치해야 합니다",
+            "잘못된 인자",
+            caughtException?.message,
+        )
     }
 
     /**
@@ -279,14 +289,15 @@ class TryCatchExtensionsTest {
     @Test
     fun testOnCatchCanReturnDifferentType() {
         // Given & When
-        val result = safeCatch(
-            block = {
-                throw RuntimeException("에러")
-            },
-            onCatch = {
-                999  // 예외 발생 시 숫자 반환
-            }
-        )
+        val result =
+            safeCatch(
+                block = {
+                    throw RuntimeException("에러")
+                },
+                onCatch = {
+                    999 // 예외 발생 시 숫자 반환
+                },
+            )
 
         // Then
         assertEquals("onCatch에서 반환한 값이 결과가 되어야 합니다", 999, result)
@@ -302,7 +313,7 @@ class TryCatchExtensionsTest {
             block = {
                 throw CancellationException("코루틴 취소")
             },
-            onCatch = { "처리 시도" }
+            onCatch = { "처리 시도" },
         )
     }
 
@@ -314,10 +325,11 @@ class TryCatchExtensionsTest {
     @Test
     fun testFileReadReturnsEmptyStringOnFailure() {
         // 실제 사용 예시: 파일 읽기 실패 시 빈 문자열 반환
-        val fileContent = safeCatch(defaultValue = "") {
-            // 실제로는 파일을 읽지만, 테스트에서는 예외 발생
-            throw java.io.FileNotFoundException("파일 없음")
-        }
+        val fileContent =
+            safeCatch(defaultValue = "") {
+                // 실제로는 파일을 읽지만, 테스트에서는 예외 발생
+                throw java.io.FileNotFoundException("파일 없음")
+            }
 
         assertEquals("파일 읽기 실패 시 빈 문자열", "", fileContent)
     }
@@ -328,22 +340,26 @@ class TryCatchExtensionsTest {
     @Test
     fun testJsonParsingReturnsDefaultObjectAndLogsError() {
         // 실제 사용 예시: JSON 파싱 실패 시 기본 객체 반환
-        data class User(val name: String, val age: Int)
+        data class User(
+            val name: String,
+            val age: Int,
+        )
 
         val defaultUser = User("Unknown", 0)
         var errorLogged = false
 
-        val user = safeCatch(
-            block = {
-                // JSON 파싱 시도
-                throw Exception("JSON 파싱 실패")
-            },
-            onCatch = { exception ->
-                errorLogged = true
-                println("JSON 파싱 에러: ${exception.message}")
-                defaultUser
-            }
-        )
+        val user =
+            safeCatch(
+                block = {
+                    // JSON 파싱 시도
+                    throw Exception("JSON 파싱 실패")
+                },
+                onCatch = { exception ->
+                    errorLogged = true
+                    println("JSON 파싱 에러: ${exception.message}")
+                    defaultUser
+                },
+            )
 
         assertEquals("기본 사용자 객체가 반환되어야 합니다", defaultUser, user)
         assertTrue("에러가 로깅되어야 합니다", errorLogged)
@@ -357,15 +373,16 @@ class TryCatchExtensionsTest {
         // 실제 사용 예시: 네트워크 요청 실패 시 재시도
         var attemptCount = 0
 
-        val result = safeCatch(
-            block = {
-                attemptCount++
-                throw java.net.SocketTimeoutException("타임아웃")
-            },
-            onCatch = { exception ->
-                "네트워크 에러: 재시도 필요 (시도 횟수: $attemptCount)"
-            }
-        )
+        val result =
+            safeCatch(
+                block = {
+                    attemptCount++
+                    throw java.net.SocketTimeoutException("타임아웃")
+                },
+                onCatch = { exception ->
+                    "네트워크 에러: 재시도 필요 (시도 횟수: $attemptCount)"
+                },
+            )
 
         assertEquals("시도 횟수가 1이어야 합니다", 1, attemptCount)
         assertTrue("재시도 메시지를 포함해야 합니다", result.contains("재시도 필요"))
@@ -424,7 +441,7 @@ class TryCatchExtensionsTest {
             onCatch = { e ->
                 caughtMessage = e.message
                 "OK"
-            }
+            },
         )
 
         // Then
@@ -437,12 +454,13 @@ class TryCatchExtensionsTest {
     @Test
     fun testSafeCatchHandlesMultipleExceptionTypes() {
         // Given
-        val exceptions = listOf<Exception>(
-            IllegalArgumentException("잘못된 인자"),
-            IllegalStateException("잘못된 상태"),
-            NullPointerException("null"),
-            IndexOutOfBoundsException("인덱스 오류")
-        )
+        val exceptions =
+            listOf<Exception>(
+                IllegalArgumentException("잘못된 인자"),
+                IllegalStateException("잘못된 상태"),
+                NullPointerException("null"),
+                IndexOutOfBoundsException("인덱스 오류"),
+            )
 
         // When & Then
         exceptions.forEach { exception ->
@@ -452,7 +470,7 @@ class TryCatchExtensionsTest {
                 onCatch = {
                     handled = true
                     "처리됨"
-                }
+                },
             )
             assertTrue("${exception::class.simpleName}이 처리되어야 합니다", handled)
         }
@@ -474,14 +492,16 @@ class TryCatchExtensionsTest {
             onCatch = { e ->
                 caughtException = e
                 "OK"
-            }
+            },
         )
 
         // Then
         assertNotNull("예외가 전달되어야 합니다", caughtException)
         assertNotNull("스택 트레이스가 있어야 합니다", caughtException?.stackTrace)
-        assertTrue("스택 트레이스가 비어있지 않아야 합니다",
-            caughtException?.stackTrace?.isNotEmpty() == true)
+        assertTrue(
+            "스택 트레이스가 비어있지 않아야 합니다",
+            caughtException?.stackTrace?.isNotEmpty() == true,
+        )
     }
 
     /**
@@ -500,13 +520,15 @@ class TryCatchExtensionsTest {
             onCatch = { e ->
                 caughtCause = e.cause
                 "OK"
-            }
+            },
         )
 
         // Then
         assertNotNull("cause가 보존되어야 합니다", caughtCause)
-        assertTrue("cause가 IllegalStateException이어야 합니다",
-            caughtCause is IllegalStateException)
+        assertTrue(
+            "cause가 IllegalStateException이어야 합니다",
+            caughtCause is IllegalStateException,
+        )
         assertEquals("cause 메시지가 일치해야 합니다", "근본 원인", caughtCause?.message)
     }
 
@@ -528,7 +550,9 @@ class TryCatchExtensionsTest {
         assertTrue(boolResult)
 
         // When & Then - Custom object
-        data class User(val name: String)
+        data class User(
+            val name: String,
+        )
         val userResult = safeCatch(defaultValue = User("default")) { User("actual") }
         assertEquals("actual", userResult.name)
     }

@@ -45,12 +45,16 @@ public fun Long.toDateString(
  * @throws IllegalArgumentException if the string cannot be parsed or doesn't match the format completely.<br><br>
  *                                  문자열을 파싱할 수 없거나 형식과 완전히 일치하지 않을 경우.
  */
-public fun String.toDateLong(format: String, locale: Locale = Locale.getDefault()): Long  {
+public fun String.toDateLong(
+    format: String,
+    locale: Locale = Locale.getDefault(),
+): Long {
     val formatter = SimpleDateFormat(format, locale)
     val parsePosition = ParsePosition(0)
 
-    val parsedDate = formatter.parse(this, parsePosition)
-        ?: throw IllegalArgumentException("Invalid time string")
+    val parsedDate =
+        formatter.parse(this, parsePosition)
+            ?: throw IllegalArgumentException("Invalid time string")
 
     if (parsePosition.index != length) {
         throw IllegalArgumentException("Invalid time string")
@@ -58,7 +62,6 @@ public fun String.toDateLong(format: String, locale: Locale = Locale.getDefault(
 
     return parsedDate.time
 }
-
 
 /**
  * Parses a date-time string using the specified pattern and locale, and returns a Date object.<br><br>
@@ -73,11 +76,15 @@ public fun String.toDateLong(format: String, locale: Locale = Locale.getDefault(
  * @return A Date object if parsing succeeds, or null if parsing fails.<br><br>
  *         파싱이 성공하면 Date 객체, 실패하면 null.<br>
  */
-public fun String.toDate(format: String, locale: Locale = Locale.getDefault()): Date? = try {
-    SimpleDateFormat(format, locale).parse(this)
-} catch (e: Exception) {
-    null
-}
+public fun String.toDate(
+    format: String,
+    locale: Locale = Locale.getDefault(),
+): Date? =
+    try {
+        SimpleDateFormat(format, locale).parse(this)
+    } catch (e: Exception) {
+        null
+    }
 
 /**
  * Converts a timestamp in milliseconds to a LocalDateTime using the system default time zone.<br>
@@ -98,8 +105,7 @@ public fun String.toDate(format: String, locale: Locale = Locale.getDefault()): 
  * }
  * ```
  */
-public fun Long.toLocalDateTime(): LocalDateTime =
-    Instant.ofEpochMilli(this).atZone(ZoneId.systemDefault()).toLocalDateTime()
+public fun Long.toLocalDateTime(): LocalDateTime = Instant.ofEpochMilli(this).atZone(ZoneId.systemDefault()).toLocalDateTime()
 
 /**
  * Formats a LocalDateTime to a string using the specified pattern and locale.<br>

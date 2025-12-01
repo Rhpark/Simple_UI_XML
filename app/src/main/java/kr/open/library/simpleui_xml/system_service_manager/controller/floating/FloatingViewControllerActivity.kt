@@ -14,17 +14,16 @@ import kotlinx.coroutines.launch
 import kr.open.library.simple_ui.xml.extensions.view.setGone
 import kr.open.library.simple_ui.xml.extensions.view.setVisible
 import kr.open.library.simple_ui.xml.extensions.view.toastShowShort
-import kr.open.library.simple_ui.xml.ui.activity.BaseActivity
 import kr.open.library.simple_ui.xml.system_manager.controller.window.FloatingViewController
 import kr.open.library.simple_ui.xml.system_manager.controller.window.drag.FloatingDragView
 import kr.open.library.simple_ui.xml.system_manager.controller.window.fixed.FloatingFixedView
 import kr.open.library.simple_ui.xml.system_manager.controller.window.vo.FloatingViewCollisionsType
 import kr.open.library.simple_ui.xml.system_manager.controller.window.vo.FloatingViewTouchType
+import kr.open.library.simple_ui.xml.ui.activity.BaseActivity
 import kr.open.library.simpleui_xml.R
 import kr.open.library.simpleui_xml.databinding.ActivityFloatingControllerBinding
 
 class FloatingViewControllerActivity : BaseActivity(R.layout.activity_floating_controller) {
-
     private lateinit var binding: ActivityFloatingControllerBinding
     private val floatingViewController by lazy { FloatingViewController(this) }
 
@@ -42,28 +41,29 @@ class FloatingViewControllerActivity : BaseActivity(R.layout.activity_floating_c
             btnFloatingViewDrag.setOnClickListener {
                 onRequestPermissions(listOf(SYSTEM_ALERT_WINDOW)) { deniedPermissions ->
                     if (deniedPermissions.isEmpty()) {
+                        val icon =
+                            getImageView(R.drawable.ic_launcher_foreground).apply {
+                                setBackgroundColor(Color.WHITE)
+                            }
 
-                        val icon = getImageView(R.drawable.ic_launcher_foreground).apply {
-                            setBackgroundColor(Color.WHITE)
-                        }
-
-                        val dragView = FloatingDragView(icon, 100, 100).apply {
-                            lifecycleScope.launch {
-                                sfCollisionStateFlow.collect { item ->
-                                    when (item.first) {
-                                        FloatingViewTouchType.TOUCH_DOWN -> {
-                                            showFloatingView()
-                                        }
-                                        FloatingViewTouchType.TOUCH_MOVE -> {
-                                            moveFloatingView(item)
-                                        }
-                                        FloatingViewTouchType.TOUCH_UP -> {
-                                            upFloatingView(this@apply, item)
+                        val dragView =
+                            FloatingDragView(icon, 100, 100).apply {
+                                lifecycleScope.launch {
+                                    sfCollisionStateFlow.collect { item ->
+                                        when (item.first) {
+                                            FloatingViewTouchType.TOUCH_DOWN -> {
+                                                showFloatingView()
+                                            }
+                                            FloatingViewTouchType.TOUCH_MOVE -> {
+                                                moveFloatingView(item)
+                                            }
+                                            FloatingViewTouchType.TOUCH_UP -> {
+                                                upFloatingView(this@apply, item)
+                                            }
                                         }
                                     }
                                 }
                             }
-                        }
                         floatingViewController.addFloatingDragView(dragView)
                         toastShowShort("Drag view added")
                     } else {
@@ -75,10 +75,10 @@ class FloatingViewControllerActivity : BaseActivity(R.layout.activity_floating_c
             btnFloatingViewFix.setOnClickListener {
                 onRequestPermissions(listOf(SYSTEM_ALERT_WINDOW)) { deniedPermissions ->
                     if (deniedPermissions.isEmpty()) {
-
-                        val icon = getImageView(R.drawable.ic_launcher_foreground).apply {
-                            setBackgroundColor(Color.GREEN)
-                        }
+                        val icon =
+                            getImageView(R.drawable.ic_launcher_foreground).apply {
+                                setBackgroundColor(Color.GREEN)
+                            }
                         val fixedView = FloatingFixedView(icon, 200, 300)
                         floatingViewController.setFloatingFixedView(fixedView)
                         toastShowShort("Fixed view set")
@@ -95,9 +95,10 @@ class FloatingViewControllerActivity : BaseActivity(R.layout.activity_floating_c
         }
     }
 
-    private fun getImageView(res: Int): ImageView = ImageView(this).apply {
-        setImageResource(res)
-    }
+    private fun getImageView(res: Int): ImageView =
+        ImageView(this).apply {
+            setImageResource(res)
+        }
 
     private fun showFloatingView() {
         floatingViewController.getFloatingFixedView()?.view?.let {
@@ -118,24 +119,33 @@ class FloatingViewControllerActivity : BaseActivity(R.layout.activity_floating_c
 
     private fun upFloatingView(
         floatingView: FloatingDragView,
-        item: Pair<FloatingViewTouchType, FloatingViewCollisionsType>
+        item: Pair<FloatingViewTouchType, FloatingViewCollisionsType>,
     ) {
         floatingViewController.getFloatingFixedView()?.view?.let {
-            hideAnimScale(it, object : Animator.AnimatorListener {
-                override fun onAnimationStart(animation: Animator) {}
-                override fun onAnimationRepeat(animation: Animator) {}
-                override fun onAnimationCancel(animation: Animator) {}
-                override fun onAnimationEnd(animation: Animator) {
-                    floatingViewController.getFloatingFixedView()?.let { it.view.setGone() }
-                    if (item.second == FloatingViewCollisionsType.OCCURING) {
-                        floatingViewController.removeFloatingDragView(floatingView)
+            hideAnimScale(
+                it,
+                object : Animator.AnimatorListener {
+                    override fun onAnimationStart(animation: Animator) {}
+
+                    override fun onAnimationRepeat(animation: Animator) {}
+
+                    override fun onAnimationCancel(animation: Animator) {}
+
+                    override fun onAnimationEnd(animation: Animator) {
+                        floatingViewController.getFloatingFixedView()?.let { it.view.setGone() }
+                        if (item.second == FloatingViewCollisionsType.OCCURING) {
+                            floatingViewController.removeFloatingDragView(floatingView)
+                        }
                     }
-                }
-            })
+                },
+            )
         }
     }
 
-    private fun hideAnimScale(view: View, listener: Animator.AnimatorListener?) {
+    private fun hideAnimScale(
+        view: View,
+        listener: Animator.AnimatorListener?,
+    ) {
         val scaleX = ObjectAnimator.ofFloat(view, "scaleX", 1.0f, 0.0f)
         val scaleY = ObjectAnimator.ofFloat(view, "scaleY", 1.0f, 0.0f)
         AnimatorSet().apply {
@@ -146,7 +156,10 @@ class FloatingViewControllerActivity : BaseActivity(R.layout.activity_floating_c
         }
     }
 
-    private fun showAnimScale(view: View, listener: Animator.AnimatorListener?) {
+    private fun showAnimScale(
+        view: View,
+        listener: Animator.AnimatorListener?,
+    ) {
         val scaleX = ObjectAnimator.ofFloat(view, "scaleX", 0.0f, 1.0f)
         val scaleY = ObjectAnimator.ofFloat(view, "scaleY", 0.0f, 1.0f)
         AnimatorSet().apply {

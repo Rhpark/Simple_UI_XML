@@ -18,7 +18,7 @@ import kotlin.math.abs
  */
 internal class RecyclerScrollStateCalculator(
     private var edgeReachThreshold: Int,
-    private var scrollDirectionThreshold: Int
+    private var scrollDirectionThreshold: Int,
 ) {
     private var accumulatedDx = 0
     private var accumulatedDy = 0
@@ -50,7 +50,7 @@ internal class RecyclerScrollStateCalculator(
         val topChanged: Boolean,
         val isAtTop: Boolean,
         val bottomChanged: Boolean,
-        val isAtBottom: Boolean
+        val isAtBottom: Boolean,
     )
 
     /**
@@ -73,7 +73,7 @@ internal class RecyclerScrollStateCalculator(
         val leftChanged: Boolean,
         val isAtLeft: Boolean,
         val rightChanged: Boolean,
-        val isAtRight: Boolean
+        val isAtRight: Boolean,
     )
 
     /**
@@ -88,7 +88,7 @@ internal class RecyclerScrollStateCalculator(
      */
     data class ScrollDirectionUpdateResult(
         val directionChanged: Boolean,
-        val newDirection: ScrollDirection
+        val newDirection: ScrollDirection,
     )
 
     /**
@@ -114,14 +114,15 @@ internal class RecyclerScrollStateCalculator(
         verticalScrollOffset: Int,
         canScrollDown: Boolean,
         verticalScrollExtent: Int,
-        verticalScrollRange: Int
+        verticalScrollRange: Int,
     ): VerticalEdgeCheckResult {
         val newIsAtTop = verticalScrollOffset <= edgeReachThreshold
         val topChanged = newIsAtTop != isAtTop
         isAtTop = newIsAtTop
 
-        val isBottomReached = !canScrollDown &&
-            verticalScrollExtent + verticalScrollOffset + edgeReachThreshold >= verticalScrollRange
+        val isBottomReached =
+            !canScrollDown &&
+                verticalScrollExtent + verticalScrollOffset + edgeReachThreshold >= verticalScrollRange
         val bottomChanged = isBottomReached != isAtBottom
         isAtBottom = isBottomReached
 
@@ -129,7 +130,7 @@ internal class RecyclerScrollStateCalculator(
             topChanged = topChanged,
             isAtTop = newIsAtTop,
             bottomChanged = bottomChanged,
-            isAtBottom = isBottomReached
+            isAtBottom = isBottomReached,
         )
     }
 
@@ -156,14 +157,15 @@ internal class RecyclerScrollStateCalculator(
         horizontalScrollOffset: Int,
         canScrollRight: Boolean,
         horizontalScrollExtent: Int,
-        horizontalScrollRange: Int
+        horizontalScrollRange: Int,
     ): HorizontalEdgeCheckResult {
         val newIsAtLeft = horizontalScrollOffset <= edgeReachThreshold
         val leftChanged = newIsAtLeft != isAtLeft
         isAtLeft = newIsAtLeft
 
-        val isRightReached = !canScrollRight &&
-            horizontalScrollExtent + horizontalScrollOffset + edgeReachThreshold >= horizontalScrollRange
+        val isRightReached =
+            !canScrollRight &&
+                horizontalScrollExtent + horizontalScrollOffset + edgeReachThreshold >= horizontalScrollRange
         val rightChanged = isRightReached != isAtRight
         isAtRight = isRightReached
 
@@ -171,7 +173,7 @@ internal class RecyclerScrollStateCalculator(
             leftChanged = leftChanged,
             isAtLeft = newIsAtLeft,
             rightChanged = rightChanged,
-            isAtRight = isRightReached
+            isAtRight = isRightReached,
         )
     }
 
@@ -199,13 +201,13 @@ internal class RecyclerScrollStateCalculator(
 
             return ScrollDirectionUpdateResult(
                 directionChanged = directionChanged,
-                newDirection = newDirection
+                newDirection = newDirection,
             )
         }
 
         return ScrollDirectionUpdateResult(
             directionChanged = false,
-            newDirection = currentScrollDirection
+            newDirection = currentScrollDirection,
         )
     }
 
@@ -233,13 +235,13 @@ internal class RecyclerScrollStateCalculator(
 
             return ScrollDirectionUpdateResult(
                 directionChanged = directionChanged,
-                newDirection = newDirection
+                newDirection = newDirection,
             )
         }
 
         return ScrollDirectionUpdateResult(
             directionChanged = false,
-            newDirection = currentScrollDirection
+            newDirection = currentScrollDirection,
         )
     }
 
@@ -263,7 +265,7 @@ internal class RecyclerScrollStateCalculator(
 
         return ScrollDirectionUpdateResult(
             directionChanged = directionChanged,
-            newDirection = ScrollDirection.IDLE
+            newDirection = ScrollDirection.IDLE,
         )
     }
 
@@ -279,7 +281,7 @@ internal class RecyclerScrollStateCalculator(
      */
     fun updateThresholds(
         edgeReachThreshold: Int? = null,
-        scrollDirectionThreshold: Int? = null
+        scrollDirectionThreshold: Int? = null,
     ) {
         edgeReachThreshold?.let { this.edgeReachThreshold = it }
         scrollDirectionThreshold?.let { this.scrollDirectionThreshold = it }

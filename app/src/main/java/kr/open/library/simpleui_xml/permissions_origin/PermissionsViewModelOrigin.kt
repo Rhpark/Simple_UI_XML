@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
 class PermissionsViewModelOrigin : ViewModel() {
-
     // Event Flow (ViewModel -> View)
     private val _events = Channel<PermissionEvent>(Channel.BUFFERED)
     val events: Flow<PermissionEvent> = _events.receiveAsFlow()

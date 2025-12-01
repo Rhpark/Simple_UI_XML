@@ -13,9 +13,9 @@ import kr.open.library.simple_ui.core.local.base.BaseSharedPreference
  * @param context The application context.<br><br>
  *                애플리케이션 컨텍스트입니다.<br>
  */
-public class LocationSharedPreference(private val context: Context) :
-    BaseSharedPreference(context, "location_preferences") {
-
+public class LocationSharedPreference(
+    private val context: Context,
+) : BaseSharedPreference(context, "location_preferences") {
     /**
      * Preference delegate for latitude.<br><br>
      * 위도 저장을 위한 Preference 위임자입니다.<br>
@@ -83,7 +83,7 @@ public class LocationSharedPreference(private val context: Context) :
          */
         private const val PROVIDER_SUFFIX = "_provider"
     }
-    
+
     /**
      * Lazy-initialized SharedPreferences instance.<br><br>
      * 지연 초기화된 SharedPreferences 인스턴스입니다.<br>
@@ -107,7 +107,6 @@ public class LocationSharedPreference(private val context: Context) :
         prefProvider = location.provider
     }
 
-
     /**
      * Loads the saved location from SharedPreferences.<br><br>
      * SharedPreferences에 저장된 위치를 불러옵니다.<br>
@@ -115,24 +114,27 @@ public class LocationSharedPreference(private val context: Context) :
      * @return The saved Location object, or `null` if no location is saved.<br><br>
      *         저장된 위치가 있으면 Location 객체를, 없으면 `null`을 반환합니다.<br>
      */
-    public fun loadLocation(): Location? = safeCatch(defaultValue = null) {
-
-        if (prefTime == 0L) { null }
-        else {
-            prefProvider?.let {
-                Location(it).apply {
-                    latitude = prefLat
-                    longitude = prefLon
-                    accuracy = prefAccuracy
-                    time = prefTime
+    public fun loadLocation(): Location? =
+        safeCatch(defaultValue = null) {
+            if (prefTime == 0L) {
+                null
+            } else {
+                prefProvider?.let {
+                    Location(it).apply {
+                        latitude = prefLat
+                        longitude = prefLon
+                        accuracy = prefAccuracy
+                        time = prefTime
+                    }
                 }
             }
         }
-    }
 
     /**
      * Removes all saved location data from SharedPreferences.<br><br>
      * SharedPreferences에 저장된 모든 위치 데이터를 삭제합니다.<br>
      */
-    public fun removeApply() { removeAllApply() }
+    public fun removeApply() {
+        removeAllApply()
+    }
 }

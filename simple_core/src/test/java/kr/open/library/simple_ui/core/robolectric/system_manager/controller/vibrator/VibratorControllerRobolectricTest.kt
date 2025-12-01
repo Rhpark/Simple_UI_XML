@@ -22,7 +22,6 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.doReturn
 import org.mockito.Mockito.doThrow
 import org.mockito.Mockito.mock
-import org.mockito.Mockito.never
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.verifyNoInteractions
 import org.robolectric.RobolectricTestRunner
@@ -31,7 +30,6 @@ import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
 class VibratorControllerRobolectricTest {
-
     private lateinit var application: Application
     private lateinit var vibrator: Vibrator
     private lateinit var vibratorManager: VibratorManager
@@ -41,10 +39,11 @@ class VibratorControllerRobolectricTest {
         application = ApplicationProvider.getApplicationContext()
         val shadowApp = Shadows.shadowOf(application)
 
-        val permissionInfo = PermissionInfo().apply {
-            name = Manifest.permission.VIBRATE
-            protectionLevel = PermissionInfo.PROTECTION_DANGEROUS
-        }
+        val permissionInfo =
+            PermissionInfo().apply {
+                name = Manifest.permission.VIBRATE
+                protectionLevel = PermissionInfo.PROTECTION_DANGEROUS
+            }
         Shadows.shadowOf(application.packageManager).addPermissionInfo(permissionInfo)
 
         vibrator = mock(Vibrator::class.java)
@@ -134,10 +133,11 @@ class VibratorControllerRobolectricTest {
         grantVibratePermission()
         val controller = VibratorController(application)
 
-        val result = controller.createWaveform(
-            longArrayOf(0L, 10L, 20L),
-            intArrayOf(0, 180, 255)
-        )
+        val result =
+            controller.createWaveform(
+                longArrayOf(0L, 10L, 20L),
+                intArrayOf(0, 180, 255),
+            )
 
         assertTrue(result)
         val combinedCaptor = ArgumentCaptor.forClass(CombinedVibration::class.java)

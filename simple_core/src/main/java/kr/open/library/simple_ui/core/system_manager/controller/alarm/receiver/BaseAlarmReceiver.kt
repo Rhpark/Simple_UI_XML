@@ -15,7 +15,6 @@ import kr.open.library.simple_ui.core.system_manager.controller.notification.Sim
 import kr.open.library.simple_ui.core.system_manager.extensions.getAlarmController
 import kr.open.library.simple_ui.core.system_manager.extensions.getPowerManager
 
-
 /**
  * Base class for handling alarm broadcasts with safe WakeLock management.<br>
  * Provides a template method pattern for alarm processing with proper resource management.<br><br>
@@ -25,8 +24,7 @@ import kr.open.library.simple_ui.core.system_manager.extensions.getPowerManager
  * @constructor Creates a BaseAlarmReceiver instance.<br><br>
  *              BaseAlarmReceiver 인스턴스를 생성합니다.
  */
-public abstract class BaseAlarmReceiver() : BroadcastReceiver() {
-
+public abstract class BaseAlarmReceiver : BroadcastReceiver() {
     /**
      * Controller for managing alarm notifications.<br>
      * Must be initialized by subclasses before use.<br><br>
@@ -58,7 +56,10 @@ public abstract class BaseAlarmReceiver() : BroadcastReceiver() {
      * @param alarmVo The alarm data.<br><br>
      *                알람 데이터.
      */
-    protected abstract fun createNotificationChannel(context: Context, alarmVo: AlarmVo)
+    protected abstract fun createNotificationChannel(
+        context: Context,
+        alarmVo: AlarmVo,
+    )
 
     /**
      * Displays a notification for the triggered alarm.<br><br>
@@ -69,7 +70,10 @@ public abstract class BaseAlarmReceiver() : BroadcastReceiver() {
      * @param alarmVo The alarm data containing notification details.<br><br>
      *                알림 세부정보를 포함하는 알람 데이터.
      */
-    protected abstract fun showNotification(context: Context, alarmVo: AlarmVo)
+    protected abstract fun showNotification(
+        context: Context,
+        alarmVo: AlarmVo,
+    )
 
     /**
      * Loads all stored alarms from persistent storage.<br>
@@ -97,7 +101,11 @@ public abstract class BaseAlarmReceiver() : BroadcastReceiver() {
      * @return The alarm data, or null if not found.<br><br>
      *         알람 데이터, 찾을 수 없는 경우 null.<br>
      */
-    protected abstract fun loadalarmVoList(context:Context, intent: Intent, key:Int): AlarmVo?
+    protected abstract fun loadalarmVoList(
+        context: Context,
+        intent: Intent,
+        key: Int,
+    ): AlarmVo?
 
     /**
      * The maximum time to hold the WakeLock (in milliseconds).<br>
@@ -117,9 +125,12 @@ public abstract class BaseAlarmReceiver() : BroadcastReceiver() {
      * @param intent The received broadcast intent.<br><br>
      *               수신된 브로드캐스트 인텐트.
      */
-    override fun onReceive(context: Context?, intent: Intent?) {
+    override fun onReceive(
+        context: Context?,
+        intent: Intent?,
+    ) {
         Logx.d("BaseAlarmReceiver.onReceive called")
-        
+
         // Early validation
         if (context == null) {
             Logx.e("Context is null, cannot process alarm")
@@ -131,21 +142,22 @@ public abstract class BaseAlarmReceiver() : BroadcastReceiver() {
         }
 
         var wakeLock: PowerManager.WakeLock? = null
-        
+
         try {
             // Acquire WakeLock with safe configuration
             val powerManager = context.getPowerManager()
-            wakeLock = powerManager.newWakeLock(
-                PowerManager.PARTIAL_WAKE_LOCK,  // Only CPU stays awake
-                WAKELOCK_TAG
-            ).apply {
-                // Use timeout as a safety net
-                acquire(minOf(powerManagerAcquireTime, WAKELOCK_TIMEOUT_MS))
-            }
-            
+            wakeLock =
+                powerManager
+                    .newWakeLock(
+                        PowerManager.PARTIAL_WAKE_LOCK, // Only CPU stays awake
+                        WAKELOCK_TAG,
+                    ).apply {
+                        // Use timeout as a safety net
+                        acquire(minOf(powerManagerAcquireTime, WAKELOCK_TIMEOUT_MS))
+                    }
+
             Logx.d("WakeLock acquired for alarm processing")
             processAlarmIntent(context, intent)
-            
         } catch (e: SecurityException) {
             Logx.e("Security exception acquiring WakeLock: ${e.message}")
             // Continue without WakeLock if permission is missing
@@ -166,7 +178,7 @@ public abstract class BaseAlarmReceiver() : BroadcastReceiver() {
             }
         }
     }
-    
+
     /**
      * Processes the alarm intent based on its action.<br><br>
      * 액션에 따라 알람 인텐트를 처리합니다.<br>
@@ -177,12 +189,15 @@ public abstract class BaseAlarmReceiver() : BroadcastReceiver() {
      * @param intent The received broadcast intent.<br><br>
      *               수신된 브로드캐스트 인텐트.
      */
-    private fun processAlarmIntent(context: Context, intent: Intent) {
+    private fun processAlarmIntent(
+        context: Context,
+        intent: Intent,
+    ) {
         try {
             val alarmController = context.getAlarmController()
-            
+
             Logx.d("Processing alarm intent with action: ${intent.action}")
-            
+
             when (intent.action) {
                 Intent.ACTION_BOOT_COMPLETED -> {
                     handleBootCompleted(context, alarmController)
@@ -195,7 +210,7 @@ public abstract class BaseAlarmReceiver() : BroadcastReceiver() {
             Logx.e("Error processing alarm intent: ${e.message}")
         }
     }
-    
+
     /**
      * Handles device boot completion by re-registering all active alarms.<br><br>
      * 기기 부팅 완료를 처리하여 모든 활성 알람을 다시 등록합니다.<br>
@@ -206,19 +221,24 @@ public abstract class BaseAlarmReceiver() : BroadcastReceiver() {
      * @param alarmController The alarm controller instance.<br><br>
      *                        알람 컨트롤러 인스턴스.
      */
-    private fun handleBootCompleted(context: Context, alarmController: AlarmController) {
+    private fun handleBootCompleted(
+        context: Context,
+        alarmController: AlarmController,
+    ) {
         try {
             val allAlarms = loadAllalarmVoList(context)
             Logx.d("Re-registering ${allAlarms.size} alarms after boot")
-            
+
             allAlarms.forEach { alarmVo ->
-                if (alarmVo.isActive) { registerAlarm(alarmController, alarmVo) }
+                if (alarmVo.isActive) {
+                    registerAlarm(alarmController, alarmVo)
+                }
             }
         } catch (e: Exception) {
             Logx.e("Error re-registering alarms after boot: ${e.message}")
         }
     }
-    
+
     /**
      * Handles alarm trigger by showing notification.<br><br>
      * 알람 트리거를 처리하여 알림을 표시합니다.<br>
@@ -229,15 +249,18 @@ public abstract class BaseAlarmReceiver() : BroadcastReceiver() {
      * @param intent The received broadcast intent.<br><br>
      *               수신된 브로드캐스트 인텐트.
      */
-    private fun handleAlarmTrigger(context: Context, intent: Intent) {
+    private fun handleAlarmTrigger(
+        context: Context,
+        intent: Intent,
+    ) {
         try {
             val key = intent.getIntExtra(ALARM_KEY, ALARM_KEY_DEFAULT_VALUE)
-            
+
             if (key == ALARM_KEY_DEFAULT_VALUE) {
                 Logx.e("Invalid alarm key received: $key")
                 return
             }
-            
+
             val alarmVo = loadalarmVoList(context, intent, key)
             if (alarmVo != null) {
                 createNotificationChannel(context, alarmVo)
@@ -264,7 +287,10 @@ public abstract class BaseAlarmReceiver() : BroadcastReceiver() {
      * @return `true` if registration succeeded, `false` otherwise.<br><br>
      *         등록 성공 시 `true`, 그렇지 않으면 `false`.<br>
      */
-    private fun registerAlarm(alarmController: AlarmController, alarmVo: AlarmVo): Boolean =
+    private fun registerAlarm(
+        alarmController: AlarmController,
+        alarmVo: AlarmVo,
+    ): Boolean =
         when (registerType) {
             RegisterType.ALARM_AND_ALLOW_WHILE_IDLE -> {
                 alarmController.registerAlarmAndAllowWhileIdle(classType, alarmVo)
@@ -302,6 +328,6 @@ public abstract class BaseAlarmReceiver() : BroadcastReceiver() {
          * Exact alarm that can fire while device is idle (precise timing).<br><br>
          * 기기가 유휴 상태일 때도 실행될 수 있는 정확한 알람(정밀한 타이밍)입니다.<br>
          */
-        ALARM_EXACT_AND_ALLOW_WHILE_IDLE
+        ALARM_EXACT_AND_ALLOW_WHILE_IDLE,
     }
 }

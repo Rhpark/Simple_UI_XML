@@ -29,22 +29,22 @@ import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
 class SnackBarExtensionsRobolectricTest {
-
     private val context: Context = ApplicationProvider.getApplicationContext()
     private val root: FrameLayout = FrameLayout(context)
 
     @Test
     fun `snackBarMakeShort applies options`() {
         withMockedSnackbar { snackbar ->
-            val option = SnackBarOption(
-                animMode = BaseTransientBottomBar.ANIMATION_MODE_FADE,
-                bgTint = Color.YELLOW,
-                textColor = Color.BLUE,
-                actionText = "dismiss",
-                actionTextColor = Color.GREEN,
-                isGestureInsetBottomIgnored = true,
-                action = {}
-            )
+            val option =
+                SnackBarOption(
+                    animMode = BaseTransientBottomBar.ANIMATION_MODE_FADE,
+                    bgTint = Color.YELLOW,
+                    textColor = Color.BLUE,
+                    actionText = "dismiss",
+                    actionTextColor = Color.GREEN,
+                    isGestureInsetBottomIgnored = true,
+                    action = {},
+                )
 
             val returned = root.snackBarMakeShort("hello", option)
             assertSame(snackbar, returned)
@@ -68,7 +68,7 @@ class SnackBarExtensionsRobolectricTest {
                 "with custom",
                 custom,
                 animMode = BaseTransientBottomBar.ANIMATION_MODE_SLIDE,
-                isGestureInsetBottomIgnored = true
+                isGestureInsetBottomIgnored = true,
             )
 
             verify(layout).removeAllViews()
@@ -123,7 +123,7 @@ class SnackBarExtensionsRobolectricTest {
                 "with custom long",
                 custom,
                 animMode = BaseTransientBottomBar.ANIMATION_MODE_SLIDE,
-                isGestureInsetBottomIgnored = true
+                isGestureInsetBottomIgnored = true,
             )
 
             verify(layout).removeAllViews()
@@ -139,11 +139,12 @@ class SnackBarExtensionsRobolectricTest {
             val textColorStateList = ColorStateList.valueOf(Color.GREEN)
             val actionTextColorStateList = ColorStateList.valueOf(Color.BLUE)
 
-            val option = SnackBarOption(
-                bgTintStateList = bgTintStateList,
-                textColorStateList = textColorStateList,
-                actionTextColorStateList = actionTextColorStateList
-            )
+            val option =
+                SnackBarOption(
+                    bgTintStateList = bgTintStateList,
+                    textColorStateList = textColorStateList,
+                    actionTextColorStateList = actionTextColorStateList,
+                )
 
             root.snackBarMakeShort("test", option)
         }
@@ -153,10 +154,11 @@ class SnackBarExtensionsRobolectricTest {
     fun `SnackBarOption with action text and callback`() {
         withMockedSnackbar { snackbar ->
             var actionClicked = false
-            val option = SnackBarOption(
-                actionText = "Undo",
-                action = { actionClicked = true }
-            )
+            val option =
+                SnackBarOption(
+                    actionText = "Undo",
+                    action = { actionClicked = true },
+                )
 
             root.snackBarMakeShort("test", option)
         }
@@ -180,9 +182,10 @@ class SnackBarExtensionsRobolectricTest {
     private fun <T> withMockedSnackbar(block: (Snackbar) -> T): T {
         mockStatic(Snackbar::class.java).use { mocked ->
             val snackbar = mock(Snackbar::class.java)
-            mocked.`when`<Snackbar> {
-                Snackbar.make(any(View::class.java), anyString(), anyInt())
-            }.thenReturn(snackbar)
+            mocked
+                .`when`<Snackbar> {
+                    Snackbar.make(any(View::class.java), anyString(), anyInt())
+                }.thenReturn(snackbar)
             return block(snackbar)
         }
     }

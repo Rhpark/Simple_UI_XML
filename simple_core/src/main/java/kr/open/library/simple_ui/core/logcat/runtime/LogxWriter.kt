@@ -16,7 +16,6 @@ import kr.open.library.simple_ui.core.logcat.internal.formatter.base.LogxFormatt
 import kr.open.library.simple_ui.core.logcat.internal.stacktrace.LogxStackTrace
 import kr.open.library.simple_ui.core.logcat.model.LogxType
 
-
 /**
  * Core runtime component responsible for log output to Logcat and file storage.<br>
  * Supports Android Lifecycle-based flush management and processes stack trace metadata.<br><br>
@@ -49,16 +48,15 @@ import kr.open.library.simple_ui.core.logcat.model.LogxType
  */
 class LogxWriter(
     private var config: LogxConfig,
-    private val context: Context? = null
+    private val context: Context? = null,
 ) {
-
     private val stackTrace by lazy { LogxStackTrace() }
 
     // 스택 트레이스 캐싱
 
     // 초기화 (Context를 FileWriter에 전달)
     private var logFilter: LogFilterImp = DefaultLogFilter(config)
-    private var fileWriter: LogxFileWriterImp = LogxFileWriterFactory. create(config, context)
+    private var fileWriter: LogxFileWriterImp = LogxFileWriterFactory.create(config, context)
 
     // 포맷터들
     private var defaultFormatter = DefaultLogFormatter(config)
@@ -66,10 +64,11 @@ class LogxWriter(
     private var threadIdFormatter = ThreadIdLogFormatter(config)
     private var parentFormatter = ParentLogFormatter(config, stackTrace, false)
     private var parentExtensionsFormatter = ParentLogFormatter(config, stackTrace, true)
-    
+
     // 성능을 위한 설정 캐싱
     @Volatile
     private var cachedIsDebug = config.isDebug
+
     @Volatile
     private var cachedDebugLogTypes = config.debugLogTypeList.toSet()
 
@@ -84,18 +83,18 @@ class LogxWriter(
      */
     fun updateConfig(newConfig: LogxConfig) {
         config = newConfig
-        
+
         // 캐시 업데이트 (성능 최적화)
         cachedIsDebug = newConfig.isDebug
         cachedDebugLogTypes = newConfig.debugLogTypeList.toSet()
 
         // 기존 리소스 정리
         fileWriter.cleanup()
-        
+
         // 새 인스턴스 생성 (Context를 FileWriter에 전달)
         logFilter = DefaultLogFilter(config)
         fileWriter = LogxFileWriterFactory.create(config, context)
-        
+
         // 포맷터들 재생성
         defaultFormatter = DefaultLogFormatter(config)
         jsonFormatter = JsonLogFormatter(config)
@@ -117,7 +116,11 @@ class LogxWriter(
      * @param type The log type/level.<br><br>
      *            로그 타입/레벨.
      */
-    fun writeExtensions(tag: String, msg: Any?, type: LogxType) {
+    fun writeExtensions(
+        tag: String,
+        msg: Any?,
+        type: LogxType,
+    ) {
         if (!shouldLog(type)) return
 
         try {
@@ -141,7 +144,11 @@ class LogxWriter(
      * @param type The log type/level.<br><br>
      *            로그 타입/레벨.
      */
-    fun write(tag: String, msg: Any?, type: LogxType) {
+    fun write(
+        tag: String,
+        msg: Any?,
+        type: LogxType,
+    ) {
         if (!shouldLog(type)) return
 
         try {
@@ -162,7 +169,10 @@ class LogxWriter(
      * @param msg The message to log.<br><br>
      *            로깅할 메시지.
      */
-    fun writeThreadId(tag: String, msg: Any?) {
+    fun writeThreadId(
+        tag: String,
+        msg: Any?,
+    ) {
         if (!shouldLog(LogxType.THREAD_ID)) return
 
         try {
@@ -183,7 +193,10 @@ class LogxWriter(
      * @param msg The message to log.<br><br>
      *            로깅할 메시지.
      */
-    fun writeParent(tag: String, msg: Any?) {
+    fun writeParent(
+        tag: String,
+        msg: Any?,
+    ) {
         if (!shouldLog(LogxType.PARENT)) return
 
         try {
@@ -204,7 +217,10 @@ class LogxWriter(
      * @param msg The message to log.<br><br>
      *            로깅할 메시지.
      */
-    fun writeExtensionsParent(tag: String, msg: Any?) {
+    fun writeExtensionsParent(
+        tag: String,
+        msg: Any?,
+    ) {
         if (!shouldLog(LogxType.PARENT)) return
 
         try {
@@ -225,7 +241,10 @@ class LogxWriter(
      * @param msg The JSON string to format and log.<br><br>
      *            포맷하고 로깅할 JSON 문자열.
      */
-    fun writeJsonExtensions(tag: String, msg: String) {
+    fun writeJsonExtensions(
+        tag: String,
+        msg: String,
+    ) {
         if (!shouldLog(LogxType.JSON)) return
 
         try {
@@ -246,7 +265,10 @@ class LogxWriter(
      * @param msg The JSON string to format and log.<br><br>
      *            포맷하고 로깅할 JSON 문자열.
      */
-    fun writeJson(tag: String, msg: String) {
+    fun writeJson(
+        tag: String,
+        msg: String,
+    ) {
         if (!shouldLog(LogxType.JSON)) return
 
         try {
@@ -281,7 +303,7 @@ class LogxWriter(
         msg: Any?,
         type: LogxType,
         stackInfo: String,
-        formatter: LogxFormatterImp
+        formatter: LogxFormatterImp,
     ) {
         val formatted = formatter.format(tag, msg, type, stackInfo) ?: return
         outputLog(formatted)
@@ -304,7 +326,12 @@ class LogxWriter(
      * @param formatter The ParentLogFormatter to use for formatting parent information.<br><br>
      *                  부모 정보 포맷팅에 사용할 ParentLogFormatter.<br>
      */
-    private fun writeParentLog(tag: String, msg: Any?, stackInfo: String, formatter: ParentLogFormatter) {
+    private fun writeParentLog(
+        tag: String,
+        msg: Any?,
+        stackInfo: String,
+        formatter: ParentLogFormatter,
+    ) {
         // 부모 정보를 먼저 출력
         formatter.formatParentInfo(tag)?.let { parentInfo ->
             outputLog(parentInfo)
@@ -334,9 +361,14 @@ class LogxWriter(
      * @param formatter The JsonLogFormatter to use for formatting JSON content.<br><br>
      *                  JSON 내용 포맷팅에 사용할 JsonLogFormatter.<br>
      */
-    private fun writeJsonLog(tag: String, msg: String, stackInfo: String, formatter: JsonLogFormatter) {
+    private fun writeJsonLog(
+        tag: String,
+        msg: String,
+        stackInfo: String,
+        formatter: JsonLogFormatter,
+    ) {
         // JSON 시작 마커
-        val startMarker = formatter.format(tag, "${stackInfo} ［ JSON_START ］", LogxType.JSON) ?: return
+        val startMarker = formatter.format(tag, "$stackInfo ［ JSON_START ］", LogxType.JSON) ?: return
         outputLog(startMarker)
         saveToFile(startMarker)
 
@@ -360,14 +392,14 @@ class LogxWriter(
      */
     private fun outputLog(formattedLog: LogxFormattedData) {
         when (formattedLog.logType) {
-            LogxType.VERBOSE    -> Log.v(formattedLog.tag, formattedLog.message)
-            LogxType.INFO       -> Log.i(formattedLog.tag, formattedLog.message)
-            LogxType.JSON       -> Log.i(formattedLog.tag, formattedLog.message)
-            LogxType.DEBUG      -> Log.d(formattedLog.tag, formattedLog.message)
-            LogxType.THREAD_ID  -> Log.d(formattedLog.tag, formattedLog.message)
-            LogxType.PARENT     -> Log.d(formattedLog.tag, formattedLog.message)
-            LogxType.WARN       -> Log.w(formattedLog.tag, formattedLog.message)
-            LogxType.ERROR      -> Log.e(formattedLog.tag, formattedLog.message)
+            LogxType.VERBOSE -> Log.v(formattedLog.tag, formattedLog.message)
+            LogxType.INFO -> Log.i(formattedLog.tag, formattedLog.message)
+            LogxType.JSON -> Log.i(formattedLog.tag, formattedLog.message)
+            LogxType.DEBUG -> Log.d(formattedLog.tag, formattedLog.message)
+            LogxType.THREAD_ID -> Log.d(formattedLog.tag, formattedLog.message)
+            LogxType.PARENT -> Log.d(formattedLog.tag, formattedLog.message)
+            LogxType.WARN -> Log.w(formattedLog.tag, formattedLog.message)
+            LogxType.ERROR -> Log.e(formattedLog.tag, formattedLog.message)
         }
     }
 
@@ -438,9 +470,7 @@ class LogxWriter(
      * @return `true` if logging is enabled and the type is allowed, `false` otherwise.<br><br>
      *         로깅이 활성화되어 있고 해당 타입이 허용되면 `true`, 그 외는 `false`.<br>
      */
-    private inline fun shouldLog(logType: LogxType): Boolean =
-        cachedIsDebug && cachedDebugLogTypes.contains(logType)
-
+    private inline fun shouldLog(logType: LogxType): Boolean = cachedIsDebug && cachedDebugLogTypes.contains(logType)
 
     /**
      * Cleans up resources by flushing and closing the file writer.<br>

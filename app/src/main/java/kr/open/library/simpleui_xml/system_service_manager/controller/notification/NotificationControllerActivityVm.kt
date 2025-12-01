@@ -4,17 +4,22 @@ import kr.open.library.simple_ui.core.viewmodel.BaseViewModelEvent
 
 sealed class NotificationControllerActivityVmEvent {
     object ShowNotification : NotificationControllerActivityVmEvent()
+
     object ShowBigTextNotification : NotificationControllerActivityVmEvent()
+
     object ShowProgress : NotificationControllerActivityVmEvent()
+
     object UpdateProgress : NotificationControllerActivityVmEvent()
+
     object CompleteProgress : NotificationControllerActivityVmEvent()
+
     object CancelNotification : NotificationControllerActivityVmEvent()
+
     object CancelAll : NotificationControllerActivityVmEvent()
 }
 
 class NotificationControllerActivityVm : BaseViewModelEvent<NotificationControllerActivityVmEvent>() {
-
-    fun onClickShowNotification() =sendEventVm(NotificationControllerActivityVmEvent.ShowNotification)
+    fun onClickShowNotification() = sendEventVm(NotificationControllerActivityVmEvent.ShowNotification)
 
     fun onClickShowBigTextNotification() = sendEventVm(NotificationControllerActivityVmEvent.ShowBigTextNotification)
 

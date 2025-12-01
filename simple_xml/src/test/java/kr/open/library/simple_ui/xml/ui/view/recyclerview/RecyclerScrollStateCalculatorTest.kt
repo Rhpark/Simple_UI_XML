@@ -1,6 +1,8 @@
 package kr.open.library.simple_ui.xml.ui.view.recyclerview
 
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
@@ -10,27 +12,28 @@ import org.junit.Test
  * Android 의존성 없이 실행 가능한 빠른 단위 테스트
  */
 class RecyclerScrollStateCalculatorTest {
-
     private lateinit var calculator: RecyclerScrollStateCalculator
 
     @Before
     fun setUp() {
-        calculator = RecyclerScrollStateCalculator(
-            edgeReachThreshold = 10,
-            scrollDirectionThreshold = 20
-        )
+        calculator =
+            RecyclerScrollStateCalculator(
+                edgeReachThreshold = 10,
+                scrollDirectionThreshold = 20,
+            )
     }
 
     // ========== Vertical Edge Tests ==========
 
     @Test
     fun checkVerticalEdges_atTop_returnsTopReached() {
-        val result = calculator.checkVerticalEdges(
-            verticalScrollOffset = 0,
-            canScrollDown = true,
-            verticalScrollExtent = 1000,
-            verticalScrollRange = 5000
-        )
+        val result =
+            calculator.checkVerticalEdges(
+                verticalScrollOffset = 0,
+                canScrollDown = true,
+                verticalScrollExtent = 1000,
+                verticalScrollRange = 5000,
+            )
 
         assertTrue("Should be at top", result.isAtTop)
         assertTrue("Top should have changed", result.topChanged)
@@ -39,12 +42,13 @@ class RecyclerScrollStateCalculatorTest {
 
     @Test
     fun checkVerticalEdges_withinTopThreshold_returnsTopReached() {
-        val result = calculator.checkVerticalEdges(
-            verticalScrollOffset = 5, // within threshold of 10
-            canScrollDown = true,
-            verticalScrollExtent = 1000,
-            verticalScrollRange = 5000
-        )
+        val result =
+            calculator.checkVerticalEdges(
+                verticalScrollOffset = 5, // within threshold of 10
+                canScrollDown = true,
+                verticalScrollExtent = 1000,
+                verticalScrollRange = 5000,
+            )
 
         assertTrue("Should be at top within threshold", result.isAtTop)
         assertTrue("Top should have changed", result.topChanged)
@@ -52,12 +56,13 @@ class RecyclerScrollStateCalculatorTest {
 
     @Test
     fun checkVerticalEdges_beyondTopThreshold_returnsNotAtTop() {
-        val result = calculator.checkVerticalEdges(
-            verticalScrollOffset = 15, // beyond threshold of 10
-            canScrollDown = true,
-            verticalScrollExtent = 1000,
-            verticalScrollRange = 5000
-        )
+        val result =
+            calculator.checkVerticalEdges(
+                verticalScrollOffset = 15, // beyond threshold of 10
+                canScrollDown = true,
+                verticalScrollExtent = 1000,
+                verticalScrollRange = 5000,
+            )
 
         assertFalse("Should not be at top beyond threshold", result.isAtTop)
         assertFalse("Top should not have changed (initial state is false)", result.topChanged)
@@ -65,12 +70,13 @@ class RecyclerScrollStateCalculatorTest {
 
     @Test
     fun checkVerticalEdges_atBottom_returnsBottomReached() {
-        val result = calculator.checkVerticalEdges(
-            verticalScrollOffset = 4000,
-            canScrollDown = false,
-            verticalScrollExtent = 1000,
-            verticalScrollRange = 5000
-        )
+        val result =
+            calculator.checkVerticalEdges(
+                verticalScrollOffset = 4000,
+                canScrollDown = false,
+                verticalScrollExtent = 1000,
+                verticalScrollRange = 5000,
+            )
 
         assertTrue("Should be at bottom", result.isAtBottom)
         assertTrue("Bottom should have changed", result.bottomChanged)
@@ -78,12 +84,13 @@ class RecyclerScrollStateCalculatorTest {
 
     @Test
     fun checkVerticalEdges_withinBottomThreshold_returnsBottomReached() {
-        val result = calculator.checkVerticalEdges(
-            verticalScrollOffset = 3995, // 3995 + 1000 + 10 >= 5000
-            canScrollDown = false,
-            verticalScrollExtent = 1000,
-            verticalScrollRange = 5000
-        )
+        val result =
+            calculator.checkVerticalEdges(
+                verticalScrollOffset = 3995, // 3995 + 1000 + 10 >= 5000
+                canScrollDown = false,
+                verticalScrollExtent = 1000,
+                verticalScrollRange = 5000,
+            )
 
         assertTrue("Should be at bottom within threshold", result.isAtBottom)
         assertTrue("Bottom should have changed", result.bottomChanged)
@@ -91,12 +98,13 @@ class RecyclerScrollStateCalculatorTest {
 
     @Test
     fun checkVerticalEdges_middlePosition_returnsNeitherEdge() {
-        val result = calculator.checkVerticalEdges(
-            verticalScrollOffset = 2000,
-            canScrollDown = true,
-            verticalScrollExtent = 1000,
-            verticalScrollRange = 5000
-        )
+        val result =
+            calculator.checkVerticalEdges(
+                verticalScrollOffset = 2000,
+                canScrollDown = true,
+                verticalScrollExtent = 1000,
+                verticalScrollRange = 5000,
+            )
 
         assertFalse("Should not be at top", result.isAtTop)
         assertFalse("Should not be at bottom", result.isAtBottom)
@@ -111,16 +119,17 @@ class RecyclerScrollStateCalculatorTest {
             verticalScrollOffset = 2000,
             canScrollDown = true,
             verticalScrollExtent = 1000,
-            verticalScrollRange = 5000
+            verticalScrollRange = 5000,
         )
 
         // Second call with same state
-        val result = calculator.checkVerticalEdges(
-            verticalScrollOffset = 2000,
-            canScrollDown = true,
-            verticalScrollExtent = 1000,
-            verticalScrollRange = 5000
-        )
+        val result =
+            calculator.checkVerticalEdges(
+                verticalScrollOffset = 2000,
+                canScrollDown = true,
+                verticalScrollExtent = 1000,
+                verticalScrollRange = 5000,
+            )
 
         assertFalse("Top should not have changed", result.topChanged)
         assertFalse("Bottom should not have changed", result.bottomChanged)
@@ -130,12 +139,13 @@ class RecyclerScrollStateCalculatorTest {
 
     @Test
     fun checkHorizontalEdges_atLeft_returnsLeftReached() {
-        val result = calculator.checkHorizontalEdges(
-            horizontalScrollOffset = 0,
-            canScrollRight = true,
-            horizontalScrollExtent = 1000,
-            horizontalScrollRange = 5000
-        )
+        val result =
+            calculator.checkHorizontalEdges(
+                horizontalScrollOffset = 0,
+                canScrollRight = true,
+                horizontalScrollExtent = 1000,
+                horizontalScrollRange = 5000,
+            )
 
         assertTrue("Should be at left", result.isAtLeft)
         assertTrue("Left should have changed", result.leftChanged)
@@ -144,12 +154,13 @@ class RecyclerScrollStateCalculatorTest {
 
     @Test
     fun checkHorizontalEdges_withinLeftThreshold_returnsLeftReached() {
-        val result = calculator.checkHorizontalEdges(
-            horizontalScrollOffset = 8, // within threshold of 10
-            canScrollRight = true,
-            horizontalScrollExtent = 1000,
-            horizontalScrollRange = 5000
-        )
+        val result =
+            calculator.checkHorizontalEdges(
+                horizontalScrollOffset = 8, // within threshold of 10
+                canScrollRight = true,
+                horizontalScrollExtent = 1000,
+                horizontalScrollRange = 5000,
+            )
 
         assertTrue("Should be at left within threshold", result.isAtLeft)
         assertTrue("Left should have changed", result.leftChanged)
@@ -157,12 +168,13 @@ class RecyclerScrollStateCalculatorTest {
 
     @Test
     fun checkHorizontalEdges_atRight_returnsRightReached() {
-        val result = calculator.checkHorizontalEdges(
-            horizontalScrollOffset = 4000,
-            canScrollRight = false,
-            horizontalScrollExtent = 1000,
-            horizontalScrollRange = 5000
-        )
+        val result =
+            calculator.checkHorizontalEdges(
+                horizontalScrollOffset = 4000,
+                canScrollRight = false,
+                horizontalScrollExtent = 1000,
+                horizontalScrollRange = 5000,
+            )
 
         assertTrue("Should be at right", result.isAtRight)
         assertTrue("Right should have changed", result.rightChanged)
@@ -170,12 +182,13 @@ class RecyclerScrollStateCalculatorTest {
 
     @Test
     fun checkHorizontalEdges_middlePosition_returnsNeitherEdge() {
-        val result = calculator.checkHorizontalEdges(
-            horizontalScrollOffset = 2000,
-            canScrollRight = true,
-            horizontalScrollExtent = 1000,
-            horizontalScrollRange = 5000
-        )
+        val result =
+            calculator.checkHorizontalEdges(
+                horizontalScrollOffset = 2000,
+                canScrollRight = true,
+                horizontalScrollExtent = 1000,
+                horizontalScrollRange = 5000,
+            )
 
         assertFalse("Should not be at left", result.isAtLeft)
         assertFalse("Should not be at right", result.isAtRight)
@@ -190,16 +203,17 @@ class RecyclerScrollStateCalculatorTest {
             horizontalScrollOffset = 2000,
             canScrollRight = true,
             horizontalScrollExtent = 1000,
-            horizontalScrollRange = 5000
+            horizontalScrollRange = 5000,
         )
 
         // Second call with same state
-        val result = calculator.checkHorizontalEdges(
-            horizontalScrollOffset = 2000,
-            canScrollRight = true,
-            horizontalScrollExtent = 1000,
-            horizontalScrollRange = 5000
-        )
+        val result =
+            calculator.checkHorizontalEdges(
+                horizontalScrollOffset = 2000,
+                canScrollRight = true,
+                horizontalScrollExtent = 1000,
+                horizontalScrollRange = 5000,
+            )
 
         assertFalse("Left should not have changed", result.leftChanged)
         assertFalse("Right should not have changed", result.rightChanged)
@@ -373,12 +387,13 @@ class RecyclerScrollStateCalculatorTest {
         calculator.updateThresholds(edgeReachThreshold = 50)
 
         // Offset of 40 should now be within threshold
-        val result = calculator.checkVerticalEdges(
-            verticalScrollOffset = 40,
-            canScrollDown = true,
-            verticalScrollExtent = 1000,
-            verticalScrollRange = 5000
-        )
+        val result =
+            calculator.checkVerticalEdges(
+                verticalScrollOffset = 40,
+                canScrollDown = true,
+                verticalScrollExtent = 1000,
+                verticalScrollRange = 5000,
+            )
 
         assertTrue("Should be at top with new threshold", result.isAtTop)
     }
@@ -410,12 +425,13 @@ class RecyclerScrollStateCalculatorTest {
         calculator.updateThresholds(scrollDirectionThreshold = 50)
 
         // Original edge reach threshold (10) should still apply
-        val result = calculator.checkVerticalEdges(
-            verticalScrollOffset = 5,
-            canScrollDown = true,
-            verticalScrollExtent = 1000,
-            verticalScrollRange = 5000
-        )
+        val result =
+            calculator.checkVerticalEdges(
+                verticalScrollOffset = 5,
+                canScrollDown = true,
+                verticalScrollExtent = 1000,
+                verticalScrollRange = 5000,
+            )
 
         assertTrue("Should be at top with original edge threshold", result.isAtTop)
     }
@@ -424,15 +440,16 @@ class RecyclerScrollStateCalculatorTest {
     fun updateThresholds_bothThresholds_updatesBoth() {
         calculator.updateThresholds(
             edgeReachThreshold = 30,
-            scrollDirectionThreshold = 100
+            scrollDirectionThreshold = 100,
         )
 
-        val edgeResult = calculator.checkVerticalEdges(
-            verticalScrollOffset = 25,
-            canScrollDown = true,
-            verticalScrollExtent = 1000,
-            verticalScrollRange = 5000
-        )
+        val edgeResult =
+            calculator.checkVerticalEdges(
+                verticalScrollOffset = 25,
+                canScrollDown = true,
+                verticalScrollExtent = 1000,
+                verticalScrollRange = 5000,
+            )
         assertTrue("Should use new edge threshold", edgeResult.isAtTop)
 
         val scrollResult = calculator.updateVerticalScrollDirection(50)
@@ -443,12 +460,13 @@ class RecyclerScrollStateCalculatorTest {
 
     @Test
     fun checkVerticalEdges_exactlyAtThreshold_returnsAtEdge() {
-        val result = calculator.checkVerticalEdges(
-            verticalScrollOffset = 10, // exactly at threshold
-            canScrollDown = true,
-            verticalScrollExtent = 1000,
-            verticalScrollRange = 5000
-        )
+        val result =
+            calculator.checkVerticalEdges(
+                verticalScrollOffset = 10, // exactly at threshold
+                canScrollDown = true,
+                verticalScrollExtent = 1000,
+                verticalScrollRange = 5000,
+            )
 
         assertTrue("Should be at top at exact threshold", result.isAtTop)
     }

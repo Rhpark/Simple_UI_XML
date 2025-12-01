@@ -7,21 +7,21 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class SnackBarOptionTest {
-
     @Test
     fun properties_areStoredAsProvided() {
-        val option = SnackBarOption(
-            animMode = 1,
-            bgTint = 0x112233,
-            bgTintStateList = null,
-            textColor = 0x445566,
-            textColorStateList = null,
-            isGestureInsetBottomIgnored = true,
-            actionTextColor = 0x778899,
-            actionTextColorStateList = null,
-            actionText = "Undo",
-            action = {}
-        )
+        val option =
+            SnackBarOption(
+                animMode = 1,
+                bgTint = 0x112233,
+                bgTintStateList = null,
+                textColor = 0x445566,
+                textColorStateList = null,
+                isGestureInsetBottomIgnored = true,
+                actionTextColor = 0x778899,
+                actionTextColorStateList = null,
+                actionText = "Undo",
+                action = {},
+            )
 
         assertEquals(1, option.animMode)
         assertEquals(0x112233, option.bgTint)

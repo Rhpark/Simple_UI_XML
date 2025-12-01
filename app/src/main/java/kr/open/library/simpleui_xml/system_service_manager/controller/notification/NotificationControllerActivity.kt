@@ -11,19 +11,19 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
 import kr.open.library.simple_ui.core.logcat.Logx
-import kr.open.library.simple_ui.xml.extensions.view.toastShowShort
-import kr.open.library.simple_ui.xml.ui.activity.BaseBindingActivity
 import kr.open.library.simple_ui.core.system_manager.controller.notification.vo.NotificationStyle
 import kr.open.library.simple_ui.core.system_manager.controller.notification.vo.SimpleNotificationOptionVo
 import kr.open.library.simple_ui.core.system_manager.controller.notification.vo.SimpleNotificationType
 import kr.open.library.simple_ui.core.system_manager.controller.notification.vo.SimpleProgressNotificationOptionVo
 import kr.open.library.simple_ui.core.system_manager.extensions.getNotificationController
+import kr.open.library.simple_ui.xml.extensions.view.toastShowShort
+import kr.open.library.simple_ui.xml.ui.activity.BaseBindingActivity
 import kr.open.library.simpleui_xml.MainActivity
 import kr.open.library.simpleui_xml.R
 import kr.open.library.simpleui_xml.databinding.ActivityNotificationControllerBinding
 
-class NotificationControllerActivity : BaseBindingActivity<ActivityNotificationControllerBinding>(R.layout.activity_notification_controller) {
-
+class NotificationControllerActivity :
+    BaseBindingActivity<ActivityNotificationControllerBinding>(R.layout.activity_notification_controller) {
     private val vm: NotificationControllerActivityVm by viewModels()
 
     private val notificationController by lazy { getNotificationController(SimpleNotificationType.ACTIVITY) }
@@ -38,13 +38,14 @@ class NotificationControllerActivity : BaseBindingActivity<ActivityNotificationC
     }
 
     private fun createNotificationChannels() {
-        val channel = NotificationChannel(
-            "default_channel",
-            "Default Notifications",
-            NotificationManager.IMPORTANCE_DEFAULT
-        ).apply {
-            description = "Default notification channel for examples"
-        }
+        val channel =
+            NotificationChannel(
+                "default_channel",
+                "Default Notifications",
+                NotificationManager.IMPORTANCE_DEFAULT,
+            ).apply {
+                description = "Default notification channel for examples"
+            }
 
         notificationController.createChannel(channel)
     }
@@ -91,45 +92,49 @@ class NotificationControllerActivity : BaseBindingActivity<ActivityNotificationC
 
     private fun showBasicNotification() {
         Logx.d()
-        val option = SimpleNotificationOptionVo(
-            notificationId = 1,
-            title = "Basic Notification",
-            content = "This is a basic notification example",
-            smallIcon = R.drawable.ic_launcher_foreground,
-            isAutoCancel = true,
-            clickIntent = Intent(this, MainActivity::class.java)
-        )
+        val option =
+            SimpleNotificationOptionVo(
+                notificationId = 1,
+                title = "Basic Notification",
+                content = "This is a basic notification example",
+                smallIcon = R.drawable.ic_launcher_foreground,
+                isAutoCancel = true,
+                clickIntent = Intent(this, MainActivity::class.java),
+            )
 
         notificationController.showNotification(option)
         toastShowShort("Basic notification shown")
     }
 
     private fun showBigTextNotification() {
-        val option = SimpleNotificationOptionVo(
-            notificationId = 2,
-            title = "BigText Notification",
-            content = "Short summary",
-            snippet = "This is a very long text that will be displayed when the notification is expanded. " +
-                    "You can include multiple lines of text here. " +
-                    "The BigText style allows you to show much more content than a basic notification.",
-            smallIcon = R.drawable.ic_launcher_foreground,
-            isAutoCancel = true,
-            style = NotificationStyle.BIG_TEXT
-        )
+        val option =
+            SimpleNotificationOptionVo(
+                notificationId = 2,
+                title = "BigText Notification",
+                content = "Short summary",
+                snippet =
+                    "This is a very long text that will be displayed when the notification is expanded. " +
+                        "You can include multiple lines of text here. " +
+                        "The BigText style allows you to show much more content than a basic notification.",
+                smallIcon = R.drawable.ic_launcher_foreground,
+                isAutoCancel = true,
+                style = NotificationStyle.BIG_TEXT,
+            )
 
         notificationController.showNotification(option)
         toastShowShort("BigText notification shown")
     }
 
     private fun showProgressNotification() {
-        val option = SimpleProgressNotificationOptionVo(
-            notificationId = 3,
-            title = "Download in Progress",
-            content = "Downloading file...",
-            smallIcon = R.drawable.ic_launcher_foreground,
-            progressPercent = 0,
-            onGoing = true
-        )
+        val option =
+            SimpleProgressNotificationOptionVo(
+                notificationId = 3,
+                title = "Download in Progress",
+                content = "Downloading file...",
+                smallIcon = R.drawable.ic_launcher_foreground,
+                progressPercent = 0,
+                onGoing = true,
+            )
 
         notificationController.showProgressNotification(option)
         toastShowShort("Progress notification shown")
@@ -146,7 +151,7 @@ class NotificationControllerActivity : BaseBindingActivity<ActivityNotificationC
     }
 
     private fun cancelNotification() {
-        notificationController.cancelNotification(tag = null , notificationId = 1)
+        notificationController.cancelNotification(tag = null, notificationId = 1)
         toastShowShort("Notification (ID: 1) cancelled")
     }
 

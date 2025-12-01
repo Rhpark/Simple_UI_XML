@@ -38,11 +38,9 @@ public fun Context.getInputMethodManager(): InputMethodManager = getSystemServic
 
 public fun Context.getTelephonyManager(): TelephonyManager = getSystemService(TelephonyManager::class.java)
 
-public fun Context.getSystemNotificationManager(): NotificationManager = getSystemService(
-    NotificationManager::class.java)
+public fun Context.getSystemNotificationManager(): NotificationManager = getSystemService(NotificationManager::class.java)
 
-public fun Context.getSubscriptionManager(): SubscriptionManager = getSystemService(
-    SubscriptionManager::class.java)
+public fun Context.getSubscriptionManager(): SubscriptionManager = getSystemService(SubscriptionManager::class.java)
 
 public fun Context.getEuiccManager(): EuiccManager = getSystemService(EuiccManager::class.java)
 
@@ -65,13 +63,11 @@ public fun Context.getBluetoothManager(): BluetoothManager = getSystemService(Bl
  */
 public fun Context.getVibrator(): Vibrator = getSystemService(Vibrator::class.java)
 
-
 /**
  * be used Build.VERSION.SDK_INT >= Build.VERSION_CODES.S(31)
  */
 @RequiresApi(Build.VERSION_CODES.S)
 public fun Context.getVibratorManager(): VibratorManager = getSystemService(VibratorManager::class.java)
-
 
 /****************************
  * SystemService Controller *
@@ -90,9 +86,8 @@ public fun Context.getWifiController(): WifiController = WifiController(this)
  * SystemService Access Info *
  *****************************/
 
-//public fun Context.getNetworkStateInfo(): NetworkStateInfo =
-//    NetworkStateInfo(this)
-
 public fun Context.getBatteryStateInfo(): BatteryStateInfo = BatteryStateInfo(this)
 
 public fun Context.getLocationStateInfo(): LocationStateInfo = LocationStateInfo(this)
+
+// public fun Context.getNetworkStateInfo(): NetworkStateInfo = NetworkStateInfo(this)

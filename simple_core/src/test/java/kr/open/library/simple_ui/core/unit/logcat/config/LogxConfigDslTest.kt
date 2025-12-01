@@ -1,6 +1,5 @@
 package kr.open.library.simple_ui.core.unit.logcat.config
 
-import java.util.EnumSet
 import kr.open.library.simple_ui.core.logcat.config.LogxConfig
 import kr.open.library.simple_ui.core.logcat.config.LogxPathUtils
 import kr.open.library.simple_ui.core.logcat.config.LogxStorageType
@@ -10,9 +9,9 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.util.EnumSet
 
 class LogxConfigDslTest {
-
     @Test
     fun `logxConfig keeps default values when no blocks provided`() {
         val config = logxConfig { }
@@ -30,25 +29,26 @@ class LogxConfigDslTest {
     fun `logxConfig applies nested builder blocks`() {
         val customPath = (System.getProperty("java.io.tmpdir") ?: error("tmp dir missing")) + "/logx-dsl"
 
-        val config = logxConfig {
-            debugMode = false
-            debugFilter = true
-            appName = "TestApp"
-            fileConfig {
-                saveToFile = true
-                filePath = customPath
+        val config =
+            logxConfig {
+                debugMode = false
+                debugFilter = true
+                appName = "TestApp"
+                fileConfig {
+                    saveToFile = true
+                    filePath = customPath
+                }
+                logTypes {
+                    LogxType.entries.forEach { -it }
+                    +LogxType.INFO
+                    +LogxType.ERROR
+                }
+                filters {
+                    +"ImportantTag"
+                    +"FileName"
+                    -"FileName"
+                }
             }
-            logTypes {
-                LogxType.entries.forEach { -it }
-                +LogxType.INFO
-                +LogxType.ERROR
-            }
-            filters {
-                +"ImportantTag"
-                +"FileName"
-                -"FileName"
-            }
-        }
 
         assertFalse(config.isDebug)
         assertTrue(config.isDebugFilter)

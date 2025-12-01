@@ -3,10 +3,13 @@ package kr.open.library.simple_ui.core.unit.logcat
 import kr.open.library.simple_ui.core.logcat.config.LogxConfig
 import kr.open.library.simple_ui.core.logcat.config.LogxConfigManager
 import kr.open.library.simple_ui.core.logcat.model.LogxType
-import org.junit.Ignore
-import org.junit.Test
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
+import org.junit.Test
 import java.util.Collections
 import java.util.EnumSet
 import java.util.concurrent.CountDownLatch
@@ -25,7 +28,6 @@ import java.util.concurrent.atomic.AtomicReference
  */
 
 class LogxConfigTest {
-
     private lateinit var configManager: LogxConfigManager
 
     @Before
@@ -51,15 +53,19 @@ class LogxConfigTest {
     fun listenerAddedDuringNotification_triggersOnNextUpdate() {
         var innerListenerCalled = false
 
-        configManager.addConfigChangeListener(object : LogxConfigManager.ConfigChangeListener {
-            override fun onConfigChanged(newConfig: LogxConfig) {
-                configManager.addConfigChangeListener(object : LogxConfigManager.ConfigChangeListener {
-                    override fun onConfigChanged(newConfig: LogxConfig) {
-                        innerListenerCalled = true
-                    }
-                })
-            }
-        })
+        configManager.addConfigChangeListener(
+            object : LogxConfigManager.ConfigChangeListener {
+                override fun onConfigChanged(newConfig: LogxConfig) {
+                    configManager.addConfigChangeListener(
+                        object : LogxConfigManager.ConfigChangeListener {
+                            override fun onConfigChanged(newConfig: LogxConfig) {
+                                innerListenerCalled = true
+                            }
+                        },
+                    )
+                }
+            },
+        )
 
         configManager.setDebugMode(false)
         assertFalse("첫 번째 업데이트 동안에는 새 리스너가 아직 호출되지 않음", innerListenerCalled)
@@ -108,9 +114,11 @@ class LogxConfigTest {
         configManager.setSaveToFile(!initialSaveToFile)
 
         // Then
-        assertEquals("파일 저장 설정이 반대가 되어야 합니다",
+        assertEquals(
+            "파일 저장 설정이 반대가 되어야 합니다",
             !initialSaveToFile,
-            configManager.config.isDebugSave)
+            configManager.config.isDebugSave,
+        )
     }
 
     // ========== 4. 앱 이름 설정 테스트 ==========
@@ -154,12 +162,18 @@ class LogxConfigTest {
 
         // Then
         assertEquals("로그 타입이 설정되어야 합니다", logTypes, configManager.config.debugLogTypeList)
-        assertTrue("ERROR 타입이 포함되어야 합니다",
-            configManager.config.debugLogTypeList.contains(LogxType.ERROR))
-        assertTrue("WARN 타입이 포함되어야 합니다",
-            configManager.config.debugLogTypeList.contains(LogxType.WARN))
-        assertFalse("DEBUG 타입은 포함되지 않아야 합니다",
-            configManager.config.debugLogTypeList.contains(LogxType.DEBUG))
+        assertTrue(
+            "ERROR 타입이 포함되어야 합니다",
+            configManager.config.debugLogTypeList.contains(LogxType.ERROR),
+        )
+        assertTrue(
+            "WARN 타입이 포함되어야 합니다",
+            configManager.config.debugLogTypeList.contains(LogxType.WARN),
+        )
+        assertFalse(
+            "DEBUG 타입은 포함되지 않아야 합니다",
+            configManager.config.debugLogTypeList.contains(LogxType.DEBUG),
+        )
     }
 
     @Test
@@ -201,10 +215,14 @@ class LogxConfigTest {
 
         // Then
         assertEquals("필터 태그 개수가 일치해야 합니다", 3, configManager.config.debugFilterList.size)
-        assertTrue("MainActivity가 포함되어야 합니다",
-            configManager.config.debugFilterList.contains("MainActivity"))
-        assertTrue("NetworkManager가 포함되어야 합니다",
-            configManager.config.debugFilterList.contains("NetworkManager"))
+        assertTrue(
+            "MainActivity가 포함되어야 합니다",
+            configManager.config.debugFilterList.contains("MainActivity"),
+        )
+        assertTrue(
+            "NetworkManager가 포함되어야 합니다",
+            configManager.config.debugFilterList.contains("NetworkManager"),
+        )
     }
 
     @Test
@@ -229,12 +247,14 @@ class LogxConfigTest {
         var listenerCalled = false
         var receivedConfig: LogxConfig? = null
 
-        configManager.addConfigChangeListener(object : LogxConfigManager.ConfigChangeListener {
-            override fun onConfigChanged(newConfig: LogxConfig) {
-                listenerCalled = true
-                receivedConfig = newConfig
-            }
-        })
+        configManager.addConfigChangeListener(
+            object : LogxConfigManager.ConfigChangeListener {
+                override fun onConfigChanged(newConfig: LogxConfig) {
+                    listenerCalled = true
+                    receivedConfig = newConfig
+                }
+            },
+        )
 
         // When
         configManager.setDebugMode(false)
@@ -252,17 +272,21 @@ class LogxConfigTest {
         var listener1Called = false
         var listener2Called = false
 
-        configManager.addConfigChangeListener(object : LogxConfigManager.ConfigChangeListener {
-            override fun onConfigChanged(newConfig: LogxConfig) {
-                listener1Called = true
-            }
-        })
+        configManager.addConfigChangeListener(
+            object : LogxConfigManager.ConfigChangeListener {
+                override fun onConfigChanged(newConfig: LogxConfig) {
+                    listener1Called = true
+                }
+            },
+        )
 
-        configManager.addConfigChangeListener(object : LogxConfigManager.ConfigChangeListener {
-            override fun onConfigChanged(newConfig: LogxConfig) {
-                listener2Called = true
-            }
-        })
+        configManager.addConfigChangeListener(
+            object : LogxConfigManager.ConfigChangeListener {
+                override fun onConfigChanged(newConfig: LogxConfig) {
+                    listener2Called = true
+                }
+            },
+        )
 
         // When
         configManager.setAppName("Test")
@@ -278,11 +302,13 @@ class LogxConfigTest {
         // Given
         var listenerCalled = false
 
-        configManager.addConfigChangeListener(object : LogxConfigManager.ConfigChangeListener {
-            override fun onConfigChanged(newConfig: LogxConfig) {
-                listenerCalled = true
-            }
-        })
+        configManager.addConfigChangeListener(
+            object : LogxConfigManager.ConfigChangeListener {
+                override fun onConfigChanged(newConfig: LogxConfig) {
+                    listenerCalled = true
+                }
+            },
+        )
 
         // When
         configManager.removeAllConfigChangeListener()
@@ -298,15 +324,16 @@ class LogxConfigTest {
     fun config_canBeUpdatedAtOnce() {
         // 새로운 설정 객체로 전체 구성이 갱신되는지 확인
         // Given
-        val newConfig = LogxConfig(
-            isDebug = false,
-            isDebugFilter = true,
-            isDebugSave = true,
-            saveFilePath = "/test/path",
-            appName = "NewApp",
-            debugLogTypeList = EnumSet.of(LogxType.ERROR),
-            debugFilterList = setOf("TestTag")
-        )
+        val newConfig =
+            LogxConfig(
+                isDebug = false,
+                isDebugFilter = true,
+                isDebugSave = true,
+                saveFilePath = "/test/path",
+                appName = "NewApp",
+                debugLogTypeList = EnumSet.of(LogxType.ERROR),
+                debugFilterList = setOf("TestTag"),
+            )
 
         // When
         configManager.updateConfig(newConfig)
@@ -333,11 +360,12 @@ class LogxConfigTest {
         val results = java.util.Collections.synchronizedList(mutableListOf<String>())
 
         // When - 동시에 읽기
-        val threads = (1..readCount).map {
-            Thread {
-                results.add(configManager.config.appName)
+        val threads =
+            (1..readCount).map {
+                Thread {
+                    results.add(configManager.config.appName)
+                }
             }
-        }
 
         threads.forEach { it.start() }
         threads.forEach { it.join() }
@@ -356,12 +384,13 @@ class LogxConfigTest {
         val writeCount = 100
 
         // When - 동시에 쓰기
-        val threads = (1..writeCount).map { i ->
-            Thread {
-                val appName = "App$i"
-                configManager.setAppName(appName)
+        val threads =
+            (1..writeCount).map { i ->
+                Thread {
+                    val appName = "App$i"
+                    configManager.setAppName(appName)
+                }
             }
-        }
 
         threads.forEach { it.start() }
         threads.forEach { it.join() }
@@ -369,8 +398,10 @@ class LogxConfigTest {
         // Then - 마지막 config가 유효한 값 중 하나여야 함
         val finalAppName = configManager.config.appName
         assertNotNull("최종 설정이 null이 아니어야 합니다", finalAppName)
-        assertTrue("최종 설정이 유효한 값이어야 합니다",
-            finalAppName.startsWith("App") || finalAppName == "RhPark")
+        assertTrue(
+            "최종 설정이 유효한 값이어야 합니다",
+            finalAppName.startsWith("App") || finalAppName == "RhPark",
+        )
     }
 
     @Test
@@ -382,18 +413,19 @@ class LogxConfigTest {
         val writeResults = java.util.Collections.synchronizedList(mutableListOf<String>())
 
         // When - 읽기/쓰기 혼합
-        val threads = (1..operationCount).map { i ->
-            Thread {
-                if (i % 2 == 0) {
-                    // 짝수: 읽기
-                    readResults.add(configManager.config.isDebug)
-                } else {
-                    // 홀수: 쓰기
-                    configManager.setDebugMode(i % 4 == 1)
-                    writeResults.add("write_$i")
+        val threads =
+            (1..operationCount).map { i ->
+                Thread {
+                    if (i % 2 == 0) {
+                        // 짝수: 읽기
+                        readResults.add(configManager.config.isDebug)
+                    } else {
+                        // 홀수: 쓰기
+                        configManager.setDebugMode(i % 4 == 1)
+                        writeResults.add("write_$i")
+                    }
                 }
             }
-        }
 
         threads.forEach { it.start() }
         threads.forEach { it.join() }
@@ -412,22 +444,26 @@ class LogxConfigTest {
         val operationCount = 200
         val error = AtomicReference<Throwable?>(null)
 
-        val threads = (1..operationCount).map { i ->
-            Thread {
-                try {
-                    when (i % 3) {
-                        0 -> configManager.addConfigChangeListener(object :
-                            LogxConfigManager.ConfigChangeListener {
-                            override fun onConfigChanged(newConfig: LogxConfig) = Unit
-                        })
-                        1 -> configManager.setDebugMode(i % 2 == 0)
-                        else -> configManager.config.isDebug
+        val threads =
+            (1..operationCount).map { i ->
+                Thread {
+                    try {
+                        when (i % 3) {
+                            0 ->
+                                configManager.addConfigChangeListener(
+                                    object :
+                                        LogxConfigManager.ConfigChangeListener {
+                                        override fun onConfigChanged(newConfig: LogxConfig) = Unit
+                                    },
+                                )
+                            1 -> configManager.setDebugMode(i % 2 == 0)
+                            else -> configManager.config.isDebug
+                        }
+                    } catch (t: Throwable) {
+                        error.compareAndSet(null, t)
                     }
-                } catch (t: Throwable) {
-                    error.compareAndSet(null, t)
                 }
             }
-        }
 
         threads.forEach(Thread::start)
         threads.forEach(Thread::join)
@@ -440,12 +476,14 @@ class LogxConfigTest {
         val latch = CountDownLatch(2)
         val threadIds = Collections.synchronizedSet(mutableSetOf<Long>())
 
-        configManager.addConfigChangeListener(object : LogxConfigManager.ConfigChangeListener {
-            override fun onConfigChanged(newConfig: LogxConfig) {
-                threadIds += Thread.currentThread().id
-                latch.countDown()
-            }
-        })
+        configManager.addConfigChangeListener(
+            object : LogxConfigManager.ConfigChangeListener {
+                override fun onConfigChanged(newConfig: LogxConfig) {
+                    threadIds += Thread.currentThread().id
+                    latch.countDown()
+                }
+            },
+        )
 
         val executor = Executors.newFixedThreadPool(2)
         executor.submit { configManager.setDebugMode(false) }
@@ -584,8 +622,10 @@ class LogxConfigTest {
         configManager.setDebugFilterList(emptyList())
 
         // Then
-        assertTrue("빈 필터 리스트가 설정되어야 합니다",
-            configManager.config.debugFilterList.isEmpty())
+        assertTrue(
+            "빈 필터 리스트가 설정되어야 합니다",
+            configManager.config.debugFilterList.isEmpty(),
+        )
     }
 
     @Test
@@ -598,8 +638,11 @@ class LogxConfigTest {
         configManager.setDebugFilterList(largeList)
 
         // Then
-        assertEquals("필터 개수가 일치해야 합니다", 1000,
-            configManager.config.debugFilterList.size)
+        assertEquals(
+            "필터 개수가 일치해야 합니다",
+            1000,
+            configManager.config.debugFilterList.size,
+        )
     }
 
     @Test
@@ -612,14 +655,23 @@ class LogxConfigTest {
         configManager.setDebugFilterList(listWithDuplicates)
 
         // Then
-        assertEquals("중복이 제거되어 3개여야 합니다", 3,
-            configManager.config.debugFilterList.size)
-        assertTrue("Tag1이 포함되어야 합니다",
-            configManager.config.debugFilterList.contains("Tag1"))
-        assertTrue("Tag2가 포함되어야 합니다",
-            configManager.config.debugFilterList.contains("Tag2"))
-        assertTrue("Tag3이 포함되어야 합니다",
-            configManager.config.debugFilterList.contains("Tag3"))
+        assertEquals(
+            "중복이 제거되어 3개여야 합니다",
+            3,
+            configManager.config.debugFilterList.size,
+        )
+        assertTrue(
+            "Tag1이 포함되어야 합니다",
+            configManager.config.debugFilterList.contains("Tag1"),
+        )
+        assertTrue(
+            "Tag2가 포함되어야 합니다",
+            configManager.config.debugFilterList.contains("Tag2"),
+        )
+        assertTrue(
+            "Tag3이 포함되어야 합니다",
+            configManager.config.debugFilterList.contains("Tag3"),
+        )
     }
 
     @Test
@@ -632,8 +684,10 @@ class LogxConfigTest {
         configManager.setDebugLogTypeList(emptyEnumSet)
 
         // Then
-        assertTrue("빈 로그 타입 리스트가 설정되어야 합니다",
-            configManager.config.debugLogTypeList.isEmpty())
+        assertTrue(
+            "빈 로그 타입 리스트가 설정되어야 합니다",
+            configManager.config.debugLogTypeList.isEmpty(),
+        )
     }
 
     @Test
@@ -663,20 +717,24 @@ class LogxConfigTest {
         // Given
         var innerListenerCalled = false
 
-        configManager.addConfigChangeListener(object : LogxConfigManager.ConfigChangeListener {
-            override fun onConfigChanged(newConfig: LogxConfig) {
-                // 알림 중에 새 리스너 추가 시도
-                try {
-                    configManager.addConfigChangeListener(object : LogxConfigManager.ConfigChangeListener {
-                        override fun onConfigChanged(newConfig: LogxConfig) {
-                            innerListenerCalled = true
-                        }
-                    })
-                } catch (e: Exception) {
-                    // 데드락 발생 시 예외가 던져질 수 있음
+        configManager.addConfigChangeListener(
+            object : LogxConfigManager.ConfigChangeListener {
+                override fun onConfigChanged(newConfig: LogxConfig) {
+                    // 알림 중에 새 리스너 추가 시도
+                    try {
+                        configManager.addConfigChangeListener(
+                            object : LogxConfigManager.ConfigChangeListener {
+                                override fun onConfigChanged(newConfig: LogxConfig) {
+                                    innerListenerCalled = true
+                                }
+                            },
+                        )
+                    } catch (e: Exception) {
+                        // 데드락 발생 시 예외가 던져질 수 있음
+                    }
                 }
-            }
-        })
+            },
+        )
 
         // When
         configManager.setDebugMode(false)
@@ -690,11 +748,12 @@ class LogxConfigTest {
         // 같은 리스너를 여러 번 추가하면 Set 특성상 한 번만 저장되는지 확인
         // Given
         var callCount = 0
-        val listener = object : LogxConfigManager.ConfigChangeListener {
-            override fun onConfigChanged(newConfig: LogxConfig) {
-                callCount++
+        val listener =
+            object : LogxConfigManager.ConfigChangeListener {
+                override fun onConfigChanged(newConfig: LogxConfig) {
+                    callCount++
+                }
             }
-        }
 
         // When
         configManager.addConfigChangeListener(listener)

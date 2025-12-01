@@ -1,7 +1,5 @@
 package kr.open.library.simple_ui.core.unit.logcat.internal.file_writer
 
-import java.nio.file.Files
-import java.util.EnumSet
 import kr.open.library.simple_ui.core.logcat.config.LogxConfig
 import kr.open.library.simple_ui.core.logcat.internal.file_writer.LogxFileWriter
 import kr.open.library.simple_ui.core.logcat.internal.file_writer.LogxFileWriterFactory
@@ -11,10 +9,11 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import java.nio.file.Files
+import java.util.EnumSet
 
 @RunWith(RobolectricTestRunner::class)
 class LogxFileWriterFactoryTest {
-
     @Test
     fun `no-op writer swallows write and cleanup`() {
         val writer = NoOpLogFileWriter()
@@ -25,10 +24,11 @@ class LogxFileWriterFactoryTest {
 
     @Test
     fun `factory returns no-op writer when saving disabled`() {
-        val config = LogxConfig(
-            isDebugSave = false,
-            debugLogTypeList = EnumSet.allOf(LogxType::class.java),
-        )
+        val config =
+            LogxConfig(
+                isDebugSave = false,
+                debugLogTypeList = EnumSet.allOf(LogxType::class.java),
+            )
 
         val writer = LogxFileWriterFactory.create(config, null)
 
@@ -38,11 +38,12 @@ class LogxFileWriterFactoryTest {
     @Test
     fun `factory returns file writer when saving enabled`() {
         val tempDir = Files.createTempDirectory("logx-writer").toFile()
-        val config = LogxConfig(
-            isDebugSave = true,
-            saveFilePath = tempDir.absolutePath,
-            debugLogTypeList = EnumSet.allOf(LogxType::class.java),
-        )
+        val config =
+            LogxConfig(
+                isDebugSave = true,
+                saveFilePath = tempDir.absolutePath,
+                debugLogTypeList = EnumSet.allOf(LogxType::class.java),
+            )
 
         val writer = LogxFileWriterFactory.create(config, null)
 

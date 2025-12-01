@@ -8,14 +8,13 @@ import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
+import kr.open.library.simple_ui.core.system_manager.extensions.getWifiController
 import kr.open.library.simple_ui.xml.extensions.view.toastShowShort
 import kr.open.library.simple_ui.xml.ui.activity.BaseBindingActivity
-import kr.open.library.simple_ui.core.system_manager.extensions.getWifiController
 import kr.open.library.simpleui_xml.R
 import kr.open.library.simpleui_xml.databinding.ActivityWifiControllerBinding
 
 class WifiControllerActivity : BaseBindingActivity<ActivityWifiControllerBinding>(R.layout.activity_wifi_controller) {
-
     private val vm: WifiControllerActivityVm by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -109,8 +108,8 @@ class WifiControllerActivity : BaseBindingActivity<ActivityWifiControllerBinding
             listOf(
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.CHANGE_WIFI_STATE,
-                Manifest.permission.ACCESS_WIFI_STATE
-            )
+                Manifest.permission.ACCESS_WIFI_STATE,
+            ),
         ) { deniedPermissions ->
             if (deniedPermissions.isEmpty()) {
                 val scanStarted = getWifiController().startScan()
@@ -149,14 +148,26 @@ class WifiControllerActivity : BaseBindingActivity<ActivityWifiControllerBinding
 
     private fun checkWifiBands() {
         val is5GHz = getWifiController().is5GHzBandSupported()
-        val is6GHz =  checkSdkVersion(Build.VERSION_CODES.R,
-            positiveWork = {    getWifiController().is6GHzBandSupported()   },
-            negativeWork = {    false   }
-        )
+        val is6GHz =
+            checkSdkVersion(
+                Build.VERSION_CODES.R,
+                positiveWork = { getWifiController().is6GHzBandSupported() },
+                negativeWork = { false },
+            )
         val result = StringBuilder()
         result.append("WiFi Band Support:\n\n")
         result.append("5GHz Band: ${if (is5GHz) "Supported" else "Not Supported"}\n")
-        result.append("6GHz Band: ${if (is6GHz) "Supported" else checkSdkVersion(Build.VERSION_CODES.R, positiveWork = {"Not Supported"}, negativeWork = {"Requires Android 11" })}\n")
+        result.append(
+            "6GHz Band: ${if (is6GHz) {
+                "Supported"
+            } else {
+                checkSdkVersion(
+                    Build.VERSION_CODES.R,
+                    positiveWork = {"Not Supported"},
+                    negativeWork = {"Requires Android 11" },
+                )
+            }}\n",
+        )
 
         binding.tvResult.text = result.toString()
         toastShowShort("Band support checked")

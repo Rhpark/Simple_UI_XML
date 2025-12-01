@@ -1,19 +1,3 @@
-package kr.open.library.simple_ui.xml.extensions.view
-
-import android.annotation.SuppressLint
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.ViewTreeObserver
-import androidx.annotation.LayoutRes
-import androidx.annotation.MainThread
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.DefaultLifecycleObserver
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.findViewTreeLifecycleOwner
-import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
-
 /**
  * View layout and lifecycle extension functions.<br>
  * Provides convenient methods for layout inflation, lifecycle observation, and window insets handling.<br><br>
@@ -39,6 +23,21 @@ import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
  * rootView.applyWindowInsetsAsPadding(bottom = true)
  * ```
  */
+package kr.open.library.simple_ui.xml.extensions.view
+
+import android.annotation.SuppressLint
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.ViewTreeObserver
+import androidx.annotation.LayoutRes
+import androidx.annotation.MainThread
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.findViewTreeLifecycleOwner
+import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
 
 /**
  * Inflates a layout resource into this ViewGroup.<br><br>
@@ -54,7 +53,9 @@ import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
  *         인플레이트된 View.<br>
  */
 @SuppressLint("ResourceType")
-public fun ViewGroup.getLayoutInflater(@LayoutRes xmlRes: Int, attachToRoot: Boolean
+public fun ViewGroup.getLayoutInflater(
+    @LayoutRes xmlRes: Int,
+    attachToRoot: Boolean,
 ): View = LayoutInflater.from(this.context).inflate(xmlRes, this, attachToRoot)
 
 /**
@@ -67,8 +68,7 @@ public fun ViewGroup.getLayoutInflater(@LayoutRes xmlRes: Int, attachToRoot: Boo
  *         LifecycleOwner 또는 찾을 수 없으면 null.<br>
  */
 @MainThread
-inline fun View.findHostLifecycleOwner(): LifecycleOwner? =
-    findViewTreeLifecycleOwner() ?: (context as? LifecycleOwner)
+inline fun View.findHostLifecycleOwner(): LifecycleOwner? = findViewTreeLifecycleOwner() ?: (context as? LifecycleOwner)
 
 /**
  * Binds a lifecycle observer to the current LifecycleOwner.<br>
@@ -88,16 +88,16 @@ fun View.bindLifecycleObserver(observer: DefaultLifecycleObserver): LifecycleOwn
     val old = getTag(ViewIds.TAG_OBSERVED_OWNER) as? LifecycleOwner
     if (old !== current) {
         old?.lifecycle?.removeObserver(observer)
-        val res = safeCatch(false) {
-            current.lifecycle.addObserver(observer)
-            setTag(ViewIds.TAG_OBSERVED_OWNER, current)
-            true
-        }
-        if(res == false) return null
+        val res =
+            safeCatch(false) {
+                current.lifecycle.addObserver(observer)
+                setTag(ViewIds.TAG_OBSERVED_OWNER, current)
+                true
+            }
+        if (res == false) return null
     }
     return current
 }
-
 
 /**
  * Unbinds the lifecycle observer from this View.<br>
@@ -113,8 +113,6 @@ fun View.unbindLifecycleObserver(observer: DefaultLifecycleObserver) {
     (getTag(ViewIds.TAG_OBSERVED_OWNER) as? LifecycleOwner)?.lifecycle?.removeObserver(observer)
     setTag(ViewIds.TAG_OBSERVED_OWNER, null)
 }
-
-
 
 /**
  * Executes a block when the view has been laid out and measured.<br>

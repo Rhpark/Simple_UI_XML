@@ -75,9 +75,9 @@ import java.util.concurrent.Executor
  * )
  * ```
  */
-public class TelephonyCallbackManager(context: Context) :
-    BaseSystemService(context, listOf(READ_PHONE_STATE, ACCESS_FINE_LOCATION)) {
-
+public class TelephonyCallbackManager(
+    context: Context,
+) : BaseSystemService(context, listOf(READ_PHONE_STATE, ACCESS_FINE_LOCATION)) {
     // =================================================
     // Core Components
     // =================================================
@@ -247,19 +247,21 @@ public class TelephonyCallbackManager(context: Context) :
         handler: Handler? = null,
         onSignalStrengthChanged: ((SignalStrength) -> Unit)? = null,
         onServiceStateChanged: ((ServiceState) -> Unit)? = null,
-        onNetworkStateChanged: ((TelephonyNetworkState) -> Unit)? = null
-    ): Boolean = tryCatchSystemManager(false) {
-        checkSdkVersion(Build.VERSION_CODES.S,
-            positiveWork = {
-                registerModernCallback(handler, onSignalStrengthChanged, onServiceStateChanged, onNetworkStateChanged)
-                return true
-            },
-            negativeWork = {
-                registerLegacyCallback(onSignalStrengthChanged, onServiceStateChanged, onNetworkStateChanged)
-                return true
-            }
-        )
-    }
+        onNetworkStateChanged: ((TelephonyNetworkState) -> Unit)? = null,
+    ): Boolean =
+        tryCatchSystemManager(false) {
+            checkSdkVersion(
+                Build.VERSION_CODES.S,
+                positiveWork = {
+                    registerModernCallback(handler, onSignalStrengthChanged, onServiceStateChanged, onNetworkStateChanged)
+                    return true
+                },
+                negativeWork = {
+                    registerLegacyCallback(onSignalStrengthChanged, onServiceStateChanged, onNetworkStateChanged)
+                    return true
+                },
+            )
+        }
 
     /**
      * Registers telephony callback for API 31+.<br><br>
@@ -279,7 +281,7 @@ public class TelephonyCallbackManager(context: Context) :
         handler: Handler?,
         onSignalStrengthChanged: ((SignalStrength) -> Unit)?,
         onServiceStateChanged: ((ServiceState) -> Unit)?,
-        onNetworkStateChanged: ((TelephonyNetworkState) -> Unit)?
+        onNetworkStateChanged: ((TelephonyNetworkState) -> Unit)?,
     ) {
         setupCallbackListeners(onSignalStrengthChanged, onServiceStateChanged, onNetworkStateChanged)
 
@@ -287,7 +289,7 @@ public class TelephonyCallbackManager(context: Context) :
 
         telephonyManager.registerTelephonyCallback(
             executor,
-            telephonyCallback.baseTelephonyCallback
+            telephonyCallback.baseTelephonyCallback,
         )
 
         isCallbackRegistered = true
@@ -309,11 +311,12 @@ public class TelephonyCallbackManager(context: Context) :
     private fun registerLegacyCallback(
         onSignalStrengthChanged: ((SignalStrength) -> Unit)?,
         onServiceStateChanged: ((ServiceState) -> Unit)?,
-        onNetworkStateChanged: ((TelephonyNetworkState) -> Unit)?
+        onNetworkStateChanged: ((TelephonyNetworkState) -> Unit)?,
     ) {
         setupCallbackListeners(onSignalStrengthChanged, onServiceStateChanged, onNetworkStateChanged)
 
-        val events = android.telephony.PhoneStateListener.LISTEN_SIGNAL_STRENGTHS or
+        val events =
+            android.telephony.PhoneStateListener.LISTEN_SIGNAL_STRENGTHS or
                 android.telephony.PhoneStateListener.LISTEN_SERVICE_STATE or
                 android.telephony.PhoneStateListener.LISTEN_DATA_CONNECTION_STATE
 
@@ -336,7 +339,7 @@ public class TelephonyCallbackManager(context: Context) :
     private fun setupCallbackListeners(
         onSignalStrengthChanged: ((SignalStrength) -> Unit)?,
         onServiceStateChanged: ((ServiceState) -> Unit)?,
-        onNetworkStateChanged: ((TelephonyNetworkState) -> Unit)?
+        onNetworkStateChanged: ((TelephonyNetworkState) -> Unit)?,
     ) {
         telephonyCallback.setOnSignalStrength { currentSignalStrength ->
             _currentSignalStrength.value = currentSignalStrength.signalStrength
@@ -362,29 +365,31 @@ public class TelephonyCallbackManager(context: Context) :
      *         성공 시 `true`, 그렇지 않으면 `false`.
      */
     @SuppressLint("MissingPermission")
-    public fun unregisterSimpleCallback(): Boolean = tryCatchSystemManager(false) {
-        if (!isCallbackRegistered) {
-            Logx.w("TelephonyCallbackManager: No callback registered")
-            return false
-        }
-
-        checkSdkVersion(Build.VERSION_CODES.S,
-            positiveWork = {
-                telephonyManager.unregisterTelephonyCallback(telephonyCallback.baseTelephonyCallback)
-            },
-            negativeWork = {
-                @Suppress("DEPRECATION")
-                telephonyManager.listen(
-                    telephonyCallback.basePhoneStateListener,
-                    android.telephony.PhoneStateListener.LISTEN_NONE
-                )
+    public fun unregisterSimpleCallback(): Boolean =
+        tryCatchSystemManager(false) {
+            if (!isCallbackRegistered) {
+                Logx.w("TelephonyCallbackManager: No callback registered")
+                return false
             }
-        )
 
-        isCallbackRegistered = false
-        Logx.d("TelephonyCallbackManager: Callback unregistered")
-        true
-    }
+            checkSdkVersion(
+                Build.VERSION_CODES.S,
+                positiveWork = {
+                    telephonyManager.unregisterTelephonyCallback(telephonyCallback.baseTelephonyCallback)
+                },
+                negativeWork = {
+                    @Suppress("DEPRECATION")
+                    telephonyManager.listen(
+                        telephonyCallback.basePhoneStateListener,
+                        android.telephony.PhoneStateListener.LISTEN_NONE,
+                    )
+                },
+            )
+
+            isCallbackRegistered = false
+            Logx.d("TelephonyCallbackManager: Callback unregistered")
+            true
+        }
 
     // =================================================
     // Advanced Callback API (멀티 SIM, 상세 콜백)
@@ -413,18 +418,27 @@ public class TelephonyCallbackManager(context: Context) :
         onServiceState: ((currentServiceState: CurrentServiceState) -> Unit)? = null,
         onCallState: ((callState: Int, phoneNumber: String?) -> Unit)? = null,
         onDisplayInfo: ((telephonyDisplayInfo: TelephonyDisplayInfo) -> Unit)? = null,
-        onTelephonyNetworkState: ((telephonyNetworkState: TelephonyNetworkState) -> Unit)? = null
-    ): Boolean = tryCatchSystemManager(false) {
-        val subscriptionInfoList = getActiveSubscriptionInfoListInternal()
-        val defaultSim = subscriptionInfoList.firstOrNull() ?: throw IllegalStateException("No default SIM found")
+        onTelephonyNetworkState: ((telephonyNetworkState: TelephonyNetworkState) -> Unit)? = null,
+    ): Boolean =
+        tryCatchSystemManager(false) {
+            val subscriptionInfoList = getActiveSubscriptionInfoListInternal()
+            val defaultSim = subscriptionInfoList.firstOrNull() ?: throw IllegalStateException("No default SIM found")
 
-        registerAdvancedCallback(
-            defaultSim.simSlotIndex, executor, isGpsOn, onActiveDataSubId,
-            onDataConnectionState, onCellInfo, onSignalStrength, onServiceState,
-            onCallState, onDisplayInfo, onTelephonyNetworkState
-        )
-        return true
-    }
+            registerAdvancedCallback(
+                defaultSim.simSlotIndex,
+                executor,
+                isGpsOn,
+                onActiveDataSubId,
+                onDataConnectionState,
+                onCellInfo,
+                onSignalStrength,
+                onServiceState,
+                onCallState,
+                onDisplayInfo,
+                onTelephonyNetworkState,
+            )
+            return true
+        }
 
     /**
      * Registers advanced telephony callback for specific SIM slot (API 31+).<br><br>
@@ -450,12 +464,14 @@ public class TelephonyCallbackManager(context: Context) :
         onServiceState: ((currentServiceState: CurrentServiceState) -> Unit)? = null,
         onCallState: ((callState: Int, phoneNumber: String?) -> Unit)? = null,
         onDisplayInfo: ((telephonyDisplayInfo: TelephonyDisplayInfo) -> Unit)? = null,
-        onTelephonyNetworkState: ((telephonyNetworkState: TelephonyNetworkState) -> Unit)? = null
+        onTelephonyNetworkState: ((telephonyNetworkState: TelephonyNetworkState) -> Unit)? = null,
     ) {
-        val tm = uSimTelephonyManagerList[simSlotIndex]
-            ?: throw IllegalStateException("TelephonyManager [$simSlotIndex] is null")
-        val callback = uSimTelephonyCallbackList[simSlotIndex]
-            ?: throw IllegalStateException("telephonyCallbackList [$simSlotIndex] is null")
+        val tm =
+            uSimTelephonyManagerList[simSlotIndex]
+                ?: throw IllegalStateException("TelephonyManager [$simSlotIndex] is null")
+        val callback =
+            uSimTelephonyCallbackList[simSlotIndex]
+                ?: throw IllegalStateException("telephonyCallbackList [$simSlotIndex] is null")
 
         unregisterAdvancedCallback(simSlotIndex)
 
@@ -465,8 +481,17 @@ public class TelephonyCallbackManager(context: Context) :
             tm.registerTelephonyCallback(executor, callback.baseTelephonyCallback)
         }
 
-        setupSlotCallbackListeners(simSlotIndex, onActiveDataSubId, onDataConnectionState,
-            onCellInfo, onSignalStrength, onServiceState, onCallState, onDisplayInfo, onTelephonyNetworkState)
+        setupSlotCallbackListeners(
+            simSlotIndex,
+            onActiveDataSubId,
+            onDataConnectionState,
+            onCellInfo,
+            onSignalStrength,
+            onServiceState,
+            onCallState,
+            onDisplayInfo,
+            onTelephonyNetworkState,
+        )
         isRegistered[simSlotIndex] = true
     }
 
@@ -484,7 +509,7 @@ public class TelephonyCallbackManager(context: Context) :
         onServiceState: ((currentServiceState: CurrentServiceState) -> Unit)?,
         onCallState: ((callState: Int, phoneNumber: String?) -> Unit)?,
         onDisplayInfo: ((telephonyDisplayInfo: TelephonyDisplayInfo) -> Unit)?,
-        onTelephonyNetworkState: ((telephonyNetworkState: TelephonyNetworkState) -> Unit)?
+        onTelephonyNetworkState: ((telephonyNetworkState: TelephonyNetworkState) -> Unit)?,
     ) {
         setOnActiveDataSubId(simSlotIndex, onActiveDataSubId)
         setOnDataConnectionState(simSlotIndex, onDataConnectionState)
@@ -541,7 +566,10 @@ public class TelephonyCallbackManager(context: Context) :
      * 신호 강도 콜백을 설정합니다.<br>
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun setOnSignalStrength(simSlotIndex: Int, onSignalStrength: ((currentSignalStrength: CurrentSignalStrength) -> Unit)? = null) {
+    public fun setOnSignalStrength(
+        simSlotIndex: Int,
+        onSignalStrength: ((currentSignalStrength: CurrentSignalStrength) -> Unit)? = null,
+    ) {
         uSimTelephonyCallbackList[simSlotIndex]?.setOnSignalStrength(onSignalStrength)
             ?: Logx.w("TelephonyCallbackManager: setOnSignalStrength telephonyCallbackList[$simSlotIndex] is null")
     }
@@ -551,7 +579,10 @@ public class TelephonyCallbackManager(context: Context) :
      * 서비스 상태 콜백을 설정합니다.<br>
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun setOnServiceState(simSlotIndex: Int, onServiceState: ((currentServiceState: CurrentServiceState) -> Unit)? = null) {
+    public fun setOnServiceState(
+        simSlotIndex: Int,
+        onServiceState: ((currentServiceState: CurrentServiceState) -> Unit)? = null,
+    ) {
         uSimTelephonyCallbackList[simSlotIndex]?.setOnServiceState(onServiceState)
             ?: Logx.w("TelephonyCallbackManager: setOnServiceState telephonyCallbackList[$simSlotIndex] is null")
     }
@@ -561,7 +592,10 @@ public class TelephonyCallbackManager(context: Context) :
      * 활성 데이터 구독 ID 콜백을 설정합니다.<br>
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun setOnActiveDataSubId(simSlotIndex: Int, onActiveDataSubId: ((subId: Int) -> Unit)? = null) {
+    public fun setOnActiveDataSubId(
+        simSlotIndex: Int,
+        onActiveDataSubId: ((subId: Int) -> Unit)? = null,
+    ) {
         uSimTelephonyCallbackList[simSlotIndex]?.setOnActiveDataSubId(onActiveDataSubId)
             ?: Logx.w("TelephonyCallbackManager: setOnActiveDataSubId telephonyCallbackList[$simSlotIndex] is null")
     }
@@ -571,7 +605,10 @@ public class TelephonyCallbackManager(context: Context) :
      * 데이터 연결 상태 콜백을 설정합니다.<br>
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun setOnDataConnectionState(simSlotIndex: Int, onDataConnectionState: ((state: Int, networkType: Int) -> Unit)? = null) {
+    public fun setOnDataConnectionState(
+        simSlotIndex: Int,
+        onDataConnectionState: ((state: Int, networkType: Int) -> Unit)? = null,
+    ) {
         uSimTelephonyCallbackList[simSlotIndex]?.setOnDataConnectionState(onDataConnectionState)
             ?: Logx.w("TelephonyCallbackManager: setOnDataConnectionState telephonyCallbackList[$simSlotIndex] is null")
     }
@@ -581,7 +618,10 @@ public class TelephonyCallbackManager(context: Context) :
      * 셀 정보 콜백을 설정합니다.<br>
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun setOnCellInfo(simSlotIndex: Int, onCellInfo: ((currentCellInfo: CurrentCellInfo) -> Unit)? = null) {
+    public fun setOnCellInfo(
+        simSlotIndex: Int,
+        onCellInfo: ((currentCellInfo: CurrentCellInfo) -> Unit)? = null,
+    ) {
         uSimTelephonyCallbackList[simSlotIndex]?.setOnCellInfo(onCellInfo)
             ?: Logx.w("TelephonyCallbackManager: setOnCellInfo telephonyCallbackList[$simSlotIndex] is null")
     }
@@ -591,7 +631,10 @@ public class TelephonyCallbackManager(context: Context) :
      * 통화 상태 콜백을 설정합니다.<br>
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun setOnCallState(simSlotIndex: Int, onCallState: ((callState: Int, phoneNumber: String?) -> Unit)? = null) {
+    public fun setOnCallState(
+        simSlotIndex: Int,
+        onCallState: ((callState: Int, phoneNumber: String?) -> Unit)? = null,
+    ) {
         uSimTelephonyCallbackList[simSlotIndex]?.setOnCallState(onCallState)
             ?: Logx.w("TelephonyCallbackManager: setOnCallState telephonyCallbackList[$simSlotIndex] is null")
     }
@@ -601,7 +644,10 @@ public class TelephonyCallbackManager(context: Context) :
      * 디스플레이 정보 콜백을 설정합니다.<br>
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun setOnDisplayState(simSlotIndex: Int, onDisplay: ((telephonyDisplayInfo: TelephonyDisplayInfo) -> Unit)? = null) {
+    public fun setOnDisplayState(
+        simSlotIndex: Int,
+        onDisplay: ((telephonyDisplayInfo: TelephonyDisplayInfo) -> Unit)? = null,
+    ) {
         uSimTelephonyCallbackList[simSlotIndex]?.setOnDisplay(onDisplay)
             ?: Logx.w("TelephonyCallbackManager: setOnDisplayState telephonyCallbackList[$simSlotIndex] is null")
     }
@@ -610,7 +656,10 @@ public class TelephonyCallbackManager(context: Context) :
      * Sets telephony network type callback.<br><br>
      * 통신망 타입 콜백을 설정합니다.<br>
      */
-    public fun setOnTelephonyNetworkType(simSlotIndex: Int, onTelephonyNetworkType: ((telephonyNetworkState: TelephonyNetworkState) -> Unit)? = null) {
+    public fun setOnTelephonyNetworkType(
+        simSlotIndex: Int,
+        onTelephonyNetworkType: ((telephonyNetworkState: TelephonyNetworkState) -> Unit)? = null,
+    ) {
         uSimTelephonyCallbackList[simSlotIndex]?.setOnTelephonyNetworkType(onTelephonyNetworkType)
             ?: Logx.w("TelephonyCallbackManager: setOnTelephonyNetworkType telephonyCallbackList[$simSlotIndex] is null")
     }
@@ -635,8 +684,7 @@ public class TelephonyCallbackManager(context: Context) :
      * @return TelephonyManager instance, or null.<br><br>
      *         TelephonyManager 인스턴스, 또는 null.
      */
-    public fun getTelephonyManagerFromUSim(slotIndex: Int): TelephonyManager? =
-        uSimTelephonyManagerList[slotIndex]
+    public fun getTelephonyManagerFromUSim(slotIndex: Int): TelephonyManager? = uSimTelephonyManagerList[slotIndex]
 
     // =================================================
     // Signal/Service State Getters (Simple API용)

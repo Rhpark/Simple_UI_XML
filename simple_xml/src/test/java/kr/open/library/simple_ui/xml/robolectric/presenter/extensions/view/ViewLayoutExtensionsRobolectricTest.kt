@@ -3,7 +3,6 @@ package kr.open.library.simple_ui.xml.robolectric.presenter.extensions.view
 import android.content.Context
 import android.content.ContextWrapper
 import android.view.View
-import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -27,11 +26,9 @@ import org.junit.Assert.assertSame
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
-import org.robolectric.Shadows
 
 @RunWith(RobolectricTestRunner::class)
 class ViewLayoutExtensionsRobolectricTest {
-
     private val baseContext: Context = ApplicationProvider.getApplicationContext()
 
     @Test
@@ -72,12 +69,13 @@ class ViewLayoutExtensionsRobolectricTest {
 
     @Test
     fun getLocationOnScreen_returnsPair() {
-        val view = object : View(baseContext) {
-            override fun getLocationOnScreen(outLocation: IntArray) {
-                outLocation[0] = 12
-                outLocation[1] = 34
+        val view =
+            object : View(baseContext) {
+                override fun getLocationOnScreen(outLocation: IntArray) {
+                    outLocation[0] = 12
+                    outLocation[1] = 34
+                }
             }
-        }
 
         val (x, y) = view.getLocationOnScreen()
         assertEquals(12, x)
@@ -90,9 +88,14 @@ class ViewLayoutExtensionsRobolectricTest {
         view.setPadding(1, 2, 3, 4)
         view.applyWindowInsetsAsPadding()
 
-        val insets = WindowInsetsCompat.Builder()
-            .setInsets(WindowInsetsCompat.Type.systemBars(), androidx.core.graphics.Insets.of(5, 6, 7, 8))
-            .build()
+        val insets =
+            WindowInsetsCompat
+                .Builder()
+                .setInsets(
+                    WindowInsetsCompat.Type.systemBars(),
+                    androidx.core.graphics.Insets
+                        .of(5, 6, 7, 8),
+                ).build()
         ViewCompat.dispatchApplyWindowInsets(view, insets)
 
         assertEquals(1 + 5, view.paddingLeft)
@@ -107,9 +110,14 @@ class ViewLayoutExtensionsRobolectricTest {
         view.setPadding(1, 2, 3, 4)
         view.applyWindowInsetsAsPadding(left = false, top = false, right = false, bottom = false)
 
-        val insets = WindowInsetsCompat.Builder()
-            .setInsets(WindowInsetsCompat.Type.systemBars(), androidx.core.graphics.Insets.of(5, 6, 7, 8))
-            .build()
+        val insets =
+            WindowInsetsCompat
+                .Builder()
+                .setInsets(
+                    WindowInsetsCompat.Type.systemBars(),
+                    androidx.core.graphics.Insets
+                        .of(5, 6, 7, 8),
+                ).build()
         ViewCompat.dispatchApplyWindowInsets(view, insets)
 
         assertEquals(1, view.paddingLeft)
@@ -183,10 +191,14 @@ class ViewLayoutExtensionsRobolectricTest {
         assertEquals(0, observer.destroyedCount)
     }
 
-    private class LifecycleContext(base: Context) : ContextWrapper(base), LifecycleOwner {
-        val registry = LifecycleRegistry(this).apply {
-            currentState = Lifecycle.State.CREATED
-        }
+    private class LifecycleContext(
+        base: Context,
+    ) : ContextWrapper(base),
+        LifecycleOwner {
+        val registry =
+            LifecycleRegistry(this).apply {
+                currentState = Lifecycle.State.CREATED
+            }
 
         override val lifecycle: Lifecycle
             get() = registry
@@ -195,6 +207,7 @@ class ViewLayoutExtensionsRobolectricTest {
     private class RecordingObserver : DefaultLifecycleObserver {
         var createdCount = 0
         var destroyedCount = 0
+
         override fun onCreate(owner: LifecycleOwner) {
             createdCount++
         }

@@ -8,7 +8,6 @@ import kr.open.library.simple_ui.xml.ui.adapter.list.diffutil.RcvListDiffUtilCal
 import kr.open.library.simple_ui.xml.ui.adapter.queue.AdapterOperationQueue
 import kr.open.library.simple_ui.xml.ui.adapter.viewholder.BaseRcvViewHolder
 
-
 /**
  * Base RecyclerView ListAdapter implementation with queue-based operations.<br>
  * Provides comprehensive item management and click handling functionality.<br><br>
@@ -60,9 +59,9 @@ import kr.open.library.simple_ui.xml.ui.adapter.viewholder.BaseRcvViewHolder
  * @see AdapterOperationQueue For the operation queue implementation.<br><br>
  *      작업 큐 구현은 AdapterOperationQueue를 참조하세요.<br>
  */
-public abstract class BaseRcvListAdapter<ITEM, VH : RecyclerView.ViewHolder>(listDiffUtil: RcvListDiffUtilCallBack<ITEM>) :
-    ListAdapter<ITEM, VH>(listDiffUtil) {
-
+public abstract class BaseRcvListAdapter<ITEM, VH : RecyclerView.ViewHolder>(
+    listDiffUtil: RcvListDiffUtilCallBack<ITEM>,
+) : ListAdapter<ITEM, VH>(listDiffUtil) {
     /**
      * Callback for item click events.<br>
      * Receives position, item, and clicked view.<br><br>
@@ -85,10 +84,11 @@ public abstract class BaseRcvListAdapter<ITEM, VH : RecyclerView.ViewHolder>(lis
      * 연속적인 어댑터 작업을 처리하기 위한 작업 큐입니다.<br>
      * 작업이 순서대로 실행되고 충돌이 방지되도록 보장합니다.<br>
      */
-    private val operationQueue = AdapterOperationQueue<ITEM>(
-        getCurrentList = { currentList },
-        submitList = { list, callback -> submitList(list, callback) }
-    )
+    private val operationQueue =
+        AdapterOperationQueue<ITEM>(
+            getCurrentList = { currentList },
+            submitList = { list, callback -> submitList(list, callback) },
+        )
 
     /**
      * Abstract method to bind data to each ViewHolder.<br><br>
@@ -103,7 +103,11 @@ public abstract class BaseRcvListAdapter<ITEM, VH : RecyclerView.ViewHolder>(lis
      * @param item The item to bind.<br><br>
      *             바인딩할 아이템.<br>
      */
-    protected abstract fun onBindViewHolder(holder: VH, position: Int, item: ITEM)
+    protected abstract fun onBindViewHolder(
+        holder: VH,
+        position: Int,
+        item: ITEM,
+    )
 
     /**
      * onBindViewHolder for partial updates with payload support.<br>
@@ -123,7 +127,12 @@ public abstract class BaseRcvListAdapter<ITEM, VH : RecyclerView.ViewHolder>(lis
      * @param payloads The list of payloads for partial updates.<br><br>
      *                 부분 업데이트를 위한 payload 리스트.<br>
      */
-    protected open fun onBindViewHolder(holder: VH, position: Int, item: ITEM, payloads: List<Any>) {
+    protected open fun onBindViewHolder(
+        holder: VH,
+        position: Int,
+        item: ITEM,
+        payloads: List<Any>,
+    ) {
         // By default performs full binding
         onBindViewHolder(holder, position, item)
     }
@@ -158,7 +167,10 @@ public abstract class BaseRcvListAdapter<ITEM, VH : RecyclerView.ViewHolder>(lis
      * @param commitCallback Callback to be invoked after list update completes (nullable).<br><br>
      *                       리스트 갱신 완료 후 호출될 콜백 (null 가능).<br>
      */
-    public fun setItems(itemList: List<ITEM>, commitCallback: (() -> Unit)? = null) {
+    public fun setItems(
+        itemList: List<ITEM>,
+        commitCallback: (() -> Unit)? = null,
+    ) {
         operationQueue.clearQueueAndExecute(AdapterOperationQueue.SetItemsOp(itemList, commitCallback))
     }
 
@@ -172,7 +184,10 @@ public abstract class BaseRcvListAdapter<ITEM, VH : RecyclerView.ViewHolder>(lis
      * @param commitCallback Callback to be invoked after list update completes (nullable).<br><br>
      *                       리스트 갱신 완료 후 호출될 콜백 (null 가능).<br>
      */
-    public fun addItem(item: ITEM, commitCallback: (() -> Unit)? = null) {
+    public fun addItem(
+        item: ITEM,
+        commitCallback: (() -> Unit)? = null,
+    ) {
         operationQueue.enqueueOperation(AdapterOperationQueue.AddItemOp(item, commitCallback))
     }
 
@@ -192,7 +207,11 @@ public abstract class BaseRcvListAdapter<ITEM, VH : RecyclerView.ViewHolder>(lis
      * @return True if addition succeeded, false if position is invalid.<br><br>
      *         추가 성공 시 true, position이 유효하지 않으면 false.<br>
      */
-    public fun addItemAt(position: Int, item: ITEM, commitCallback: (() -> Unit)? = null): Boolean {
+    public fun addItemAt(
+        position: Int,
+        item: ITEM,
+        commitCallback: (() -> Unit)? = null,
+    ): Boolean {
         if (position < 0 || position > itemCount) {
             Logx.e("Cannot add item at position $position. Valid range: 0..$itemCount")
             return false
@@ -214,7 +233,10 @@ public abstract class BaseRcvListAdapter<ITEM, VH : RecyclerView.ViewHolder>(lis
      * @return The number of items added.<br><br>
      *         추가된 아이템 수.<br>
      */
-    public fun addItems(itemList: List<ITEM>, commitCallback: (() -> Unit)? = null): Int {
+    public fun addItems(
+        itemList: List<ITEM>,
+        commitCallback: (() -> Unit)? = null,
+    ): Int {
         if (itemList.isEmpty()) return 0
         operationQueue.enqueueOperation(AdapterOperationQueue.AddItemsOp(itemList, commitCallback))
         return itemList.size
@@ -236,7 +258,11 @@ public abstract class BaseRcvListAdapter<ITEM, VH : RecyclerView.ViewHolder>(lis
      * @return True if addition succeeded, false if position is invalid.<br><br>
      *         추가 성공 시 true, position이 유효하지 않으면 false.<br>
      */
-    public fun addItems(position: Int, itemList: List<ITEM>, commitCallback: (() -> Unit)? = null): Boolean {
+    public fun addItems(
+        position: Int,
+        itemList: List<ITEM>,
+        commitCallback: (() -> Unit)? = null,
+    ): Boolean {
         if (itemList.isEmpty()) return true
         if (position < 0 || position > itemCount) {
             Logx.e("Cannot add items at position $position. Valid range: 0..$itemCount")
@@ -271,7 +297,10 @@ public abstract class BaseRcvListAdapter<ITEM, VH : RecyclerView.ViewHolder>(lis
      * @return True if removal succeeded, false if item not found.<br><br>
      *         제거 성공 시 true, 아이템이 없으면 false.<br>
      */
-    public fun removeItem(item: ITEM, commitCallback: (() -> Unit)? = null): Boolean {
+    public fun removeItem(
+        item: ITEM,
+        commitCallback: (() -> Unit)? = null,
+    ): Boolean {
         if (!currentList.contains(item)) {
             Logx.e("Item not found in the list")
             return false
@@ -293,7 +322,10 @@ public abstract class BaseRcvListAdapter<ITEM, VH : RecyclerView.ViewHolder>(lis
      * @return True if removal succeeded, false if position is invalid.<br><br>
      *         제거 성공 시 true, position이 유효하지 않으면 false.<br>
      */
-    public fun removeAt(position: Int, commitCallback: (() -> Unit)? = null): Boolean {
+    public fun removeAt(
+        position: Int,
+        commitCallback: (() -> Unit)? = null,
+    ): Boolean {
         if (position < 0 || position >= itemCount) {
             Logx.e("Cannot remove item at position $position. Valid range: 0 until $itemCount")
             return false
@@ -329,7 +361,11 @@ public abstract class BaseRcvListAdapter<ITEM, VH : RecyclerView.ViewHolder>(lis
      * @return True if move succeeded, false if any position is invalid.<br><br>
      *         이동 성공 시 true, position이 유효하지 않으면 false.<br>
      */
-    public fun moveItem(fromPosition: Int, toPosition: Int, commitCallback: (() -> Unit)? = null): Boolean {
+    public fun moveItem(
+        fromPosition: Int,
+        toPosition: Int,
+        commitCallback: (() -> Unit)? = null,
+    ): Boolean {
         if (fromPosition == toPosition) return true
         if (fromPosition < 0 || fromPosition >= itemCount) {
             Logx.e("Invalid fromPosition $fromPosition. Valid range: 0 until $itemCount")
@@ -359,7 +395,11 @@ public abstract class BaseRcvListAdapter<ITEM, VH : RecyclerView.ViewHolder>(lis
      * @return True if replacement succeeded, false if position is invalid.<br><br>
      *         교체 성공 시 true, position이 유효하지 않으면 false.<br>
      */
-    public fun replaceItemAt(position: Int, item: ITEM, commitCallback: (() -> Unit)? = null): Boolean {
+    public fun replaceItemAt(
+        position: Int,
+        item: ITEM,
+        commitCallback: (() -> Unit)? = null,
+    ): Boolean {
         if (position < 0 || position >= itemCount) {
             Logx.e("Invalid position $position. Valid range: 0 until $itemCount")
             return false
@@ -375,7 +415,9 @@ public abstract class BaseRcvListAdapter<ITEM, VH : RecyclerView.ViewHolder>(lis
      * @param listener The callback for click events (receives position, item, and view).<br><br>
      *                 클릭 이벤트 콜백 (위치, 아이템, 뷰를 수신).<br>
      */
-    public fun setOnItemClickListener(listener: (Int, ITEM, View) -> Unit) { onItemClickListener = listener }
+    public fun setOnItemClickListener(listener: (Int, ITEM, View) -> Unit) {
+        onItemClickListener = listener
+    }
 
     /**
      * Sets the item long-click listener.<br><br>
@@ -384,7 +426,9 @@ public abstract class BaseRcvListAdapter<ITEM, VH : RecyclerView.ViewHolder>(lis
      * @param listener The callback for long-click events (receives position, item, and view).<br><br>
      *                 롱클릭 이벤트 콜백 (위치, 아이템, 뷰를 수신).<br>
      */
-    public fun setOnItemLongClickListener(listener: (Int, ITEM, View) -> Unit) { onItemLongClickListener = listener }
+    public fun setOnItemLongClickListener(listener: (Int, ITEM, View) -> Unit) {
+        onItemLongClickListener = listener
+    }
 
     /**
      * Binds data to the ViewHolder at the specified position.<br>
@@ -398,7 +442,10 @@ public abstract class BaseRcvListAdapter<ITEM, VH : RecyclerView.ViewHolder>(lis
      * @param position The position of the item.<br><br>
      *                 아이템의 위치.<br>
      */
-    override fun onBindViewHolder(holder: VH, position: Int) {
+    override fun onBindViewHolder(
+        holder: VH,
+        position: Int,
+    ) {
         if (!isPositionValid(position)) {
             Logx.e("Invalid position: $position, item count: $itemCount")
             return
@@ -434,7 +481,11 @@ public abstract class BaseRcvListAdapter<ITEM, VH : RecyclerView.ViewHolder>(lis
      * @param payloads The list of payloads for partial updates.<br><br>
      *                 부분 업데이트를 위한 payload 리스트.<br>
      */
-    override fun onBindViewHolder(holder: VH, position: Int, payloads: MutableList<Any>) {
+    override fun onBindViewHolder(
+        holder: VH,
+        position: Int,
+        payloads: MutableList<Any>,
+    ) {
         if (payloads.isEmpty()) {
             // Full binding if no payloads
             onBindViewHolder(holder, position)
@@ -461,7 +512,7 @@ public abstract class BaseRcvListAdapter<ITEM, VH : RecyclerView.ViewHolder>(lis
      */
     override fun onViewRecycled(holder: VH) {
         super.onViewRecycled(holder)
-        if(holder is BaseRcvViewHolder){
+        if (holder is BaseRcvViewHolder) {
             holder.clearViewCache()
         }
     }

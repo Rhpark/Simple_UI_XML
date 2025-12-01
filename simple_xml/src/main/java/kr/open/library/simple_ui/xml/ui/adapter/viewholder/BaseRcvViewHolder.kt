@@ -20,11 +20,10 @@ import androidx.recyclerview.widget.RecyclerView
 public open class BaseRcvViewHolder(
     @LayoutRes xmlRes: Int,
     parent: ViewGroup,
-    attachToRoot: Boolean = false
+    attachToRoot: Boolean = false,
 ) : RecyclerView.ViewHolder(
-    LayoutInflater.from(parent.context).inflate(xmlRes, parent, attachToRoot)
-) {
-
+        LayoutInflater.from(parent.context).inflate(xmlRes, parent, attachToRoot),
+    ) {
     @PublishedApi
     internal val viewCache = mutableMapOf<Int, View>()
 
@@ -42,8 +41,9 @@ public open class BaseRcvViewHolder(
         val cached = viewCache[id]
         if (cached != null && cached is T) return cached
 
-        val view = itemView.findViewById<View>(id)
-            ?: throw IllegalArgumentException("View with id $id not found in layout")
+        val view =
+            itemView.findViewById<View>(id)
+                ?: throw IllegalArgumentException("View with id $id not found in layout")
 
         if (view !is T) {
             throw ClassCastException("View with id $id is ${view::class.java.simpleName}, not ${T::class.java.simpleName}")
@@ -105,6 +105,5 @@ public open class BaseRcvViewHolder(
      * @return Adapter position, or -1 if invalid.<br><br>
      *         유효하지 않으면 -1을 반환합니다.<br>
      */
-    protected fun getAdapterPositionSafe(): Int =
-        if (isValidPosition()) adapterPosition else RecyclerView.NO_POSITION
+    protected fun getAdapterPositionSafe(): Int = if (isValidPosition()) adapterPosition else RecyclerView.NO_POSITION
 }

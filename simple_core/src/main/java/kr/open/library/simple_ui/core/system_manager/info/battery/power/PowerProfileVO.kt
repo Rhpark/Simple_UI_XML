@@ -7,7 +7,9 @@ package kr.open.library.simple_ui.core.system_manager.info.battery.power
  * @param res Resource string identifier for the power profile metric.<br><br>
  *            파워 프로파일 지표에 대응하는 리소스 문자열 식별자입니다.<br>
  */
-public enum class PowerProfileVO(public val res: String) {
+public enum class PowerProfileVO(
+    public val res: String,
+) {
     /*
      * POWER_CPU_SUSPEND: Power consumption when CPU is in power collapse mode.
      * POWER_CPU_IDLE: Power consumption when CPU is awake (when a wake lock is held). This should
@@ -31,7 +33,7 @@ public enum class PowerProfileVO(public val res: String) {
     POWER_CPU_ACTIVE("cpu.active"),
 
     POWER_SCREEN_FULL("screen.full"),
-    
+
     /**
      * Power consumption when WiFi driver is scanning for networks.<br><br>
      * WiFi 드라이버가 네트워크를 스캔할 때의 전력 소모입니다.<br>

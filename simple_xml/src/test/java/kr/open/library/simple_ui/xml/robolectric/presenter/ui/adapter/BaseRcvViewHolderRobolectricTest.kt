@@ -2,7 +2,6 @@ package kr.open.library.simple_ui.xml.robolectric.presenter.ui.adapter
 
 import android.content.Context
 import android.os.Build
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
@@ -10,7 +9,13 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ApplicationProvider
 import kr.open.library.simple_ui.xml.ui.adapter.viewholder.BaseRcvViewHolder
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNotSame
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertSame
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -31,7 +36,6 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [Build.VERSION_CODES.TIRAMISU])
 class BaseRcvViewHolderRobolectricTest {
-
     private lateinit var context: Context
     private lateinit var parent: ViewGroup
 
@@ -473,18 +477,16 @@ class BaseRcvViewHolderRobolectricTest {
         return android.R.layout.simple_list_item_2
     }
 
-    private fun createLayoutWithMultipleViews(): Int {
-        return android.R.layout.simple_list_item_2
-    }
+    private fun createLayoutWithMultipleViews(): Int = android.R.layout.simple_list_item_2
 
     // Test ViewHolder that exposes protected methods
     private class TestViewHolder(
         xmlRes: Int,
         parent: ViewGroup,
-        attachToRoot: Boolean = false
+        attachToRoot: Boolean = false,
     ) : BaseRcvViewHolder(xmlRes, parent, attachToRoot) {
-
         fun testIsValidPosition(): Boolean = isValidPosition()
+
         fun testGetAdapterPositionSafe(): Int = getAdapterPositionSafe()
     }
 

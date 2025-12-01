@@ -9,7 +9,6 @@ import org.junit.Test
 import java.lang.reflect.InvocationTargetException
 
 class LogxStackTraceTest {
-
     @Test
     fun `getStackTrace variants return metadata`() {
         fun capture(block: () -> LogxStackTraceMetaData): LogxStackTraceMetaData = block()
@@ -27,12 +26,13 @@ class LogxStackTraceTest {
 
     @Test
     fun `meta data falls back when fileName missing`() {
-        val element = StackTraceElement(
-            LogxStackTraceTest::class.java.name,
-            "fakeMethod",
-            null,
-            123
-        )
+        val element =
+            StackTraceElement(
+                LogxStackTraceTest::class.java.name,
+                "fakeMethod",
+                null,
+                123,
+            )
         val meta = LogxStackTraceMetaData(element)
 
         val normal = meta.getMsgFrontNormal()
@@ -78,5 +78,4 @@ class LogxStackTraceTest {
         assertTrue(isNormal)
         assertFalse(isLambdaNormal)
     }
-
 }

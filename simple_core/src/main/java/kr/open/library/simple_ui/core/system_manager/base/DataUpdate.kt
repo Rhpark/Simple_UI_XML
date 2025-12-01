@@ -15,10 +15,11 @@ import kotlinx.coroutines.flow.asStateFlow
  * @param TYPE The type of data being tracked
  * @param initialValue The initial value to start with
  */
-internal class DataUpdate<TYPE>(initialValue: TYPE) {
-
+internal class DataUpdate<TYPE>(
+    initialValue: TYPE,
+) {
     private val _state = MutableStateFlow(initialValue)
-    
+
     /**
      * StateFlow that emits the current value and any subsequent changes.
      * Automatically filters out duplicate consecutive values.

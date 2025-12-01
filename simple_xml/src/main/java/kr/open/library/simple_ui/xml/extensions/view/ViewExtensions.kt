@@ -1,6 +1,5 @@
 package kr.open.library.simple_ui.xml.extensions.view
 
-
 import android.os.SystemClock
 import android.view.View
 import android.view.ViewGroup
@@ -42,7 +41,6 @@ internal object ViewIds {
     val LAST_CLICK_TIME = R.id.tag_last_click_time
     val FADE_ANIMATOR = R.id.tag_fade_animator
 
-
     /***************************
      * usefor LifeCycle*Layout
      ***************************/
@@ -73,7 +71,6 @@ public fun View.setInvisible() {
     if (this.visibility != View.INVISIBLE) this.visibility = View.INVISIBLE
 }
 
-
 /**
  * Sets a debounced click listener on this view to prevent rapid consecutive clicks.<br>
  * Uses View's tag system to store timing information, preventing memory leaks.<br><br>
@@ -101,7 +98,6 @@ public fun View.setOnDebouncedClickListener(
     }
 }
 
-
 /**
  * Iterates over all child views of this ViewGroup.<br><br>
  * 이 ViewGroup의 모든 자식 View를 반복합니다.<br>
@@ -114,7 +110,6 @@ public fun ViewGroup.forEachChild(action: (View) -> Unit) {
         action(getChildAt(i))
     }
 }
-
 
 /**
  * Sets all margin values at once.<br><br>
@@ -145,7 +140,6 @@ public fun View.setMargins(
     }
 }
 
-
 /**
  * Sets uniform margin for all sides.<br><br>
  * 모든 면에 대해 동일한 여백을 설정합니다.<br>
@@ -157,7 +151,6 @@ public fun View.setMargin(margin: Int) {
     setMargins(margin, margin, margin, margin)
 }
 
-
 /**
  * Sets uniform padding for all sides.<br><br>
  * 모든 면에 대해 동일한 패딩을 설정합니다.<br>
@@ -168,7 +161,6 @@ public fun View.setMargin(margin: Int) {
 public fun View.setPadding(padding: Int) {
     setPadding(padding, padding, padding, padding)
 }
-
 
 /**
  * Sets the width of the view.<br><br>
@@ -184,7 +176,6 @@ public fun View.setWidth(width: Int) {
     }
 }
 
-
 /**
  * Sets the height of the view.<br><br>
  * View의 높이를 설정합니다.<br>
@@ -199,7 +190,6 @@ public fun View.setHeight(height: Int) {
     }
 }
 
-
 /**
  * Sets both width and height of the view.<br><br>
  * View의 너비와 높이를 모두 설정합니다.<br>
@@ -210,14 +200,16 @@ public fun View.setHeight(height: Int) {
  * @param height Height in pixels.<br><br>
  *               높이(픽셀 단위).<br>
  */
-public fun View.setSize(width: Int, height: Int) {
+public fun View.setSize(
+    width: Int,
+    height: Int,
+) {
     layoutParams?.let { params ->
         params.width = width
         params.height = height
         layoutParams = params
     }
 }
-
 
 /**
  * Sets the view width to match parent.<br><br>
@@ -227,7 +219,6 @@ public fun View.setWidthMatchParent() {
     setWidth(ViewGroup.LayoutParams.MATCH_PARENT)
 }
 
-
 /**
  * Sets the view height to match parent.<br><br>
  * View의 높이를 부모에 맞춥니다.<br>
@@ -235,7 +226,6 @@ public fun View.setWidthMatchParent() {
 public fun View.setHeightMatchParent() {
     setHeight(ViewGroup.LayoutParams.MATCH_PARENT)
 }
-
 
 /**
  * Sets the view width to wrap content.<br><br>
@@ -245,7 +235,6 @@ public fun View.setWidthWrapContent() {
     setWidth(ViewGroup.LayoutParams.WRAP_CONTENT)
 }
 
-
 /**
  * Sets the view height to wrap content.<br><br>
  * View의 높이를 내용에 맞춥니다.<br>
@@ -253,4 +242,3 @@ public fun View.setWidthWrapContent() {
 public fun View.setHeightWrapContent() {
     setHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
 }
-

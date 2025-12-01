@@ -4,11 +4,9 @@ import kr.open.library.simple_ui.core.extensions.round_to.roundDown
 import kr.open.library.simple_ui.core.extensions.round_to.roundTo
 import kr.open.library.simple_ui.core.extensions.round_to.roundUp
 import org.junit.Assert.assertEquals
-import org.junit.Ignore
 import org.junit.Test
 
 class RoundToInlineTest {
-
     @Test
     fun double_roundVariants_behaveAsExpected() {
         val value = 3.14159
@@ -61,7 +59,7 @@ class RoundToInlineTest {
         val value = -3.14159
 
         assertEquals(-3.14, value.roundTo(2), 0.0001)
-        assertEquals(-3.14, value.roundUp(2), 0.0001)  // ceil moves toward 0
+        assertEquals(-3.14, value.roundUp(2), 0.0001) // ceil moves toward 0
         assertEquals(-3.15, value.roundDown(2), 0.0001) // floor moves away from 0
     }
 

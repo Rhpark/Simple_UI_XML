@@ -1,11 +1,3 @@
-package kr.open.library.simple_ui.xml.extensions.view
-
-import android.graphics.Paint
-import android.graphics.Typeface
-import android.widget.TextView
-import androidx.annotation.ColorRes
-import androidx.core.content.ContextCompat
-
 /**
  * TextView extension functions for text manipulation and styling.<br>
  * Provides convenient methods for text extraction, type conversion, and text style formatting.<br><br>
@@ -34,6 +26,13 @@ import androidx.core.content.ContextCompat
  * }
  * ```
  */
+package kr.open.library.simple_ui.xml.extensions.view
+
+import android.graphics.Paint
+import android.graphics.Typeface
+import android.widget.TextView
+import androidx.annotation.ColorRes
+import androidx.core.content.ContextCompat
 
 /**
  * Converts TextView content to String.<br><br>
@@ -102,9 +101,10 @@ public fun TextView.textToDouble(): Double? = this.text.toString().toDoubleOrNul
  * @return The TextView instance for method chaining.<br><br>
  *         메서드 체이닝을 위한 TextView 인스턴스.<br>
  */
-public fun TextView.bold(): TextView = apply {
-    setTypeface(typeface, Typeface.BOLD)
-}
+public fun TextView.bold(): TextView =
+    apply {
+        setTypeface(typeface, Typeface.BOLD)
+    }
 
 /**
  * Makes the TextView text italic.<br><br>
@@ -113,9 +113,10 @@ public fun TextView.bold(): TextView = apply {
  * @return The TextView instance for method chaining.<br><br>
  *         메서드 체이닝을 위한 TextView 인스턴스.<br>
  */
-public fun TextView.italic(): TextView = apply {
-    setTypeface(typeface, Typeface.ITALIC)
-}
+public fun TextView.italic(): TextView =
+    apply {
+        setTypeface(typeface, Typeface.ITALIC)
+    }
 
 /**
  * Makes the TextView text bold and italic.<br><br>
@@ -124,9 +125,10 @@ public fun TextView.italic(): TextView = apply {
  * @return The TextView instance for method chaining.<br><br>
  *         메서드 체이닝을 위한 TextView 인스턴스.<br>
  */
-public fun TextView.boldItalic(): TextView = apply {
-    setTypeface(typeface, Typeface.BOLD_ITALIC)
-}
+public fun TextView.boldItalic(): TextView =
+    apply {
+        setTypeface(typeface, Typeface.BOLD_ITALIC)
+    }
 
 /**
  * Makes the TextView text normal (removes bold/italic).<br><br>
@@ -135,9 +137,10 @@ public fun TextView.boldItalic(): TextView = apply {
  * @return The TextView instance for method chaining.<br><br>
  *         메서드 체이닝을 위한 TextView 인스턴스.<br>
  */
-public fun TextView.normal(): TextView = apply {
-    setTypeface(typeface, Typeface.NORMAL)
-}
+public fun TextView.normal(): TextView =
+    apply {
+        setTypeface(typeface, Typeface.NORMAL)
+    }
 
 /**
  * Adds underline to the TextView text.<br><br>
@@ -146,9 +149,10 @@ public fun TextView.normal(): TextView = apply {
  * @return The TextView instance for method chaining.<br><br>
  *         메서드 체이닝을 위한 TextView 인스턴스.<br>
  */
-public fun TextView.underline(): TextView = apply {
-    paintFlags = paintFlags or Paint.UNDERLINE_TEXT_FLAG
-}
+public fun TextView.underline(): TextView =
+    apply {
+        paintFlags = paintFlags or Paint.UNDERLINE_TEXT_FLAG
+    }
 
 /**
  * Removes underline from the TextView text.<br><br>
@@ -157,9 +161,10 @@ public fun TextView.underline(): TextView = apply {
  * @return The TextView instance for method chaining.<br><br>
  *         메서드 체이닝을 위한 TextView 인스턴스.<br>
  */
-public fun TextView.removeUnderline(): TextView = apply {
-    paintFlags = paintFlags and Paint.UNDERLINE_TEXT_FLAG.inv()
-}
+public fun TextView.removeUnderline(): TextView =
+    apply {
+        paintFlags = paintFlags and Paint.UNDERLINE_TEXT_FLAG.inv()
+    }
 
 /**
  * Adds strikethrough to the TextView text.<br><br>
@@ -168,9 +173,10 @@ public fun TextView.removeUnderline(): TextView = apply {
  * @return The TextView instance for method chaining.<br><br>
  *         메서드 체이닝을 위한 TextView 인스턴스.<br>
  */
-public fun TextView.strikeThrough(): TextView = apply {
-    paintFlags = paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
-}
+public fun TextView.strikeThrough(): TextView =
+    apply {
+        paintFlags = paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+    }
 
 /**
  * Removes strikethrough from the TextView text.<br><br>
@@ -179,9 +185,10 @@ public fun TextView.strikeThrough(): TextView = apply {
  * @return The TextView instance for method chaining.<br><br>
  *         메서드 체이닝을 위한 TextView 인스턴스.<br>
  */
-public fun TextView.removeStrikeThrough(): TextView = apply {
-    paintFlags = paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
-}
+public fun TextView.removeStrikeThrough(): TextView =
+    apply {
+        paintFlags = paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
+    }
 
 /**
  * Sets text color using color resource.<br><br>
@@ -193,9 +200,12 @@ public fun TextView.removeStrikeThrough(): TextView = apply {
  * @return The TextView instance for method chaining.<br><br>
  *         메서드 체이닝을 위한 TextView 인스턴스.<br>
  */
-public fun TextView.setTextColorRes(@ColorRes colorRes: Int): TextView = apply {
-    setTextColor(ContextCompat.getColor(context, colorRes))
-}
+public fun TextView.setTextColorRes(
+    @ColorRes colorRes: Int,
+): TextView =
+    apply {
+        setTextColor(ContextCompat.getColor(context, colorRes))
+    }
 
 /**
  * Chains multiple styling operations using a DSL-style block.<br><br>

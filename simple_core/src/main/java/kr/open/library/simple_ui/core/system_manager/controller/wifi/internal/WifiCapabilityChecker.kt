@@ -19,9 +19,8 @@ import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
 internal class WifiCapabilityChecker(
     private val wifiManager: WifiManager,
     private val guard: WifiOperationGuard,
-    private val capabilityInvoker: CapabilityInvoker = CapabilityInvoker.Reflection
+    private val capabilityInvoker: CapabilityInvoker = CapabilityInvoker.Reflection,
 ) {
-
     /**
      * Functional interface for invoking capability check methods.<br><br>
      * 기능 확인 메서드를 호출하기 위한 함수형 인터페이스입니다.<br>
@@ -38,17 +37,21 @@ internal class WifiCapabilityChecker(
          * @return Boolean result or null if invocation fails.<br><br>
          *         Boolean 결과 또는 호출 실패 시 null.<br>
          */
-        fun invoke(manager: WifiManager, methodName: String): Boolean?
+        fun invoke(
+            manager: WifiManager,
+            methodName: String,
+        ): Boolean?
 
         companion object {
             /**
              * Default reflection-based invoker implementation.<br><br>
              * 기본 리플렉션 기반 호출자 구현입니다.<br>
              */
-            val Reflection: CapabilityInvoker = CapabilityInvoker { manager, methodName ->
-                val method = manager.javaClass.getMethod(methodName)
-                method.invoke(manager) as? Boolean
-            }
+            val Reflection: CapabilityInvoker =
+                CapabilityInvoker { manager, methodName ->
+                    val method = manager.javaClass.getMethod(methodName)
+                    method.invoke(manager) as? Boolean
+                }
         }
     }
 
@@ -71,12 +74,14 @@ internal class WifiCapabilityChecker(
      *         6GHz 대역이 지원되면 `true`, 그렇지 않으면 `false`.<br>
      */
     @RequiresApi(Build.VERSION_CODES.R)
-    fun is6GHzBandSupported(): Boolean = guard.run(false) {
-        checkSdkVersion(Build.VERSION_CODES.R,
-            positiveWork = { invokeBooleanCapability("is6GHzBandSupported") },
-            negativeWork = { false }
-        )
-    }
+    fun is6GHzBandSupported(): Boolean =
+        guard.run(false) {
+            checkSdkVersion(
+                Build.VERSION_CODES.R,
+                positiveWork = { invokeBooleanCapability("is6GHzBandSupported") },
+                negativeWork = { false },
+            )
+        }
 
     /**
      * Checks if WPA3 SAE (Simultaneous Authentication of Equals) is supported.<br>
@@ -88,12 +93,14 @@ internal class WifiCapabilityChecker(
      *         WPA3 SAE가 지원되면 `true`, 그렇지 않으면 `false`.<br>
      */
     @RequiresApi(Build.VERSION_CODES.Q)
-    fun isWpa3SaeSupported(): Boolean = guard.run(false) {
-        checkSdkVersion(Build.VERSION_CODES.R,
-            positiveWork = { invokeBooleanCapability("isWpa3SaeSupported") },
-            negativeWork = { false }
-        )
-    }
+    fun isWpa3SaeSupported(): Boolean =
+        guard.run(false) {
+            checkSdkVersion(
+                Build.VERSION_CODES.R,
+                positiveWork = { invokeBooleanCapability("isWpa3SaeSupported") },
+                negativeWork = { false },
+            )
+        }
 
     /**
      * Checks if Enhanced Open (OWE - Opportunistic Wireless Encryption) is supported.<br>
@@ -105,12 +112,14 @@ internal class WifiCapabilityChecker(
      *         Enhanced Open이 지원되면 `true`, 그렇지 않으면 `false`.<br>
      */
     @RequiresApi(Build.VERSION_CODES.Q)
-    fun isEnhancedOpenSupported(): Boolean = guard.run(false) {
-        checkSdkVersion(Build.VERSION_CODES.Q,
-            positiveWork = { invokeBooleanCapability("isEnhancedOpenSupported") },
-            negativeWork = { false }
-        )
-    }
+    fun isEnhancedOpenSupported(): Boolean =
+        guard.run(false) {
+            checkSdkVersion(
+                Build.VERSION_CODES.Q,
+                positiveWork = { invokeBooleanCapability("isEnhancedOpenSupported") },
+                negativeWork = { false },
+            )
+        }
 
     /**
      * Invokes a boolean capability check method via reflection.<br><br>
@@ -121,7 +130,8 @@ internal class WifiCapabilityChecker(
      * @return `true` if capability is supported, `false` otherwise.<br><br>
      *         기능이 지원되면 `true`, 그렇지 않으면 `false`.<br>
      */
-    private fun invokeBooleanCapability(methodName: String): Boolean = guard.run(false) {
-        capabilityInvoker.invoke(wifiManager, methodName) ?: false
-    }
+    private fun invokeBooleanCapability(methodName: String): Boolean =
+        guard.run(false) {
+            capabilityInvoker.invoke(wifiManager, methodName) ?: false
+        }
 }

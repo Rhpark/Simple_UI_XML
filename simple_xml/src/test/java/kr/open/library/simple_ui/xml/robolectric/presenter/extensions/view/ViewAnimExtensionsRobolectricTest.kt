@@ -1,9 +1,11 @@
 package kr.open.library.simple_ui.xml.robolectric.presenter.extensions.view
 
+import android.animation.Animator
 import android.animation.ValueAnimator
 import android.content.Context
 import android.os.Build
 import android.view.View
+import android.view.ViewPropertyAnimator
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import androidx.test.core.app.ApplicationProvider
@@ -28,13 +30,10 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
-import android.view.ViewPropertyAnimator
-import android.animation.Animator
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [Build.VERSION_CODES.TIRAMISU])
 class ViewAnimExtensionsRobolectricTest {
-
     private lateinit var context: Context
 
     @Before
@@ -113,10 +112,11 @@ class ViewAnimExtensionsRobolectricTest {
 
     @Test
     fun fadeInWhenAlreadyVisibleInvokesCallbackImmediately() {
-        val view = View(context).apply {
-            alpha = 1f
-            visibility = View.VISIBLE
-        }
+        val view =
+            View(context).apply {
+                alpha = 1f
+                visibility = View.VISIBLE
+            }
 
         var invoked = false
         view.fadeIn {
@@ -128,10 +128,11 @@ class ViewAnimExtensionsRobolectricTest {
 
     @Test
     fun fadeOutWhenAlreadyHiddenInvokesCallbackImmediately() {
-        val view = View(context).apply {
-            alpha = 0f
-            visibility = View.GONE
-        }
+        val view =
+            View(context).apply {
+                alpha = 0f
+                visibility = View.GONE
+            }
 
         var invoked = false
         view.fadeOut {
@@ -143,10 +144,11 @@ class ViewAnimExtensionsRobolectricTest {
 
     @Test
     fun fadeInMakesHiddenViewVisible() {
-        val view = View(context).apply {
-            alpha = 0.2f
-            visibility = View.INVISIBLE
-        }
+        val view =
+            View(context).apply {
+                alpha = 0.2f
+                visibility = View.INVISIBLE
+            }
         var completed = false
 
         view.fadeIn {
@@ -161,10 +163,11 @@ class ViewAnimExtensionsRobolectricTest {
 
     @Test
     fun fadeOutAnimatesAndRespectsHideFlag() {
-        val view = View(context).apply {
-            alpha = 1f
-            visibility = View.VISIBLE
-        }
+        val view =
+            View(context).apply {
+                alpha = 1f
+                visibility = View.VISIBLE
+            }
         var completed = false
 
         view.fadeOut(duration = 80L, hideOnComplete = false) {
@@ -178,10 +181,11 @@ class ViewAnimExtensionsRobolectricTest {
 
     @Test
     fun fadeToggleSwitchesBetweenStates() {
-        val view = View(context).apply {
-            alpha = 0f
-            visibility = View.GONE
-        }
+        val view =
+            View(context).apply {
+                alpha = 0f
+                visibility = View.GONE
+            }
 
         view.fadeToggle()
         assertTrue(view.isVisible)
@@ -272,21 +276,24 @@ class ViewAnimExtensionsRobolectricTest {
         assertNotNull(view.animate())
     }
 
-    private fun createMeasuredView(width: Int, height: Int): View {
-        return View(context).apply {
+    private fun createMeasuredView(
+        width: Int,
+        height: Int,
+    ): View =
+        View(context).apply {
             layoutParams = FrameLayout.LayoutParams(width, height)
             val widthSpec = View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY)
             val heightSpec = View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY)
             measure(widthSpec, heightSpec)
             layout(0, 0, width, height)
         }
-    }
 
     private fun triggerAnimationEnd(view: View) {
         val animator = view.animate()
-        val listenerField = ViewPropertyAnimator::class.java.getDeclaredField("mListener").apply {
-            isAccessible = true
-        }
+        val listenerField =
+            ViewPropertyAnimator::class.java.getDeclaredField("mListener").apply {
+                isAccessible = true
+            }
         val listener = listenerField.get(animator) as? Animator.AnimatorListener
         listener?.onAnimationEnd(ValueAnimator())
     }

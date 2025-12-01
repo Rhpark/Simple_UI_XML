@@ -71,7 +71,6 @@ import kotlinx.coroutines.launch
  *      이벤트 처리 기능이 없는 ViewModel은 BaseViewModel을 참조하세요.<br>
  */
 public abstract class BaseViewModelEvent<EVENT_TYPE> : BaseViewModel() {
-
     /**
      * Private channel for sending events from ViewModel to View.<br>
      * Uses buffered channel to prevent event loss when collector is not ready.<br><br>

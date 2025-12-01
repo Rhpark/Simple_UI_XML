@@ -15,5 +15,5 @@ public enum class TelephonyNetworkType {
     CONNECT_2G,
     CONNECT_3G,
     CONNECT_4G,
-    CONNECT_5G
+    CONNECT_5G,
 }

@@ -38,8 +38,9 @@ import androidx.annotation.LayoutRes
  * @see BaseBindingActivity For DataBinding-enabled Activity.<br><br>
  *      DataBinding을 사용하는 Activity는 BaseBindingActivity를 참조하세요.<br>
  */
-public abstract class BaseActivity(@LayoutRes private val layoutRes: Int) : RootActivity() {
-
+public abstract class BaseActivity(
+    @LayoutRes private val layoutRes: Int,
+) : RootActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(layoutRes)

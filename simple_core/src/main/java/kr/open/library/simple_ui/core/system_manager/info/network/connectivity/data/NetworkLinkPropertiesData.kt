@@ -20,8 +20,9 @@ import java.net.InetAddress
  * @property linkProperties The original LinkProperties object.<br><br>
  *                          원본 LinkProperties 객체입니다.<br>
  */
-public data class NetworkLinkPropertiesData(public val linkProperties: LinkProperties) : NetworkBase(linkProperties) {
-
+public data class NetworkLinkPropertiesData(
+    public val linkProperties: LinkProperties,
+) : NetworkBase(linkProperties) {
     /**
      * Gets the list of link addresses.<br><br>
      * 링크 주소 목록을 반환합니다.<br>
@@ -38,10 +39,12 @@ public data class NetworkLinkPropertiesData(public val linkProperties: LinkPrope
      * @return MTU size in bytes.<br><br>
      *         바이트 단위 MTU 크기입니다.<br>
      */
-    public fun getMtu(): Int = checkSdkVersion(Build.VERSION_CODES.Q,
-        positiveWork = { linkProperties.mtu },
-        negativeWork = { splitStr("MTU: ", " ")?.let { it[0].toInt() } ?: 0 }
-    )
+    public fun getMtu(): Int =
+        checkSdkVersion(
+            Build.VERSION_CODES.Q,
+            positiveWork = { linkProperties.mtu },
+            negativeWork = { splitStr("MTU: ", " ")?.let { it[0].toInt() } ?: 0 },
+        )
 
     /**
      * Gets the list of routes.<br><br>
@@ -77,10 +80,12 @@ public data class NetworkLinkPropertiesData(public val linkProperties: LinkPrope
      * @return DHCP server address, or `null`.<br><br>
      *         DHCP 서버 주소이며, 없으면 `null`입니다.<br>
      */
-    public fun getDhcpServerAddress(): InetAddress? = checkSdkVersion(Build.VERSION_CODES.R,
-        positiveWork = {    linkProperties.dhcpServerAddress    },
-        negativeWork = {    InetAddress.getByName(splitStr("ServerAddress: "," ")?.get(0)?.toString())  }
-    )
+    public fun getDhcpServerAddress(): InetAddress? =
+        checkSdkVersion(
+            Build.VERSION_CODES.R,
+            positiveWork = { linkProperties.dhcpServerAddress },
+            negativeWork = { InetAddress.getByName(splitStr("ServerAddress: ", " ")?.get(0)?.toString()) },
+        )
 
     /**
      * Gets the HTTP proxy information.<br><br>
@@ -135,11 +140,12 @@ public data class NetworkLinkPropertiesData(public val linkProperties: LinkPrope
      * @return Buffer sizes as strings, or `null`.<br><br>
      *         문자열 형태의 버퍼 크기 목록이며, 없으면 `null`입니다.<br>
      */
-    public fun getTcpBufferSizes(): List<String>? = if (getResStr().contains(" TcpBufferSizes: ")) {
-        getResStr().split(" TcpBufferSizes: ", " ")?.split(",")
-    } else {
-        null
-    }
+    public fun getTcpBufferSizes(): List<String>? =
+        if (getResStr().contains(" TcpBufferSizes: ")) {
+            getResStr().split(" TcpBufferSizes: ", " ")?.split(",")
+        } else {
+            null
+        }
 
     /**
      * Converts all properties to a readable string.<br><br>
@@ -149,7 +155,8 @@ public data class NetworkLinkPropertiesData(public val linkProperties: LinkPrope
      *         포맷된 문자열 표현입니다.<br>
      */
     public fun toResString(): String {
-        var res = "getLinkAddresses ${getLinkAddresses().toList()}\n" +
+        var res =
+            "getLinkAddresses ${getLinkAddresses().toList()}\n" +
                 "getMtu ${getMtu()}\n" +
                 "getRoutes ${getRoutes()}\n" +
                 "getDomains ${getDomains()}\n" +

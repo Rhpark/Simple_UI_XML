@@ -4,10 +4,10 @@ import android.app.Application
 import android.content.Context
 import android.os.Build
 import androidx.test.core.app.ApplicationProvider
-import kr.open.library.simple_ui.core.local.base.BaseSharedPreference
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kr.open.library.simple_ui.core.local.base.BaseSharedPreference
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -22,7 +22,6 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [Build.VERSION_CODES.TIRAMISU])
 class BaseSharedPreferenceRobolectricTest {
-
     private lateinit var application: Application
     private lateinit var preference: TestPreference
 
@@ -104,16 +103,17 @@ class BaseSharedPreferenceRobolectricTest {
 
     @Test
     fun doublePref_edgeCases_preservesPrecision() {
-        val edgeCases = listOf(
-            Double.MAX_VALUE,
-            Double.MIN_VALUE,
-            Double.POSITIVE_INFINITY,
-            Double.NEGATIVE_INFINITY,
-            Math.PI,
-            Math.E,
-            0.0,
-            -0.0
-        )
+        val edgeCases =
+            listOf(
+                Double.MAX_VALUE,
+                Double.MIN_VALUE,
+                Double.POSITIVE_INFINITY,
+                Double.NEGATIVE_INFINITY,
+                Math.PI,
+                Math.E,
+                0.0,
+                -0.0,
+            )
 
         edgeCases.forEach { testValue ->
             preference.balance = testValue
@@ -143,19 +143,21 @@ class BaseSharedPreferenceRobolectricTest {
     }
 
     @Test
-    fun saveCommit_concurrentCalls_areSerialized() = runBlocking {
-        val jobs = (1..10).map { i ->
-            launch(Dispatchers.Default) {
-                preference.saveValueWithCommit("counter_$i", i * 10)
+    fun saveCommit_concurrentCalls_areSerialized() =
+        runBlocking {
+            val jobs =
+                (1..10).map { i ->
+                    launch(Dispatchers.Default) {
+                        preference.saveValueWithCommit("counter_$i", i * 10)
+                    }
+                }
+            jobs.forEach { it.join() }
+
+            // Verify all values were saved correctly
+            (1..10).forEach { i ->
+                assertEquals(i * 10, preference.readInt("counter_$i", -1))
             }
         }
-        jobs.forEach { it.join() }
-
-        // Verify all values were saved correctly
-        (1..10).forEach { i ->
-            assertEquals(i * 10, preference.readInt("counter_$i", -1))
-        }
-    }
 
     @Test
     fun removeAtString_removesKeyImmediately() {
@@ -273,56 +275,60 @@ class BaseSharedPreferenceRobolectricTest {
     }
 
     @Test
-    fun removeAtIntCommit_removesKeyWithCommit() = runBlocking {
-        preference.userAge = 42
-        assertTrue(preference.rawContains("user_age"))
+    fun removeAtIntCommit_removesKeyWithCommit() =
+        runBlocking {
+            preference.userAge = 42
+            assertTrue(preference.rawContains("user_age"))
 
-        val removed = preference.removeUserAgeCommit()
+            val removed = preference.removeUserAgeCommit()
 
-        assertTrue(removed)
-        assertFalse(preference.rawContains("user_age"))
-        assertEquals(0, preference.userAge)
-    }
-
-    @Test
-    fun removeAtFloatCommit_removesKeyWithCommit() = runBlocking {
-        preference.rating = 4.5f
-        assertTrue(preference.rawContains("rating"))
-
-        val removed = preference.removeRatingCommit()
-
-        assertTrue(removed)
-        assertFalse(preference.rawContains("rating"))
-        assertEquals(0.0f, preference.rating, 0.0f)
-    }
+            assertTrue(removed)
+            assertFalse(preference.rawContains("user_age"))
+            assertEquals(0, preference.userAge)
+        }
 
     @Test
-    fun removeAtLongCommit_removesKeyWithCommit() = runBlocking {
-        preference.userId = 12345L
-        assertTrue(preference.rawContains("user_id"))
+    fun removeAtFloatCommit_removesKeyWithCommit() =
+        runBlocking {
+            preference.rating = 4.5f
+            assertTrue(preference.rawContains("rating"))
 
-        val removed = preference.removeUserIdCommit()
+            val removed = preference.removeRatingCommit()
 
-        assertTrue(removed)
-        assertFalse(preference.rawContains("user_id"))
-        assertEquals(0L, preference.userId)
-    }
+            assertTrue(removed)
+            assertFalse(preference.rawContains("rating"))
+            assertEquals(0.0f, preference.rating, 0.0f)
+        }
 
     @Test
-    fun removeAtStringCommit_removesKeyWithCommit() = runBlocking {
-        preference.userName = "test"
-        assertTrue(preference.rawContains("user_name"))
+    fun removeAtLongCommit_removesKeyWithCommit() =
+        runBlocking {
+            preference.userId = 12345L
+            assertTrue(preference.rawContains("user_id"))
 
-        val removed = preference.removeUserNameCommit()
+            val removed = preference.removeUserIdCommit()
 
-        assertTrue(removed)
-        assertFalse(preference.rawContains("user_name"))
-        assertEquals("", preference.userName)
-    }
+            assertTrue(removed)
+            assertFalse(preference.rawContains("user_id"))
+            assertEquals(0L, preference.userId)
+        }
 
-    private class TestPreference(context: Context) :
-        BaseSharedPreference(context, PREF_NAME) {
+    @Test
+    fun removeAtStringCommit_removesKeyWithCommit() =
+        runBlocking {
+            preference.userName = "test"
+            assertTrue(preference.rawContains("user_name"))
 
+            val removed = preference.removeUserNameCommit()
+
+            assertTrue(removed)
+            assertFalse(preference.rawContains("user_name"))
+            assertEquals("", preference.userName)
+        }
+
+    private class TestPreference(
+        context: Context,
+    ) : BaseSharedPreference(context, PREF_NAME) {
         var userName by stringPref("user_name", "")
         var userAge by intPref("user_age", 0)
         var isPremium by booleanPref("is_premium", false)
@@ -338,25 +344,48 @@ class BaseSharedPreferenceRobolectricTest {
 
         fun rawContains(key: String): Boolean = sp.contains(key)
 
-        fun readInt(key: String, defaultValue: Int): Int = getInt(key, defaultValue)
+        fun readInt(
+            key: String,
+            defaultValue: Int,
+        ): Int = getInt(key, defaultValue)
 
-        fun readString(key: String, defaultValue: String?): String? = getString(key, defaultValue)
+        fun readString(
+            key: String,
+            defaultValue: String?,
+        ): String? = getString(key, defaultValue)
 
-        fun readBoolean(key: String, defaultValue: Boolean): Boolean = getBoolean(key, defaultValue)
+        fun readBoolean(
+            key: String,
+            defaultValue: Boolean,
+        ): Boolean = getBoolean(key, defaultValue)
 
-        fun saveStringSet(key: String, value: Set<String>) = saveApply(key, value)
+        fun saveStringSet(
+            key: String,
+            value: Set<String>,
+        ) = saveApply(key, value)
 
-        fun loadStringSet(key: String, defaultValue: Set<String>): Set<String>? = getSet(key, defaultValue)
+        fun loadStringSet(
+            key: String,
+            defaultValue: Set<String>,
+        ): Set<String>? = getSet(key, defaultValue)
 
-        fun saveValueWithCommit(key: String, value: Any?): Boolean = runBlocking {
-            super.saveCommit(key, value)
-        }
+        fun saveValueWithCommit(
+            key: String,
+            value: Any?,
+        ): Boolean =
+            runBlocking {
+                super.saveCommit(key, value)
+            }
 
-        fun putArbitraryValue(key: String, value: Any?) = saveApply(key, value)
+        fun putArbitraryValue(
+            key: String,
+            value: Any?,
+        ) = saveApply(key, value)
 
-        fun removeBalanceCommit(): Boolean = runBlocking {
-            removeAtDoubleCommit("balance")
-        }
+        fun removeBalanceCommit(): Boolean =
+            runBlocking {
+                removeAtDoubleCommit("balance")
+            }
 
         fun removeUserName() = removeAtString("user_name")
 
@@ -370,21 +399,25 @@ class BaseSharedPreferenceRobolectricTest {
 
         fun removeBalance() = removeAtDouble("balance")
 
-        fun removeUserAgeCommit(): Boolean = runBlocking {
-            removeAtIntCommit("user_age")
-        }
+        fun removeUserAgeCommit(): Boolean =
+            runBlocking {
+                removeAtIntCommit("user_age")
+            }
 
-        fun removeRatingCommit(): Boolean = runBlocking {
-            removeAtFloatCommit("rating")
-        }
+        fun removeRatingCommit(): Boolean =
+            runBlocking {
+                removeAtFloatCommit("rating")
+            }
 
-        fun removeUserIdCommit(): Boolean = runBlocking {
-            removeAtLongCommit("user_id")
-        }
+        fun removeUserIdCommit(): Boolean =
+            runBlocking {
+                removeAtLongCommit("user_id")
+            }
 
-        fun removeUserNameCommit(): Boolean = runBlocking {
-            removeAtStringCommit("user_name")
-        }
+        fun removeUserNameCommit(): Boolean =
+            runBlocking {
+                removeAtStringCommit("user_name")
+            }
 
         fun saveApplyManual() = saveApply()
 

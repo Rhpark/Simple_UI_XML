@@ -13,7 +13,6 @@ import kr.open.library.simpleui_xml.system_service_manager.controller.vibrator.V
 import kr.open.library.simpleui_xml.system_service_manager.controller.wifi.WifiControllerActivity
 
 class ServiceManagerControllerActivity : BaseActivity(R.layout.activity_service_manager_controller) {
-
     private lateinit var binding: ActivityServiceManagerControllerBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {

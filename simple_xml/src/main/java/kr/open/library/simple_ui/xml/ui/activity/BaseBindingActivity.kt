@@ -8,7 +8,6 @@ import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 
-
 /**
  * A base Activity class that uses DataBinding and provides common functionality for data-bound activities.<br>
  * Extends RootActivity to inherit system bar control and permission management.<br><br>
@@ -83,9 +82,9 @@ import androidx.lifecycle.ViewModelProvider
  * @see BaseActivity For simple layout-based Activity without DataBinding.<br><br>
  *      DataBinding 없이 간단한 레이아웃 기반 Activity는 BaseActivity를 참조하세요.<br>
  */
-public abstract class BaseBindingActivity<BINDING : ViewDataBinding>(@LayoutRes private val layoutRes: Int) :
-    RootActivity() {
-
+public abstract class BaseBindingActivity<BINDING : ViewDataBinding>(
+    @LayoutRes private val layoutRes: Int,
+) : RootActivity() {
     /**
      * The DataBinding object for the activity.<br>
      * Initialized in onCreate and available for use in onCreateView and afterwards.<br><br>
@@ -114,10 +113,11 @@ public abstract class BaseBindingActivity<BINDING : ViewDataBinding>(@LayoutRes 
      * @param savedInstanceState The saved instance state bundle, if any.<br><br>
      *                           저장된 인스턴스 상태 번들 (있는 경우).<br>
      */
-    protected open fun onCreateView(rootView: View, savedInstanceState: Bundle?) {
-
+    protected open fun onCreateView(
+        rootView: View,
+        savedInstanceState: Bundle?,
+    ) {
     }
-
 
     /**
      * Override this method to set up ViewModel event collection.<br>
@@ -127,7 +127,6 @@ public abstract class BaseBindingActivity<BINDING : ViewDataBinding>(@LayoutRes 
      */
     protected open fun eventVmCollect() {}
 
-
     /**
      * Obtains a ViewModel of the specified type using ViewModelProvider.<br><br>
      * ViewModelProvider를 사용하여 지정된 타입의 ViewModel을 가져옵니다.<br>
@@ -135,8 +134,5 @@ public abstract class BaseBindingActivity<BINDING : ViewDataBinding>(@LayoutRes 
      * @return The ViewModel instance of type T.<br><br>
      *         타입 T의 ViewModel 인스턴스.<br>
      */
-    protected inline fun <reified T : ViewModel> getViewModel(): T {
-        return ViewModelProvider(this)[T::class.java]
-    }
-
+    protected inline fun <reified T : ViewModel> getViewModel(): T = ViewModelProvider(this)[T::class.java]
 }

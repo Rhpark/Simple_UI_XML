@@ -15,8 +15,13 @@ import androidx.annotation.ChecksSdkIntAtLeast
  *        [doWork]를 실행하기 위한 최소 SDK 수준입니다.
  */
 @ChecksSdkIntAtLeast(parameter = 0, lambda = 1)
-public inline fun checkSdkVersion(ver: Int, doWork: () -> Unit) {
-    if (Build.VERSION.SDK_INT >= ver) { doWork() }
+public inline fun checkSdkVersion(
+    ver: Int,
+    doWork: () -> Unit,
+) {
+    if (Build.VERSION.SDK_INT >= ver) {
+        doWork()
+    }
 }
 
 /**
@@ -31,8 +36,15 @@ public inline fun checkSdkVersion(ver: Int, doWork: () -> Unit) {
  *         조건이 충족되면 [doWork] 반환값을, 아니면 null을 돌려줍니다.
  */
 @ChecksSdkIntAtLeast(parameter = 0, lambda = 1)
-public inline fun <T> checkSdkVersion(ver: Int, doWork: () -> T, ): T? =
-    if (Build.VERSION.SDK_INT >= ver) { doWork() } else { null }
+public inline fun <T> checkSdkVersion(
+    ver: Int,
+    doWork: () -> T,
+): T? =
+    if (Build.VERSION.SDK_INT >= ver) {
+        doWork()
+    } else {
+        null
+    }
 
 /**
  * Chooses between [positiveWork] and [negativeWork] based on the SDK requirement defined by [ver].<br><br>
@@ -48,5 +60,13 @@ public inline fun <T> checkSdkVersion(ver: Int, doWork: () -> T, ): T? =
  *         실행된 분기에서 반환된 값을 돌려줍니다.
  */
 @ChecksSdkIntAtLeast(parameter = 0, lambda = 1)
-public inline fun <T> checkSdkVersion(ver: Int, positiveWork: () -> T, negativeWork: () -> T,
-): T = if (Build.VERSION.SDK_INT >= ver) { positiveWork() } else { negativeWork() }
+public inline fun <T> checkSdkVersion(
+    ver: Int,
+    positiveWork: () -> T,
+    negativeWork: () -> T,
+): T =
+    if (Build.VERSION.SDK_INT >= ver) {
+        positiveWork()
+    } else {
+        negativeWork()
+    }

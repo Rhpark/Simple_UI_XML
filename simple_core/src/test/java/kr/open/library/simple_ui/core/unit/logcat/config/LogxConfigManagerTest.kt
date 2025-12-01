@@ -17,7 +17,6 @@ import java.util.EnumSet
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [Build.VERSION_CODES.TIRAMISU])
 class LogxConfigManagerTest {
-
     private lateinit var manager: LogxConfigManager
 
     @Before
@@ -28,16 +27,16 @@ class LogxConfigManagerTest {
     @Test
     fun `listeners continue notification even when one fails`() {
         var notified = false
-        val failing = object : LogxConfigManager.ConfigChangeListener {
-            override fun onConfigChanged(newConfig: LogxConfig) {
-                throw IllegalStateException("boom")
+        val failing =
+            object : LogxConfigManager.ConfigChangeListener {
+                override fun onConfigChanged(newConfig: LogxConfig): Unit = throw IllegalStateException("boom")
             }
-        }
-        val working = object : LogxConfigManager.ConfigChangeListener {
-            override fun onConfigChanged(newConfig: LogxConfig) {
-                notified = true
+        val working =
+            object : LogxConfigManager.ConfigChangeListener {
+                override fun onConfigChanged(newConfig: LogxConfig) {
+                    notified = true
+                }
             }
-        }
 
         manager.addConfigChangeListener(failing)
         manager.addConfigChangeListener(working)
@@ -51,11 +50,12 @@ class LogxConfigManagerTest {
     @Test
     fun `removeAllConfigChangeListener clears registry`() {
         var invoked = false
-        val listener = object : LogxConfigManager.ConfigChangeListener {
-            override fun onConfigChanged(newConfig: LogxConfig) {
-                invoked = true
+        val listener =
+            object : LogxConfigManager.ConfigChangeListener {
+                override fun onConfigChanged(newConfig: LogxConfig) {
+                    invoked = true
+                }
             }
-        }
 
         manager.addConfigChangeListener(listener)
         manager.removeAllConfigChangeListener()
@@ -89,16 +89,18 @@ class LogxConfigManagerTest {
     fun `removeConfigChangeListener removes specific listener`() {
         var firstCalled = false
         var secondCalled = false
-        val first = object : LogxConfigManager.ConfigChangeListener {
-            override fun onConfigChanged(newConfig: LogxConfig) {
-                firstCalled = true
+        val first =
+            object : LogxConfigManager.ConfigChangeListener {
+                override fun onConfigChanged(newConfig: LogxConfig) {
+                    firstCalled = true
+                }
             }
-        }
-        val second = object : LogxConfigManager.ConfigChangeListener {
-            override fun onConfigChanged(newConfig: LogxConfig) {
-                secondCalled = true
+        val second =
+            object : LogxConfigManager.ConfigChangeListener {
+                override fun onConfigChanged(newConfig: LogxConfig) {
+                    secondCalled = true
+                }
             }
-        }
 
         manager.addConfigChangeListener(first)
         manager.addConfigChangeListener(second)
@@ -113,16 +115,16 @@ class LogxConfigManagerTest {
     @Test
     fun `private notifyListeners still informs listeners`() {
         var notified = false
-        val succeed = object : LogxConfigManager.ConfigChangeListener {
-            override fun onConfigChanged(newConfig: LogxConfig) {
-                notified = true
+        val succeed =
+            object : LogxConfigManager.ConfigChangeListener {
+                override fun onConfigChanged(newConfig: LogxConfig) {
+                    notified = true
+                }
             }
-        }
-        val failing = object : LogxConfigManager.ConfigChangeListener {
-            override fun onConfigChanged(newConfig: LogxConfig) {
-                throw IllegalStateException("should be caught")
+        val failing =
+            object : LogxConfigManager.ConfigChangeListener {
+                override fun onConfigChanged(newConfig: LogxConfig): Unit = throw IllegalStateException("should be caught")
             }
-        }
 
         manager.addConfigChangeListener(failing)
         manager.addConfigChangeListener(succeed)
@@ -139,9 +141,10 @@ class LogxConfigManagerTest {
         val lockField = LogxConfigManager::class.java.getDeclaredField("lock").apply { isAccessible = true }
         val lock = lockField.get(manager) as java.util.concurrent.locks.ReentrantReadWriteLock
 
-        val listener = object : LogxConfigManager.ConfigChangeListener {
-            override fun onConfigChanged(newConfig: LogxConfig) = Unit
-        }
+        val listener =
+            object : LogxConfigManager.ConfigChangeListener {
+                override fun onConfigChanged(newConfig: LogxConfig) = Unit
+            }
 
         lock.writeLock().lock()
         try {

@@ -2,8 +2,8 @@ package kr.open.library.simple_ui.xml.ui.fragment
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import kr.open.library.simple_ui.xml.permissions.register.PermissionRequester
 import kr.open.library.simple_ui.xml.permissions.register.PermissionDelegate
+import kr.open.library.simple_ui.xml.permissions.register.PermissionRequester
 
 /**
  * Root Fragment class providing runtime permission management.<br>
@@ -26,13 +26,14 @@ import kr.open.library.simple_ui.xml.permissions.register.PermissionDelegate
  * @see BaseBindingFragment For DataBinding-enabled Fragment.<br><br>
  *      DataBinding을 사용하는 Fragment는 BaseBindingFragment를 참조하세요.<br>
  */
-abstract class RootFragment: Fragment(), PermissionRequester {
-
+abstract class RootFragment :
+    Fragment(),
+    PermissionRequester {
     /**
      * Delegate for handling runtime permission requests.<br><br>
      * 런타임 권한 요청을 처리하는 델리게이트입니다.<br>
      */
-    protected lateinit var permissionDelegate : PermissionDelegate<Fragment>
+    protected lateinit var permissionDelegate: PermissionDelegate<Fragment>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,7 +46,10 @@ abstract class RootFragment: Fragment(), PermissionRequester {
         permissionDelegate.onSaveInstanceState(outState)
     }
 
-    override fun onRequestPermissions(permissions: List<String>, onResult: (deniedPermissions: List<String>) -> Unit) {
+    override fun onRequestPermissions(
+        permissions: List<String>,
+        onResult: (deniedPermissions: List<String>) -> Unit,
+    ) {
         permissionDelegate.requestPermissions(permissions, onResult)
     }
 }

@@ -32,5 +32,5 @@ public data class WifiNetworkDetails(
     val linkUpstreamBandwidthKbps: Int,
     val interfaceName: String?,
     val dnsServers: List<String>,
-    val domains: String?
+    val domains: String?,
 )

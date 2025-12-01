@@ -9,13 +9,13 @@ import org.junit.Test
 import java.util.EnumSet
 
 class DefaultLogFilterTest {
-
     @Test
     fun `filter allows any tag when debug filter disabled`() {
-        val config = LogxConfig(
-            isDebugFilter = false,
-            debugLogTypeList = EnumSet.allOf(LogxType::class.java),
-        )
+        val config =
+            LogxConfig(
+                isDebugFilter = false,
+                debugLogTypeList = EnumSet.allOf(LogxType::class.java),
+            )
         val filter = DefaultLogFilter(config)
 
         assertTrue(filter.shouldLog("RandomTag", "SomeFile"))
@@ -23,11 +23,12 @@ class DefaultLogFilterTest {
 
     @Test
     fun `filter checks tag and file names when debug filter enabled`() {
-        val config = LogxConfig(
-            isDebugFilter = true,
-            debugFilterList = setOf("AllowedTag", "AllowedFile"),
-            debugLogTypeList = EnumSet.allOf(LogxType::class.java),
-        )
+        val config =
+            LogxConfig(
+                isDebugFilter = true,
+                debugFilterList = setOf("AllowedTag", "AllowedFile"),
+                debugLogTypeList = EnumSet.allOf(LogxType::class.java),
+            )
         val filter = DefaultLogFilter(config)
 
         assertTrue(filter.shouldLog("AllowedTag", "OtherFile"))

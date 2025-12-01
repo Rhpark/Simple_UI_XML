@@ -3,8 +3,8 @@ plugins {
     alias(libs.plugins.kotlin.android)
     // FireBase (Add the Google services Gradle plugin)
     id("com.google.gms.google-services")
-    id("com.google.firebase.appdistribution") //apk 자동 배포
-    id("com.google.firebase.crashlytics") //Firebase Exception Report
+    id("com.google.firebase.appdistribution") // apk 자동 배포
+    id("com.google.firebase.crashlytics") // Firebase Exception Report
 }
 
 // 빌드 타입별 Suffix 상수
@@ -64,7 +64,7 @@ android {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
 
             // Release 모드: Crashlytics 활성화
@@ -87,23 +87,27 @@ android {
         //noinspection DataBindingWithoutKapt
         dataBinding = true
 //        viewBinding = true
-        buildConfig = true  // BuildConfig 활성화
+        buildConfig = true // BuildConfig 활성화
     }
 }
 
 firebaseAppDistribution {
     // Determine the App ID based on the task name
-    val taskNames = gradle.startParameter.taskNames.toString().lowercase()
-    appId = when {
-        taskNames.contains("verification") -> "1:549084067814:android:3ecfc4be81884ce0738827" // Verification
-        taskNames.contains("debug") -> "1:549084067814:android:d467d3ea55c4c608738827"        // Debug
-        else -> "1:549084067814:android:2477eceb48b0314a738827"                                 // Release (Default)
-    }
+    val taskNames =
+        gradle.startParameter.taskNames
+            .toString()
+            .lowercase()
+    appId =
+        when {
+            taskNames.contains("verification") -> "1:549084067814:android:3ecfc4be81884ce0738827" // Verification
+            taskNames.contains("debug") -> "1:549084067814:android:d467d3ea55c4c608738827" // Debug
+            else -> "1:549084067814:android:2477eceb48b0314a738827" // Release (Default)
+        }
 
     val credentialsFile =
-        (project.findProperty("firebaseCredentialsFile") as String?) ?:
-        System.getenv("FIREBASE_CREDENTIALS_FILE") ?:
-        rootProject.file("firebase-app-dist.json").takeIf { it.exists() }?.absolutePath
+        (project.findProperty("firebaseCredentialsFile") as String?)
+            ?: System.getenv("FIREBASE_CREDENTIALS_FILE")
+            ?: rootProject.file("firebase-app-dist.json").takeIf { it.exists() }?.absolutePath
 
     if (!credentialsFile.isNullOrBlank()) {
         serviceCredentialsFile = credentialsFile
@@ -113,21 +117,23 @@ firebaseAppDistribution {
         ?: System.getenv("FIREBASE_RELEASE_NOTES")
         ?: "Automated build ${System.getenv("GITHUB_RUN_NUMBER") ?: ""}"
 
-    val groupsValue = (project.findProperty("firebaseDistributionGroups") as String?)
-        ?: System.getenv("FIREBASE_TESTER_GROUPS")
+    val groupsValue =
+        (project.findProperty("firebaseDistributionGroups") as String?)
+            ?: System.getenv("FIREBASE_TESTER_GROUPS")
     if (!groupsValue.isNullOrBlank()) {
         groups = groupsValue
     }
 
-    val testersValue = (project.findProperty("firebaseDistributionTesters") as String?)
-        ?: System.getenv("FIREBASE_TESTERS")
+    val testersValue =
+        (project.findProperty("firebaseDistributionTesters") as String?)
+            ?: System.getenv("FIREBASE_TESTERS")
     if (!testersValue.isNullOrBlank()) {
         testers = testersValue
     }
 
     val artifactOverride =
-        (project.findProperty("firebaseArtifactPath") as String?) ?:
-        System.getenv("FIREBASE_ARTIFACT_PATH")
+        (project.findProperty("firebaseArtifactPath") as String?)
+            ?: System.getenv("FIREBASE_ARTIFACT_PATH")
     if (!artifactOverride.isNullOrBlank()) {
         artifactPath = artifactOverride
     }
@@ -145,18 +151,14 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
-
     /**************
      *  FireBase  *
      **************/
-    // Import the Firebase BoM
-    implementation(platform("com.google.firebase:firebase-bom:34.5.0"))
 
+    implementation(platform("com.google.firebase:firebase-bom:34.5.0")) // Import the Firebase BoM
 
-    // TODO: Add the dependencies for Firebase products you want to use
     // When using the BoM, don't specify versions in Firebase dependencies
     implementation("com.google.firebase:firebase-analytics")
-
 
     // Add the dependencies for any other desired Firebase products
     // https://firebase.google.com/docs/android/setup#available-libraries

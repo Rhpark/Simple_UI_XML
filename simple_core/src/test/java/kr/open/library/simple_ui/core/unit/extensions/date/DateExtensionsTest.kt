@@ -1,25 +1,25 @@
 package kr.open.library.simple_ui.core.unit.extensions.date
 
-import kr.open.library.simple_ui.core.extensions.date.toCompareInDays
 import kr.open.library.simple_ui.core.extensions.date.format
-import kr.open.library.simple_ui.core.extensions.date.toStringFormat
-import kr.open.library.simple_ui.core.extensions.date.toStringSimpleFormat
-import kr.open.library.simple_ui.core.extensions.date.toCompareInHours
 import kr.open.library.simple_ui.core.extensions.date.millisecondsToDays
 import kr.open.library.simple_ui.core.extensions.date.millisecondsToHours
 import kr.open.library.simple_ui.core.extensions.date.millisecondsToMinutes
 import kr.open.library.simple_ui.core.extensions.date.millisecondsToSeconds
-import kr.open.library.simple_ui.core.extensions.date.toCompareInMinutes
-import kr.open.library.simple_ui.core.extensions.date.toCompareInMonths
 import kr.open.library.simple_ui.core.extensions.date.secondsToDays
 import kr.open.library.simple_ui.core.extensions.date.secondsToHours
 import kr.open.library.simple_ui.core.extensions.date.secondsToMinutes
+import kr.open.library.simple_ui.core.extensions.date.toCompareInDays
+import kr.open.library.simple_ui.core.extensions.date.toCompareInHours
+import kr.open.library.simple_ui.core.extensions.date.toCompareInMinutes
+import kr.open.library.simple_ui.core.extensions.date.toCompareInMonths
+import kr.open.library.simple_ui.core.extensions.date.toCompareInSeconds
+import kr.open.library.simple_ui.core.extensions.date.toCompareInYears
 import kr.open.library.simple_ui.core.extensions.date.toDate
 import kr.open.library.simple_ui.core.extensions.date.toDateLong
 import kr.open.library.simple_ui.core.extensions.date.toDateString
-import kr.open.library.simple_ui.core.extensions.date.toCompareInSeconds
 import kr.open.library.simple_ui.core.extensions.date.toLocalDateTime
-import kr.open.library.simple_ui.core.extensions.date.toCompareInYears
+import kr.open.library.simple_ui.core.extensions.date.toStringFormat
+import kr.open.library.simple_ui.core.extensions.date.toStringSimpleFormat
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -31,7 +31,6 @@ import java.util.Date
 import java.util.Locale
 
 class DateExtensionsTest {
-
     @Test
     fun timeDateToString_formatsMillisCorrectly() {
         val instant = LocalDateTime.of(2024, Month.MARCH, 1, 10, 30)
@@ -46,10 +45,12 @@ class DateExtensionsTest {
     fun timeDateToLong_parsesBackToMillis() {
         val millis = "2024-03-01 10:30".toDateLong("yyyy-MM-dd HH:mm", Locale.US)
 
-        val expected = LocalDateTime.of(2024, Month.MARCH, 1, 10, 30)
-            .atZone(ZoneId.systemDefault())
-            .toInstant()
-            .toEpochMilli()
+        val expected =
+            LocalDateTime
+                .of(2024, Month.MARCH, 1, 10, 30)
+                .atZone(ZoneId.systemDefault())
+                .toInstant()
+                .toEpochMilli()
 
         assertEquals(expected, millis)
     }
@@ -214,10 +215,12 @@ class DateExtensionsTest {
 
     @Test
     fun longToLocalDateTime_convertsCorrectly() {
-        val millis = LocalDateTime.of(2024, Month.JUNE, 15, 14, 30)
-            .atZone(ZoneId.systemDefault())
-            .toInstant()
-            .toEpochMilli()
+        val millis =
+            LocalDateTime
+                .of(2024, Month.JUNE, 15, 14, 30)
+                .atZone(ZoneId.systemDefault())
+                .toInstant()
+                .toEpochMilli()
 
         val localDateTime = millis.toLocalDateTime()
 
@@ -269,10 +272,12 @@ class DateExtensionsTest {
 
     @Test
     fun timeDateToString_respectsLocale() {
-        val millis = LocalDateTime.of(2024, Month.MARCH, 1, 10, 30)
-            .atZone(ZoneId.systemDefault())
-            .toInstant()
-            .toEpochMilli()
+        val millis =
+            LocalDateTime
+                .of(2024, Month.MARCH, 1, 10, 30)
+                .atZone(ZoneId.systemDefault())
+                .toInstant()
+                .toEpochMilli()
 
         val formattedUS = millis.toDateString("MMM dd, yyyy", Locale.US)
         val formattedFR = millis.toDateString("dd MMM yyyy", Locale.FRANCE)
@@ -287,10 +292,12 @@ class DateExtensionsTest {
         val original = Locale.getDefault()
         try {
             Locale.setDefault(Locale.US)
-            val millis = LocalDateTime.of(2024, Month.JULY, 4, 12, 0)
-                .atZone(ZoneId.systemDefault())
-                .toInstant()
-                .toEpochMilli()
+            val millis =
+                LocalDateTime
+                    .of(2024, Month.JULY, 4, 12, 0)
+                    .atZone(ZoneId.systemDefault())
+                    .toInstant()
+                    .toEpochMilli()
 
             val withoutLocale = millis.toDateString("yyyy-MM-dd HH:mm")
             val withLocale = millis.toDateString("yyyy-MM-dd HH:mm", Locale.US)

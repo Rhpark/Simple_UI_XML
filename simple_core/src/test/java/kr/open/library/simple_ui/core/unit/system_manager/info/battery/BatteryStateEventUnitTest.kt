@@ -11,7 +11,6 @@ import org.junit.Test
  * Unit tests for BatteryStateEvent sealed class and its data classes
  */
 class BatteryStateEventUnitTest {
-
     // ==============================================
     // OnCapacity Tests
     // ==============================================
@@ -340,20 +339,21 @@ class BatteryStateEventUnitTest {
 
     @Test
     fun allEvents_areInstancesOfBatteryStateEvent() {
-        val events: List<BatteryStateEvent> = listOf(
-            BatteryStateEvent.OnCapacity(50),
-            BatteryStateEvent.OnChargeCounter(2000000),
-            BatteryStateEvent.OnChargePlug(1),
-            BatteryStateEvent.OnTemperature(30.0),
-            BatteryStateEvent.OnVoltage(3.8),
-            BatteryStateEvent.OnCurrentAmpere(1000000),
-            BatteryStateEvent.OnCurrentAverageAmpere(950000),
-            BatteryStateEvent.OnChargeStatus(2),
-            BatteryStateEvent.OnHealth(2),
-            BatteryStateEvent.OnEnergyCounter(12000000000L),
-            BatteryStateEvent.OnPresent(true),
-            BatteryStateEvent.OnTotalCapacity(4200.0)
-        )
+        val events: List<BatteryStateEvent> =
+            listOf(
+                BatteryStateEvent.OnCapacity(50),
+                BatteryStateEvent.OnChargeCounter(2000000),
+                BatteryStateEvent.OnChargePlug(1),
+                BatteryStateEvent.OnTemperature(30.0),
+                BatteryStateEvent.OnVoltage(3.8),
+                BatteryStateEvent.OnCurrentAmpere(1000000),
+                BatteryStateEvent.OnCurrentAverageAmpere(950000),
+                BatteryStateEvent.OnChargeStatus(2),
+                BatteryStateEvent.OnHealth(2),
+                BatteryStateEvent.OnEnergyCounter(12000000000L),
+                BatteryStateEvent.OnPresent(true),
+                BatteryStateEvent.OnTotalCapacity(4200.0),
+            )
 
         events.forEach { event ->
             assertTrue(event is BatteryStateEvent)
@@ -362,36 +362,38 @@ class BatteryStateEventUnitTest {
 
     @Test
     fun whenExpression_coversAllEventTypes() {
-        val events: List<BatteryStateEvent> = listOf(
-            BatteryStateEvent.OnCapacity(75),
-            BatteryStateEvent.OnChargeCounter(3000000),
-            BatteryStateEvent.OnChargePlug(2),
-            BatteryStateEvent.OnTemperature(35.0),
-            BatteryStateEvent.OnVoltage(4.1),
-            BatteryStateEvent.OnCurrentAmpere(1500000),
-            BatteryStateEvent.OnCurrentAverageAmpere(1400000),
-            BatteryStateEvent.OnChargeStatus(2),
-            BatteryStateEvent.OnHealth(2),
-            BatteryStateEvent.OnEnergyCounter(15000000000L),
-            BatteryStateEvent.OnPresent(true),
-            BatteryStateEvent.OnTotalCapacity(5000.0)
-        )
+        val events: List<BatteryStateEvent> =
+            listOf(
+                BatteryStateEvent.OnCapacity(75),
+                BatteryStateEvent.OnChargeCounter(3000000),
+                BatteryStateEvent.OnChargePlug(2),
+                BatteryStateEvent.OnTemperature(35.0),
+                BatteryStateEvent.OnVoltage(4.1),
+                BatteryStateEvent.OnCurrentAmpere(1500000),
+                BatteryStateEvent.OnCurrentAverageAmpere(1400000),
+                BatteryStateEvent.OnChargeStatus(2),
+                BatteryStateEvent.OnHealth(2),
+                BatteryStateEvent.OnEnergyCounter(15000000000L),
+                BatteryStateEvent.OnPresent(true),
+                BatteryStateEvent.OnTotalCapacity(5000.0),
+            )
 
         events.forEach { event ->
-            val eventType = when (event) {
-                is BatteryStateEvent.OnCapacity -> "Capacity"
-                is BatteryStateEvent.OnChargeCounter -> "ChargeCounter"
-                is BatteryStateEvent.OnChargePlug -> "ChargePlug"
-                is BatteryStateEvent.OnTemperature -> "Temperature"
-                is BatteryStateEvent.OnVoltage -> "Voltage"
-                is BatteryStateEvent.OnCurrentAmpere -> "CurrentAmpere"
-                is BatteryStateEvent.OnCurrentAverageAmpere -> "CurrentAverageAmpere"
-                is BatteryStateEvent.OnChargeStatus -> "ChargeStatus"
-                is BatteryStateEvent.OnHealth -> "Health"
-                is BatteryStateEvent.OnEnergyCounter -> "EnergyCounter"
-                is BatteryStateEvent.OnPresent -> "Present"
-                is BatteryStateEvent.OnTotalCapacity -> "TotalCapacity"
-            }
+            val eventType =
+                when (event) {
+                    is BatteryStateEvent.OnCapacity -> "Capacity"
+                    is BatteryStateEvent.OnChargeCounter -> "ChargeCounter"
+                    is BatteryStateEvent.OnChargePlug -> "ChargePlug"
+                    is BatteryStateEvent.OnTemperature -> "Temperature"
+                    is BatteryStateEvent.OnVoltage -> "Voltage"
+                    is BatteryStateEvent.OnCurrentAmpere -> "CurrentAmpere"
+                    is BatteryStateEvent.OnCurrentAverageAmpere -> "CurrentAverageAmpere"
+                    is BatteryStateEvent.OnChargeStatus -> "ChargeStatus"
+                    is BatteryStateEvent.OnHealth -> "Health"
+                    is BatteryStateEvent.OnEnergyCounter -> "EnergyCounter"
+                    is BatteryStateEvent.OnPresent -> "Present"
+                    is BatteryStateEvent.OnTotalCapacity -> "TotalCapacity"
+                }
             assertTrue(eventType.isNotEmpty())
         }
     }

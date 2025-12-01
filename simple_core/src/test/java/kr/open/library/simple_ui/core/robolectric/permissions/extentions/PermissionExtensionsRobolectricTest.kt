@@ -8,21 +8,28 @@ import android.content.Context
 import android.content.pm.PermissionInfo
 import android.os.Build
 import android.os.PowerManager
-import android.provider.Settings
-import androidx.test.core.app.ApplicationProvider
-import kr.open.library.simple_ui.core.permissions.extentions.*
 import androidx.core.app.NotificationManagerCompat
-import org.junit.After
-import org.junit.Assert.*
+import androidx.test.core.app.ApplicationProvider
+import kr.open.library.simple_ui.core.permissions.extentions.getPermissionProtectionLevel
+import kr.open.library.simple_ui.core.permissions.extentions.hasAccessibilityServicePermission
+import kr.open.library.simple_ui.core.permissions.extentions.hasNotificationListenerPermission
+import kr.open.library.simple_ui.core.permissions.extentions.hasPermission
+import kr.open.library.simple_ui.core.permissions.extentions.hasPermissions
+import kr.open.library.simple_ui.core.permissions.extentions.hasUsageStatsPermission
+import kr.open.library.simple_ui.core.permissions.extentions.isSpecialPermission
+import kr.open.library.simple_ui.core.permissions.extentions.remainPermissions
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.Mockito
-import org.mockito.Mockito.`when`
 import org.mockito.Mockito.doReturn
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.mockStatic
 import org.mockito.Mockito.spy
+import org.mockito.Mockito.`when`
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows
 import org.robolectric.annotation.Config
@@ -40,7 +47,6 @@ import org.robolectric.util.ReflectionHelpers
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [Build.VERSION_CODES.TIRAMISU], manifest = Config.NONE)
 class PermissionExtensionsRobolectricTest {
-
     private lateinit var application: Application
     private lateinit var context: Context
 
@@ -53,31 +59,35 @@ class PermissionExtensionsRobolectricTest {
         val shadowPackageManager = Shadows.shadowOf(application.packageManager)
 
         // Add common permissions used in tests
-        val permissions = listOf(
-            Manifest.permission.CAMERA,
-            Manifest.permission.RECORD_AUDIO,
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.POST_NOTIFICATIONS
-        )
+        val permissions =
+            listOf(
+                Manifest.permission.CAMERA,
+                Manifest.permission.RECORD_AUDIO,
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.POST_NOTIFICATIONS,
+            )
 
-        val protectionField = PermissionInfo::class.java.getDeclaredField("protectionLevel").apply {
-            isAccessible = true
-        }
+        val protectionField =
+            PermissionInfo::class.java.getDeclaredField("protectionLevel").apply {
+                isAccessible = true
+            }
 
         permissions.forEach { permission ->
-            val permissionInfo = PermissionInfo().apply {
-                name = permission
-                packageName = context.packageName
-            }
+            val permissionInfo =
+                PermissionInfo().apply {
+                    name = permission
+                    packageName = context.packageName
+                }
             protectionField.setInt(permissionInfo, PermissionInfo.PROTECTION_DANGEROUS)
             shadowPackageManager.addPermissionInfo(permissionInfo)
         }
 
         // Register an arbitrary permission used in unknown-permission tests
-        val unknownPermissionInfo = PermissionInfo().apply {
-            name = "com.unknown.PERMISSION"
-            packageName = context.packageName
-        }
+        val unknownPermissionInfo =
+            PermissionInfo().apply {
+                name = "com.unknown.PERMISSION"
+                packageName = context.packageName
+            }
         protectionField.setInt(unknownPermissionInfo, PermissionInfo.PROTECTION_NORMAL)
         shadowPackageManager.addPermissionInfo(unknownPermissionInfo)
     }
@@ -139,7 +149,6 @@ class PermissionExtensionsRobolectricTest {
         assertNotNull(result)
     }
 
-
     // ==============================================
     // hasPermissions() - Batch Checking
     // ==============================================
@@ -150,7 +159,7 @@ class PermissionExtensionsRobolectricTest {
         Shadows.shadowOf(application).grantPermissions(
             Manifest.permission.CAMERA,
             Manifest.permission.RECORD_AUDIO,
-            Manifest.permission.ACCESS_FINE_LOCATION
+            Manifest.permission.ACCESS_FINE_LOCATION,
         )
 
         // When & Then
@@ -158,8 +167,8 @@ class PermissionExtensionsRobolectricTest {
             context.hasPermissions(
                 Manifest.permission.CAMERA,
                 Manifest.permission.RECORD_AUDIO,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            )
+                Manifest.permission.ACCESS_FINE_LOCATION,
+            ),
         )
     }
 
@@ -175,8 +184,8 @@ class PermissionExtensionsRobolectricTest {
         assertFalse(
             context.hasPermissions(
                 Manifest.permission.CAMERA,
-                Manifest.permission.RECORD_AUDIO
-            )
+                Manifest.permission.RECORD_AUDIO,
+            ),
         )
     }
 
@@ -185,15 +194,15 @@ class PermissionExtensionsRobolectricTest {
         // Given
         Shadows.shadowOf(application).denyPermissions(
             Manifest.permission.CAMERA,
-            Manifest.permission.RECORD_AUDIO
+            Manifest.permission.RECORD_AUDIO,
         )
 
         // When & Then
         assertFalse(
             context.hasPermissions(
                 Manifest.permission.CAMERA,
-                Manifest.permission.RECORD_AUDIO
-            )
+                Manifest.permission.RECORD_AUDIO,
+            ),
         )
     }
 
@@ -214,9 +223,10 @@ class PermissionExtensionsRobolectricTest {
         var callbackExecuted = false
 
         // When
-        val result = context.hasPermissions(Manifest.permission.CAMERA) {
-            callbackExecuted = true
-        }
+        val result =
+            context.hasPermissions(Manifest.permission.CAMERA) {
+                callbackExecuted = true
+            }
 
         // Then
         assertTrue(result)
@@ -230,9 +240,10 @@ class PermissionExtensionsRobolectricTest {
         var callbackExecuted = false
 
         // When
-        val result = context.hasPermissions(Manifest.permission.CAMERA) {
-            callbackExecuted = true
-        }
+        val result =
+            context.hasPermissions(Manifest.permission.CAMERA) {
+                callbackExecuted = true
+            }
 
         // Then
         assertFalse(result)
@@ -248,16 +259,17 @@ class PermissionExtensionsRobolectricTest {
         // Given
         Shadows.shadowOf(application).grantPermissions(
             Manifest.permission.CAMERA,
-            Manifest.permission.RECORD_AUDIO
+            Manifest.permission.RECORD_AUDIO,
         )
 
         // When
-        val remaining = context.remainPermissions(
-            listOf(
-                Manifest.permission.CAMERA,
-                Manifest.permission.RECORD_AUDIO
+        val remaining =
+            context.remainPermissions(
+                listOf(
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.RECORD_AUDIO,
+                ),
             )
-        )
 
         // Then
         assertTrue(remaining.isEmpty())
@@ -272,12 +284,13 @@ class PermissionExtensionsRobolectricTest {
         }
 
         // When
-        val remaining = context.remainPermissions(
-            listOf(
-                Manifest.permission.CAMERA,
-                Manifest.permission.RECORD_AUDIO
+        val remaining =
+            context.remainPermissions(
+                listOf(
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.RECORD_AUDIO,
+                ),
             )
-        )
 
         // Then
         assertEquals(1, remaining.size)
@@ -289,16 +302,17 @@ class PermissionExtensionsRobolectricTest {
         // Given
         Shadows.shadowOf(application).denyPermissions(
             Manifest.permission.CAMERA,
-            Manifest.permission.RECORD_AUDIO
+            Manifest.permission.RECORD_AUDIO,
         )
 
         // When
-        val remaining = context.remainPermissions(
-            listOf(
-                Manifest.permission.CAMERA,
-                Manifest.permission.RECORD_AUDIO
+        val remaining =
+            context.remainPermissions(
+                listOf(
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.RECORD_AUDIO,
+                ),
             )
-        )
 
         // Then
         assertEquals(2, remaining.size)
@@ -306,9 +320,9 @@ class PermissionExtensionsRobolectricTest {
             remaining.containsAll(
                 listOf(
                     Manifest.permission.CAMERA,
-                    Manifest.permission.RECORD_AUDIO
-                )
-            )
+                    Manifest.permission.RECORD_AUDIO,
+                ),
+            ),
         )
     }
 
@@ -364,10 +378,11 @@ class PermissionExtensionsRobolectricTest {
         Shadows.shadowOf(application).grantPermissions(Manifest.permission.CAMERA)
 
         // When
-        val result = context.hasPermissions(
-            Manifest.permission.CAMERA,
-            Manifest.permission.SYSTEM_ALERT_WINDOW
-        )
+        val result =
+            context.hasPermissions(
+                Manifest.permission.CAMERA,
+                Manifest.permission.SYSTEM_ALERT_WINDOW,
+            )
 
         // Then - CAMERA??granted, SYSTEM_ALERT_WINDOW??denied
         assertFalse(result)
@@ -379,13 +394,14 @@ class PermissionExtensionsRobolectricTest {
         Shadows.shadowOf(application).grantPermissions(Manifest.permission.CAMERA)
 
         // When
-        val remaining = context.remainPermissions(
-            listOf(
-                Manifest.permission.CAMERA,
-                Manifest.permission.SYSTEM_ALERT_WINDOW,
-                Manifest.permission.WRITE_SETTINGS
+        val remaining =
+            context.remainPermissions(
+                listOf(
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.SYSTEM_ALERT_WINDOW,
+                    Manifest.permission.WRITE_SETTINGS,
+                ),
             )
-        )
 
         // Then
         // CAMERA should not be in remaining (it's granted)
@@ -443,9 +459,10 @@ class PermissionExtensionsRobolectricTest {
     fun remainPermissions_filtersOutGrantedPermissions() {
         Shadows.shadowOf(application).grantPermissions(Manifest.permission.CAMERA)
 
-        val remaining = context.remainPermissions(
-            listOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)
-        )
+        val remaining =
+            context.remainPermissions(
+                listOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO),
+            )
 
         assertEquals(listOf(Manifest.permission.RECORD_AUDIO), remaining)
     }
@@ -514,11 +531,12 @@ class PermissionExtensionsRobolectricTest {
         val appOps = context.getSystemService(Context.APP_OPS_SERVICE) as? android.app.AppOpsManager
 
         // When
-        val result = appOps?.checkOpNoThrow(
-            android.app.AppOpsManager.OPSTR_GET_USAGE_STATS,
-            android.os.Process.myUid(),
-            context.packageName
-        )
+        val result =
+            appOps?.checkOpNoThrow(
+                android.app.AppOpsManager.OPSTR_GET_USAGE_STATS,
+                android.os.Process.myUid(),
+                context.packageName,
+            )
 
         // Then - Print the actual value
         println("AppOpsManager.checkOpNoThrow() returned: $result")

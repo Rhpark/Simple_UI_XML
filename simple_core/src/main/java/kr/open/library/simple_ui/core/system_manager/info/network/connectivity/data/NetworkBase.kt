@@ -10,9 +10,11 @@ package kr.open.library.simple_ui.core.system_manager.info.network.connectivity.
  * @param res The source object to be wrapped and stringified.<br><br>
  *            래핑하고 문자열로 변환할 원본 객체입니다.<br>
  */
-public open class NetworkBase(res: Any) {
-
+public open class NetworkBase(
+    res: Any,
+) {
     private val resStr = res.toString()
+
     /**
      * Splits the string representation of the source object.<br><br>
      * 원본 객체의 문자열 표현을 구분자로 분리합니다.<br>
@@ -26,8 +28,11 @@ public open class NetworkBase(res: Any) {
      * @return List of split strings, or `null` if delimiters are missing.<br><br>
      *         분리된 문자열 리스트이며, 구분자를 찾지 못하면 `null`입니다.<br>
      */
-    protected fun splitStr(start: String, end: String, splitPoint: String): List<String>? =
-        resStr.split(start, end)?.split(splitPoint)
+    protected fun splitStr(
+        start: String,
+        end: String,
+        splitPoint: String,
+    ): List<String>? = resStr.split(start, end)?.split(splitPoint)
 
     /**
      * Splits the string representation of the source object.<br><br>
@@ -40,7 +45,10 @@ public open class NetworkBase(res: Any) {
      * @return Split string, or `null` if delimiters are missing.<br><br>
      *         분리된 문자열이며, 구분자를 찾지 못하면 `null`입니다.<br>
      */
-    protected fun splitStr(start: String, end: String): String? = resStr.split(start, end)
+    protected fun splitStr(
+        start: String,
+        end: String,
+    ): String? = resStr.split(start, end)
 
     /**
      * Extension function to split a string between two delimiters.<br><br>
@@ -53,16 +61,22 @@ public open class NetworkBase(res: Any) {
      * @return Extracted string, or `null` if delimiters are missing.<br><br>
      *         추출된 문자열이며, 구분자를 찾지 못하면 `null`입니다.<br>
      */
-    protected fun String.split(start: String, end: String): String? = if (contains(start)) {
-        val splitRes = split(start)
-        // contains(start) == true이면 splitRes.size() >= 2
-        val afterStart = splitRes[1]
-        if (afterStart.contains(end)) {
-            afterStart.split(end)[0]
-        } else null
-    } else {
-        null
-    }
+    protected fun String.split(
+        start: String,
+        end: String,
+    ): String? =
+        if (contains(start)) {
+            val splitRes = split(start)
+            // contains(start) == true이면 splitRes.size() >= 2
+            val afterStart = splitRes[1]
+            if (afterStart.contains(end)) {
+                afterStart.split(end)[0]
+            } else {
+                null
+            }
+        } else {
+            null
+        }
 
     /**
      * Checks if the string representation contains the specified string.<br><br>

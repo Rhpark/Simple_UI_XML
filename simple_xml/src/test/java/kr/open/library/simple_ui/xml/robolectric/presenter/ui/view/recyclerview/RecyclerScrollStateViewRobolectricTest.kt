@@ -2,27 +2,24 @@ package kr.open.library.simple_ui.xml.robolectric.presenter.ui.view.recyclerview
 
 import android.content.Context
 import android.os.Build
-import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ApplicationProvider
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withTimeout
-import kr.open.library.simple_ui.xml.R
 import kr.open.library.simple_ui.xml.ui.view.recyclerview.OnEdgeReachedListener
 import kr.open.library.simple_ui.xml.ui.view.recyclerview.OnScrollDirectionChangedListener
 import kr.open.library.simple_ui.xml.ui.view.recyclerview.RecyclerScrollStateView
 import kr.open.library.simple_ui.xml.ui.view.recyclerview.ScrollDirection
 import kr.open.library.simple_ui.xml.ui.view.recyclerview.ScrollEdge
-import org.junit.Assert.*
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
@@ -40,7 +37,6 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [Build.VERSION_CODES.TIRAMISU])
 class RecyclerScrollStateViewRobolectricTest {
-
     private lateinit var context: Context
     private lateinit var recyclerView: RecyclerScrollStateView
 
@@ -151,11 +147,12 @@ class RecyclerScrollStateViewRobolectricTest {
     @Test
     fun setOnScrollDirectionListener_withInterface_registersSuccessfully() {
         // Given
-        val listener = object : OnScrollDirectionChangedListener {
-            override fun onScrollDirectionChanged(scrollDirection: ScrollDirection) {
-                // Do nothing
+        val listener =
+            object : OnScrollDirectionChangedListener {
+                override fun onScrollDirectionChanged(scrollDirection: ScrollDirection) {
+                    // Do nothing
+                }
             }
-        }
 
         // When & Then - should not throw exception
         recyclerView.setOnScrollDirectionListener(listener)
@@ -164,11 +161,12 @@ class RecyclerScrollStateViewRobolectricTest {
     @Test
     fun setOnScrollDirectionListener_withNull_removesListener() {
         // Given
-        val listener = object : OnScrollDirectionChangedListener {
-            override fun onScrollDirectionChanged(scrollDirection: ScrollDirection) {
-                // Do nothing
+        val listener =
+            object : OnScrollDirectionChangedListener {
+                override fun onScrollDirectionChanged(scrollDirection: ScrollDirection) {
+                    // Do nothing
+                }
             }
-        }
         recyclerView.setOnScrollDirectionListener(listener)
 
         // When & Then - should not throw exception
@@ -178,11 +176,15 @@ class RecyclerScrollStateViewRobolectricTest {
     @Test
     fun setOnReachEdgeListener_withInterface_registersSuccessfully() {
         // Given
-        val listener = object : OnEdgeReachedListener {
-            override fun onEdgeReached(edge: ScrollEdge, isReached: Boolean) {
-                // Do nothing
+        val listener =
+            object : OnEdgeReachedListener {
+                override fun onEdgeReached(
+                    edge: ScrollEdge,
+                    isReached: Boolean,
+                ) {
+                    // Do nothing
+                }
             }
-        }
 
         // When & Then - should not throw exception
         recyclerView.setOnReachEdgeListener(listener)
@@ -191,11 +193,15 @@ class RecyclerScrollStateViewRobolectricTest {
     @Test
     fun setOnReachEdgeListener_withNull_removesListener() {
         // Given
-        val listener = object : OnEdgeReachedListener {
-            override fun onEdgeReached(edge: ScrollEdge, isReached: Boolean) {
-                // Do nothing
+        val listener =
+            object : OnEdgeReachedListener {
+                override fun onEdgeReached(
+                    edge: ScrollEdge,
+                    isReached: Boolean,
+                ) {
+                    // Do nothing
+                }
             }
-        }
         recyclerView.setOnReachEdgeListener(listener)
 
         // When & Then - should not throw exception
@@ -258,45 +264,35 @@ class RecyclerScrollStateViewRobolectricTest {
     }
 
     @Test
-    fun sfScrollDirectionFlow_hasReplayCache() = runBlocking {
-        // Given
-        val view = RecyclerScrollStateView(context)
+    fun sfScrollDirectionFlow_hasReplayCache() =
+        runBlocking {
+            // Given
+            val view = RecyclerScrollStateView(context)
 
-        // When
-        val flow = view.sfScrollDirectionFlow
+            // When
+            val flow = view.sfScrollDirectionFlow
 
-        // Then - Flow should be accessible and have replay capability
-        assertNotNull(flow)
-        // Note: Cannot easily test replay without triggering scroll events in Robolectric
-    }
+            // Then - Flow should be accessible and have replay capability
+            assertNotNull(flow)
+            // Note: Cannot easily test replay without triggering scroll events in Robolectric
+        }
 
     @Test
-    fun sfEdgeReachedFlow_hasReplayCache() = runBlocking {
-        // Given
-        val view = RecyclerScrollStateView(context)
+    fun sfEdgeReachedFlow_hasReplayCache() =
+        runBlocking {
+            // Given
+            val view = RecyclerScrollStateView(context)
 
-        // When
-        val flow = view.sfEdgeReachedFlow
+            // When
+            val flow = view.sfEdgeReachedFlow
 
-        // Then - Flow should be accessible and have replay capability
-        assertNotNull(flow)
-        // Note: Cannot easily test replay without triggering scroll events in Robolectric
-    }
+            // Then - Flow should be accessible and have replay capability
+            assertNotNull(flow)
+            // Note: Cannot easily test replay without triggering scroll events in Robolectric
+        }
 
     // ==============================================
     // Lifecycle Tests
-    // ==============================================
-
-    /**
-     * Note: onAttachedToWindow() and onDetachedFromWindow() are protected methods
-     * and cannot be directly called from tests. They are called automatically by
-     * the Android framework when the view is attached to/detached from a window.
-     *
-     * Lifecycle behavior is tested through:
-     * - View creation (which internally handles initialization)
-     * - Integration tests in sample app
-     */
-
     // ==============================================
     // Multiple Threshold Configuration Tests
     // ==============================================
@@ -333,12 +329,14 @@ class RecyclerScrollStateViewRobolectricTest {
     @Test
     fun setOnScrollDirectionListener_replacesOldListener() {
         // Given
-        val listener1 = object : OnScrollDirectionChangedListener {
-            override fun onScrollDirectionChanged(scrollDirection: ScrollDirection) {}
-        }
-        val listener2 = object : OnScrollDirectionChangedListener {
-            override fun onScrollDirectionChanged(scrollDirection: ScrollDirection) {}
-        }
+        val listener1 =
+            object : OnScrollDirectionChangedListener {
+                override fun onScrollDirectionChanged(scrollDirection: ScrollDirection) {}
+            }
+        val listener2 =
+            object : OnScrollDirectionChangedListener {
+                override fun onScrollDirectionChanged(scrollDirection: ScrollDirection) {}
+            }
 
         // When
         recyclerView.setOnScrollDirectionListener(listener1)
@@ -351,12 +349,20 @@ class RecyclerScrollStateViewRobolectricTest {
     @Test
     fun setOnReachEdgeListener_replacesOldListener() {
         // Given
-        val listener1 = object : OnEdgeReachedListener {
-            override fun onEdgeReached(edge: ScrollEdge, isReached: Boolean) {}
-        }
-        val listener2 = object : OnEdgeReachedListener {
-            override fun onEdgeReached(edge: ScrollEdge, isReached: Boolean) {}
-        }
+        val listener1 =
+            object : OnEdgeReachedListener {
+                override fun onEdgeReached(
+                    edge: ScrollEdge,
+                    isReached: Boolean,
+                ) {}
+            }
+        val listener2 =
+            object : OnEdgeReachedListener {
+                override fun onEdgeReached(
+                    edge: ScrollEdge,
+                    isReached: Boolean,
+                ) {}
+            }
 
         // When
         recyclerView.setOnReachEdgeListener(listener1)
@@ -373,12 +379,17 @@ class RecyclerScrollStateViewRobolectricTest {
     @Test
     fun multipleListeners_canBeSetAndRemoved() {
         // Given
-        val scrollListener = object : OnScrollDirectionChangedListener {
-            override fun onScrollDirectionChanged(scrollDirection: ScrollDirection) {}
-        }
-        val edgeListener = object : OnEdgeReachedListener {
-            override fun onEdgeReached(edge: ScrollEdge, isReached: Boolean) {}
-        }
+        val scrollListener =
+            object : OnScrollDirectionChangedListener {
+                override fun onScrollDirectionChanged(scrollDirection: ScrollDirection) {}
+            }
+        val edgeListener =
+            object : OnEdgeReachedListener {
+                override fun onEdgeReached(
+                    edge: ScrollEdge,
+                    isReached: Boolean,
+                ) {}
+            }
 
         // When
         recyclerView.setOnScrollDirectionListener(scrollListener)
@@ -458,7 +469,7 @@ class RecyclerScrollStateViewRobolectricTest {
         // Layout the view to make scroll calculations work
         view.measure(
             View.MeasureSpec.makeMeasureSpec(500, View.MeasureSpec.EXACTLY),
-            View.MeasureSpec.makeMeasureSpec(1000, View.MeasureSpec.EXACTLY)
+            View.MeasureSpec.makeMeasureSpec(1000, View.MeasureSpec.EXACTLY),
         )
         view.layout(0, 0, 500, 1000)
 
@@ -487,7 +498,7 @@ class RecyclerScrollStateViewRobolectricTest {
         // Layout the view
         view.measure(
             View.MeasureSpec.makeMeasureSpec(500, View.MeasureSpec.EXACTLY),
-            View.MeasureSpec.makeMeasureSpec(1000, View.MeasureSpec.EXACTLY)
+            View.MeasureSpec.makeMeasureSpec(1000, View.MeasureSpec.EXACTLY),
         )
         view.layout(0, 0, 500, 1000)
 
@@ -521,7 +532,7 @@ class RecyclerScrollStateViewRobolectricTest {
         // Layout the view
         view.measure(
             View.MeasureSpec.makeMeasureSpec(500, View.MeasureSpec.EXACTLY),
-            View.MeasureSpec.makeMeasureSpec(1000, View.MeasureSpec.EXACTLY)
+            View.MeasureSpec.makeMeasureSpec(1000, View.MeasureSpec.EXACTLY),
         )
         view.layout(0, 0, 500, 1000)
 
@@ -550,7 +561,7 @@ class RecyclerScrollStateViewRobolectricTest {
         // Layout the view
         view.measure(
             View.MeasureSpec.makeMeasureSpec(500, View.MeasureSpec.EXACTLY),
-            View.MeasureSpec.makeMeasureSpec(1000, View.MeasureSpec.EXACTLY)
+            View.MeasureSpec.makeMeasureSpec(1000, View.MeasureSpec.EXACTLY),
         )
         view.layout(0, 0, 500, 1000)
 
@@ -583,7 +594,7 @@ class RecyclerScrollStateViewRobolectricTest {
         // Layout the view
         view.measure(
             View.MeasureSpec.makeMeasureSpec(1000, View.MeasureSpec.EXACTLY),
-            View.MeasureSpec.makeMeasureSpec(500, View.MeasureSpec.EXACTLY)
+            View.MeasureSpec.makeMeasureSpec(500, View.MeasureSpec.EXACTLY),
         )
         view.layout(0, 0, 1000, 500)
 
@@ -612,7 +623,7 @@ class RecyclerScrollStateViewRobolectricTest {
         // Layout the view
         view.measure(
             View.MeasureSpec.makeMeasureSpec(1000, View.MeasureSpec.EXACTLY),
-            View.MeasureSpec.makeMeasureSpec(500, View.MeasureSpec.EXACTLY)
+            View.MeasureSpec.makeMeasureSpec(500, View.MeasureSpec.EXACTLY),
         )
         view.layout(0, 0, 1000, 500)
 
@@ -645,7 +656,7 @@ class RecyclerScrollStateViewRobolectricTest {
         // Layout the view
         view.measure(
             View.MeasureSpec.makeMeasureSpec(500, View.MeasureSpec.EXACTLY),
-            View.MeasureSpec.makeMeasureSpec(1000, View.MeasureSpec.EXACTLY)
+            View.MeasureSpec.makeMeasureSpec(1000, View.MeasureSpec.EXACTLY),
         )
         view.layout(0, 0, 500, 1000)
 
@@ -674,7 +685,7 @@ class RecyclerScrollStateViewRobolectricTest {
         // Layout the view
         view.measure(
             View.MeasureSpec.makeMeasureSpec(500, View.MeasureSpec.EXACTLY),
-            View.MeasureSpec.makeMeasureSpec(1000, View.MeasureSpec.EXACTLY)
+            View.MeasureSpec.makeMeasureSpec(1000, View.MeasureSpec.EXACTLY),
         )
         view.layout(0, 0, 500, 1000)
 
@@ -704,7 +715,7 @@ class RecyclerScrollStateViewRobolectricTest {
         // Layout the view
         view.measure(
             View.MeasureSpec.makeMeasureSpec(1000, View.MeasureSpec.EXACTLY),
-            View.MeasureSpec.makeMeasureSpec(500, View.MeasureSpec.EXACTLY)
+            View.MeasureSpec.makeMeasureSpec(500, View.MeasureSpec.EXACTLY),
         )
         view.layout(0, 0, 1000, 500)
 
@@ -733,7 +744,7 @@ class RecyclerScrollStateViewRobolectricTest {
         // Layout the view
         view.measure(
             View.MeasureSpec.makeMeasureSpec(1000, View.MeasureSpec.EXACTLY),
-            View.MeasureSpec.makeMeasureSpec(500, View.MeasureSpec.EXACTLY)
+            View.MeasureSpec.makeMeasureSpec(500, View.MeasureSpec.EXACTLY),
         )
         view.layout(0, 0, 1000, 500)
 
@@ -750,34 +761,36 @@ class RecyclerScrollStateViewRobolectricTest {
     // ==============================================
 
     @Test
-    fun scrollDirectionFlow_emitsDirectionChanges() = runBlocking {
-        // Given
-        val view = RecyclerScrollStateView(context)
-        view.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-        view.adapter = TestAdapter(100)
-        view.setScrollDirectionThreshold(20)
+    fun scrollDirectionFlow_emitsDirectionChanges() =
+        runBlocking {
+            // Given
+            val view = RecyclerScrollStateView(context)
+            view.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            view.adapter = TestAdapter(100)
+            view.setScrollDirectionThreshold(20)
 
-        // When
-        val flow = view.sfScrollDirectionFlow
+            // When
+            val flow = view.sfScrollDirectionFlow
 
-        // Then - Flow should be accessible
-        assertNotNull(flow)
-    }
+            // Then - Flow should be accessible
+            assertNotNull(flow)
+        }
 
     @Test
-    fun edgeReachedFlow_emitsEdgeChanges() = runBlocking {
-        // Given
-        val view = RecyclerScrollStateView(context)
-        view.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-        view.adapter = TestAdapter(100)
-        view.setEdgeReachThreshold(10)
+    fun edgeReachedFlow_emitsEdgeChanges() =
+        runBlocking {
+            // Given
+            val view = RecyclerScrollStateView(context)
+            view.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            view.adapter = TestAdapter(100)
+            view.setEdgeReachThreshold(10)
 
-        // When
-        val flow = view.sfEdgeReachedFlow
+            // When
+            val flow = view.sfEdgeReachedFlow
 
-        // Then - Flow should be accessible
-        assertNotNull(flow)
-    }
+            // Then - Flow should be accessible
+            assertNotNull(flow)
+        }
 
     // ==============================================
     // XML Attribute Initialization Tests
@@ -792,13 +805,6 @@ class RecyclerScrollStateViewRobolectricTest {
         assertNotNull(view)
     }
 
-    /**
-     * Note: Testing XML attributes with Robolectric's AttributeSet builder
-     * can be unreliable due to styling attribute complexities.
-     * XML attribute loading is better tested through instrumentation tests
-     * or verified manually in the sample app.
-     */
-
     // ==============================================
     // Callback Invocation Tests
     // ==============================================
@@ -812,17 +818,18 @@ class RecyclerScrollStateViewRobolectricTest {
         view.setScrollDirectionThreshold(20)
 
         var callbackInvoked = false
-        val listener = object : OnScrollDirectionChangedListener {
-            override fun onScrollDirectionChanged(scrollDirection: ScrollDirection) {
-                callbackInvoked = true
+        val listener =
+            object : OnScrollDirectionChangedListener {
+                override fun onScrollDirectionChanged(scrollDirection: ScrollDirection) {
+                    callbackInvoked = true
+                }
             }
-        }
         view.setOnScrollDirectionListener(listener)
 
         // Layout the view
         view.measure(
             View.MeasureSpec.makeMeasureSpec(500, View.MeasureSpec.EXACTLY),
-            View.MeasureSpec.makeMeasureSpec(1000, View.MeasureSpec.EXACTLY)
+            View.MeasureSpec.makeMeasureSpec(1000, View.MeasureSpec.EXACTLY),
         )
         view.layout(0, 0, 500, 1000)
 
@@ -842,17 +849,21 @@ class RecyclerScrollStateViewRobolectricTest {
         view.setEdgeReachThreshold(10)
 
         var callbackInvoked = false
-        val listener = object : OnEdgeReachedListener {
-            override fun onEdgeReached(edge: ScrollEdge, isReached: Boolean) {
-                callbackInvoked = true
+        val listener =
+            object : OnEdgeReachedListener {
+                override fun onEdgeReached(
+                    edge: ScrollEdge,
+                    isReached: Boolean,
+                ) {
+                    callbackInvoked = true
+                }
             }
-        }
         view.setOnReachEdgeListener(listener)
 
         // Layout the view
         view.measure(
             View.MeasureSpec.makeMeasureSpec(500, View.MeasureSpec.EXACTLY),
-            View.MeasureSpec.makeMeasureSpec(1000, View.MeasureSpec.EXACTLY)
+            View.MeasureSpec.makeMeasureSpec(1000, View.MeasureSpec.EXACTLY),
         )
         view.layout(0, 0, 500, 1000)
 
@@ -879,7 +890,7 @@ class RecyclerScrollStateViewRobolectricTest {
         // Layout the view
         view.measure(
             View.MeasureSpec.makeMeasureSpec(500, View.MeasureSpec.EXACTLY),
-            View.MeasureSpec.makeMeasureSpec(1000, View.MeasureSpec.EXACTLY)
+            View.MeasureSpec.makeMeasureSpec(1000, View.MeasureSpec.EXACTLY),
         )
         view.layout(0, 0, 500, 1000)
 
@@ -908,7 +919,7 @@ class RecyclerScrollStateViewRobolectricTest {
         // Layout the view
         view.measure(
             View.MeasureSpec.makeMeasureSpec(500, View.MeasureSpec.EXACTLY),
-            View.MeasureSpec.makeMeasureSpec(1000, View.MeasureSpec.EXACTLY)
+            View.MeasureSpec.makeMeasureSpec(1000, View.MeasureSpec.EXACTLY),
         )
         view.layout(0, 0, 500, 1000)
 
@@ -919,49 +930,37 @@ class RecyclerScrollStateViewRobolectricTest {
         assertNotNull(view)
     }
 
-    /**
-     * Integration note:
-     *
-     * Full scroll behavior testing (actual scroll events, edge detection, direction changes)
-     * requires a more complex setup with:
-     * - Populated RecyclerView with Adapter and LayoutManager
-     * - Simulated scroll events
-     * - UI thread execution
-     *
-     * These are best tested through:
-     * - Instrumentation tests (on real device/emulator)
-     * - Manual testing in sample app
-     *
-     * This Robolectric test focuses on:
-     * - API correctness (methods don't crash)
-     * - Configuration validation (threshold requirements)
-     * - Listener registration mechanics
-     * - Flow accessibility
-     */
-
     // ==============================================
     // Test Helper Classes
     // ==============================================
 
-    /**
-     * Simple adapter for testing scroll behavior
-     */
-    private class TestAdapter(private val itemCount: Int) : RecyclerView.Adapter<TestViewHolder>() {
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TestViewHolder {
+    private class TestAdapter(
+        private val itemCount: Int,
+    ) : RecyclerView.Adapter<TestViewHolder>() {
+        override fun onCreateViewHolder(
+            parent: ViewGroup,
+            viewType: Int,
+        ): TestViewHolder {
             val view = View(parent.context)
-            view.layoutParams = ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                100
-            )
+            view.layoutParams =
+                ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    100,
+                )
             return TestViewHolder(view)
         }
 
-        override fun onBindViewHolder(holder: TestViewHolder, position: Int) {
+        override fun onBindViewHolder(
+            holder: TestViewHolder,
+            position: Int,
+        ) {
             // Nothing to bind
         }
 
         override fun getItemCount(): Int = itemCount
     }
 
-    private class TestViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+    private class TestViewHolder(
+        itemView: View,
+    ) : RecyclerView.ViewHolder(itemView)
 }

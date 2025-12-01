@@ -2,12 +2,13 @@ package kr.open.library.simple_ui.xml.robolectric.permissions.register
 
 import android.Manifest
 import android.os.Bundle
-import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import junit.framework.TestCase.assertNull
+import kotlinx.coroutines.test.runTest
+import kr.open.library.simple_ui.core.permissions.vo.PermissionSpecialType
 import kr.open.library.simple_ui.xml.permissions.manager.PermissionManager
 import kr.open.library.simple_ui.xml.permissions.register.PermissionDelegate
-import kr.open.library.simple_ui.core.permissions.vo.PermissionSpecialType
 import org.junit.After
 import org.junit.Assert
 import org.junit.Before
@@ -17,14 +18,12 @@ import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.android.controller.ActivityController
-import kotlinx.coroutines.test.runTest
 import java.lang.reflect.Field
 import java.lang.reflect.Method
 import java.util.UUID
 
 @RunWith(RobolectricTestRunner::class)
 class PermissionDelegateRobolectricTest {
-
     private lateinit var activityController: ActivityController<FragmentActivity>
     private lateinit var activity: FragmentActivity
     private lateinit var delegate: PermissionDelegate<FragmentActivity>
@@ -119,59 +118,64 @@ class PermissionDelegateRobolectricTest {
     }
 
     @Test
-    fun cleanup_clearsActiveRequestWhenActivityFinishes() = runTest {
-        val requestId = UUID.randomUUID().toString()
-        setCurrentRequestId(requestId)
-        insertPendingRequest(requestId, listOf(Manifest.permission.CAMERA))
-        permissionManager.registerDelegate(requestId, delegate)
+    fun cleanup_clearsActiveRequestWhenActivityFinishes() =
+        runTest {
+            val requestId = UUID.randomUUID().toString()
+            setCurrentRequestId(requestId)
+            insertPendingRequest(requestId, listOf(Manifest.permission.CAMERA))
+            permissionManager.registerDelegate(requestId, delegate)
 
-        activity.finish()
-        runCatching { activityController.destroy() }
+            activity.finish()
+            runCatching { activityController.destroy() }
 
-        cleanupMethod.invoke(delegate)
+            cleanupMethod.invoke(delegate)
 
-        val pendingRequests = pendingRequestsField.get(permissionManager) as MutableMap<*, *>
-        Assert.assertFalse(pendingRequests.containsKey(requestId))
-        assertNull(getCurrentRequestId())
-    }
+            val pendingRequests = pendingRequestsField.get(permissionManager) as MutableMap<*, *>
+            Assert.assertFalse(pendingRequests.containsKey(requestId))
+            assertNull(getCurrentRequestId())
+        }
 
     @Test
-    fun cleanup_clearsWhenFragmentIsRemoving() = runTest {
-        class RegisteringFragment : Fragment() {
-            lateinit var delegate: PermissionDelegate<Fragment>
-            override fun onCreate(savedInstanceState: Bundle?) {
-                super.onCreate(savedInstanceState)
-                delegate = PermissionDelegate(this)
+    fun cleanup_clearsWhenFragmentIsRemoving() =
+        runTest {
+            class RegisteringFragment : Fragment() {
+                lateinit var delegate: PermissionDelegate<Fragment>
+
+                override fun onCreate(savedInstanceState: Bundle?) {
+                    super.onCreate(savedInstanceState)
+                    delegate = PermissionDelegate(this)
+                }
             }
+
+            val fragment = RegisteringFragment()
+            activity.supportFragmentManager
+                .beginTransaction()
+                .add(fragment, "test")
+                .commitNow()
+
+            val fragmentDelegate = fragment.delegate
+
+            val currentField = PermissionDelegate::class.java.getDeclaredField("currentRequestId").apply { isAccessible = true }
+            val requestId = UUID.randomUUID().toString()
+            currentField.set(fragmentDelegate, requestId)
+
+            insertPendingRequest(requestId, listOf(Manifest.permission.ACCESS_FINE_LOCATION))
+            permissionManager.registerDelegate(requestId, fragmentDelegate)
+
+            activity.supportFragmentManager
+                .beginTransaction()
+                .remove(fragment)
+                .commitNow()
+
+            PermissionDelegate::class.java.getDeclaredMethod("cleanup").apply {
+                isAccessible = true
+                invoke(fragmentDelegate)
+            }
+
+            val pendingRequests = pendingRequestsField.get(permissionManager) as MutableMap<*, *>
+            Assert.assertFalse(pendingRequests.containsKey(requestId))
+            Assert.assertNull(currentField.get(fragmentDelegate))
         }
-
-        val fragment = RegisteringFragment()
-        activity.supportFragmentManager.beginTransaction()
-            .add(fragment, "test")
-            .commitNow()
-
-        val fragmentDelegate = fragment.delegate
-
-        val currentField = PermissionDelegate::class.java.getDeclaredField("currentRequestId").apply { isAccessible = true }
-        val requestId = UUID.randomUUID().toString()
-        currentField.set(fragmentDelegate, requestId)
-
-        insertPendingRequest(requestId, listOf(Manifest.permission.ACCESS_FINE_LOCATION))
-        permissionManager.registerDelegate(requestId, fragmentDelegate)
-
-        activity.supportFragmentManager.beginTransaction()
-            .remove(fragment)
-            .commitNow()
-
-        PermissionDelegate::class.java.getDeclaredMethod("cleanup").apply {
-            isAccessible = true
-            invoke(fragmentDelegate)
-        }
-
-        val pendingRequests = pendingRequestsField.get(permissionManager) as MutableMap<*, *>
-        Assert.assertFalse(pendingRequests.containsKey(requestId))
-        Assert.assertNull(currentField.get(fragmentDelegate))
-    }
 
     @Test
     fun requestPermissions_existingRequestAddsCallback() {
@@ -212,23 +216,27 @@ class PermissionDelegateRobolectricTest {
         }
     }
 
-    private fun insertPendingRequest(requestId: String, permissions: List<String>): Any {
+    private fun insertPendingRequest(
+        requestId: String,
+        permissions: List<String>,
+    ): Any {
         val pendingRequests = pendingRequestsField.get(permissionManager) as MutableMap<String, Any>
         val clazz = Class.forName("kr.open.library.simple_ui.xml.permissions.manager.PermissionManager\$PendingRequest")
         val ctor = clazz.getDeclaredConstructor(MutableList::class.java, Long::class.javaPrimitiveType, List::class.java, List::class.java)
         ctor.isAccessible = true
-        val pending = ctor.newInstance(
-            mutableListOf<(List<String>) -> Unit>(),
-            System.currentTimeMillis(),
-            permissions,
-            emptyList<String>()
-        )
+        val pending =
+            ctor.newInstance(
+                mutableListOf<(List<String>) -> Unit>(),
+                System.currentTimeMillis(),
+                permissions,
+                emptyList<String>(),
+            )
         pendingRequests[requestId] = pending
         return pending
     }
 
     private fun getKeyRequestId(): String {
-        val field = PermissionDelegate::class.java.getDeclaredField("KEY_REQUEST_ID").apply { isAccessible = true }
+        val field = PermissionDelegate::class.java.getDeclaredField("keyRequestId").apply { isAccessible = true }
         return field.get(delegate) as String
     }
 
@@ -343,6 +351,7 @@ class PermissionDelegateRobolectricTest {
     fun getContext_withFragment_returnsFragmentContext() {
         class TestContextFragment : Fragment() {
             lateinit var delegate: PermissionDelegate<Fragment>
+
             override fun onCreate(savedInstanceState: Bundle?) {
                 super.onCreate(savedInstanceState)
                 delegate = PermissionDelegate(this)
@@ -350,7 +359,8 @@ class PermissionDelegateRobolectricTest {
         }
 
         val fragment = TestContextFragment()
-        activity.supportFragmentManager.beginTransaction()
+        activity.supportFragmentManager
+            .beginTransaction()
             .add(fragment, "test_context")
             .commitNow()
 

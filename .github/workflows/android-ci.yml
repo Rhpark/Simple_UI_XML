@@ -406,6 +406,25 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
+      - name: Run KtLint
+        run: bash -o pipefail -c "./gradlew ktlintCheck |& tee ktlint.log"
+
+      - name: Capture failure snippet (ktlint)
+        if: failure()
+        run: |
+          python3 .github/scripts/extract_gradle_failure.py ktlint.log ktlint-failure.log
+          SUMMARY="$(head -n 1 ktlint-failure.log | tr -d '\r')"
+          if [ -z "$SUMMARY" ]; then
+            SUMMARY="KtLint check failed."
+          fi
+          {
+            echo "BUILD_FAILURE_SUMMARY<<EOF"
+            echo "$SUMMARY"
+            echo "EOF"
+            echo "BUILD_FAILURE_LOG_PATH=$(pwd)/ktlint-failure.log"
+            echo "BUILD_FAILURE_SOURCE=ktlintCheck"
+          } >> "$GITHUB_ENV"
+
       - name: Run all tests for coverage
         run: bash -o pipefail -c "./gradlew :simple_core:testAll :simple_xml:testAll |& tee build-testAll.log"
 

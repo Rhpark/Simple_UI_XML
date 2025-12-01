@@ -8,7 +8,6 @@ import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.pow
 import kotlin.math.round
-import kotlin.math.roundToInt
 import kotlin.math.roundToLong
 
 /**
@@ -111,8 +110,7 @@ public inline fun Float.roundDown(decimals: Int): Float {
  * @return Half-up rounded result as `Double`.<br><br>
  *         반올림 결과를 `Double`로 반환합니다.<br>
  */
-public fun roundHalfUp(value: Double): Double =
-    if (value >= 0.0) floor(value + 0.5) else ceil(value - 0.5)
+public fun roundHalfUp(value: Double): Double = if (value >= 0.0) floor(value + 0.5) else ceil(value - 0.5)
 
 /**
  * Rounds the integer to the specified decimal [place] using half-up semantics.<br><br>

@@ -14,7 +14,6 @@ import kr.open.library.simple_ui.core.system_manager.controller.alarm.vo.AlarmCo
 import kr.open.library.simple_ui.core.system_manager.controller.alarm.vo.AlarmVo
 import kr.open.library.simple_ui.core.system_manager.extensions.getAlarmManager
 
-
 /**
  * Controller for managing Android alarm operations with enhanced safety and reliability.<br>
  * Provides methods to register different types of alarms and handles calendar logic properly.<br><br>
@@ -24,14 +23,16 @@ import kr.open.library.simple_ui.core.system_manager.extensions.getAlarmManager
  * @param context The application context.<br><br>
  *                애플리케이션 컨텍스트.
  */
-public open class AlarmController(context: Context) :
-    BaseSystemService(context,
-        checkSdkVersion(Build.VERSION_CODES.S,
+public open class AlarmController(
+    context: Context,
+) : BaseSystemService(
+        context,
+        checkSdkVersion(
+            Build.VERSION_CODES.S,
             positiveWork = { listOf(SCHEDULE_EXACT_ALARM) },
-            negativeWork = { emptyList() }
-        )
+            negativeWork = { emptyList() },
+        ),
     ) {
-
     /**
      * Lazy-initialized AlarmManager instance for scheduling and managing alarms.<br><br>
      * 알람 스케줄링 및 관리를 위한 지연 초기화된 AlarmManager 인스턴스입니다.<br>
@@ -51,15 +52,19 @@ public open class AlarmController(context: Context) :
      * @return Boolean true if alarm was registered successfully, false otherwise.<br><br>
      *         알람이 성공적으로 등록되면 true, 그렇지 않으면 false.<br>
      */
-    public fun registerAlarmClock(receiver: Class<*>, alarmVo: AlarmVo): Boolean = tryCatchSystemManager(false) {
-        val calendar = getCalendar(alarmVo)
-        val pendingIntent = getAlarmPendingIntent(receiver, alarmVo.key) ?: return@tryCatchSystemManager false
+    public fun registerAlarmClock(
+        receiver: Class<*>,
+        alarmVo: AlarmVo,
+    ): Boolean =
+        tryCatchSystemManager(false) {
+            val calendar = getCalendar(alarmVo)
+            val pendingIntent = getAlarmPendingIntent(receiver, alarmVo.key) ?: return@tryCatchSystemManager false
 
-        val alarmClockInfo = AlarmManager.AlarmClockInfo(calendar.timeInMillis, pendingIntent)
-        alarmManager.setAlarmClock(alarmClockInfo, pendingIntent)
-        Logx.d("Alarm clock registered for key: ${alarmVo.key} at ${calendar.time}")
-        return true
-    }
+            val alarmClockInfo = AlarmManager.AlarmClockInfo(calendar.timeInMillis, pendingIntent)
+            alarmManager.setAlarmClock(alarmClockInfo, pendingIntent)
+            Logx.d("Alarm clock registered for key: ${alarmVo.key} at ${calendar.time}")
+            return true
+        }
 
     /**
      * Registers an exact alarm that can fire while the device is in idle mode.<br><br>
@@ -74,14 +79,18 @@ public open class AlarmController(context: Context) :
      * @return Boolean true if alarm was registered successfully, false otherwise.<br><br>
      *         알람이 성공적으로 등록되면 true, 그렇지 않으면 false.<br>
      */
-    public fun registerAlarmExactAndAllowWhileIdle(receiver: Class<*>, alarmVo: AlarmVo): Boolean = tryCatchSystemManager(false) {
-        val calendar = getCalendar(alarmVo)
-        val pendingIntent = getAlarmPendingIntent(receiver, alarmVo.key) ?: return@tryCatchSystemManager false
+    public fun registerAlarmExactAndAllowWhileIdle(
+        receiver: Class<*>,
+        alarmVo: AlarmVo,
+    ): Boolean =
+        tryCatchSystemManager(false) {
+            val calendar = getCalendar(alarmVo)
+            val pendingIntent = getAlarmPendingIntent(receiver, alarmVo.key) ?: return@tryCatchSystemManager false
 
-        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
-        Logx.d("Exact alarm registered for key: ${alarmVo.key} at ${calendar.time}")
-        return true
-    }
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
+            Logx.d("Exact alarm registered for key: ${alarmVo.key} at ${calendar.time}")
+            return true
+        }
 
     /**
      * Registers an alarm that can fire while the device is in idle mode (less precise than exact).<br><br>
@@ -96,14 +105,18 @@ public open class AlarmController(context: Context) :
      * @return Boolean true if alarm was registered successfully, false otherwise.<br><br>
      *         알람이 성공적으로 등록되면 true, 그렇지 않으면 false.<br>
      */
-    public fun registerAlarmAndAllowWhileIdle(receiver: Class<*>, alarmVo: AlarmVo): Boolean = tryCatchSystemManager(false) {
-        val calendar = getCalendar(alarmVo)
-        val pendingIntent = getAlarmPendingIntent(receiver, alarmVo.key) ?: return@tryCatchSystemManager false
+    public fun registerAlarmAndAllowWhileIdle(
+        receiver: Class<*>,
+        alarmVo: AlarmVo,
+    ): Boolean =
+        tryCatchSystemManager(false) {
+            val calendar = getCalendar(alarmVo)
+            val pendingIntent = getAlarmPendingIntent(receiver, alarmVo.key) ?: return@tryCatchSystemManager false
 
-        alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
-        Logx.d("Idle-allowed alarm registered for key: ${alarmVo.key} at ${calendar.time}")
-        return true
-    }
+            alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
+            Logx.d("Idle-allowed alarm registered for key: ${alarmVo.key} at ${calendar.time}")
+            return true
+        }
 
     /**
      * Creates a PendingIntent for alarm operations with proper error handling.<br><br>
@@ -118,14 +131,18 @@ public open class AlarmController(context: Context) :
      * @return PendingIntent for the alarm, or null if creation fails.<br><br>
      *         알람용 PendingIntent, 생성 실패 시 null.<br>
      */
-    private fun getAlarmPendingIntent(receiver: Class<*>, key: Int): PendingIntent? = tryCatchSystemManager(null) {
-        return PendingIntent.getBroadcast(
-            context,
-            key,
-            Intent(context, receiver).apply { putExtra(AlarmConstants.ALARM_KEY, key) },
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-    }
+    private fun getAlarmPendingIntent(
+        receiver: Class<*>,
+        key: Int,
+    ): PendingIntent? =
+        tryCatchSystemManager(null) {
+            return PendingIntent.getBroadcast(
+                context,
+                key,
+                Intent(context, receiver).apply { putExtra(AlarmConstants.ALARM_KEY, key) },
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+            )
+        }
 
     /**
      * Creates a Calendar instance for the alarm time, properly handling next-day scheduling.<br><br>
@@ -139,13 +156,14 @@ public open class AlarmController(context: Context) :
      */
     private fun getCalendar(alarmVo: AlarmVo): Calendar {
         val now = Calendar.getInstance()
-        val alarmTime = Calendar.getInstance().apply {
-            set(Calendar.HOUR_OF_DAY, alarmVo.hour)
-            set(Calendar.MINUTE, alarmVo.minute)
-            set(Calendar.SECOND, alarmVo.second)
-            set(Calendar.MILLISECOND, 0) // Reset milliseconds for precise comparison
-        }
-        
+        val alarmTime =
+            Calendar.getInstance().apply {
+                set(Calendar.HOUR_OF_DAY, alarmVo.hour)
+                set(Calendar.MINUTE, alarmVo.minute)
+                set(Calendar.SECOND, alarmVo.second)
+                set(Calendar.MILLISECOND, 0) // Reset milliseconds for precise comparison
+            }
+
         // If the alarm time has already passed today, schedule it for tomorrow
         if (alarmTime.before(now)) {
             alarmTime.add(Calendar.DATE, 1)
@@ -153,7 +171,7 @@ public open class AlarmController(context: Context) :
         } else {
             Logx.d("Alarm scheduled for today: ${alarmTime.time}")
         }
-        
+
         return alarmTime
     }
 
@@ -170,28 +188,34 @@ public open class AlarmController(context: Context) :
      * @return Boolean true if alarm was found and cancelled, false if not found.<br><br>
      *         알람을 찾아 취소하면 true, 찾지 못하면 false.<br>
      */
-    public fun remove(key: Int, receiver: Class<*>): Boolean = tryCatchSystemManager(false) {
-        val intent = Intent(context, receiver).apply {
-            putExtra(AlarmConstants.ALARM_KEY, key)
-        }
-        val pendingIntent = PendingIntent.getBroadcast(
-            context,
-            key,
-            intent,
-            PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
-        )
+    public fun remove(
+        key: Int,
+        receiver: Class<*>,
+    ): Boolean =
+        tryCatchSystemManager(false) {
+            val intent =
+                Intent(context, receiver).apply {
+                    putExtra(AlarmConstants.ALARM_KEY, key)
+                }
+            val pendingIntent =
+                PendingIntent.getBroadcast(
+                    context,
+                    key,
+                    intent,
+                    PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE,
+                )
 
-        return if (pendingIntent != null) {
-            alarmManager.cancel(pendingIntent)
-            pendingIntent.cancel()
-            Logx.d("Alarm with key $key cancelled successfully")
-            true
-        } else {
-            Logx.w("No alarm found with key $key")
-            false
+            return if (pendingIntent != null) {
+                alarmManager.cancel(pendingIntent)
+                pendingIntent.cancel()
+                Logx.d("Alarm with key $key cancelled successfully")
+                true
+            } else {
+                Logx.w("No alarm found with key $key")
+                false
+            }
         }
-    }
-    
+
     /**
      * Checks if an alarm with the given key exists.<br><br>
      * 주어진 키를 가진 알람이 존재하는지 확인합니다.<br>
@@ -205,16 +229,22 @@ public open class AlarmController(context: Context) :
      * @return Boolean true if alarm exists, false otherwise.<br><br>
      *         알람이 존재하면 true, 그렇지 않으면 false.<br>
      */
-    public fun exists(key: Int, receiver: Class<*>): Boolean = tryCatchSystemManager(false) {
-        val intent = Intent(context, receiver).apply {
-            putExtra(AlarmConstants.ALARM_KEY, key)
+    public fun exists(
+        key: Int,
+        receiver: Class<*>,
+    ): Boolean =
+        tryCatchSystemManager(false) {
+            val intent =
+                Intent(context, receiver).apply {
+                    putExtra(AlarmConstants.ALARM_KEY, key)
+                }
+            val pendingIntent =
+                PendingIntent.getBroadcast(
+                    context,
+                    key,
+                    intent,
+                    PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE,
+                )
+            return pendingIntent != null
         }
-        val pendingIntent = PendingIntent.getBroadcast(
-            context,
-            key,
-            intent,
-            PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
-        )
-        return pendingIntent != null
-    }
 }

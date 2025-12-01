@@ -11,7 +11,11 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ApplicationProvider
 import kr.open.library.simple_ui.xml.ui.adapter.list.base.BaseRcvListAdapter
 import kr.open.library.simple_ui.xml.ui.adapter.list.diffutil.RcvListDiffUtilCallBack
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
+import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -36,32 +40,44 @@ import java.util.concurrent.TimeUnit
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [Build.VERSION_CODES.TIRAMISU])
 class BaseRcvListAdapterRobolectricTest {
-
     private lateinit var context: Context
     private lateinit var adapter: TestListAdapter
 
     // Test data class
-    data class TestItem(val id: Int, val name: String)
+    data class TestItem(
+        val id: Int,
+        val name: String,
+    )
 
     // Test adapter implementation
-    private class TestListAdapter : BaseRcvListAdapter<TestItem, TestViewHolder>(
-        RcvListDiffUtilCallBack(
-            itemsTheSame = { oldItem, newItem -> oldItem.id == newItem.id },
-            contentsTheSame = { oldItem, newItem -> oldItem == newItem }
-        )
-    ) {
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TestViewHolder {
+    private class TestListAdapter :
+        BaseRcvListAdapter<TestItem, TestViewHolder>(
+            RcvListDiffUtilCallBack(
+                itemsTheSame = { oldItem, newItem -> oldItem.id == newItem.id },
+                contentsTheSame = { oldItem, newItem -> oldItem == newItem },
+            ),
+        ) {
+        override fun onCreateViewHolder(
+            parent: ViewGroup,
+            viewType: Int,
+        ): TestViewHolder {
             val view = View(parent.context)
             return TestViewHolder(view)
         }
 
-        override fun onBindViewHolder(holder: TestViewHolder, position: Int, item: TestItem) {
+        override fun onBindViewHolder(
+            holder: TestViewHolder,
+            position: Int,
+            item: TestItem,
+        ) {
             // No binding needed for tests
         }
     }
 
     // Test ViewHolder
-    private class TestViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+    private class TestViewHolder(
+        itemView: View,
+    ) : RecyclerView.ViewHolder(itemView)
 
     @Before
     fun setUp() {
@@ -135,11 +151,12 @@ class BaseRcvListAdapterRobolectricTest {
     @Test
     fun multipleItems_canBeAddedInBatch() {
         // Given
-        val items = listOf(
-            TestItem(1, "Item 1"),
-            TestItem(2, "Item 2"),
-            TestItem(3, "Item 3")
-        )
+        val items =
+            listOf(
+                TestItem(1, "Item 1"),
+                TestItem(2, "Item 2"),
+                TestItem(3, "Item 3"),
+            )
 
         // When
         val result = addItemsAwait(items)
@@ -297,8 +314,8 @@ class BaseRcvListAdapterRobolectricTest {
             listOf(
                 TestItem(1, "Item 1"),
                 TestItem(2, "Item 2"),
-                TestItem(3, "Item 3")
-            )
+                TestItem(3, "Item 3"),
+            ),
         )
 
         // When
@@ -325,10 +342,11 @@ class BaseRcvListAdapterRobolectricTest {
     fun items_canBeReplaced() {
         // Given
         addItemAwait(TestItem(1, "Old Item"))
-        val newItems = listOf(
-            TestItem(2, "New Item 1"),
-            TestItem(3, "New Item 2")
-        )
+        val newItems =
+            listOf(
+                TestItem(2, "New Item 1"),
+                TestItem(3, "New Item 2"),
+            )
 
         // When
         setItemsAwait(newItems)
@@ -387,8 +405,8 @@ class BaseRcvListAdapterRobolectricTest {
             listOf(
                 TestItem(1, "Item 1"),
                 TestItem(2, "Item 2"),
-                TestItem(3, "Item 3")
-            )
+                TestItem(3, "Item 3"),
+            ),
         )
 
         // When
@@ -512,7 +530,6 @@ class BaseRcvListAdapterRobolectricTest {
 
     @Test
     fun itemLongClickListener_canBeConfigured() {
-
         // When
         addItemAwait(TestItem(1, "Item 1"))
 
@@ -527,11 +544,12 @@ class BaseRcvListAdapterRobolectricTest {
     @Test
     fun chatMessageScenario_behavesAsExpected() {
         // Given - Chat messages being added sequentially
-        val messages = listOf(
-            TestItem(1, "First"),
-            TestItem(2, "Second"),
-            TestItem(3, "Third")
-        )
+        val messages =
+            listOf(
+                TestItem(1, "First"),
+                TestItem(2, "Second"),
+                TestItem(3, "Third"),
+            )
 
         // When - Using setItems for ListAdapter is more reliable
         setItemsAwait(messages)
@@ -562,17 +580,19 @@ class BaseRcvListAdapterRobolectricTest {
     @Test
     fun searchResultUpdateScenario_behavesAsExpected() {
         // Given - Search results being updated
-        val initialResults = listOf(
-            TestItem(1, "Apple"),
-            TestItem(2, "Banana")
-        )
+        val initialResults =
+            listOf(
+                TestItem(1, "Apple"),
+                TestItem(2, "Banana"),
+            )
         setItemsAwait(initialResults)
 
         // When - New search query
-        val newResults = listOf(
-            TestItem(3, "Avocado"),
-            TestItem(4, "Apricot")
-        )
+        val newResults =
+            listOf(
+                TestItem(3, "Avocado"),
+                TestItem(4, "Apricot"),
+            )
         setItemsAwait(newResults)
 
         // Then - ListAdapter internally uses AsyncListDiffer
@@ -587,9 +607,9 @@ class BaseRcvListAdapterRobolectricTest {
                 listOf(
                     TestItem(1, "First"),
                     TestItem(2, "Second"),
-                    TestItem(3, "Third")
+                    TestItem(3, "Third"),
                 ),
-                commit
+                commit,
             )
         }
 
@@ -598,10 +618,9 @@ class BaseRcvListAdapterRobolectricTest {
             adapter.moveItem(0, 2, commit)
         }
 
-
-        //adapter.getItems()[0] = 2,"Second"
-        //adapter.getItems()[1] = 3,"Third"
-        //adapter.getItems()[2] = 1,"First"
+        // adapter.getItems()[0] = 2,"Second"
+        // adapter.getItems()[1] = 3,"Third"
+        // adapter.getItems()[2] = 1,"First"
         // Then
         assertEquals(TestItem(2, "Second"), adapter.getItems()[0])
         assertEquals(TestItem(3, "Third"), adapter.getItems()[1])
@@ -708,14 +727,20 @@ class BaseRcvListAdapterRobolectricTest {
         }
     }
 
-    private fun addItemAtAwait(position: Int, item: TestItem): Boolean {
+    private fun addItemAtAwait(
+        position: Int,
+        item: TestItem,
+    ): Boolean {
         val expected = adapter.itemCount + 1
         return awaitListUpdate(expectedItemCount = expected) { commit ->
             adapter.addItemAt(position, item, commit)
         }
     }
 
-    private fun addItemsAtAwait(position: Int, items: List<TestItem>): Boolean {
+    private fun addItemsAtAwait(
+        position: Int,
+        items: List<TestItem>,
+    ): Boolean {
         val expected = adapter.itemCount + items.size
         return awaitListUpdate(expectedItemCount = expected) { commit ->
             adapter.addItems(position, items, commit)
@@ -742,16 +767,21 @@ class BaseRcvListAdapterRobolectricTest {
         }
     }
 
-    private fun replaceItemAtAwait(position: Int, item: TestItem): Boolean {
+    private fun replaceItemAtAwait(
+        position: Int,
+        item: TestItem,
+    ): Boolean {
         val expected = adapter.itemCount
         return awaitListUpdate(expectedItemCount = expected) { commit ->
             adapter.replaceItemAt(position, item, commit)
         }.apply {
-
         }
     }
 
-    private fun moveItemAwait(fromPosition: Int, toPosition: Int): Boolean {
+    private fun moveItemAwait(
+        fromPosition: Int,
+        toPosition: Int,
+    ): Boolean {
         if (fromPosition == toPosition) {
             return adapter.moveItem(fromPosition, toPosition)
         }
@@ -761,7 +791,10 @@ class BaseRcvListAdapterRobolectricTest {
         }
     }
 
-    private fun <T> awaitListUpdate(expectedItemCount: Int? = null, trigger: ((() -> Unit) -> T)): T {
+    private fun <T> awaitListUpdate(
+        expectedItemCount: Int? = null,
+        trigger: ((() -> Unit) -> T),
+    ): T {
         val latch = CountDownLatch(1)
         val result = trigger { latch.countDown() }
 
@@ -806,21 +839,29 @@ class BaseRcvListAdapterRobolectricTest {
     fun onBindViewHolder_callsAbstractMethod() {
         // Given
         var bindCalled = false
-        val testAdapter = object : BaseRcvListAdapter<TestItem, TestViewHolder>(
-            RcvListDiffUtilCallBack(
-                itemsTheSame = { oldItem, newItem -> oldItem.id == newItem.id },
-                contentsTheSame = { oldItem, newItem -> oldItem == newItem }
-            )
-        ) {
-            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TestViewHolder {
-                val view = View(parent.context)
-                return TestViewHolder(view)
-            }
+        val testAdapter =
+            object : BaseRcvListAdapter<TestItem, TestViewHolder>(
+                RcvListDiffUtilCallBack(
+                    itemsTheSame = { oldItem, newItem -> oldItem.id == newItem.id },
+                    contentsTheSame = { oldItem, newItem -> oldItem == newItem },
+                ),
+            ) {
+                override fun onCreateViewHolder(
+                    parent: ViewGroup,
+                    viewType: Int,
+                ): TestViewHolder {
+                    val view = View(parent.context)
+                    return TestViewHolder(view)
+                }
 
-            override fun onBindViewHolder(holder: TestViewHolder, position: Int, item: TestItem) {
-                bindCalled = true
+                override fun onBindViewHolder(
+                    holder: TestViewHolder,
+                    position: Int,
+                    item: TestItem,
+                ) {
+                    bindCalled = true
+                }
             }
-        }
 
         testAdapter.setItems(listOf(TestItem(1, "Item 1")))
         shadowOf(Looper.getMainLooper()).idle()
@@ -837,25 +878,38 @@ class BaseRcvListAdapterRobolectricTest {
     fun onBindViewHolder_withPayload_callsPayloadMethod() {
         // Given
         var payloadBindCalled = false
-        val testAdapter = object : BaseRcvListAdapter<TestItem, TestViewHolder>(
-            RcvListDiffUtilCallBack(
-                itemsTheSame = { oldItem, newItem -> oldItem.id == newItem.id },
-                contentsTheSame = { oldItem, newItem -> oldItem == newItem }
-            )
-        ) {
-            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TestViewHolder {
-                val view = View(parent.context)
-                return TestViewHolder(view)
-            }
+        val testAdapter =
+            object : BaseRcvListAdapter<TestItem, TestViewHolder>(
+                RcvListDiffUtilCallBack(
+                    itemsTheSame = { oldItem, newItem -> oldItem.id == newItem.id },
+                    contentsTheSame = { oldItem, newItem -> oldItem == newItem },
+                ),
+            ) {
+                override fun onCreateViewHolder(
+                    parent: ViewGroup,
+                    viewType: Int,
+                ): TestViewHolder {
+                    val view = View(parent.context)
+                    return TestViewHolder(view)
+                }
 
-            override fun onBindViewHolder(holder: TestViewHolder, position: Int, item: TestItem) {
-                // Full binding
-            }
+                override fun onBindViewHolder(
+                    holder: TestViewHolder,
+                    position: Int,
+                    item: TestItem,
+                ) {
+                    // Full binding
+                }
 
-            override fun onBindViewHolder(holder: TestViewHolder, position: Int, item: TestItem, payloads: List<Any>) {
-                payloadBindCalled = true
+                override fun onBindViewHolder(
+                    holder: TestViewHolder,
+                    position: Int,
+                    item: TestItem,
+                    payloads: List<Any>,
+                ) {
+                    payloadBindCalled = true
+                }
             }
-        }
 
         testAdapter.setItems(listOf(TestItem(1, "Item 1")))
         shadowOf(Looper.getMainLooper()).idle()
@@ -872,21 +926,29 @@ class BaseRcvListAdapterRobolectricTest {
     fun onBindViewHolder_withEmptyPayload_callsFullBinding() {
         // Given
         var fullBindCalled = false
-        val testAdapter = object : BaseRcvListAdapter<TestItem, TestViewHolder>(
-            RcvListDiffUtilCallBack(
-                itemsTheSame = { oldItem, newItem -> oldItem.id == newItem.id },
-                contentsTheSame = { oldItem, newItem -> oldItem == newItem }
-            )
-        ) {
-            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TestViewHolder {
-                val view = View(parent.context)
-                return TestViewHolder(view)
-            }
+        val testAdapter =
+            object : BaseRcvListAdapter<TestItem, TestViewHolder>(
+                RcvListDiffUtilCallBack(
+                    itemsTheSame = { oldItem, newItem -> oldItem.id == newItem.id },
+                    contentsTheSame = { oldItem, newItem -> oldItem == newItem },
+                ),
+            ) {
+                override fun onCreateViewHolder(
+                    parent: ViewGroup,
+                    viewType: Int,
+                ): TestViewHolder {
+                    val view = View(parent.context)
+                    return TestViewHolder(view)
+                }
 
-            override fun onBindViewHolder(holder: TestViewHolder, position: Int, item: TestItem) {
-                fullBindCalled = true
+                override fun onBindViewHolder(
+                    holder: TestViewHolder,
+                    position: Int,
+                    item: TestItem,
+                ) {
+                    fullBindCalled = true
+                }
             }
-        }
 
         testAdapter.setItems(listOf(TestItem(1, "Item 1")))
         shadowOf(Looper.getMainLooper()).idle()
@@ -928,30 +990,30 @@ class BaseRcvListAdapterRobolectricTest {
     @Test
     fun onViewRecycled_clearsViewCacheForBaseRcvViewHolder() {
         // Given - Create adapter with BaseRcvViewHolder
-        val testAdapter = object : BaseRcvListAdapter<TestItem, kr.open.library.simple_ui.xml.ui.adapter.viewholder.BaseRcvViewHolder>(
-            RcvListDiffUtilCallBack(
-                itemsTheSame = { oldItem, newItem -> oldItem.id == newItem.id },
-                contentsTheSame = { oldItem, newItem -> oldItem == newItem }
-            )
-        ) {
-            override fun onCreateViewHolder(
-                parent: ViewGroup,
-                viewType: Int
-            ): kr.open.library.simple_ui.xml.ui.adapter.viewholder.BaseRcvViewHolder {
-                return kr.open.library.simple_ui.xml.ui.adapter.viewholder.BaseRcvViewHolder(
-                    android.R.layout.simple_list_item_1,
-                    parent
-                )
-            }
-
-            override fun onBindViewHolder(
-                holder: kr.open.library.simple_ui.xml.ui.adapter.viewholder.BaseRcvViewHolder,
-                position: Int,
-                item: TestItem
+        val testAdapter =
+            object : BaseRcvListAdapter<TestItem, kr.open.library.simple_ui.xml.ui.adapter.viewholder.BaseRcvViewHolder>(
+                RcvListDiffUtilCallBack(
+                    itemsTheSame = { oldItem, newItem -> oldItem.id == newItem.id },
+                    contentsTheSame = { oldItem, newItem -> oldItem == newItem },
+                ),
             ) {
-                // No binding needed
+                override fun onCreateViewHolder(
+                    parent: ViewGroup,
+                    viewType: Int,
+                ): kr.open.library.simple_ui.xml.ui.adapter.viewholder.BaseRcvViewHolder =
+                    kr.open.library.simple_ui.xml.ui.adapter.viewholder.BaseRcvViewHolder(
+                        android.R.layout.simple_list_item_1,
+                        parent,
+                    )
+
+                override fun onBindViewHolder(
+                    holder: kr.open.library.simple_ui.xml.ui.adapter.viewholder.BaseRcvViewHolder,
+                    position: Int,
+                    item: TestItem,
+                ) {
+                    // No binding needed
+                }
             }
-        }
 
         // When
         val holder = testAdapter.onCreateViewHolder(RecyclerView(context).apply { layoutManager = LinearLayoutManager(context) }, 0)
@@ -980,18 +1042,24 @@ class BaseRcvListAdapterRobolectricTest {
     @Test
     fun addItemAt_withRuntimeException_returnsFalse() {
         // Given - Create adapter that throws exception
-        val faultyAdapter = object : BaseRcvListAdapter<TestItem, TestViewHolder>(
-            RcvListDiffUtilCallBack(
-                itemsTheSame = { oldItem, newItem -> oldItem.id == newItem.id },
-                contentsTheSame = { oldItem, newItem -> oldItem == newItem }
-            )
-        ) {
-            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TestViewHolder {
-                return TestViewHolder(View(parent.context))
-            }
+        val faultyAdapter =
+            object : BaseRcvListAdapter<TestItem, TestViewHolder>(
+                RcvListDiffUtilCallBack(
+                    itemsTheSame = { oldItem, newItem -> oldItem.id == newItem.id },
+                    contentsTheSame = { oldItem, newItem -> oldItem == newItem },
+                ),
+            ) {
+                override fun onCreateViewHolder(
+                    parent: ViewGroup,
+                    viewType: Int,
+                ): TestViewHolder = TestViewHolder(View(parent.context))
 
-            override fun onBindViewHolder(holder: TestViewHolder, position: Int, item: TestItem) {}
-        }
+                override fun onBindViewHolder(
+                    holder: TestViewHolder,
+                    position: Int,
+                    item: TestItem,
+                ) {}
+            }
 
         // When - Trigger unexpected exception scenario
         val result = faultyAdapter.addItemAt(Int.MAX_VALUE, TestItem(1, "Item"))

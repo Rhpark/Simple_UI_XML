@@ -7,15 +7,21 @@ import kr.open.library.simple_ui.xml.ui.fragment.dialog.BaseBindingDialogFragmen
 import kr.open.library.simpleui_xml.R
 import kr.open.library.simpleui_xml.databinding.DialogBaseBindingDialogFragmentBinding
 
-class BaseBindingDialogFragmentExample : BaseBindingDialogFragment<DialogBaseBindingDialogFragmentBinding>(R.layout.dialog_base_binding_dialog_fragment) {
-
-    override fun afterOnCreateView(rootView: View, savedInstanceState: Bundle?) {
+class BaseBindingDialogFragmentExample :
+    BaseBindingDialogFragment<DialogBaseBindingDialogFragmentBinding>(R.layout.dialog_base_binding_dialog_fragment) {
+    override fun afterOnCreateView(
+        rootView: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.afterOnCreateView(rootView, savedInstanceState)
         // 주의: 메서드명 오타 (afterOnCreateView - Crate not Create)
         Logx.d("BaseBindingDialogFragmentExample - afterOnCreateView() called (typo: Crate not Create)")
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
         Logx.d("BaseBindingDialogFragmentExample - onViewCreated() called")
 

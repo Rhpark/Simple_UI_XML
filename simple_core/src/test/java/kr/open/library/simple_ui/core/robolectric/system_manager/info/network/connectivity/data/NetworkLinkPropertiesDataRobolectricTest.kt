@@ -15,7 +15,6 @@ import java.net.InetAddress
 
 @RunWith(RobolectricTestRunner::class)
 class NetworkLinkPropertiesDataRobolectricTest {
-
     @Test
     @Config(sdk = [Build.VERSION_CODES.Q])
     fun getMtu_onSdkQ_returnsConfiguredValue() {
@@ -47,5 +46,4 @@ class NetworkLinkPropertiesDataRobolectricTest {
 
         assertEquals(address, data.getDhcpServerAddress())
     }
-
 }

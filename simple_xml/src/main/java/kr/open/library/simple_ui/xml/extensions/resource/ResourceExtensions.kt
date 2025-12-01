@@ -1,14 +1,3 @@
-package kr.open.library.simple_ui.xml.extensions.resource
-
-import android.content.Context
-import android.graphics.drawable.Drawable
-import androidx.annotation.ColorRes
-import androidx.annotation.DimenRes
-import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
-import androidx.core.content.ContextCompat
-import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
-
 /**
  * Resource access extension functions for Context.<br>
  * Provides convenient methods to safely access Android resources with backward compatibility.<br><br>
@@ -28,6 +17,17 @@ import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
  * ```
  */
 
+package kr.open.library.simple_ui.xml.extensions.resource
+
+import android.content.Context
+import android.graphics.drawable.Drawable
+import androidx.annotation.ColorRes
+import androidx.annotation.DimenRes
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
+import androidx.core.content.ContextCompat
+import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
+
 /**
  * Gets a drawable using ContextCompat for backward compatibility.<br><br>
  * 역호환성을 위해 ContextCompat을 사용하여 drawable을 가져옵니다.<br>
@@ -38,7 +38,8 @@ import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
  * @return The drawable or null if not found.<br><br>
  *         drawable 또는 찾지 못한 경우 null.<br>
  */
-public fun Context.getDrawableCompat(@DrawableRes drawableRes: Int,
+public fun Context.getDrawableCompat(
+    @DrawableRes drawableRes: Int,
 ): Drawable? = ContextCompat.getDrawable(this, drawableRes)
 
 /**
@@ -51,7 +52,8 @@ public fun Context.getDrawableCompat(@DrawableRes drawableRes: Int,
  * @return The color as an integer.<br><br>
  *         정수값으로 반환된 색상.<br>
  */
-public fun Context.getColorCompat(@ColorRes colorRes: Int,
+public fun Context.getColorCompat(
+    @ColorRes colorRes: Int,
 ): Int = ContextCompat.getColor(this, colorRes)
 
 /**
@@ -64,7 +66,8 @@ public fun Context.getColorCompat(@ColorRes colorRes: Int,
  * @return The dimension in pixels.<br><br>
  *         픽셀 단위의 dimension 값.<br>
  */
-public fun Context.getDimensionPixelSize(@DimenRes dimenRes: Int,
+public fun Context.getDimensionPixelSize(
+    @DimenRes dimenRes: Int,
 ): Int = resources.getDimensionPixelSize(dimenRes)
 
 /**
@@ -77,7 +80,8 @@ public fun Context.getDimensionPixelSize(@DimenRes dimenRes: Int,
  * @return The dimension offset in pixels.<br><br>
  *         픽셀 단위의 dimension 오프셋 값.<br>
  */
-public fun Context.getDimensionPixelOffset(@DimenRes dimenRes: Int,
+public fun Context.getDimensionPixelOffset(
+    @DimenRes dimenRes: Int,
 ): Int = resources.getDimensionPixelOffset(dimenRes)
 
 /**
@@ -93,7 +97,9 @@ public fun Context.getDimensionPixelOffset(@DimenRes dimenRes: Int,
  * @return The formatted string.<br><br>
  *         포맷된 문자열.<br>
  */
-public fun Context.getStringFormatted(@StringRes stringRes: Int, vararg args: Any,
+public fun Context.getStringFormatted(
+    @StringRes stringRes: Int,
+    vararg args: Any,
 ): String = getString(stringRes, *args)
 
 /**
@@ -130,7 +136,8 @@ public fun Context.getInteger(intRes: Int): Int = resources.getInteger(intRes)
  * @return The drawable or null if not found/invalid.<br><br>
  *         drawable 또는 찾지 못했거나 유효하지 않은 경우 null.<br>
  */
-public fun Context.getDrawableSafe(@DrawableRes drawableRes: Int,
+public fun Context.getDrawableSafe(
+    @DrawableRes drawableRes: Int,
 ): Drawable? = safeCatch(defaultValue = null) { ContextCompat.getDrawable(this, drawableRes) }
 
 /**
@@ -147,7 +154,8 @@ public fun Context.getDrawableSafe(@DrawableRes drawableRes: Int,
  *         색상 또는 기본 색상.<br>
  */
 public fun Context.getColorSafe(
-    @ColorRes colorRes: Int, defaultColor: Int,
+    @ColorRes colorRes: Int,
+    defaultColor: Int,
 ): Int = safeCatch(defaultValue = defaultColor) { ContextCompat.getColor(this, colorRes) }
 
 /**
@@ -160,4 +168,6 @@ public fun Context.getColorSafe(
  * @return The string or empty string if not found.<br><br>
  *         문자열 또는 찾지 못한 경우 빈 문자열.<br>
  */
-public fun Context.getStringSafe(@StringRes stringRes: Int, ): String = safeCatch(defaultValue = "") { getString(stringRes) }
+public fun Context.getStringSafe(
+    @StringRes stringRes: Int,
+): String = safeCatch(defaultValue = "") { getString(stringRes) }

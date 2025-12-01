@@ -3,14 +3,12 @@ package kr.open.library.simpleui_xml
 import android.content.Intent
 import android.os.Bundle
 import androidx.lifecycle.lifecycleScope
-import com.google.firebase.Firebase
-import com.google.firebase.crashlytics.crashlytics
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kr.open.library.simple_ui.xml.extensions.view.bold
 import kr.open.library.simple_ui.xml.ui.activity.BaseBindingActivity
-import kr.open.library.simpleui_xml.databinding.ActivityMainBinding
 import kr.open.library.simpleui_xml.activity_fragment.ActivityFragmentActivity
+import kr.open.library.simpleui_xml.databinding.ActivityMainBinding
 import kr.open.library.simpleui_xml.extenstions_style.ExtensionsStyleActivity
 import kr.open.library.simpleui_xml.logx.LogxActivity
 import kr.open.library.simpleui_xml.permission.PermissionsActivity
@@ -19,10 +17,8 @@ import kr.open.library.simpleui_xml.recyclerview.new_.RecyclerViewActivity
 import kr.open.library.simpleui_xml.recyclerview.origin.RecyclerViewActivityOrigin
 import kr.open.library.simpleui_xml.system_service_manager.controller.ServiceManagerControllerActivity
 import kr.open.library.simpleui_xml.system_service_manager.info.ServiceManagerInfoActivity
-import java.io.IOException
 
 class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setupPermissionButtons()
@@ -30,13 +26,11 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
         lifecycleScope.launch {
             delay(5000)
 
-
 //            throw Exception(":FSEF")
 //            Firebase.crashlytics.recordException(Exception("test"))
 //            "rfeafefe".toInt()
         }
     }
-
 
     private fun setupPermissionButtons() {
         binding.btnNewPermissionActivity.setOnClickListener {

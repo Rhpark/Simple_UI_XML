@@ -1,13 +1,3 @@
-package kr.open.library.simple_ui.xml.extensions.view
-
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
-import android.animation.ValueAnimator
-import android.view.View
-import android.view.animation.AccelerateDecelerateInterpolator
-import android.view.animation.LinearInterpolator
-import androidx.core.view.isVisible
-
 /**
  * View animation extension functions for various animation effects.<br>
  * Provides convenient methods for scale, fade, slide, rotate, pulse, and shake animations.<br><br>
@@ -39,6 +29,15 @@ import androidx.core.view.isVisible
  * menuView.fadeToggle(400L)
  * ```
  */
+package kr.open.library.simple_ui.xml.extensions.view
+
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.animation.ValueAnimator
+import android.view.View
+import android.view.animation.AccelerateDecelerateInterpolator
+import android.view.animation.LinearInterpolator
+import androidx.core.view.isVisible
 
 /**
  * Animates the view's scale with customizable parameters.<br><br>
@@ -76,8 +75,7 @@ public fun View.animateScale(
                     onComplete?.invoke()
                 }
             },
-        )
-        .start()
+        ).start()
 }
 
 /**
@@ -185,8 +183,7 @@ public fun View.slideIn(
                     onComplete?.invoke()
                 }
             },
-        )
-        .start()
+        ).start()
 }
 
 /**
@@ -247,8 +244,7 @@ public fun View.slideOut(
                     onComplete?.invoke()
                 }
             },
-        )
-        .start()
+        ).start()
 }
 
 /**
@@ -300,13 +296,11 @@ public fun View.shake(
                                         onComplete?.invoke()
                                     }
                                 },
-                            )
-                            .start()
+                            ).start()
                     }
                 }
             },
-        )
-        .start()
+        ).start()
 }
 
 /**
@@ -354,10 +348,8 @@ public fun View.rotate(
                     onComplete?.invoke()
                 }
             },
-        )
-        .start()
+        ).start()
 }
-
 
 /**
  * Fades in the view with animation.<br><br>
@@ -369,7 +361,10 @@ public fun View.rotate(
  * @param onComplete Optional callback when animation completes.<br><br>
  *                   애니메이션 완료 시 실행할 선택적 콜백.<br>
  */
-public fun View.fadeIn(duration: Long = 300L, onComplete: (() -> Unit)? = null) {
+public fun View.fadeIn(
+    duration: Long = 300L,
+    onComplete: (() -> Unit)? = null,
+) {
     if (alpha == 1f && isVisible) {
         onComplete?.invoke()
         return
@@ -386,8 +381,7 @@ public fun View.fadeIn(duration: Long = 300L, onComplete: (() -> Unit)? = null) 
                     onComplete?.invoke()
                 }
             },
-        )
-        .start()
+        ).start()
 }
 
 /**
@@ -423,8 +417,7 @@ public fun View.fadeOut(
                         onComplete?.invoke()
                     }
                 },
-            )
-            .start()
+            ).start()
     }
 }
 
@@ -438,7 +431,10 @@ public fun View.fadeOut(
  * @param onComplete Optional callback when animation completes.<br><br>
  *                   애니메이션 완료 시 실행할 선택적 콜백.<br>
  */
-public fun View.fadeToggle(duration: Long = 300L, onComplete: (() -> Unit)? = null) {
+public fun View.fadeToggle(
+    duration: Long = 300L,
+    onComplete: (() -> Unit)? = null,
+) {
     if (isVisible && alpha > 0f) {
         fadeOut(duration, true, onComplete)
     } else {

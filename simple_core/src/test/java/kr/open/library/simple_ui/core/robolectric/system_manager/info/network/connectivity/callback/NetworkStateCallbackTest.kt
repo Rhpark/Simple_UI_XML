@@ -21,7 +21,6 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [33])
 class NetworkStateCallbackTest {
-
     private val network: Network = mock(Network::class.java)
     private val networkCapabilities: NetworkCapabilities = mock(NetworkCapabilities::class.java)
     private val linkProperties: LinkProperties = mock(LinkProperties::class.java)
@@ -40,10 +39,11 @@ class NetworkStateCallbackTest {
     fun `onLosing forwards params`() {
         var capturedNetwork: Network? = null
         var capturedMs: Int? = null
-        val callback = NetworkStateCallback(onNetworkLosing = { net, ms ->
-            capturedNetwork = net
-            capturedMs = ms
-        })
+        val callback =
+            NetworkStateCallback(onNetworkLosing = { net, ms ->
+                capturedNetwork = net
+                capturedMs = ms
+            })
 
         callback.onLosing(network, 500)
 
@@ -55,10 +55,11 @@ class NetworkStateCallbackTest {
     fun `onLost invokes both lost and telephony state callbacks`() {
         var lostNetwork: Network? = null
         var state: TelephonyNetworkState? = null
-        val callback = NetworkStateCallback(
-            onNetworkLost = { lostNetwork = it },
-            onNetworkChangedState = { state = it }
-        )
+        val callback =
+            NetworkStateCallback(
+                onNetworkLost = { lostNetwork = it },
+                onNetworkChangedState = { state = it },
+            )
 
         callback.onLost(network)
 
@@ -81,12 +82,13 @@ class NetworkStateCallbackTest {
     fun `onCapabilitiesChanged wraps NetworkCapabilities into data object`() {
         var capturedNetwork: Network? = null
         var capturedData: NetworkCapabilitiesData? = null
-        val callback = NetworkStateCallback(
-            onNetworkCapabilitiesChanged = { net, data ->
-                capturedNetwork = net
-                capturedData = data
-            }
-        )
+        val callback =
+            NetworkStateCallback(
+                onNetworkCapabilitiesChanged = { net, data ->
+                    capturedNetwork = net
+                    capturedData = data
+                },
+            )
 
         callback.onCapabilitiesChanged(network, networkCapabilities)
 
@@ -98,12 +100,13 @@ class NetworkStateCallbackTest {
     fun `onLinkPropertiesChanged wraps LinkProperties into data object`() {
         var capturedNetwork: Network? = null
         var capturedData: NetworkLinkPropertiesData? = null
-        val callback = NetworkStateCallback(
-            onLinkPropertiesChanged = { net, data ->
-                capturedNetwork = net
-                capturedData = data
-            }
-        )
+        val callback =
+            NetworkStateCallback(
+                onLinkPropertiesChanged = { net, data ->
+                    capturedNetwork = net
+                    capturedData = data
+                },
+            )
 
         callback.onLinkPropertiesChanged(network, linkProperties)
 
@@ -115,10 +118,11 @@ class NetworkStateCallbackTest {
     fun `onBlockedStatusChanged forwards parameters`() {
         var capturedNetwork: Network? = null
         var capturedBlocked: Boolean? = null
-        val callback = NetworkStateCallback(onBlockedStatusChanged = { net, blocked ->
-            capturedNetwork = net
-            capturedBlocked = blocked
-        })
+        val callback =
+            NetworkStateCallback(onBlockedStatusChanged = { net, blocked ->
+                capturedNetwork = net
+                capturedBlocked = blocked
+            })
 
         callback.onBlockedStatusChanged(network, true)
 

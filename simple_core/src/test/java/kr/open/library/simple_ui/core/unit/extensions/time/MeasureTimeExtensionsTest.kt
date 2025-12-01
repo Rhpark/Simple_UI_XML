@@ -6,11 +6,9 @@ import kr.open.library.simple_ui.core.extensions.time.measureTimeNanos
 import kr.open.library.simple_ui.core.extensions.time.measureTimeWithResult
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
-import org.junit.Ignore
 import org.junit.Test
 
 class MeasureTimeExtensionsTest {
-
     @Test
     fun measureTimeMillis_returnsResultAndNonNegativeDuration() {
         val (result, duration) = measureTimeMillis { "value" }

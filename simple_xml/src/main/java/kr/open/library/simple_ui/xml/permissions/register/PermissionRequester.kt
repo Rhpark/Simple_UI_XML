@@ -5,7 +5,6 @@ package kr.open.library.simple_ui.xml.permissions.register
  * 권한 요청 흐름을 시작할 수 있는 구성요소를 위한 계약입니다.<br>
  */
 interface PermissionRequester {
-
     /**
      * Requests the supplied permissions and returns denied results via callback.<br><br>
      * 전달받은 권한을 요청하고 거부된 목록을 콜백으로 돌려줍니다.<br>

@@ -1,14 +1,3 @@
-package kr.open.library.simple_ui.xml.extensions.view
-
-import android.annotation.SuppressLint
-import android.content.res.ColorStateList
-import android.view.View
-import androidx.fragment.app.Fragment
-import com.google.android.material.snackbar.BaseTransientBottomBar
-import com.google.android.material.snackbar.Snackbar
-import kr.open.library.simple_ui.core.logcat.Logx
-
-
 /**
  * SnackBar display and customization extension functions for View and Fragment.<br>
  * Provides convenient methods to create and show SnackBar with various durations and custom options.<br><br>
@@ -33,6 +22,15 @@ import kr.open.library.simple_ui.core.logcat.Logx
  * view.snackBarShowShort("Message", customView)
  * ```
  */
+package kr.open.library.simple_ui.xml.extensions.view
+
+import android.annotation.SuppressLint
+import android.content.res.ColorStateList
+import android.view.View
+import androidx.fragment.app.Fragment
+import com.google.android.material.snackbar.BaseTransientBottomBar
+import com.google.android.material.snackbar.Snackbar
+import kr.open.library.simple_ui.core.logcat.Logx
 
 /**
  * Configuration options for customizing SnackBar appearance and behavior.<br><br>
@@ -91,17 +89,18 @@ public data class SnackBarOption(
  * @return This Snackbar instance for method chaining.<br><br>
  *         메서드 체이닝을 위한 이 Snackbar 인스턴스.<br>
  */
-private fun Snackbar.snackBarOption(snackBarOption: SnackBarOption) = apply {
-    snackBarOption.bgTint?.let { setBackgroundTint(it) }
-    snackBarOption.bgTintStateList?.let { setBackgroundTintList(it) }
-    snackBarOption.textColor?.let { setTextColor(it) }
-    snackBarOption.textColorStateList?.let { setTextColor(it) }
-    snackBarOption.isGestureInsetBottomIgnored?.let { setGestureInsetBottomIgnored(it) }
-    snackBarOption.animMode?.let { animationMode = it }
-    snackBarOption.actionTextColor?.let { setActionTextColor(it) }
-    snackBarOption.actionTextColorStateList?.let { setActionTextColor(it) }
-    snackBarOption.actionText?.let { setAction(it, snackBarOption.action) }
-}
+private fun Snackbar.snackBarOption(snackBarOption: SnackBarOption) =
+    apply {
+        snackBarOption.bgTint?.let { setBackgroundTint(it) }
+        snackBarOption.bgTintStateList?.let { setBackgroundTintList(it) }
+        snackBarOption.textColor?.let { setTextColor(it) }
+        snackBarOption.textColorStateList?.let { setTextColor(it) }
+        snackBarOption.isGestureInsetBottomIgnored?.let { setGestureInsetBottomIgnored(it) }
+        snackBarOption.animMode?.let { animationMode = it }
+        snackBarOption.actionTextColor?.let { setActionTextColor(it) }
+        snackBarOption.actionTextColorStateList?.let { setActionTextColor(it) }
+        snackBarOption.actionText?.let { setAction(it, snackBarOption.action) }
+    }
 
 /**
  * Creates a short duration Snackbar without showing it.<br>
@@ -118,10 +117,13 @@ private fun Snackbar.snackBarOption(snackBarOption: SnackBarOption) = apply {
  * @return The created Snackbar instance.<br><br>
  *         생성된 Snackbar 인스턴스.<br>
  */
-public fun View.snackBarMakeShort(msg: CharSequence, snackBarOption: SnackBarOption? = null)
-: Snackbar = Snackbar.make(this, msg, Snackbar.LENGTH_SHORT).apply {
+public fun View.snackBarMakeShort(
+    msg: CharSequence,
+    snackBarOption: SnackBarOption? = null,
+): Snackbar =
+    Snackbar.make(this, msg, Snackbar.LENGTH_SHORT).apply {
         snackBarOption?.let { snackBarOption(it) }
-}
+    }
 
 /**
  * Creates a long duration Snackbar without showing it.<br>
@@ -138,10 +140,13 @@ public fun View.snackBarMakeShort(msg: CharSequence, snackBarOption: SnackBarOpt
  * @return The created Snackbar instance.<br><br>
  *         생성된 Snackbar 인스턴스.<br>
  */
-public fun View.snackBarMakeLong(msg: CharSequence, snackBarOption: SnackBarOption? = null
-): Snackbar = Snackbar.make(this, msg, Snackbar.LENGTH_LONG).apply {
+public fun View.snackBarMakeLong(
+    msg: CharSequence,
+    snackBarOption: SnackBarOption? = null,
+): Snackbar =
+    Snackbar.make(this, msg, Snackbar.LENGTH_LONG).apply {
         snackBarOption?.let { snackBarOption(it) }
-}
+    }
 
 /**
  * Creates an indefinite duration Snackbar without showing it.<br>
@@ -158,10 +163,13 @@ public fun View.snackBarMakeLong(msg: CharSequence, snackBarOption: SnackBarOpti
  * @return The created Snackbar instance.<br><br>
  *         생성된 Snackbar 인스턴스.<br>
  */
-public fun View.snackBarMakeIndefinite(msg: CharSequence, snackBarOption: SnackBarOption? = null,
-): Snackbar = Snackbar.make(this, msg, Snackbar.LENGTH_INDEFINITE).apply {
+public fun View.snackBarMakeIndefinite(
+    msg: CharSequence,
+    snackBarOption: SnackBarOption? = null,
+): Snackbar =
+    Snackbar.make(this, msg, Snackbar.LENGTH_INDEFINITE).apply {
         snackBarOption?.let { snackBarOption(it) }
-}
+    }
 
 /**
  * Creates and shows a short duration Snackbar from a View.<br><br>
@@ -173,7 +181,10 @@ public fun View.snackBarMakeIndefinite(msg: CharSequence, snackBarOption: SnackB
  * @param snackBarOption Optional configuration for customizing the Snackbar.<br><br>
  *                       Snackbar 커스터마이징을 위한 선택적 설정.<br>
  */
-public fun View.snackBarShowShort(msg: CharSequence, snackBarOption: SnackBarOption? = null) {
+public fun View.snackBarShowShort(
+    msg: CharSequence,
+    snackBarOption: SnackBarOption? = null,
+) {
     snackBarMakeShort(msg, snackBarOption).show()
 }
 
@@ -189,7 +200,10 @@ public fun View.snackBarShowShort(msg: CharSequence, snackBarOption: SnackBarOpt
  * @param snackBarOption Optional configuration for customizing the Snackbar.<br><br>
  *                       Snackbar 커스터마이징을 위한 선택적 설정.<br>
  */
-public fun Fragment.snackBarShowShort(msg: CharSequence, snackBarOption: SnackBarOption? = null) {
+public fun Fragment.snackBarShowShort(
+    msg: CharSequence,
+    snackBarOption: SnackBarOption? = null,
+) {
     this.view?.let {
         it.snackBarMakeShort(msg, snackBarOption).show()
     } ?: Logx.e("Fragment view is null, can not show SnackBar!!!")
@@ -218,19 +232,20 @@ public fun View.snackBarShowShort(
     @BaseTransientBottomBar.AnimationMode animMode: Int? = null,
     isGestureInsetBottomIgnored: Boolean? = null,
 ) {
-    snackBarMakeShort(msg).apply {
-        val snackBarLayout =
-            (this.view as? Snackbar.SnackbarLayout)?.let {
-                it.removeAllViews()
-                it.setPadding(0, 0, 0, 0)
-                it.addView(customView)
-                animMode?.let { animationMode = it }
-                isGestureInsetBottomIgnored?.let { setGestureInsetBottomIgnored(it) }
+    snackBarMakeShort(msg)
+        .apply {
+            val snackBarLayout =
+                (this.view as? Snackbar.SnackbarLayout)?.let {
+                    it.removeAllViews()
+                    it.setPadding(0, 0, 0, 0)
+                    it.addView(customView)
+                    animMode?.let { animationMode = it }
+                    isGestureInsetBottomIgnored?.let { setGestureInsetBottomIgnored(it) }
+                }
+            if (snackBarLayout == null) {
+                Logx.e("Snackbar view is not of type Snackbar.SnackbarLayout")
             }
-        if (snackBarLayout == null) {
-            Logx.e("Snackbar view is not of type Snackbar.SnackbarLayout")
-        }
-    }.show()
+        }.show()
 }
 
 /**
@@ -243,7 +258,10 @@ public fun View.snackBarShowShort(
  * @param snackBarOption Optional configuration for customizing the Snackbar.<br><br>
  *                       Snackbar 커스터마이징을 위한 선택적 설정.<br>
  */
-public fun View.snackBarShowLong(msg: CharSequence, snackBarOption: SnackBarOption?) {
+public fun View.snackBarShowLong(
+    msg: CharSequence,
+    snackBarOption: SnackBarOption?,
+) {
     snackBarMakeLong(msg, snackBarOption).show()
 }
 
@@ -259,7 +277,10 @@ public fun View.snackBarShowLong(msg: CharSequence, snackBarOption: SnackBarOpti
  * @param snackBarOption Optional configuration for customizing the Snackbar.<br><br>
  *                       Snackbar 커스터마이징을 위한 선택적 설정.<br>
  */
-public fun Fragment.snackBarShowLong(msg: CharSequence, snackBarOption: SnackBarOption?) {
+public fun Fragment.snackBarShowLong(
+    msg: CharSequence,
+    snackBarOption: SnackBarOption?,
+) {
     this.view?.let {
         it.snackBarMakeLong(msg, snackBarOption).show()
     } ?: Logx.e("Fragment view is null, can not show SnackBar!!!")
@@ -288,19 +309,20 @@ public fun View.snackBarShowLong(
     @BaseTransientBottomBar.AnimationMode animMode: Int? = null,
     isGestureInsetBottomIgnored: Boolean? = null,
 ) {
-    snackBarMakeLong(msg).apply {
-        val snackBarLayout =
-            (this.view as? Snackbar.SnackbarLayout)?.let {
-                it.removeAllViews()
-                it.setPadding(0, 0, 0, 0)
-                it.addView(customView)
-                animMode?.let { animationMode = it }
-                isGestureInsetBottomIgnored?.let { setGestureInsetBottomIgnored(it) }
+    snackBarMakeLong(msg)
+        .apply {
+            val snackBarLayout =
+                (this.view as? Snackbar.SnackbarLayout)?.let {
+                    it.removeAllViews()
+                    it.setPadding(0, 0, 0, 0)
+                    it.addView(customView)
+                    animMode?.let { animationMode = it }
+                    isGestureInsetBottomIgnored?.let { setGestureInsetBottomIgnored(it) }
+                }
+            if (snackBarLayout == null) {
+                Logx.e("Snackbar view is not of type Snackbar.SnackbarLayout")
             }
-        if (snackBarLayout == null) {
-            Logx.e("Snackbar view is not of type Snackbar.SnackbarLayout")
-        }
-    }.show()
+        }.show()
 }
 
 /**
@@ -313,7 +335,10 @@ public fun View.snackBarShowLong(
  * @param snackBarOption Optional configuration for customizing the Snackbar.<br><br>
  *                       Snackbar 커스터마이징을 위한 선택적 설정.<br>
  */
-public fun View.snackBarShowIndefinite(msg: CharSequence, snackBarOption: SnackBarOption?) {
+public fun View.snackBarShowIndefinite(
+    msg: CharSequence,
+    snackBarOption: SnackBarOption?,
+) {
     snackBarMakeIndefinite(msg, snackBarOption).show()
 }
 
@@ -329,7 +354,10 @@ public fun View.snackBarShowIndefinite(msg: CharSequence, snackBarOption: SnackB
  * @param snackBarOption Optional configuration for customizing the Snackbar.<br><br>
  *                       Snackbar 커스터마이징을 위한 선택적 설정.<br>
  */
-public fun Fragment.snackBarShowIndefinite(msg: CharSequence, snackBarOption: SnackBarOption?) {
+public fun Fragment.snackBarShowIndefinite(
+    msg: CharSequence,
+    snackBarOption: SnackBarOption?,
+) {
     this.view?.let {
         it.snackBarMakeIndefinite(msg, snackBarOption).show()
     } ?: Logx.e("Fragment view is null, can not show SnackBar!!!")
@@ -358,18 +386,19 @@ public fun View.snackBarShowIndefinite(
     @BaseTransientBottomBar.AnimationMode animMode: Int? = null,
     isGestureInsetBottomIgnored: Boolean? = null,
 ) {
-    snackBarMakeIndefinite(msg).apply {
-        val snackBarLayout =
-            (this.view as? Snackbar.SnackbarLayout)?.let {
-                it.removeAllViews()
-                it.setPadding(0, 0, 0, 0)
-                it.addView(customView)
-                animMode?.let { animationMode = it }
-                isGestureInsetBottomIgnored?.let { setGestureInsetBottomIgnored(it) }
-            }
+    snackBarMakeIndefinite(msg)
+        .apply {
+            val snackBarLayout =
+                (this.view as? Snackbar.SnackbarLayout)?.let {
+                    it.removeAllViews()
+                    it.setPadding(0, 0, 0, 0)
+                    it.addView(customView)
+                    animMode?.let { animationMode = it }
+                    isGestureInsetBottomIgnored?.let { setGestureInsetBottomIgnored(it) }
+                }
 
-        if (snackBarLayout == null) {
-            Logx.e("Snackbar view is not of type Snackbar.SnackbarLayout")
-        }
-    }.show()
+            if (snackBarLayout == null) {
+                Logx.e("Snackbar view is not of type Snackbar.SnackbarLayout")
+            }
+        }.show()
 }

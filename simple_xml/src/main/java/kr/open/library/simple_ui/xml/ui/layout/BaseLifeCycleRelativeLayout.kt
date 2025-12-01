@@ -45,14 +45,16 @@ import kr.open.library.simple_ui.xml.extensions.view.unbindLifecycleObserver
  * @see BaseLifeCycleConstraintLayout For ConstraintLayout with lifecycle support.<br><br>
  *      생명주기 지원이 있는 ConstraintLayout은 BaseLifeCycleConstraintLayout을 참조하세요.<br>
  */
-class BaseLifeCycleRelativeLayout : RelativeLayout, DefaultLifecycleObserver {
+class BaseLifeCycleRelativeLayout :
+    RelativeLayout,
+    DefaultLifecycleObserver {
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
-            super(context, attrs, defStyleAttr)
+        super(context, attrs, defStyleAttr)
 
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) :
-            super(context, attrs, defStyleAttr, defStyleRes)
+        super(context, attrs, defStyleAttr, defStyleRes)
 
     /**
      * Called when the view is attached to a window.<br>

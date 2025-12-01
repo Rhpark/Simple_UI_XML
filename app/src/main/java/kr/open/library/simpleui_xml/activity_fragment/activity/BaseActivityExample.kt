@@ -9,7 +9,6 @@ import kr.open.library.simple_ui.xml.ui.activity.BaseActivity
 import kr.open.library.simpleui_xml.R
 
 class BaseActivityExample : BaseActivity(R.layout.activity_base_activity_example) {
-
     private lateinit var tvStatusBarHeight: TextView
     private lateinit var tvNavigationBarHeight: TextView
 
@@ -40,7 +39,7 @@ class BaseActivityExample : BaseActivity(R.layout.activity_base_activity_example
         listOf(
             Triple(R.id.btnStatusBarRed, Color.RED, "RED"),
             Triple(R.id.btnStatusBarBlue, Color.BLUE, "BLUE"),
-            Triple(R.id.btnStatusBarGreen, Color.GREEN, "GREEN")
+            Triple(R.id.btnStatusBarGreen, Color.GREEN, "GREEN"),
         ).forEach { (buttonId, color, label) ->
             findViewById<Button>(buttonId).setOnClickListener {
                 statusBarVisible()
@@ -70,7 +69,7 @@ class BaseActivityExample : BaseActivity(R.layout.activity_base_activity_example
         listOf(
             Triple(R.id.btnSystemBarsRed, Color.RED, "RED"),
             Triple(R.id.btnSystemBarsBlue, Color.BLUE, "BLUE"),
-            Triple(R.id.btnSystemBarsGreen, Color.GREEN, "GREEN")
+            Triple(R.id.btnSystemBarsGreen, Color.GREEN, "GREEN"),
         ).forEach { (buttonId, color, label) ->
             findViewById<Button>(buttonId).setOnClickListener {
                 setSystemBarsColor(color)
@@ -93,7 +92,7 @@ class BaseActivityExample : BaseActivity(R.layout.activity_base_activity_example
         listOf(
             Triple(R.id.btnNavigationBarRed, Color.RED, "RED"),
             Triple(R.id.btnNavigationBarBlue, Color.BLUE, "BLUE"),
-            Triple(R.id.btnNavigationBarGreen, Color.GREEN, "GREEN")
+            Triple(R.id.btnNavigationBarGreen, Color.GREEN, "GREEN"),
         ).forEach { (buttonId, color, label) ->
             findViewById<Button>(buttonId).setOnClickListener {
                 setNavigationBarColor(color)

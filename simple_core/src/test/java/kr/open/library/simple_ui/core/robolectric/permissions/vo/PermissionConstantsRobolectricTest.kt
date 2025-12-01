@@ -19,7 +19,6 @@ import org.robolectric.annotation.Config
  */
 @RunWith(RobolectricTestRunner::class)
 class PermissionConstantsRobolectricTest {
-
     // ==============================================
     // SPECIAL_PERMISSION_ACTIONS Tests
     // ==============================================
@@ -30,29 +29,45 @@ class PermissionConstantsRobolectricTest {
         val actions = PermissionConstants.SPECIAL_PERMISSION_ACTIONS
 
         // Verify base permissions that should always be present
-        assertEquals(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-            actions[Manifest.permission.SYSTEM_ALERT_WINDOW])
+        assertEquals(
+            Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+            actions[Manifest.permission.SYSTEM_ALERT_WINDOW],
+        )
 
-        assertEquals(Settings.ACTION_MANAGE_WRITE_SETTINGS,
-            actions[Manifest.permission.WRITE_SETTINGS])
+        assertEquals(
+            Settings.ACTION_MANAGE_WRITE_SETTINGS,
+            actions[Manifest.permission.WRITE_SETTINGS],
+        )
 
-        assertEquals(Settings.ACTION_USAGE_ACCESS_SETTINGS,
-            actions[Manifest.permission.PACKAGE_USAGE_STATS])
+        assertEquals(
+            Settings.ACTION_USAGE_ACCESS_SETTINGS,
+            actions[Manifest.permission.PACKAGE_USAGE_STATS],
+        )
 
-        assertEquals(Settings.ACTION_ACCESSIBILITY_SETTINGS,
-            actions[Manifest.permission.BIND_ACCESSIBILITY_SERVICE])
+        assertEquals(
+            Settings.ACTION_ACCESSIBILITY_SETTINGS,
+            actions[Manifest.permission.BIND_ACCESSIBILITY_SERVICE],
+        )
 
-        assertEquals(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES,
-            actions[Manifest.permission.REQUEST_INSTALL_PACKAGES])
+        assertEquals(
+            Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES,
+            actions[Manifest.permission.REQUEST_INSTALL_PACKAGES],
+        )
 
-        assertEquals(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS,
-            actions[Manifest.permission.ACCESS_NOTIFICATION_POLICY])
+        assertEquals(
+            Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS,
+            actions[Manifest.permission.ACCESS_NOTIFICATION_POLICY],
+        )
 
-        assertEquals(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS,
-            actions[Manifest.permission.BIND_NOTIFICATION_LISTENER_SERVICE])
+        assertEquals(
+            Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS,
+            actions[Manifest.permission.BIND_NOTIFICATION_LISTENER_SERVICE],
+        )
 
-        assertEquals(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
-            actions[Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS])
+        assertEquals(
+            Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
+            actions[Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS],
+        )
     }
 
     @Test
@@ -61,8 +76,10 @@ class PermissionConstantsRobolectricTest {
         val actions = PermissionConstants.SPECIAL_PERMISSION_ACTIONS
 
         // Android R (API 30) permission
-        assertEquals(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION,
-            actions[Manifest.permission.MANAGE_EXTERNAL_STORAGE])
+        assertEquals(
+            Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION,
+            actions[Manifest.permission.MANAGE_EXTERNAL_STORAGE],
+        )
     }
 
     @Test
@@ -71,8 +88,10 @@ class PermissionConstantsRobolectricTest {
         val actions = PermissionConstants.SPECIAL_PERMISSION_ACTIONS
 
         // Android S (API 31) permission
-        assertEquals(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM,
-            actions[Manifest.permission.SCHEDULE_EXACT_ALARM])
+        assertEquals(
+            Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM,
+            actions[Manifest.permission.SCHEDULE_EXACT_ALARM],
+        )
     }
 
     @Test
@@ -109,8 +128,10 @@ class PermissionConstantsRobolectricTest {
 
         // Verify all PermissionSpecialType entries have corresponding actions
         PermissionSpecialType.entries.forEach { specialType ->
-            assertTrue("Permission ${specialType.permission} should be in the map",
-                actions.containsKey(specialType.permission))
+            assertTrue(
+                "Permission ${specialType.permission} should be in the map",
+                actions.containsKey(specialType.permission),
+            )
         }
     }
 
@@ -244,8 +265,10 @@ class PermissionConstantsRobolectricTest {
 
         // All URI-requiring permissions should be in the special permissions map
         uriPermissions.forEach { uriPermission ->
-            assertTrue("URI permission $uriPermission should be in special permissions",
-                specialPermissions.contains(uriPermission))
+            assertTrue(
+                "URI permission $uriPermission should be in special permissions",
+                specialPermissions.contains(uriPermission),
+            )
         }
     }
 
@@ -258,14 +281,18 @@ class PermissionConstantsRobolectricTest {
 
         // Android R permissions should be in special permissions
         rPermissions.forEach { permission ->
-            assertTrue("Android R permission $permission should be in special permissions",
-                specialPermissions.contains(permission))
+            assertTrue(
+                "Android R permission $permission should be in special permissions",
+                specialPermissions.contains(permission),
+            )
         }
 
         // Android S permissions should be in special permissions
         sPermissions.forEach { permission ->
-            assertTrue("Android S permission $permission should be in special permissions",
-                specialPermissions.contains(permission))
+            assertTrue(
+                "Android S permission $permission should be in special permissions",
+                specialPermissions.contains(permission),
+            )
         }
     }
 }

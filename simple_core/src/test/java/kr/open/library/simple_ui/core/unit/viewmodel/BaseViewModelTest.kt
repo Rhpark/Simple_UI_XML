@@ -10,7 +10,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class BaseViewModelTest {
-
     // BaseViewModel을 인스턴스화할 수 있는지 검증
     @Test
     fun baseViewModel_canBeInstantiated() {
@@ -24,17 +23,19 @@ class BaseViewModelTest {
     fun lifecycleCallbacks_canBeOverridden_onCreate() {
         var onCreateCalled = false
 
-        val viewModel = object : BaseViewModel() {
-            override fun onCreate(owner: LifecycleOwner) {
-                onCreateCalled = true
+        val viewModel =
+            object : BaseViewModel() {
+                override fun onCreate(owner: LifecycleOwner) {
+                    onCreateCalled = true
+                }
             }
-        }
 
         // Lifecycle 없이 직접 호출
-        val mockOwner = object : LifecycleOwner {
-            override val lifecycle: Lifecycle
-                get() = LifecycleRegistry(this)
-        }
+        val mockOwner =
+            object : LifecycleOwner {
+                override val lifecycle: Lifecycle
+                    get() = LifecycleRegistry(this)
+            }
 
         viewModel.onCreate(mockOwner)
 
@@ -45,16 +46,18 @@ class BaseViewModelTest {
     fun lifecycleCallbacks_canBeOverridden_onStart() {
         var onStartCalled = false
 
-        val viewModel = object : BaseViewModel() {
-            override fun onStart(owner: LifecycleOwner) {
-                onStartCalled = true
+        val viewModel =
+            object : BaseViewModel() {
+                override fun onStart(owner: LifecycleOwner) {
+                    onStartCalled = true
+                }
             }
-        }
 
-        val mockOwner = object : LifecycleOwner {
-            override val lifecycle: Lifecycle
-                get() = LifecycleRegistry(this)
-        }
+        val mockOwner =
+            object : LifecycleOwner {
+                override val lifecycle: Lifecycle
+                    get() = LifecycleRegistry(this)
+            }
 
         viewModel.onStart(mockOwner)
 
@@ -65,16 +68,18 @@ class BaseViewModelTest {
     fun lifecycleCallbacks_canBeOverridden_onResume() {
         var onResumeCalled = false
 
-        val viewModel = object : BaseViewModel() {
-            override fun onResume(owner: LifecycleOwner) {
-                onResumeCalled = true
+        val viewModel =
+            object : BaseViewModel() {
+                override fun onResume(owner: LifecycleOwner) {
+                    onResumeCalled = true
+                }
             }
-        }
 
-        val mockOwner = object : LifecycleOwner {
-            override val lifecycle: Lifecycle
-                get() = LifecycleRegistry(this)
-        }
+        val mockOwner =
+            object : LifecycleOwner {
+                override val lifecycle: Lifecycle
+                    get() = LifecycleRegistry(this)
+            }
 
         viewModel.onResume(mockOwner)
 
@@ -85,16 +90,18 @@ class BaseViewModelTest {
     fun lifecycleCallbacks_canBeOverridden_onPause() {
         var onPauseCalled = false
 
-        val viewModel = object : BaseViewModel() {
-            override fun onPause(owner: LifecycleOwner) {
-                onPauseCalled = true
+        val viewModel =
+            object : BaseViewModel() {
+                override fun onPause(owner: LifecycleOwner) {
+                    onPauseCalled = true
+                }
             }
-        }
 
-        val mockOwner = object : LifecycleOwner {
-            override val lifecycle: Lifecycle
-                get() = LifecycleRegistry(this)
-        }
+        val mockOwner =
+            object : LifecycleOwner {
+                override val lifecycle: Lifecycle
+                    get() = LifecycleRegistry(this)
+            }
 
         viewModel.onPause(mockOwner)
 
@@ -105,16 +112,18 @@ class BaseViewModelTest {
     fun lifecycleCallbacks_canBeOverridden_onStop() {
         var onStopCalled = false
 
-        val viewModel = object : BaseViewModel() {
-            override fun onStop(owner: LifecycleOwner) {
-                onStopCalled = true
+        val viewModel =
+            object : BaseViewModel() {
+                override fun onStop(owner: LifecycleOwner) {
+                    onStopCalled = true
+                }
             }
-        }
 
-        val mockOwner = object : LifecycleOwner {
-            override val lifecycle: Lifecycle
-                get() = LifecycleRegistry(this)
-        }
+        val mockOwner =
+            object : LifecycleOwner {
+                override val lifecycle: Lifecycle
+                    get() = LifecycleRegistry(this)
+            }
 
         viewModel.onStop(mockOwner)
 
@@ -125,16 +134,18 @@ class BaseViewModelTest {
     fun lifecycleCallbacks_canBeOverridden_onDestroy() {
         var onDestroyCalled = false
 
-        val viewModel = object : BaseViewModel() {
-            override fun onDestroy(owner: LifecycleOwner) {
-                onDestroyCalled = true
+        val viewModel =
+            object : BaseViewModel() {
+                override fun onDestroy(owner: LifecycleOwner) {
+                    onDestroyCalled = true
+                }
             }
-        }
 
-        val mockOwner = object : LifecycleOwner {
-            override val lifecycle: Lifecycle
-                get() = LifecycleRegistry(this)
-        }
+        val mockOwner =
+            object : LifecycleOwner {
+                override val lifecycle: Lifecycle
+                    get() = LifecycleRegistry(this)
+            }
 
         viewModel.onDestroy(mockOwner)
 
@@ -146,24 +157,26 @@ class BaseViewModelTest {
     fun lifecycleCallbacks_canModifyState() {
         var counter = 0
 
-        val viewModel = object : BaseViewModel() {
-            override fun onCreate(owner: LifecycleOwner) {
-                counter += 1
+        val viewModel =
+            object : BaseViewModel() {
+                override fun onCreate(owner: LifecycleOwner) {
+                    counter += 1
+                }
+
+                override fun onStart(owner: LifecycleOwner) {
+                    counter += 10
+                }
+
+                override fun onResume(owner: LifecycleOwner) {
+                    counter += 100
+                }
             }
 
-            override fun onStart(owner: LifecycleOwner) {
-                counter += 10
+        val mockOwner =
+            object : LifecycleOwner {
+                override val lifecycle: Lifecycle
+                    get() = LifecycleRegistry(this)
             }
-
-            override fun onResume(owner: LifecycleOwner) {
-                counter += 100
-            }
-        }
-
-        val mockOwner = object : LifecycleOwner {
-            override val lifecycle: Lifecycle
-                get() = LifecycleRegistry(this)
-        }
 
         viewModel.onCreate(mockOwner)
         assertEquals(1, counter)
@@ -180,17 +193,18 @@ class BaseViewModelTest {
     fun viewModel_canBeCleared() {
         var onClearedCalled = false
 
-        val viewModel = object : BaseViewModel() {
-            override fun onCleared() {
-                super.onCleared()
-                onClearedCalled = true
-            }
+        val viewModel =
+            object : BaseViewModel() {
+                override fun onCleared() {
+                    super.onCleared()
+                    onClearedCalled = true
+                }
 
-            // 테스트를 위한 public 메서드
-            fun triggerCleared() {
-                onCleared()
+                // 테스트를 위한 public 메서드
+                fun triggerCleared() {
+                    onCleared()
+                }
             }
-        }
 
         viewModel.triggerCleared()
 

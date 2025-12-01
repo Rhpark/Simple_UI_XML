@@ -49,9 +49,8 @@ import androidx.recyclerview.widget.DiffUtil
 public class RcvListDiffUtilCallBack<ITEM>(
     private val itemsTheSame: ((oldItem: ITEM, newItem: ITEM) -> Boolean),
     private val contentsTheSame: ((oldItem: ITEM, newItem: ITEM) -> Boolean),
-    private val changePayload: ((oldItem: ITEM, newItem: ITEM) -> Any?)? = null
+    private val changePayload: ((oldItem: ITEM, newItem: ITEM) -> Any?)? = null,
 ) : DiffUtil.ItemCallback<ITEM>() {
-
     /**
      * Checks if two items represent the same entity.<br>
      * Used to determine if an item was moved or changed.<br><br>
@@ -67,7 +66,10 @@ public class RcvListDiffUtilCallBack<ITEM>(
      * @return True if the items represent the same entity, false otherwise.<br><br>
      *         같은 항목이면 true, 아니면 false.<br>
      */
-    public override fun areItemsTheSame(oldItem: ITEM & Any, newItem: ITEM & Any): Boolean = itemsTheSame(oldItem, newItem)
+    public override fun areItemsTheSame(
+        oldItem: ITEM & Any,
+        newItem: ITEM & Any,
+    ): Boolean = itemsTheSame(oldItem, newItem)
 
     /**
      * Checks if two items have the same content.<br>
@@ -84,7 +86,10 @@ public class RcvListDiffUtilCallBack<ITEM>(
      * @return True if the items have the same content, false otherwise.<br><br>
      *         내용이 같으면 true, 아니면 false.<br>
      */
-    public override fun areContentsTheSame(oldItem: ITEM & Any, newItem: ITEM & Any): Boolean = contentsTheSame(oldItem, newItem)
+    public override fun areContentsTheSame(
+        oldItem: ITEM & Any,
+        newItem: ITEM & Any,
+    ): Boolean = contentsTheSame(oldItem, newItem)
 
     /**
      * Returns payload for partial update when items are the same but contents differ.<br>
@@ -101,6 +106,8 @@ public class RcvListDiffUtilCallBack<ITEM>(
      * @return Payload object for partial update, null for full update.<br><br>
      *         부분 업데이트용 payload 객체, 전체 업데이트면 null.<br>
      */
-    public override fun getChangePayload(oldItem: ITEM & Any, newItem: ITEM & Any): Any? =
-        changePayload?.invoke(oldItem, newItem)
+    public override fun getChangePayload(
+        oldItem: ITEM & Any,
+        newItem: ITEM & Any,
+    ): Any? = changePayload?.invoke(oldItem, newItem)
 }

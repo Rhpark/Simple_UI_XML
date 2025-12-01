@@ -16,7 +16,6 @@ import org.robolectric.shadows.ShadowApplication
 
 @RunWith(RobolectricTestRunner::class)
 class BaseSystemServiceRobolectricTest {
-
     private lateinit var context: Context
     private lateinit var shadowApp: ShadowApplication
 
@@ -54,10 +53,11 @@ class BaseSystemServiceRobolectricTest {
     @Test
     fun getDeniedPermissionList_returnsCorrectList() {
         shadowApp.grantPermissions(Manifest.permission.CAMERA)
-        val service = TestSystemService(
-            context,
-            listOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)
-        )
+        val service =
+            TestSystemService(
+                context,
+                listOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO),
+            )
 
         val denied = service.testGetDeniedPermissionList()
         assertEquals(1, denied.size)
@@ -67,10 +67,11 @@ class BaseSystemServiceRobolectricTest {
     @Test
     fun isPermissionAllGranted_returnsTrueWhenAllGranted() {
         shadowApp.grantPermissions(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)
-        val service = TestSystemService(
-            context,
-            listOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)
-        )
+        val service =
+            TestSystemService(
+                context,
+                listOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO),
+            )
 
         assertTrue(service.testIsPermissionAllGranted())
     }
@@ -78,10 +79,11 @@ class BaseSystemServiceRobolectricTest {
     @Test
     fun isPermissionAllGranted_returnsFalseWhenSomeDenied() {
         shadowApp.grantPermissions(Manifest.permission.CAMERA)
-        val service = TestSystemService(
-            context,
-            listOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)
-        )
+        val service =
+            TestSystemService(
+                context,
+                listOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO),
+            )
 
         assertFalse(service.testIsPermissionAllGranted())
     }
@@ -135,10 +137,11 @@ class BaseSystemServiceRobolectricTest {
     @Test
     fun getPermissionInfo_returnsCorrectMap() {
         shadowApp.grantPermissions(Manifest.permission.CAMERA)
-        val service = TestSystemService(
-            context,
-            listOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)
-        )
+        val service =
+            TestSystemService(
+                context,
+                listOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO),
+            )
 
         val info = service.getPermissionInfo()
         assertEquals(2, info.size)
@@ -157,10 +160,11 @@ class BaseSystemServiceRobolectricTest {
     @Test
     fun isPermissionGranted_returnsTrueForGrantedPermission() {
         shadowApp.grantPermissions(Manifest.permission.CAMERA)
-        val service = TestSystemService(
-            context,
-            listOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)
-        )
+        val service =
+            TestSystemService(
+                context,
+                listOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO),
+            )
 
         assertTrue(service.isPermissionGranted(Manifest.permission.CAMERA))
     }
@@ -168,10 +172,11 @@ class BaseSystemServiceRobolectricTest {
     @Test
     fun isPermissionGranted_returnsFalseForDeniedPermission() {
         shadowApp.grantPermissions(Manifest.permission.CAMERA)
-        val service = TestSystemService(
-            context,
-            listOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)
-        )
+        val service =
+            TestSystemService(
+                context,
+                listOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO),
+            )
 
         assertFalse(service.isPermissionGranted(Manifest.permission.RECORD_AUDIO))
     }
@@ -184,22 +189,20 @@ class BaseSystemServiceRobolectricTest {
 
     private class TestSystemService(
         context: Context,
-        permissions: List<String>?
+        permissions: List<String>?,
     ) : BaseSystemService(context, permissions) {
-
         fun testIsPermissionAllGranted() = isPermissionAllGranted()
+
         fun testGetDeniedPermissionList() = getDeniedPermissionList()
 
-        fun testTryCatch(): String {
-            return tryCatchSystemManager("default") {
+        fun testTryCatch(): String =
+            tryCatchSystemManager("default") {
                 "success"
             }
-        }
 
-        fun testTryCatchWithException(): String {
-            return tryCatchSystemManager("default") {
+        fun testTryCatchWithException(): String =
+            tryCatchSystemManager("default") {
                 throw RuntimeException("Test exception")
             }
-        }
     }
 }

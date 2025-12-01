@@ -2,17 +2,15 @@ package kr.open.library.simpleui_xml.system_service_manager.controller.alarm
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import kr.open.library.simple_ui.xml.extensions.view.toastShowShort
-import kr.open.library.simple_ui.xml.ui.activity.BaseActivity
 import kr.open.library.simple_ui.core.system_manager.controller.alarm.vo.AlarmVo
 import kr.open.library.simple_ui.core.system_manager.extensions.getAlarmController
+import kr.open.library.simple_ui.xml.extensions.view.toastShowShort
+import kr.open.library.simple_ui.xml.ui.activity.BaseActivity
 import kr.open.library.simpleui_xml.R
 import kr.open.library.simpleui_xml.databinding.ActivityAlarmControllerBinding
 import kr.open.library.simpleui_xml.system_service_manager.controller.receiver.AlarmReceiver
-import java.util.Calendar
 
 class AlarmControllerActivity : BaseActivity(R.layout.activity_alarm_controller) {
-
     private lateinit var binding: ActivityAlarmControllerBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,15 +28,16 @@ class AlarmControllerActivity : BaseActivity(R.layout.activity_alarm_controller)
                 val hour = timePicker.hour
                 val minute = timePicker.minute
 
-                val alarmVo = AlarmVo(
-                    key = 1,
-                    title = "AlarmClock Title",
-                    message = "AlarmClock Message",
-                    soundUri = null,
-                    hour = hour,
-                    minute = minute,
-                    second = 0
-                )
+                val alarmVo =
+                    AlarmVo(
+                        key = 1,
+                        title = "AlarmClock Title",
+                        message = "AlarmClock Message",
+                        soundUri = null,
+                        hour = hour,
+                        minute = minute,
+                        second = 0,
+                    )
 
                 val result = getAlarmController().registerAlarmClock(AlarmReceiver::class.java, alarmVo)
                 if (result) {
@@ -54,15 +53,16 @@ class AlarmControllerActivity : BaseActivity(R.layout.activity_alarm_controller)
                 val hour = timePicker.hour
                 val minute = timePicker.minute
 
-                val alarmVo = AlarmVo(
-                    key = 2,
-                    title = "Exact Alarm Title",
-                    message = "Exact Alarm (Allow While Idle)",
-                    soundUri = null,
-                    hour = hour,
-                    minute = minute,
-                    second = 0
-                )
+                val alarmVo =
+                    AlarmVo(
+                        key = 2,
+                        title = "Exact Alarm Title",
+                        message = "Exact Alarm (Allow While Idle)",
+                        soundUri = null,
+                        hour = hour,
+                        minute = minute,
+                        second = 0,
+                    )
 
                 val result = getAlarmController().registerAlarmExactAndAllowWhileIdle(AlarmReceiver::class.java, alarmVo)
                 if (result) {
@@ -78,15 +78,16 @@ class AlarmControllerActivity : BaseActivity(R.layout.activity_alarm_controller)
                 val hour = timePicker.hour
                 val minute = timePicker.minute
 
-                val alarmVo = AlarmVo(
-                    key = 3,
-                    title = "Allow While Idle Alarm",
-                    message = "This alarm allows idle mode",
-                    soundUri = null,
-                    hour = hour,
-                    minute = minute,
-                    second = 0
-                )
+                val alarmVo =
+                    AlarmVo(
+                        key = 3,
+                        title = "Allow While Idle Alarm",
+                        message = "This alarm allows idle mode",
+                        soundUri = null,
+                        hour = hour,
+                        minute = minute,
+                        second = 0,
+                    )
 
                 val result = getAlarmController().registerAlarmAndAllowWhileIdle(AlarmReceiver::class.java, alarmVo)
                 if (result) {

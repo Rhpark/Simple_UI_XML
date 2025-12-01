@@ -8,8 +8,8 @@ import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kr.open.library.simple_ui.xml.R
 import kr.open.library.simple_ui.core.logcat.Logx
+import kr.open.library.simple_ui.xml.R
 import java.lang.ref.WeakReference
 
 /**
@@ -61,10 +61,10 @@ import java.lang.ref.WeakReference
  *      스크롤 상태 계산 로직은 RecyclerScrollStateCalculator를 참조하세요.<br>
  */
 public open class RecyclerScrollStateView : RecyclerView {
-
     private companion object {
         /** Default threshold in pixels for edge reach detection. */
         private const val DEFAULT_EDGE_REACH_THRESHOLD = 10
+
         /** Default threshold in pixels for scroll direction change detection. */
         private const val DEFAULT_SCROLL_DIRECTION_THRESHOLD = 20
     }
@@ -76,10 +76,11 @@ public open class RecyclerScrollStateView : RecyclerView {
      * 테스트 목적으로 접근 가능합니다.<br>
      */
     @VisibleForTesting
-    internal val scrollStateCalculator = RecyclerScrollStateCalculator(
-        edgeReachThreshold = DEFAULT_EDGE_REACH_THRESHOLD,
-        scrollDirectionThreshold = DEFAULT_SCROLL_DIRECTION_THRESHOLD
-    )
+    internal val scrollStateCalculator =
+        RecyclerScrollStateCalculator(
+            edgeReachThreshold = DEFAULT_EDGE_REACH_THRESHOLD,
+            scrollDirectionThreshold = DEFAULT_SCROLL_DIRECTION_THRESHOLD,
+        )
 
     /**
      * Listener for edge reach events using WeakReference to prevent memory leaks.<br><br>
@@ -99,10 +100,11 @@ public open class RecyclerScrollStateView : RecyclerView {
      * 스크롤 방향 이벤트를 위한 MutableSharedFlow입니다.<br>
      * 새로운 컬렉터에게 마지막으로 발행된 값을 다시 전달합니다.<br>
      */
-    private val msfScrollDirectionFlow = MutableSharedFlow<ScrollDirection>(
-        replay = 1,
-        onBufferOverflow = BufferOverflow.DROP_OLDEST
-    )
+    private val msfScrollDirectionFlow =
+        MutableSharedFlow<ScrollDirection>(
+            replay = 1,
+            onBufferOverflow = BufferOverflow.DROP_OLDEST,
+        )
 
     /**
      * Public SharedFlow for observing scroll direction changes.<br><br>
@@ -116,10 +118,11 @@ public open class RecyclerScrollStateView : RecyclerView {
      * 가장자리 도달 이벤트를 위한 MutableSharedFlow입니다.<br>
      * ScrollEdge와 가장자리 도달 여부의 Pair를 발행합니다.<br>
      */
-    private val msfEdgeReachedFlow = MutableSharedFlow<Pair<ScrollEdge, Boolean>>(
-        replay = 1,
-        onBufferOverflow = BufferOverflow.DROP_OLDEST
-    )
+    private val msfEdgeReachedFlow =
+        MutableSharedFlow<Pair<ScrollEdge, Boolean>>(
+            replay = 1,
+            onBufferOverflow = BufferOverflow.DROP_OLDEST,
+        )
 
     /**
      * Public SharedFlow for observing edge reach events.<br><br>
@@ -131,8 +134,8 @@ public open class RecyclerScrollStateView : RecyclerView {
     public constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
         initTypeArray(attrs)
     }
-    public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int)
-            : super(context, attrs, defStyleAttr) {
+    public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
+        super(context, attrs, defStyleAttr) {
         initTypeArray(attrs)
     }
 
@@ -144,10 +147,8 @@ public open class RecyclerScrollStateView : RecyclerView {
      *              XML의 속성 집합.<br>
      */
     private fun initTypeArray(attrs: AttributeSet?) {
-
         attrs?.let {
             context.obtainStyledAttributes(it, R.styleable.RecyclerScrollStateView).apply {
-
                 getString(R.styleable.RecyclerScrollStateView_scrollDirectionThreshold).also {
                     setScrollDirectionThreshold(it?.toInt() ?: DEFAULT_SCROLL_DIRECTION_THRESHOLD)
                 }
@@ -164,22 +165,31 @@ public open class RecyclerScrollStateView : RecyclerView {
      * Internal scroll listener for monitoring scroll events.<br><br>
      * 스크롤 이벤트를 모니터링하기 위한 내부 스크롤 리스너입니다.<br>
      */
-    private val scrollListener = object : OnScrollListener() {
+    private val scrollListener =
+        object : OnScrollListener() {
+            override fun onScrollStateChanged(
+                recyclerView: RecyclerView,
+                newState: Int,
+            ) {
+                super.onScrollStateChanged(recyclerView, newState)
+                if (newState == SCROLL_STATE_IDLE) {
+                    val result = scrollStateCalculator.resetScrollAccumulation()
+                    if (result.directionChanged) {
+                        notifyScrollDirectionChanged(result.newDirection)
+                    }
+                }
+            }
 
-        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-            super.onScrollStateChanged(recyclerView, newState)
-            if(newState == SCROLL_STATE_IDLE) {
-                val result = scrollStateCalculator.resetScrollAccumulation()
-                if (result.directionChanged) { notifyScrollDirectionChanged(result.newDirection) }
+            override fun onScrolled(
+                recyclerView: RecyclerView,
+                dx: Int,
+                dy: Int,
+            ) {
+                super.onScrolled(recyclerView, dx, dy)
+                checkEdgeReach()
+                updateScrollDirection(dx, dy)
             }
         }
-
-        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-            super.onScrolled(recyclerView, dx, dy)
-            checkEdgeReach()
-            updateScrollDirection(dx, dy)
-        }
-    }
 
     /**
      * Notifies listeners of scroll direction changes.<br><br>
@@ -211,12 +221,13 @@ public open class RecyclerScrollStateView : RecyclerView {
      * 상단 및 하단 가장자리 도달을 감지합니다.<br>
      */
     private fun checkVerticalEdges() {
-        val result = scrollStateCalculator.checkVerticalEdges(
-            verticalScrollOffset = computeVerticalScrollOffset(),
-            canScrollDown = canScrollVertically(1),
-            verticalScrollExtent = computeVerticalScrollExtent(),
-            verticalScrollRange = computeVerticalScrollRange()
-        )
+        val result =
+            scrollStateCalculator.checkVerticalEdges(
+                verticalScrollOffset = computeVerticalScrollOffset(),
+                canScrollDown = canScrollVertically(1),
+                verticalScrollExtent = computeVerticalScrollExtent(),
+                verticalScrollRange = computeVerticalScrollRange(),
+            )
 
         if (result.topChanged) {
             onEdgeReachedListener?.get()?.onEdgeReached(ScrollEdge.TOP, result.isAtTop)
@@ -238,12 +249,13 @@ public open class RecyclerScrollStateView : RecyclerView {
      * 좌측 및 우측 가장자리 도달을 감지합니다.<br>
      */
     private fun checkHorizontalEdges() {
-        val result = scrollStateCalculator.checkHorizontalEdges(
-            horizontalScrollOffset = computeHorizontalScrollOffset(),
-            canScrollRight = canScrollHorizontally(1),
-            horizontalScrollExtent = computeHorizontalScrollExtent(),
-            horizontalScrollRange = computeHorizontalScrollRange()
-        )
+        val result =
+            scrollStateCalculator.checkHorizontalEdges(
+                horizontalScrollOffset = computeHorizontalScrollOffset(),
+                canScrollRight = canScrollHorizontally(1),
+                horizontalScrollExtent = computeHorizontalScrollExtent(),
+                horizontalScrollRange = computeHorizontalScrollRange(),
+            )
 
         if (result.leftChanged) {
             onEdgeReachedListener?.get()?.onEdgeReached(ScrollEdge.LEFT, result.isAtLeft)
@@ -264,13 +276,13 @@ public open class RecyclerScrollStateView : RecyclerView {
      * Checks if the LayoutManager supports vertical scrolling.<br><br>
      * LayoutManager가 수직 스크롤을 지원하는지 확인합니다.<br>
      */
-    private fun isScrollVertical() =  layoutManager?.canScrollVertically() ?: false
+    private fun isScrollVertical() = layoutManager?.canScrollVertically() ?: false
 
     /**
      * Checks if the LayoutManager supports horizontal scrolling.<br><br>
      * LayoutManager가 수평 스크롤을 지원하는지 확인합니다.<br>
      */
-    private fun isScrollHorizontal() =  layoutManager?.canScrollHorizontally() ?: false
+    private fun isScrollHorizontal() = layoutManager?.canScrollHorizontally() ?: false
 
     /**
      * Updates scroll direction based on scroll deltas.<br><br>
@@ -282,7 +294,10 @@ public open class RecyclerScrollStateView : RecyclerView {
      * @param dy Vertical scroll delta.<br><br>
      *           수직 스크롤 델타.<br>
      */
-    private fun updateScrollDirection(dx: Int, dy: Int) {
+    private fun updateScrollDirection(
+        dx: Int,
+        dy: Int,
+    ) {
         when {
             isScrollVertical() -> updateVerticalScrollDirection(dy)
             isScrollHorizontal() -> updateHorizontalScrollDirection(dx)
@@ -371,11 +386,13 @@ public open class RecyclerScrollStateView : RecyclerView {
      *                 스크롤 방향 변경 시 호출될 람다.<br>
      */
     public fun setOnScrollDirectionListener(listener: (scrollDirection: ScrollDirection) -> Unit) {
-        setOnScrollDirectionListener(object : OnScrollDirectionChangedListener {
-            override fun onScrollDirectionChanged(scrollDirection: ScrollDirection) {
-                listener(scrollDirection)
-            }
-        })
+        setOnScrollDirectionListener(
+            object : OnScrollDirectionChangedListener {
+                override fun onScrollDirectionChanged(scrollDirection: ScrollDirection) {
+                    listener(scrollDirection)
+                }
+            },
+        )
     }
 
     /**
@@ -408,11 +425,16 @@ public open class RecyclerScrollStateView : RecyclerView {
      *                 가장자리 도달 이벤트 시 호출될 람다.<br>
      */
     public fun setOnReachEdgeListener(listener: (edge: ScrollEdge, isReached: Boolean) -> Unit) {
-        setOnReachEdgeListener(object : OnEdgeReachedListener {
-            override fun onEdgeReached(edge: ScrollEdge, isReached: Boolean) {
-                listener(edge, isReached)
-            }
-        })
+        setOnReachEdgeListener(
+            object : OnEdgeReachedListener {
+                override fun onEdgeReached(
+                    edge: ScrollEdge,
+                    isReached: Boolean,
+                ) {
+                    listener(edge, isReached)
+                }
+            },
+        )
     }
 
     /**

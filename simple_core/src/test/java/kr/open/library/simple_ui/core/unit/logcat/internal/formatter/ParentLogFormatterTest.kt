@@ -7,29 +7,29 @@ import kr.open.library.simple_ui.core.logcat.model.LogxType
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
-import org.junit.Ignore
 import org.junit.Test
 import java.util.EnumSet
 
 class ParentLogFormatterTest {
-
-    private val baseConfig = LogxConfig(
-        isDebug = true,
-        debugLogTypeList = EnumSet.of(LogxType.PARENT),
-        appName = "TestApp"
-    )
+    private val baseConfig =
+        LogxConfig(
+            isDebug = true,
+            debugLogTypeList = EnumSet.of(LogxType.PARENT),
+            appName = "TestApp",
+        )
 
     private val mockStackTrace = LogxStackTrace()
 
     @Test
     fun format_returnsFormattedDataWhenParentEnabled() {
         val formatter = ParentLogFormatter(baseConfig, mockStackTrace, isExtensions = false)
-        val formatted = formatter.format(
-            tag = "MyTag",
-            message = "Hello",
-            logType = LogxType.PARENT,
-            stackInfo = "[Class#method:10] "
-        )
+        val formatted =
+            formatter.format(
+                tag = "MyTag",
+                message = "Hello",
+                logType = LogxType.PARENT,
+                stackInfo = "[Class#method:10] ",
+            )
 
         requireNotNull(formatted)
         assertEquals("TestApp[MyTag][PARENT]", formatted.tag)
@@ -41,12 +41,13 @@ class ParentLogFormatterTest {
     fun format_returnsNullWhenLogTypeNotParent() {
         val formatter = ParentLogFormatter(baseConfig, mockStackTrace, isExtensions = false)
 
-        val formatted = formatter.format(
-            tag = "TAG",
-            message = "ignored",
-            logType = LogxType.DEBUG,
-            stackInfo = ""
-        )
+        val formatted =
+            formatter.format(
+                tag = "TAG",
+                message = "ignored",
+                logType = LogxType.DEBUG,
+                stackInfo = "",
+            )
 
         assertNull(formatted)
     }
@@ -56,29 +57,32 @@ class ParentLogFormatterTest {
         val config = baseConfig.copy(isDebug = false)
         val formatter = ParentLogFormatter(config, mockStackTrace, isExtensions = false)
 
-        val formatted = formatter.format(
-            tag = "TAG",
-            message = "ignored",
-            logType = LogxType.PARENT,
-            stackInfo = ""
-        )
+        val formatted =
+            formatter.format(
+                tag = "TAG",
+                message = "ignored",
+                logType = LogxType.PARENT,
+                stackInfo = "",
+            )
 
         assertNull(formatted)
     }
 
     @Test
     fun format_returnsNullWhenParentNotInAllowedTypes() {
-        val config = baseConfig.copy(
-            debugLogTypeList = EnumSet.of(LogxType.DEBUG, LogxType.ERROR)
-        )
+        val config =
+            baseConfig.copy(
+                debugLogTypeList = EnumSet.of(LogxType.DEBUG, LogxType.ERROR),
+            )
         val formatter = ParentLogFormatter(config, mockStackTrace, isExtensions = false)
 
-        val formatted = formatter.format(
-            tag = "TAG",
-            message = "ignored",
-            logType = LogxType.PARENT,
-            stackInfo = ""
-        )
+        val formatted =
+            formatter.format(
+                tag = "TAG",
+                message = "ignored",
+                logType = LogxType.PARENT,
+                stackInfo = "",
+            )
 
         assertNull(formatted)
     }
@@ -107,9 +111,10 @@ class ParentLogFormatterTest {
 
     @Test
     fun formatParentInfo_returnsNullWhenParentNotInAllowedTypes() {
-        val config = baseConfig.copy(
-            debugLogTypeList = EnumSet.of(LogxType.DEBUG)
-        )
+        val config =
+            baseConfig.copy(
+                debugLogTypeList = EnumSet.of(LogxType.DEBUG),
+            )
         val formatter = ParentLogFormatter(config, mockStackTrace, isExtensions = false)
 
         val parentInfo = formatter.formatParentInfo("TAG")
@@ -140,12 +145,13 @@ class ParentLogFormatterTest {
     @Test
     fun format_messageIncludesTreeCharacter() {
         val formatter = ParentLogFormatter(baseConfig, mockStackTrace, isExtensions = false)
-        val formatted = formatter.format(
-            tag = "TAG",
-            message = "Test message",
-            logType = LogxType.PARENT,
-            stackInfo = "[StackInfo] "
-        )
+        val formatted =
+            formatter.format(
+                tag = "TAG",
+                message = "Test message",
+                logType = LogxType.PARENT,
+                stackInfo = "[StackInfo] ",
+            )
 
         requireNotNull(formatted)
         assertTrue(formatted.message.startsWith("┖"))
@@ -157,12 +163,13 @@ class ParentLogFormatterTest {
     @Test
     fun format_handlesNullMessage() {
         val formatter = ParentLogFormatter(baseConfig, mockStackTrace, isExtensions = false)
-        val formatted = formatter.format(
-            tag = "TAG",
-            message = null,
-            logType = LogxType.PARENT,
-            stackInfo = "[Info] "
-        )
+        val formatted =
+            formatter.format(
+                tag = "TAG",
+                message = null,
+                logType = LogxType.PARENT,
+                stackInfo = "[Info] ",
+            )
 
         requireNotNull(formatted)
         assertEquals("┖[Info] ", formatted.message)
@@ -171,12 +178,13 @@ class ParentLogFormatterTest {
     @Test
     fun format_handlesEmptyStackInfo() {
         val formatter = ParentLogFormatter(baseConfig, mockStackTrace, isExtensions = false)
-        val formatted = formatter.format(
-            tag = "TAG",
-            message = "Message",
-            logType = LogxType.PARENT,
-            stackInfo = ""
-        )
+        val formatted =
+            formatter.format(
+                tag = "TAG",
+                message = "Message",
+                logType = LogxType.PARENT,
+                stackInfo = "",
+            )
 
         requireNotNull(formatted)
         assertEquals("┖Message", formatted.message)
@@ -185,12 +193,13 @@ class ParentLogFormatterTest {
     @Test
     fun format_tagIncludesParentSuffix() {
         val formatter = ParentLogFormatter(baseConfig, mockStackTrace, isExtensions = false)
-        val formatted = formatter.format(
-            tag = "CustomTag",
-            message = "msg",
-            logType = LogxType.PARENT,
-            stackInfo = ""
-        )
+        val formatted =
+            formatter.format(
+                tag = "CustomTag",
+                message = "msg",
+                logType = LogxType.PARENT,
+                stackInfo = "",
+            )
 
         requireNotNull(formatted)
         assertTrue(formatted.tag.endsWith("[PARENT]"))

@@ -3,7 +3,6 @@ package kr.open.library.simple_ui.core.logcat.internal.stacktrace
 import android.util.Log
 import kr.open.library.simple_ui.core.logcat.Logx
 
-
 /**
  *  LogxStackTrace의 metaData 클래스
  *  출력 부분 중 현 위치 파악 정보를 전달
@@ -12,8 +11,9 @@ import kr.open.library.simple_ui.core.logcat.Logx
  *  2. 부모 - fileName:lineNumber - [className.methodName]
  *  3. JSON - fileName:lineNumber -
  */
-data class LogxStackTraceMetaData(private val item: StackTraceElement) {
-
+data class LogxStackTraceMetaData(
+    private val item: StackTraceElement,
+) {
     // 파일 이름을 한 번만 계산하고 저장
     val fileName: String by lazy {
         try {
@@ -28,16 +28,16 @@ data class LogxStackTraceMetaData(private val item: StackTraceElement) {
     }
 
     // 위치 정보 캐싱
-    private val fileLocation by lazy { "(${fileName}:${item.lineNumber})" }
+    private val fileLocation by lazy { "($fileName:${item.lineNumber})" }
 
     // 일반 메시지 앞부분 캐싱
-    private val msgFrontNormalCache by lazy {   "${fileLocation}.${item.methodName} - " }
+    private val msgFrontNormalCache by lazy { "$fileLocation.${item.methodName} - " }
 
     // 부모 메시지 앞부분 캐싱
-    private val msgFrontParentCache by lazy { "${fileLocation} - [${item.className}.${item.methodName}]" }
+    private val msgFrontParentCache by lazy { "$fileLocation - [${item.className}.${item.methodName}]" }
 
     // JSON 메시지 앞부분 캐싱
-    private val msgFrontJsonCache by lazy { "${fileLocation} - " }
+    private val msgFrontJsonCache by lazy { "$fileLocation - " }
 
     fun getMsgFrontNormal(): String = msgFrontNormalCache
 

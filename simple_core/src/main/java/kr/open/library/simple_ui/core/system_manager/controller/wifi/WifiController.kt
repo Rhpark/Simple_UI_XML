@@ -50,11 +50,12 @@ import kr.open.library.simple_ui.core.system_manager.extensions.getWifiManager
  * @param context The application context.<br><br>
  *                애플리케이션 컨텍스트.
  */
-public open class WifiController(context: Context) : BaseSystemService(
-    context,
-    listOf(ACCESS_WIFI_STATE, CHANGE_WIFI_STATE, ACCESS_FINE_LOCATION, ACCESS_NETWORK_STATE)
-) {
-
+public open class WifiController(
+    context: Context,
+) : BaseSystemService(
+        context,
+        listOf(ACCESS_WIFI_STATE, CHANGE_WIFI_STATE, ACCESS_FINE_LOCATION, ACCESS_NETWORK_STATE),
+    ) {
     /**
      * Lazy-initialized WifiManager instance.<br><br>
      * 지연 초기화된 WifiManager 인스턴스입니다.<br>
@@ -119,18 +120,20 @@ public open class WifiController(context: Context) : BaseSystemService(
      *         작업 성공 시 `true`, 실패 또는 API 29+ 에서 `false`.<br>
      */
     @RequiresPermission(CHANGE_WIFI_STATE)
-    public fun setWifiEnabled(enabled: Boolean): Boolean = tryCatchSystemManager(false) {
-        return checkSdkVersion(Build.VERSION_CODES.Q,
-            positiveWork = {
-                Logx.w("WiFi control deprecated on API 29+, user must enable manually")
-                false
-            },
-            negativeWork = {
-                @Suppress("DEPRECATION")
-                wifiManager.setWifiEnabled(enabled)
-            }
-        )
-    }
+    public fun setWifiEnabled(enabled: Boolean): Boolean =
+        tryCatchSystemManager(false) {
+            return checkSdkVersion(
+                Build.VERSION_CODES.Q,
+                positiveWork = {
+                    Logx.w("WiFi control deprecated on API 29+, user must enable manually")
+                    false
+                },
+                negativeWork = {
+                    @Suppress("DEPRECATION")
+                    wifiManager.setWifiEnabled(enabled)
+                },
+            )
+        }
 
     /**
      * Gets current WiFi connection information.<br><br>
@@ -150,9 +153,10 @@ public open class WifiController(context: Context) : BaseSystemService(
      *         DhcpInfo 객체 또는 사용 불가능한 경우 null.<br>
      */
     @RequiresPermission(ACCESS_WIFI_STATE)
-    public fun getDhcpInfo(): DhcpInfo? = tryCatchSystemManager(null) {
-        return wifiManager.dhcpInfo
-    }
+    public fun getDhcpInfo(): DhcpInfo? =
+        tryCatchSystemManager(null) {
+            return wifiManager.dhcpInfo
+        }
 
     /**
      * Starts WiFi network scanning.<br><br>
@@ -162,10 +166,11 @@ public open class WifiController(context: Context) : BaseSystemService(
      *         스캔이 성공적으로 시작되면 `true`, 그렇지 않으면 `false`.<br>
      */
     @RequiresPermission(CHANGE_WIFI_STATE)
-    public fun startScan(): Boolean = tryCatchSystemManager(false) {
-        @Suppress("DEPRECATION")
-        return wifiManager.startScan()
-    }
+    public fun startScan(): Boolean =
+        tryCatchSystemManager(false) {
+            @Suppress("DEPRECATION")
+            return wifiManager.startScan()
+        }
 
     /**
      * Gets WiFi scan results.<br><br>
@@ -175,9 +180,10 @@ public open class WifiController(context: Context) : BaseSystemService(
      *         ScanResult 객체 목록, 사용 불가능한 경우 빈 목록.<br>
      */
     @RequiresPermission(allOf = [ACCESS_WIFI_STATE, ACCESS_FINE_LOCATION])
-    public fun getScanResults(): List<ScanResult> = tryCatchSystemManager(emptyList()) {
-        return wifiManager.scanResults ?: emptyList()
-    }
+    public fun getScanResults(): List<ScanResult> =
+        tryCatchSystemManager(emptyList()) {
+            return wifiManager.scanResults ?: emptyList()
+        }
 
     /**
      * Gets list of configured (saved) networks.<br>
@@ -189,18 +195,20 @@ public open class WifiController(context: Context) : BaseSystemService(
      *         WifiConfiguration 객체 목록, API 29+ 또는 사용 불가능한 경우 빈 목록.<br>
      */
     @RequiresPermission(allOf = [ACCESS_WIFI_STATE, ACCESS_FINE_LOCATION])
-    public fun getConfiguredNetworks(): List<WifiConfiguration> = tryCatchSystemManager(emptyList()) {
-        return checkSdkVersion(Build.VERSION_CODES.Q,
-            positiveWork = {
-                Logx.w("getConfiguredNetworks deprecated on API 29+, use WiFi suggestion API")
-                emptyList()
-            },
-            negativeWork = {
-                @Suppress("DEPRECATION")
-                wifiManager.configuredNetworks ?: emptyList()
-            }
-        )
-    }
+    public fun getConfiguredNetworks(): List<WifiConfiguration> =
+        tryCatchSystemManager(emptyList()) {
+            return checkSdkVersion(
+                Build.VERSION_CODES.Q,
+                positiveWork = {
+                    Logx.w("getConfiguredNetworks deprecated on API 29+, use WiFi suggestion API")
+                    emptyList()
+                },
+                negativeWork = {
+                    @Suppress("DEPRECATION")
+                    wifiManager.configuredNetworks ?: emptyList()
+                },
+            )
+        }
 
     /**
      * Checks if WiFi is currently connected.<br><br>
@@ -210,10 +218,11 @@ public open class WifiController(context: Context) : BaseSystemService(
      *         WiFi에 연결되어 있으면 `true`, 그렇지 않으면 `false`.<br>
      */
     @RequiresPermission(ACCESS_NETWORK_STATE)
-    public fun isConnectedWifi(): Boolean = tryCatchSystemManager(false) {
-        val networkCapabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
-        return networkCapabilities?.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ?: false
-    }
+    public fun isConnectedWifi(): Boolean =
+        tryCatchSystemManager(false) {
+            val networkCapabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+            return networkCapabilities?.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ?: false
+        }
 
     /**
      * Calculates signal level from RSSI value.<br><br>
@@ -226,8 +235,10 @@ public open class WifiController(context: Context) : BaseSystemService(
      * @return Signal level from 0 to numLevels-1.<br><br>
      *         0부터 numLevels-1까지의 신호 레벨.<br>
      */
-    public fun calculateSignalLevel(rssi: Int, numLevels: Int): Int =
-        tryCatchSystemManager(0) { return WifiManager.calculateSignalLevel(rssi, numLevels) }
+    public fun calculateSignalLevel(
+        rssi: Int,
+        numLevels: Int,
+    ): Int = tryCatchSystemManager(0) { return WifiManager.calculateSignalLevel(rssi, numLevels) }
 
     /**
      * Compares two signal strengths.<br><br>
@@ -240,8 +251,10 @@ public open class WifiController(context: Context) : BaseSystemService(
      * @return Negative if rssiA is weaker, positive if stronger, 0 if equal.<br><br>
      *         rssiA가 약하면 음수, 강하면 양수, 같으면 0.<br>
      */
-    public fun compareSignalLevel(rssiA: Int, rssiB: Int): Int =
-        tryCatchSystemManager(0) { return WifiManager.compareSignalLevel(rssiA, rssiB) }
+    public fun compareSignalLevel(
+        rssiA: Int,
+        rssiB: Int,
+    ): Int = tryCatchSystemManager(0) { return WifiManager.compareSignalLevel(rssiA, rssiB) }
 
     /**
      * Checks if 5GHz WiFi band is supported.<br><br>
@@ -326,9 +339,10 @@ public open class WifiController(context: Context) : BaseSystemService(
      *         따옴표가 제거된 SSID 문자열, 연결되지 않은 경우 null.<br>
      */
     @RequiresPermission(ACCESS_NETWORK_STATE)
-    public fun getCurrentSsid(): String? = tryCatchSystemManager(null) {
-        return getConnectionInfo()?.ssid?.removeSurrounding("\"")
-    }
+    public fun getCurrentSsid(): String? =
+        tryCatchSystemManager(null) {
+            return getConnectionInfo()?.ssid?.removeSurrounding("\"")
+        }
 
     /**
      * Gets the BSSID of currently connected WiFi network.<br><br>
@@ -338,9 +352,10 @@ public open class WifiController(context: Context) : BaseSystemService(
      *         BSSID 문자열 (MAC 주소), 연결되지 않은 경우 null.<br>
      */
     @RequiresPermission(ACCESS_NETWORK_STATE)
-    public fun getCurrentBssid(): String? = tryCatchSystemManager(null) {
-        return getConnectionInfo()?.bssid
-    }
+    public fun getCurrentBssid(): String? =
+        tryCatchSystemManager(null) {
+            return getConnectionInfo()?.bssid
+        }
 
     /**
      * Gets the signal strength (RSSI) of currently connected WiFi.<br><br>
@@ -350,9 +365,10 @@ public open class WifiController(context: Context) : BaseSystemService(
      *         dBm 단위의 RSSI 값, 연결되지 않은 경우 -127.<br>
      */
     @RequiresPermission(ACCESS_NETWORK_STATE)
-    public fun getCurrentRssi(): Int = tryCatchSystemManager(-127) {
-        return getConnectionInfo()?.rssi ?: -127
-    }
+    public fun getCurrentRssi(): Int =
+        tryCatchSystemManager(-127) {
+            return getConnectionInfo()?.rssi ?: -127
+        }
 
     /**
      * Gets the link speed of current WiFi connection.<br><br>
@@ -362,9 +378,10 @@ public open class WifiController(context: Context) : BaseSystemService(
      *         Mbps 단위의 링크 속도, 연결되지 않은 경우 0.<br>
      */
     @RequiresPermission(ACCESS_NETWORK_STATE)
-    public fun getCurrentLinkSpeed(): Int = tryCatchSystemManager(0) {
-        return getConnectionInfo()?.linkSpeed ?: 0
-    }
+    public fun getCurrentLinkSpeed(): Int =
+        tryCatchSystemManager(0) {
+            return getConnectionInfo()?.linkSpeed ?: 0
+        }
 
     /**
      * Gets detailed WiFi network information using modern API approach.<br>

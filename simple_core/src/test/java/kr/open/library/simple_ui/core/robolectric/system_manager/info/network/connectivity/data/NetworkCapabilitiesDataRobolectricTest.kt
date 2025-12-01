@@ -13,7 +13,6 @@ import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
 class NetworkCapabilitiesDataRobolectricTest {
-
     @Test
     @Config(sdk = [Build.VERSION_CODES.S])
     fun getCapabilities_onSdkS_returnsCapabilitiesArray() {
@@ -21,8 +20,8 @@ class NetworkCapabilitiesDataRobolectricTest {
         doReturn(
             intArrayOf(
                 NetworkCapabilities.NET_CAPABILITY_INTERNET,
-                NetworkCapabilities.NET_CAPABILITY_MMS
-            )
+                NetworkCapabilities.NET_CAPABILITY_MMS,
+            ),
         ).`when`(capabilities).capabilities
 
         val data = NetworkCapabilitiesData(capabilities)
@@ -30,9 +29,9 @@ class NetworkCapabilitiesDataRobolectricTest {
         assertArrayEquals(
             intArrayOf(
                 NetworkCapabilities.NET_CAPABILITY_INTERNET,
-                NetworkCapabilities.NET_CAPABILITY_MMS
+                NetworkCapabilities.NET_CAPABILITY_MMS,
             ),
-            data.getCapabilities()
+            data.getCapabilities(),
         )
     }
 
@@ -47,9 +46,9 @@ class NetworkCapabilitiesDataRobolectricTest {
         assertArrayEquals(
             intArrayOf(
                 NetworkCapabilities.NET_CAPABILITY_INTERNET,
-                NetworkCapabilities.NET_CAPABILITY_MMS
+                NetworkCapabilities.NET_CAPABILITY_MMS,
             ),
-            data.getCapabilities()
+            data.getCapabilities(),
         )
     }
 }

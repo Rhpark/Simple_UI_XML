@@ -38,7 +38,10 @@ public interface OnEdgeReachedListener {
      * @param isReached True if the edge is reached, false if left.<br><br>
      *                  가장자리에 도달했으면 true, 떠났으면 false.<br>
      */
-    public fun onEdgeReached(edge: ScrollEdge, isReached: Boolean)
+    public fun onEdgeReached(
+        edge: ScrollEdge,
+        isReached: Boolean,
+    )
 }
 
 /**
@@ -56,11 +59,13 @@ public interface OnEdgeReachedListener {
  * @return True if emission succeeded, false otherwise.<br><br>
  *         발행이 성공하면 true, 그렇지 않으면 false.<br>
  */
-public inline fun <T> MutableSharedFlow<T>.safeEmit(value: T, failure: () -> Unit): Boolean {
-    return if (tryEmit(value)) {
+public inline fun <T> MutableSharedFlow<T>.safeEmit(
+    value: T,
+    failure: () -> Unit,
+): Boolean =
+    if (tryEmit(value)) {
         true
     } else {
         failure()
         false
     }
-}

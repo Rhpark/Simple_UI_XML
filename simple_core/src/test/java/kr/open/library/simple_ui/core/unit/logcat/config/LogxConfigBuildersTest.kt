@@ -7,18 +7,17 @@ import kr.open.library.simple_ui.core.logcat.model.LogxType
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
-import org.junit.Ignore
 import org.junit.Test
 import java.util.EnumSet
 
 class LogxConfigBuildersTest {
-
     @Test
     fun fileConfigBuilder_appliesOverrides() {
-        val builder = LogxFileConfigBuilder().apply {
-            saveToFile = true
-            filePath = "/tmp/logs"
-        }
+        val builder =
+            LogxFileConfigBuilder().apply {
+                saveToFile = true
+                filePath = "/tmp/logs"
+            }
 
         assertTrue(builder.saveToFile)
         assertEquals("/tmp/logs", builder.filePath)
@@ -26,12 +25,13 @@ class LogxConfigBuildersTest {
 
     @Test
     fun logTypeConfigBuilder_supportsOperations() {
-        val builder = LogxTypeConfigBuilder().apply {
-            -LogxType.JSON
-            basic() // re-adds standard types
-            extended() // re-adds extended types
-            -LogxType.THREAD_ID
-        }
+        val builder =
+            LogxTypeConfigBuilder().apply {
+                -LogxType.JSON
+                basic() // re-adds standard types
+                extended() // re-adds extended types
+                -LogxType.THREAD_ID
+            }
 
         val types = builder.types
         assertTrue(types.containsAll(listOf(LogxType.VERBOSE, LogxType.DEBUG, LogxType.INFO, LogxType.WARN, LogxType.ERROR, LogxType.JSON)))
@@ -45,22 +45,24 @@ class LogxConfigBuildersTest {
 
     @Test
     fun logTypeConfigBuilder_allAddsEveryType() {
-        val builder = LogxTypeConfigBuilder().apply {
-            LogxType.entries.forEach { -it }
-            all()
-        }
+        val builder =
+            LogxTypeConfigBuilder().apply {
+                LogxType.entries.forEach { -it }
+                all()
+            }
 
         assertEquals(EnumSet.copyOf(LogxType.entries), builder.types)
     }
 
     @Test
     fun filterConfigBuilder_managesFilters() {
-        val builder = LogxFilterConfigBuilder().apply {
-            +"Tag1"
-            +"Tag2"
-            -"Tag1"
-            addAll("Tag3", "Tag4")
-        }
+        val builder =
+            LogxFilterConfigBuilder().apply {
+                +"Tag1"
+                +"Tag2"
+                -"Tag1"
+                addAll("Tag3", "Tag4")
+            }
 
         assertEquals(setOf("Tag2", "Tag3", "Tag4"), builder.filters)
 

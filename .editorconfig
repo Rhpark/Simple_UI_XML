@@ -1,0 +1,43 @@
+root = true
+
+[*.{kt,kts}]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+indent_style = space
+indent_size = 4
+
+[app/src/androidTest/**.kt]
+ktlint_standard_package-name = disabled
+
+[app/src/test/**.kt]
+ktlint_standard_package-name = disabled
+
+[build.gradle.kts]
+ktlint_standard_import-ordering = disabled
+
+# Build 산출물 경로는 규칙 적용을 비활성화
+[**/build/**.{kt,kts}]
+ktlint_disabled_rules = import-ordering,package-name,no-wildcard-imports
+
+[simple_core/src/main/java/kr/open/library/simple_ui/core/system_manager/info/network/telephony/data/state/TelephonyNetworkDetailType.kt]
+ktlint_standard_enum-entry-name-case = disabled
+
+[simple_core/src/main/java/kr/open/library/simple_ui/**.kt]
+ktlint_standard_package-name = disabled
+
+[simple_core/src/test/java/kr/open/library/simple_ui/**.kt]
+ktlint_standard_package-name = disabled
+
+[simple_xml/src/main/java/kr/open/library/simple_ui/**.kt]
+ktlint_standard_package-name = disabled
+
+[simple_xml/src/test/java/kr/open/library/simple_ui/**.kt]
+ktlint_standard_package-name = disabled
+
+[app/src/main/java/kr/open/library/simpleui_xml/**.kt]
+ktlint_standard_package-name = disabled
+
+
+
+

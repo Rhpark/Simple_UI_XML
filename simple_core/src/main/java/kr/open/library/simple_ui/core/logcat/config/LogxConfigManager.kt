@@ -1,6 +1,5 @@
 package kr.open.library.simple_ui.core.logcat.config
 
-
 import android.util.Log
 import kr.open.library.simple_ui.core.logcat.model.LogxType
 import java.util.EnumSet
@@ -24,8 +23,9 @@ import kotlin.concurrent.write
  * @param initialConfig The initial configuration to use. Defaults to a default LogxConfig instance.<br><br>
  *                      사용할 초기 설정. 기본값은 기본 LogxConfig 인스턴스입니다.
  */
-class LogxConfigManager(initialConfig: LogxConfig = LogxConfig()) {
-
+class LogxConfigManager(
+    initialConfig: LogxConfig = LogxConfig(),
+) {
     private val lock = ReentrantReadWriteLock()
     private var _config = initialConfig
 
@@ -37,7 +37,7 @@ class LogxConfigManager(initialConfig: LogxConfig = LogxConfig()) {
      */
     val config: LogxConfig
         get() = lock.read { _config }
-    
+
     /**
      * Callback interface for receiving configuration change notifications.<br><br>
      * 설정 변경 알림을 받기 위한 콜백 인터페이스입니다.<br>
@@ -52,9 +52,9 @@ class LogxConfigManager(initialConfig: LogxConfig = LogxConfig()) {
          */
         fun onConfigChanged(newConfig: LogxConfig)
     }
-    
+
     private val listeners = mutableSetOf<ConfigChangeListener>()
-    
+
     /**
      * Registers a configuration change listener in a thread-safe manner.<br><br>
      * 스레드 안전 방식으로 설정 변경 리스너를 등록합니다.<br>
@@ -67,7 +67,7 @@ class LogxConfigManager(initialConfig: LogxConfig = LogxConfig()) {
             listeners.add(listener)
         }
     }
-    
+
     /**
      * Removes a configuration change listener in a thread-safe manner.<br><br>
      * 스레드 안전 방식으로 설정 변경 리스너를 제거합니다.<br>
@@ -101,10 +101,11 @@ class LogxConfigManager(initialConfig: LogxConfig = LogxConfig()) {
      *                  적용할 새로운 설정.
      */
     fun updateConfig(newConfig: LogxConfig) {
-        val snapshot = lock.write {
-            _config = newConfig
-            listeners.toList()  // Create snapshot to avoid holding lock during notifications | 알림 중 잠금을 피하기 위한 스냅샷
-        }
+        val snapshot =
+            lock.write {
+                _config = newConfig
+                listeners.toList() // Create snapshot to avoid holding lock during notifications | 알림 중 잠금을 피하기 위한 스냅샷
+            }
 
         snapshot.forEach { listener ->
             try {
@@ -114,7 +115,7 @@ class LogxConfigManager(initialConfig: LogxConfig = LogxConfig()) {
             }
         }
     }
-    
+
     /**
      * Updates the debug mode setting.<br><br>
      * 디버그 모드 설정을 업데이트합니다.<br>
@@ -125,7 +126,7 @@ class LogxConfigManager(initialConfig: LogxConfig = LogxConfig()) {
     fun setDebugMode(isDebug: Boolean) {
         updateConfig(_config.copy(isDebug = isDebug))
     }
-    
+
     /**
      * Updates the debug filter setting.<br><br>
      * 디버그 필터 설정을 업데이트합니다.<br>
@@ -136,7 +137,7 @@ class LogxConfigManager(initialConfig: LogxConfig = LogxConfig()) {
     fun setDebugFilter(isFilter: Boolean) {
         updateConfig(_config.copy(isDebugFilter = isFilter))
     }
-    
+
     /**
      * Updates the file saving setting.<br><br>
      * 파일 저장 설정을 업데이트합니다.<br>
@@ -147,7 +148,7 @@ class LogxConfigManager(initialConfig: LogxConfig = LogxConfig()) {
     fun setSaveToFile(isSave: Boolean) {
         updateConfig(_config.copy(isDebugSave = isSave))
     }
-    
+
     /**
      * Updates the log file path.<br><br>
      * 로그 파일 경로를 업데이트합니다.<br>
@@ -158,7 +159,7 @@ class LogxConfigManager(initialConfig: LogxConfig = LogxConfig()) {
     fun setFilePath(path: String) {
         updateConfig(_config.copy(saveFilePath = path))
     }
-    
+
     /**
      * Updates the application name used in log file naming and organization.<br><br>
      * 로그 파일 이름 지정 및 구성에 사용되는 애플리케이션 이름을 업데이트합니다.<br>
@@ -169,7 +170,7 @@ class LogxConfigManager(initialConfig: LogxConfig = LogxConfig()) {
     fun setAppName(name: String) {
         updateConfig(_config.copy(appName = name))
     }
-    
+
     /**
      * Updates the set of log types to display.<br><br>
      * 표시할 로그 타입 집합을 업데이트합니다.<br>
@@ -180,7 +181,7 @@ class LogxConfigManager(initialConfig: LogxConfig = LogxConfig()) {
     fun setDebugLogTypeList(types: EnumSet<LogxType>) {
         updateConfig(_config.copy(debugLogTypeList = types))
     }
-    
+
     /**
      * Updates the set of tag filters for debug logging.<br>
      * Only logs matching these tags will be displayed when debug filtering is enabled.<br><br>
@@ -193,7 +194,7 @@ class LogxConfigManager(initialConfig: LogxConfig = LogxConfig()) {
     fun setDebugFilterList(tags: List<String>) {
         updateConfig(_config.copy(debugFilterList = tags.toSet()))
     }
-    
+
     private fun notifyListeners(newConfig: LogxConfig) {
         listeners.forEach { listener ->
             try {

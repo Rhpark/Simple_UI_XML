@@ -4,13 +4,15 @@ import kr.open.library.simple_ui.core.viewmodel.BaseViewModelEvent
 
 sealed class WifiControllerActivityVmEvent {
     object GetWifiInfo : WifiControllerActivityVmEvent()
+
     object CheckStatus : WifiControllerActivityVmEvent()
+
     object ScanWifi : WifiControllerActivityVmEvent()
+
     object CheckBands : WifiControllerActivityVmEvent()
 }
 
 class WifiControllerActivityVm : BaseViewModelEvent<WifiControllerActivityVmEvent>() {
-
     fun onClickGetWifiInfo() = sendEventVm(WifiControllerActivityVmEvent.GetWifiInfo)
 
     fun onClickCheckStatus() = sendEventVm(WifiControllerActivityVmEvent.CheckStatus)

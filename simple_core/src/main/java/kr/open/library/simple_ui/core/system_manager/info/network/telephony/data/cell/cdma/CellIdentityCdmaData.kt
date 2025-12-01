@@ -13,45 +13,47 @@ import android.telephony.CellIdentityCdma
  *                        원본 CellIdentityCdma 객체.
  */
 public data class CellIdentityCdmaData(
-    public val cellIdentity: CellIdentityCdma? = null
+    public val cellIdentity: CellIdentityCdma? = null,
 ) {
-    /******************************
-     * get currentCellIdentityCdma *
-     ******************************/
     /**
      * Gets the long alpha tag.<br><br>
      * 긴 알파 태그를 가져옵니다.<br>
      */
     public fun getOperatorAlphaLong(): CharSequence? = cellIdentity?.operatorAlphaLong
+
     /**
      * Gets the short alpha tag.<br><br>
      * 짧은 알파 태그를 가져옵니다.<br>
      */
     public fun getOperatorAlphaShort(): CharSequence? = cellIdentity?.operatorAlphaShort
+
     /**
      * Gets the Base Station ID.<br><br>
      * 기지국 ID를 가져옵니다.<br>
      */
     public fun getBasestationId(): Int? = cellIdentity?.basestationId
+
     /**
      * Gets the Network ID.<br><br>
      * 네트워크 ID를 가져옵니다.<br>
      */
     public fun getNetworkId(): Int? = cellIdentity?.networkId
+
     /**
      * Gets the System ID.<br><br>
      * 시스템 ID를 가져옵니다.<br>
      */
     public fun getSystemId(): Int? = cellIdentity?.systemId
+
     /**
      * Gets the latitude.<br><br>
      * 위도를 가져옵니다.<br>
      */
     public fun getLatitude(): Int? = cellIdentity?.latitude
+
     /**
      * Gets the longitude.<br><br>
      * 경도를 가져옵니다.<br>
      */
     public fun getLongitude(): Int? = cellIdentity?.longitude
-
 }

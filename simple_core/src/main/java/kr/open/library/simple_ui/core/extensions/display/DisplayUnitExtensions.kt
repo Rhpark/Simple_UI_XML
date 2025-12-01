@@ -1,8 +1,3 @@
-package kr.open.library.simple_ui.core.extensions.display
-
-import android.content.Context
-import android.util.TypedValue
-
 /**
  * Display unit conversion extension functions for Number types.<br>
  * Provides convenient methods to convert between DP, PX, and SP units.<br><br>
@@ -23,10 +18,10 @@ import android.util.TypedValue
  * val sp = 14.dpToSp(context)
  * ```
  */
+package kr.open.library.simple_ui.core.extensions.display
 
-/****************
- * DP To PX, SP *
- ****************/
+import android.content.Context
+import android.util.TypedValue
 
 /**
  * Converts dp value to pixels.<br><br>
@@ -53,12 +48,10 @@ public fun Number.dpToPx(context: Context): Float =
  */
 public fun Number.dpToSp(context: Context): Float =
     TypedValue.applyDimension(
-        TypedValue.COMPLEX_UNIT_DIP, this.toFloat(), context.resources.displayMetrics,
+        TypedValue.COMPLEX_UNIT_DIP,
+        this.toFloat(),
+        context.resources.displayMetrics,
     ) / (context.resources.displayMetrics.density * context.resources.configuration.fontScale)
-
-/****************
- * PX To DP, SP *
- ****************/
 
 /**
  * Converts pixel value to dp.<br><br>
@@ -84,10 +77,6 @@ public fun Number.pxToDp(context: Context): Float = this.toFloat() / context.res
  */
 public fun Number.pxToSp(context: Context): Float =
     (this.toFloat() / context.resources.displayMetrics.density / context.resources.configuration.fontScale)
-
-/****************
- * SP To DP, PX *
- ****************/
 
 /**
  * Converts sp value to pixels.<br><br>

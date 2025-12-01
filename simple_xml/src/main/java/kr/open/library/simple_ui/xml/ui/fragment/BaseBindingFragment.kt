@@ -68,9 +68,8 @@ import androidx.lifecycle.ViewModelProvider
  */
 public abstract class BaseBindingFragment<BINDING : ViewDataBinding>(
     @LayoutRes private val layoutRes: Int,
-    private val isAttachToParent: Boolean = false
+    private val isAttachToParent: Boolean = false,
 ) : RootFragment() {
-
     /**
      * Internal backing field for binding.<br><br>
      * binding의 내부 백킹 필드입니다.<br>
@@ -83,18 +82,19 @@ public abstract class BaseBindingFragment<BINDING : ViewDataBinding>(
      * Fragment의 DataBinding 객체입니다.<br>
      * onDestroyView() 이후에 접근하면 IllegalStateException이 발생합니다.<br>
      */
-    protected val binding: BINDING
-        get() = _binding
-            ?: throw IllegalStateException("Binding accessed after onDestroyView()")
-
+    public val binding: BINDING
+        get() =
+            _binding
+                ?: throw IllegalStateException("Binding accessed after onDestroyView()")
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
     ): View {
         _binding = DataBindingUtil.inflate(inflater, layoutRes, container, isAttachToParent)
         return binding.root.also { afterOnCreateView(it, savedInstanceState) }
     }
-
 
     /**
      * Called immediately after onCreateView() has returned, but before any saved state has been restored into the view.<br>
@@ -108,16 +108,19 @@ public abstract class BaseBindingFragment<BINDING : ViewDataBinding>(
      * @param savedInstanceState If non-null, this fragment is being re-constructed from a previous saved state.<br><br>
      *                           null이 아닌 경우 이 Fragment는 이전에 저장된 상태에서 다시 생성됩니다.<br>
      */
-    protected open fun afterOnCreateView(rootView: View, savedInstanceState: Bundle?) {
-
+    protected open fun afterOnCreateView(
+        rootView: View,
+        savedInstanceState: Bundle?,
+    ) {
     }
 
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
         binding.lifecycleOwner = viewLifecycleOwner
     }
-
 
     /**
      * Override this method to set up ViewModel event collection.<br>
@@ -127,7 +130,6 @@ public abstract class BaseBindingFragment<BINDING : ViewDataBinding>(
      */
     protected open fun eventVmCollect() {}
 
-
     /**
      * Obtains a ViewModel of the specified type using ViewModelProvider.<br><br>
      * ViewModelProvider를 사용하여 지정된 타입의 ViewModel을 가져옵니다.<br>
@@ -135,9 +137,7 @@ public abstract class BaseBindingFragment<BINDING : ViewDataBinding>(
      * @return The ViewModel instance of type T.<br><br>
      *         타입 T의 ViewModel 인스턴스.<br>
      */
-    protected inline fun <reified T : ViewModel> Fragment.getViewModel(): T {
-        return ViewModelProvider(this)[T::class.java]
-    }
+    protected inline fun <reified T : ViewModel> Fragment.getViewModel(): T = ViewModelProvider(this)[T::class.java]
 
     override fun onDestroyView() {
         super.onDestroyView()

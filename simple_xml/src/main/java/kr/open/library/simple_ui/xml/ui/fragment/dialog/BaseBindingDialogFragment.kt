@@ -70,9 +70,8 @@ import androidx.lifecycle.ViewModelProvider
  */
 public abstract class BaseBindingDialogFragment<BINDING : ViewDataBinding>(
     @LayoutRes private val layoutRes: Int,
-    private val isAttachToParent: Boolean = false
+    private val isAttachToParent: Boolean = false,
 ) : RootDialogFragment() {
-
     /**
      * Internal backing field for binding.<br><br>
      * binding의 내부 백킹 필드입니다.<br>
@@ -85,12 +84,15 @@ public abstract class BaseBindingDialogFragment<BINDING : ViewDataBinding>(
      * 다이얼로그의 DataBinding 객체입니다.<br>
      * onDestroyView() 이후에 접근하면 IllegalStateException이 발생합니다.<br>
      */
-    protected val binding: BINDING
-        get() = _binding
-            ?: throw IllegalStateException("Binding accessed after onDestroyView()")
+    public val binding: BINDING
+        get() =
+            _binding
+                ?: throw IllegalStateException("Binding accessed after onDestroyView()")
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
     ): View {
         _binding = DataBindingUtil.inflate(inflater, layoutRes, container, isAttachToParent)
         return binding.root.also { afterOnCreateView(it, savedInstanceState) }
@@ -108,12 +110,16 @@ public abstract class BaseBindingDialogFragment<BINDING : ViewDataBinding>(
      * @param savedInstanceState If non-null, this dialog is being re-constructed from a previous saved state.<br><br>
      *                           null이 아닌 경우 이 다이얼로그는 이전에 저장된 상태에서 다시 생성됩니다.<br>
      */
-    protected open fun afterOnCreateView(rootView: View, savedInstanceState: Bundle?) {
-
+    protected open fun afterOnCreateView(
+        rootView: View,
+        savedInstanceState: Bundle?,
+    ) {
     }
 
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
         binding.lifecycleOwner = viewLifecycleOwner
         getBackgroundColor()?.let { setBackgroundColor(it) }
@@ -142,9 +148,7 @@ public abstract class BaseBindingDialogFragment<BINDING : ViewDataBinding>(
      * @return The ViewModel instance of type T.<br><br>
      *         타입 T의 ViewModel 인스턴스.<br>
      */
-    protected inline fun <reified T : ViewModel> DialogFragment.getViewModel(): T {
-        return ViewModelProvider(this)[T::class.java]
-    }
+    protected inline fun <reified T : ViewModel> DialogFragment.getViewModel(): T = ViewModelProvider(this)[T::class.java]
 
     override fun setBackgroundColor(color: Int) {
         super.setBackgroundColor(color)

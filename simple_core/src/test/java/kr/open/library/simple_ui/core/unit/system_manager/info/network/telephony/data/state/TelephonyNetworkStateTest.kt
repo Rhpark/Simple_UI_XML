@@ -8,19 +8,19 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class TelephonyNetworkStateTest {
-
     @Test
     fun telephonyNetworkType_hasAllEntries() {
-        val types = listOf(
-            TelephonyNetworkType.DISCONNECT,
-            TelephonyNetworkType.CONNECTING,
-            TelephonyNetworkType.UNKNOWN,
-            TelephonyNetworkType.CONNECT_WIFI,
-            TelephonyNetworkType.CONNECT_2G,
-            TelephonyNetworkType.CONNECT_3G,
-            TelephonyNetworkType.CONNECT_4G,
-            TelephonyNetworkType.CONNECT_5G,
-        )
+        val types =
+            listOf(
+                TelephonyNetworkType.DISCONNECT,
+                TelephonyNetworkType.CONNECTING,
+                TelephonyNetworkType.UNKNOWN,
+                TelephonyNetworkType.CONNECT_WIFI,
+                TelephonyNetworkType.CONNECT_2G,
+                TelephonyNetworkType.CONNECT_3G,
+                TelephonyNetworkType.CONNECT_4G,
+                TelephonyNetworkType.CONNECT_5G,
+            )
 
         assertEquals(8, types.toSet().size)
     }
@@ -36,10 +36,11 @@ class TelephonyNetworkStateTest {
 
     @Test
     fun telephonyNetworkState_storesValues() {
-        val state = TelephonyNetworkState(
-            networkTypeState = TelephonyNetworkType.CONNECT_5G,
-            networkTypeDetailState = TelephonyNetworkDetailType.NETWORK_TYPE_NR,
-        )
+        val state =
+            TelephonyNetworkState(
+                networkTypeState = TelephonyNetworkType.CONNECT_5G,
+                networkTypeDetailState = TelephonyNetworkDetailType.NETWORK_TYPE_NR,
+            )
 
         assertEquals(TelephonyNetworkType.CONNECT_5G, state.networkTypeState)
         assertEquals(TelephonyNetworkDetailType.NETWORK_TYPE_NR, state.networkTypeDetailState)

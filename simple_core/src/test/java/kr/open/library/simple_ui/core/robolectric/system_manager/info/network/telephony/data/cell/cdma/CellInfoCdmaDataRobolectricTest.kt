@@ -23,7 +23,6 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [33])
 class CellInfoCdmaDataRobolectricTest {
-
     // ==============================================
     // Constructor and Initialization Tests
     // ==============================================

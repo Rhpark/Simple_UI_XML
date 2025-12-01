@@ -6,14 +6,14 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class ViewIdsTest {
-
     @Test
     fun ids_areUniqueAndPositive() {
-        val ids = listOf(
-            ViewIds.LAST_CLICK_TIME,
-            ViewIds.FADE_ANIMATOR,
-            ViewIds.TAG_OBSERVED_OWNER,
-        )
+        val ids =
+            listOf(
+                ViewIds.LAST_CLICK_TIME,
+                ViewIds.FADE_ANIMATOR,
+                ViewIds.TAG_OBSERVED_OWNER,
+            )
 
         ids.forEachIndexed { index, id ->
             assertTrue("ID should be positive", id > 0)

@@ -6,12 +6,15 @@ import android.os.Looper
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ApplicationProvider
 import kr.open.library.simple_ui.xml.ui.adapter.normal.base.BaseRcvAdapter
-import androidx.recyclerview.widget.DiffUtil
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -34,23 +37,32 @@ import java.util.concurrent.Executor
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [Build.VERSION_CODES.TIRAMISU])
 class BaseRcvAdapterRobolectricTest {
-
     private lateinit var context: Context
     private lateinit var adapter: TestAdapter
 
     // Test data class
-    data class TestItem(val id: Int, val name: String)
+    data class TestItem(
+        val id: Int,
+        val name: String,
+    )
 
     // Test adapter implementation with synchronous executor for deterministic testing
     private class TestAdapter(
-        testExecutor: Executor = Executor { it.run() }
+        testExecutor: Executor = Executor { it.run() },
     ) : BaseRcvAdapter<TestItem, TestViewHolder>(testExecutor) {
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TestViewHolder {
+        override fun onCreateViewHolder(
+            parent: ViewGroup,
+            viewType: Int,
+        ): TestViewHolder {
             val view = View(parent.context)
             return TestViewHolder(view)
         }
 
-        override fun onBindViewHolder(holder: TestViewHolder, position: Int, item: TestItem) {
+        override fun onBindViewHolder(
+            holder: TestViewHolder,
+            position: Int,
+            item: TestItem,
+        ) {
             // No binding needed for tests
         }
     }
@@ -59,21 +71,33 @@ class BaseRcvAdapterRobolectricTest {
     private class PayloadTrackingAdapter : BaseRcvAdapter<TestItem, TestViewHolder>() {
         var lastPayloads: List<Any>? = null
 
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TestViewHolder {
-            return TestViewHolder(View(parent.context))
-        }
+        override fun onCreateViewHolder(
+            parent: ViewGroup,
+            viewType: Int,
+        ): TestViewHolder = TestViewHolder(View(parent.context))
 
-        override fun onBindViewHolder(holder: TestViewHolder, position: Int, item: TestItem) {
+        override fun onBindViewHolder(
+            holder: TestViewHolder,
+            position: Int,
+            item: TestItem,
+        ) {
             // no-op
         }
 
-        override fun onBindViewHolder(holder: TestViewHolder, position: Int, item: TestItem, payloads: List<Any>) {
+        override fun onBindViewHolder(
+            holder: TestViewHolder,
+            position: Int,
+            item: TestItem,
+            payloads: List<Any>,
+        ) {
             lastPayloads = payloads
         }
     }
 
     // Test ViewHolder
-    private class TestViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+    private class TestViewHolder(
+        itemView: View,
+    ) : RecyclerView.ViewHolder(itemView)
 
     @Before
     fun setUp() {
@@ -152,11 +176,12 @@ class BaseRcvAdapterRobolectricTest {
     @Test
     fun multipleItems_canBeAddedInBatch() {
         // Given
-        val items = listOf(
-            TestItem(1, "Item 1"),
-            TestItem(2, "Item 2"),
-            TestItem(3, "Item 3")
-        )
+        val items =
+            listOf(
+                TestItem(1, "Item 1"),
+                TestItem(2, "Item 2"),
+                TestItem(3, "Item 3"),
+            )
 
         // When
         val result = adapter.addItems(items)
@@ -273,10 +298,11 @@ class BaseRcvAdapterRobolectricTest {
     @Test
     fun allItems_canBeRetrieved() {
         // Given
-        val items = listOf(
-            TestItem(1, "Item 1"),
-            TestItem(2, "Item 2")
-        )
+        val items =
+            listOf(
+                TestItem(1, "Item 1"),
+                TestItem(2, "Item 2"),
+            )
         adapter.addItems(items)
 
         // When
@@ -352,11 +378,13 @@ class BaseRcvAdapterRobolectricTest {
     @Test
     fun allItems_canBeCleared() {
         // Given
-        adapter.setItems(listOf(
-            TestItem(1, "Item 1"),
-            TestItem(2, "Item 2"),
-            TestItem(3, "Item 3")
-        ))
+        adapter.setItems(
+            listOf(
+                TestItem(1, "Item 1"),
+                TestItem(2, "Item 2"),
+                TestItem(3, "Item 3"),
+            ),
+        )
 
         // When
         val result = adapter.removeAll()
@@ -385,10 +413,11 @@ class BaseRcvAdapterRobolectricTest {
     fun items_canBeReplaced() {
         // Given
         adapter.setItems(listOf(TestItem(1, "Old Item")))
-        val newItems = listOf(
-            TestItem(2, "New Item 1"),
-            TestItem(3, "New Item 2")
-        )
+        val newItems =
+            listOf(
+                TestItem(2, "New Item 1"),
+                TestItem(3, "New Item 2"),
+            )
 
         // When
         adapter.setItems(newItems)
@@ -594,19 +623,21 @@ class BaseRcvAdapterRobolectricTest {
     @Test
     fun searchResultUpdateScenario_behavesAsExpected() {
         // Given - Search results being updated
-        val initialResults = listOf(
-            TestItem(1, "Apple"),
-            TestItem(2, "Banana")
-        )
+        val initialResults =
+            listOf(
+                TestItem(1, "Apple"),
+                TestItem(2, "Banana"),
+            )
         adapter.setItems(initialResults)
         shadowOf(Looper.getMainLooper()).idle()
         shadowOf(Looper.getMainLooper()).idle()
 
         // When - New search query
-        val newResults = listOf(
-            TestItem(3, "Avocado"),
-            TestItem(4, "Apricot")
-        )
+        val newResults =
+            listOf(
+                TestItem(3, "Avocado"),
+                TestItem(4, "Apricot"),
+            )
         adapter.setItems(newResults)
         shadowOf(Looper.getMainLooper()).idle()
         shadowOf(Looper.getMainLooper()).idle()
@@ -659,15 +690,16 @@ class BaseRcvAdapterRobolectricTest {
             captured = Triple(index, item, view)
         }
 
-        val recyclerView = RecyclerView(context).apply {
-            layoutManager = LinearLayoutManager(context)
-            adapter = longClickAdapter
-            measure(
-                View.MeasureSpec.makeMeasureSpec(500, View.MeasureSpec.EXACTLY),
-                View.MeasureSpec.makeMeasureSpec(500, View.MeasureSpec.EXACTLY)
-            )
-            layout(0, 0, 500, 500)
-        }
+        val recyclerView =
+            RecyclerView(context).apply {
+                layoutManager = LinearLayoutManager(context)
+                adapter = longClickAdapter
+                measure(
+                    View.MeasureSpec.makeMeasureSpec(500, View.MeasureSpec.EXACTLY),
+                    View.MeasureSpec.makeMeasureSpec(500, View.MeasureSpec.EXACTLY),
+                )
+                layout(0, 0, 500, 500)
+            }
         shadowOf(Looper.getMainLooper()).idle()
 
         val holder = recyclerView.findViewHolderForAdapterPosition(0)

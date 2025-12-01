@@ -1,20 +1,38 @@
+import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
+import java.io.File
+
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.android.library) apply false
 
-    // FireBase (Add the dependency for the Google services Gradle plugin)
-    id("com.google.gms.google-services") version "4.4.4" apply false //Firebase Common
-    id("com.google.firebase.appdistribution") version "5.0.0" apply false // Firebase App Distribution(Apk 테스트 자동 베포)
+    // Firebase
+    id("com.google.gms.google-services") version "4.4.4" apply false // Firebase Common
+    id("com.google.firebase.appdistribution") version "5.0.0" apply false // Firebase App Distribution (APK auto distribute)
     id("com.google.firebase.crashlytics") version "3.0.6" apply false // Firebase Exception Report
-    id("org.jetbrains.dokka") version "2.1.0" // Dokka 멀티 모듈 설정 추가
+    id("org.jetbrains.dokka") version "2.1.0" // Dokka multi-module docs
+
+    id("org.jlleitschuh.gradle.ktlint") version "14.0.1" // KtLint
 }
 
-// Dokka V2 Multi-Module Configuration
-// Dokka V2 멀티 모듈 통합 문서 설정
+// Dokka V2 Multi-Module Configuration + KtLint setup
 subprojects {
     apply(plugin = "org.jetbrains.dokka")
+    apply(plugin = "org.jlleitschuh.gradle.ktlint")
+
+    ktlint {
+        android.set(true)
+        ignoreFailures = false
+        reporters {
+            reporter(ReporterType.PLAIN)
+            reporter(ReporterType.CHECKSTYLE)
+        }
+        filter {
+            // Exclude generated build outputs from linting
+            exclude { it.file.path.contains("${File.separator}build${File.separator}") }
+        }
+    }
 }
 
 tasks.register("dokkaHtmlMultiModuleCustom") {
@@ -42,7 +60,8 @@ tasks.register("dokkaHtmlMultiModuleCustom") {
         }
 
         // Create index.html for navigation
-        file("docs/api/index.html").writeText("""
+        file("docs/api/index.html").writeText(
+            """
             <!DOCTYPE html>
             <html>
             <head>
@@ -73,7 +92,7 @@ tasks.register("dokkaHtmlMultiModuleCustom") {
                             <li>System managers (Battery, Location, Network, etc.)</li>
                             <li>Base ViewModel</li>
                         </ul>
-                        <a href="simple-core/index.html">View Core Documentation →</a>
+                        <a href="simple-core/index.html">View Core Documentation</a>
                     </div>
 
                     <div class="module">
@@ -85,13 +104,14 @@ tasks.register("dokkaHtmlMultiModuleCustom") {
                             <li>Permission management</li>
                             <li>System UI controllers (StatusBar, NavigationBar, etc.)</li>
                         </ul>
-                        <a href="simple-xml/index.html">View XML Documentation →</a>
+                        <a href="simple-xml/index.html">View XML Documentation</a>
                     </div>
                 </div>
             </body>
             </html>
-        """.trimIndent())
+            """.trimIndent(),
+        )
 
-        println("✅ Multi-module documentation generated at: docs/api/index.html")
+        println("Multi-module documentation generated at: docs/api/index.html")
     }
 }

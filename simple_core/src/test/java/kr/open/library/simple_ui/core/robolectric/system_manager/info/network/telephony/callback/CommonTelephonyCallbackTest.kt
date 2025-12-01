@@ -4,7 +4,6 @@ import android.os.Build
 import android.telephony.CellInfo
 import android.telephony.ServiceState
 import android.telephony.SignalStrength
-import android.telephony.TelephonyCallback
 import android.telephony.TelephonyDisplayInfo
 import android.telephony.TelephonyManager
 import kr.open.library.simple_ui.core.system_manager.info.network.telephony.callback.CommonTelephonyCallback
@@ -15,11 +14,12 @@ import kr.open.library.simple_ui.core.system_manager.info.network.telephony.data
 import kr.open.library.simple_ui.core.system_manager.info.network.telephony.data.state.TelephonyNetworkState
 import kr.open.library.simple_ui.core.system_manager.info.network.telephony.data.state.TelephonyNetworkType
 import org.junit.After
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertSame
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.ArgumentCaptor
 import org.mockito.Mockito.doReturn
 import org.mockito.Mockito.mock
 import org.robolectric.RobolectricTestRunner
@@ -29,7 +29,6 @@ import org.robolectric.util.ReflectionHelpers
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [Build.VERSION_CODES.S])
 class CommonTelephonyCallbackTest {
-
     private val telephonyManager = mock(TelephonyManager::class.java)
     private lateinit var callback: CommonTelephonyCallback
     private var originalSdk = Build.VERSION.SDK_INT
@@ -71,7 +70,7 @@ class CommonTelephonyCallbackTest {
         val baseCallback = callback.baseTelephonyCallback
         baseCallback.onDataConnectionStateChanged(
             TelephonyManager.DATA_CONNECTED,
-            TelephonyManager.NETWORK_TYPE_LTE
+            TelephonyManager.NETWORK_TYPE_LTE,
         )
         assertEquals(TelephonyManager.DATA_CONNECTED, dataState?.first)
         assertEquals(1, networkEvents)
@@ -80,7 +79,7 @@ class CommonTelephonyCallbackTest {
         // duplicate update should not trigger listeners again
         baseCallback.onDataConnectionStateChanged(
             TelephonyManager.DATA_CONNECTED,
-            TelephonyManager.NETWORK_TYPE_LTE
+            TelephonyManager.NETWORK_TYPE_LTE,
         )
         assertEquals(1, networkEvents)
 
@@ -101,14 +100,15 @@ class CommonTelephonyCallbackTest {
 
         val telephonyDisplayInfo = mock(TelephonyDisplayInfo::class.java)
         doReturn(TelephonyDisplayInfo.OVERRIDE_NETWORK_TYPE_NR_ADVANCED)
-            .`when`(telephonyDisplayInfo).overrideNetworkType
+            .`when`(telephonyDisplayInfo)
+            .overrideNetworkType
         baseCallback.onDisplayInfoChanged(telephonyDisplayInfo)
         assertSame(telephonyDisplayInfo, displayInfo)
         assertEquals(2, networkEvents)
         assertEquals(TelephonyNetworkType.CONNECT_5G, lastNetworkState?.networkTypeState)
         assertEquals(
             TelephonyNetworkDetailType.OVERRIDE_NETWORK_TYPE_NR_ADVANCED,
-            lastNetworkState?.networkTypeDetailState
+            lastNetworkState?.networkTypeDetailState,
         )
     }
 
@@ -138,7 +138,7 @@ class CommonTelephonyCallbackTest {
 
         listener.onDataConnectionStateChanged(
             TelephonyManager.DATA_CONNECTING,
-            TelephonyManager.NETWORK_TYPE_HSPA
+            TelephonyManager.NETWORK_TYPE_HSPA,
         )
         assertEquals(TelephonyNetworkType.CONNECTING, networkState?.networkTypeState)
 
@@ -156,7 +156,8 @@ class CommonTelephonyCallbackTest {
 
         val telephonyDisplayInfo = mock(TelephonyDisplayInfo::class.java)
         doReturn(TelephonyDisplayInfo.OVERRIDE_NETWORK_TYPE_NR_NSA)
-            .`when`(telephonyDisplayInfo).overrideNetworkType
+            .`when`(telephonyDisplayInfo)
+            .overrideNetworkType
         listener.onDisplayInfoChanged(telephonyDisplayInfo)
         assertSame(telephonyDisplayInfo, displayInfo)
         assertEquals(TelephonyNetworkType.CONNECT_5G, networkState?.networkTypeState)
@@ -187,10 +188,11 @@ class CommonTelephonyCallbackTest {
         val serviceState = mock(ServiceState::class.java)
         doReturn("nrState=CONNECTED something nsaState=5").`when`(serviceState).toString()
 
-        val method = CommonTelephonyCallback::class.java.getDeclaredMethod(
-            "getTelephonyServiceStateNetworkCheck",
-            ServiceState::class.java
-        )
+        val method =
+            CommonTelephonyCallback::class.java.getDeclaredMethod(
+                "getTelephonyServiceStateNetworkCheck",
+                ServiceState::class.java,
+            )
         method.isAccessible = true
         method.invoke(callback, serviceState)
 

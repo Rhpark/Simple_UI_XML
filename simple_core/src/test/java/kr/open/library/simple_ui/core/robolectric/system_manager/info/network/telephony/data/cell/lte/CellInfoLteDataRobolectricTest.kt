@@ -23,7 +23,6 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [33])
 class CellInfoLteDataRobolectricTest {
-
     @Test
     fun constructor_withNullCellInfo_createsInstance() {
         val data = CellInfoLteData(cellInfo = null)

@@ -27,19 +27,21 @@ import org.robolectric.shadows.ShadowWifiInfo
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [Build.VERSION_CODES.R])
 class WifiConnectionInfoProviderRobolectricTest {
-
     private val context: Context = ApplicationProvider.getApplicationContext()
-    private val guard = WifiOperationGuard { defaultValue, block ->
-        try {
-            block()
-        } catch (e: Exception) {
-            defaultValue
+    private val guard =
+        WifiOperationGuard { defaultValue, block ->
+            try {
+                block()
+            } catch (e: Exception) {
+                defaultValue
+            }
         }
-    }
 
     private fun createWifiInfo(ssid: String): WifiInfo {
         val info = ShadowWifiInfo.newInstance()
-        val shadow = org.robolectric.shadow.api.Shadow.extract<ShadowWifiInfo>(info)
+        val shadow =
+            org.robolectric.shadow.api.Shadow
+                .extract<ShadowWifiInfo>(info)
         shadow.setSSID(ssid)
         shadow.setBSSID("00:11:22:33:44:55")
         shadow.setRssi(-45)
@@ -173,10 +175,11 @@ class WifiConnectionInfoProviderRobolectricTest {
         assertNull(withoutDns?.domains)
         assertEquals(emptyList<String>(), withoutDns?.dnsServers)
 
-        val dnsList = listOf(
-            java.net.InetAddress.getByName("8.8.8.8"),
-            java.net.InetAddress.getByName("1.1.1.1")
-        )
+        val dnsList =
+            listOf(
+                java.net.InetAddress.getByName("8.8.8.8"),
+                java.net.InetAddress.getByName("1.1.1.1"),
+            )
         doReturn(dnsList).`when`(linkProperties).dnsServers
         doReturn("example.com").`when`(linkProperties).domains
 

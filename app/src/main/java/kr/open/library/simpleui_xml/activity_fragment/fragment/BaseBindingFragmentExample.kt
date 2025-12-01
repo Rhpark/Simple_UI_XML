@@ -13,15 +13,20 @@ import kr.open.library.simpleui_xml.R
 import kr.open.library.simpleui_xml.databinding.FragmentBaseBindingExampleBinding
 
 class BaseBindingFragmentExample : BaseBindingFragment<FragmentBaseBindingExampleBinding>(R.layout.fragment_base_binding_example) {
-
     private val vm: BaseBindingFragmentExampleVm by lazy { getViewModel() }
 
-    override fun afterOnCreateView(rootView: View, savedInstanceState: Bundle?) {
+    override fun afterOnCreateView(
+        rootView: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.afterOnCreateView(rootView, savedInstanceState)
         Logx.d("BaseBindingFragmentExample - afterOnCreateView() called (typo: Crate not Create)")
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
         Logx.d("BaseBindingFragmentExample - onViewCreated() called")
 

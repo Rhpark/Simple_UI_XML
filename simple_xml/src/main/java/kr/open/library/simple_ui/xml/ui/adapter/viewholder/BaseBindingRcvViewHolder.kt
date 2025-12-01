@@ -10,10 +10,10 @@ import androidx.recyclerview.widget.RecyclerView
 public open class BaseBindingRcvViewHolder<BINDING : ViewDataBinding>(
     @LayoutRes xmlRes: Int,
     parent: ViewGroup,
-    attachToRoot: Boolean = false
+    attachToRoot: Boolean = false,
 ) : RecyclerView.ViewHolder(
-    LayoutInflater.from(parent.context).inflate(xmlRes, parent, attachToRoot)
-) {
+        LayoutInflater.from(parent.context).inflate(xmlRes, parent, attachToRoot),
+    ) {
     public val binding: BINDING by lazy {
         DataBindingUtil.bind<BINDING>(itemView) ?: throw IllegalStateException("Exception Binding is null!!")
     }
@@ -31,8 +31,7 @@ public open class BaseBindingRcvViewHolder<BINDING : ViewDataBinding>(
      * @return Adapter position, or -1 if invalid.<br><br>
      *         유효하지 않으면 -1을 반환합니다.<br>
      */
-    protected fun getAdapterPositionSafe(): Int =
-        if (isValidPosition()) adapterPosition else RecyclerView.NO_POSITION
+    protected fun getAdapterPositionSafe(): Int = if (isValidPosition()) adapterPosition else RecyclerView.NO_POSITION
 
     /**
      * Executes pending bindings for DataBinding.<br><br>

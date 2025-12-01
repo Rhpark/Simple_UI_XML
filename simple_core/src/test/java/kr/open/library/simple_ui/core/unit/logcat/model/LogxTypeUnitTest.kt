@@ -9,7 +9,6 @@ import org.junit.Test
  * Unit tests for LogxType enum
  */
 class LogxTypeUnitTest {
-
     @Test
     fun logxType_hasCorrectNumberOfValues() {
         val entries = LogxType.entries

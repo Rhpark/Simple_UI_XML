@@ -38,11 +38,9 @@ import kr.open.library.simple_ui.core.system_manager.info.network.telephony.data
  * @param telephonyManager The TelephonyManager instance.<br><br>
  *                         TelephonyManager 인스턴스.
  */
-public open class CommonTelephonyCallback(private val telephonyManager: TelephonyManager) {
-
-    /***************************
-     * CallBack Listener List  *
-     ***************************/
+public open class CommonTelephonyCallback(
+    private val telephonyManager: TelephonyManager,
+) {
     /**
      * Callback for active data subscription ID changes.<br><br>
      * 활성 데이터 SUb ID 변경 콜백입니다.<br>
@@ -121,8 +119,7 @@ public open class CommonTelephonyCallback(private val telephonyManager: Telephon
      * Legacy phone state listener instance.<br><br>
      * 기존 PhoneStateListener 인스턴스입니다.<br>
      */
-    public val basePhoneStateListener: BasePhoneStateListener by lazy { BasePhoneStateListener()}
-
+    public val basePhoneStateListener: BasePhoneStateListener by lazy { BasePhoneStateListener() }
 
     /**
      * Sets the callback for active data subscription ID changes.<br><br>
@@ -220,36 +217,39 @@ public open class CommonTelephonyCallback(private val telephonyManager: Telephon
      * telephonyManager.registerTelephonyCallback과 함께 사용됩니다.<br>
      */
     @RequiresApi(Build.VERSION_CODES.S)
-    public open inner class BaseTelephonyCallback : TelephonyCallback(),
+    public open inner class BaseTelephonyCallback :
+        TelephonyCallback(),
         TelephonyCallback.DataConnectionStateListener,
         TelephonyCallback.ServiceStateListener,
         TelephonyCallback.SignalStrengthsListener,
         TelephonyCallback.CallStateListener,
         TelephonyCallback.DisplayInfoListener,
         TelephonyCallback.ActiveDataSubscriptionIdListener {
-
         /**
-          * Called when data connection state changes.<br><br>
-          * 데이터 연결 상태가 변경될 때 호출됩니다.<br>
-          */
+         * Called when data connection state changes.<br><br>
+         * 데이터 연결 상태가 변경될 때 호출됩니다.<br>
+         */
         @RequiresPermission(READ_PHONE_STATE)
-        public override fun onDataConnectionStateChanged(state: Int, networkType: Int) {
+        public override fun onDataConnectionStateChanged(
+            state: Int,
+            networkType: Int,
+        ) {
             onDataConnectionState?.invoke(state, networkType)
             updateDataState(state)
         }
 
         /**
-          * Called when call state changes.<br><br>
-          * 통화 상태가 변경될 때 호출됩니다.<br>
-          */
+         * Called when call state changes.<br><br>
+         * 통화 상태가 변경될 때 호출됩니다.<br>
+         */
         override fun onCallStateChanged(state: Int) {
-            onCallState?.invoke(state,null)
+            onCallState?.invoke(state, null)
         }
 
         /**
-          * Called when service state changes.<br><br>
-          * 서비스 상태가 변경될 때 호출됩니다.<br>
-          */
+         * Called when service state changes.<br><br>
+         * 서비스 상태가 변경될 때 호출됩니다.<br>
+         */
         @RequiresPermission(READ_PHONE_STATE)
         public override fun onServiceStateChanged(serviceState: ServiceState) {
             getTelephonyServiceStateNetworkCheck(serviceState)
@@ -257,25 +257,25 @@ public open class CommonTelephonyCallback(private val telephonyManager: Telephon
         }
 
         /**
-          * Called when signal strengths change.<br><br>
-          * 신호 강도가 변경될 때 호출됩니다.<br>
-          */
+         * Called when signal strengths change.<br><br>
+         * 신호 강도가 변경될 때 호출됩니다.<br>
+         */
         public override fun onSignalStrengthsChanged(signalStrength: SignalStrength) {
             onSignalStrength?.invoke(CurrentSignalStrength(signalStrength))
         }
 
         /**
-          * Called when active data subscription ID changes.<br><br>
-          * 활성 데이터 구독 ID가 변경될 때 호출됩니다.<br>
-          */
+         * Called when active data subscription ID changes.<br><br>
+         * 활성 데이터 구독 ID가 변경될 때 호출됩니다.<br>
+         */
         public override fun onActiveDataSubscriptionIdChanged(subId: Int) {
             onActiveDataSubId?.invoke(subId)
         }
 
         /**
-          * Called when display info changes.<br><br>
-          * 디스플레이 정보가 변경될 때 호출됩니다.<br>
-          */
+         * Called when display info changes.<br><br>
+         * 디스플레이 정보가 변경될 때 호출됩니다.<br>
+         */
         @RequiresPermission(READ_PHONE_STATE)
         override fun onDisplayInfoChanged(telephonyDisplayInfo: TelephonyDisplayInfo) {
             setNetworkType(telephonyDisplayInfo)
@@ -291,13 +291,13 @@ public open class CommonTelephonyCallback(private val telephonyManager: Telephon
      * GPS 상태에 따라 응답하지 않을 수 있으므로 별도로 선언되었습니다.<br>
      */
     @RequiresApi(Build.VERSION_CODES.S)
-    public open inner class BaseGpsTelephonyCallback : BaseTelephonyCallback(),
+    public open inner class BaseGpsTelephonyCallback :
+        BaseTelephonyCallback(),
         TelephonyCallback.CellInfoListener {
-
         /**
-          * Called when cell info changes.<br><br>
-          * 셀 정보가 변경될 때 호출됩니다.<br>
-          */
+         * Called when cell info changes.<br><br>
+         * 셀 정보가 변경될 때 호출됩니다.<br>
+         */
         @RequiresPermission(allOf = [READ_PHONE_STATE, ACCESS_FINE_LOCATION])
         override fun onCellInfoChanged(cellInfo: MutableList<CellInfo>) {
             onCellInfo?.invoke(CurrentCellInfo(cellInfo))
@@ -316,11 +316,10 @@ public open class CommonTelephonyCallback(private val telephonyManager: Telephon
      * - `ACCESS_FINE_LOCATION` (onCellInfoChanged)<br>
      */
     public open inner class BasePhoneStateListener : PhoneStateListener() {
-
         /**
-          * Called when active data subscription ID changes.<br><br>
-          * 활성 데이터 구독 ID가 변경될 때 호출됩니다.<br>
-          */
+         * Called when active data subscription ID changes.<br><br>
+         * 활성 데이터 구독 ID가 변경될 때 호출됩니다.<br>
+         */
         @RequiresPermission(READ_PHONE_STATE)
         public override fun onActiveDataSubscriptionIdChanged(subId: Int) {
             super.onActiveDataSubscriptionIdChanged(subId)
@@ -328,20 +327,23 @@ public open class CommonTelephonyCallback(private val telephonyManager: Telephon
         }
 
         /**
-          * Called when data connection state changes.<br><br>
-          * 데이터 연결 상태가 변경될 때 호출됩니다.<br>
-          */
+         * Called when data connection state changes.<br><br>
+         * 데이터 연결 상태가 변경될 때 호출됩니다.<br>
+         */
         @RequiresPermission(READ_PHONE_STATE)
-        override fun onDataConnectionStateChanged(state: Int, networkType: Int) {
+        override fun onDataConnectionStateChanged(
+            state: Int,
+            networkType: Int,
+        ) {
             super.onDataConnectionStateChanged(state, networkType)
             updateDataState(state)
             onDataConnectionState?.invoke(state, networkType)
         }
 
         /**
-          * Called when service state changes.<br><br>
-          * 서비스 상태가 변경될 때 호출됩니다.<br>
-          */
+         * Called when service state changes.<br><br>
+         * 서비스 상태가 변경될 때 호출됩니다.<br>
+         */
         @RequiresApi(Build.VERSION_CODES.R)
         @RequiresPermission(READ_PHONE_STATE)
         public override fun onServiceStateChanged(serviceState: ServiceState?) {
@@ -353,9 +355,9 @@ public open class CommonTelephonyCallback(private val telephonyManager: Telephon
         }
 
         /**
-          * Called when signal strengths change.<br><br>
-          * 신호 강도가 변경될 때 호출됩니다.<br>
-          */
+         * Called when signal strengths change.<br><br>
+         * 신호 강도가 변경될 때 호출됩니다.<br>
+         */
         @RequiresApi(Build.VERSION_CODES.Q)
         public override fun onSignalStrengthsChanged(signalStrength: SignalStrength?) {
             super.onSignalStrengthsChanged(signalStrength)
@@ -363,18 +365,21 @@ public open class CommonTelephonyCallback(private val telephonyManager: Telephon
         }
 
         /**
-          * Called when call state changes.<br><br>
-          * 통화 상태가 변경될 때 호출됩니다.<br>
-          */
-        override fun onCallStateChanged(state: Int, phoneNumber: String?) {
+         * Called when call state changes.<br><br>
+         * 통화 상태가 변경될 때 호출됩니다.<br>
+         */
+        override fun onCallStateChanged(
+            state: Int,
+            phoneNumber: String?,
+        ) {
             super.onCallStateChanged(state, phoneNumber)
             onCallState?.invoke(state, phoneNumber)
         }
 
         /**
-          * Called when display info changes.<br><br>
-          * 디스플레이 정보가 변경될 때 호출됩니다.<br>
-          */
+         * Called when display info changes.<br><br>
+         * 디스플레이 정보가 변경될 때 호출됩니다.<br>
+         */
         @RequiresPermission(READ_PHONE_STATE)
         override fun onDisplayInfoChanged(telephonyDisplayInfo: TelephonyDisplayInfo) {
             super.onDisplayInfoChanged(telephonyDisplayInfo)
@@ -383,16 +388,16 @@ public open class CommonTelephonyCallback(private val telephonyManager: Telephon
         }
 
         /**
-          * Called when cell info changes.<br><br>
-          * 셀 정보가 변경될 때 호출됩니다.<br>
-          *
-          * Requires `ACCESS_FINE_LOCATION` permission.<br><br>
-          * `ACCESS_FINE_LOCATION` 권한이 필요합니다.<br>
-          */
+         * Called when cell info changes.<br><br>
+         * 셀 정보가 변경될 때 호출됩니다.<br>
+         *
+         * Requires `ACCESS_FINE_LOCATION` permission.<br><br>
+         * `ACCESS_FINE_LOCATION` 권한이 필요합니다.<br>
+         */
         @RequiresPermission(allOf = [READ_PHONE_STATE, ACCESS_FINE_LOCATION])
         public override fun onCellInfoChanged(cellInfo: MutableList<CellInfo>?) {
             super.onCellInfoChanged(cellInfo)
-            cellInfo?.let { data-> onCellInfo?.invoke(CurrentCellInfo(data)) }
+            cellInfo?.let { data -> onCellInfo?.invoke(CurrentCellInfo(data)) }
         }
     }
 
@@ -405,11 +410,11 @@ public open class CommonTelephonyCallback(private val telephonyManager: Telephon
      */
     @RequiresPermission(allOf = [READ_PHONE_STATE])
     private fun updateDataState(state: Int) {
-        if(state == TelephonyManager.DATA_DISCONNECTED) {
+        if (state == TelephonyManager.DATA_DISCONNECTED) {
             updateNetwork(TelephonyNetworkState(TelephonyNetworkType.DISCONNECT, TelephonyNetworkDetailType.DISCONNECT))
-        } else if(state == TelephonyManager.DATA_CONNECTING) {
+        } else if (state == TelephonyManager.DATA_CONNECTING) {
             updateNetwork(TelephonyNetworkState(TelephonyNetworkType.CONNECTING, TelephonyNetworkDetailType.CONNECTING))
-        } else if(state == TelephonyManager.DATA_CONNECTED) {
+        } else if (state == TelephonyManager.DATA_CONNECTED) {
             updateNetwork(getTelephonyManagerNetworkState())
         }
     }
@@ -422,23 +427,29 @@ public open class CommonTelephonyCallback(private val telephonyManager: Telephon
      *                             Telephony 디스플레이 정보.
      */
     @RequiresPermission(allOf = [READ_PHONE_STATE])
-    private fun setNetworkType(telephonyDisplayInfo:TelephonyDisplayInfo ) {
-
-        checkSdkVersion(Build.VERSION_CODES.S,
+    private fun setNetworkType(telephonyDisplayInfo: TelephonyDisplayInfo) {
+        checkSdkVersion(
+            Build.VERSION_CODES.S,
             positiveWork = {
-                val telephonyNetworkState : TelephonyNetworkState = if(telephonyDisplayInfo.overrideNetworkType == TelephonyDisplayInfo.OVERRIDE_NETWORK_TYPE_NR_ADVANCED) {
-                    TelephonyNetworkState(TelephonyNetworkType.CONNECT_5G,TelephonyNetworkDetailType.OVERRIDE_NETWORK_TYPE_NR_ADVANCED)
-                } else if(telephonyDisplayInfo.overrideNetworkType == TelephonyDisplayInfo.OVERRIDE_NETWORK_TYPE_NR_NSA_MMWAVE) {
-                    TelephonyNetworkState(TelephonyNetworkType.CONNECT_5G,TelephonyNetworkDetailType.OVERRIDE_NETWORK_TYPE_NR_NSA_MMWAVE)
-                } else if(telephonyDisplayInfo.overrideNetworkType == TelephonyDisplayInfo.OVERRIDE_NETWORK_TYPE_NR_NSA) {
-                    TelephonyNetworkState(TelephonyNetworkType.CONNECT_5G,TelephonyNetworkDetailType.OVERRIDE_NETWORK_TYPE_NR_NSA)
-                } else {
-                    getTelephonyManagerNetworkState()
-                }
+                val telephonyNetworkState: TelephonyNetworkState =
+                    if (telephonyDisplayInfo.overrideNetworkType ==
+                        TelephonyDisplayInfo.OVERRIDE_NETWORK_TYPE_NR_ADVANCED
+                    ) {
+                        TelephonyNetworkState(TelephonyNetworkType.CONNECT_5G, TelephonyNetworkDetailType.OVERRIDE_NETWORK_TYPE_NR_ADVANCED)
+                    } else if (telephonyDisplayInfo.overrideNetworkType == TelephonyDisplayInfo.OVERRIDE_NETWORK_TYPE_NR_NSA_MMWAVE) {
+                        TelephonyNetworkState(
+                            TelephonyNetworkType.CONNECT_5G,
+                            TelephonyNetworkDetailType.OVERRIDE_NETWORK_TYPE_NR_NSA_MMWAVE,
+                        )
+                    } else if (telephonyDisplayInfo.overrideNetworkType == TelephonyDisplayInfo.OVERRIDE_NETWORK_TYPE_NR_NSA) {
+                        TelephonyNetworkState(TelephonyNetworkType.CONNECT_5G, TelephonyNetworkDetailType.OVERRIDE_NETWORK_TYPE_NR_NSA)
+                    } else {
+                        getTelephonyManagerNetworkState()
+                    }
 
                 updateNetwork(telephonyNetworkState)
             },
-            negativeWork = {  Logx.w("Can not update Network TelephonyDisplayInfo") }
+            negativeWork = { Logx.w("Can not update Network TelephonyDisplayInfo") },
         )
     }
 
@@ -465,91 +476,92 @@ public open class CommonTelephonyCallback(private val telephonyManager: Telephon
      */
     @SuppressLint("SwitchIntDef")
     @RequiresPermission(allOf = [READ_PHONE_STATE])
-    private fun getTelephonyManagerNetworkState():TelephonyNetworkState =  when (telephonyManager.dataNetworkType) {
-        TelephonyManager.NETWORK_TYPE_GPRS -> {
-            TelephonyNetworkState(TelephonyNetworkType.CONNECT_2G, TelephonyNetworkDetailType.NETWORK_TYPE_GPRS)
-        }
+    private fun getTelephonyManagerNetworkState(): TelephonyNetworkState =
+        when (telephonyManager.dataNetworkType) {
+            TelephonyManager.NETWORK_TYPE_GPRS -> {
+                TelephonyNetworkState(TelephonyNetworkType.CONNECT_2G, TelephonyNetworkDetailType.NETWORK_TYPE_GPRS)
+            }
 
-        TelephonyManager.NETWORK_TYPE_EDGE -> {
-            TelephonyNetworkState(TelephonyNetworkType.CONNECT_2G, TelephonyNetworkDetailType.NETWORK_TYPE_EDGE)
-        }
+            TelephonyManager.NETWORK_TYPE_EDGE -> {
+                TelephonyNetworkState(TelephonyNetworkType.CONNECT_2G, TelephonyNetworkDetailType.NETWORK_TYPE_EDGE)
+            }
 
-        TelephonyManager.NETWORK_TYPE_CDMA -> {
-            TelephonyNetworkState(TelephonyNetworkType.CONNECT_2G, TelephonyNetworkDetailType.NETWORK_TYPE_CDMA)
-        }
+            TelephonyManager.NETWORK_TYPE_CDMA -> {
+                TelephonyNetworkState(TelephonyNetworkType.CONNECT_2G, TelephonyNetworkDetailType.NETWORK_TYPE_CDMA)
+            }
 
-        TelephonyManager.NETWORK_TYPE_1xRTT -> {
-            TelephonyNetworkState(TelephonyNetworkType.CONNECT_2G, TelephonyNetworkDetailType.NETWORK_TYPE_1xRTT)
-        }
+            TelephonyManager.NETWORK_TYPE_1xRTT -> {
+                TelephonyNetworkState(TelephonyNetworkType.CONNECT_2G, TelephonyNetworkDetailType.NETWORK_TYPE_1xRTT)
+            }
 
-        TelephonyManager.NETWORK_TYPE_IDEN -> {
-            TelephonyNetworkState(TelephonyNetworkType.CONNECT_2G, TelephonyNetworkDetailType.NETWORK_TYPE_IDEN)
-        }
+            TelephonyManager.NETWORK_TYPE_IDEN -> {
+                TelephonyNetworkState(TelephonyNetworkType.CONNECT_2G, TelephonyNetworkDetailType.NETWORK_TYPE_IDEN)
+            }
 
-        TelephonyManager.NETWORK_TYPE_GSM -> {
-            TelephonyNetworkState(TelephonyNetworkType.CONNECT_2G, TelephonyNetworkDetailType.NETWORK_TYPE_GSM)
-        }
+            TelephonyManager.NETWORK_TYPE_GSM -> {
+                TelephonyNetworkState(TelephonyNetworkType.CONNECT_2G, TelephonyNetworkDetailType.NETWORK_TYPE_GSM)
+            }
 
-        TelephonyManager.NETWORK_TYPE_UMTS -> {
-            TelephonyNetworkState(TelephonyNetworkType.CONNECT_3G, TelephonyNetworkDetailType.NETWORK_TYPE_UMTS)
-        }
+            TelephonyManager.NETWORK_TYPE_UMTS -> {
+                TelephonyNetworkState(TelephonyNetworkType.CONNECT_3G, TelephonyNetworkDetailType.NETWORK_TYPE_UMTS)
+            }
 
-        TelephonyManager.NETWORK_TYPE_EVDO_0 -> {
-            TelephonyNetworkState(TelephonyNetworkType.CONNECT_3G, TelephonyNetworkDetailType.NETWORK_TYPE_EVDO_0)
-        }
+            TelephonyManager.NETWORK_TYPE_EVDO_0 -> {
+                TelephonyNetworkState(TelephonyNetworkType.CONNECT_3G, TelephonyNetworkDetailType.NETWORK_TYPE_EVDO_0)
+            }
 
-        TelephonyManager.NETWORK_TYPE_EVDO_A -> {
-            TelephonyNetworkState(TelephonyNetworkType.CONNECT_3G, TelephonyNetworkDetailType.NETWORK_TYPE_EVDO_A)
-        }
+            TelephonyManager.NETWORK_TYPE_EVDO_A -> {
+                TelephonyNetworkState(TelephonyNetworkType.CONNECT_3G, TelephonyNetworkDetailType.NETWORK_TYPE_EVDO_A)
+            }
 
-        TelephonyManager.NETWORK_TYPE_HSDPA -> {
-            TelephonyNetworkState(TelephonyNetworkType.CONNECT_3G, TelephonyNetworkDetailType.NETWORK_TYPE_HSDPA)
-        }
+            TelephonyManager.NETWORK_TYPE_HSDPA -> {
+                TelephonyNetworkState(TelephonyNetworkType.CONNECT_3G, TelephonyNetworkDetailType.NETWORK_TYPE_HSDPA)
+            }
 
-        TelephonyManager.NETWORK_TYPE_HSUPA -> {
-            TelephonyNetworkState(TelephonyNetworkType.CONNECT_3G, TelephonyNetworkDetailType.NETWORK_TYPE_HSUPA)
-        }
+            TelephonyManager.NETWORK_TYPE_HSUPA -> {
+                TelephonyNetworkState(TelephonyNetworkType.CONNECT_3G, TelephonyNetworkDetailType.NETWORK_TYPE_HSUPA)
+            }
 
-        TelephonyManager.NETWORK_TYPE_HSPA -> {
-            TelephonyNetworkState(TelephonyNetworkType.CONNECT_3G, TelephonyNetworkDetailType.NETWORK_TYPE_HSPA)
-        }
+            TelephonyManager.NETWORK_TYPE_HSPA -> {
+                TelephonyNetworkState(TelephonyNetworkType.CONNECT_3G, TelephonyNetworkDetailType.NETWORK_TYPE_HSPA)
+            }
 
-        TelephonyManager.NETWORK_TYPE_EVDO_B -> {
-            TelephonyNetworkState(TelephonyNetworkType.CONNECT_3G, TelephonyNetworkDetailType.NETWORK_TYPE_EVDO_B)
-        }
+            TelephonyManager.NETWORK_TYPE_EVDO_B -> {
+                TelephonyNetworkState(TelephonyNetworkType.CONNECT_3G, TelephonyNetworkDetailType.NETWORK_TYPE_EVDO_B)
+            }
 
-        TelephonyManager.NETWORK_TYPE_EHRPD -> {
-            TelephonyNetworkState(TelephonyNetworkType.CONNECT_3G, TelephonyNetworkDetailType.NETWORK_TYPE_EHRPD)
-        }
+            TelephonyManager.NETWORK_TYPE_EHRPD -> {
+                TelephonyNetworkState(TelephonyNetworkType.CONNECT_3G, TelephonyNetworkDetailType.NETWORK_TYPE_EHRPD)
+            }
 
-        TelephonyManager.NETWORK_TYPE_HSPAP -> {
-            TelephonyNetworkState(TelephonyNetworkType.CONNECT_3G, TelephonyNetworkDetailType.NETWORK_TYPE_HSPAP)
-        }
+            TelephonyManager.NETWORK_TYPE_HSPAP -> {
+                TelephonyNetworkState(TelephonyNetworkType.CONNECT_3G, TelephonyNetworkDetailType.NETWORK_TYPE_HSPAP)
+            }
 
-        TelephonyManager.NETWORK_TYPE_TD_SCDMA -> {
-            TelephonyNetworkState(TelephonyNetworkType.CONNECT_3G, TelephonyNetworkDetailType.NETWORK_TYPE_TD_SCDMA)
-        }
+            TelephonyManager.NETWORK_TYPE_TD_SCDMA -> {
+                TelephonyNetworkState(TelephonyNetworkType.CONNECT_3G, TelephonyNetworkDetailType.NETWORK_TYPE_TD_SCDMA)
+            }
 
-        TelephonyManager.NETWORK_TYPE_LTE -> {
-            TelephonyNetworkState(TelephonyNetworkType.CONNECT_4G, TelephonyNetworkDetailType.NETWORK_TYPE_LTE)
-        }
+            TelephonyManager.NETWORK_TYPE_LTE -> {
+                TelephonyNetworkState(TelephonyNetworkType.CONNECT_4G, TelephonyNetworkDetailType.NETWORK_TYPE_LTE)
+            }
 
-        TelephonyManager.NETWORK_TYPE_IWLAN -> {
-            TelephonyNetworkState(TelephonyNetworkType.CONNECT_4G, TelephonyNetworkDetailType.NETWORK_TYPE_IWLAN)
-        }
+            TelephonyManager.NETWORK_TYPE_IWLAN -> {
+                TelephonyNetworkState(TelephonyNetworkType.CONNECT_4G, TelephonyNetworkDetailType.NETWORK_TYPE_IWLAN)
+            }
 
-        19 /* NETWORK_TYPE_LTE_CA */ -> {
-            TelephonyNetworkState(TelephonyNetworkType.CONNECT_4G, TelephonyNetworkDetailType.NETWORK_TYPE_LTE_CA)
-        }
+            19 -> { // NETWORK_TYPE_LTE_CA
+                TelephonyNetworkState(TelephonyNetworkType.CONNECT_4G, TelephonyNetworkDetailType.NETWORK_TYPE_LTE_CA)
+            }
 
-        20 /* NETWORK_TYPE_NR */ -> {
-            TelephonyNetworkState(TelephonyNetworkType.CONNECT_5G, TelephonyNetworkDetailType.NETWORK_TYPE_NR)
-        }
+            20 -> { // NETWORK_TYPE_NR
+                TelephonyNetworkState(TelephonyNetworkType.CONNECT_5G, TelephonyNetworkDetailType.NETWORK_TYPE_NR)
+            }
 
-        else -> {
-            TelephonyNetworkState(TelephonyNetworkType.UNKNOWN, TelephonyNetworkDetailType.UNKNOWN)
+            else -> {
+                TelephonyNetworkState(TelephonyNetworkType.UNKNOWN, TelephonyNetworkDetailType.UNKNOWN)
+            }
         }
-    }
 
     /**
      * Checks network state using ServiceState for more accuracy.<br><br>
@@ -560,20 +572,32 @@ public open class CommonTelephonyCallback(private val telephonyManager: Telephon
      */
     @RequiresPermission(allOf = [READ_PHONE_STATE])
     private fun getTelephonyServiceStateNetworkCheck(serviceState: ServiceState) {
-
         var telephonyNetworkState = getTelephonyManagerNetworkState()
 
         if (telephonyNetworkState.networkTypeState == TelephonyNetworkType.CONNECT_4G) {
-            checkSdkVersion(Build.VERSION_CODES.R,
+            checkSdkVersion(
+                Build.VERSION_CODES.R,
                 positiveWork = {
                     currentTelephonyDisplayInfo?.let {
-                        telephonyNetworkState = if (it.overrideNetworkType == TelephonyDisplayInfo.OVERRIDE_NETWORK_TYPE_NR_NSA) {
-                            TelephonyNetworkState(TelephonyNetworkType.CONNECT_5G, TelephonyNetworkDetailType.OVERRIDE_NETWORK_TYPE_NR_NSA)
-                        } else if (it.overrideNetworkType == TelephonyDisplayInfo.OVERRIDE_NETWORK_TYPE_NR_NSA_MMWAVE) {
-                            TelephonyNetworkState(TelephonyNetworkType.CONNECT_5G, TelephonyNetworkDetailType.OVERRIDE_NETWORK_TYPE_NR_NSA_MMWAVE)
-                        } else if (it.overrideNetworkType == TelephonyDisplayInfo.OVERRIDE_NETWORK_TYPE_NR_ADVANCED) {
-                            TelephonyNetworkState(TelephonyNetworkType.CONNECT_5G, TelephonyNetworkDetailType.OVERRIDE_NETWORK_TYPE_NR_ADVANCED)
-                        } else telephonyNetworkState
+                        telephonyNetworkState =
+                            if (it.overrideNetworkType == TelephonyDisplayInfo.OVERRIDE_NETWORK_TYPE_NR_NSA) {
+                                TelephonyNetworkState(
+                                    TelephonyNetworkType.CONNECT_5G,
+                                    TelephonyNetworkDetailType.OVERRIDE_NETWORK_TYPE_NR_NSA,
+                                )
+                            } else if (it.overrideNetworkType == TelephonyDisplayInfo.OVERRIDE_NETWORK_TYPE_NR_NSA_MMWAVE) {
+                                TelephonyNetworkState(
+                                    TelephonyNetworkType.CONNECT_5G,
+                                    TelephonyNetworkDetailType.OVERRIDE_NETWORK_TYPE_NR_NSA_MMWAVE,
+                                )
+                            } else if (it.overrideNetworkType == TelephonyDisplayInfo.OVERRIDE_NETWORK_TYPE_NR_ADVANCED) {
+                                TelephonyNetworkState(
+                                    TelephonyNetworkType.CONNECT_5G,
+                                    TelephonyNetworkDetailType.OVERRIDE_NETWORK_TYPE_NR_ADVANCED,
+                                )
+                            } else {
+                                telephonyNetworkState
+                            }
 
                         updateNetwork(telephonyNetworkState)
                     }
@@ -581,10 +605,11 @@ public open class CommonTelephonyCallback(private val telephonyManager: Telephon
                 negativeWork = {
                     val str = serviceState.toString()
                     if (str.contains("nrState=CONNECTED") && str.contains("nsaState=5")) {
-                        telephonyNetworkState = TelephonyNetworkState(TelephonyNetworkType.CONNECT_5G, TelephonyNetworkDetailType.NETWORK_TYPE_NR)
+                        telephonyNetworkState =
+                            TelephonyNetworkState(TelephonyNetworkType.CONNECT_5G, TelephonyNetworkDetailType.NETWORK_TYPE_NR)
                     }
                     updateNetwork(telephonyNetworkState)
-                }
+                },
             )
         }
     }
@@ -598,10 +623,11 @@ public open class CommonTelephonyCallback(private val telephonyManager: Telephon
      * @return `true` if same, `false` otherwise.<br><br>
      *         같으면 `true`, 그렇지 않으면 `false`.
      */
-    private fun isSameTelephonyNetworkState(telephonyNetworkState: TelephonyNetworkState): Boolean  {
-        return currentTelephonyState?.let {
-            (it.networkTypeState == telephonyNetworkState.networkTypeState &&
-                    it.networkTypeDetailState == telephonyNetworkState.networkTypeDetailState)
-        }?:false
-    }
+    private fun isSameTelephonyNetworkState(telephonyNetworkState: TelephonyNetworkState): Boolean =
+        currentTelephonyState?.let {
+            (
+                it.networkTypeState == telephonyNetworkState.networkTypeState &&
+                    it.networkTypeDetailState == telephonyNetworkState.networkTypeDetailState
+            )
+        } ?: false
 }

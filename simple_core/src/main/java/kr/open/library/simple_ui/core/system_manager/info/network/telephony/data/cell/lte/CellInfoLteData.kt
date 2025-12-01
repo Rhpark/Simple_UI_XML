@@ -15,25 +15,24 @@ import androidx.annotation.RequiresApi
  *                    원본 CellInfoLte 객체.
  */
 public data class CellInfoLteData(
-    private var cellInfo : CellInfoLte?
+    private var cellInfo: CellInfoLte?,
 ) {
     private var cellDataLteIdentity = CellIdentityLteData(cellInfo?.cellIdentity)
     private var cellDataLteSignalStrength = CellSignalStrengthLteData(cellInfo?.cellSignalStrength)
 
-    /*******************
-     * get CellInfoLte *
-     *******************/
     /**
      * Gets the timestamp in milliseconds (API 30+).<br><br>
      * 밀리초 단위의 타임스탬프를 가져옵니다 (API 30+).<br>
      */
     @RequiresApi(Build.VERSION_CODES.R)
     public fun getTimestampMillis(): Long? = cellInfo?.timestampMillis
+
     /**
      * Gets the cell connection status.<br><br>
      * 셀 연결 상태를 가져옵니다.<br>
      */
     public fun getCellConnectionStatus(): Int? = cellInfo?.cellConnectionStatus
+
     /**
      * Checks if the cell is registered.<br><br>
      * 셀이 등록되었는지 확인합니다.<br>
@@ -45,10 +44,10 @@ public data class CellInfoLteData(
      * 셀 식별 데이터를 가져옵니다.<br>
      */
     public fun getCellIdentity(): CellIdentityLteData = cellDataLteIdentity
+
     /**
      * Gets the cell signal strength data.<br><br>
      * 셀 신호 강도 데이터를 가져옵니다.<br>
      */
     public fun getCellSignalStrength(): CellSignalStrengthLteData = cellDataLteSignalStrength
-
 }

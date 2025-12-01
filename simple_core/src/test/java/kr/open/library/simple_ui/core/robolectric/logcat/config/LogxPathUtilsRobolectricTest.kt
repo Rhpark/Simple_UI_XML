@@ -20,7 +20,6 @@ import java.io.File
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [Build.VERSION_CODES.TIRAMISU])
 class LogxPathUtilsRobolectricTest {
-
     private lateinit var application: Application
 
     @Before
@@ -30,9 +29,10 @@ class LogxPathUtilsRobolectricTest {
 
     @Test
     fun appExternalPathFallsBackToInternalWhenDirNull() {
-        val wrapper = object : ContextWrapper(application) {
-            override fun getExternalFilesDir(type: String?): File? = null
-        }
+        val wrapper =
+            object : ContextWrapper(application) {
+                override fun getExternalFilesDir(type: String?): File? = null
+            }
 
         val result = LogxPathUtils.getAppExternalLogPath(wrapper)
 
@@ -95,9 +95,10 @@ class LogxPathUtilsRobolectricTest {
     fun appExternalPathUsesProvidedDirWhenAvailable() {
         val expectedDir = File(application.filesDir, "customDir")
         expectedDir.mkdirs()
-        val wrapper = object : ContextWrapper(application) {
-            override fun getExternalFilesDir(type: String?): File? = expectedDir
-        }
+        val wrapper =
+            object : ContextWrapper(application) {
+                override fun getExternalFilesDir(type: String?): File? = expectedDir
+            }
 
         val path = LogxPathUtils.getAppExternalLogPath(wrapper)
         assertEquals(expectedDir.absolutePath, path)
@@ -106,11 +107,11 @@ class LogxPathUtilsRobolectricTest {
     @Test
     @Config(sdk = [Build.VERSION_CODES.Q])
     fun publicExternalPathFallsBackToAppExternalWhenDocumentsNull() {
-        val wrapper = object : ContextWrapper(application) {
-            override fun getExternalFilesDir(type: String?): File? {
-                return if (type == Environment.DIRECTORY_DOCUMENTS) null else super.getExternalFilesDir(type)
+        val wrapper =
+            object : ContextWrapper(application) {
+                override fun getExternalFilesDir(type: String?): File? =
+                    if (type == Environment.DIRECTORY_DOCUMENTS) null else super.getExternalFilesDir(type)
             }
-        }
 
         val expected = LogxPathUtils.getAppExternalLogPath(wrapper)
         val result = LogxPathUtils.getPublicExternalLogPath(wrapper)

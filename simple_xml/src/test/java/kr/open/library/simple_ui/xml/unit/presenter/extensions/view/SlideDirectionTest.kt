@@ -6,15 +6,15 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class SlideDirectionTest {
-
     @Test
     fun values_containsAllDirections() {
-        val expected = arrayOf(
-            SlideDirection.LEFT,
-            SlideDirection.RIGHT,
-            SlideDirection.TOP,
-            SlideDirection.BOTTOM,
-        )
+        val expected =
+            arrayOf(
+                SlideDirection.LEFT,
+                SlideDirection.RIGHT,
+                SlideDirection.TOP,
+                SlideDirection.BOTTOM,
+            )
 
         assertArrayEquals(expected, SlideDirection.values())
     }

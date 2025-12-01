@@ -3,7 +3,9 @@ package kr.open.library.simple_ui.xml.robolectric.permissions.register
 import android.Manifest
 import android.os.Build
 import kr.open.library.simple_ui.xml.permissions.register.PermissionRequester
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -42,7 +44,6 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [Build.VERSION_CODES.TIRAMISU])
 class PermissionRequesterRobolectricTest {
-
     /**
      * Simple test implementation of PermissionRequester
      */
@@ -53,7 +54,7 @@ class PermissionRequesterRobolectricTest {
 
         override fun onRequestPermissions(
             permissions: List<String>,
-            onResult: (deniedPermissions: List<String>) -> Unit
+            onResult: (deniedPermissions: List<String>) -> Unit,
         ) {
             lastPermissions = permissions
             lastCallback = onResult

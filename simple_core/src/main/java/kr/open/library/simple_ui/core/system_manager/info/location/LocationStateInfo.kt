@@ -15,13 +15,10 @@ import android.os.Bundle
 import androidx.annotation.RequiresApi
 import androidx.annotation.RequiresPermission
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
 import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
@@ -48,7 +45,6 @@ import kr.open.library.simple_ui.core.system_manager.extensions.getLocationManag
 public open class LocationStateInfo(
     context: Context,
 ) : BaseSystemService(context, listOf(ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION)) {
-
     /**
      * Lazy-initialized LocationManager instance.<br><br>
      * 지연 초기화된 LocationManager 인스턴스입니다.<br>
@@ -60,7 +56,7 @@ public open class LocationStateInfo(
      * 최신 위치 상태 이벤트를 보관하는 MutableStateFlow입니다.<br>
      */
     private val msfUpdate: MutableStateFlow<LocationStateEvent> = MutableStateFlow(LocationStateEvent.OnGpsEnabled(isGpsEnabled()))
-    
+
     /**
      * StateFlow that emits location state events whenever location information changes.<br><br>
      * 위치 정보가 바뀔 때마다 위치 상태 이벤트를 방출하는 StateFlow입니다.<br>
@@ -71,34 +67,38 @@ public open class LocationStateInfo(
      * Last known location cache for reactive flow.<br><br>
      * 반응형 플로우용 마지막 위치 캐시입니다.<br>
      */
-    private val locationChanged     = DataUpdate<Location?>(getLocation())
+    private val locationChanged = DataUpdate<Location?>(getLocation())
+
     /**
      * GPS provider enabled state cache.<br><br>
      * GPS 제공자 활성 상태 캐시입니다.<br>
      */
-    private val isGpsEnabled        = DataUpdate<Boolean>(isGpsEnabled())
+    private val isGpsEnabled = DataUpdate<Boolean>(isGpsEnabled())
+
     /**
      * Network provider enabled state cache.<br><br>
      * 네트워크 제공자 활성 상태 캐시입니다.<br>
      */
-    private val isNetworkEnabled    = DataUpdate<Boolean>(isNetworkEnabled())
+    private val isNetworkEnabled = DataUpdate<Boolean>(isNetworkEnabled())
+
     /**
      * Passive provider enabled state cache.<br><br>
      * Passive 제공자 활성 상태 캐시입니다.<br>
      */
-    private val isPassiveEnabled    = DataUpdate<Boolean>(isPassiveEnabled())
+    private val isPassiveEnabled = DataUpdate<Boolean>(isPassiveEnabled())
+
     /**
      * Fused provider enabled state cache (API 31+).<br><br>
      * Fused 제공자 활성 상태 캐시(API 31+)입니다.<br>
      */
-    private val isFusedEnabled      = DataUpdate<Boolean>(checkSdkVersion(Build.VERSION_CODES.S, positiveWork = { isFusedEnabled() }, negativeWork = { false }))
+    private val isFusedEnabled =
+        DataUpdate<Boolean>(checkSdkVersion(Build.VERSION_CODES.S, positiveWork = { isFusedEnabled() }, negativeWork = { false }))
 
     /**
      * Coroutine scope used for collecting/emitting updates.<br><br>
      * 업데이트 수집·방출에 사용하는 코루틴 스코프입니다.<br>
      */
     private var coroutineScope: CoroutineScope? = null
-
 
     /**
      * Subscribes data updates and emits LocationStateEvents.<br><br>
@@ -114,61 +114,65 @@ public open class LocationStateInfo(
         }
     }
 
-
     /**
      * Listener handling location/provider callbacks.<br><br>
      * 위치/제공자 콜백을 처리하는 리스너입니다.<br>
      */
-    private val locationListener = object : LocationListener {
-        /**
-         * Called when location is updated.<br><br>
-         * 위치가 갱신될 때 호출됩니다.<br>
-         */
-        override fun onLocationChanged(location: Location) {
-            Logx.d("Location updated: lat=${location.latitude}, lng=${location.longitude}, accuracy=${location.accuracy}m")
-            locationChanged.update(location)
-        }
+    private val locationListener =
+        object : LocationListener {
+            /**
+             * Called when location is updated.<br><br>
+             * 위치가 갱신될 때 호출됩니다.<br>
+             */
+            override fun onLocationChanged(location: Location) {
+                Logx.d("Location updated: lat=${location.latitude}, lng=${location.longitude}, accuracy=${location.accuracy}m")
+                locationChanged.update(location)
+            }
 
-        /**
-         * Called when provider status changes.<br><br>
-         * 제공자 상태가 바뀔 때 호출됩니다.<br>
-         */
-        override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
-            Logx.d("Location status changed: provider=$provider, status=$status")
-        }
+            /**
+             * Called when provider status changes.<br><br>
+             * 제공자 상태가 바뀔 때 호출됩니다.<br>
+             */
+            override fun onStatusChanged(
+                provider: String?,
+                status: Int,
+                extras: Bundle?,
+            ) {
+                Logx.d("Location status changed: provider=$provider, status=$status")
+            }
 
-        /**
-         * Called when a provider is enabled.<br><br>
-         * 제공자가 활성화될 때 호출됩니다.<br>
-         */
-        override fun onProviderEnabled(provider: String) {
-            Logx.i("Location provider enabled: $provider")
-            when (provider) {
-                LocationManager.GPS_PROVIDER ->     isGpsEnabled.update(true)
-                LocationManager.NETWORK_PROVIDER -> isNetworkEnabled.update(true)
-                LocationManager.PASSIVE_PROVIDER -> isPassiveEnabled.update(true)
-                LocationManager.FUSED_PROVIDER -> {
-                    checkSdkVersion(Build.VERSION_CODES.S) { isFusedEnabled.update(true) }
+            /**
+             * Called when a provider is enabled.<br><br>
+             * 제공자가 활성화될 때 호출됩니다.<br>
+             */
+            override fun onProviderEnabled(provider: String) {
+                Logx.i("Location provider enabled: $provider")
+                when (provider) {
+                    LocationManager.GPS_PROVIDER -> isGpsEnabled.update(true)
+                    LocationManager.NETWORK_PROVIDER -> isNetworkEnabled.update(true)
+                    LocationManager.PASSIVE_PROVIDER -> isPassiveEnabled.update(true)
+                    LocationManager.FUSED_PROVIDER -> {
+                        checkSdkVersion(Build.VERSION_CODES.S) { isFusedEnabled.update(true) }
+                    }
+                }
+            }
+
+            /**
+             * Called when a provider is disabled.<br><br>
+             * 제공자가 비활성화될 때 호출됩니다.<br>
+             */
+            override fun onProviderDisabled(provider: String) {
+                Logx.i("Location provider disabled: $provider")
+                when (provider) {
+                    LocationManager.GPS_PROVIDER -> isGpsEnabled.update(false)
+                    LocationManager.NETWORK_PROVIDER -> isNetworkEnabled.update(false)
+                    LocationManager.PASSIVE_PROVIDER -> isPassiveEnabled.update(false)
+                    LocationManager.FUSED_PROVIDER -> {
+                        checkSdkVersion(Build.VERSION_CODES.S) { isFusedEnabled.update(false) }
+                    }
                 }
             }
         }
-
-        /**
-         * Called when a provider is disabled.<br><br>
-         * 제공자가 비활성화될 때 호출됩니다.<br>
-         */
-        override fun onProviderDisabled(provider: String) {
-            Logx.i("Location provider disabled: $provider")
-            when (provider) {
-                LocationManager.GPS_PROVIDER ->     isGpsEnabled.update(false)
-                LocationManager.NETWORK_PROVIDER -> isNetworkEnabled.update(false)
-                LocationManager.PASSIVE_PROVIDER -> isPassiveEnabled.update(false)
-                LocationManager.FUSED_PROVIDER -> {
-                    checkSdkVersion(Build.VERSION_CODES.S) { isFusedEnabled.update(false) }
-                }
-            }
-        }
-    }
 
     /**
      * Emits a location event if a coroutine scope is active.<br><br>
@@ -176,11 +180,6 @@ public open class LocationStateInfo(
      */
     private fun sendFlow(event: LocationStateEvent) = coroutineScope?.launch { msfUpdate.emit(event) }
 
-    /**
-     * This is needed because of TelephonyCallback.CellInfoListener(Telephony.registerCallBack)
-     * or
-     * PhoneStateListener.LISTEN_CELL_INFO(Telephony.registerListen).
-     */
     /**
      * BroadcastReceiver for provider on/off changes.<br><br>
      * 제공자 온·오프 변화를 수신하는 브로드캐스트 리시버입니다.<br>
@@ -210,13 +209,17 @@ public open class LocationStateInfo(
      *                     위치 업데이트 최소 거리(미터)입니다.
      */
     @RequiresPermission(anyOf = [ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION])
-    public fun registerStart(coroutineScope: CoroutineScope, locationProvider: String, minTimeMs: Long, minDistanceM: Float) {
+    public fun registerStart(
+        coroutineScope: CoroutineScope,
+        locationProvider: String,
+        minTimeMs: Long,
+        minDistanceM: Float,
+    ) {
         if (registerLocation()) {
             this.coroutineScope = coroutineScope
             registerLocationUpdateStart(locationProvider, minTimeMs, minDistanceM)
             setupDataFlows()
         } else {
-
         }
     }
 
@@ -227,32 +230,41 @@ public open class LocationStateInfo(
      * @return `true` if registration succeeded; `false` otherwise.<br><br>
      *         등록 성공 시 `true`, 실패 시 `false`입니다.<br>
      */
-    private fun registerLocation(): Boolean = tryCatchSystemManager(false) {
-        unregisterGpsState()
-        gpsStateBroadcastReceiver = object : BroadcastReceiver() {
-            /**
-             * Handles provider change broadcasts.<br><br>
-             * 제공자 변경 브로드캐스트를 처리합니다.<br>
-             */
-            override fun onReceive(context: Context, intent: Intent) {
-                if (intent.action.equals(LocationManager.PROVIDERS_CHANGED_ACTION)) {
-                    isGpsEnabled.update(isGpsEnabled())
-                    isNetworkEnabled.update(isNetworkEnabled())
-                    isPassiveEnabled.update(isPassiveEnabled())
-                    checkSdkVersion(Build.VERSION_CODES.S) { isFusedEnabled.update(isFusedEnabled()) }
+    private fun registerLocation(): Boolean =
+        tryCatchSystemManager(false) {
+            unregisterGpsState()
+            gpsStateBroadcastReceiver =
+                object : BroadcastReceiver() {
+                    /**
+                     * Handles provider change broadcasts.<br><br>
+                     * 제공자 변경 브로드캐스트를 처리합니다.<br>
+                     */
+                    override fun onReceive(
+                        context: Context,
+                        intent: Intent,
+                    ) {
+                        if (intent.action.equals(LocationManager.PROVIDERS_CHANGED_ACTION)) {
+                            isGpsEnabled.update(isGpsEnabled())
+                            isNetworkEnabled.update(isNetworkEnabled())
+                            isPassiveEnabled.update(isPassiveEnabled())
+                            checkSdkVersion(Build.VERSION_CODES.S) { isFusedEnabled.update(isFusedEnabled()) }
+                        }
+                    }
                 }
-            }
+            context.registerReceiver(gpsStateBroadcastReceiver, intentFilter)
+            return true
         }
-        context.registerReceiver(gpsStateBroadcastReceiver, intentFilter)
-        return true
-    }
 
     /**
      * Requests location updates from the specified provider.<br><br>
      * 지정된 제공자로부터 위치 업데이트를 요청합니다.<br>
      */
     @RequiresPermission(anyOf = [ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION])
-    private fun registerLocationUpdateStart(locationProvider: String, minTimeMs: Long, minDistanceM: Float) {
+    private fun registerLocationUpdateStart(
+        locationProvider: String,
+        minTimeMs: Long,
+        minDistanceM: Float,
+    ) {
         locationManager.requestLocationUpdates(locationProvider, minTimeMs, minDistanceM, locationListener)
     }
 
@@ -280,7 +292,6 @@ public open class LocationStateInfo(
         gpsStateBroadcastReceiver?.let { safeCatch { context.unregisterReceiver(it) } }
         gpsStateBroadcastReceiver = null
     }
-
 
     /**
      * Checks if location services are enabled.<br><br>
@@ -328,7 +339,6 @@ public open class LocationStateInfo(
     @RequiresApi(Build.VERSION_CODES.S)
     public fun isFusedEnabled(): Boolean = locationManager.isProviderEnabled(LocationManager.FUSED_PROVIDER)
 
-
     /**
      * Checks if any location provider is enabled.<br><br>
      * 하나라도 활성화된 위치 제공자가 있는지 확인합니다.<br>
@@ -336,16 +346,16 @@ public open class LocationStateInfo(
      * @return `true` if any provider is enabled; `false` otherwise.<br><br>
      *         하나라도 제공자가 활성화되어 있으면 `true`, 아니면 `false`입니다.<br>
      */
-    public fun isAnyEnabled(): Boolean {
-        return checkSdkVersion(Build.VERSION_CODES.S,
+    public fun isAnyEnabled(): Boolean =
+        checkSdkVersion(
+            Build.VERSION_CODES.S,
             positiveWork = {
                 (isLocationEnabled() || isGpsEnabled() || isNetworkEnabled() || isPassiveEnabled() || isFusedEnabled())
             },
             negativeWork = {
                 (isLocationEnabled() || isGpsEnabled() || isNetworkEnabled() || isPassiveEnabled())
-            }
+            },
         )
-    }
 
     /**
      * Gets the last known location from the location provider.<br><br>
@@ -356,22 +366,36 @@ public open class LocationStateInfo(
      */
     @SuppressLint("MissingPermission")
     public fun getLocation(): Location? {
-        Logx.d("isAnyEnabled() ${isAnyEnabled()} ${context.hasPermissions(ACCESS_COARSE_LOCATION)}, ${context.hasPermissions(ACCESS_FINE_LOCATION)}")
+        Logx.d(
+            "isAnyEnabled() ${isAnyEnabled()} ${context.hasPermissions(
+                ACCESS_COARSE_LOCATION,
+            )}, ${context.hasPermissions(ACCESS_FINE_LOCATION)}",
+        )
         return if (!isAnyEnabled()) {
-            checkSdkVersion(Build.VERSION_CODES.S,
+            checkSdkVersion(
+                Build.VERSION_CODES.S,
                 positiveWork = {
-                    Logx.e("can not find location!, isLocationEnabled ${isLocationEnabled()}, isGpsEnabled ${isGpsEnabled()}, isNetworkEnabled ${isNetworkEnabled()}, isPassiveEnabled ${isPassiveEnabled()}, isFusedEnabled ${isFusedEnabled()}")
+                    Logx.e(
+                        "can not find location!, isLocationEnabled ${isLocationEnabled()}, isGpsEnabled ${isGpsEnabled()}, isNetworkEnabled ${isNetworkEnabled()}, isPassiveEnabled ${isPassiveEnabled()}, isFusedEnabled ${isFusedEnabled()}",
+                    )
                 },
                 negativeWork = {
-                    Logx.e("can not find location!, isLocationEnabled ${isLocationEnabled()}, isGpsEnabled ${isGpsEnabled()}, isNetworkEnabled ${isNetworkEnabled()}, isPassiveEnabled ${isPassiveEnabled()}")
-                }
+                    Logx.e(
+                        "can not find location!, isLocationEnabled ${isLocationEnabled()}, isGpsEnabled ${isGpsEnabled()}, isNetworkEnabled ${isNetworkEnabled()}, isPassiveEnabled ${isPassiveEnabled()}",
+                    )
+                },
             )
             null
-        } else if (context.hasPermissions(ACCESS_COARSE_LOCATION)
-            || context.hasPermissions(ACCESS_FINE_LOCATION)) {
-             locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+        } else if (context.hasPermissions(ACCESS_COARSE_LOCATION) ||
+            context.hasPermissions(ACCESS_FINE_LOCATION)
+        ) {
+            locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
         } else {
-            Logx.e("can not find location!, ACCESS_COARSE_LOCATION ${context.hasPermissions(ACCESS_COARSE_LOCATION)}, ACCESS_FINE_LOCATION  ${context.hasPermissions(ACCESS_FINE_LOCATION)}")
+            Logx.e(
+                "can not find location!, ACCESS_COARSE_LOCATION ${context.hasPermissions(
+                    ACCESS_COARSE_LOCATION,
+                )}, ACCESS_FINE_LOCATION  ${context.hasPermissions(ACCESS_FINE_LOCATION)}",
+            )
             null
         }
     }
@@ -387,8 +411,10 @@ public open class LocationStateInfo(
      * @return Distance in meters.<br><br>
      *         미터 단위 거리입니다.<br>
      */
-    public fun calculateDistance(fromLocation: Location, toLocation: Location): Float =
-        fromLocation.distanceTo(toLocation)
+    public fun calculateDistance(
+        fromLocation: Location,
+        toLocation: Location,
+    ): Float = fromLocation.distanceTo(toLocation)
 
     /**
      * Calculates the bearing between two locations in degrees.<br><br>
@@ -401,8 +427,10 @@ public open class LocationStateInfo(
      * @return Bearing in degrees.<br><br>
      *         도 단위 방위각입니다.<br>
      */
-    public fun calculateBearing(fromLocation: Location, toLocation: Location): Float =
-        fromLocation.bearingTo(toLocation)
+    public fun calculateBearing(
+        fromLocation: Location,
+        toLocation: Location,
+    ): Float = fromLocation.bearingTo(toLocation)
 
     /**
      * Checks if two locations are within a specified radius.<br><br>
@@ -417,8 +445,11 @@ public open class LocationStateInfo(
      * @return `true` if locations are within radius; `false` otherwise.<br><br>
      *         반경 안에 있으면 `true`, 아니면 `false`입니다.<br>
      */
-    public fun isLocationWithRadius(fromLocation: Location, toLocation: Location, radius: Float): Boolean =
-        calculateDistance(fromLocation, toLocation) <= radius
+    public fun isLocationWithRadius(
+        fromLocation: Location,
+        toLocation: Location,
+        radius: Float,
+    ): Boolean = calculateDistance(fromLocation, toLocation) <= radius
 
     /**
      * Helper for persisting last known location.<br><br>
@@ -434,7 +465,7 @@ public open class LocationStateInfo(
      *         저장된 위치가 있으면 Location, 없으면 `null`입니다.<br>
      */
     public fun loadLocation(): Location? = locationStorage.loadLocation()
-    
+
     /**
      * Saves the location to SharedPreferences.<br><br>
      * 위치를 SharedPreferences에 저장합니다.<br>
@@ -442,13 +473,17 @@ public open class LocationStateInfo(
      * @param location The location to save.<br><br>
      *                 저장할 위치입니다.<br>
      */
-    public fun saveApplyLocation(location: Location) { locationStorage.saveApplyLocation(location) }
-    
+    public fun saveApplyLocation(location: Location) {
+        locationStorage.saveApplyLocation(location)
+    }
+
     /**
      * Removes the saved location from SharedPreferences.<br><br>
      * SharedPreferences에 저장된 위치를 삭제합니다.<br>
      */
-    public fun removeLocation() { locationStorage.removeApply() }
+    public fun removeLocation() {
+        locationStorage.removeApply()
+    }
 
     /**
      * Unregisters all location listeners and cleans up resources.<br><br>

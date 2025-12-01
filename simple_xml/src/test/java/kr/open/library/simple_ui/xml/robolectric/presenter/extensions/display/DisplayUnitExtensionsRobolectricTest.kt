@@ -23,7 +23,6 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [33])
 class DisplayUnitExtensionsRobolectricTest {
-
     private lateinit var context: Context
 
     @Before

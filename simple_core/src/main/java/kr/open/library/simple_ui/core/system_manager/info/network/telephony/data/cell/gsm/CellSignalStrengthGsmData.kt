@@ -15,38 +15,39 @@ import androidx.annotation.RequiresApi
  *                              원본 CellSignalStrengthGsm 객체.
  */
 public data class CellSignalStrengthGsmData(
-    public val cellSignalStrength: CellSignalStrengthGsm? = null
+    public val cellSignalStrength: CellSignalStrengthGsm? = null,
 ) {
-
-    /******************************
-     * get CellSignalStrengthLte  *
-     ******************************/
     /**
      * Gets the signal strength in dBm.<br><br>
      * dBm 단위의 신호 강도를 가져옵니다.<br>
      */
     public fun getDbm(): Int? = cellSignalStrength?.dbm
+
     /**
      * Gets the signal level.<br><br>
      * 신호 레벨을 가져옵니다.<br>
      */
     public fun getLevel(): Int? = cellSignalStrength?.level
+
     /**
      * Gets the ASU level.<br><br>
      * ASU 레벨을 가져옵니다.<br>
      */
     public fun getAsuLevel(): Int? = cellSignalStrength?.asuLevel
+
     /**
      * Gets the RSSI (Received Signal Strength Indicator) (API 30+).<br><br>
      * RSSI (수신 신호 강도 표시기)를 가져옵니다 (API 30+).<br>
      */
     @RequiresApi(Build.VERSION_CODES.R)
     public fun getRssi(): Int? = cellSignalStrength?.rssi
+
     /**
      * Gets the timing advance.<br><br>
      * 타이밍 어드밴스를 가져옵니다.<br>
      */
     public fun getTimingAdvance(): Int? = cellSignalStrength?.timingAdvance
+
     /**
      * Gets the bit error rate (API 29+).<br><br>
      * 비트 오류율을 가져옵니다 (API 29+).<br>

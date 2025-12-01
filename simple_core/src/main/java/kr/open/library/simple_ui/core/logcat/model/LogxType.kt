@@ -9,7 +9,9 @@ package kr.open.library.simple_ui.core.logcat.model
  * @property logTypeString The single-character identifier for this log type.<br><br>
  *                         이 로그 타입의 단일 문자 식별자.<br>
  */
-public enum class LogxType(public val logTypeString: String) {
+public enum class LogxType(
+    public val logTypeString: String,
+) {
     /**
      * Verbose log level (lowest priority).<br>
      * Maps to Android's Log.v().<br><br>
@@ -78,5 +80,5 @@ public enum class LogxType(public val logTypeString: String) {
      * 로그 출력에 현재 스레드 ID를 포함합니다.<br>
      * Android의 Log.d()에 매핑됩니다.<br>
      */
-    THREAD_ID("T")
+    THREAD_ID("T"),
 }

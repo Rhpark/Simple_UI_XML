@@ -53,9 +53,10 @@ data class LogxConfig(
          * @return A LogxConfig instance configured for fallback scenarios.<br><br>
          *         폴백 시나리오용으로 구성된 LogxConfig 인스턴스.<br>
          */
-        fun createFallback(): LogxConfig = LogxConfig(
-            saveFilePath = LogxPathUtils.getDefaultLogPath(),
-            storageType = LogxStorageType.INTERNAL,
-        )
+        fun createFallback(): LogxConfig =
+            LogxConfig(
+                saveFilePath = LogxPathUtils.getDefaultLogPath(),
+                storageType = LogxStorageType.INTERNAL,
+            )
     }
 }

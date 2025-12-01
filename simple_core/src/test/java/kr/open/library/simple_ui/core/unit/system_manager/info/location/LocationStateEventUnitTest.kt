@@ -15,7 +15,6 @@ import org.mockito.Mockito.mock
  * Unit tests for LocationStateEvent sealed class
  */
 class LocationStateEventUnitTest {
-
     // ==============================================
     // OnGpsEnabled Tests
     // ==============================================
@@ -200,13 +199,14 @@ class LocationStateEventUnitTest {
 
     @Test
     fun sealedClass_allSubtypesAreInstanceOfParent() {
-        val events: List<LocationStateEvent> = listOf(
-            LocationStateEvent.OnGpsEnabled(isEnabled = true),
-            LocationStateEvent.OnFusedEnabled(isEnabled = false),
-            LocationStateEvent.OnNetworkEnabled(isEnabled = true),
-            LocationStateEvent.OnPassiveEnabled(isEnabled = false),
-            LocationStateEvent.OnLocationChanged(location = null)
-        )
+        val events: List<LocationStateEvent> =
+            listOf(
+                LocationStateEvent.OnGpsEnabled(isEnabled = true),
+                LocationStateEvent.OnFusedEnabled(isEnabled = false),
+                LocationStateEvent.OnNetworkEnabled(isEnabled = true),
+                LocationStateEvent.OnPassiveEnabled(isEnabled = false),
+                LocationStateEvent.OnLocationChanged(location = null),
+            )
 
         events.forEach { event ->
             assertTrue(event is LocationStateEvent)
@@ -215,22 +215,24 @@ class LocationStateEventUnitTest {
 
     @Test
     fun sealedClass_whenExpressionHandlesAllTypes() {
-        val events: List<LocationStateEvent> = listOf(
-            LocationStateEvent.OnGpsEnabled(isEnabled = true),
-            LocationStateEvent.OnFusedEnabled(isEnabled = false),
-            LocationStateEvent.OnNetworkEnabled(isEnabled = true),
-            LocationStateEvent.OnPassiveEnabled(isEnabled = false),
-            LocationStateEvent.OnLocationChanged(location = null)
-        )
+        val events: List<LocationStateEvent> =
+            listOf(
+                LocationStateEvent.OnGpsEnabled(isEnabled = true),
+                LocationStateEvent.OnFusedEnabled(isEnabled = false),
+                LocationStateEvent.OnNetworkEnabled(isEnabled = true),
+                LocationStateEvent.OnPassiveEnabled(isEnabled = false),
+                LocationStateEvent.OnLocationChanged(location = null),
+            )
 
         events.forEach { event ->
-            val result = when (event) {
-                is LocationStateEvent.OnGpsEnabled -> "GPS"
-                is LocationStateEvent.OnFusedEnabled -> "Fused"
-                is LocationStateEvent.OnNetworkEnabled -> "Network"
-                is LocationStateEvent.OnPassiveEnabled -> "Passive"
-                is LocationStateEvent.OnLocationChanged -> "Location"
-            }
+            val result =
+                when (event) {
+                    is LocationStateEvent.OnGpsEnabled -> "GPS"
+                    is LocationStateEvent.OnFusedEnabled -> "Fused"
+                    is LocationStateEvent.OnNetworkEnabled -> "Network"
+                    is LocationStateEvent.OnPassiveEnabled -> "Passive"
+                    is LocationStateEvent.OnLocationChanged -> "Location"
+                }
             assertNotNull(result)
         }
     }

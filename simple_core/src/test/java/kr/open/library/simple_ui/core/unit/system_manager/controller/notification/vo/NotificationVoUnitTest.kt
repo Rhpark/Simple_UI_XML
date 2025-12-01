@@ -10,7 +10,6 @@ import org.junit.Test
  * Unit tests for NotificationStyle and SimpleNotificationType enums
  */
 class NotificationVoUnitTest {
-
     // ==============================================
     // NotificationStyle Tests
     // ==============================================

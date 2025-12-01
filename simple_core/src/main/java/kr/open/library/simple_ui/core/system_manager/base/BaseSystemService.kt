@@ -5,7 +5,6 @@ import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
 import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.core.permissions.extentions.remainPermissions
 
-
 /**
  * Base class for system services with integrated Result pattern support.
  * Result 패턴 지원이 통합된 시스템 서비스의 기본 클래스입니다.
@@ -23,16 +22,15 @@ import kr.open.library.simple_ui.core.permissions.extentions.remainPermissions
  * @param requiredPermissions 필요한 권한 목록입니다.
  */
 public abstract class BaseSystemService(
-    protected val context: Context, 
-    private val requiredPermissions: List<String>? = null
+    protected val context: Context,
+    private val requiredPermissions: List<String>? = null,
 ) {
-
     private var remainPermissions = emptyList<String>()
 
     init {
         requiredPermissions?.let {
             remainPermissions = context.remainPermissions(it)
-            if(remainPermissions.isEmpty()) {
+            if (remainPermissions.isEmpty()) {
                 Logx.d("All required permissions granted for ${this::class.simpleName}")
             } else {
                 Logx.w("Missing permissions for ${this::class.simpleName}: $remainPermissions")
@@ -55,7 +53,6 @@ public abstract class BaseSystemService(
      */
     protected fun isPermissionAllGranted(): Boolean = remainPermissions.isEmpty()
 
-
     /**
      * Simple safe execution with basic error handling.
      * 기본 오류 처리가 포함된 간단한 안전 실행입니다.
@@ -65,24 +62,23 @@ public abstract class BaseSystemService(
      * - Logx 로 부족한 권한 목록을 경고합니다.
      * - 필요한 경우 refreshPermissions() 호출을 유도합니다.
      */
-    protected inline fun <T> tryCatchSystemManager(defaultValue: T, block: () -> T): T {
-
+    protected inline fun <T> tryCatchSystemManager(
+        defaultValue: T,
+        block: () -> T,
+    ): T {
         val deniedPermissions = getDeniedPermissionList()
-        if(deniedPermissions.isNotEmpty()) {
+        if (deniedPermissions.isNotEmpty()) {
             Logx.w("${this::class.simpleName}: Missing permissions!!! - $deniedPermissions")
             return defaultValue
         }
         return safeCatch(
             block = block,
-            onCatch = { e->
+            onCatch = { e ->
                 Logx.e("${this::class.simpleName}: Error occurred : ${e.message}")
                 defaultValue
-            }
+            },
         )
     }
-
-
-
 
     /**
      * Refreshes the permission status. Call this after requesting permissions.
@@ -101,19 +97,16 @@ public abstract class BaseSystemService(
      * Gets information about required permissions and their status.
      * 필요한 권한과 그 상태에 대한 정보를 가져옵니다.
      */
-    public fun getPermissionInfo(): Map<String, Boolean> {
-        return requiredPermissions?.associateWith { permission ->
+    public fun getPermissionInfo(): Map<String, Boolean> =
+        requiredPermissions?.associateWith { permission ->
             !remainPermissions.contains(permission)
         } ?: emptyMap()
-    }
 
     /**
      * Checks if a specific permission is granted.
      * 특정 권한이 부여되었는지 확인합니다.
      */
-    public fun isPermissionGranted(permission: String): Boolean {
-        return !remainPermissions.contains(permission)
-    }
+    public fun isPermissionGranted(permission: String): Boolean = !remainPermissions.contains(permission)
 
     /**
      * Called when the service is being destroyed. Override to perform cleanup.

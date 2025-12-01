@@ -2,7 +2,6 @@ package kr.open.library.simple_ui.core.logcat.internal.formatter.base
 
 import kr.open.library.simple_ui.core.logcat.model.LogxType
 
-
 /**
  * 로그 포맷팅을 담당하는 인터페이스
  * OCP 원칙을 준수하여 새로운 포맷터를 쉽게 추가할 수 있도록 함
@@ -16,6 +15,10 @@ interface LogxFormatterImp {
      * @param stackInfo 스택 정보 (옵션)
      * @return 포맷팅된 로그 메시지, null이면 필터링됨
      */
-    fun format(tag: String, message: Any?, logType: LogxType, stackInfo: String = ""): LogxFormattedData?
+    fun format(
+        tag: String,
+        message: Any?,
+        logType: LogxType,
+        stackInfo: String = "",
+    ): LogxFormattedData?
 }
-

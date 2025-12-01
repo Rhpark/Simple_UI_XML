@@ -8,8 +8,6 @@ import java.util.Locale
  * 시스템 전체에서 사용되는 알람 관련 상수들.<br>
  */
 public object AlarmConstants {
-    
-    // Intent extras
     /**
      * Key for storing alarm identifier in Intent extras.<br><br>
      * Intent extras에 알람 식별자를 저장하기 위한 키입니다.<br>
@@ -22,7 +20,6 @@ public object AlarmConstants {
      */
     public const val ALARM_KEY_DEFAULT_VALUE: Int = -1
 
-    //WakeLock settings
     /**
      * Tag identifier for WakeLock instances.<br><br>
      * WakeLock 인스턴스의 태그 식별자입니다.<br>
@@ -41,7 +38,6 @@ public object AlarmConstants {
      */
     public const val DEFAULT_ACQUIRE_TIME_MS: Long = 3000L // 3 seconds
 
-    //Calendar settings
     /**
      * Milliseconds in one second for time calculations.<br><br>
      * 시간 계산을 위한 1초당 밀리초입니다.<br>
@@ -60,7 +56,6 @@ public object AlarmConstants {
      */
     public const val MINUTES_IN_HOUR: Long = 60L
 
-    //Alarm type identifiers
     /**
      * Identifier for standard alarm clock type.<br><br>
      * 표준 알람 시계 타입의 식별자입니다.<br>
@@ -79,7 +74,6 @@ public object AlarmConstants {
      */
     public const val ALARM_TYPE_EXACT_IDLE: String = "EXACT_AND_ALLOW_WHILE_IDLE"
 
-    //Error codes
     /**
      * Error code for invalid time values.<br><br>
      * 유효하지 않은 시간 값에 대한 오류 코드입니다.<br>
@@ -98,7 +92,6 @@ public object AlarmConstants {
      */
     public const val ERROR_ALARM_REGISTRATION_FAILED: Int = -1003
 }
-
 
 /**
  * Data Transfer Object for alarm information with input validation and immutable design.<br>
@@ -150,9 +143,8 @@ public data class AlarmVo(
     public val hour: Int,
     public val minute: Int,
     public val second: Int = 0, // Default to 0 seconds for cleaner times
-    public val acquireTime: Long = AlarmConstants.DEFAULT_ACQUIRE_TIME_MS
+    public val acquireTime: Long = AlarmConstants.DEFAULT_ACQUIRE_TIME_MS,
 ) {
-
     /**
      * Initialization block that validates all input parameters.<br>
      * Ensures data integrity by checking ranges and business rules.<br><br>
@@ -204,9 +196,11 @@ public data class AlarmVo(
      * @return A copy of this AlarmVo with the specified time.<br><br>
      *         지정된 시간을 가진 AlarmVo의 복사본.<br>
      */
-    public fun withTime(hour: Int, minute: Int, second: Int = this.second): AlarmVo {
-        return copy(hour = hour, minute = minute, second = second)
-    }
+    public fun withTime(
+        hour: Int,
+        minute: Int,
+        second: Int = this.second,
+    ): AlarmVo = copy(hour = hour, minute = minute, second = second)
 
     /**
      * Formats the alarm time as HH:MM:SS string.<br><br>
@@ -215,7 +209,7 @@ public data class AlarmVo(
      * @return Formatted time string in HH:MM:SS format.<br><br>
      *         HH:MM:SS 형식의 형식화된 시간 문자열.<br>
      */
-    public fun getFormattedTime(): String = String.format(Locale.getDefault(),"%02d:%02d:%02d", hour, minute, second)
+    public fun getFormattedTime(): String = String.format(Locale.getDefault(), "%02d:%02d:%02d", hour, minute, second)
 
     /**
      * Calculates total seconds since midnight for easy comparison.<br><br>
@@ -235,16 +229,14 @@ public data class AlarmVo(
      */
     public fun getDescription(): String = "Alarm[$key]: '$title' at ${getFormattedTime()}, active: $isActive"
 
-
     /**
      * Legacy compatibility property for msg.
      * @deprecated Use message instead
      */
     @Deprecated(
         message = "Use message instead",
-        replaceWith = ReplaceWith("message")
+        replaceWith = ReplaceWith("message"),
     )
-
     companion object {
         /**
          * Creates a simple alarm with minimal configuration.<br><br>
@@ -273,16 +265,15 @@ public data class AlarmVo(
             title: String,
             message: String,
             hour: Int,
-            minute: Int
-        ): AlarmVo {
-            return AlarmVo(
+            minute: Int,
+        ): AlarmVo =
+            AlarmVo(
                 key = key,
                 title = title,
                 message = message,
                 hour = hour,
-                minute = minute
+                minute = minute,
             )
-        }
 
         /**
          * Creates an alarm that can fire during device idle time.<br><br>
@@ -315,17 +306,16 @@ public data class AlarmVo(
             message: String,
             hour: Int,
             minute: Int,
-            second: Int = 0
-        ): AlarmVo {
-            return AlarmVo(
+            second: Int = 0,
+        ): AlarmVo =
+            AlarmVo(
                 key = key,
                 title = title,
                 message = message,
                 hour = hour,
                 minute = minute,
                 second = second,
-                isAllowIdle = true
+                isAllowIdle = true,
             )
-        }
     }
 }

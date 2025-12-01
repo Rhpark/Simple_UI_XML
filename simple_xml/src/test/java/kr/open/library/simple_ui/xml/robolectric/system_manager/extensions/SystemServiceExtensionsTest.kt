@@ -17,34 +17,34 @@ import android.telephony.SubscriptionManager
 import android.telephony.TelephonyManager
 import android.telephony.euicc.EuiccManager
 import androidx.test.core.app.ApplicationProvider
+import kr.open.library.simple_ui.core.system_manager.controller.notification.vo.SimpleNotificationType
+import kr.open.library.simple_ui.core.system_manager.controller.wifi.WifiController
+import kr.open.library.simple_ui.core.system_manager.extensions.getAlarmController
 import kr.open.library.simple_ui.core.system_manager.extensions.getAlarmManager
 import kr.open.library.simple_ui.core.system_manager.extensions.getBatteryManager
-import kr.open.library.simple_ui.core.system_manager.extensions.getInputMethodManager
-import kr.open.library.simple_ui.core.system_manager.extensions.getTelephonyManager
-import kr.open.library.simple_ui.core.system_manager.extensions.getSystemNotificationManager
-import kr.open.library.simple_ui.core.system_manager.extensions.getSubscriptionManager
-import kr.open.library.simple_ui.core.system_manager.extensions.getEuiccManager
+import kr.open.library.simple_ui.core.system_manager.extensions.getBatteryStateInfo
+import kr.open.library.simple_ui.core.system_manager.extensions.getBluetoothManager
 import kr.open.library.simple_ui.core.system_manager.extensions.getConnectivityManager
-import kr.open.library.simple_ui.core.system_manager.extensions.getWifiManager
+import kr.open.library.simple_ui.core.system_manager.extensions.getEuiccManager
+import kr.open.library.simple_ui.core.system_manager.extensions.getInputMethodManager
 import kr.open.library.simple_ui.core.system_manager.extensions.getLocationManager
+import kr.open.library.simple_ui.core.system_manager.extensions.getLocationStateInfo
+import kr.open.library.simple_ui.core.system_manager.extensions.getNotificationController
 import kr.open.library.simple_ui.core.system_manager.extensions.getNotificationManager
 import kr.open.library.simple_ui.core.system_manager.extensions.getPowerManager
-import kr.open.library.simple_ui.core.system_manager.extensions.getBluetoothManager
+import kr.open.library.simple_ui.core.system_manager.extensions.getSubscriptionManager
+import kr.open.library.simple_ui.core.system_manager.extensions.getSystemNotificationManager
+import kr.open.library.simple_ui.core.system_manager.extensions.getTelephonyManager
 import kr.open.library.simple_ui.core.system_manager.extensions.getVibrator
-import kr.open.library.simple_ui.core.system_manager.extensions.getVibratorManager
-import kr.open.library.simple_ui.core.system_manager.extensions.getWindowManager
-import kr.open.library.simple_ui.core.system_manager.extensions.getAlarmController
-import kr.open.library.simple_ui.core.system_manager.extensions.getNotificationController
 import kr.open.library.simple_ui.core.system_manager.extensions.getVibratorController
+import kr.open.library.simple_ui.core.system_manager.extensions.getVibratorManager
 import kr.open.library.simple_ui.core.system_manager.extensions.getWifiController
-import kr.open.library.simple_ui.core.system_manager.extensions.getBatteryStateInfo
-import kr.open.library.simple_ui.core.system_manager.extensions.getLocationStateInfo
-import kr.open.library.simple_ui.xml.system_manager.extensions.getSoftKeyboardController
-import kr.open.library.simple_ui.xml.system_manager.extensions.getFloatingViewController
-import kr.open.library.simple_ui.xml.system_manager.extensions.getDisplayInfo
+import kr.open.library.simple_ui.core.system_manager.extensions.getWifiManager
+import kr.open.library.simple_ui.core.system_manager.extensions.getWindowManager
 import kr.open.library.simple_ui.xml.system_manager.controller.softkeyboard.SoftKeyboardController
-import kr.open.library.simple_ui.core.system_manager.controller.wifi.WifiController
-import kr.open.library.simple_ui.core.system_manager.controller.notification.vo.SimpleNotificationType
+import kr.open.library.simple_ui.xml.system_manager.extensions.getDisplayInfo
+import kr.open.library.simple_ui.xml.system_manager.extensions.getFloatingViewController
+import kr.open.library.simple_ui.xml.system_manager.extensions.getSoftKeyboardController
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertSame
 import org.junit.Test
@@ -56,7 +56,6 @@ import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
 class SystemServiceExtensionsTest {
-
     private val application: Application = ApplicationProvider.getApplicationContext()
 
     @Test

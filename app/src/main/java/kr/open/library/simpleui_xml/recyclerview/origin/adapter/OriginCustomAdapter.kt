@@ -8,22 +8,29 @@ import kr.open.library.simpleui_xml.R
 import kr.open.library.simpleui_xml.databinding.ItemRcvTextviewBinding
 import kr.open.library.simpleui_xml.recyclerview.model.SampleItem
 
-class OriginCustomAdapter(private val onItemClick: (SampleItem, Int) -> Unit) :
-    RecyclerView.Adapter<OriginCustomAdapter.SampleItemViewHolder>() {
-
+class OriginCustomAdapter(
+    private val onItemClick: (SampleItem, Int) -> Unit,
+) : RecyclerView.Adapter<OriginCustomAdapter.SampleItemViewHolder>() {
     private var items = mutableListOf<SampleItem>()
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SampleItemViewHolder {
-        val binding = DataBindingUtil.inflate<ItemRcvTextviewBinding>(
-            LayoutInflater.from(parent.context),
-            R.layout.item_rcv_textview,
-            parent,
-            false
-        )
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int,
+    ): SampleItemViewHolder {
+        val binding =
+            DataBindingUtil.inflate<ItemRcvTextviewBinding>(
+                LayoutInflater.from(parent.context),
+                R.layout.item_rcv_textview,
+                parent,
+                false,
+            )
         return SampleItemViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: SampleItemViewHolder, position: Int) {
+    override fun onBindViewHolder(
+        holder: SampleItemViewHolder,
+        position: Int,
+    ) {
         val item = items[position]
         holder.bind(item, position, onItemClick)
     }
@@ -57,9 +64,14 @@ class OriginCustomAdapter(private val onItemClick: (SampleItem, Int) -> Unit) :
 
     fun getItems(): List<SampleItem> = items.toList()
 
-    class SampleItemViewHolder(private val binding: ItemRcvTextviewBinding) : RecyclerView.ViewHolder(binding.root) {
-
-        fun bind(item: SampleItem, position: Int, onItemClick: (SampleItem, Int) -> Unit) {
+    class SampleItemViewHolder(
+        private val binding: ItemRcvTextviewBinding,
+    ) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(
+            item: SampleItem,
+            position: Int,
+            onItemClick: (SampleItem, Int) -> Unit,
+        ) {
             binding.apply {
                 tvTitle.text = item.title
                 tvDescription.text = item.description

@@ -34,7 +34,6 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [33])
 class TextViewExtensionsRobolectricTest {
-
     private lateinit var context: Context
     private lateinit var textView: TextView
 
@@ -278,9 +277,10 @@ class TextViewExtensionsRobolectricTest {
 
     @Test
     fun style_returnsTextView() {
-        val result = textView.style {
-            text = "Test"
-        }
+        val result =
+            textView.style {
+                text = "Test"
+            }
 
         // style() 함수가 TextView를 반환하는지 확인 (체이닝 가능)
         assertEquals(textView, result)
@@ -288,11 +288,12 @@ class TextViewExtensionsRobolectricTest {
 
     @Test
     fun style_chainingWorks() {
-        textView.style {
-            bold()
-        }.style {
-            underline()
-        }
+        textView
+            .style {
+                bold()
+            }.style {
+                underline()
+            }
 
         assertEquals(Typeface.BOLD, textView.typeface.style)
         assertTrue(textView.paintFlags and Paint.UNDERLINE_TEXT_FLAG != 0)

@@ -4,24 +4,33 @@ import android.Manifest
 import android.os.Bundle
 import androidx.core.widget.addTextChangedListener
 import kr.open.library.simple_ui.core.extensions.date.toDateString
+import kr.open.library.simple_ui.core.extensions.display.dpToPx
+import kr.open.library.simple_ui.core.extensions.display.pxToDp
+import kr.open.library.simple_ui.core.extensions.display.spToPx
 import kr.open.library.simple_ui.core.extensions.string.isEmailValid
 import kr.open.library.simple_ui.core.extensions.string.isNumeric
 import kr.open.library.simple_ui.core.extensions.string.removeWhitespace
 import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
 import kr.open.library.simple_ui.core.permissions.extentions.hasPermission
-import kr.open.library.simple_ui.core.extensions.display.dpToPx
-import kr.open.library.simple_ui.core.extensions.display.pxToDp
-import kr.open.library.simple_ui.core.extensions.display.spToPx
 import kr.open.library.simple_ui.xml.extensions.resource.getColorCompat
 import kr.open.library.simple_ui.xml.extensions.resource.getDrawableCompat
-import kr.open.library.simple_ui.xml.extensions.view.*
+import kr.open.library.simple_ui.xml.extensions.view.SnackBarOption
+import kr.open.library.simple_ui.xml.extensions.view.bold
+import kr.open.library.simple_ui.xml.extensions.view.italic
+import kr.open.library.simple_ui.xml.extensions.view.normal
+import kr.open.library.simple_ui.xml.extensions.view.removeStrikeThrough
+import kr.open.library.simple_ui.xml.extensions.view.removeUnderline
+import kr.open.library.simple_ui.xml.extensions.view.snackBarShowShort
+import kr.open.library.simple_ui.xml.extensions.view.strikeThrough
+import kr.open.library.simple_ui.xml.extensions.view.toastShowLong
+import kr.open.library.simple_ui.xml.extensions.view.toastShowShort
+import kr.open.library.simple_ui.xml.extensions.view.underline
 import kr.open.library.simple_ui.xml.ui.activity.BaseBindingActivity
 import kr.open.library.simpleui_xml.R
 import kr.open.library.simpleui_xml.databinding.ActivityExtensionsStyleBinding
 import java.util.Locale
 
 class ExtensionsStyleActivity : BaseBindingActivity<ActivityExtensionsStyleBinding>(R.layout.activity_extensions_style) {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -57,8 +66,8 @@ class ExtensionsStyleActivity : BaseBindingActivity<ActivityExtensionsStyleBindi
                 "액션 버튼이 있는 SnackBar",
                 SnackBarOption(
                     actionText = "확인",
-                    action = { toastShowShort("액션 클릭!") }
-                )
+                    action = { toastShowShort("액션 클릭!") },
+                ),
             )
         }
 
@@ -91,19 +100,28 @@ class ExtensionsStyleActivity : BaseBindingActivity<ActivityExtensionsStyleBindi
      */
     private fun setupDisplayExtensions() {
         binding.btnDpToPx.setOnClickListener {
-            val value = binding.edtDisplayValue.text.toString().toFloatOrNull() ?: 0f
+            val value =
+                binding.edtDisplayValue.text
+                    .toString()
+                    .toFloatOrNull() ?: 0f
             val result = value.dpToPx(this)
             binding.tvDisplayResult.text = "결과: ${value}dp = ${result}px"
         }
 
         binding.btnPxToDp.setOnClickListener {
-            val value = binding.edtDisplayValue.text.toString().toFloatOrNull() ?: 0f
+            val value =
+                binding.edtDisplayValue.text
+                    .toString()
+                    .toFloatOrNull() ?: 0f
             val result = value.pxToDp(this)
             binding.tvDisplayResult.text = "결과: ${value}px = ${result}dp"
         }
 
         binding.btnSpToPx.setOnClickListener {
-            val value = binding.edtDisplayValue.text.toString().toFloatOrNull() ?: 0f
+            val value =
+                binding.edtDisplayValue.text
+                    .toString()
+                    .toFloatOrNull() ?: 0f
             val result = value.spToPx(this)
             binding.tvDisplayResult.text = "결과: ${value}sp = ${result}px"
         }
@@ -178,11 +196,12 @@ class ExtensionsStyleActivity : BaseBindingActivity<ActivityExtensionsStyleBindi
             val formatted1 = currentTime.toDateString("yyyy-MM-dd HH:mm:ss", Locale.KOREA)
             val formatted2 = currentTime.toDateString("yyyy년 MM월 dd일 HH시 mm분", Locale.KOREA)
 
-            binding.tvDateResult.text = """
-               결과:
-                - ${formatted1}
-                - ${formatted2}
-            """.trimIndent()
+            binding.tvDateResult.text =
+                """
+                결과:
+                 - $formatted1
+                 - $formatted2
+                """.trimIndent()
         }
     }
 
@@ -192,11 +211,12 @@ class ExtensionsStyleActivity : BaseBindingActivity<ActivityExtensionsStyleBindi
     private fun setupTryCatchExtensions() {
         binding.btnSafeCatch.setOnClickListener {
             // 에러 발생 가능한 코드
-            val result = safeCatch(defaultValue = "에러 발생!") {
-                val text = binding.edtDisplayValue.text.toString()
-                if (text.isEmpty()) throw IllegalArgumentException("값이 비어있습니다")
-                "성공: $text"
-            }
+            val result =
+                safeCatch(defaultValue = "에러 발생!") {
+                    val text = binding.edtDisplayValue.text.toString()
+                    if (text.isEmpty()) throw IllegalArgumentException("값이 비어있습니다")
+                    "성공: $text"
+                }
 
             binding.tvSafeCatchResult.text = "결과: $result"
         }

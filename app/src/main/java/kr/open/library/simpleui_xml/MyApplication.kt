@@ -4,7 +4,7 @@ import android.app.Application
 import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simpleui_xml.crash.CrashReporter
 
-class MyApplication:Application() {
+class MyApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         Logx.init(this)
@@ -23,11 +23,12 @@ class MyApplication:Application() {
      * <br>
      */
     private fun setupCrashReporter() {
-        val crashReporter = CrashReporter(
-            cloudFunctionUrl = BuildConfig.CRASH_REPORT_URL,
-            apiKey = BuildConfig.CRASH_API_KEY,
-            appVersion = BuildConfig.VERSION_NAME
-        )
+        val crashReporter =
+            CrashReporter(
+                cloudFunctionUrl = BuildConfig.CRASH_REPORT_URL,
+                apiKey = BuildConfig.CRASH_API_KEY,
+                appVersion = BuildConfig.VERSION_NAME,
+            )
         Thread.setDefaultUncaughtExceptionHandler(crashReporter)
     }
 }

@@ -10,7 +10,6 @@ import org.junit.Test
  * Unit tests for TelephonyNetworkType and TelephonyNetworkDetailType enums
  */
 class TelephonyNetworkTypeUnitTest {
-
     // ==============================================
     // TelephonyNetworkType Tests
     // ==============================================

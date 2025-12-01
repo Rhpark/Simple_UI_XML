@@ -5,19 +5,17 @@ import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
 import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
-import kr.open.library.simple_ui.xml.extensions.view.toastShowShort
-import kr.open.library.simple_ui.xml.ui.activity.BaseActivity
 import kr.open.library.simple_ui.core.system_manager.extensions.getVibratorController
 import kr.open.library.simple_ui.xml.extensions.view.toastShowShort
+import kr.open.library.simple_ui.xml.ui.activity.BaseActivity
 import kr.open.library.simpleui_xml.R
 import kr.open.library.simpleui_xml.databinding.ActivityVibratorControllerBinding
 
 class VibratorControllerActivity : BaseActivity(R.layout.activity_vibrator_controller) {
-
     private lateinit var binding: ActivityVibratorControllerBinding
 
     private val vibratorController by lazy { getVibratorController() }
-    
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityVibratorControllerBinding.inflate(layoutInflater)
@@ -57,32 +55,35 @@ class VibratorControllerActivity : BaseActivity(R.layout.activity_vibrator_contr
             }
 
             btnClickEffect.setOnClickListener {
-                checkSdkVersion(Build.VERSION_CODES.Q,
+                checkSdkVersion(
+                    Build.VERSION_CODES.Q,
                     positiveWork = {
                         vibratorController.createPredefined(VibrationEffect.EFFECT_CLICK)
                         toastShowShort("Click Effect")
                     },
-                    negativeWork = {toastShowShort("Requires Android 10+")}
+                    negativeWork = { toastShowShort("Requires Android 10+") },
                 )
             }
 
             btnDoubleClickEffect.setOnClickListener {
-                checkSdkVersion(Build.VERSION_CODES.Q,
+                checkSdkVersion(
+                    Build.VERSION_CODES.Q,
                     positiveWork = {
                         vibratorController.createPredefined(VibrationEffect.EFFECT_DOUBLE_CLICK)
                         toastShowShort("Double Click Effect")
                     },
-                    negativeWork = { toastShowShort("Requires Android 10+")}
+                    negativeWork = { toastShowShort("Requires Android 10+") },
                 )
             }
 
             btnHeavyClickEffect.setOnClickListener {
-                checkSdkVersion(Build.VERSION_CODES.Q,
+                checkSdkVersion(
+                    Build.VERSION_CODES.Q,
                     positiveWork = {
                         vibratorController.createPredefined(VibrationEffect.EFFECT_HEAVY_CLICK)
                         toastShowShort("Heavy Click Effect")
                     },
-                    negativeWork = { toastShowShort("Requires Android 10+") }
+                    negativeWork = { toastShowShort("Requires Android 10+") },
                 )
             }
 

@@ -29,7 +29,6 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [33])
 class ImageViewExtensionsRobolectricTest {
-
     private lateinit var context: Context
     private lateinit var imageView: ImageView
 
@@ -176,20 +175,22 @@ class ImageViewExtensionsRobolectricTest {
 
     @Test
     fun style_returnsImageView() {
-        val result = imageView.style {
-            centerCrop()
-        }
+        val result =
+            imageView.style {
+                centerCrop()
+            }
 
         assertEquals(imageView, result)
     }
 
     @Test
     fun style_chainingWorks() {
-        imageView.style {
-            centerCrop()
-        }.style {
-            fitCenter() // 다른 ScaleType로 변경
-        }
+        imageView
+            .style {
+                centerCrop()
+            }.style {
+                fitCenter() // 다른 ScaleType로 변경
+            }
 
         assertEquals(ImageView.ScaleType.FIT_CENTER, imageView.scaleType) // 마지막 설정된 값
     }
@@ -258,11 +259,12 @@ class ImageViewExtensionsRobolectricTest {
 
     @Test
     fun load_chainingWorks() {
-        imageView.load(android.R.drawable.ic_delete) {
-            centerCrop()
-        }.load(android.R.drawable.ic_menu_search) {
-            fitCenter()
-        }
+        imageView
+            .load(android.R.drawable.ic_delete) {
+                centerCrop()
+            }.load(android.R.drawable.ic_menu_search) {
+                fitCenter()
+            }
 
         assertEquals(ImageView.ScaleType.FIT_CENTER, imageView.scaleType)
         assertNotNull(imageView.drawable)

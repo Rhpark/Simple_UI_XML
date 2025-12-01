@@ -3,17 +3,16 @@ package kr.open.library.simpleui_xml.system_service_manager.controller.softkeybo
 import android.os.Bundle
 import androidx.lifecycle.lifecycleScope
 import kr.open.library.simple_ui.xml.extensions.view.toastShowShort
-import kr.open.library.simple_ui.xml.ui.activity.BaseActivity
 import kr.open.library.simple_ui.xml.system_manager.extensions.getSoftKeyboardController
+import kr.open.library.simple_ui.xml.ui.activity.BaseActivity
 import kr.open.library.simpleui_xml.R
 import kr.open.library.simpleui_xml.databinding.ActivitySoftkeyboardControllerBinding
 
 class SoftKeyboardControllerActivity : BaseActivity(R.layout.activity_softkeyboard_controller) {
-
     private lateinit var binding: ActivitySoftkeyboardControllerBinding
 
     private val softKeyboardController by lazy { getSoftKeyboardController() }
-    
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySoftkeyboardControllerBinding.inflate(layoutInflater)
