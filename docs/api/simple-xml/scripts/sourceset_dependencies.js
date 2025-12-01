@@ -1,1 +1,0 @@
-sourceset_dependencies='{":simple_xml/debug":[],":simple_xml/main":[],":simple_xml/release":[]}'
