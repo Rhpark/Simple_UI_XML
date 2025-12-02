@@ -72,6 +72,7 @@ dependencies {
 ## More Information (더 많은 정보 보기)
 - **[Getting Started Guide](README_START.md)** - 시작 가이드
 - **[API Documentation](https://rhpark.github.io/Simple_UI_XML/api)** - Dokka로 생성된 API 문서
+- **[Code Coverage Report](https://rhpark.github.io/Simple_UI_XML/coverage)** - Kover 커버리지 리포트
 
 
 <br>

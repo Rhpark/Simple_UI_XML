@@ -1,4 +1,4 @@
-# .github/workflows/dokka-deploy.yml
+# .github/workflows/documentation.yml
 name: 3. Documentation (Dokka)
 
 on:
@@ -84,6 +84,36 @@ jobs:
           echo "✅ Documentation generated successfully"
           ls -la docs/api/
 
+      - name: Run all tests for coverage
+        run: bash -o pipefail -c "./gradlew :simple_core:testAll :simple_xml:testAll |& tee kover-test.log"
+
+      - name: Generate Kover coverage report
+        run: bash -o pipefail -c "./gradlew :simple_core:koverHtmlReport :simple_xml:koverHtmlReport |& tee kover-generate.log"
+
+      - name: Copy Kover reports to docs
+        run: |
+          mkdir -p docs/coverage/simple_core
+          mkdir -p docs/coverage/simple_xml
+          cp -r simple_core/build/reports/kover/html/* docs/coverage/simple_core/
+          cp -r simple_xml/build/reports/kover/html/* docs/coverage/simple_xml/
+
+      - name: Verify coverage reports copied
+        run: |
+          if [ ! -f "docs/coverage/index.html" ]; then
+            echo "❌ Coverage index not found!"
+            exit 1
+          fi
+          if [ ! -f "docs/coverage/simple_core/index.html" ]; then
+            echo "❌ simple_core coverage not generated!"
+            exit 1
+          fi
+          if [ ! -f "docs/coverage/simple_xml/index.html" ]; then
+            echo "❌ simple_xml coverage not generated!"
+            exit 1
+          fi
+          echo "✅ Coverage reports generated successfully"
+          ls -la docs/coverage/
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
@@ -100,8 +130,8 @@ jobs:
         if: failure()
         run: |
           LOG_FILE="dokka-generate.log"
-          python3 .github/scripts/extract_gradle_failure.py "$LOG_FILE" dokka-deploy-failure.log || true
-          SUMMARY="$(head -n 1 dokka-deploy-failure.log | tr -d '\r')"
+          python3 .github/scripts/extract_gradle_failure.py "$LOG_FILE" documentation-failure.log || true
+          SUMMARY="$(head -n 1 documentation-failure.log | tr -d '\r')"
           if [ -z "$SUMMARY" ]; then
             SUMMARY="3. Documentation (Dokka) failed."
           fi
@@ -109,7 +139,7 @@ jobs:
             echo "DOKKA_FAILURE_SUMMARY<<EOF"
             echo "$SUMMARY"
             echo "EOF"
-            echo "DOKKA_FAILURE_LOG_PATH=$(pwd)/dokka-deploy-failure.log"
+            echo "DOKKA_FAILURE_LOG_PATH=$(pwd)/documentation-failure.log"
           } >> "$GITHUB_ENV"
 
       - name: Report failure (Dokka Deploy)
