@@ -35,7 +35,18 @@ API_URL="${GITHUB_API_URL:-https://api.github.com}"
 FAILURE_MESSAGE_INPUT="${FAILURE_MESSAGE:-No additional summary provided.}"
 FAILURE_LOG_INPUT="${FAILURE_LOG:-}"
 if [[ -z "${FAILURE_LOG_INPUT}" && -n "${FAILURE_LOG_PATH:-}" && -f "${FAILURE_LOG_PATH}" ]]; then
-    FAILURE_LOG_INPUT="$(cat "${FAILURE_LOG_PATH}")"
+    # Limit log size to prevent "Argument list too long" error
+    # Extract first 400 lines and last 400 lines if log is too large
+    LOG_LINE_COUNT=$(wc -l < "${FAILURE_LOG_PATH}")
+    if [[ ${LOG_LINE_COUNT} -gt 800 ]]; then
+        FAILURE_LOG_INPUT="$(head -n 400 "${FAILURE_LOG_PATH}")
+
+... (truncated ${LOG_LINE_COUNT} lines, showing first 400 and last 400 lines) ...
+
+$(tail -n 400 "${FAILURE_LOG_PATH}")"
+    else
+        FAILURE_LOG_INPUT="$(cat "${FAILURE_LOG_PATH}")"
+    fi
 fi
 if [[ -z "${FAILURE_LOG_INPUT}" ]]; then
     FAILURE_LOG_INPUT="Logs available at ${RUN_URL}"
@@ -91,6 +102,9 @@ case "${STAGE_NAME_INPUT}" in
     ;;
   "Firebase App Distribution")
     ISSUE_LABELS=("CD-Firebase")
+    ;;
+  "Generate and Deploy Documentation")
+    ISSUE_LABELS=("Documentation")
     ;;
   *)
     ISSUE_LABELS=("ci" "needs-triage")

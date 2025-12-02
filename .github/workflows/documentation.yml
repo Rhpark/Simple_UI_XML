@@ -73,7 +73,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Generate Dokka documentation
-        run: bash -o pipefail -c "./gradlew dokkaHtmlMultiModuleCustom --no-daemon --build-cache |& tee dokka-generate.log"
+        run: bash -o pipefail -c "./gradlew dokkaHtmlMultiModuleCustom --no-daemon --build-cache --warn |& tee dokka-generate.log"
 
       - name: Verify documentation generated
         run: |
@@ -164,8 +164,8 @@ jobs:
         if: failure()
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          STAGE_NAME: "3. Documentation (Dokka, Kover)"
-          FAILURE_MESSAGE: ${{ env.DOKKA_FAILURE_SUMMARY || '3. Documentation (Dokka, Kover) failed.' }}
+          STAGE_NAME: "Generate and Deploy Documentation"
+          FAILURE_MESSAGE: ${{ env.DOKKA_FAILURE_SUMMARY || 'Generate and Deploy Documentation failed.' }}
           FAILURE_LOG_PATH: ${{ env.DOKKA_FAILURE_LOG_PATH }}
           FAILURE_ENVIRONMENT: |
             Runner: ${{ runner.os }}
