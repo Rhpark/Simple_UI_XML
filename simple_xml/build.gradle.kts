@@ -129,6 +129,7 @@ kover {
                 classes("kr.open.library.simple_ui.core.logcat.extensions.LogxExtensions*")
                 classes("kr.open.library.simple_ui.core.extensions.display.DisplayUnitExtensions*")
                 classes("kr.open.library.simple_ui.core.system_manager.controller.alarm.*")
+                classes("kr.open.library.simple_ui.xml.permissions.register.*")
             }
         }
     }

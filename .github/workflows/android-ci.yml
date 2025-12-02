@@ -236,7 +236,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Run pure unit tests only
-        run: bash -o pipefail -c "./gradlew :simple_core:testUnit :simple_xml:testUnit |& tee unit-test.log"
+        run: bash -o pipefail -c "./gradlew :simple_core:testUnit :simple_xml:testUnit --build-cache |& tee unit-test.log"
 
       - name: Capture failure snippet (Unit Tests)
         if: failure()
@@ -311,7 +311,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Run Robolectric tests
-        run: bash -o pipefail -c "./gradlew :simple_core:testRobolectric :simple_xml:testRobolectric |& tee robolectric-test.log"
+        run: bash -o pipefail -c "./gradlew :simple_core:testRobolectric :simple_xml:testRobolectric --build-cache |& tee robolectric-test.log"
 
       - name: Capture failure snippet (Robolectric Tests)
         if: failure()
@@ -407,7 +407,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Run KtLint
-        run: bash -o pipefail -c "./gradlew ktlintCheck |& tee ktlint.log"
+        run: bash -o pipefail -c "./gradlew ktlintCheck --build-cache |& tee ktlint.log"
 
       - name: Capture failure snippet (ktlint)
         if: failure()
@@ -426,7 +426,7 @@ jobs:
           } >> "$GITHUB_ENV"
 
       - name: Run all tests for coverage
-        run: bash -o pipefail -c "./gradlew :simple_core:testAll :simple_xml:testAll |& tee build-testAll.log"
+        run: bash -o pipefail -c "./gradlew :simple_core:testAll :simple_xml:testAll --build-cache |& tee build-testAll.log"
 
       - name: Capture failure snippet (testAll)
         if: failure()
@@ -445,7 +445,7 @@ jobs:
           } >> "$GITHUB_ENV"
 
       - name: Generate Kover coverage report
-        run: bash -o pipefail -c "./gradlew :simple_core:koverHtmlReport :simple_xml:koverHtmlReport |& tee build-kover.log"
+        run: bash -o pipefail -c "./gradlew :simple_core:koverHtmlReport :simple_xml:koverHtmlReport --build-cache |& tee build-kover.log"
         if: always()
 
       - name: Capture failure snippet (kover)
@@ -465,7 +465,7 @@ jobs:
           } >> "$GITHUB_ENV"
 
       - name: Assemble
-        run: bash -o pipefail -c "./gradlew assemble --stacktrace |& tee build-assemble.log"
+        run: bash -o pipefail -c "./gradlew assemble --stacktrace --build-cache |& tee build-assemble.log"
 
       - name: Capture failure snippet (assemble)
         if: failure()
@@ -484,7 +484,7 @@ jobs:
           } >> "$GITHUB_ENV"
 
       - name: Android Lint (non-blocking)
-        run: bash -o pipefail -c "./gradlew lint |& tee build-lint.log"
+        run: bash -o pipefail -c "./gradlew lint --build-cache |& tee build-lint.log"
 
       - name: Capture failure snippet (lint)
         if: failure()

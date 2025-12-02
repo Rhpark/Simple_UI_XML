@@ -1,5 +1,5 @@
 # .github/workflows/documentation.yml
-name: 3. Documentation (Dokka)
+name: 3. Documentation (Dokka, Kover)
 
 on:
   workflow_run:
@@ -133,7 +133,7 @@ jobs:
           python3 .github/scripts/extract_gradle_failure.py "$LOG_FILE" documentation-failure.log || true
           SUMMARY="$(head -n 1 documentation-failure.log | tr -d '\r')"
           if [ -z "$SUMMARY" ]; then
-            SUMMARY="3. Documentation (Dokka) failed."
+            SUMMARY="3. Documentation (Dokka, Kover) failed."
           fi
           {
             echo "DOKKA_FAILURE_SUMMARY<<EOF"
@@ -146,8 +146,8 @@ jobs:
         if: failure()
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          STAGE_NAME: "3. Documentation (Dokka)"
-          FAILURE_MESSAGE: ${{ env.DOKKA_FAILURE_SUMMARY || '3. Documentation (Dokka) failed.' }}
+          STAGE_NAME: "3. Documentation (Dokka, Kover)"
+          FAILURE_MESSAGE: ${{ env.DOKKA_FAILURE_SUMMARY || '3. Documentation (Dokka, Kover) failed.' }}
           FAILURE_LOG_PATH: ${{ env.DOKKA_FAILURE_LOG_PATH }}
           FAILURE_ENVIRONMENT: |
             Runner: ${{ runner.os }}
