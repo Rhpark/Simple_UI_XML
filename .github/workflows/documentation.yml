@@ -73,7 +73,8 @@ jobs:
         run: chmod +x gradlew
 
       - name: Generate Dokka documentation
-        run: bash -o pipefail -c "./gradlew dokkaHtmlMultiModuleCustom --no-daemon --build-cache --warn |& tee dokka-generate.log"
+        run: bash -o pipefail -c "./gradlew dokkaHtmlMultiModuleCustom --no-daemon --warn |& tee dokka-generate.log"
+#        run: bash -o pipefail -c "./gradlew dokkaHtmlMultiModuleCustom --no-daemon --build-cache --warn |& tee dokka-generate.log"
 
       - name: Verify documentation generated
         run: |
