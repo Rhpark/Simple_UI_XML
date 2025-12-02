@@ -187,24 +187,34 @@ EOF
 
 export ISSUE_BODY
 LIST_URL="${API_URL}/repos/${REPO}/issues?state=open&per_page=100"
-LIST_RESPONSE=$(curl -sSf \
+
+# Save LIST_RESPONSE to temp file to avoid "Argument list too long" error
+LIST_RESPONSE_FILE=$(mktemp)
+curl -sSf \
   -H "Authorization: Bearer ${GITHUB_TOKEN}" \
   -H "Accept: application/vnd.github+json" \
-  "${LIST_URL}")
-export LIST_RESPONSE
+  "${LIST_URL}" > "${LIST_RESPONSE_FILE}"
+
+export LIST_RESPONSE_FILE
 ISSUE_NUMBER=$(python3 - <<'PY'
 import json, os, sys
 title = os.environ["ISSUE_TITLE"]
+list_file = os.environ.get("LIST_RESPONSE_FILE", "")
 try:
-    issues = json.loads(os.environ["LIST_RESPONSE"])
-    for issue in issues:
-        if issue.get("title") == title:
-            print(issue.get("number"))
-            break
+    if list_file and os.path.exists(list_file):
+        with open(list_file, 'r', encoding='utf-8') as f:
+            issues = json.load(f)
+        for issue in issues:
+            if issue.get("title") == title:
+                print(issue.get("number"))
+                break
 except Exception:
     pass
 PY
 )
+
+# Clean up temp file
+rm -f "${LIST_RESPONSE_FILE}"
 
 create_issue() {
   # 디버깅: ISSUE_LABELS_JSON 값 출력
