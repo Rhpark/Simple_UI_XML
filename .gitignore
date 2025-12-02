@@ -19,4 +19,8 @@ local.properties
 codex.md
 
 # Dokka generated documentation
-docs/
+docs/*
+# Exception: Keep coverage index page
+!docs/coverage/
+docs/coverage/*
+!docs/coverage/index.html

@@ -121,31 +121,30 @@ kover {
                 classes("**.Databinding.**")
                 classes("**.BR")
 
-                classes("kr.open.library.simple_core.DataBinderMapperImpl*") // *로 Inner 클래스까지 함께 제외
-                classes("kr.open.library.simple_core.DataBindingTriggerClass")
+                classes("**.DataBinderMapperImpl*") // *로 Inner 클래스까지 함께 제외
+                classes("**.DataBindingTriggerClass")
 
                 /*******************************
                  *   Android OS 에 종속 인 부분  *
                  * 통합 테스트 단위에서 태스트 예정 *
                  *******************************/
 
-                classes("kr.open.library.simple_core.logcat.ILogx*")
-                classes("kr.open.library.simple_core.logcat.extensions.LogxExtensions*")
-                classes("kr.open.library.simple_core.logcat.Logx*")
-                classes("kr.open.library.simple_core.logcat.runtime.LogxWriter*")
+                classes("kr.open.library.simple_ui.core.logcat.ILogx*")
+                classes("kr.open.library.simple_ui.core.logcat.extensions.LogxExtensions*")
+                classes("kr.open.library.simple_ui.core.logcat.Logx*")
+                classes("kr.open.library.simple_ui.core.logcat.runtime.LogxWriter*")
 
-                classes("kr.open.library.simple_core.system_manager.base.BaseSystemService*")
-                classes("kr.open.library.simple_core.system_manager.controller.alarm.AlarmController*")
-                classes("kr.open.library.simple_core.system_manager.controller.alarm.receiver.BaseAlarmReceiver*")
-                classes("kr.open.library.simple_core.system_manager.controller.wifi.WifiController*")
-                classes("kr.open.library.simple_core.system_manager.controller.window.FloatingViewController*")
-                classes("kr.open.library.simple_core.system_manager.info.battery.BatteryStateInfo*")
-                classes("kr.open.library.simple_core.system_manager.info.battery.power.PowerProfile*")
+                classes("kr.open.library.simple_ui.core.system_manager.base.BaseSystemService*")
+                classes("kr.open.library.simple_ui.core.system_manager.controller.alarm.AlarmController*")
+                classes("kr.open.library.simple_ui.core.system_manager.controller.alarm.receiver.BaseAlarmReceiver*")
+                classes("kr.open.library.simple_ui.core.system_manager.controller.wifi.WifiController*")
+                classes("kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateInfo*")
+                classes("kr.open.library.simple_ui.core.system_manager.info.battery.power.PowerProfile*")
 
-                classes("kr.open.library.simple_core.system_manager.info.location.LocationStateInfo*")
-                classes("kr.open.library.simple_core.system_manager.info.network.connectivity.NetworkConnectivityInfo*")
-                classes("kr.open.library.simple_core.system_manager.info.network.sim.SimInfo*")
-                classes("kr.open.library.simple_core.system_manager.info.network.telephony.TelephonyInfo*")
+                classes("kr.open.library.simple_ui.core.system_manager.info.location.LocationStateInfo*")
+                classes("kr.open.library.simple_ui.core.system_manager.info.network.connectivity.NetworkConnectivityInfo*")
+                classes("kr.open.library.simple_ui.core.system_manager.info.network.sim.SimInfo*")
+                classes("kr.open.library.simple_ui.core.system_manager.info.network.telephony.TelephonyInfo*")
             }
         }
     }

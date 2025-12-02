@@ -114,17 +114,21 @@ kover {
                 classes("kr.open.library.simple_xml.DataBindingTriggerClass")
 
                 // 2. 베이스 컴포넌트(단위 테스트 어려움)
-                classes("kr.open.library.simple_ui.xml.ui.activity.RootActivity")
-                classes("kr.open.library.simple_ui.xml.ui.activity.BaseActivity")
-                classes("kr.open.library.simple_ui.xml.ui.activity.BaseBindingActivity")
-                classes("kr.open.library.simple_ui.xml.ui.fragment.RootFragment")
-                classes("kr.open.library.simple_ui.xml.ui.fragment.BaseFragment")
-                classes("kr.open.library.simple_ui.xml.ui.fragment.BaseBindingFragment")
-                classes("kr.open.library.simple_ui.xml.ui.fragment.dialog.RootDialogFragment")
-                classes("kr.open.library.simple_ui.xml.ui.fragment.dialog.BaseDialogFragment")
-                classes("kr.open.library.simple_ui.xml.ui.fragment.dialog.BaseBindingDialogFragment")
+                classes("kr.open.library.simple_ui.xml.ui.activity.RootActivity*")
+                classes("kr.open.library.simple_ui.xml.ui.activity.BaseActivity*")
+                classes("kr.open.library.simple_ui.xml.ui.activity.BaseBindingActivity*")
+                classes("kr.open.library.simple_ui.xml.ui.fragment.RootFragment*")
+                classes("kr.open.library.simple_ui.xml.ui.fragment.BaseFragment*")
+                classes("kr.open.library.simple_ui.xml.ui.fragment.BaseBindingFragment*")
+                classes("kr.open.library.simple_ui.xml.ui.fragment.dialog.RootDialogFragment*")
+                classes("kr.open.library.simple_ui.xml.ui.fragment.dialog.BaseDialogFragment*")
+                classes("kr.open.library.simple_ui.xml.ui.fragment.dialog.BaseBindingDialogFragment*")
+                classes("kr.open.library.simple_ui.system_manager.controller.window.FloatingViewController*")
                 // 3. Lifecycle 커스텀 Layout
-                classes("**.BaseLifeCycle*Layout")
+                classes("kr.open.library.simple_ui.xml.ui.layout.BaseLifeCycle*Layout")
+                classes("kr.open.library.simple_ui.core.logcat.extensions.LogxExtensions*")
+                classes("kr.open.library.simple_ui.core.extensions.display.DisplayUnitExtensions*")
+                classes("kr.open.library.simple_ui.core.system_manager.controller.alarm.*")
             }
         }
     }
