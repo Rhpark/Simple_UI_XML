@@ -6,101 +6,126 @@
  
 
 
-## 프로젝트 정의
- - **Simple_UI_XML**은 Android XML 사용 개발자들이 개발을 더 쉽고 빠르게 할 수 있도록 도와주는 종합 라이브러리.
- - 추후 Compose용도 대응예정
+ ## 프로젝트 정의
+  - **Simple_UI_XML**은 Android XML 사용 개발자들이 개발을 더 쉽고 빠르게 할 수 있도록 도와주는 종합 라이브러리.
+  - 추후 Compose용도 대응예정
 
 
 
-## 프로젝트 구조
- - 모듈 분리 구조로 UI 비의존 코어(simple_core)와 XML 전용 UI 레이어(simple_xml)를 제공.
- - 샘플 앱(app)으로 활용법을 검증함 (settings.gradle.kts, app/build.gradle.kts).
+ ## 프로젝트 구조
+  - 모듈 분리 구조로 UI 비의존 코어(simple_core)와 XML 전용 UI 레이어(simple_xml)를 제공.
+  - 샘플 앱(app)으로 활용법을 검증함 (settings.gradle.kts, app/build.gradle.kts).
 
 
 
-## 라이브러리 주요 기능
-
- ### 베이스 UI 스캐폴딩
-  - 시스템 바·권한·edge-to-edge 처리까지 포함한 simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/activity/RootActivity.kt. 
-  - 자동 레이아웃/데이터바인딩 포함 BaseActivity.kt.
-  - BaseBindingActivity.kt.
-  - 동일 컨셉의 Fragment/Dialog/라이프사이클 레이아웃 클래스들.
-
- ### RecyclerView 편의
-  - 안전한 리스트 연산 큐 simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/adapter/queue/AdapterOperationQueue.kt. 
-  - Diff/List/Binding 어댑터.
-  - 스크롤 방향·엣지 감지용 RecyclerScrollStateView.kt.
-
- ### 확장 함수 팩
-  - 문자열/날짜/번들/단위 변환/try-catch 등 범용 확장 (simple_core/src/main/java/kr/open/library/simple_ui/core/extensions/...). 
-  - View/Resource/Toast/SnackBar/Anim 확장 (simple_xml/src/main/java/kr/open/library/simple_ui/xml/extensions/view/...).
-
- ### System Manager 정보·제어
-  - 배터리·위치·디스플레이·네트워크·Telephony·SIM을 StateFlow 기반으로 제공 (simple_core/src/main/java/kr/open/library/simple_ui/core/system_manager/info/*). 
-  - Wi-Fi/알람/알림/진동 등 제어기 (simple_core/src/main/java/kr/open/library/simple_ui/core/system_manager/controller/*).
-  - 키보드·플로팅뷰 컨트롤러 (simple_xml/src/main/java/kr/open/library/simple_ui/xml/system_manager/controller/*).
-
- ### 로깅
-  - DSL 구성, 파일 저장, 포매터/필터/스택트레이스 지원하는 simple_core/src/main/java/kr/open/library/simple_ui/core/logcat/Logx.kt.
-  - 내부 구성·작성기 구현체들.
-
- ### 권한 처리
-  - 플랫폼 특수 권한까지 아우르는 Context 확장 (simple_core/src/main/java/kr/open/library/simple_ui/core/permissions/extentions/PermissionExtensions.kt).
-  - ActivityResult 기반 큐·재요청·특수 권한 흐름을 묶은 오케스트레이터 simple_xml/src/main/java/kr/open/library/simple_ui/xml/permissions/manager/PermissionManager.kt.
-
- ### MVVM 베이스
-  - 라이프사이클 옵저버를 포함한 simple_core/src/main/java/kr/open/library/simple_ui/core/viewmodel/BaseViewModel.kt
-  - 이벤트 채널 제공 BaseViewModelEvent.kt.
+ ## 모듈별 상세 가이드
+  - **simple_core 모듈**: simple_core/claude.md 참조
+  - **simple_xml 모듈**: simple_xml/claude.md 참조
+  - 각 모듈별 특화 규칙 및 주의사항은 해당 모듈 claude.md 확인
 
 
 
-## 프로젝트 가치 제안
+ ## 개발 환경 설정
+  - Android Studio Ladybug Feature Drop | 2024.2.2 Patch 2
+  - Kotlin: 2.0.21
+  - compileSdk: 35
+  - minSdk: 28
+  - Android Gradle Plugin Version: 8.8.2
+  - Gradle Version: 8.10.2
 
- ### 대폭 보일러플레이트 절감
-  - 기본 Activity/Fragment/Adapter/권한/로그/시스템 서비스 래퍼로 표준 흐름만 남기도록 설계 (README_RECYCLERVIEW.md, README_SERVICE_MANAGER_INFO.md, README_SERVICE_MANAGER_CONTROL.md).
 
- ### 안정성과 일관성
-  - BaseSystemService.kt에서 권한 미리 검증 후 tryCatchSystemManager로 실패를 기본값 처리. 
-  - @RequiresPermission/@RequiresApi 표기. 
-  - safeCatch로 예외 안전성 확보.
+
+ ## 라이브러리 주요 기능
+
+  ### 베이스 UI 스캐폴딩
+   - 시스템 바·권한·edge-to-edge 처리까지 포함한 simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/activity/RootActivity.kt. 
+   - 자동 레이아웃/데이터바인딩 포함 BaseActivity.kt.
+   - BaseBindingActivity.kt.
+   - 동일 컨셉의 Fragment/Dialog/라이프사이클 레이아웃 클래스들.
+
+  ### RecyclerView 편의
+   - 안전한 리스트 연산 큐 simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/adapter/queue/AdapterOperationQueue.kt. 
+   - Diff/List/Binding 어댑터.
+   - 스크롤 방향·엣지 감지용 RecyclerScrollStateView.kt.
+
+  ### 확장 함수 팩
+   - 문자열/날짜/번들/단위 변환/try-catch 등 범용 확장 (simple_core/src/main/java/kr/open/library/simple_ui/core/extensions/...). 
+   - View/Resource/Toast/SnackBar/Anim 확장 (simple_xml/src/main/java/kr/open/library/simple_ui/xml/extensions/view/...).
+
+  ### System Manager 정보·제어
+   - 배터리·위치·디스플레이·네트워크·Telephony·SIM을 StateFlow 기반으로 제공 (simple_core/src/main/java/kr/open/library/simple_ui/core/system_manager/info/*). 
+   - Wi-Fi/알람/알림/진동 등 제어기 (simple_core/src/main/java/kr/open/library/simple_ui/core/system_manager/controller/*).
+   - 키보드·플로팅뷰 컨트롤러 (simple_xml/src/main/java/kr/open/library/simple_ui/xml/system_manager/controller/*).
+
+  ### 로깅
+   - DSL 구성, 파일 저장, 포매터/필터/스택트레이스 지원하는 simple_core/src/main/java/kr/open/library/simple_ui/core/logcat/Logx.kt.
+   - 내부 구성·작성기 구현체들.
+
+  ### 권한 처리
+   - 플랫폼 특수 권한까지 아우르는 Context 확장 (simple_core/src/main/java/kr/open/library/simple_ui/core/permissions/extentions/PermissionExtensions.kt).
+   - ActivityResult 기반 큐·재요청·특수 권한 흐름을 묶은 오케스트레이터 simple_xml/src/main/java/kr/open/library/simple_ui/xml/permissions/manager/PermissionManager.kt.
+
+  ### MVVM 베이스
+   - 라이프사이클 옵저버를 포함한 simple_core/src/main/java/kr/open/library/simple_ui/core/viewmodel/BaseViewModel.kt
+   - 이벤트 채널 제공 BaseViewModelEvent.kt.
+
+
+
+ ## 프로젝트 가치 제안
+
+  ### 대폭 보일러플레이트 절감
+   - 기본 Activity/Fragment/Adapter/권한/로그/시스템 서비스 래퍼로 표준 흐름만 남기도록 설계 (README_RECYCLERVIEW.md, README_SERVICE_MANAGER_INFO.md, README_SERVICE_MANAGER_CONTROL.md).
+
+
+  ### 안정성과 일관성
+   - BaseSystemService.kt에서 권한 미리 검증 후 tryCatchSystemManager로 실패를 기본값 처리. 
+   - @RequiresPermission/@RequiresApi 표기. 
+   - safeCatch로 예외 안전성 확보.
  
- ### 바로 현업에 쓰기 좋은 툴링
-  - 로그 파일 저장·필터·DSL, 특수 권한까지 이어받는 PermissionManager.
-  - API 35 대응 시스템 바 처리 등 실기기 이슈 대응 로직을 기본 제공.
+
+  ### 바로 현업에 쓰기 좋은 툴링
+   - 로그 파일 저장·필터·DSL, 특수 권한까지 이어받는 PermissionManager.
+   - API 35 대응 시스템 바 처리 등 실기기 이슈 대응 로직을 기본 제공.
  
- ### 문서·배포 준비 완료
-  - 한/영 병기 KDoc과 세분화된 README,
-  - 다중 모듈 Dokka 산출물(docs/api) 및 JitPack 퍼블리싱 스크립트.(Maven 에정)
+
+  ### 문서·배포 준비 완료
+   - 한/영 병기 KDoc과 세분화된 README,
+   - 다중 모듈 Dokka 산출물(docs/api) 및 JitPack 퍼블리싱 스크립트.(Maven 에정)
 
 
 
-## 코딩 컨벤션 & 스타일
+ ## 코딩 컨벤션 & 스타일
 
- ### Kotlin/Coroutine/Flow 우선
-  - 상태 StateFlow 관리.
-  - 이벤트 SharedFlow/Channel 관리.
-  - 동시성 Mutex/SupervisorJob 관리.
-  - 예제 코드(simple_xml/src/main/java/kr/open/library/simple_ui/xml/permissions/manager/PermissionManager.kt, simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/view/recyclerview/RecyclerScrollStateView.kt).
+  ### Kotlin/Coroutine/Flow 우선
+   - 상태 StateFlow 관리.
+   - 이벤트 SharedFlow/Channel 관리.
+   - 동시성 Mutex/SupervisorJob 관리.
+   - 예제 코드(simple_xml/src/main/java/kr/open/library/simple_ui/xml/permissions/manager/PermissionManager.kt, simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/view/recyclerview/RecyclerScrollStateView.kt).
 
- ### 명시적 가시성·어노테이션
-  - public/private를 드러내고 @RequiresPermission, @RequiresApi로 API·권한 요구사항을 문서화 (simple_core/src/main/java/kr/open/library/simple_ui/core/system_manager/info/location/LocationStateInfo.kt, simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/activity/RootActivity.kt).
 
- ### API 분기 헬퍼·게으른 초기화
-  - checkSdkVersion 인라인 분기와 by lazy로 시스템 서비스 접근을 캡슐화 (simple_core/src/main/java/kr/open/library/simple_ui/core/system_manager/controller/wifi/WifiController.kt).
+  ### 명시적 가시성·어노테이션
+   - public/private를 드러내고 @RequiresPermission, @RequiresApi로 API·권한 요구사항을 문서화 (simple_core/src/main/java/kr/open/library/simple_ui/core/system_manager/info/location/LocationStateInfo.kt, simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/activity/RootActivity.kt).
 
- ### 에러/로깅 패턴
-  - 모든 예외/상태 로깅은 Logx를 통한 단일 경로로 수집.
-  - safeCatch로 기본값 반환 패턴 유지 (simple_core/src/main/java/kr/open/library/simple_ui/core/extensions/trycatch/TryCatchExtensions.kt).
 
- ### 도메인별 패키징·타입 세분화
-  - extensions, system_manager, logcat, ui/adapter 등 도메인 단위 디렉터리.
-  - 연산 모델은 sealed class(AdapterOperationQueue.kt), 값 객체는 data class(telephony/network 등).
+  ### API 분기 헬퍼·게으른 초기화
+   - checkSdkVersion 인라인 분기와 by lazy로 시스템 서비스 접근을 캡슐화 (simple_core/src/main/java/kr/open/library/simple_ui/core/system_manager/controller/wifi/WifiController.kt).
 
- ### 도구 체인
-  - DataBinding 가능.
-  - Kover로 커버리지 태스크.
-  - Robolectric·단위 테스트 태스크 분리
-  - Dokka 자동 적용 (simple_core/build.gradle.kts, simple_xml/build.gradle.kts, build.gradle.kts 루트).
+
+  ### 에러/로깅 패턴
+   - 모든 예외/상태 로깅은 Logx를 통한 단일 경로로 수집.
+   - safeCatch로 기본값 반환 패턴 유지 (simple_core/src/main/java/kr/open/library/simple_ui/core/extensions/trycatch/TryCatchExtensions.kt).
+
+
+  ### 도메인별 패키징·타입 세분화
+   - extensions, system_manager, logcat, ui/adapter 등 도메인 단위 디렉터리.
+   - 연산 모델은 sealed class(AdapterOperationQueue.kt), 값 객체는 data class(telephony/network 등).
+
+
+  ### 도구 체인
+   - DataBinding 가능.
+   - Kover로 커버리지 태스크.
+   - Robolectric·단위 테스트 태스크 분리
+   - Dokka 자동 적용 (simple_core/build.gradle.kts, simple_xml/build.gradle.kts, build.gradle.kts 루트).
 
 
 
@@ -114,7 +139,7 @@
 
 
 
-  ## 주석 스타일
+ ## 주석 스타일
   - 주석은 한·영 병기 규칙을 따른다. 
   - 먼저 영어 설명 이후, 곧바로 <br><br>로 두 줄 공백을 만든다
   - 뒤 같은 내용을 한글로 반복해 “영문 → 빈 줄 → 국문” 구성을 유지한다.
@@ -129,13 +154,28 @@
 
 
 
-  ## 개발 환경 설정
-   - Android Studio Ladybug Feature Drop | 2024.2.2 Patch 2
-   - Kotlin: 2.0.21
-   - compileSdk: 35
-   - minSdk: 28
-   - Android Gradle Plugin Version: 8.8.2
-   - Gradle Version: 8.10.2
+ ## 에러 처리 규칙
+  - try-catch에서 return값이 필요한 경우 safeCatch을 권장한다.
+  - 시스템 서비스는 tryCatchSystemManager 사용을 권장한다.
+  - Logx로 통일된 로깅을 권장한다.
+  - 에러 발생 시 기본값 반환, null 반환 최소화
+
+
+
+ ## 테스트 작성 규칙
+
+  ### 단위 테스트 (Unit Test)
+   - simple_core, simple_xml 모두 testUnit 태스크 사용
+   - UI 의존성 없는 순수 로직 테스트
+  
+
+  ### Robolectric 테스트
+   - testRobolectric 태스크 사용
+   - Android 컴포넌트 의존성 있는 테스트
+  
+
+  ### Kover 커버리지
+   - testAll 실행 후 koverHtmlReport로 리포트 생성
 
 
 
@@ -167,7 +207,20 @@
    - 기능 추가/수정 전, 수정 부분에 대해 반드시 사용자에게 고지 할 것.
    - 기능 추가/수정 시, Android OS(SDK Version) 별 분기를 나눠야 할 필요가 있는지 반드시 확인 한다.
    - 기능 추가/수정 시, 기존 작성된 코드 스타일과 비슷한 구조로 개발 한다.
-   - 기능 추가/수정이 이상 없이 완료되면, claude.md에 수정된 부분을 정리하여 갱신할지 확인요청한다. 
+
+
+
+ ## claude.md 갱신이 필요한 경우
+  - 새로운 모듈 추가
+  - 주요 아키텍처 변경 (예: 새로운 디자인 패턴 도입)
+  - 개발 환경 변경 (Kotlin, Gradle 버전 업)
+  - 새로운 개발 규칙 추가
+
+
+ 
+ ## claude.md 갱신이 불필요한 경우
+  - 단순 버그 수정
+  - 기존 기능 개선 (규칙 변경 없음)
 
 
 
@@ -224,3 +277,24 @@
   - 거짓말이 제일 나쁜것.
 
 
+
+
+# GitHub 규칙
+
+ ## 커밋 메시지 형식
+  ### 릴리즈 커밋 (CI -> CD -> Documentation 자동 실행)
+   [release]  
+   Tag : x.x.x  
+   Title : 릴리즈 제목  
+   Describe : 릴리즈 상세 설명
+
+  ### 일반 커밋 (CI만 실행)
+   - [release] 태그 없이 일반 커밋
+
+
+
+ ## CI/CD 워크플로우
+  - **1. Android CI** (android-ci.yml): Unit Tests, Robolectric Tests, Build, Lint
+  - **2. Android CD** (android-cd.yml): Release 생성 및 JitPack 배포
+  - **3. Documentation** (documentation.yml): Dokka API 문서 + Kover Coverage 리포트 생성
+  - [release] 태그가 있는 커밋만 릴리즈 트리거

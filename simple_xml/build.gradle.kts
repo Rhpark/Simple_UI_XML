@@ -110,8 +110,8 @@ kover {
                 classes("**.Databinding.**")
                 classes("**.BR")
 
-                classes("kr.open.library.simple_xml.DataBinderMapperImpl*") // *로 Inner 클래스까지 함께 제외
-                classes("kr.open.library.simple_xml.DataBindingTriggerClass")
+                classes("**.DataBinderMapperImpl*") // *로 Inner 클래스까지 함께 제외
+                classes("**.DataBindingTriggerClass")
 
                 // 2. 베이스 컴포넌트(단위 테스트 어려움)
                 classes("kr.open.library.simple_ui.xml.ui.activity.RootActivity*")
@@ -123,7 +123,7 @@ kover {
                 classes("kr.open.library.simple_ui.xml.ui.fragment.dialog.RootDialogFragment*")
                 classes("kr.open.library.simple_ui.xml.ui.fragment.dialog.BaseDialogFragment*")
                 classes("kr.open.library.simple_ui.xml.ui.fragment.dialog.BaseBindingDialogFragment*")
-                classes("kr.open.library.simple_ui.system_manager.controller.window.FloatingViewController*")
+                classes("kr.open.library.simple_ui.xml.system_manager.controller.window.*")
                 // 3. Lifecycle 커스텀 Layout
                 classes("kr.open.library.simple_ui.xml.ui.layout.BaseLifeCycle*Layout")
                 classes("kr.open.library.simple_ui.core.logcat.extensions.LogxExtensions*")

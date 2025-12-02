@@ -133,6 +133,7 @@ kover {
                 classes("kr.open.library.simple_ui.core.logcat.extensions.LogxExtensions*")
                 classes("kr.open.library.simple_ui.core.logcat.Logx*")
                 classes("kr.open.library.simple_ui.core.logcat.runtime.LogxWriter*")
+                classes("kr.open.library.simple_ui.core.extensions.display.DisplayUnitExtensions*")
 
                 classes("kr.open.library.simple_ui.core.system_manager.base.BaseSystemService*")
                 classes("kr.open.library.simple_ui.core.system_manager.controller.alarm.AlarmController*")
