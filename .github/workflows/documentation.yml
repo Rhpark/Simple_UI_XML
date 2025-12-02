@@ -73,7 +73,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Generate Dokka documentation
-        run: bash -o pipefail -c "./gradlew dokkaHtmlMultiModuleCustom --no-daemon |& tee dokka-generate.log"
+        run: bash -o pipefail -c "./gradlew dokkaHtmlMultiModuleCustom --no-daemon --build-cache |& tee dokka-generate.log"
 
       - name: Verify documentation generated
         run: |
@@ -85,10 +85,10 @@ jobs:
           ls -la docs/api/
 
       - name: Run all tests for coverage
-        run: bash -o pipefail -c "./gradlew :simple_core:testAll :simple_xml:testAll |& tee kover-test.log"
+        run: bash -o pipefail -c "./gradlew :simple_core:testAll :simple_xml:testAll --build-cache |& tee kover-test.log"
 
       - name: Generate Kover coverage report
-        run: bash -o pipefail -c "./gradlew :simple_core:koverHtmlReport :simple_xml:koverHtmlReport |& tee kover-generate.log"
+        run: bash -o pipefail -c "./gradlew :simple_core:koverHtmlReport :simple_xml:koverHtmlReport --build-cache |& tee kover-generate.log"
 
       - name: Copy Kover reports to docs
         run: |
@@ -96,6 +96,24 @@ jobs:
           mkdir -p docs/coverage/simple_xml
           cp -r simple_core/build/reports/kover/html/* docs/coverage/simple_core/
           cp -r simple_xml/build/reports/kover/html/* docs/coverage/simple_xml/
+
+      - name: Add version banner to documentation
+        run: |
+          VERSION="${{ needs.check-cd-success.outputs.tag }}"
+          BUILD_DATE=$(date +'%Y-%m-%d')
+
+          # Create banner HTML
+          BANNER='<div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px 20px; text-align: center; font-family: Arial, sans-serif; box-shadow: 0 2px 8px rgba(0,0,0,0.15);"><strong style="font-size: 18px;">Version: '"$VERSION"'</strong><span style="margin: 0 15px; opacity: 0.8;">|</span><span style="opacity: 0.9;">Built: '"$BUILD_DATE"'</span></div>'
+
+          # Inject into coverage index.html
+          sed -i "/<body>/a\\
+          $BANNER" docs/coverage/index.html
+
+          # Inject into API index.html
+          sed -i "/<body>/a\\
+          $BANNER" docs/api/index.html
+
+          echo "✅ Version banner added to documentation pages"
 
       - name: Verify coverage reports copied
         run: |

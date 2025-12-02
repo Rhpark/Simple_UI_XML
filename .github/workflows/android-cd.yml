@@ -165,7 +165,7 @@ jobs:
 
       - name: Assemble verification APK
         id: assemble_verification
-        run: bash -o pipefail -c "./gradlew :app:assembleVerification --stacktrace |& tee assemble-verification.log"
+        run: bash -o pipefail -c "./gradlew :app:assembleVerification --stacktrace --build-cache |& tee assemble-verification.log"
 
       - name: Capture failure snippet (Assemble verification APK)
         if: failure()
@@ -313,7 +313,7 @@ jobs:
             echo "Verification artifact path not found." | tee "$LOG_FILE"
             exit 1
           fi
-          ./gradlew :app:appDistributionUploadVerification -PfirebaseArtifactPath="$ARTIFACT" --stacktrace |& tee "$LOG_FILE"
+          ./gradlew :app:appDistributionUploadVerification -PfirebaseArtifactPath="$ARTIFACT" --stacktrace --build-cache |& tee "$LOG_FILE"
 
       - name: Capture failure snippet (Firebase App Distribution)
         if: failure()
