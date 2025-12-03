@@ -77,15 +77,15 @@ jobs:
           bash -o pipefail -c "git push origin \"$TAG\" | tee -a release-tag.log"
 
       - name: Create GitHub Release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ needs.check-ci-success.outputs.tag }}
-          release_name: ${{ needs.check-ci-success.outputs.title }}
+          name: ${{ needs.check-ci-success.outputs.title }}
           body: ${{ needs.check-ci-success.outputs.body }}
           draft: false
           prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Capture failure snippet (Release)
         if: failure()
