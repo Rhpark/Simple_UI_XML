@@ -210,8 +210,8 @@ jobs:
           export FAILURE_MESSAGE="$SUMMARY"
           bash .github/scripts/report_action_error.sh
 
-  unit-test:
-    name: Unit Tests
+  test:
+    name: Tests (Unit, Robolectric)
     if: ${{ needs.initialize-check.outputs.docs_only != 'true' }}
     runs-on: ubuntu-latest
     needs: initialize-check
@@ -232,29 +232,35 @@ jobs:
           java-version: 17
           cache: gradle
 
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: false
+          gradle-home-cache-cleanup: true
+
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Run pure unit tests only
-        run: bash -o pipefail -c "./gradlew :simple_core:testUnit :simple_xml:testUnit --build-cache |& tee unit-test.log"
+      - name: Run tests and generate coverage
+        run: bash -o pipefail -c "./gradlew :simple_core:koverHtmlReport :simple_xml:koverHtmlReport --build-cache |& tee test-coverage.log"
 
-      - name: Capture failure snippet (Unit Tests)
+      - name: Capture failure snippet (Tests)
         if: failure()
-        id: unit_test_failure_snippet
+        id: test_failure_snippet
         run: |
-          python3 .github/scripts/extract_gradle_failure.py unit-test.log unit-test-failure-snippet.log
-          SUMMARY="$(head -n 1 unit-test-failure-snippet.log | tr -d '\r')"
+          python3 .github/scripts/extract_gradle_failure.py test-coverage.log test-failure-snippet.log
+          SUMMARY="$(head -n 1 test-failure-snippet.log | tr -d '\r')"
           if [ -z "$SUMMARY" ]; then
-            SUMMARY="Unit Tests job failed. Please inspect Gradle tasks :simple_core:testUnit and :simple_xml:testUnit."
+            SUMMARY="Tests or coverage generation failed."
           fi
           {
-            echo "UNIT_TEST_FAILURE_SUMMARY<<EOF"
+            echo "TEST_FAILURE_SUMMARY<<EOF"
             echo "$SUMMARY"
             echo "EOF"
-            echo "UNIT_TEST_FAILURE_LOG_PATH=$(pwd)/unit-test-failure-snippet.log"
+            echo "TEST_FAILURE_LOG_PATH=$(pwd)/test-failure-snippet.log"
           } >> "$GITHUB_ENV"
 
-      - name: Publish test results
+      - name: Publish unit test results
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
         with:
@@ -263,73 +269,7 @@ jobs:
             simple_xml/build/test-results/testUnit/**/*.xml
           check_name: Unit Test Results
 
-      - name: Upload test report
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: unit-test-report
-          path: |
-            simple_core/build/reports/tests/testUnit/
-            simple_xml/build/reports/tests/testUnit/
-          retention-days: 30
-
-      - name: Report failure (Unit Tests)
-        if: failure()
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          STAGE_NAME: "Unit Tests"
-          FAILURE_MESSAGE: ${{ env.UNIT_TEST_FAILURE_SUMMARY || 'Unit Tests job failed. Please inspect Gradle task :simple_ui:testUnit.' }}
-          FAILURE_LOG_PATH: ${{ env.UNIT_TEST_FAILURE_LOG_PATH }}
-          FAILURE_ENVIRONMENT: |
-            Runner: ${{ runner.os }}
-            Event: ${{ github.event_name }}
-        run: bash .github/scripts/report_action_error.sh
-
-  robolectric-test:
-    name: Robolectric Tests
-    if: ${{ needs.initialize-check.outputs.docs_only != 'true' }}
-    runs-on: ubuntu-latest
-    needs: unit-test
-    permissions:
-      contents: read
-      checks: write
-      pull-requests: write
-      issues: write
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: 17
-          cache: gradle
-
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-
-      - name: Run Robolectric tests
-        run: bash -o pipefail -c "./gradlew :simple_core:testRobolectric :simple_xml:testRobolectric --build-cache |& tee robolectric-test.log"
-
-      - name: Capture failure snippet (Robolectric Tests)
-        if: failure()
-        id: robolectric_failure_snippet
-        run: |
-          python3 .github/scripts/extract_gradle_failure.py robolectric-test.log robolectric-failure-snippet.log
-          SUMMARY="$(head -n 1 robolectric-failure-snippet.log | tr -d '\r')"
-          if [ -z "$SUMMARY" ]; then
-            SUMMARY="Robolectric Tests job failed. Check Gradle tasks :simple_core:testRobolectric and :simple_xml:testRobolectric."
-          fi
-          {
-            echo "ROBO_FAILURE_SUMMARY<<EOF"
-            echo "$SUMMARY"
-            echo "EOF"
-            echo "ROBO_FAILURE_LOG_PATH=$(pwd)/robolectric-failure-snippet.log"
-          } >> "$GITHUB_ENV"
-
-      - name: Publish test results
+      - name: Publish robolectric test results
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
         with:
@@ -338,23 +278,33 @@ jobs:
             simple_xml/build/test-results/testRobolectric/**/*.xml
           check_name: Robolectric Test Results
 
-      - name: Upload test report
+      - name: Upload test reports
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: robolectric-test-report
+          name: test-reports
           path: |
-            simple_core/build/reports/tests/testRobolectric/
-            simple_xml/build/reports/tests/testRobolectric/
+            simple_core/build/reports/tests/
+            simple_xml/build/reports/tests/
           retention-days: 30
 
-      - name: Report failure (Robolectric Tests)
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: coverage-report
+          path: |
+            simple_core/build/reports/kover/html/
+            simple_xml/build/reports/kover/html/
+          retention-days: 30
+
+      - name: Report failure (Tests)
         if: failure()
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          STAGE_NAME: "Robolectric Tests"
-          FAILURE_MESSAGE: ${{ env.ROBO_FAILURE_SUMMARY || 'Robolectric Tests job failed. Check Gradle task :simple_ui:testRobolectric.' }}
-          FAILURE_LOG_PATH: ${{ env.ROBO_FAILURE_LOG_PATH }}
+          STAGE_NAME: "Tests (Unit, Robolectric)"
+          FAILURE_MESSAGE: ${{ env.TEST_FAILURE_SUMMARY || 'Tests failed. Please inspect test logs.' }}
+          FAILURE_LOG_PATH: ${{ env.TEST_FAILURE_LOG_PATH }}
           FAILURE_ENVIRONMENT: |
             Runner: ${{ runner.os }}
             Event: ${{ github.event_name }}
@@ -364,7 +314,7 @@ jobs:
     name: Build and Lint Check
     if: ${{ needs.initialize-check.outputs.docs_only != 'true' }}
     runs-on: ubuntu-latest
-    needs: robolectric-test
+    needs: test
     permissions:
       contents: read
       checks: write
@@ -425,26 +375,7 @@ jobs:
             echo "BUILD_FAILURE_SOURCE=ktlintCheck"
           } >> "$GITHUB_ENV"
 
-      - name: Run all tests for coverage
-        run: bash -o pipefail -c "./gradlew :simple_core:testAll :simple_xml:testAll --build-cache |& tee build-testAll.log"
-
-      - name: Capture failure snippet (testAll)
-        if: failure()
-        run: |
-          python3 .github/scripts/extract_gradle_failure.py build-testAll.log build-testAll-failure.log
-          SUMMARY="$(head -n 1 build-testAll-failure.log | tr -d '\r')"
-          if [ -z "$SUMMARY" ]; then
-            SUMMARY="Build job failed while running :simple_core:testAll and :simple_xml:testAll."
-          fi
-          {
-            echo "BUILD_FAILURE_SUMMARY<<EOF"
-            echo "$SUMMARY"
-            echo "EOF"
-            echo "BUILD_FAILURE_LOG_PATH=$(pwd)/build-testAll-failure.log"
-            echo "BUILD_FAILURE_SOURCE=:simple_core:testAll and :simple_xml:testAll"
-          } >> "$GITHUB_ENV"
-
-      - name: Generate Kover coverage report
+      - name: Generate Kover coverage report (using previous test results)
         run: bash -o pipefail -c "./gradlew :simple_core:koverHtmlReport :simple_xml:koverHtmlReport --build-cache |& tee build-kover.log"
         if: always()
 

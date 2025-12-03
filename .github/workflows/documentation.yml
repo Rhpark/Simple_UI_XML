@@ -68,6 +68,9 @@ jobs:
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: false
+          gradle-home-cache-cleanup: true
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
@@ -85,18 +88,20 @@ jobs:
           echo "✅ Documentation generated successfully"
           ls -la docs/api/
 
-      - name: Run all tests for coverage
-        run: bash -o pipefail -c "./gradlew :simple_core:testAll :simple_xml:testAll --build-cache |& tee kover-test.log"
-
-      - name: Generate Kover coverage report
-        run: bash -o pipefail -c "./gradlew :simple_core:koverHtmlReport :simple_xml:koverHtmlReport --build-cache |& tee kover-generate.log"
+      - name: Download coverage report from CI
+        uses: dawidd6/action-download-artifact@v3
+        with:
+          workflow: android-ci.yml
+          name: coverage-report
+          path: coverage-from-ci
+          if_no_artifact_found: fail
 
       - name: Copy Kover reports to docs
         run: |
           mkdir -p docs/coverage/simple_core
           mkdir -p docs/coverage/simple_xml
-          cp -r simple_core/build/reports/kover/html/* docs/coverage/simple_core/
-          cp -r simple_xml/build/reports/kover/html/* docs/coverage/simple_xml/
+          cp -r coverage-from-ci/simple_core/build/reports/kover/html/* docs/coverage/simple_core/ || cp -r coverage-from-ci/simple_core/* docs/coverage/simple_core/
+          cp -r coverage-from-ci/simple_xml/build/reports/kover/html/* docs/coverage/simple_xml/ || cp -r coverage-from-ci/simple_xml/* docs/coverage/simple_xml/
 
       - name: Add version banner to documentation
         run: |
