@@ -11,10 +11,8 @@ import androidx.test.core.app.ApplicationProvider
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
-import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.runTest
 import kr.open.library.simple_ui.xml.system_manager.controller.softkeyboard.SoftKeyboardController
-import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
@@ -45,7 +43,6 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [Build.VERSION_CODES.TIRAMISU]) // API 33 for stylus handwriting tests
 class SoftKeyboardControllerRobolectricTest {
-
     private lateinit var application: Application
     private lateinit var controller: SoftKeyboardController
 
@@ -66,7 +63,7 @@ class SoftKeyboardControllerRobolectricTest {
         // Inject mock InputMethodManager
         Shadows.shadowOf(application).setSystemService(
             android.content.Context.INPUT_METHOD_SERVICE,
-            mockImm
+            mockImm,
         )
 
         controller = SoftKeyboardController(application)
@@ -96,7 +93,8 @@ class SoftKeyboardControllerRobolectricTest {
 
     @Test
     fun `setSoftInputMode sets custom soft input mode`() {
-        val customMode = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE or
+        val customMode =
+            WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE or
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE
 
         val result = controller.setSoftInputMode(mockWindow, customMode)
@@ -178,24 +176,25 @@ class SoftKeyboardControllerRobolectricTest {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun `showDelay with coroutine launches delayed task`() = runTest {
-        val testDispatcher = StandardTestDispatcher(testScheduler)
-        val testScope = TestScope(testDispatcher)
+    fun `showDelay with coroutine launches delayed task`() =
+        runTest {
+            val testDispatcher = StandardTestDispatcher(testScheduler)
+            val testScope = TestScope(testDispatcher)
 
-        `when`(mockView.requestFocus()).thenReturn(true)
-        `when`(mockImm.showSoftInput(mockView, InputMethodManager.SHOW_IMPLICIT)).thenReturn(true)
+            `when`(mockView.requestFocus()).thenReturn(true)
+            `when`(mockImm.showSoftInput(mockView, InputMethodManager.SHOW_IMPLICIT)).thenReturn(true)
 
-        val result = controller.showDelay(mockView, 100L, InputMethodManager.SHOW_IMPLICIT, testScope)
+            val result = controller.showDelay(mockView, 100L, InputMethodManager.SHOW_IMPLICIT, testScope)
 
-        assertTrue(result)
+            assertTrue(result)
 
-        // Advance time to trigger the delayed coroutine
-        testScope.testScheduler.advanceTimeBy(100L)
-        testScope.testScheduler.runCurrent()
+            // Advance time to trigger the delayed coroutine
+            testScope.testScheduler.advanceTimeBy(100L)
+            testScope.testScheduler.runCurrent()
 
-        verify(mockView).requestFocus()
-        verify(mockImm).showSoftInput(mockView, InputMethodManager.SHOW_IMPLICIT)
-    }
+            verify(mockView).requestFocus()
+            verify(mockImm).showSoftInput(mockView, InputMethodManager.SHOW_IMPLICIT)
+        }
 
     // ========================================
     // 4. Keyboard Hide Tests
@@ -252,26 +251,27 @@ class SoftKeyboardControllerRobolectricTest {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun `hideDelay with coroutine launches delayed task`() = runTest {
-        val testDispatcher = StandardTestDispatcher(testScheduler)
-        val testScope = TestScope(testDispatcher)
+    fun `hideDelay with coroutine launches delayed task`() =
+        runTest {
+            val testDispatcher = StandardTestDispatcher(testScheduler)
+            val testScope = TestScope(testDispatcher)
 
-        val mockWindowToken = mock(android.os.IBinder::class.java)
-        `when`(mockView.requestFocus()).thenReturn(true)
-        `when`(mockView.windowToken).thenReturn(mockWindowToken)
-        `when`(mockImm.hideSoftInputFromWindow(mockWindowToken, 0)).thenReturn(true)
+            val mockWindowToken = mock(android.os.IBinder::class.java)
+            `when`(mockView.requestFocus()).thenReturn(true)
+            `when`(mockView.windowToken).thenReturn(mockWindowToken)
+            `when`(mockImm.hideSoftInputFromWindow(mockWindowToken, 0)).thenReturn(true)
 
-        val result = controller.hideDelay(mockView, 100L, 0, testScope)
+            val result = controller.hideDelay(mockView, 100L, 0, testScope)
 
-        assertTrue(result)
+            assertTrue(result)
 
-        // Advance time to trigger the delayed coroutine
-        testScope.testScheduler.advanceTimeBy(100L)
-        testScope.testScheduler.runCurrent()
+            // Advance time to trigger the delayed coroutine
+            testScope.testScheduler.advanceTimeBy(100L)
+            testScope.testScheduler.runCurrent()
 
-        verify(mockView).requestFocus()
-        verify(mockImm).hideSoftInputFromWindow(mockWindowToken, 0)
-    }
+            verify(mockView).requestFocus()
+            verify(mockImm).hideSoftInputFromWindow(mockWindowToken, 0)
+        }
 
     // ========================================
     // 5. Stylus Handwriting Tests (API 33+)
