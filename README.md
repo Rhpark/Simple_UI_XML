@@ -23,6 +23,16 @@ This library helps you make easy and more simple code for Android developers
 
 #### 1. settings.gradle.kts
 ```kotlin
+pluginManagement {
+    repositories {
+        google {
+            //...
+        }
+        mavenCentral()
+        gradlePluginPortal()
+        maven { url = uri("https://jitpack.io") } // JitPack 추가
+    }
+}
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
