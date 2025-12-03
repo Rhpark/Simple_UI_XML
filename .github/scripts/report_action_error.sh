@@ -85,6 +85,12 @@ case "${STAGE_NAME_INPUT}" in
   "Initialize Check")
     ISSUE_LABELS=("CI-Initialize")
     ;;
+  "KtLint Check")
+    ISSUE_LABELS=("CI-KtLint")
+    ;;
+  "Tests (Unit, Robolectric)")
+    ISSUE_LABELS=("CI-Tests")
+    ;;
   "Unit Tests")
     ISSUE_LABELS=("CI-Unit-Test")
     ;;
