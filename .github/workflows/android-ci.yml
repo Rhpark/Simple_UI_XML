@@ -375,26 +375,6 @@ jobs:
             echo "BUILD_FAILURE_SOURCE=ktlintCheck"
           } >> "$GITHUB_ENV"
 
-      - name: Generate Kover coverage report (using previous test results)
-        run: bash -o pipefail -c "./gradlew :simple_core:koverHtmlReport :simple_xml:koverHtmlReport --build-cache |& tee build-kover.log"
-        if: always()
-
-      - name: Capture failure snippet (kover)
-        if: failure()
-        run: |
-          python3 .github/scripts/extract_gradle_failure.py build-kover.log build-kover-failure.log
-          SUMMARY="$(head -n 1 build-kover-failure.log | tr -d '\r')"
-          if [ -z "$SUMMARY" ]; then
-            SUMMARY="Build job failed while running koverHtmlReport."
-          fi
-          {
-            echo "BUILD_FAILURE_SUMMARY<<EOF"
-            echo "$SUMMARY"
-            echo "EOF"
-            echo "BUILD_FAILURE_LOG_PATH=$(pwd)/build-kover-failure.log"
-            echo "BUILD_FAILURE_SOURCE=koverHtmlReport"
-          } >> "$GITHUB_ENV"
-
       - name: Assemble
         run: bash -o pipefail -c "./gradlew assemble --stacktrace --build-cache |& tee build-assemble.log"
 
@@ -432,16 +412,6 @@ jobs:
             echo "BUILD_FAILURE_LOG_PATH=$(pwd)/build-lint-failure.log"
             echo "BUILD_FAILURE_SOURCE=lint"
           } >> "$GITHUB_ENV"
-
-      - name: Upload coverage report
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: coverage-report
-          path: |
-            simple_core/build/reports/kover/html/
-            simple_xml/build/reports/kover/html/
-          retention-days: 30
 
       - name: Upload reports
         if: always()
