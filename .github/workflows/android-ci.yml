@@ -228,7 +228,6 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
-          cache: gradle
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
@@ -290,7 +289,6 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
-          cache: gradle
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
@@ -320,23 +318,14 @@ jobs:
             echo "TEST_FAILURE_LOG_PATH=$(pwd)/test-failure-snippet.log"
           } >> "$GITHUB_ENV"
 
-      - name: Publish unit test results
+      - name: Publish test results
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
         with:
           files: |
-            simple_core/build/test-results/testUnit/**/*.xml
-            simple_xml/build/test-results/testUnit/**/*.xml
-          check_name: Unit Test Results
-
-      - name: Publish robolectric test results
-        uses: EnricoMi/publish-unit-test-result-action@v2
-        if: always()
-        with:
-          files: |
-            simple_core/build/test-results/testRobolectric/**/*.xml
-            simple_xml/build/test-results/testRobolectric/**/*.xml
-          check_name: Robolectric Test Results
+            simple_core/build/test-results/**/*.xml
+            simple_xml/build/test-results/**/*.xml
+          check_name: Test Results
 
       - name: Upload test reports
         uses: actions/upload-artifact@v4
@@ -399,7 +388,6 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
-          cache: gradle
 
       - name: Set up Android SDK (base)
         uses: android-actions/setup-android@v3

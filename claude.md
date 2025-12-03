@@ -175,7 +175,7 @@
   
 
   ### Kover 커버리지
-   - testAll 실행 후 koverHtmlReport로 리포트 생성
+   - koverHtmlReport로 simple_xml, simple_core 리포트 생성
 
 
 

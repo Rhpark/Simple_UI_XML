@@ -181,8 +181,8 @@
 
 
   ### 테스트 실행
-   - ./gradlew :simple_core:testAll 로 전체
-   - ./gradlew :simple_core:koverHtmlReport 로 KoverReport 작성
+   - ./gradlew :simple_core:koverHtmlReport
+   - ./gradlew :simple_xml:koverHtmlReport
 
 
 

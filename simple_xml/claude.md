@@ -193,8 +193,7 @@
 
 
   ### 테스트 실행
-   - ./gradlew :simple_xml:testAll 로 전체 테스트 실행
-   - ./gradlew :simple_xml:koverHtmlReport 로 KoverReport 작성
+   - ./gradlew :simple_xml:koverHtmlReport
 
 
 
