@@ -1,7 +1,8 @@
 # simple_xml 모듈 개요
  - **전역 규칙은 루트 claude.md 참조**
  - 주석 스타일, 코딩 컨벤션, 대화 규칙 등은 루트 claude.md를 따름
-
+ - **현재 버전**: 0.3.28 (JitPack)
+ - **Maven 좌표**: `com.github.Rhpark:Simple_UI_XML:0.3.28`
 
 
 
@@ -183,6 +184,13 @@
 
 
  ## 테스트 작성 규칙
+
+  ### 테스트 파일 디렉터리 구조
+   - 테스트 파일은 반드시 테스트 유형별 패키지에 위치해야 함
+   - **단위 테스트**: `src/test/java/kr/open/library/simple_ui/xml/unit/{원본_패키지_경로}/`
+   - **Robolectric 테스트**: `src/test/java/kr/open/library/simple_ui/xml/robolectric/{원본_패키지_경로}/`
+   - 파일명: 단위 테스트는 `*Test.kt`, Robolectric은 `*RobolectricTest.kt`
+
 
   ### testUnit
    - UI 의존성 없는 순수 로직 테스트

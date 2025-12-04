@@ -1,5 +1,7 @@
-package kr.open.library.simple_ui.xml.ui.view.recyclerview
+package kr.open.library.simple_ui.xml.unit.presenter.ui.view.recyclerview
 
+import kr.open.library.simple_ui.xml.ui.view.recyclerview.RecyclerScrollStateCalculator
+import kr.open.library.simple_ui.xml.ui.view.recyclerview.ScrollDirection
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue

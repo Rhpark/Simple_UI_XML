@@ -40,10 +40,99 @@ jobs:
             echo "tag=" >> $GITHUB_OUTPUT
           fi
 
+  update-version-in-docs:
+    name: Update Version in Documentation Files
+    runs-on: ubuntu-latest
+    needs: check-cd-success
+    if: needs.check-cd-success.outputs.should_release == 'true'
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Get version
+        id: version
+        run: |
+          VERSION="${{ needs.check-cd-success.outputs.tag }}"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "📌 Version: $VERSION"
+
+      - name: Update README.md
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          
+          # Line 13: **libraries** (v0.3.0+):
+          sed -i "s/\*\*libraries\*\* (v[0-9.]\+)/**libraries** (v$VERSION)/" README.md
+          
+          # Line 69-71, 74: implementation dependencies
+          sed -i "s/Simple_UI_Core:[0-9.]\+/Simple_UI_Core:$VERSION/g" README.md
+          sed -i "s/Simple_UI_XML:[0-9.]\+/Simple_UI_XML:$VERSION/g" README.md
+          
+          echo "✅ README.md updated"
+
+      - name: Update claude.md
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          
+          # Line 4: JitPack version
+          sed -i "s/JitPack [0-9.]\+/JitPack $VERSION/g" claude.md
+          
+          echo "✅ claude.md updated"
+
+      - name: Update simple_xml/claude.md
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          
+          # Line 4-5: 현재 버전 및 Maven 좌표
+          sed -i "s/\*\*현재 버전\*\*: [0-9.]\+/**현재 버전**: $VERSION/g" simple_xml/claude.md
+          sed -i "s/Simple_UI_XML:[0-9.]\+/Simple_UI_XML:$VERSION/g" simple_xml/claude.md
+          
+          echo "✅ simple_xml/claude.md updated"
+
+      - name: Update simple_core/claude.md
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          
+          # Line 4-5: 현재 버전 및 Maven 좌표
+          sed -i "s/\*\*현재 버전\*\*: [0-9.]\+/**현재 버전**: $VERSION/g" simple_core/claude.md
+          sed -i "s/Simple_UI_Core:[0-9.]\+/Simple_UI_Core:$VERSION/g" simple_core/claude.md
+          
+          echo "✅ simple_core/claude.md updated"
+
+      - name: Check if files changed
+        id: check_changes
+        run: |
+          if git diff --quiet; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+            echo "ℹ️ No changes detected"
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "✅ Changes detected"
+            git diff --stat
+          fi
+
+      - name: Commit and push changes
+        if: steps.check_changes.outputs.changed == 'true'
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          git add README.md claude.md simple_xml/claude.md simple_core/claude.md
+          git commit -m "docs: Update version to $VERSION [skip ci]"
+          git push
+          
+          echo "✅ Changes committed and pushed"
+
   generate-and-deploy-docs:
     name: Generate and Deploy Documentation
     runs-on: ubuntu-latest
-    needs: check-cd-success
+    needs: [check-cd-success, update-version-in-docs]
     if: needs.check-cd-success.outputs.should_release == 'true'
     permissions:
       contents: read

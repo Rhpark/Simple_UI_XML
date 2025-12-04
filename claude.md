@@ -1,73 +1,90 @@
 # 프로젝트 개요 및 목적
  - **Kotlin 기반 Android XML 개발 향상 라이브러리**
  - 샘플 앱으로 활용법을 검증함 (settings.gradle.kts, app/build.gradle.kts).
- - 배포는 JitPack 0.3.5 기준, minSdk 28/compileSdk 35, Kotlin 2.0.21/AGP 8.8.2 설정 (gradle/libs.versions.toml).
+ - 배포는 JitPack 0.3.28 기준, minSdk 28/compileSdk 35, Kotlin 2.0.21/AGP 8.8.2 설정 (gradle/libs.versions.toml).
  - 반복되는 Activity/Fragment/권한/로깅/시스템 서비스 보일러플레이트를 제거하고 생산성을 높이는 것이 1차 목표 (README_START.md, README_ACTIVITY_FRAGMENT.md 등).
  
 
 
- ## 프로젝트 정의
-  - **Simple_UI_XML**은 Android XML 사용 개발자들이 개발을 더 쉽고 빠르게 할 수 있도록 도와주는 종합 라이브러리.
-  - 추후 Compose용도 대응예정
+
+# 프로젝트 정의
+ - **Simple_UI_XML**은 Android XML 사용 개발자들이 개발을 더 쉽고 빠르게 할 수 있도록 도와주는 종합 라이브러리.
+ - 추후 Compose용도 대응예정
 
 
 
- ## 프로젝트 구조
-  - 모듈 분리 구조로 UI 비의존 코어(simple_core)와 XML 전용 UI 레이어(simple_xml)를 제공.
-  - 샘플 앱(app)으로 활용법을 검증함 (settings.gradle.kts, app/build.gradle.kts).
+
+# 프로젝트 구조
+ - 모듈 분리 구조로 UI 비의존 코어(simple_core)와 XML 전용 UI 레이어(simple_xml)를 제공.
+ - 샘플 앱(app)으로 활용법을 검증함 (settings.gradle.kts, app/build.gradle.kts).
 
 
 
- ## 모듈별 상세 가이드
-  - **simple_core 모듈**: simple_core/claude.md 참조
-  - **simple_xml 모듈**: simple_xml/claude.md 참조
-  - 각 모듈별 특화 규칙 및 주의사항은 해당 모듈 claude.md 확인
+
+# 모듈별 상세 가이드
+ - **simple_core 모듈**: simple_core/claude.md 참조
+ - **simple_xml 모듈**: simple_xml/claude.md 참조
+ - 각 모듈별 특화 규칙 및 주의사항은 해당 모듈 claude.md 확인
 
 
 
- ## 개발 환경 설정
-  - Android Studio Ladybug Feature Drop | 2024.2.2 Patch 2
-  - Kotlin: 2.0.21
-  - compileSdk: 35
-  - minSdk: 28
-  - Android Gradle Plugin Version: 8.8.2
-  - Gradle Version: 8.10.2
+ ## 새로운 모듈 추가 절차
+  - settings.gradle.kts에 모듈 추가
+  - build.gradle.kts 생성 (simple_core, simple_xml 템플릿 참조)
+  - namespace 설정 및 의존성 구성
+  - 모듈별 claude.md 작성
+  - 루트 claude.md에 모듈 링크 추가
+  - publishing 설정 (groupId, artifactId)
+  - Dokka 설정 추가
+  - Kover 설정 추가
+  - test/testRobolectric 태스크 구성
 
 
 
- ## 라이브러리 주요 기능
 
-  ### 베이스 UI 스캐폴딩
-   - 시스템 바·권한·edge-to-edge 처리까지 포함한 simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/activity/RootActivity.kt. 
-   - 자동 레이아웃/데이터바인딩 포함 BaseActivity.kt.
-   - BaseBindingActivity.kt.
-   - 동일 컨셉의 Fragment/Dialog/라이프사이클 레이아웃 클래스들.
+# 개발 환경 설정
+ - Android Studio Ladybug Feature Drop | 2024.2.2 Patch 2
+ - Kotlin: 2.0.21
+ - compileSdk: 35
+ - minSdk: 28
+ - Android Gradle Plugin Version: 8.8.2
+ - Gradle Version: 8.10.2
 
-  ### RecyclerView 편의
-   - 안전한 리스트 연산 큐 simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/adapter/queue/AdapterOperationQueue.kt. 
-   - Diff/List/Binding 어댑터.
-   - 스크롤 방향·엣지 감지용 RecyclerScrollStateView.kt.
 
-  ### 확장 함수 팩
-   - 문자열/날짜/번들/단위 변환/try-catch 등 범용 확장 (simple_core/src/main/java/kr/open/library/simple_ui/core/extensions/...). 
-   - View/Resource/Toast/SnackBar/Anim 확장 (simple_xml/src/main/java/kr/open/library/simple_ui/xml/extensions/view/...).
 
-  ### System Manager 정보·제어
-   - 배터리·위치·디스플레이·네트워크·Telephony·SIM을 StateFlow 기반으로 제공 (simple_core/src/main/java/kr/open/library/simple_ui/core/system_manager/info/*). 
-   - Wi-Fi/알람/알림/진동 등 제어기 (simple_core/src/main/java/kr/open/library/simple_ui/core/system_manager/controller/*).
-   - 키보드·플로팅뷰 컨트롤러 (simple_xml/src/main/java/kr/open/library/simple_ui/xml/system_manager/controller/*).
+# 라이브러리 주요 기능
 
-  ### 로깅
-   - DSL 구성, 파일 저장, 포매터/필터/스택트레이스 지원하는 simple_core/src/main/java/kr/open/library/simple_ui/core/logcat/Logx.kt.
-   - 내부 구성·작성기 구현체들.
+ ## 베이스 UI 스캐폴딩
+  - 시스템 바·권한·edge-to-edge 처리까지 포함한 simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/activity/RootActivity.kt. 
+  - 자동 레이아웃/데이터바인딩 포함 BaseActivity.kt.
+  - BaseBindingActivity.kt.
+  - 동일 컨셉의 Fragment/Dialog/라이프사이클 레이아웃 클래스들.
 
-  ### 권한 처리
-   - 플랫폼 특수 권한까지 아우르는 Context 확장 (simple_core/src/main/java/kr/open/library/simple_ui/core/permissions/extentions/PermissionExtensions.kt).
-   - ActivityResult 기반 큐·재요청·특수 권한 흐름을 묶은 오케스트레이터 simple_xml/src/main/java/kr/open/library/simple_ui/xml/permissions/manager/PermissionManager.kt.
+ ## RecyclerView 편의
+  - 안전한 리스트 연산 큐 simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/adapter/queue/AdapterOperationQueue.kt. 
+  - Diff/List/Binding 어댑터.
+  - 스크롤 방향·엣지 감지용 RecyclerScrollStateView.kt.
 
-  ### MVVM 베이스
-   - 라이프사이클 옵저버를 포함한 simple_core/src/main/java/kr/open/library/simple_ui/core/viewmodel/BaseViewModel.kt
-   - 이벤트 채널 제공 BaseViewModelEvent.kt.
+ ## 확장 함수 팩
+  - 문자열/날짜/번들/단위 변환/try-catch 등 범용 확장 (simple_core/src/main/java/kr/open/library/simple_ui/core/extensions/...). 
+  - View/Resource/Toast/SnackBar/Anim 확장 (simple_xml/src/main/java/kr/open/library/simple_ui/xml/extensions/view/...).
+
+ ## System Manager 정보·제어
+  - 배터리·위치·디스플레이·네트워크·Telephony·SIM을 StateFlow 기반으로 제공 (simple_core/src/main/java/kr/open/library/simple_ui/core/system_manager/info/*). 
+  - Wi-Fi/알람/알림/진동 등 제어기 (simple_core/src/main/java/kr/open/library/simple_ui/core/system_manager/controller/*).
+  - 키보드·플로팅뷰 컨트롤러 (simple_xml/src/main/java/kr/open/library/simple_ui/xml/system_manager/controller/*).
+
+ ## 로깅
+  - DSL 구성, 파일 저장, 포매터/필터/스택트레이스 지원하는 simple_core/src/main/java/kr/open/library/simple_ui/core/logcat/Logx.kt.
+  - 내부 구성·작성기 구현체들.
+
+ ## 권한 처리
+  - 플랫폼 특수 권한까지 아우르는 Context 확장 (simple_core/src/main/java/kr/open/library/simple_ui/core/permissions/extentions/PermissionExtensions.kt).
+  - ActivityResult 기반 큐·재요청·특수 권한 흐름을 묶은 오케스트레이터 simple_xml/src/main/java/kr/open/library/simple_ui/xml/permissions/manager/PermissionManager.kt.
+
+ ## MVVM 베이스
+  - 라이프사이클 옵저버를 포함한 simple_core/src/main/java/kr/open/library/simple_ui/core/viewmodel/BaseViewModel.kt
+  - 이벤트 채널 제공 BaseViewModelEvent.kt.
 
 
 
@@ -164,18 +181,75 @@
 
  ## 테스트 작성 규칙
 
+  ### 테스트 파일 디렉터리 구조
+   - 테스트 파일은 반드시 테스트 유형별 패키지에 위치해야 함
+   - **단위 테스트**: `src/test/java/kr/open/library/simple_ui/{모듈}/unit/{원본_패키지_경로}/`
+   - **Robolectric 테스트**: `src/test/java/kr/open/library/simple_ui/{모듈}/robolectric/{원본_패키지_경로}/`
+   - 원본 소스 파일의 패키지 구조를 `unit/` 또는 `robolectric/` 하위에 그대로 유지
+   - 예시:
+     - 소스: `simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/view/recyclerview/RecyclerScrollStateCalculator.kt`
+     - 단위 테스트: `simple_xml/src/test/java/kr/open/library/simple_ui/xml/unit/ui/view/recyclerview/RecyclerScrollStateCalculatorTest.kt`
+     - Robolectric: `simple_xml/src/test/java/kr/open/library/simple_ui/xml/robolectric/ui/view/recyclerview/RecyclerScrollStateCalculatorRobolectricTest.kt`
+  
+
   ### 단위 테스트 (Unit Test)
    - simple_core, simple_xml 모두 testUnit 태스크 사용
-   - UI 의존성 없는 순수 로직 테스트
+   - UI, Android 의존성 없는 순수 로직 테스트
+   - JUnit 기반
+   - 파일명: `*Test.kt` (예: `RecyclerScrollStateCalculatorTest.kt`)
   
 
   ### Robolectric 테스트
    - testRobolectric 태스크 사용
    - Android 컴포넌트 의존성 있는 테스트
+   - Android 프레임워크 필요 시 사용
+   - 파일명: `*RobolectricTest.kt` (예: `PermissionManagerRobolectricTest.kt`)
+  
+
+  ### 테스트 파일 네이밍 규칙
+   - 단위 테스트: `{클래스명}Test.kt`
+   - Robolectric 테스트: `{클래스명}RobolectricTest.kt`
+   - 테스트 대상 클래스명을 명확히 반영
   
 
   ### Kover 커버리지
    - koverHtmlReport로 simple_xml, simple_core 리포트 생성
+
+
+
+ ## 버전 관리 규칙
+
+  ### 버전 변경 절차
+   - gradle/libs.versions.toml의 appVersion 업데이트
+   - [release] 
+      Tag: x.x.x (appVersion과 동일)
+      Title: 릴리즈 제목
+      Describe: 상세 설명
+   - CI → CD → Documentation 자동 실행
+   - JitPack 자동 배포
+   - [release] 태그가 있는 커밋만 릴리즈 트리거, 없다면 CI만 수행
+
+
+ ### 버전 번호 규칙
+  - Major.Minor.Patch (Semantic Versioning)
+  - Breaking changes: Major 증가
+  - 새 기능 추가: Minor 증가
+  - 버그 수정: Patch 증가
+
+
+
+ ## CI/CD 워크플로우
+  - **1. Android CI** (android-ci.yml): Initialize Check, KtLint Check, Tests(Unit, Robolectric) Build 구조
+  - **2. Android CD** (android-cd.yml): Release(JitPack 자동 배포), Assemble Apk,  Firebase App Distribution,
+  - **3. Documentation** (documentation.yml): Dokka API 문서 + Kover Coverage 리포트 생성
+  - [release] 태그가 있는 커밋만 릴리즈 트리거, 없다면 "1. Android CI"만 수행
+
+
+  ### Dokka 문서 업데이트 시점
+   - [release] 커밋 시 Documentation 워크플로우가 자동 실행
+   - Dokka HTML 생성 및 GitHub Pages 배포
+   - 로컬 확인: ./gradlew dokkaHtml
+   - 출력 위치: build/dokka/html/
 
 
 
@@ -278,23 +352,25 @@
 
 
 
+ ## README 파일 업데이트 가이드
 
-# GitHub 규칙
+  ### README 파일 매핑
+   - Activity/Fragment 변경 → README_ACTIVITY_FRAGMENT.md
+   - 확장 함수 추가/변경 → README_EXTENSIONS.md
+   - Logx 기능 변경 → README_LOGX.md
+   - ViewModel 관련 → README_MVVM.md
+   - RecyclerView 관련 → README_RECYCLERVIEW.md
+   - System Manager Info → README_SERVICE_MANAGER_INFO.md
+   - System Manager Control → README_SERVICE_MANAGER_CONTROL.md
+   - 스타일 가이드 변경 → README_STYLE.md
+   - 샘플 앱 변경 → README_SAMPLE.md
+   - 시작 가이드 변경 → README_START.md
+   - 전체 개요 변경 → README.md
 
- ## 커밋 메시지 형식
-  ### 릴리즈 커밋 (CI -> CD -> Documentation 자동 실행)
-   [release]  
-   Tag : x.x.x  
-   Title : 릴리즈 제목  
-   Describe : 릴리즈 상세 설명
 
-  ### 일반 커밋 (CI만 실행)
-   - [release] 태그 없이 일반 커밋
+  ### 업데이트 원칙
+   - 새 기능 추가 시: 해당 README + README.md 개요 섹션
+   - Breaking change: 해당 README + README.md 버전 정보
+   - 예제 코드 변경: 반드시 실행 가능한 코드로 유지
 
 
-
- ## CI/CD 워크플로우
-  - **1. Android CI** (android-ci.yml): Unit Tests, Robolectric Tests, Build, Lint
-  - **2. Android CD** (android-cd.yml): Release 생성 및 JitPack 배포
-  - **3. Documentation** (documentation.yml): Dokka API 문서 + Kover Coverage 리포트 생성
-  - [release] 태그가 있는 커밋만 릴리즈 트리거

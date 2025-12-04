@@ -1,7 +1,8 @@
 # simple_core 모듈 개요
  - **전역 규칙은 루트 claude.md 참조**  
  - 주석 스타일, 코딩 컨벤션, 대화 규칙 등은 루트 claude.md를 따름
-
+ - **현재 버전**: 0.3.28 (JitPack)
+ - **Maven 좌표**: `com.github.Rhpark:Simple_UI_Core:0.3.28`
 
 
 
@@ -35,7 +36,7 @@
 
  ## 주요 패키지 구조 (총 97개 파일)
 
-  ### extensions (11개 하위 패키지)
+  ### extensions (9개 하위 패키지)
    - **bundle**: Bundle 생성/접근 간편화 (simple_core/src/main/java/kr/open/library/simple_ui/core/extensions/bundle/BundleInline.kt)
    - **collection**: 컬렉션 조건부 처리 (simple_core/src/main/java/kr/open/library/simple_ui/core/extensions/collection/)
    - **conditional**: SDK 버전 분기, 조건부 실행 (simple_core/src/main/java/kr/open/library/simple_ui/core/extensions/conditional/SdkVersionInline.kt)
@@ -172,6 +173,13 @@
 
  ## 테스트 작성 규칙
 
+  ### 테스트 파일 디렉터리 구조
+   - 테스트 파일은 반드시 테스트 유형별 패키지에 위치해야 함
+   - **단위 테스트**: `src/test/java/kr/open/library/simple_ui/core/unit/{원본_패키지_경로}/`
+   - **Robolectric 테스트**: `src/test/java/kr/open/library/simple_ui/core/robolectric/{원본_패키지_경로}/`
+   - 파일명: 단위 테스트는 `*Test.kt`, Robolectric은 `*RobolectricTest.kt`
+
+
   ### testUnit: UI 의존성 없는 순수 로직 테스트
    - extensions, logcat, permissions, system_manager 등
 
@@ -183,6 +191,7 @@
   ### 테스트 실행
    - ./gradlew :simple_core:koverHtmlReport
    - ./gradlew :simple_xml:koverHtmlReport
+   - 또는 ./gradlew :simple_core:koverHtmlReport :simple_xml:koverHtmlReport
 
 
 
