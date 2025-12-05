@@ -120,7 +120,6 @@ kover {
                 classes("**.databinding.**")
                 classes("**.Databinding.**")
                 classes("**.BR")
-
                 classes("**.DataBinderMapperImpl*") // *로 Inner 클래스까지 함께 제외
                 classes("**.DataBindingTriggerClass")
 
@@ -135,17 +134,11 @@ kover {
                 classes("kr.open.library.simple_ui.core.logcat.runtime.LogxWriter*")
                 classes("kr.open.library.simple_ui.core.extensions.display.DisplayUnitExtensions*")
 
-                classes("kr.open.library.simple_ui.core.system_manager.base.BaseSystemService*")
-                classes("kr.open.library.simple_ui.core.system_manager.controller.alarm.AlarmController*")
                 classes("kr.open.library.simple_ui.core.system_manager.controller.alarm.receiver.BaseAlarmReceiver*")
-                classes("kr.open.library.simple_ui.core.system_manager.controller.wifi.WifiController*")
                 classes("kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateInfo*")
                 classes("kr.open.library.simple_ui.core.system_manager.info.battery.power.PowerProfile*")
-
                 classes("kr.open.library.simple_ui.core.system_manager.info.location.LocationStateInfo*")
-                classes("kr.open.library.simple_ui.core.system_manager.info.network.connectivity.NetworkConnectivityInfo*")
                 classes("kr.open.library.simple_ui.core.system_manager.info.network.sim.SimInfo*")
-                classes("kr.open.library.simple_ui.core.system_manager.info.network.telephony.TelephonyInfo*")
             }
         }
     }
