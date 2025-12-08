@@ -81,12 +81,32 @@ public abstract class BaseBindingFragment<BINDING : ViewDataBinding>(
      * Throws IllegalStateException if accessed after onDestroyView().<br><br>
      * Fragment의 DataBinding 객체입니다.<br>
      * onDestroyView() 이후에 접근하면 IllegalStateException이 발생합니다.<br>
+     *
+     * @return The DataBinding object for the fragment.<br><br>
+     *         Fragment의 DataBinding 객체.<br>
+     * @throws IllegalStateException if accessed after onDestroyView().<br><br>
+     *                               onDestroyView() 이후에 접근하는 경우.
      */
     public val binding: BINDING
         get() =
             _binding
                 ?: throw IllegalStateException("Binding accessed after onDestroyView()")
 
+    /**
+     * Called to have the fragment instantiate its user interface view.
+     * Inflates the layout using DataBinding and calls afterOnCreateView hook.<br><br>
+     * Fragment가 사용자 인터페이스 뷰를 인스턴스화하기 위해 호출됩니다.<br>
+     * DataBinding을 사용하여 레이아웃을 인플레이션하고 afterOnCreateView 훅을 호출합니다.<br>
+     *
+     * @param inflater The LayoutInflater object that can be used to inflate any views in the fragment.<br><br>
+     *                 Fragment의 뷰를 인플레이션하는 데 사용할 수 있는 LayoutInflater 객체.
+     * @param container If non-null, this is the parent view that the fragment's UI should be attached to.<br><br>
+     *                  null이 아닌 경우, Fragment의 UI가 첨부될 부모 뷰.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed from a previous saved state.<br><br>
+     *                           null이 아닌 경우, 이 Fragment는 이전에 저장된 상태에서 다시 구성되고 있습니다.
+     * @return Return the View for the fragment's UI.<br><br>
+     *         Fragment UI의 View를 반환.<br>
+     */
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -114,6 +134,17 @@ public abstract class BaseBindingFragment<BINDING : ViewDataBinding>(
     ) {
     }
 
+    /**
+     * Called immediately after onCreateView has returned, but before any saved state has been restored in to the view.
+     * Sets the lifecycle owner for the binding to viewLifecycleOwner.<br><br>
+     * onCreateView가 반환된 직후에 호출되지만 저장된 상태가 뷰에 복원되기 전에 호출됩니다.<br>
+     * 바인딩의 생명주기 소유자를 viewLifecycleOwner로 설정합니다.<br>
+     *
+     * @param view The View returned by onCreateView.<br><br>
+     *             onCreateView에서 반환된 View.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed from a previous saved state.<br><br>
+     *                           null이 아닌 경우, 이 Fragment는 이전에 저장된 상태에서 다시 구성되고 있습니다.
+     */
     override fun onViewCreated(
         view: View,
         savedInstanceState: Bundle?,
@@ -134,11 +165,19 @@ public abstract class BaseBindingFragment<BINDING : ViewDataBinding>(
      * Obtains a ViewModel of the specified type using ViewModelProvider.<br><br>
      * ViewModelProvider를 사용하여 지정된 타입의 ViewModel을 가져옵니다.<br>
      *
+     * @param T The type of the ViewModel to obtain.<br><br>
+     *          가져올 ViewModel의 타입.
      * @return The ViewModel instance of type T.<br><br>
      *         타입 T의 ViewModel 인스턴스.<br>
      */
     protected inline fun <reified T : ViewModel> Fragment.getViewModel(): T = ViewModelProvider(this)[T::class.java]
 
+    /**
+     * Called when the view previously created by onCreateView has been detached from the fragment.
+     * Cleans up the binding reference to prevent memory leaks.<br><br>
+     * onCreateView에서 생성된 뷰가 Fragment에서 분리될 때 호출됩니다.<br>
+     * 메모리 누수를 방지하기 위해 바인딩 참조를 정리합니다.<br>
+     */
     override fun onDestroyView() {
         super.onDestroyView()
         binding.lifecycleOwner = null

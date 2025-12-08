@@ -72,6 +72,15 @@ class PermissionManager private constructor() {
         @Volatile
         private var instance: PermissionManager? = null
 
+        /**
+         * Returns the singleton instance of PermissionManager.<br>
+         * Thread-safe lazy initialization using double-checked locking.<br><br>
+         * PermissionManager의 싱글톤 인스턴스를 반환합니다.<br>
+         * 이중 확인 잠금을 사용한 스레드 안전 지연 초기화입니다.<br>
+         *
+         * @return The singleton PermissionManager instance.<br><br>
+         *         싱글톤 PermissionManager 인스턴스.<br>
+         */
         fun getInstance(): PermissionManager =
             instance ?: synchronized(this) {
                 instance ?: PermissionManager().also { instance = it }
@@ -179,7 +188,7 @@ class PermissionManager private constructor() {
 
             val (specialPermissions, normalPermissions) =
                 remainingPermissions.partition {
-                    context.isSpecialPermission(it)
+                    isSpecialPermission(it)
                 }
 
             // Launches the normal permission flow first when necessary.<br><br>

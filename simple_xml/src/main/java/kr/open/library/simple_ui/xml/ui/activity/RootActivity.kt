@@ -72,6 +72,9 @@ abstract class RootActivity :
      * Uses WindowInsets on API 30+ and legacy method on older versions.<br><br>
      * 현재 StatusBar 높이를 픽셀 단위로 반환합니다.<br>
      * API 30+에서는 WindowInsets를 사용하고 이전 버전에서는 레거시 메서드를 사용합니다.<br>
+     *
+     * @return The StatusBar height in pixels.<br><br>
+     *         StatusBar 높이 (픽셀 단위).<br>
      */
     public val statusBarHeight: Int
         get() =
@@ -91,6 +94,9 @@ abstract class RootActivity :
      * Uses WindowInsets on API 30+ and legacy calculation on older versions.<br><br>
      * 현재 NavigationBar 높이를 픽셀 단위로 반환합니다.<br>
      * API 30+에서는 WindowInsets를 사용하고 이전 버전에서는 레거시 계산을 사용합니다.<br>
+     *
+     * @return The NavigationBar height in pixels.<br><br>
+     *         NavigationBar 높이 (픽셀 단위).<br>
      */
     public val navigationBarHeight: Int
         get() =
@@ -109,6 +115,17 @@ abstract class RootActivity :
                 },
             )
 
+    /**
+     * Requests runtime permissions and returns the result via callback.
+     * Delegates to PermissionDelegate for actual permission handling.<br><br>
+     * 런타임 권한을 요청하고 콜백을 통해 결과를 반환합니다.<br>
+     * 실제 권한 처리는 PermissionDelegate에 위임합니다.<br>
+     *
+     * @param permissions The list of permissions to request.<br><br>
+     *                    요청할 권한 목록.
+     * @param onResult Callback invoked with the list of denied permissions after the request completes.<br><br>
+     *                 요청 완료 후 거부된 권한 목록과 함께 호출되는 콜백.
+     */
     override fun onRequestPermissions(
         permissions: List<String>,
         onResult: (deniedPermissions: List<String>) -> Unit,
@@ -116,6 +133,17 @@ abstract class RootActivity :
         permissionDelegate.requestPermissions(permissions, onResult)
     }
 
+    /**
+     * Called when the activity is starting.
+     * Initializes PermissionDelegate and restores permission state from savedInstanceState.<br><br>
+     * 액티비티가 시작될 때 호출됩니다.<br>
+     * PermissionDelegate를 초기화하고 savedInstanceState에서 권한 상태를 복원합니다.<br>
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down,
+     *                           this Bundle contains the data it most recently supplied in onSaveInstanceState.<br><br>
+     *                           액티비티가 이전에 종료된 후 다시 초기화되는 경우,
+     *                           이 Bundle에는 onSaveInstanceState에서 가장 최근에 제공된 데이터가 포함됩니다.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         permissionDelegate = PermissionDelegate(this)
@@ -134,6 +162,15 @@ abstract class RootActivity :
      */
     protected open fun beforeOnCreated(savedInstanceState: Bundle?) {}
 
+    /**
+     * Called to retrieve per-instance state from an activity before being killed.
+     * Saves the current permission state to the Bundle.<br><br>
+     * 액티비티가 종료되기 전에 인스턴스별 상태를 검색하기 위해 호출됩니다.<br>
+     * 현재 권한 상태를 Bundle에 저장합니다.<br>
+     *
+     * @param outState Bundle in which to place your saved state.<br><br>
+     *                 저장된 상태를 배치할 Bundle.
+     */
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         permissionDelegate.onSaveInstanceState(outState)

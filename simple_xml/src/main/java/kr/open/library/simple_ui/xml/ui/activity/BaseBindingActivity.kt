@@ -94,6 +94,17 @@ public abstract class BaseBindingActivity<BINDING : ViewDataBinding>(
     protected lateinit var binding: BINDING
         private set
 
+    /**
+     * Called when the activity is starting.
+     * Initializes DataBinding, sets up the layout, and calls onCreateView hook.<br><br>
+     * 액티비티가 시작될 때 호출됩니다.<br>
+     * DataBinding을 초기화하고, 레이아웃을 설정하며, onCreateView 훅을 호출합니다.<br>
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down,
+     *                           this Bundle contains the data it most recently supplied in onSaveInstanceState.<br><br>
+     *                           액티비티가 이전에 종료된 후 다시 초기화되는 경우,
+     *                           이 Bundle에는 onSaveInstanceState에서 가장 최근에 제공된 데이터가 포함됩니다.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, layoutRes)
@@ -131,6 +142,8 @@ public abstract class BaseBindingActivity<BINDING : ViewDataBinding>(
      * Obtains a ViewModel of the specified type using ViewModelProvider.<br><br>
      * ViewModelProvider를 사용하여 지정된 타입의 ViewModel을 가져옵니다.<br>
      *
+     * @param T The type of the ViewModel to obtain.<br><br>
+     *          가져올 ViewModel의 타입.
      * @return The ViewModel instance of type T.<br><br>
      *         타입 T의 ViewModel 인스턴스.<br>
      */

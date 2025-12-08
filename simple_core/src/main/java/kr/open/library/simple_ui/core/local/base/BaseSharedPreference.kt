@@ -79,6 +79,13 @@ public abstract class BaseSharedPreference(
     /**
      * Builds an `Int` delegate bound to [key] with [defaultValue].<br><br>
      * [key]와 [defaultValue]를 바인딩한 `Int` 위임자를 만듭니다.<br>
+     *
+     * @param key SharedPreferences entry key.<br><br>
+     *        SharedPreferences에 사용할 키입니다.
+     * @param defaultValue Fallback integer when the key has no value.<br><br>
+     *        값이 없을 때 사용할 기본 정수입니다.
+     * @return Read/write property delegate backed by SharedPreferences.<br><br>
+     *         SharedPreferences를 기반으로 하는 읽기·쓰기 위임자를 반환합니다.<br>
      */
     protected fun intPref(
         key: String,
@@ -99,6 +106,13 @@ public abstract class BaseSharedPreference(
     /**
      * Builds a `Boolean` delegate bound to [key] with [defaultValue].<br><br>
      * [key]와 [defaultValue]를 바인딩한 `Boolean` 위임자를 만듭니다.<br>
+     *
+     * @param key SharedPreferences entry key.<br><br>
+     *        SharedPreferences에 사용할 키입니다.
+     * @param defaultValue Fallback boolean when the key has no value.<br><br>
+     *        값이 없을 때 사용할 기본 불리언입니다.
+     * @return Read/write property delegate backed by SharedPreferences.<br><br>
+     *         SharedPreferences를 기반으로 하는 읽기·쓰기 위임자를 반환합니다.<br>
      */
     protected fun booleanPref(
         key: String,
@@ -119,6 +133,13 @@ public abstract class BaseSharedPreference(
     /**
      * Builds a `Long` delegate bound to [key] with [defaultValue].<br><br>
      * [key]와 [defaultValue]를 바인딩한 `Long` 위임자를 만듭니다.<br>
+     *
+     * @param key SharedPreferences entry key.<br><br>
+     *        SharedPreferences에 사용할 키입니다.
+     * @param defaultValue Fallback long when the key has no value.<br><br>
+     *        값이 없을 때 사용할 기본 Long 값입니다.
+     * @return Read/write property delegate backed by SharedPreferences.<br><br>
+     *         SharedPreferences를 기반으로 하는 읽기·쓰기 위임자를 반환합니다.<br>
      */
     protected fun longPref(
         key: String,
@@ -139,6 +160,13 @@ public abstract class BaseSharedPreference(
     /**
      * Builds a `Float` delegate bound to [key] with [defaultValue].<br><br>
      * [key]와 [defaultValue]를 바인딩한 `Float` 위임자를 만듭니다.<br>
+     *
+     * @param key SharedPreferences entry key.<br><br>
+     *        SharedPreferences에 사용할 키입니다.
+     * @param defaultValue Fallback float when the key has no value.<br><br>
+     *        값이 없을 때 사용할 기본 Float 값입니다.
+     * @return Read/write property delegate backed by SharedPreferences.<br><br>
+     *         SharedPreferences를 기반으로 하는 읽기·쓰기 위임자를 반환합니다.<br>
      */
     protected fun floatPref(
         key: String,
@@ -159,6 +187,13 @@ public abstract class BaseSharedPreference(
     /**
      * Builds a `Double` delegate bound to [key] with [defaultValue], storing raw bits in `Long`.<br><br>
      * [key]와 [defaultValue]를 바인딩한 `Double` 위임자를 만들고 내부적으로 `Long` 비트로 저장합니다.<br>
+     *
+     * @param key SharedPreferences entry key.<br><br>
+     *        SharedPreferences에 사용할 키입니다.
+     * @param defaultValue Fallback double when the key has no value.<br><br>
+     *        값이 없을 때 사용할 기본 Double 값입니다.
+     * @return Read/write property delegate backed by SharedPreferences.<br><br>
+     *         SharedPreferences를 기반으로 하는 읽기·쓰기 위임자를 반환합니다.<br>
      */
     protected fun doublePref(
         key: String,
@@ -179,6 +214,13 @@ public abstract class BaseSharedPreference(
     /**
      * Reads a nullable `String` from preferences.<br><br>
      * SharedPreferences에서 Nullable `String` 값을 읽어옵니다.<br>
+     *
+     * @param key SharedPreferences entry key.<br><br>
+     *        읽어올 키입니다.
+     * @param defaultValue Fallback string when the key has no value.<br><br>
+     *        값이 없을 때 사용할 기본 문자열입니다.
+     * @return The stored string or [defaultValue].<br><br>
+     *         저장된 문자열 또는 [defaultValue].<br>
      */
     protected fun getString(
         key: String,
@@ -188,6 +230,13 @@ public abstract class BaseSharedPreference(
     /**
      * Reads an `Int` from preferences.<br><br>
      * SharedPreferences에서 `Int` 값을 읽어옵니다.<br>
+     *
+     * @param key SharedPreferences entry key.<br><br>
+     *        읽어올 키입니다.
+     * @param defaultValue Fallback integer when the key has no value.<br><br>
+     *        값이 없을 때 사용할 기본 정수입니다.
+     * @return The stored integer or [defaultValue].<br><br>
+     *         저장된 정수 또는 [defaultValue].<br>
      */
     protected fun getInt(
         key: String,
@@ -197,6 +246,13 @@ public abstract class BaseSharedPreference(
     /**
      * Reads a `Float` from preferences.<br><br>
      * SharedPreferences에서 `Float` 값을 읽어옵니다.<br>
+     *
+     * @param key SharedPreferences entry key.<br><br>
+     *        읽어올 키입니다.
+     * @param defaultValue Fallback float when the key has no value.<br><br>
+     *        값이 없을 때 사용할 기본 Float 값입니다.
+     * @return The stored float or [defaultValue].<br><br>
+     *         저장된 Float 값 또는 [defaultValue].<br>
      */
     protected fun getFloat(
         key: String,
@@ -206,6 +262,13 @@ public abstract class BaseSharedPreference(
     /**
      * Reads a `Boolean` from preferences.<br><br>
      * SharedPreferences에서 `Boolean` 값을 읽어옵니다.<br>
+     *
+     * @param key SharedPreferences entry key.<br><br>
+     *        읽어올 키입니다.
+     * @param defaultValue Fallback boolean when the key has no value.<br><br>
+     *        값이 없을 때 사용할 기본 불리언입니다.
+     * @return The stored boolean or [defaultValue].<br><br>
+     *         저장된 불리언 또는 [defaultValue].<br>
      */
     protected fun getBoolean(
         key: String,
@@ -215,6 +278,13 @@ public abstract class BaseSharedPreference(
     /**
      * Reads a `Long` from preferences.<br><br>
      * SharedPreferences에서 `Long` 값을 읽어옵니다.<br>
+     *
+     * @param key SharedPreferences entry key.<br><br>
+     *        읽어올 키입니다.
+     * @param defaultValue Fallback long when the key has no value.<br><br>
+     *        값이 없을 때 사용할 기본 Long 값입니다.
+     * @return The stored long or [defaultValue].<br><br>
+     *         저장된 Long 값 또는 [defaultValue].<br>
      */
     protected fun getLong(
         key: String,
@@ -224,6 +294,13 @@ public abstract class BaseSharedPreference(
     /**
      * Reads a `Set<String>` from preferences.<br><br>
      * SharedPreferences에서 `Set<String>` 값을 읽어옵니다.<br>
+     *
+     * @param key SharedPreferences entry key.<br><br>
+     *        읽어올 키입니다.
+     * @param defaultValue Fallback set when the key has no value.<br><br>
+     *        값이 없을 때 사용할 기본 Set입니다.
+     * @return The stored set or [defaultValue].<br><br>
+     *         저장된 Set 또는 [defaultValue].<br>
      */
     protected fun getSet(
         key: String,
@@ -232,7 +309,14 @@ public abstract class BaseSharedPreference(
 
     /**
      * Reads a `Double` by mapping to raw long bits stored with a suffix.<br><br>
-     * 접미사를 덧붙여 저장된 `Long` 비트를 다시 `Double`로 변환해 읽어옵니다.<br>
+     * 접미사를 덫붙여 저장된 `Long` 비트를 다시 `Double`로 변환해 읽어옵니다.<br>
+     *
+     * @param key SharedPreferences entry key.<br><br>
+     *        읽어올 키입니다.
+     * @param defaultValue Fallback double when the key has no value.<br><br>
+     *        값이 없을 때 사용할 기본 Double 값입니다.
+     * @return The stored double or [defaultValue].<br><br>
+     *         저장된 Double 값 또는 [defaultValue].<br>
      */
     protected fun getDouble(
         key: String,
@@ -281,6 +365,9 @@ public abstract class BaseSharedPreference(
     /**
      * Returns a fresh [SharedPreferences.Editor] instance.<br><br>
      * 새로운 [SharedPreferences.Editor] 인스턴스를 반환합니다.<br>
+     *
+     * @return A new editor instance.<br><br>
+     *         새로운 에디터 인스턴스.<br>
      */
     protected fun getEditor(): SharedPreferences.Editor = sp.edit()
 
@@ -295,6 +382,11 @@ public abstract class BaseSharedPreference(
     /**
      * Applies a single [key]/[value] mutation asynchronously.<br><br>
      * [key]/[value] 쌍을 비동기적으로 적용합니다.<br>
+     *
+     * @param key SharedPreferences entry key.<br><br>
+     *        저장할 키입니다.
+     * @param value Value to store.<br><br>
+     *        저장할 값입니다.
      */
     protected fun saveApply(
         key: String,
@@ -336,6 +428,9 @@ public abstract class BaseSharedPreference(
     /**
      * Removes a specific key using `apply()`.<br><br>
      * 특정 키를 `apply()` 방식으로 삭제합니다.<br>
+     *
+     * @param key SharedPreferences entry key to remove.<br><br>
+     *        삭제할 키입니다.
      */
     private fun removeAt(key: String) {
         sp.edit().remove(key).apply()
@@ -344,6 +439,9 @@ public abstract class BaseSharedPreference(
     /**
      * Removes an `Int` entry using [removeAt].<br><br>
      * [removeAt]을 통해 `Int` 항목을 삭제합니다.<br>
+     *
+     * @param key SharedPreferences entry key to remove.<br><br>
+     *        삭제할 키입니다.
      */
     protected fun removeAtInt(key: String) {
         removeAt(key)
@@ -352,6 +450,9 @@ public abstract class BaseSharedPreference(
     /**
      * Removes a `String` entry using [removeAt].<br><br>
      * [removeAt]을 통해 `String` 항목을 삭제합니다.<br>
+     *
+     * @param key SharedPreferences entry key to remove.<br><br>
+     *        삭제할 키입니다.
      */
     protected fun removeAtString(key: String) {
         removeAt(key)
@@ -360,6 +461,9 @@ public abstract class BaseSharedPreference(
     /**
      * Removes a `Float` entry using [removeAt].<br><br>
      * [removeAt]을 통해 `Float` 항목을 삭제합니다.<br>
+     *
+     * @param key SharedPreferences entry key to remove.<br><br>
+     *        삭제할 키입니다.
      */
     protected fun removeAtFloat(key: String) {
         removeAt(key)
@@ -368,6 +472,9 @@ public abstract class BaseSharedPreference(
     /**
      * Removes a `Long` entry using [removeAt].<br><br>
      * [removeAt]을 통해 `Long` 항목을 삭제합니다.<br>
+     *
+     * @param key SharedPreferences entry key to remove.<br><br>
+     *        삭제할 키입니다.
      */
     protected fun removeAtLong(key: String) {
         removeAt(key)
@@ -376,6 +483,9 @@ public abstract class BaseSharedPreference(
     /**
      * Removes a `Boolean` entry using [removeAt].<br><br>
      * [removeAt]을 통해 `Boolean` 항목을 삭제합니다.<br>
+     *
+     * @param key SharedPreferences entry key to remove.<br><br>
+     *        삭제할 키입니다.
      */
     protected fun removeAtBoolean(key: String) {
         removeAt(key)
@@ -384,6 +494,9 @@ public abstract class BaseSharedPreference(
     /**
      * Removes a `Double` entry by deleting the suffixed key.<br><br>
      * 접미사가 붙은 키를 삭제해 `Double` 항목을 제거합니다.<br>
+     *
+     * @param key SharedPreferences entry key to remove.<br><br>
+     *        삭제할 키입니다.
      */
     protected fun removeAtDouble(key: String) {
         removeAt(key + DOUBLE_TYPE)
@@ -392,42 +505,75 @@ public abstract class BaseSharedPreference(
     /**
      * Clears all entries with a synchronous commit.<br><br>
      * 모든 항목을 동기 커밋 방식으로 삭제합니다.<br>
+     *
+     * @return `true` if commit succeeded, `false` otherwise.<br><br>
+     *         커밋이 성공하면 `true`, 실패하면 `false`.<br>
      */
     protected suspend fun removeAllCommit(): Boolean = commitDoWork { clear() }
 
     /**
      * Removes a specific key with synchronous commit.<br><br>
      * 특정 키를 동기 커밋 방식으로 삭제합니다.<br>
+     *
+     * @param key SharedPreferences entry key to remove.<br><br>
+     *        삭제할 키입니다.
+     * @return `true` if commit succeeded, `false` otherwise.<br><br>
+     *         커밋이 성공하면 `true`, 실패하면 `false`.<br>
      */
     private suspend fun removeAtCommit(key: String): Boolean = commitDoWork { remove(key) }
 
     /**
      * Removes an `Int` entry with synchronous commit.<br><br>
      * `Int` 항목을 동기 커밋 방식으로 삭제합니다.<br>
+     *
+     * @param key SharedPreferences entry key to remove.<br><br>
+     *        삭제할 키입니다.
+     * @return `true` if commit succeeded, `false` otherwise.<br><br>
+     *         커밋이 성공하면 `true`, 실패하면 `false`.<br>
      */
     protected suspend fun removeAtIntCommit(key: String): Boolean = removeAtCommit(key)
 
     /**
      * Removes a `Float` entry with synchronous commit.<br><br>
      * `Float` 항목을 동기 커밋 방식으로 삭제합니다.<br>
+     *
+     * @param key SharedPreferences entry key to remove.<br><br>
+     *        삭제할 키입니다.
+     * @return `true` if commit succeeded, `false` otherwise.<br><br>
+     *         커밋이 성공하면 `true`, 실패하면 `false`.<br>
      */
     protected suspend fun removeAtFloatCommit(key: String): Boolean = removeAtCommit(key)
 
     /**
      * Removes a `Long` entry with synchronous commit.<br><br>
      * `Long` 항목을 동기 커밋 방식으로 삭제합니다.<br>
+     *
+     * @param key SharedPreferences entry key to remove.<br><br>
+     *        삭제할 키입니다.
+     * @return `true` if commit succeeded, `false` otherwise.<br><br>
+     *         커밋이 성공하면 `true`, 실패하면 `false`.<br>
      */
     protected suspend fun removeAtLongCommit(key: String): Boolean = removeAtCommit(key)
 
     /**
      * Removes a `String` entry with synchronous commit.<br><br>
      * `String` 항목을 동기 커밋 방식으로 삭제합니다.<br>
+     *
+     * @param key SharedPreferences entry key to remove.<br><br>
+     *        삭제할 키입니다.
+     * @return `true` if commit succeeded, `false` otherwise.<br><br>
+     *         커밋이 성공하면 `true`, 실패하면 `false`.<br>
      */
     protected suspend fun removeAtStringCommit(key: String): Boolean = removeAtCommit(key)
 
     /**
      * Removes a `Double` entry (suffixed key) with synchronous commit.<br><br>
      * 접미사 키를 사용하는 `Double` 항목을 동기 커밋 방식으로 삭제합니다.<br>
+     *
+     * @param key SharedPreferences entry key to remove.<br><br>
+     *        삭제할 키입니다.
+     * @return `true` if commit succeeded, `false` otherwise.<br><br>
+     *         커밋이 성공하면 `true`, 실패하면 `false`.<br>
      */
     protected suspend fun removeAtDoubleCommit(key: String): Boolean = removeAtCommit(key + DOUBLE_TYPE)
 }

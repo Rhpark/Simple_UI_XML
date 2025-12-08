@@ -1,6 +1,6 @@
 /**
  * Conditional collection helpers that keep fluent chains tidy.<br><br>
- * 조건 기반 컬렉션 연산을 간결하게 이어 갈 수 있게 해 주는 확장 모음입니다.
+ * 조건 기반 컬렉션 연산을 간결하게 이어 갈 수 있게 해 주는 확장 모음입니다.<br>
  */
 package kr.open.library.simple_ui.core.extensions.conditional
 
@@ -22,7 +22,7 @@ public inline fun <T> List<T>.filterIf(
 
 /**
  * Runs [action] only when the list is not empty and keeps fluent chains intact.<br><br>
- * 리스트가 비어 있지 않을 때만 [action]을 실행해 체이닝 흐름을 유지합니다.
+ * 리스트가 비어 있지 않을 때만 [action]을 실행해 체이닝 흐름을 유지합니다.<br>
  *
  * @param action Callback that receives the non-empty list.<br><br>
  *        비어 있지 않은 리스트를 전달받는 콜백입니다.
@@ -36,7 +36,7 @@ public inline fun <T> List<T>.ifNotEmpty(action: (List<T>) -> Unit): List<T> {
 
 /**
  * Runs [action] only when the list is empty and keeps fluent chains intact.<br><br>
- * 리스트가 비어 있을 때만 [action]을 실행해 체이닝 흐름을 유지합니다.
+ * 리스트가 비어 있을 때만 [action]을 실행해 체이닝 흐름을 유지합니다.<br>
  *
  * @param action Callback executed when the list is empty.<br><br>
  *        리스트가 비었을 때 실행할 콜백입니다.
@@ -50,7 +50,7 @@ public inline fun <T> List<T>.ifEmpty(action: () -> Unit): List<T> {
 
 /**
  * Runs [action] only when the map is not empty and keeps fluent chains intact.<br><br>
- * 맵이 비어 있지 않을 때만 [action]을 실행해 체이닝 흐름을 유지합니다.
+ * 맵이 비어 있지 않을 때만 [action]을 실행해 체이닝 흐름을 유지합니다.<br>
  *
  * @param action Callback that receives the non-empty map.<br><br>
  *        비어 있지 않은 맵을 전달받는 콜백입니다.
@@ -64,7 +64,7 @@ public inline fun <K, V> Map<K, V>.ifNotEmpty(action: (Map<K, V>) -> Unit): Map<
 
 /**
  * Runs [action] only when the map is empty and keeps fluent chains intact.<br><br>
- * 맵이 비어 있을 때만 [action]을 실행해 체이닝 흐름을 유지합니다.
+ * 맵이 비어 있을 때만 [action]을 실행해 체이닝 흐름을 유지합니다.<br>
  *
  * @param action Callback executed when the map is empty.<br><br>
  *        맵이 비었을 때 실행할 콜백입니다.

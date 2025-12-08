@@ -341,24 +341,24 @@ class PermissionExtensionsRobolectricTest {
 
     @Test
     fun isSpecialPermission_systemAlertWindow_returnsTrue() {
-        assertTrue(context.isSpecialPermission(Manifest.permission.SYSTEM_ALERT_WINDOW))
+        assertTrue(isSpecialPermission(Manifest.permission.SYSTEM_ALERT_WINDOW))
     }
 
     @Test
     fun isSpecialPermission_writeSettings_returnsTrue() {
-        assertTrue(context.isSpecialPermission(Manifest.permission.WRITE_SETTINGS))
+        assertTrue(isSpecialPermission(Manifest.permission.WRITE_SETTINGS))
     }
 
     @Test
     fun isSpecialPermission_packageUsageStats_returnsTrue() {
-        assertTrue(context.isSpecialPermission(Manifest.permission.PACKAGE_USAGE_STATS))
+        assertTrue(isSpecialPermission(Manifest.permission.PACKAGE_USAGE_STATS))
     }
 
     @Test
     fun isSpecialPermission_normalPermission_returnsFalse() {
-        assertFalse(context.isSpecialPermission(Manifest.permission.CAMERA))
-        assertFalse(context.isSpecialPermission(Manifest.permission.RECORD_AUDIO))
-        assertFalse(context.isSpecialPermission(Manifest.permission.ACCESS_FINE_LOCATION))
+        assertFalse(isSpecialPermission(Manifest.permission.CAMERA))
+        assertFalse(isSpecialPermission(Manifest.permission.RECORD_AUDIO))
+        assertFalse(isSpecialPermission(Manifest.permission.ACCESS_FINE_LOCATION))
     }
 
     // ==============================================

@@ -88,6 +88,9 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder>(
     /**
      * Sets custom identity comparison for DiffUtil.<br><br>
      * DiffUtil에서 아이템 동일성 비교 로직을 설정합니다.<br>
+     *
+     * @param diffUtilItemSame Custom logic to determine if two items represent the same entity.<br><br>
+     *                         두 아이템이 같은 엔티티를 나타내는지 판단하는 커스텀 로직.
      */
     public fun setDiffUtilItemSame(diffUtilItemSame: (oldItem: ITEM, newItem: ITEM) -> Boolean) {
         this.diffUtilItemSame = diffUtilItemSame
@@ -97,6 +100,9 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder>(
     /**
      * Sets custom content comparison for DiffUtil.<br><br>
      * DiffUtil에서 아이템 내용 비교 로직을 설정합니다.<br>
+     *
+     * @param diffUtilContentsSame Custom logic to determine if two items have the same content.<br><br>
+     *                             두 아이템의 내용이 같은지 판단하는 커스텀 로직.
      */
     public fun setDiffUtilContentsSame(diffUtilContentsSame: (oldItem: ITEM, newItem: ITEM) -> Boolean) {
         this.diffUtilContentsSame = diffUtilContentsSame
@@ -106,6 +112,9 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder>(
     /**
      * Sets custom change-payload logic for DiffUtil.<br><br>
      * DiffUtil에서 변경 payload 생성 로직을 설정합니다.<br>
+     *
+     * @param diffUtilChangePayload Custom logic to generate change payload when items differ.<br><br>
+     *                              아이템이 다를 때 변경 payload를 생성하는 커스텀 로직.
      */
     public fun setDiffUtilChangePayload(diffUtilChangePayload: (oldItem: ITEM, newItem: ITEM) -> Any?) {
         this.diffUtilChangePayload = diffUtilChangePayload
@@ -116,6 +125,10 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder>(
      * Item identity comparison used by DiffUtil.<br><br>
      * DiffUtil에서 사용하는 아이템 동일성 비교입니다.<br>
      *
+     * @param oldItem The old item to compare.<br><br>
+     *                비교할 이전 아이템.
+     * @param newItem The new item to compare.<br><br>
+     *                비교할 새 아이템.
      * @return True if items are the same, false otherwise.<br><br>
      *         아이템이 같으면 true, 그렇지 않으면 false.<br>
      */
@@ -128,6 +141,10 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder>(
      * Item content comparison used by DiffUtil.<br><br>
      * DiffUtil에서 사용하는 아이템 내용 비교입니다.<br>
      *
+     * @param oldItem The old item to compare.<br><br>
+     *                비교할 이전 아이템.
+     * @param newItem The new item to compare.<br><br>
+     *                비교할 새 아이템.
      * @return True if contents are the same, false otherwise.<br><br>
      *         내용이 같으면 true, 그렇지 않으면 false.<br>
      */
@@ -140,6 +157,10 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder>(
      * Provides payload when items match but contents differ.<br><br>
      * 아이템은 같고 내용만 다를 때 payload를 제공합니다.<br>
      *
+     * @param oldItem The old item.<br><br>
+     *                이전 아이템.
+     * @param newItem The new item.<br><br>
+     *                새 아이템.
      * @return Change payload object, or null if none.<br><br>
      *         변경 payload 객체, 없으면 null.<br>
      */
@@ -151,6 +172,13 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder>(
     /**
      * Binds data to the ViewHolder (must be implemented by subclasses).<br><br>
      * 서브클래스가 ViewHolder에 데이터를 바인딩해야 합니다.<br>
+     *
+     * @param holder The ViewHolder to bind data to.<br><br>
+     *               데이터를 바인딩할 ViewHolder.
+     * @param position The position of the item within the adapter's data set.<br><br>
+     *                 어댑터 데이터 세트 내 아이템의 위치.
+     * @param item The item to bind.<br><br>
+     *             바인딩할 아이템.
      */
     protected abstract fun onBindViewHolder(
         holder: VH,
@@ -161,6 +189,15 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder>(
     /**
      * Binds with payloads for partial updates.<br><br>
      * 부분 갱신 payload와 함께 바인딩합니다.<br>
+     *
+     * @param holder The ViewHolder to bind data to.<br><br>
+     *               데이터를 바인딩할 ViewHolder.
+     * @param position The position of the item within the adapter's data set.<br><br>
+     *                 어댑터 데이터 세트 내 아이템의 위치.
+     * @param item The item to bind.<br><br>
+     *             바인딩할 아이템.
+     * @param payloads A non-null list of merged payloads. Can be empty list if requires full update.<br><br>
+     *                 병합된 payload의 비어있지 않은 리스트. 전체 업데이트가 필요한 경우 빈 리스트일 수 있음.
      */
     protected open fun onBindViewHolder(
         holder: VH,
@@ -184,8 +221,12 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder>(
      * Returns the item at the given position, or throws if invalid.<br><br>
      * 주어진 위치의 아이템을 반환하며, 잘못된 경우 예외를 던집니다.<br>
      *
+     * @param position The position of the item to retrieve.<br><br>
+     *                 가져올 아이템의 위치.
      * @return The item at the specified position.<br><br>
      *         지정된 위치의 아이템.<br>
+     * @throws IndexOutOfBoundsException if position is invalid.<br><br>
+     *                                   위치가 유효하지 않은 경우.
      */
     public fun getItem(position: Int): ITEM {
         if (!isPositionValid(position)) {
@@ -208,6 +249,11 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder>(
     /**
      * Replaces items using AsyncListDiffer for efficient updates.<br><br>
      * AsyncListDiffer로 아이템을 교체해 효율적으로 갱신합니다.<br>
+     *
+     * @param newItems The new list of items to set.<br><br>
+     *                 설정할 새 아이템 리스트.
+     * @param commitCallback Optional callback invoked when the list update is committed.<br><br>
+     *                       리스트 업데이트가 커밋될 때 호출되는 선택적 콜백.
      */
     public fun setItems(
         newItems: List<ITEM>,
@@ -220,6 +266,10 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder>(
      * Appends multiple items.<br><br>
      * 여러 아이템을 뒤에 추가합니다.<br>
      *
+     * @param items The list of items to add.<br><br>
+     *              추가할 아이템 리스트.
+     * @param commitCallback Optional callback invoked when the operation is committed.<br><br>
+     *                       작업이 커밋될 때 호출되는 선택적 콜백.
      * @return True if operation was enqueued, false otherwise.<br><br>
      *         작업이 큐에 추가되면 true, 그렇지 않으면 false.<br>
      */
@@ -248,6 +298,10 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder>(
      * Appends a single item.<br><br>
      * 단일 아이템을 추가합니다.<br>
      *
+     * @param item The item to add.<br><br>
+     *             추가할 아이템.
+     * @param commitCallback Optional callback invoked when the operation is committed.<br><br>
+     *                       작업이 커밋될 때 호출되는 선택적 콜백.
      * @return True if operation was enqueued.<br><br>
      *         작업이 큐에 추가되면 true.<br>
      */
@@ -263,6 +317,12 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder>(
      * Inserts an item at the given position.<br><br>
      * 지정 위치에 아이템을 삽입합니다.<br>
      *
+     * @param position The position at which to insert the item.<br><br>
+     *                 아이템을 삽입할 위치.
+     * @param item The item to insert.<br><br>
+     *             삽입할 아이템.
+     * @param commitCallback Optional callback invoked when the operation is committed.<br><br>
+     *                       작업이 커밋될 때 호출되는 선택적 콜백.
      * @return True if operation was enqueued, false if position is invalid.<br><br>
      *         작업이 큐에 추가되면 true, 위치가 잘못되었으면 false.<br>
      */
@@ -283,6 +343,8 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder>(
      * Clears all items from the list.<br><br>
      * 리스트의 모든 아이템을 제거합니다.<br>
      *
+     * @param commitCallback Optional callback invoked when the operation is committed.<br><br>
+     *                       작업이 커밋될 때 호출되는 선택적 콜백.
      * @return True if operation was enqueued.<br><br>
      *         작업이 큐에 추가되면 true.<br>
      */
@@ -295,6 +357,10 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder>(
      * Removes the item at the given position.<br><br>
      * 지정 위치의 아이템을 제거합니다.<br>
      *
+     * @param position The position of the item to remove.<br><br>
+     *                 제거할 아이템의 위치.
+     * @param commitCallback Optional callback invoked when the operation is committed.<br><br>
+     *                       작업이 커밋될 때 호출되는 선택적 콜백.
      * @return True if operation was enqueued, false if position is invalid.<br><br>
      *         작업이 큐에 추가되면 true, 위치가 잘못되었으면 false.<br>
      */
@@ -314,6 +380,10 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder>(
      * Removes the first matching item.<br><br>
      * 첫 번째로 일치하는 아이템을 제거합니다.<br>
      *
+     * @param item The item to remove.<br><br>
+     *             제거할 아이템.
+     * @param commitCallback Optional callback invoked when the operation is committed.<br><br>
+     *                       작업이 커밋될 때 호출되는 선택적 콜백.
      * @return True if operation was enqueued, false if item not found.<br><br>
      *         작업이 큐에 추가되면 true, 아이템을 찾지 못했으면 false.<br>
      */
@@ -332,6 +402,11 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder>(
     /**
      * Binds holder without payloads and wires click listeners.<br><br>
      * payload 없이 바인딩하며 클릭 리스너를 설정합니다.<br>
+     *
+     * @param holder The ViewHolder to bind.<br><br>
+     *               바인딩할 ViewHolder.
+     * @param position The position of the item within the adapter's data set.<br><br>
+     *                 어댑터 데이터 세트 내 아이템의 위치.
      */
     override fun onBindViewHolder(
         holder: VH,
@@ -367,6 +442,13 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder>(
     /**
      * Binds holder with payloads when provided.<br><br>
      * payload가 있을 때 ViewHolder를 바인딩합니다.<br>
+     *
+     * @param holder The ViewHolder to bind.<br><br>
+     *               바인딩할 ViewHolder.
+     * @param position The position of the item within the adapter's data set.<br><br>
+     *                 어댑터 데이터 세트 내 아이템의 위치.
+     * @param payloads A non-null list of merged payloads.<br><br>
+     *                 병합된 payload의 비어있지 않은 리스트.
      */
     override fun onBindViewHolder(
         holder: VH,
@@ -390,6 +472,8 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder>(
      * Checks if position is within current list bounds.<br><br>
      * 위치가 현재 리스트 범위 내인지 확인합니다.<br>
      *
+     * @param position The position to check.<br><br>
+     *                 확인할 위치.
      * @return True if position is valid, false otherwise.<br><br>
      *         위치가 유효하면 true, 그렇지 않으면 false.<br>
      */
@@ -407,6 +491,13 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder>(
             /**
              * DiffUtil identity check.<br><br>
              * DiffUtil의 동일성 비교입니다.<br>
+             *
+             * @param oldItem The old item to compare.<br><br>
+             *                비교할 이전 아이템.
+             * @param newItem The new item to compare.<br><br>
+             *                비교할 새 아이템.
+             * @return True if items represent the same entity.<br><br>
+             *         아이템이 같은 엔티티를 나타내면 true.<br>
              */
             override fun areItemsTheSame(
                 oldItem: ITEM,
@@ -416,6 +507,13 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder>(
             /**
              * DiffUtil content equality check.<br><br>
              * DiffUtil의 내용 비교입니다.<br>
+             *
+             * @param oldItem The old item to compare.<br><br>
+             *                비교할 이전 아이템.
+             * @param newItem The new item to compare.<br><br>
+             *                비교할 새 아이템.
+             * @return True if contents are the same.<br><br>
+             *         내용이 같으면 true.<br>
              */
             override fun areContentsTheSame(
                 oldItem: ITEM,
@@ -425,6 +523,13 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder>(
             /**
              * DiffUtil payload provider.<br><br>
              * DiffUtil payload 제공자입니다.<br>
+             *
+             * @param oldItem The old item.<br><br>
+             *                이전 아이템.
+             * @param newItem The new item.<br><br>
+             *                새 아이템.
+             * @return Change payload or null.<br><br>
+             *         변경 payload 또는 null.<br>
              */
             override fun getChangePayload(
                 oldItem: ITEM,
@@ -478,6 +583,9 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder>(
     /**
      * Recreates differ to apply updated config while keeping current list.<br><br>
      * 현재 리스트를 유지한 채 설정을 반영하도록 differ를 재생성합니다.<br>
+     *
+     * @param commitCallback Optional callback invoked when the differ is recreated.<br><br>
+     *                       differ가 재생성될 때 호출되는 선택적 콜백.
      */
     private fun recreateDiffer(commitCallback: (() -> Unit)? = null) {
         val snapshot = differ.currentList.toList()
@@ -488,6 +596,9 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder>(
     /**
      * Sets click listener for items.<br><br>
      * 아이템 클릭 리스너를 설정합니다.<br>
+     *
+     * @param listener The click listener callback receiving position, item, and view.<br><br>
+     *                 위치, 아이템, 뷰를 받는 클릭 리스너 콜백.
      */
     public fun setOnItemClickListener(listener: (Int, ITEM, View) -> Unit) {
         onItemClickListener = listener
@@ -496,6 +607,9 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder>(
     /**
      * Sets long-click listener for items.<br><br>
      * 아이템 롱클릭 리스너를 설정합니다.<br>
+     *
+     * @param listener The long-click listener callback receiving position, item, and view.<br><br>
+     *                 위치, 아이템, 뷰를 받는 롱클릭 리스너 콜백.
      */
     public fun setOnItemLongClickListener(listener: (Int, ITEM, View) -> Unit) {
         onItemLongClickListener = listener
@@ -504,6 +618,9 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder>(
     /**
      * Clears view cache when a BaseRcvViewHolder is recycled.<br><br>
      * BaseRcvViewHolder가 재활용될 때 뷰 캐시를 비웁니다.<br>
+     *
+     * @param holder The ViewHolder being recycled.<br><br>
+     *               재활용되는 ViewHolder.
      */
     override fun onViewRecycled(holder: VH) {
         super.onViewRecycled(holder)

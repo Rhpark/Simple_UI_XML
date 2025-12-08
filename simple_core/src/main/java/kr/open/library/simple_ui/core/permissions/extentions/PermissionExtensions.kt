@@ -205,7 +205,7 @@ public inline fun Context.hasNotificationListenerPermission(): Boolean =
  * @return true when the permission matches [PermissionSpecialType].<br><br>
  *         [PermissionSpecialType] 목록 중 하나와 일치하면 true입니다.<br>
  */
-public inline fun Context.isSpecialPermission(permission: String): Boolean {
+public inline fun isSpecialPermission(permission: String): Boolean {
     PermissionSpecialType.entries.forEach {
         if (permission == it.permission) return true
     }

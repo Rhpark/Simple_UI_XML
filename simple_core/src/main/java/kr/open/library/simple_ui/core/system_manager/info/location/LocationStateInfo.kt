@@ -220,6 +220,7 @@ public open class LocationStateInfo(
             registerLocationUpdateStart(locationProvider, minTimeMs, minDistanceM)
             setupDataFlows()
         } else {
+            Logx.e("LocationStateInfo: registerStart failed")
         }
     }
 

@@ -41,6 +41,17 @@ import androidx.annotation.LayoutRes
 public abstract class BaseActivity(
     @LayoutRes private val layoutRes: Int,
 ) : RootActivity() {
+    /**
+     * Called when the activity is starting.
+     * Automatically inflates the layout resource specified in the constructor.<br><br>
+     * 액티비티가 시작될 때 호출됩니다.<br>
+     * 생성자에서 지정된 레이아웃 리소스를 자동으로 인플레이션합니다.<br>
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down,
+     *                           this Bundle contains the data it most recently supplied in onSaveInstanceState.<br><br>
+     *                           액티비티가 이전에 종료된 후 다시 초기화되는 경우,
+     *                           이 Bundle에는 onSaveInstanceState에서 가장 최근에 제공된 데이터가 포함됩니다.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(layoutRes)

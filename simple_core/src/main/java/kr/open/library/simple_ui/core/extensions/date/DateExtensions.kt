@@ -1,4 +1,4 @@
-package kr.open.library.simple_ui.core.extensions.date
+﻿package kr.open.library.simple_ui.core.extensions.date
 
 import java.text.ParsePosition
 import java.text.SimpleDateFormat
@@ -16,10 +16,10 @@ import java.util.Locale
  * 밀리초 단위의 타임스탬프를 지정된 패턴과 로케일을 사용하여 포맷된 문자열로 변환합니다.<br>
  *
  * @param format The date-time pattern (e.g., "HH:mm:ss dd/MM/yyyy").<br><br>
- *               날짜-시간 패턴 (예: "HH:mm:ss dd/MM/yyyy").
+ *               날짜-시간 패턴 (예: "HH:mm:ss dd/MM/yyyy").<br>
  *
  * @param locale The locale to use for formatting. Defaults to the system default locale.<br><br>
- *               포맷팅에 사용할 로케일. 기본값은 시스템 기본 로케일입니다.
+ *               포맷팅에 사용할 로케일. 기본값은 시스템 기본 로케일입니다.<br>
  *
  * @return A formatted date-time string.<br><br>
  *         포맷된 날짜-시간 문자열.<br>
@@ -34,16 +34,16 @@ public fun Long.toDateString(
  * 지정된 패턴과 로케일을 사용하여 날짜-시간 문자열을 파싱하고, 밀리초 단위의 타임스탬프를 반환합니다.<br>
  *
  * @param format The date-time pattern to use for parsing (e.g., "HH:mm:ss dd/MM/yyyy").<br><br>
- *               파싱에 사용할 날짜-시간 패턴 (예: "HH:mm:ss dd/MM/yyyy").
+ *               파싱에 사용할 날짜-시간 패턴 (예: "HH:mm:ss dd/MM/yyyy").<br>
  *
  * @param locale The locale to use for parsing. Defaults to the system default locale.<br><br>
- *               파싱에 사용할 로케일. 기본값은 시스템 기본 로케일입니다.
+ *               파싱에 사용할 로케일. 기본값은 시스템 기본 로케일입니다.<br>
  *
  * @return The timestamp in milliseconds since epoch.<br><br>
  *         에포크 이후의 밀리초 단위 타임스탬프.<br>
  *
  * @throws IllegalArgumentException if the string cannot be parsed or doesn't match the format completely.<br><br>
- *                                  문자열을 파싱할 수 없거나 형식과 완전히 일치하지 않을 경우.
+ *                                  문자열을 파싱할 수 없거나 형식과 완전히 일치하지 않을 경우.<br>
  */
 public fun String.toDateLong(
     format: String,
@@ -68,10 +68,10 @@ public fun String.toDateLong(
  * 지정된 패턴과 로케일을 사용하여 날짜-시간 문자열을 파싱하고, Date 객체를 반환합니다.<br>
  *
  * @param format The date-time pattern to use for parsing (e.g., "HH:mm:ss dd/MM/yyyy").<br><br>
- *               파싱에 사용할 날짜-시간 패턴 (예: "HH:mm:ss dd/MM/yyyy").
+ *               파싱에 사용할 날짜-시간 패턴 (예: "HH:mm:ss dd/MM/yyyy").<br>
  *
  * @param locale The locale to use for parsing. Defaults to the system default locale.<br><br>
- *               파싱에 사용할 로케일. 기본값은 시스템 기본 로케일입니다.
+ *               파싱에 사용할 로케일. 기본값은 시스템 기본 로케일입니다.<br>
  *
  * @return A Date object if parsing succeeds, or null if parsing fails.<br><br>
  *         파싱이 성공하면 Date 객체, 실패하면 null.<br>
@@ -114,10 +114,10 @@ public fun Long.toLocalDateTime(): LocalDateTime = Instant.ofEpochMilli(this).at
  * API 레벨 26 (Android O) 이상이 필요합니다.<br>
  *
  * @param pattern The date-time pattern to use for formatting (e.g., "yyyy-MM-dd HH:mm:ss").<br><br>
- *               포맷팅에 사용할 날짜-시간 패턴 (예: "yyyy-MM-dd HH:mm:ss").
+ *               포맷팅에 사용할 날짜-시간 패턴 (예: "yyyy-MM-dd HH:mm:ss").<br>
  *
  * @param locale The locale to use for formatting. Defaults to the system default locale.<br><br>
- *               포맷팅에 사용할 로케일. 기본값은 시스템 기본 로케일입니다.
+ *               포맷팅에 사용할 로케일. 기본값은 시스템 기본 로케일입니다.<br>
  *
  * @return A formatted date-time string.<br><br>
  *         포맷된 날짜-시간 문자열.<br>
@@ -157,10 +157,10 @@ public fun Date.toLocalDateTime(): LocalDateTime = this.toInstant().atZone(ZoneI
  * API 레벨 26 (Android O) 이상이 필요합니다.<br>
  *
  * @param pattern The date-time pattern to use for formatting (e.g., "yyyy-MM-dd HH:mm:ss").<br><br>
- *               포맷팅에 사용할 날짜-시간 패턴 (예: "yyyy-MM-dd HH:mm:ss").
+ *               포맷팅에 사용할 날짜-시간 패턴 (예: "yyyy-MM-dd HH:mm:ss").<br>
  *
  * @param locale The locale to use for formatting. Defaults to the system default locale.<br><br>
- *               포맷팅에 사용할 로케일. 기본값은 시스템 기본 로케일입니다.
+ *               포맷팅에 사용할 로케일. 기본값은 시스템 기본 로케일입니다.<br>
  *
  * @return A formatted date-time string.<br><br>
  *         포맷된 날짜-시간 문자열.<br>
@@ -177,10 +177,10 @@ public fun Date.toStringFormat(
  * 모든 API 레벨에서 작동합니다.<br>
  *
  * @param format The date-time pattern to use for formatting (e.g., "HH:mm:ss dd/MM/yyyy").<br><br>
- *               포맷팅에 사용할 날짜-시간 패턴 (예: "HH:mm:ss dd/MM/yyyy").
+ *               포맷팅에 사용할 날짜-시간 패턴 (예: "HH:mm:ss dd/MM/yyyy").<br>
  *
  * @param locale The locale to use for formatting. Defaults to the system default locale.<br><br>
- *               포맷팅에 사용할 로케일. 기본값은 시스템 기본 로케일입니다.
+ *               포맷팅에 사용할 로케일. 기본값은 시스템 기본 로케일입니다.<br>
  *
  * @return A formatted date-time string.<br><br>
  *         포맷된 날짜-시간 문자열.<br>

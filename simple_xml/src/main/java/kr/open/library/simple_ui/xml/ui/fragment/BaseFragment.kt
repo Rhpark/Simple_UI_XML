@@ -62,12 +62,30 @@ abstract class BaseFragment(
      * Throws IllegalStateException if accessed after onDestroyView().<br><br>
      * Fragment 레이아웃의 루트 뷰입니다.<br>
      * onDestroyView() 이후에 접근하면 IllegalStateException이 발생합니다.<br>
+     *
+     * @return The root view of the fragment.<br><br>
+     *         Fragment의 루트 뷰.<br>
+     * @throws IllegalStateException if accessed after onDestroyView().<br><br>
+     *                               onDestroyView() 이후에 접근하는 경우.
      */
     public val rootView: View
         get() =
             _rootView
                 ?: throw IllegalStateException("View accessed after onDestroyView()")
 
+    /**
+     * Called to have the fragment instantiate its user interface view.<br><br>
+     * Fragment가 사용자 인터페이스 뷰를 인스턴스화하기 위해 호출됩니다.<br>
+     *
+     * @param inflater The LayoutInflater object that can be used to inflate any views in the fragment.<br><br>
+     *                 Fragment의 뷰를 인플레이션하는 데 사용할 수 있는 LayoutInflater 객체.
+     * @param container If non-null, this is the parent view that the fragment's UI should be attached to.<br><br>
+     *                  null이 아닌 경우, Fragment의 UI가 첫부될 부모 뷰.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed from a previous saved state.<br><br>
+     *                           null이 아닌 경우, 이 Fragment는 이전에 저장된 상태에서 다시 구성되고 있습니다.
+     * @return Return the View for the fragment's UI, or null.<br><br>
+     *         Fragment UI의 View를 반환하거나 null을 반환.<br>
+     */
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -77,6 +95,12 @@ abstract class BaseFragment(
         return rootView
     }
 
+    /**
+     * Called when the view previously created by onCreateView has been detached from the fragment.
+     * Cleans up the rootView reference to prevent memory leaks.<br><br>
+     * onCreateView에서 생성된 뷰가 Fragment에서 분리될 때 호출됩니다.<br>
+     * 메모리 누수를 방지하기 위해 rootView 참조를 정리합니다.<br>
+     */
     override fun onDestroyView() {
         super.onDestroyView()
         _rootView = null
