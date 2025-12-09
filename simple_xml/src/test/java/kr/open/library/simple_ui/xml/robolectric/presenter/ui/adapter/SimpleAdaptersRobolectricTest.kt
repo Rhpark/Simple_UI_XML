@@ -98,7 +98,9 @@ class SimpleAdaptersRobolectricTest {
     fun simpleBindingRcvAdapter_invokesOnBindLambda() {
         var capturedItem: String? = null
         val adapter =
-            SimpleBindingRcvAdapter<String, ViewDataBinding>(android.R.layout.simple_list_item_1) { _, item: String, _ ->
+            SimpleBindingRcvAdapter<String, ViewDataBinding>(
+                android.R.layout.simple_list_item_1,
+            ) { _, item: String, _ ->
                 capturedItem = item
             }
         val holder = adapter.onCreateViewHolder(parent, 0)

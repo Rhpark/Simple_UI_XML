@@ -45,7 +45,9 @@ public abstract class BaseSharedPreference(
         private const val DOUBLE_TYPE = "_DOUBLE_"
     }
 
-    protected val sp: SharedPreferences by lazy { context.applicationContext.getSharedPreferences(groupKey, sharedPrivateMode) }
+    protected val sp: SharedPreferences by lazy {
+        context.applicationContext.getSharedPreferences(groupKey, sharedPrivateMode)
+    }
 
     protected val commitMutex: Mutex by lazy { Mutex() }
 

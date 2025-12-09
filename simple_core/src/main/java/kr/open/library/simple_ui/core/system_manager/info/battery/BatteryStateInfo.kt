@@ -119,7 +119,8 @@ public open class BatteryStateInfo(
      * Mutable flow that stores the latest battery event.<br><br>
      * 최신 배터리 이벤트를 보관하는 MutableStateFlow입니다.<br>
      */
-    private val msfUpdate: MutableStateFlow<BatteryStateEvent> = MutableStateFlow(BatteryStateEvent.OnCapacity(getCapacity()))
+    private val msfUpdate: MutableStateFlow<BatteryStateEvent> =
+        MutableStateFlow(BatteryStateEvent.OnCapacity(getCapacity()))
 
     /**
      * StateFlow that emits battery state events whenever battery information changes.<br><br>
@@ -221,7 +222,13 @@ public open class BatteryStateInfo(
         coroutineScope?.let { scope ->
             scope.launch { capacity.state.collect { sendFlow(BatteryStateEvent.OnCapacity(it)) } }
             scope.launch { currentAmpere.state.collect { sendFlow(BatteryStateEvent.OnCurrentAmpere(it)) } }
-            scope.launch { currentAverageAmpere.state.collect { sendFlow(BatteryStateEvent.OnCurrentAverageAmpere(it)) } }
+            scope.launch {
+                currentAverageAmpere.state.collect {
+                    sendFlow(
+                        BatteryStateEvent.OnCurrentAverageAmpere(it),
+                    )
+                }
+            }
             scope.launch { chargeStatus.state.collect { sendFlow(BatteryStateEvent.OnChargeStatus(it)) } }
             scope.launch { chargeCounter.state.collect { sendFlow(BatteryStateEvent.OnChargeCounter(it)) } }
             scope.launch { chargePlug.state.collect { sendFlow(BatteryStateEvent.OnChargePlug(it)) } }
@@ -778,13 +785,15 @@ public open class BatteryStateInfo(
         tryCatchSystemManager(errorValueDouble) {
             // Try to get voltage from current batteryStatus first
             // 먼저 현재 batteryStatus에서 전압을 가져오기 시도
-            var voltage = batteryStatus?.getIntExtra(BatteryManager.EXTRA_VOLTAGE, errorValue * 1000) ?: errorValue * 1000
+            var voltage =
+                batteryStatus?.getIntExtra(BatteryManager.EXTRA_VOLTAGE, errorValue * 1000) ?: errorValue * 1000
 
             // If batteryStatus is null or doesn't have voltage info, get fresh battery intent
             // batteryStatus가 null이거나 전압 정보가 없는 경우, 새로운 배터리 intent를 가져옴
             if (voltage == errorValue * 1000) {
                 val batteryIntent = context.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
-                voltage = batteryIntent?.getIntExtra(BatteryManager.EXTRA_VOLTAGE, errorValue * 1000) ?: errorValue * 1000
+                voltage =
+                    batteryIntent?.getIntExtra(BatteryManager.EXTRA_VOLTAGE, errorValue * 1000) ?: errorValue * 1000
             }
 
             return voltage.toDouble() / 1000

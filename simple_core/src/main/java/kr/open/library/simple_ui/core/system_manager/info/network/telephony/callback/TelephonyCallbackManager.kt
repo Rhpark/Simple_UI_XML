@@ -197,7 +197,8 @@ public class TelephonyCallbackManager(
         subscriptionInfoList.forEach { subscriptionInfo ->
             Logx.d("TelephonyCallbackManager: SubID $subscriptionInfo")
             val slotIndex = subscriptionInfo.simSlotIndex
-            uSimTelephonyManagerList[slotIndex] = telephonyManager.createForSubscriptionId(subscriptionInfo.subscriptionId)
+            uSimTelephonyManagerList[slotIndex] =
+                telephonyManager.createForSubscriptionId(subscriptionInfo.subscriptionId)
             uSimTelephonyCallbackList[slotIndex] = CommonTelephonyCallback(uSimTelephonyManagerList[slotIndex])
         }
     }
@@ -253,7 +254,12 @@ public class TelephonyCallbackManager(
             checkSdkVersion(
                 Build.VERSION_CODES.S,
                 positiveWork = {
-                    registerModernCallback(handler, onSignalStrengthChanged, onServiceStateChanged, onNetworkStateChanged)
+                    registerModernCallback(
+                        handler,
+                        onSignalStrengthChanged,
+                        onServiceStateChanged,
+                        onNetworkStateChanged,
+                    )
                     return true
                 },
                 negativeWork = {
@@ -661,7 +667,9 @@ public class TelephonyCallbackManager(
         onTelephonyNetworkType: ((telephonyNetworkState: TelephonyNetworkState) -> Unit)? = null,
     ) {
         uSimTelephonyCallbackList[simSlotIndex]?.setOnTelephonyNetworkType(onTelephonyNetworkType)
-            ?: Logx.w("TelephonyCallbackManager: setOnTelephonyNetworkType telephonyCallbackList[$simSlotIndex] is null")
+            ?: Logx.w(
+                "TelephonyCallbackManager: setOnTelephonyNetworkType telephonyCallbackList[$simSlotIndex] is null",
+            )
     }
 
     /**

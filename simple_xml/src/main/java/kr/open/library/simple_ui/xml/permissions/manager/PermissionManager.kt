@@ -23,35 +23,11 @@ import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.core.permissions.extentions.hasPermission
 import kr.open.library.simple_ui.core.permissions.extentions.isSpecialPermission
 import kr.open.library.simple_ui.core.permissions.extentions.remainPermissions
+import kr.open.library.simple_ui.core.permissions.manager.PermissionCallbackAddResult
 import kr.open.library.simple_ui.core.permissions.vo.PermissionConstants
 import kr.open.library.simple_ui.xml.permissions.register.PermissionDelegate
 import java.lang.ref.WeakReference
 import java.util.UUID
-
-/**
- * Indicates whether an additional callback could be attached to an in-flight request.<br><br>
- * 진행 중인 권한 요청에 추가 콜백을 부착할 수 있었는지를 나타냅니다.<br>
- */
-
-enum class CallbackAddResult {
-    /**
-     * Additional callbacks were attached successfully.<br><br>
-     * 추가 콜백이 정상적으로 연결되었습니다.<br>
-     */
-    SUCCESS,
-
-    /**
-     * The request could not be found (completed or cancelled already).<br><br>
-     * 요청을 찾을 수 없어 이미 완료되었거나 취소된 상태입니다.<br>
-     */
-    REQUEST_NOT_FOUND,
-
-    /**
-     * The permission set does not match the existing pending request.<br><br>
-     * 새로 전달된 권한 집합이 기존 대기 요청과 일치하지 않습니다.<br>
-     */
-    PERMISSION_MISMATCH,
-}
 
 /**
  * Lightweight permission orchestrator that merges callback-based requests with special flows.<br><br>
@@ -66,7 +42,6 @@ enum class CallbackAddResult {
  * - Cleans up expired requests automatically on a timer.<br><br>
  *   타이머를 활용해 만료된 요청을 자동 정리합니다.<br>
  */
-
 class PermissionManager private constructor() {
     companion object {
         @Volatile
@@ -225,7 +200,9 @@ class PermissionManager private constructor() {
                 if (launcher != null) {
                     launchSpecialPermissionWithRetry(context, firstSpecialPermission, launcher, requestId)
                 } else {
-                    Logx.e("No launcher found for special permission: $firstSpecialPermission (Delegate not registered?)")
+                    Logx.e(
+                        "No launcher found for special permission: $firstSpecialPermission (Delegate not registered?)",
+                    )
                     handleSpecialPermissionFailure(context, requestId, firstSpecialPermission)
                 }
             } else if (specialPermissions.isNotEmpty() && normalPermissions.isNotEmpty()) {
@@ -260,11 +237,7 @@ class PermissionManager private constructor() {
         val request = pendingRequests[requestId] ?: return@withLock
 
         val deniedPermissions =
-            permissions
-                .filterNot { (permission, granted) ->
-                    granted || context.hasPermission(permission)
-                }.keys
-                .toList()
+            permissions.filterNot { (permission, granted) -> granted || context.hasPermission(permission) }.keys.toList()
 
         // Continue with special permissions if needed; otherwise finalize the request.<br><br>
         // 특수 권한이 남아 있다면 계속 진행하고, 없다면 요청을 종료합니다.<br>
@@ -333,7 +306,9 @@ class PermissionManager private constructor() {
                 launchSpecialPermissionWithRetry(context, nextPermission, launcher, requestId)
                 return@withLock
             } else {
-                Logx.e("No launcher available for special permission: $nextPermission (Delegate may have been destroyed)")
+                Logx.e(
+                    "No launcher available for special permission: $nextPermission (Delegate may have been destroyed)",
+                )
                 handleSpecialPermissionFailure(context, requestId, nextPermission)
                 return@withLock
             }
@@ -452,11 +427,11 @@ class PermissionManager private constructor() {
         requestId: String,
         callback: (List<String>) -> Unit,
         requestedPermissions: List<String>,
-    ): CallbackAddResult =
+    ): PermissionCallbackAddResult =
         mutex.withLock {
             // Returns immediately when the request no longer exists.<br><br>
             // 요청이 이미 완료되었거나 취소되었다면 즉시 반환합니다.<br>
-            val request = pendingRequests[requestId] ?: return@withLock CallbackAddResult.REQUEST_NOT_FOUND
+            val request = pendingRequests[requestId] ?: return@withLock PermissionCallbackAddResult.REQUEST_NOT_FOUND
 
             // Compares permission sets regardless of order to ensure parity.<br><br>
             // 순서에 상관없이 권한 집합이 동일한지 확인합니다.<br>
@@ -465,14 +440,14 @@ class PermissionManager private constructor() {
 
             if (existingPermissions != newPermissions) {
                 Logx.w("Permission mismatch! Existing: $existingPermissions, Requested: $newPermissions")
-                return@withLock CallbackAddResult.PERMISSION_MISMATCH
+                return@withLock PermissionCallbackAddResult.PERMISSION_MISMATCH
             }
 
             // Appends the callback when everything matches.<br><br>
             // 조건이 일치하면 콜백을 추가합니다.<br>
             request.callbacks.add(callback)
             Logx.d("Added callback to existing request: $requestId (total callbacks: ${request.callbacks.size})")
-            CallbackAddResult.SUCCESS
+            PermissionCallbackAddResult.SUCCESS
         }
 
     /**

@@ -46,7 +46,9 @@ public open class BaseRcvViewHolder(
                 ?: throw IllegalArgumentException("View with id $id not found in layout")
 
         if (view !is T) {
-            throw ClassCastException("View with id $id is ${view::class.java.simpleName}, not ${T::class.java.simpleName}")
+            throw ClassCastException(
+                "View with id $id is ${view::class.java.simpleName}, not ${T::class.java.simpleName}",
+            )
         }
 
         viewCache[id] = view

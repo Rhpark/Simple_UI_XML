@@ -24,8 +24,8 @@ class BaseActivityExample : BaseActivity(R.layout.activity_base_activity_example
         tvNavigationBarHeight = findViewById(R.id.tvNavigationBarHeight)
 
         window.decorView.post {
-            tvStatusBarHeight.text = "StatusBar Height: $statusBarHeight px"
-            tvNavigationBarHeight.text = "NavigationBar Height: $navigationBarHeight px"
+            tvStatusBarHeight.text = "StatusBar Height: ${getStatusBarHeight()} px"
+            tvNavigationBarHeight.text = "NavigationBar Height: ${getNavigationBarHeight()} px"
         }
 
         setupStatusBarButtons()

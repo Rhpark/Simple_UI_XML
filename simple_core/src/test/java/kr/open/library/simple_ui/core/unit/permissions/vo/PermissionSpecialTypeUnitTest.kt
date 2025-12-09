@@ -20,14 +20,26 @@ class PermissionSpecialTypeUnitTest {
             Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
             PermissionSpecialType.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS.permission,
         )
-        assertEquals(Manifest.permission.BIND_ACCESSIBILITY_SERVICE, PermissionSpecialType.BIND_ACCESSIBILITY_SERVICE.permission)
+        assertEquals(
+            Manifest.permission.BIND_ACCESSIBILITY_SERVICE,
+            PermissionSpecialType.BIND_ACCESSIBILITY_SERVICE.permission,
+        )
         assertEquals(
             Manifest.permission.BIND_NOTIFICATION_LISTENER_SERVICE,
             PermissionSpecialType.BIND_NOTIFICATION_LISTENER_SERVICE.permission,
         )
-        assertEquals(Manifest.permission.REQUEST_INSTALL_PACKAGES, PermissionSpecialType.REQUEST_INSTALL_PACKAGES.permission)
-        assertEquals(Manifest.permission.ACCESS_NOTIFICATION_POLICY, PermissionSpecialType.ACCESS_NOTIFICATION_POLICY.permission)
-        assertEquals(Manifest.permission.MANAGE_EXTERNAL_STORAGE, PermissionSpecialType.MANAGE_EXTERNAL_STORAGE.permission)
+        assertEquals(
+            Manifest.permission.REQUEST_INSTALL_PACKAGES,
+            PermissionSpecialType.REQUEST_INSTALL_PACKAGES.permission,
+        )
+        assertEquals(
+            Manifest.permission.ACCESS_NOTIFICATION_POLICY,
+            PermissionSpecialType.ACCESS_NOTIFICATION_POLICY.permission,
+        )
+        assertEquals(
+            Manifest.permission.MANAGE_EXTERNAL_STORAGE,
+            PermissionSpecialType.MANAGE_EXTERNAL_STORAGE.permission,
+        )
         assertEquals(Manifest.permission.SCHEDULE_EXACT_ALARM, PermissionSpecialType.SCHEDULE_EXACT_ALARM.permission)
     }
 

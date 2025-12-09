@@ -18,11 +18,27 @@ public object PermissionConstants {
         buildMap {
             PermissionSpecialType.entries.forEach {
                 when (it) {
-                    PermissionSpecialType.SYSTEM_ALERT_WINDOW -> put(it.permission, Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
+                    PermissionSpecialType.SYSTEM_ALERT_WINDOW ->
+                        put(
+                            it.permission,
+                            Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                        )
                     PermissionSpecialType.WRITE_SETTINGS -> put(it.permission, Settings.ACTION_MANAGE_WRITE_SETTINGS)
-                    PermissionSpecialType.PACKAGE_USAGE_STATS -> put(it.permission, Settings.ACTION_USAGE_ACCESS_SETTINGS)
-                    PermissionSpecialType.BIND_ACCESSIBILITY_SERVICE -> put(it.permission, Settings.ACTION_ACCESSIBILITY_SETTINGS)
-                    PermissionSpecialType.REQUEST_INSTALL_PACKAGES -> put(it.permission, Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES)
+                    PermissionSpecialType.PACKAGE_USAGE_STATS ->
+                        put(
+                            it.permission,
+                            Settings.ACTION_USAGE_ACCESS_SETTINGS,
+                        )
+                    PermissionSpecialType.BIND_ACCESSIBILITY_SERVICE ->
+                        put(
+                            it.permission,
+                            Settings.ACTION_ACCESSIBILITY_SETTINGS,
+                        )
+                    PermissionSpecialType.REQUEST_INSTALL_PACKAGES ->
+                        put(
+                            it.permission,
+                            Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES,
+                        )
                     PermissionSpecialType.ACCESS_NOTIFICATION_POLICY ->
                         put(
                             it.permission,
@@ -42,13 +58,19 @@ public object PermissionConstants {
                     else -> {
                         checkSdkVersion(Build.VERSION_CODES.S) {
                             if (it == PermissionSpecialType.SCHEDULE_EXACT_ALARM) {
-                                put(Manifest.permission.SCHEDULE_EXACT_ALARM, Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
+                                put(
+                                    Manifest.permission.SCHEDULE_EXACT_ALARM,
+                                    Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM,
+                                )
                             }
                         }
 
                         checkSdkVersion(Build.VERSION_CODES.R) {
                             if (it == PermissionSpecialType.MANAGE_EXTERNAL_STORAGE) {
-                                put(Manifest.permission.MANAGE_EXTERNAL_STORAGE, Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
+                                put(
+                                    Manifest.permission.MANAGE_EXTERNAL_STORAGE,
+                                    Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION,
+                                )
                             }
                         }
                     }

@@ -504,8 +504,11 @@ class SimpleNotificationControllerRobolectricTest {
             val infoClass = info::class.java
             val builderField = infoClass.getDeclaredField("builder").apply { isAccessible = true }
             val builder = builderField.get(info) as NotificationCompat.Builder
-            val constructor =
-                infoClass.getDeclaredConstructor(NotificationCompat.Builder::class.java, Long::class.javaPrimitiveType).apply {
+            val constructor = infoClass
+                .getDeclaredConstructor(
+                    NotificationCompat.Builder::class.java,
+                    Long::class.javaPrimitiveType,
+                ).apply {
                     isAccessible = true
                 }
             val staleTime = System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(31)
@@ -545,8 +548,11 @@ class SimpleNotificationControllerRobolectricTest {
             val infoClass = info::class.java
             val builderField = infoClass.getDeclaredField("builder").apply { isAccessible = true }
             val builder = builderField.get(info) as NotificationCompat.Builder
-            val constructor =
-                infoClass.getDeclaredConstructor(NotificationCompat.Builder::class.java, Long::class.javaPrimitiveType).apply {
+            val constructor = infoClass
+                .getDeclaredConstructor(
+                    NotificationCompat.Builder::class.java,
+                    Long::class.javaPrimitiveType,
+                ).apply {
                     isAccessible = true
                 }
             val staleTime = System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(31)
@@ -815,12 +821,18 @@ private object ImmediateScheduledFuture : ScheduledFuture<Unit> {
 }
 
 private fun SimpleNotificationController.setCleanupSchedulerForTest(executor: ScheduledExecutorService?) {
-    val field = SimpleNotificationController::class.java.getDeclaredField("cleanupScheduler").apply { isAccessible = true }
+    val field =
+        SimpleNotificationController::class.java.getDeclaredField("cleanupScheduler").apply {
+            isAccessible = true
+        }
     field.set(this, executor)
 }
 
 private fun SimpleNotificationController.getCleanupSchedulerForTest(): ScheduledExecutorService? {
-    val field = SimpleNotificationController::class.java.getDeclaredField("cleanupScheduler").apply { isAccessible = true }
+    val field =
+        SimpleNotificationController::class.java.getDeclaredField("cleanupScheduler").apply {
+            isAccessible = true
+        }
     @Suppress("UNCHECKED_CAST")
     return field.get(this) as? ScheduledExecutorService
 }

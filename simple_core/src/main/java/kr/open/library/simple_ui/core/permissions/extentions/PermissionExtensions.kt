@@ -48,7 +48,10 @@ public inline fun Context.hasPermission(permission: String): Boolean =
                 Build.VERSION_CODES.R,
                 positiveWork = { Environment.isExternalStorageManager() },
                 negativeWork = {
-                    ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+                    ContextCompat.checkSelfPermission(
+                        this,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    ) == PackageManager.PERMISSION_GRANTED
                 },
             )
         }

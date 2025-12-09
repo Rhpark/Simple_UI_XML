@@ -135,7 +135,10 @@ class TelephonyNetworkTypeUnitTest {
     @Test
     fun telephonyNetworkDetailType_valueOf_returnsCorrectEnum() {
         assertEquals(TelephonyNetworkDetailType.DISCONNECT, TelephonyNetworkDetailType.valueOf("DISCONNECT"))
-        assertEquals(TelephonyNetworkDetailType.NETWORK_TYPE_LTE, TelephonyNetworkDetailType.valueOf("NETWORK_TYPE_LTE"))
+        assertEquals(
+            TelephonyNetworkDetailType.NETWORK_TYPE_LTE,
+            TelephonyNetworkDetailType.valueOf("NETWORK_TYPE_LTE"),
+        )
         assertEquals(TelephonyNetworkDetailType.NETWORK_TYPE_NR, TelephonyNetworkDetailType.valueOf("NETWORK_TYPE_NR"))
     }
 
@@ -148,7 +151,10 @@ class TelephonyNetworkTypeUnitTest {
     fun telephonyNetworkDetailType_enumName_matchesExpectedFormat() {
         assertEquals("DISCONNECT", TelephonyNetworkDetailType.DISCONNECT.name)
         assertEquals("NETWORK_TYPE_LTE", TelephonyNetworkDetailType.NETWORK_TYPE_LTE.name)
-        assertEquals("OVERRIDE_NETWORK_TYPE_NR_ADVANCED", TelephonyNetworkDetailType.OVERRIDE_NETWORK_TYPE_NR_ADVANCED.name)
+        assertEquals(
+            "OVERRIDE_NETWORK_TYPE_NR_ADVANCED",
+            TelephonyNetworkDetailType.OVERRIDE_NETWORK_TYPE_NR_ADVANCED.name,
+        )
     }
 
     @Test

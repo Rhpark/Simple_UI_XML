@@ -435,14 +435,24 @@ public open class CommonTelephonyCallback(
                     if (telephonyDisplayInfo.overrideNetworkType ==
                         TelephonyDisplayInfo.OVERRIDE_NETWORK_TYPE_NR_ADVANCED
                     ) {
-                        TelephonyNetworkState(TelephonyNetworkType.CONNECT_5G, TelephonyNetworkDetailType.OVERRIDE_NETWORK_TYPE_NR_ADVANCED)
-                    } else if (telephonyDisplayInfo.overrideNetworkType == TelephonyDisplayInfo.OVERRIDE_NETWORK_TYPE_NR_NSA_MMWAVE) {
+                        TelephonyNetworkState(
+                            TelephonyNetworkType.CONNECT_5G,
+                            TelephonyNetworkDetailType.OVERRIDE_NETWORK_TYPE_NR_ADVANCED,
+                        )
+                    } else if (telephonyDisplayInfo.overrideNetworkType ==
+                        TelephonyDisplayInfo.OVERRIDE_NETWORK_TYPE_NR_NSA_MMWAVE
+                    ) {
                         TelephonyNetworkState(
                             TelephonyNetworkType.CONNECT_5G,
                             TelephonyNetworkDetailType.OVERRIDE_NETWORK_TYPE_NR_NSA_MMWAVE,
                         )
-                    } else if (telephonyDisplayInfo.overrideNetworkType == TelephonyDisplayInfo.OVERRIDE_NETWORK_TYPE_NR_NSA) {
-                        TelephonyNetworkState(TelephonyNetworkType.CONNECT_5G, TelephonyNetworkDetailType.OVERRIDE_NETWORK_TYPE_NR_NSA)
+                    } else if (telephonyDisplayInfo.overrideNetworkType ==
+                        TelephonyDisplayInfo.OVERRIDE_NETWORK_TYPE_NR_NSA
+                    ) {
+                        TelephonyNetworkState(
+                            TelephonyNetworkType.CONNECT_5G,
+                            TelephonyNetworkDetailType.OVERRIDE_NETWORK_TYPE_NR_NSA,
+                        )
                     } else {
                         getTelephonyManagerNetworkState()
                     }
@@ -585,12 +595,16 @@ public open class CommonTelephonyCallback(
                                     TelephonyNetworkType.CONNECT_5G,
                                     TelephonyNetworkDetailType.OVERRIDE_NETWORK_TYPE_NR_NSA,
                                 )
-                            } else if (it.overrideNetworkType == TelephonyDisplayInfo.OVERRIDE_NETWORK_TYPE_NR_NSA_MMWAVE) {
+                            } else if (it.overrideNetworkType ==
+                                TelephonyDisplayInfo.OVERRIDE_NETWORK_TYPE_NR_NSA_MMWAVE
+                            ) {
                                 TelephonyNetworkState(
                                     TelephonyNetworkType.CONNECT_5G,
                                     TelephonyNetworkDetailType.OVERRIDE_NETWORK_TYPE_NR_NSA_MMWAVE,
                                 )
-                            } else if (it.overrideNetworkType == TelephonyDisplayInfo.OVERRIDE_NETWORK_TYPE_NR_ADVANCED) {
+                            } else if (it.overrideNetworkType ==
+                                TelephonyDisplayInfo.OVERRIDE_NETWORK_TYPE_NR_ADVANCED
+                            ) {
                                 TelephonyNetworkState(
                                     TelephonyNetworkType.CONNECT_5G,
                                     TelephonyNetworkDetailType.OVERRIDE_NETWORK_TYPE_NR_ADVANCED,
@@ -606,7 +620,10 @@ public open class CommonTelephonyCallback(
                     val str = serviceState.toString()
                     if (str.contains("nrState=CONNECTED") && str.contains("nsaState=5")) {
                         telephonyNetworkState =
-                            TelephonyNetworkState(TelephonyNetworkType.CONNECT_5G, TelephonyNetworkDetailType.NETWORK_TYPE_NR)
+                            TelephonyNetworkState(
+                                TelephonyNetworkType.CONNECT_5G,
+                                TelephonyNetworkDetailType.NETWORK_TYPE_NR,
+                            )
                     }
                     updateNetwork(telephonyNetworkState)
                 },

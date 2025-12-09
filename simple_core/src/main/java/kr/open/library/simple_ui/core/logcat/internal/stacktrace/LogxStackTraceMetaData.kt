@@ -22,7 +22,11 @@ data class LogxStackTraceMetaData(
             Log.e(Logx.getAppName(), "[ERROR] LogxStackTrace, Failed to resolve className: ${item.className}", e)
             "Unknown"
         } catch (e: Exception) {
-            Log.e(Logx.getAppName(), "[ERROR] LogxStackTrace,  LogxStackTrace, Unexpected error getting fileName: ${e.message}", e)
+            Log.e(
+                Logx.getAppName(),
+                "[ERROR] LogxStackTrace,  LogxStackTrace, Unexpected error getting fileName: ${e.message}",
+                e,
+            )
             "Unknown"
         }
     }

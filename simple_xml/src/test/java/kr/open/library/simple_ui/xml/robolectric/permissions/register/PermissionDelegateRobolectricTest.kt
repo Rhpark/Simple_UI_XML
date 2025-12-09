@@ -36,8 +36,10 @@ class PermissionDelegateRobolectricTest {
 
     @Before
     fun setUp() {
-        pendingRequestsField = permissionManager.javaClass.getDeclaredField("pendingRequests").apply { isAccessible = true }
-        activeDelegatesField = permissionManager.javaClass.getDeclaredField("activeDelegates").apply { isAccessible = true }
+        pendingRequestsField =
+            permissionManager.javaClass.getDeclaredField("pendingRequests").apply { isAccessible = true }
+        activeDelegatesField =
+            permissionManager.javaClass.getDeclaredField("activeDelegates").apply { isAccessible = true }
 
         activityController = Robolectric.buildActivity(FragmentActivity::class.java)
         activityController.create()
@@ -45,7 +47,8 @@ class PermissionDelegateRobolectricTest {
         // Create delegate BEFORE starting/resuming the activity
         delegate = PermissionDelegate(activity)
 
-        currentRequestIdField = PermissionDelegate::class.java.getDeclaredField("currentRequestId").apply { isAccessible = true }
+        currentRequestIdField =
+            PermissionDelegate::class.java.getDeclaredField("currentRequestId").apply { isAccessible = true }
         cleanupMethod = PermissionDelegate::class.java.getDeclaredMethod("cleanup").apply { isAccessible = true }
 
         clearPermissionManagerState()
@@ -155,7 +158,10 @@ class PermissionDelegateRobolectricTest {
 
             val fragmentDelegate = fragment.delegate
 
-            val currentField = PermissionDelegate::class.java.getDeclaredField("currentRequestId").apply { isAccessible = true }
+            val currentField =
+                PermissionDelegate::class.java.getDeclaredField("currentRequestId").apply {
+                    isAccessible = true
+                }
             val requestId = UUID.randomUUID().toString()
             currentField.set(fragmentDelegate, requestId)
 
@@ -212,7 +218,10 @@ class PermissionDelegateRobolectricTest {
     @Test
     fun createSpecialLauncher_returnsLauncherForAllSpecialTypes() {
         PermissionSpecialType.entries.forEach { type ->
-            Assert.assertNotNull("Launcher missing for ${type.permission}", delegate.getSpecialLauncher(type.permission))
+            Assert.assertNotNull(
+                "Launcher missing for ${type.permission}",
+                delegate.getSpecialLauncher(type.permission),
+            )
         }
     }
 
@@ -222,7 +231,13 @@ class PermissionDelegateRobolectricTest {
     ): Any {
         val pendingRequests = pendingRequestsField.get(permissionManager) as MutableMap<String, Any>
         val clazz = Class.forName("kr.open.library.simple_ui.xml.permissions.manager.PermissionManager\$PendingRequest")
-        val ctor = clazz.getDeclaredConstructor(MutableList::class.java, Long::class.javaPrimitiveType, List::class.java, List::class.java)
+        val ctor =
+            clazz.getDeclaredConstructor(
+                MutableList::class.java,
+                Long::class.javaPrimitiveType,
+                List::class.java,
+                List::class.java,
+            )
         ctor.isAccessible = true
         val pending =
             ctor.newInstance(

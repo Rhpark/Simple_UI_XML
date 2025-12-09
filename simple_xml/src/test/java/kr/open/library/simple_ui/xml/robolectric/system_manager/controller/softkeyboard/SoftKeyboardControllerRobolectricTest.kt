@@ -331,7 +331,10 @@ class SoftKeyboardControllerRobolectricTest {
         val mockWindowWithException = mock(Window::class.java)
         `when`(mockWindowWithException.setSoftInputMode(anyInt())).thenThrow(RuntimeException("Test exception"))
 
-        val result = controller.setSoftInputMode(mockWindowWithException, WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
+        val result = controller.setSoftInputMode(
+            mockWindowWithException,
+            WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN,
+        )
 
         assertFalse(result)
     }

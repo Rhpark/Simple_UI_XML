@@ -55,7 +55,11 @@ android {
 
             // BuildConfig 필드 추가
             buildConfigField("String", "BUILD_TYPE_NAME", "\"${AppConfig.VERIFICATION}\"")
-            buildConfigField("String", "CRASH_REPORT_URL", "\"https://us-central1-rhpark-cc1f1.cloudfunctions.net/reportTestCrash\"")
+            buildConfigField(
+                "String",
+                "CRASH_REPORT_URL",
+                "\"https://us-central1-rhpark-cc1f1.cloudfunctions.net/reportTestCrash\"",
+            )
             buildConfigField("String", "CRASH_API_KEY", "\"SIMPLE_UI_VER_2025_nR8kL4mX9pT2wQ7vK3sN\"")
         }
 

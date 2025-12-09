@@ -34,7 +34,11 @@ class LogxConfigBuildersTest {
             }
 
         val types = builder.types
-        assertTrue(types.containsAll(listOf(LogxType.VERBOSE, LogxType.DEBUG, LogxType.INFO, LogxType.WARN, LogxType.ERROR, LogxType.JSON)))
+        assertTrue(
+            types.containsAll(
+                listOf(LogxType.VERBOSE, LogxType.DEBUG, LogxType.INFO, LogxType.WARN, LogxType.ERROR, LogxType.JSON),
+            ),
+        )
         assertFalse(types.contains(LogxType.THREAD_ID))
 
         builder.apply {

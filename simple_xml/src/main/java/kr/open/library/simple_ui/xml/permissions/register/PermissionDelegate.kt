@@ -16,8 +16,8 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.core.permissions.extentions.hasPermission
+import kr.open.library.simple_ui.core.permissions.manager.PermissionCallbackAddResult
 import kr.open.library.simple_ui.core.permissions.vo.PermissionSpecialType
-import kr.open.library.simple_ui.xml.permissions.manager.CallbackAddResult
 import kr.open.library.simple_ui.xml.permissions.manager.PermissionManager
 
 /**
@@ -44,14 +44,18 @@ public class PermissionDelegate<T : Any>(
     private val normalPermissionLauncher: ActivityResultLauncher<Array<String>> =
         when (contextProvider) {
             is ComponentActivity ->
-                contextProvider.registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+                contextProvider.registerForActivityResult(
+                    ActivityResultContracts.RequestMultiplePermissions(),
+                ) { permissions ->
                     delegateScope.launch {
                         permissionManager.result(getContext(), permissions, currentRequestId)
                     }
                 }
 
             is Fragment ->
-                contextProvider.registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+                contextProvider.registerForActivityResult(
+                    ActivityResultContracts.RequestMultiplePermissions(),
+                ) { permissions ->
                     delegateScope.launch {
                         permissionManager.result(getContext(), permissions, currentRequestId)
                     }
@@ -183,7 +187,9 @@ public class PermissionDelegate<T : Any>(
                     permissionManager.registerDelegate(requestId, this@PermissionDelegate)
                     Logx.d("Auto-reregistered delegate for request: $requestId")
                 } else {
-                    Logx.w("Attempted to reregister for inactive request: $requestId. Request may have been completed or cancelled.")
+                    Logx.w(
+                        "Attempted to reregister for inactive request: $requestId. Request may have been completed or cancelled.",
+                    )
                     currentRequestId = null
                 }
             }
@@ -241,11 +247,11 @@ public class PermissionDelegate<T : Any>(
                     )
 
                 when (result) {
-                    CallbackAddResult.SUCCESS -> {
+                    PermissionCallbackAddResult.SUCCESS -> {
                         Logx.d("Added callback to existing request: $currentRequestId (same permissions)")
                         return@launch
                     }
-                    CallbackAddResult.PERMISSION_MISMATCH -> {
+                    PermissionCallbackAddResult.PERMISSION_MISMATCH -> {
                         /*
                          * Ignores mismatched requests to prevent leaking stale callbacks.<br><br>
                          * 일치하지 않는 요청은 무시하여 잘못된 콜백 연결을 방지합니다.<br>
@@ -254,15 +260,19 @@ public class PermissionDelegate<T : Any>(
                         Logx.w(
                             "Cannot add callback: permission mismatch. Existing: $existingPermissions, Requested: ${permissions.toSet()}",
                         )
-                        Logx.w("Ignoring duplicate request with different permissions. Please wait for current request to complete.")
+                        Logx.w(
+                            "Ignoring duplicate request with different permissions. Please wait for current request to complete.",
+                        )
                         return@launch
                     }
-                    CallbackAddResult.REQUEST_NOT_FOUND -> {
+                    PermissionCallbackAddResult.REQUEST_NOT_FOUND -> {
                         /*
                          * Handles the race where the previous request finished between checks.<br><br>
                          * 직전 요청이 막 끝난 레이스 컨디션을 감지해 새 요청을 준비합니다.<br>
                          */
-                        Logx.d("Race condition detected: request $currentRequestId just completed. Starting new request.")
+                        Logx.d(
+                            "Race condition detected: request $currentRequestId just completed. Starting new request.",
+                        )
                         currentRequestId = null
                         /*
                          * Continues below to start a brand-new permission request.<br><br>

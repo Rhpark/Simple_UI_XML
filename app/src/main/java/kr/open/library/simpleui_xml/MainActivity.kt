@@ -3,7 +3,6 @@ package kr.open.library.simpleui_xml
 import android.content.Intent
 import android.os.Bundle
 import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kr.open.library.simple_ui.xml.extensions.view.bold
 import kr.open.library.simple_ui.xml.ui.activity.BaseBindingActivity
@@ -24,7 +23,7 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
         setupPermissionButtons()
 
         lifecycleScope.launch {
-            delay(5000)
+//            delay(5000)
 
 //            throw Exception(":FSEF")
 //            Firebase.crashlytics.recordException(Exception("test"))

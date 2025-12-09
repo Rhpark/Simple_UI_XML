@@ -264,9 +264,19 @@ class ServiceManagerInfoActivity : BaseBindingActivity<ActivityServiceManagerInf
 
                 // IP 주소
                 addItem("--- IP Addresses ---")
-                addItem("WiFi IP: ${networkInfo.getIPAddressByNetworkType(android.net.NetworkCapabilities.TRANSPORT_WIFI)}")
-                addItem("Mobile IP: ${networkInfo.getIPAddressByNetworkType(android.net.NetworkCapabilities.TRANSPORT_CELLULAR)}")
-                addItem("Ethernet IP: ${networkInfo.getIPAddressByNetworkType(android.net.NetworkCapabilities.TRANSPORT_ETHERNET)}")
+                addItem(
+                    "WiFi IP: ${networkInfo.getIPAddressByNetworkType(android.net.NetworkCapabilities.TRANSPORT_WIFI)}",
+                )
+                addItem(
+                    "Mobile IP: ${networkInfo.getIPAddressByNetworkType(
+                        android.net.NetworkCapabilities.TRANSPORT_CELLULAR,
+                    )}",
+                )
+                addItem(
+                    "Ethernet IP: ${networkInfo.getIPAddressByNetworkType(
+                        android.net.NetworkCapabilities.TRANSPORT_ETHERNET,
+                    )}",
+                )
 
                 // 네트워크 요약
                 addItem("--- Network Summary ---")
@@ -332,14 +342,17 @@ class ServiceManagerInfoActivity : BaseBindingActivity<ActivityServiceManagerInf
                                     is BatteryStateEvent.OnChargeCounter -> addItem("ChargeCounter = ${type.counter}")
                                     is BatteryStateEvent.OnChargePlug -> addItem("ChargePlugStr = ${type.type}")
                                     is BatteryStateEvent.OnChargeStatus -> addItem("OnChargeStatus = ${type.status}")
-                                    is BatteryStateEvent.OnCurrentAmpere -> addItem("Current Ampere = ${type.current} mA")
+                                    is BatteryStateEvent.OnCurrentAmpere ->
+                                        addItem("Current Ampere = ${type.current} mA",)
                                     is BatteryStateEvent.OnEnergyCounter -> addItem("EnergyCounte = ${type.energy}")
                                     is BatteryStateEvent.OnHealth -> addItem("Health = ${type.health}")
                                     is BatteryStateEvent.OnPresent -> addItem("Present = ${type.present}")
                                     is BatteryStateEvent.OnTemperature -> addItem("Temperature = ${type.temperature}")
-                                    is BatteryStateEvent.OnTotalCapacity -> addItem("TotalCapacity = ${type.totalCapacity} ")
+                                    is BatteryStateEvent.OnTotalCapacity ->
+                                        addItem("TotalCapacity = ${type.totalCapacity} ",)
                                     is BatteryStateEvent.OnVoltage -> addItem("Charge voltage = ${type.voltage} v")
-                                    is BatteryStateEvent.OnCurrentAverageAmpere -> addItem("Current AverageAmpere = ${type.current} mA")
+                                    is BatteryStateEvent.OnCurrentAverageAmpere ->
+                                        addItem("Current AverageAmpere = ${type.current} mA",)
                                 }
                             }
                         }
@@ -359,10 +372,13 @@ class ServiceManagerInfoActivity : BaseBindingActivity<ActivityServiceManagerInf
                             locationInfo.sfUpdate.collect { type ->
                                 when (type) {
                                     is LocationStateEvent.OnGpsEnabled -> addItem("OnGpsEnabled ${type.isEnabled}")
-                                    is LocationStateEvent.OnNetworkEnabled -> addItem("OnNetworkEnabled ${type.isEnabled}")
+                                    is LocationStateEvent.OnNetworkEnabled ->
+                                        addItem("OnNetworkEnabled ${type.isEnabled}",)
                                     is LocationStateEvent.OnFusedEnabled -> addItem("OnFusedEnabled ${type.isEnabled}")
-                                    is LocationStateEvent.OnPassiveEnabled -> addItem("OnPassiveEnabled ${type.isEnabled}")
-                                    is LocationStateEvent.OnLocationChanged -> addItem("OnLocationChanged ${type.location}")
+                                    is LocationStateEvent.OnPassiveEnabled ->
+                                        addItem("OnPassiveEnabled ${type.isEnabled}",)
+                                    is LocationStateEvent.OnLocationChanged ->
+                                        addItem("OnLocationChanged ${type.location}",)
                                 }
                             }
                         }
@@ -444,7 +460,12 @@ class ServiceManagerInfoActivity : BaseBindingActivity<ActivityServiceManagerInf
                                     latitude = 37.5665
                                     longitude = 126.9780
                                 }
-                            val isWithinRadius = locationInfo.isLocationWithRadius(currentLocation, seoulCityHall, 10000f)
+                            val isWithinRadius =
+                                locationInfo.isLocationWithRadius(
+                                    currentLocation,
+                                    seoulCityHall,
+                                    10000f,
+                                )
                             addItem("Within 10km of Seoul City Hall: $isWithinRadius")
                         } else {
                             addItem("Current Location is null")

@@ -27,7 +27,10 @@ class LogxStackTrace {
         val stackTraceSize = currentThread.stackTrace.size
 
         if (level >= stackTraceSize) {
-            Log.e(Logx.getAppName(), "[Error] Logx: Stack trace level $level exceeds available stack size $stackTraceSize")
+            Log.e(
+                Logx.getAppName(),
+                "[Error] Logx: Stack trace level $level exceeds available stack size $stackTraceSize",
+            )
             throw IndexOutOfBoundsException("Stack trace level $level exceeds available stack size $stackTraceSize")
         }
 

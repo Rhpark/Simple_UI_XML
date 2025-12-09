@@ -208,7 +208,13 @@ public class PowerProfile(
                     // Current percentage
                     val capacity = batteryManager?.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
 
-                    return if (chargeCounter != null && capacity != null && chargeCounter > 0 && capacity > 5 && capacity <= 100) {
+                    return if (
+                        chargeCounter != null &&
+                        capacity != null &&
+                        chargeCounter > 0 &&
+                        capacity > 5 &&
+                        capacity <= 100
+                    ) {
                         // Calculate total capacity: (current_charge_µAh / current_percentage) * 100 / 1000 = mAh
                         // 총 용량 계산: (현재_충전량_µAh / 현재_백분율) * 100 / 1000 = mAh
                         val estimatedTotalCapacity = (chargeCounter.toDouble() / capacity.toDouble()) * 100.0 / 1000.0

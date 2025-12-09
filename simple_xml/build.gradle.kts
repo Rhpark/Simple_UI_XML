@@ -135,19 +135,27 @@ kover {
     }
 }
 
-// Dokka Configuration for simple_xml module
 // simple_xml 모듈 Dokka 설정
+// - ./gradlew :simple_xml:dokkaHtml 실행 시 사용
 tasks.dokkaHtml {
+    // 생성되는 Dokka HTML 문서 상단에 표시할 모듈 이름
     moduleName.set("Simple UI XML")
 
     dokkaSourceSets {
         named("main") {
+            // GitHub 소스 코드와 연결 (문서에서 "소스 보기" 링크를 생성)
             sourceLink {
+                // 로컬 소스 디렉터리 경로
                 localDirectory.set(file("src/main/java"))
-                remoteUrl.set(uri("https://github.com/Rhpark/Simple_UI_XML/tree/master/simple_xml/src/main/java").toURL())
+                // GitHub 리포지토리의 대응 경로 (브랜치/디렉터리 구조가 일치해야 함)
+                remoteUrl.set(
+                    uri("https://github.com/Rhpark/Simple_UI_XML/tree/master/simple_xml/src/main/java").toURL(),
+                )
+                // 특정 라인으로 이동하기 위한 suffix 형식
                 remoteLineSuffix.set("#L")
             }
 
+            // Android 공식 레퍼런스와 연결 (예: Activity, Fragment 등 타입에 대한 링크 자동 생성)
             externalDocumentationLink {
                 url.set(uri("https://developer.android.com/reference/").toURL())
             }

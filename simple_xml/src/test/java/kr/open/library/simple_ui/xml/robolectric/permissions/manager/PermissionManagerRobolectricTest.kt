@@ -8,7 +8,7 @@ import android.os.Build
 import androidx.activity.result.ActivityResultLauncher
 import androidx.test.core.app.ApplicationProvider
 import kotlinx.coroutines.test.runTest
-import kr.open.library.simple_ui.xml.permissions.manager.CallbackAddResult
+import kr.open.library.simple_ui.core.permissions.manager.PermissionCallbackAddResult
 import kr.open.library.simple_ui.xml.permissions.manager.PermissionManager
 import kr.open.library.simple_ui.xml.permissions.register.PermissionDelegate
 import org.junit.Assert.assertEquals
@@ -349,7 +349,7 @@ class PermissionManagerRobolectricTest {
                 )
 
             // Then
-            assertEquals(CallbackAddResult.SUCCESS, result)
+            assertEquals(PermissionCallbackAddResult.SUCCESS, result)
         }
 
     @Test
@@ -364,7 +364,7 @@ class PermissionManagerRobolectricTest {
                 )
 
             // Then
-            assertEquals(CallbackAddResult.REQUEST_NOT_FOUND, result)
+            assertEquals(PermissionCallbackAddResult.REQUEST_NOT_FOUND, result)
         }
 
     @Test
@@ -389,7 +389,7 @@ class PermissionManagerRobolectricTest {
                 )
 
             // Then
-            assertEquals(CallbackAddResult.PERMISSION_MISMATCH, result)
+            assertEquals(PermissionCallbackAddResult.PERMISSION_MISMATCH, result)
         }
 
     @Test
@@ -455,7 +455,7 @@ class PermissionManagerRobolectricTest {
                     callback = { },
                     requestedPermissions = listOf(Manifest.permission.CAMERA),
                 )
-            assertEquals(CallbackAddResult.REQUEST_NOT_FOUND, result)
+            assertEquals(PermissionCallbackAddResult.REQUEST_NOT_FOUND, result)
         }
 
     @Test

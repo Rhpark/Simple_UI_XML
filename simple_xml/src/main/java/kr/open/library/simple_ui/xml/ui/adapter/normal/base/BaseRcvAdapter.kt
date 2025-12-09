@@ -573,7 +573,10 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder>(
                     method.invoke(this, detectMoves)
                 } catch (_: NoSuchMethodException) {
                     if (!detectMoves) {
-                        Logx.w("AsyncListDiffer", "setDetectMoves not available; detectMoves flag is ignored on this version.")
+                        Logx.w(
+                            "AsyncListDiffer",
+                            "setDetectMoves not available; detectMoves flag is ignored on this version.",
+                        )
                     }
                 } catch (e: Exception) {
                     Logx.w("AsyncListDiffer", "Failed to reflectively set detectMoves: ${e.message}")

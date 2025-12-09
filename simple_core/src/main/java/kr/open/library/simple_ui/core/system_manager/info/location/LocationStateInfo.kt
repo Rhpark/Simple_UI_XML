@@ -55,7 +55,8 @@ public open class LocationStateInfo(
      * Mutable flow caching the latest location state event.<br><br>
      * 최신 위치 상태 이벤트를 보관하는 MutableStateFlow입니다.<br>
      */
-    private val msfUpdate: MutableStateFlow<LocationStateEvent> = MutableStateFlow(LocationStateEvent.OnGpsEnabled(isGpsEnabled()))
+    private val msfUpdate: MutableStateFlow<LocationStateEvent> =
+        MutableStateFlow(LocationStateEvent.OnGpsEnabled(isGpsEnabled()))
 
     /**
      * StateFlow that emits location state events whenever location information changes.<br><br>
@@ -92,7 +93,13 @@ public open class LocationStateInfo(
      * Fused 제공자 활성 상태 캐시(API 31+)입니다.<br>
      */
     private val isFusedEnabled =
-        DataUpdate<Boolean>(checkSdkVersion(Build.VERSION_CODES.S, positiveWork = { isFusedEnabled() }, negativeWork = { false }))
+        DataUpdate<Boolean>(
+            checkSdkVersion(
+                Build.VERSION_CODES.S,
+                positiveWork = { isFusedEnabled() },
+                negativeWork = { false }
+            ),
+        )
 
     /**
      * Coroutine scope used for collecting/emitting updates.<br><br>
@@ -125,7 +132,9 @@ public open class LocationStateInfo(
              * 위치가 갱신될 때 호출됩니다.<br>
              */
             override fun onLocationChanged(location: Location) {
-                Logx.d("Location updated: lat=${location.latitude}, lng=${location.longitude}, accuracy=${location.accuracy}m")
+                Logx.d(
+                    "Location updated: lat=${location.latitude}, lng=${location.longitude}, accuracy=${location.accuracy}m",
+                )
                 locationChanged.update(location)
             }
 

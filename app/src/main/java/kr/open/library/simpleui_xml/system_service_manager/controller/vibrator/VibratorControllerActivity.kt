@@ -41,7 +41,8 @@ class VibratorControllerActivity : BaseActivity(R.layout.activity_vibrator_contr
 
             btnPattern2.setOnClickListener {
                 // Pattern: SOS (... --- ...)
-                val pattern = longArrayOf(0, 100, 100, 100, 100, 100, 300, 300, 300, 300, 300, 300, 300, 100, 100, 100, 100, 100)
+                val pattern =
+                    longArrayOf(0, 100, 100, 100, 100, 100, 300, 300, 300, 300, 300, 300, 300, 100, 100, 100, 100, 100)
                 vibratorController.vibratePattern(pattern, -1)
                 toastShowShort("Pattern 2: SOS")
             }

@@ -114,9 +114,19 @@ internal class WifiConnectionInfoProvider(
 
                         WifiNetworkDetails(
                             isConnected = true,
-                            hasInternet = networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET),
-                            isValidated = networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED),
-                            isMetered = networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_METERED).not(),
+                            hasInternet =
+                                networkCapabilities.hasCapability(
+                                    NetworkCapabilities.NET_CAPABILITY_INTERNET,
+                                ),
+                            isValidated =
+                                networkCapabilities.hasCapability(
+                                    NetworkCapabilities.NET_CAPABILITY_VALIDATED,
+                                ),
+                            isMetered =
+                                networkCapabilities
+                                    .hasCapability(
+                                        NetworkCapabilities.NET_CAPABILITY_NOT_METERED,
+                                    ).not(),
                             linkDownstreamBandwidthKbps = networkCapabilities.linkDownstreamBandwidthKbps,
                             linkUpstreamBandwidthKbps = networkCapabilities.linkUpstreamBandwidthKbps,
                             interfaceName = linkProperties?.interfaceName,

@@ -72,7 +72,9 @@ internal class NetworkStateCallback(
     override fun onLost(network: Network) {
         super.onLost(network)
         onNetworkLost?.invoke(network)
-        onNetworkChangedState?.invoke(TelephonyNetworkState(TelephonyNetworkType.DISCONNECT, TelephonyNetworkDetailType.DISCONNECT))
+        onNetworkChangedState?.invoke(
+            TelephonyNetworkState(TelephonyNetworkType.DISCONNECT, TelephonyNetworkDetailType.DISCONNECT),
+        )
     }
 
     /**

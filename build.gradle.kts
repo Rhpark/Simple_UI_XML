@@ -9,7 +9,7 @@ plugins {
 
     // Firebase
     id("com.google.gms.google-services") version "4.4.4" apply false // Firebase Common
-    id("com.google.firebase.appdistribution") version "5.0.0" apply false // Firebase App Distribution (APK auto distribute)
+    id("com.google.firebase.appdistribution") version "5.0.0" apply false // Firebase Auto App(APK) Distribution
     id("com.google.firebase.crashlytics") version "3.0.6" apply false // Firebase Exception Report
     id("org.jetbrains.dokka") version "2.1.0" // Dokka multi-module docs
 
@@ -18,6 +18,7 @@ plugins {
 
 // Dokka V2 Multi-Module Configuration + KtLint setup
 subprojects {
+    // 각 모듈에 Dokka 플러그인을 적용하여 dokkaHtml / dokkaGeneratePublicationHtml 태스크를 활성화
     apply(plugin = "org.jetbrains.dokka")
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
 
@@ -35,6 +36,7 @@ subprojects {
     }
 }
 
+// Dokka 멀티 모듈 HTML 문서를 docs/api 이하로 복사·정리하는 커스텀 태스크
 tasks.register("dokkaHtmlMultiModuleCustom") {
     group = "documentation"
     description = "Generate multi-module Dokka HTML documentation to docs/api"
@@ -43,24 +45,32 @@ tasks.register("dokkaHtmlMultiModuleCustom") {
     dependsOn(":simple_xml:dokkaGeneratePublicationHtml")
 
     doLast {
-        val outputDir = file("docs/api")
+        val outputDir =
+            project.layout.projectDirectory
+                .dir("docs/api")
+                .asFile
         outputDir.deleteRecursively()
         outputDir.mkdirs()
 
         // Copy simple_core documentation
-        copy {
-            from("simple_core/build/dokka/html")
-            into("docs/api/simple-core")
+        project.copy {
+            from(project.layout.projectDirectory.dir("simple_core/build/dokka/html"))
+            into(outputDir.resolve("simple-core"))
         }
 
         // Copy simple_xml documentation
-        copy {
-            from("simple_xml/build/dokka/html")
-            into("docs/api/simple-xml")
+        project.copy {
+            from(project.layout.projectDirectory.dir("simple_xml/build/dokka/html"))
+            into(outputDir.resolve("simple-xml"))
         }
 
+        val indexFile =
+            project.layout.projectDirectory
+                .file("docs/api/index.html")
+                .asFile
+
         // Create index.html for navigation
-        file("docs/api/index.html").writeText(
+        indexFile.writeText(
             """
             <!DOCTYPE html>
             <html>

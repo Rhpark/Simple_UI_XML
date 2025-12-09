@@ -76,7 +76,10 @@ public open class DisplayInfo(
             Build.VERSION_CODES.R,
             positiveWork = {
                 val height =
-                    getCurrentWindowMetricsSdkR().windowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.statusBars()).top
+                    getCurrentWindowMetricsSdkR()
+                        .windowInsets
+                        .getInsetsIgnoringVisibility(WindowInsets.Type.statusBars())
+                        .top
                 val width = getFullScreenWidth()
                 return Point(width, height)
             },
@@ -86,7 +89,9 @@ public open class DisplayInfo(
                         .getIdentifier("status_bar_height", "dimen", "android")
                         .takeIf { it > 0 }
                         ?.let { context.resources.getDimensionPixelSize(it) }
-                        ?: throw Resources.NotFoundException("Cannot find status bar height. Try getStatusBarSize(activity: Activity).")
+                        ?: throw Resources.NotFoundException(
+                            "Cannot find status bar height. Try getStatusBarSize(activity: Activity).",
+                        )
 
                 val width = getFullScreenWidth()
                 return Point(width, height)

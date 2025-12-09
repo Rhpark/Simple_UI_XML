@@ -41,19 +41,34 @@ class TryCatchExtensionsTest {
 
     private fun stubAndroidLog() {
         logMock.`when`<Int> { Log.v(Mockito.anyString(), Mockito.anyString()) }.thenReturn(0)
-        logMock.`when`<Int> { Log.v(Mockito.anyString(), Mockito.anyString(), Mockito.any(Throwable::class.java)) }.thenReturn(0)
+        logMock
+            .`when`<Int> {
+                Log.v(Mockito.anyString(), Mockito.anyString(), Mockito.any(Throwable::class.java))
+            }.thenReturn(0)
 
         logMock.`when`<Int> { Log.d(Mockito.anyString(), Mockito.anyString()) }.thenReturn(0)
-        logMock.`when`<Int> { Log.d(Mockito.anyString(), Mockito.anyString(), Mockito.any(Throwable::class.java)) }.thenReturn(0)
+        logMock
+            .`when`<Int> {
+                Log.d(Mockito.anyString(), Mockito.anyString(), Mockito.any(Throwable::class.java))
+            }.thenReturn(0)
 
         logMock.`when`<Int> { Log.i(Mockito.anyString(), Mockito.anyString()) }.thenReturn(0)
-        logMock.`when`<Int> { Log.i(Mockito.anyString(), Mockito.anyString(), Mockito.any(Throwable::class.java)) }.thenReturn(0)
+        logMock
+            .`when`<Int> {
+                Log.i(Mockito.anyString(), Mockito.anyString(), Mockito.any(Throwable::class.java))
+            }.thenReturn(0)
 
         logMock.`when`<Int> { Log.w(Mockito.anyString(), Mockito.anyString()) }.thenReturn(0)
-        logMock.`when`<Int> { Log.w(Mockito.anyString(), Mockito.anyString(), Mockito.any(Throwable::class.java)) }.thenReturn(0)
+        logMock
+            .`when`<Int> {
+                Log.w(Mockito.anyString(), Mockito.anyString(), Mockito.any(Throwable::class.java))
+            }.thenReturn(0)
 
         logMock.`when`<Int> { Log.e(Mockito.anyString(), Mockito.anyString()) }.thenReturn(0)
-        logMock.`when`<Int> { Log.e(Mockito.anyString(), Mockito.anyString(), Mockito.any(Throwable::class.java)) }.thenReturn(0)
+        logMock
+            .`when`<Int> {
+                Log.e(Mockito.anyString(), Mockito.anyString(), Mockito.any(Throwable::class.java))
+            }.thenReturn(0)
     }
 
     // ========== 1. safeCatch(block) 테스트 ==========

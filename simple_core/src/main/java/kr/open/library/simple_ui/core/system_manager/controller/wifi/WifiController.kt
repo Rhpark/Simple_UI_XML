@@ -72,7 +72,10 @@ public open class WifiController(
      * Operation guard for safe WiFi operation execution.<br><br>
      * 안전한 WiFi 작업 실행을 위한 작업 가드입니다.<br>
      */
-    private val operationGuard = WifiOperationGuard { defaultValue, block -> tryCatchSystemManager(defaultValue) { block() } }
+    private val operationGuard =
+        WifiOperationGuard { defaultValue, block, ->
+            tryCatchSystemManager(defaultValue) { block() }
+        }
 
     /**
      * Provider for WiFi connection information.<br><br>
