@@ -169,10 +169,7 @@ class LogxWriter(
      * @param msg The message to log.<br><br>
      *            로깅할 메시지.
      */
-    fun writeThreadId(
-        tag: String,
-        msg: Any?,
-    ) {
+    fun writeThreadId(tag: String, msg: Any?) {
         if (!shouldLog(LogxType.THREAD_ID)) return
 
         try {
@@ -193,10 +190,7 @@ class LogxWriter(
      * @param msg The message to log.<br><br>
      *            로깅할 메시지.
      */
-    fun writeParent(
-        tag: String,
-        msg: Any?,
-    ) {
+    fun writeParent(tag: String, msg: Any?) {
         if (!shouldLog(LogxType.PARENT)) return
 
         try {
@@ -217,10 +211,7 @@ class LogxWriter(
      * @param msg The message to log.<br><br>
      *            로깅할 메시지.
      */
-    fun writeExtensionsParent(
-        tag: String,
-        msg: Any?,
-    ) {
+    fun writeExtensionsParent(tag: String, msg: Any?) {
         if (!shouldLog(LogxType.PARENT)) return
 
         try {
@@ -241,10 +232,7 @@ class LogxWriter(
      * @param msg The JSON string to format and log.<br><br>
      *            포맷하고 로깅할 JSON 문자열.
      */
-    fun writeJsonExtensions(
-        tag: String,
-        msg: String,
-    ) {
+    fun writeJsonExtensions(tag: String, msg: String) {
         if (!shouldLog(LogxType.JSON)) return
 
         try {
@@ -265,10 +253,7 @@ class LogxWriter(
      * @param msg The JSON string to format and log.<br><br>
      *            포맷하고 로깅할 JSON 문자열.
      */
-    fun writeJson(
-        tag: String,
-        msg: String,
-    ) {
+    fun writeJson(tag: String, msg: String) {
         if (!shouldLog(LogxType.JSON)) return
 
         try {

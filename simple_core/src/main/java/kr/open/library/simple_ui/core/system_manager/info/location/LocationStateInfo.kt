@@ -92,14 +92,13 @@ public open class LocationStateInfo(
      * Fused provider enabled state cache (API 31+).<br><br>
      * Fused 제공자 활성 상태 캐시(API 31+)입니다.<br>
      */
-    private val isFusedEnabled =
-        DataUpdate<Boolean>(
-            checkSdkVersion(
-                Build.VERSION_CODES.S,
-                positiveWork = { isFusedEnabled() },
-                negativeWork = { false }
-            ),
-        )
+    private val isFusedEnabled = DataUpdate<Boolean>(
+        checkSdkVersion(
+            Build.VERSION_CODES.S,
+            positiveWork = { isFusedEnabled() },
+            negativeWork = { false }
+        ),
+    )
 
     /**
      * Coroutine scope used for collecting/emitting updates.<br><br>
@@ -240,30 +239,29 @@ public open class LocationStateInfo(
      * @return `true` if registration succeeded; `false` otherwise.<br><br>
      *         등록 성공 시 `true`, 실패 시 `false`입니다.<br>
      */
-    private fun registerLocation(): Boolean =
-        tryCatchSystemManager(false) {
-            unregisterGpsState()
-            gpsStateBroadcastReceiver =
-                object : BroadcastReceiver() {
-                    /**
-                     * Handles provider change broadcasts.<br><br>
-                     * 제공자 변경 브로드캐스트를 처리합니다.<br>
-                     */
-                    override fun onReceive(
-                        context: Context,
-                        intent: Intent,
-                    ) {
-                        if (intent.action.equals(LocationManager.PROVIDERS_CHANGED_ACTION)) {
-                            isGpsEnabled.update(isGpsEnabled())
-                            isNetworkEnabled.update(isNetworkEnabled())
-                            isPassiveEnabled.update(isPassiveEnabled())
-                            checkSdkVersion(Build.VERSION_CODES.S) { isFusedEnabled.update(isFusedEnabled()) }
-                        }
+    private fun registerLocation(): Boolean = tryCatchSystemManager(false) {
+        unregisterGpsState()
+        gpsStateBroadcastReceiver =
+            object : BroadcastReceiver() {
+                /**
+                 * Handles provider change broadcasts.<br><br>
+                 * 제공자 변경 브로드캐스트를 처리합니다.<br>
+                 */
+                override fun onReceive(
+                    context: Context,
+                    intent: Intent,
+                ) {
+                    if (intent.action.equals(LocationManager.PROVIDERS_CHANGED_ACTION)) {
+                        isGpsEnabled.update(isGpsEnabled())
+                        isNetworkEnabled.update(isNetworkEnabled())
+                        isPassiveEnabled.update(isPassiveEnabled())
+                        checkSdkVersion(Build.VERSION_CODES.S) { isFusedEnabled.update(isFusedEnabled()) }
                     }
                 }
-            context.registerReceiver(gpsStateBroadcastReceiver, intentFilter)
-            return true
-        }
+            }
+        context.registerReceiver(gpsStateBroadcastReceiver, intentFilter)
+        return true
+    }
 
     /**
      * Requests location updates from the specified provider.<br><br>
@@ -356,16 +354,11 @@ public open class LocationStateInfo(
      * @return `true` if any provider is enabled; `false` otherwise.<br><br>
      *         하나라도 제공자가 활성화되어 있으면 `true`, 아니면 `false`입니다.<br>
      */
-    public fun isAnyEnabled(): Boolean =
-        checkSdkVersion(
-            Build.VERSION_CODES.S,
-            positiveWork = {
-                (isLocationEnabled() || isGpsEnabled() || isNetworkEnabled() || isPassiveEnabled() || isFusedEnabled())
-            },
-            negativeWork = {
-                (isLocationEnabled() || isGpsEnabled() || isNetworkEnabled() || isPassiveEnabled())
-            },
-        )
+    public fun isAnyEnabled(): Boolean = checkSdkVersion(
+        Build.VERSION_CODES.S,
+        positiveWork = { (isLocationEnabled() || isGpsEnabled() || isNetworkEnabled() || isPassiveEnabled() || isFusedEnabled()) },
+        negativeWork = { (isLocationEnabled() || isGpsEnabled() || isNetworkEnabled() || isPassiveEnabled()) },
+    )
 
     /**
      * Gets the last known location from the location provider.<br><br>
@@ -421,10 +414,7 @@ public open class LocationStateInfo(
      * @return Distance in meters.<br><br>
      *         미터 단위 거리입니다.<br>
      */
-    public fun calculateDistance(
-        fromLocation: Location,
-        toLocation: Location,
-    ): Float = fromLocation.distanceTo(toLocation)
+    public fun calculateDistance(fromLocation: Location, toLocation: Location): Float = fromLocation.distanceTo(toLocation)
 
     /**
      * Calculates the bearing between two locations in degrees.<br><br>
@@ -437,10 +427,7 @@ public open class LocationStateInfo(
      * @return Bearing in degrees.<br><br>
      *         도 단위 방위각입니다.<br>
      */
-    public fun calculateBearing(
-        fromLocation: Location,
-        toLocation: Location,
-    ): Float = fromLocation.bearingTo(toLocation)
+    public fun calculateBearing(fromLocation: Location, toLocation: Location): Float = fromLocation.bearingTo(toLocation)
 
     /**
      * Checks if two locations are within a specified radius.<br><br>

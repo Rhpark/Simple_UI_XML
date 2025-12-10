@@ -198,10 +198,7 @@ public class SimInfo(
      *         활성화된 SIM 카드 수.
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun getActiveSimCount(): Int =
-        safeCatch(defaultValue = 0) {
-            return subscriptionManager.activeSubscriptionInfoCount
-        }
+    public fun getActiveSimCount(): Int = safeCatch(defaultValue = 0) { return subscriptionManager.activeSubscriptionInfoCount }
 
     /**
      * Gets active SIM slot index list.<br><br>
@@ -259,19 +256,17 @@ public class SimInfo(
      *         기본 subscription ID, 사용할 수 없는 경우 null.
      */
     @RequiresPermission(READ_PHONE_STATE)
-    private fun getSubIdFromDefaultUSimInternal(): Int? =
-        safeCatch(null) {
-            isReadSimInfoFromDefaultUSim = false
+    private fun getSubIdFromDefaultUSimInternal(): Int? = safeCatch(null) {
+        isReadSimInfoFromDefaultUSim = false
 
-            val id =
-                checkSdkVersion(
-                    Build.VERSION_CODES.R,
-                    positiveWork = { telephonyManager.subscriptionId },
-                    negativeWork = { getActiveSubscriptionInfoList().firstOrNull()?.subscriptionId },
-                )
-            isReadSimInfoFromDefaultUSim = id != null
-            return id
-        }
+        val id = checkSdkVersion(
+            Build.VERSION_CODES.R,
+            positiveWork = { telephonyManager.subscriptionId },
+            negativeWork = { getActiveSubscriptionInfoList().firstOrNull()?.subscriptionId },
+        )
+        isReadSimInfoFromDefaultUSim = id != null
+        return id
+    }
 
     /**
      * Gets subscription ID for specific SIM slot.<br><br>
@@ -283,14 +278,13 @@ public class SimInfo(
      *         Subscription ID, 사용할 수 없는 경우 null.
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun getSubId(simSlotIndex: Int): Int? =
-        tryCatchSystemManager(null) {
-            checkSdkVersion(
-                Build.VERSION_CODES.R,
-                positiveWork = { uSimTelephonyManagerList[simSlotIndex]?.subscriptionId },
-                negativeWork = { getActiveSubscriptionInfoSimSlot(simSlotIndex)?.subscriptionId },
-            )
-        }
+    public fun getSubId(simSlotIndex: Int): Int? = tryCatchSystemManager(null) {
+        checkSdkVersion(
+            Build.VERSION_CODES.R,
+            positiveWork = { uSimTelephonyManagerList[simSlotIndex]?.subscriptionId },
+            negativeWork = { getActiveSubscriptionInfoSimSlot(simSlotIndex)?.subscriptionId },
+        )
+    }
 
     /**
      * Converts subscription ID to SIM slot index.<br><br>
@@ -312,10 +306,9 @@ public class SimInfo(
      *         SubscriptionInfo 목록.
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun getActiveSubscriptionInfoList(): List<SubscriptionInfo> =
-        safeCatch(defaultValue = emptyList()) {
-            return subscriptionManager.activeSubscriptionInfoList ?: emptyList()
-        }
+    public fun getActiveSubscriptionInfoList(): List<SubscriptionInfo> = safeCatch(defaultValue = emptyList()) {
+        return subscriptionManager.activeSubscriptionInfoList ?: emptyList()
+    }
 
     /**
      * Gets SubscriptionInfo for default subscription.<br><br>
@@ -326,8 +319,7 @@ public class SimInfo(
      */
     @RequiresPermission(READ_PHONE_STATE)
     public fun getSubscriptionInfoSubIdFromDefaultUSim(): SubscriptionInfo? =
-        getSubIdFromDefaultUSim()?.let { getActiveSubscriptionInfoSubId(it) }
-            ?: throw IllegalArgumentException("Cannot read uSim Chip")
+        getSubIdFromDefaultUSim()?.let { getActiveSubscriptionInfoSubId(it) } ?: throw IllegalArgumentException("Cannot read uSim Chip")
 
     /**
      * Gets SubscriptionInfo for specific subscription ID.<br><br>
@@ -363,8 +355,7 @@ public class SimInfo(
      */
     @RequiresPermission(READ_PHONE_STATE)
     public fun getSubscriptionInfoSimSlotFromDefaultUSim(): SubscriptionInfo? =
-        getSubIdFromDefaultUSim()?.let { getActiveSubscriptionInfoSimSlot(it) }
-            ?: throw NoSuchMethodError("Cannot read uSim Chip")
+        getSubIdFromDefaultUSim()?.let { getActiveSubscriptionInfoSimSlot(it) } ?: throw NoSuchMethodError("Cannot read uSim Chip")
 
     // =================================================
     // SIM State Information / SIM 상태 정보
@@ -387,14 +378,13 @@ public class SimInfo(
      *         MCC 문자열, 사용할 수 없는 경우 null.
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun getMccFromDefaultUSimString(): String? =
-        getSubscriptionInfoSubIdFromDefaultUSim()?.let {
-            checkSdkVersion(
-                Build.VERSION_CODES.Q,
-                positiveWork = { it.mccString },
-                negativeWork = { it.mcc.toString() },
-            )
-        }
+    public fun getMccFromDefaultUSimString(): String? = getSubscriptionInfoSubIdFromDefaultUSim()?.let {
+        checkSdkVersion(
+            Build.VERSION_CODES.Q,
+            positiveWork = { it.mccString },
+            negativeWork = { it.mcc.toString() },
+        )
+    }
 
     /**
      * Gets MNC (Mobile Network Code) from default SIM.<br><br>
@@ -404,14 +394,13 @@ public class SimInfo(
      *         MNC 문자열, 사용할 수 없는 경우 null.
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun getMncFromDefaultUSimString(): String? =
-        getSubscriptionInfoSubIdFromDefaultUSim()?.let {
-            checkSdkVersion(
-                Build.VERSION_CODES.Q,
-                positiveWork = { it.mncString },
-                negativeWork = { it.mnc.toString() },
-            )
-        }
+    public fun getMncFromDefaultUSimString(): String? = getSubscriptionInfoSubIdFromDefaultUSim()?.let {
+        checkSdkVersion(
+            Build.VERSION_CODES.Q,
+            positiveWork = { it.mncString },
+            negativeWork = { it.mnc.toString() },
+        )
+    }
 
     /**
      * Gets MCC for specific SIM slot.<br><br>
@@ -423,14 +412,13 @@ public class SimInfo(
      *         MCC 문자열, 사용할 수 없는 경우 null.
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun getMcc(slotIndex: Int): String? =
-        getActiveSubscriptionInfoSimSlot(slotIndex)?.let {
-            checkSdkVersion(
-                Build.VERSION_CODES.Q,
-                positiveWork = { it.mccString },
-                negativeWork = { it.mcc.toString() },
-            )
-        }
+    public fun getMcc(slotIndex: Int): String? = getActiveSubscriptionInfoSimSlot(slotIndex)?.let {
+        checkSdkVersion(
+            Build.VERSION_CODES.Q,
+            positiveWork = { it.mccString },
+            negativeWork = { it.mcc.toString() },
+        )
+    }
 
     /**
      * Gets MNC for specific SIM slot.<br><br>
@@ -442,14 +430,13 @@ public class SimInfo(
      *         MNC 문자열, 사용할 수 없는 경우 null.
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun getMnc(slotIndex: Int): String? =
-        getActiveSubscriptionInfoSimSlot(slotIndex)?.let {
-            checkSdkVersion(
-                Build.VERSION_CODES.Q,
-                positiveWork = { it.mncString },
-                negativeWork = { it.mnc.toString() },
-            )
-        }
+    public fun getMnc(slotIndex: Int): String? = getActiveSubscriptionInfoSimSlot(slotIndex)?.let {
+        checkSdkVersion(
+            Build.VERSION_CODES.Q,
+            positiveWork = { it.mncString },
+            negativeWork = { it.mnc.toString() },
+        )
+    }
 
     // =================================================
     // Phone Number Information / 전화번호 정보

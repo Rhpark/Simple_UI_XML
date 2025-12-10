@@ -38,7 +38,7 @@ class LogxFileWriter(
      */
     class LogFileWriteException(
         message: String,
-        cause: Throwable? = null,
+        cause: Throwable? = null
     ) : Exception(message, cause)
 
     init {
@@ -110,10 +110,7 @@ class LogxFileWriter(
         return logFile
     }
 
-    private fun writeToFile(
-        file: File,
-        logLine: String,
-    ) {
+    private fun writeToFile(file: File, logLine: String) {
         try {
             BufferedWriter(FileWriter(file, true)).use { writer ->
                 writer.write(logLine)

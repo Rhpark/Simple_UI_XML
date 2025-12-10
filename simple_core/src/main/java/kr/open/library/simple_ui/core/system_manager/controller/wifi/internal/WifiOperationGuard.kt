@@ -24,8 +24,5 @@ internal class WifiOperationGuard(
      *         블록 실행 결과 또는 실패 시 defaultValue.<br>
      */
     @Suppress("UNCHECKED_CAST")
-    fun <T> run(
-        defaultValue: T,
-        block: () -> T,
-    ): T = executor(defaultValue, block) as T
+    fun <T> run(defaultValue: T, block: () -> T): T = executor(defaultValue, block) as T
 }

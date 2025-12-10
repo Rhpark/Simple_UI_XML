@@ -43,17 +43,16 @@ internal class RootActivityWindow(
      * @return The StatusBar height in pixels.<br><br>
      *         StatusBar 높이 (픽셀 단위).<br>
      */
-    public fun getStatusBarHeight() =
-        checkSdkVersion(
-            Build.VERSION_CODES.R,
-            positiveWork = {
-                window.decorView
-                    .getRootWindowInsets()
-                    ?.getInsets(WindowInsets.Type.statusBars())
-                    ?.top ?: 0
-            },
-            negativeWork = { Rect().apply { window.decorView.getWindowVisibleDisplayFrame(this) }.top },
-        )
+    public fun getStatusBarHeight() = checkSdkVersion(
+        Build.VERSION_CODES.R,
+        positiveWork = {
+            window.decorView
+                .getRootWindowInsets()
+                ?.getInsets(WindowInsets.Type.statusBars())
+                ?.top ?: 0
+        },
+        negativeWork = { Rect().apply { window.decorView.getWindowVisibleDisplayFrame(this) }.top },
+    )
 
     /**
      * Returns the current NavigationBar height in pixels.<br>
@@ -64,20 +63,16 @@ internal class RootActivityWindow(
      * @return The NavigationBar height in pixels.<br><br>
      *         NavigationBar 높이 (픽셀 단위).<br>
      */
-    public fun getNavigationBarHeight(contentViewHeight: Int) =
-        checkSdkVersion(
-            Build.VERSION_CODES.R,
-            positiveWork = {
-                window.decorView
-                    .getRootWindowInsets()
-                    ?.getInsets(WindowInsets.Type.navigationBars())
-                    ?.bottom ?: 0
-            },
-            negativeWork = {
-                val rootView = window.decorView.rootView
-                (rootView.height - contentViewHeight) - getStatusBarHeight()
-            },
-        )
+    public fun getNavigationBarHeight(contentViewHeight: Int) = checkSdkVersion(
+        Build.VERSION_CODES.R,
+        positiveWork = {
+            window.decorView
+                .getRootWindowInsets()
+                ?.getInsets(WindowInsets.Type.navigationBars())
+                ?.bottom ?: 0
+        },
+        negativeWork = { (window.decorView.rootView.height - contentViewHeight) - getStatusBarHeight() },
+    )
 
     /**
      * Sets the status bar color.<br><br>
@@ -149,10 +144,7 @@ internal class RootActivityWindow(
      */
     @SuppressLint("WrongConstant")
     @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
-    private fun setStatusBarColorSdk35(
-        context: Context,
-        @ColorInt color: Int,
-    ) {
+    private fun setStatusBarColorSdk35(context: Context, @ColorInt color: Int) {
         window.apply {
             val decorView = decorView as? FrameLayout ?: return
 
@@ -303,9 +295,7 @@ internal class RootActivityWindow(
      *                   어두운 아이콘은 true, 밝은 아이콘은 false.<br>
      */
     public fun setStatusBarAppearance(isDarkIcon: Boolean) {
-        WindowCompat.getInsetsController(window, window.decorView).apply {
-            isAppearanceLightStatusBars = isDarkIcon
-        }
+        WindowCompat.getInsetsController(window, window.decorView).apply { isAppearanceLightStatusBars = isDarkIcon }
     }
 
     /**
@@ -319,9 +309,7 @@ internal class RootActivityWindow(
      */
     public fun setNavigationBarAppearance(isDarkIcon: Boolean) {
         window.apply {
-            WindowCompat.getInsetsController(this, decorView).apply {
-                isAppearanceLightNavigationBars = isDarkIcon
-            }
+            WindowCompat.getInsetsController(this, decorView).apply { isAppearanceLightNavigationBars = isDarkIcon }
         }
     }
 
@@ -362,11 +350,7 @@ internal class RootActivityWindow(
                 negativeWork = {
                     // 테마 기본 색상으로 복원
                     val typedValue = TypedValue()
-                    context.theme.resolveAttribute(
-                        android.R.attr.navigationBarColor,
-                        typedValue,
-                        true,
-                    )
+                    context.theme.resolveAttribute(android.R.attr.navigationBarColor, typedValue, true)
                     @Suppress("DEPRECATION")
                     navigationBarColor = typedValue.data
 
@@ -502,13 +486,11 @@ internal class RootActivityWindow(
                 positiveWork = {
                     WindowCompat.setDecorFitsSystemWindows(this, true)
                     val insetsController = WindowCompat.getInsetsController(this, decorView)
-//                    insetsController.show(WindowInsetsCompat.Type.statusBars())
                     insetsController.show(WindowInsetsCompat.Type.statusBars())
                 },
                 negativeWork = {
                     @Suppress("DEPRECATION")
                     clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
-
 //                    clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
                 },
             )

@@ -19,7 +19,8 @@ ktlint_standard_no-wildcard-imports = enabled # 와일드카드 import 규칙 �
 ij_kotlin_blank_lines_around_block_when_branches = 0 # when 문의 블록 사이 빈 줄 개수
 ij_kotlin_line_break_after_multiline_when_entry = false # 멀티라인 when 항목 뒤 줄바꿈 여부, true 인 경우 '->' 이후 줄바꿈
 ij_kotlin_blank_lines_before_declaration_with_comment_or_annotation_on_separate_line = 0 #어노테이션이나 주석 과 코드 사이 빈 줄 수
-
+ktlint_standard_expression-body-newline = disabled # 본문이 선언부와 같은 줄에 불가 enabled, 가능 disabled
+ktlint_standard_function-signature = disabled # 함수 선언부를 어떻게 줄바꿈·들여쓰기 규칙 적용 enabled,
 
 # 체이닝 규칙
 ij_kotlin_method_call_chain_wrap = off # normal - 적절한 바꿈, off - 줄바꿈 X, wrap_always - 항상 바꿈

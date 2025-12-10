@@ -114,21 +114,20 @@ public class LocationSharedPreference(
      * @return The saved Location object, or `null` if no location is saved.<br><br>
      *         저장된 위치가 있으면 Location 객체를, 없으면 `null`을 반환합니다.<br>
      */
-    public fun loadLocation(): Location? =
-        safeCatch(defaultValue = null) {
-            if (prefTime == 0L) {
-                null
-            } else {
-                prefProvider?.let {
-                    Location(it).apply {
-                        latitude = prefLat
-                        longitude = prefLon
-                        accuracy = prefAccuracy
-                        time = prefTime
-                    }
+    public fun loadLocation(): Location? = safeCatch(defaultValue = null) {
+        if (prefTime == 0L) {
+            null
+        } else {
+            prefProvider?.let {
+                Location(it).apply {
+                    latitude = prefLat
+                    longitude = prefLon
+                    accuracy = prefAccuracy
+                    time = prefTime
                 }
             }
         }
+    }
 
     /**
      * Removes all saved location data from SharedPreferences.<br><br>

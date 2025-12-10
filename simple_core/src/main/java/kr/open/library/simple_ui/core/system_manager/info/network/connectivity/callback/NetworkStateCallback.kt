@@ -57,10 +57,7 @@ internal class NetworkStateCallback(
      * Called when the network is about to be disconnected.<br><br>
      * 네트워크가 곧 연결 해제될 때 호출됩니다.<br>
      */
-    override fun onLosing(
-        network: Network,
-        maxMsToLive: Int,
-    ) {
+    override fun onLosing(network: Network, maxMsToLive: Int) {
         super.onLosing(network, maxMsToLive)
         onNetworkLosing?.invoke(network, maxMsToLive)
     }
@@ -90,10 +87,7 @@ internal class NetworkStateCallback(
      * Called when the network capabilities have changed.<br><br>
      * 네트워크 기능이 변경되었을 때 호출됩니다.<br>
      */
-    override fun onCapabilitiesChanged(
-        network: Network,
-        networkCapabilities: NetworkCapabilities,
-    ) {
+    override fun onCapabilitiesChanged(network: Network, networkCapabilities: NetworkCapabilities) {
         super.onCapabilitiesChanged(network, networkCapabilities)
         onNetworkCapabilitiesChanged?.invoke(network, NetworkCapabilitiesData((networkCapabilities)))
     }
@@ -102,10 +96,7 @@ internal class NetworkStateCallback(
      * Called when the link properties have changed.<br><br>
      * 링크 속성이 변경되었을 때 호출됩니다.<br>
      */
-    override fun onLinkPropertiesChanged(
-        network: Network,
-        linkProperties: LinkProperties,
-    ) {
+    override fun onLinkPropertiesChanged(network: Network, linkProperties: LinkProperties) {
         super.onLinkPropertiesChanged(network, linkProperties)
         onLinkPropertiesChanged?.invoke(network, NetworkLinkPropertiesData((linkProperties)))
     }
@@ -114,10 +105,7 @@ internal class NetworkStateCallback(
      * Called when the blocked status of the network has changed.<br><br>
      * 네트워크의 차단 상태가 변경되었을 때 호출됩니다.<br>
      */
-    override fun onBlockedStatusChanged(
-        network: Network,
-        blocked: Boolean,
-    ) {
+    override fun onBlockedStatusChanged(network: Network, blocked: Boolean) {
         super.onBlockedStatusChanged(network, blocked)
         onBlockedStatusChanged?.invoke(network, blocked)
     }

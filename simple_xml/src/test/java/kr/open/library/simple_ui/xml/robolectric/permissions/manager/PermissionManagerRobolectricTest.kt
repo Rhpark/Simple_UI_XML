@@ -803,40 +803,6 @@ class PermissionManagerRobolectricTest {
     // Special Permission Intent Helpers
     // ==============================================
 
-    @Test
-    @Config(sdk = [Build.VERSION_CODES.Q])
-    fun createSpecialPermissionIntent_returnsNullWhenApiLevelTooLow() {
-        val method =
-            PermissionManager::class.java
-                .getDeclaredMethod(
-                    "createSpecialPermissionIntent",
-                    Context::class.java,
-                    String::class.java,
-                ).apply { isAccessible = true }
-
-        val result =
-            method.invoke(
-                permissionManager,
-                context,
-                Manifest.permission.MANAGE_EXTERNAL_STORAGE,
-            )
-
-        assertNull(result)
-    }
-
-    @Test
-    fun createSpecialPermissionIntent_returnsPackageUriIntentWhenRequired() {
-        val method =
-            PermissionManager::class.java
-                .getDeclaredMethod(
-                    "createSpecialPermissionIntent",
-                    Context::class.java,
-                    String::class.java,
-                ).apply { isAccessible = true }
-
-        val permission = Manifest.permission.REQUEST_INSTALL_PACKAGES
-        val result = method.invoke(permissionManager, context, permission) as Intent
-
-        assertEquals("package:${context.packageName}", result.dataString)
-    }
+    // Note: createSpecialPermissionIntent() tests moved to
+    // SpecialPermissionIntentFactoryRobolectricTest.kt
 }

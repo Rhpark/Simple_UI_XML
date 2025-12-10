@@ -39,12 +39,11 @@ public data class NetworkLinkPropertiesData(
      * @return MTU size in bytes.<br><br>
      *         바이트 단위 MTU 크기입니다.<br>
      */
-    public fun getMtu(): Int =
-        checkSdkVersion(
-            Build.VERSION_CODES.Q,
-            positiveWork = { linkProperties.mtu },
-            negativeWork = { splitStr("MTU: ", " ")?.let { it[0].toInt() } ?: 0 },
-        )
+    public fun getMtu(): Int = checkSdkVersion(
+        Build.VERSION_CODES.Q,
+        positiveWork = { linkProperties.mtu },
+        negativeWork = { splitStr("MTU: ", " ")?.let { it[0].toInt() } ?: 0 },
+    )
 
     /**
      * Gets the list of routes.<br><br>
@@ -80,12 +79,11 @@ public data class NetworkLinkPropertiesData(
      * @return DHCP server address, or `null`.<br><br>
      *         DHCP 서버 주소이며, 없으면 `null`입니다.<br>
      */
-    public fun getDhcpServerAddress(): InetAddress? =
-        checkSdkVersion(
-            Build.VERSION_CODES.R,
-            positiveWork = { linkProperties.dhcpServerAddress },
-            negativeWork = { InetAddress.getByName(splitStr("ServerAddress: ", " ")?.get(0)?.toString()) },
-        )
+    public fun getDhcpServerAddress(): InetAddress? = checkSdkVersion(
+        Build.VERSION_CODES.R,
+        positiveWork = { linkProperties.dhcpServerAddress },
+        negativeWork = { InetAddress.getByName(splitStr("ServerAddress: ", " ")?.get(0)?.toString()) },
+    )
 
     /**
      * Gets the HTTP proxy information.<br><br>
@@ -140,12 +138,11 @@ public data class NetworkLinkPropertiesData(
      * @return Buffer sizes as strings, or `null`.<br><br>
      *         문자열 형태의 버퍼 크기 목록이며, 없으면 `null`입니다.<br>
      */
-    public fun getTcpBufferSizes(): List<String>? =
-        if (getResStr().contains(" TcpBufferSizes: ")) {
-            getResStr().split(" TcpBufferSizes: ", " ")?.split(",")
-        } else {
-            null
-        }
+    public fun getTcpBufferSizes(): List<String>? = if (getResStr().contains(" TcpBufferSizes: ")) {
+        getResStr().split(" TcpBufferSizes: ", " ")?.split(",")
+    } else {
+        null
+    }
 
     /**
      * Converts all properties to a readable string.<br><br>

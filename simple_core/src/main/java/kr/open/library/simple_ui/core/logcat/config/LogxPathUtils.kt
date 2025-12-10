@@ -152,12 +152,11 @@ object LogxPathUtils {
      * @return `true` if WRITE_EXTERNAL_STORAGE permission is required (only for PUBLIC_EXTERNAL on API 28 and below), `false` otherwise.<br><br>
      *         WRITE_EXTERNAL_STORAGE 권한이 필요하면 `true` (API 28 이하에서 PUBLIC_EXTERNAL인 경우만), 그 외는 `false`.<br>
      */
-    fun requiresPermission(storageType: LogxStorageType): Boolean =
-        when (storageType) {
-            LogxStorageType.INTERNAL -> false
-            LogxStorageType.APP_EXTERNAL -> false
-            LogxStorageType.PUBLIC_EXTERNAL -> Build.VERSION.SDK_INT <= Build.VERSION_CODES.P
-        }
+    fun requiresPermission(storageType: LogxStorageType): Boolean = when (storageType) {
+        LogxStorageType.INTERNAL -> false
+        LogxStorageType.APP_EXTERNAL -> false
+        LogxStorageType.PUBLIC_EXTERNAL -> Build.VERSION.SDK_INT <= Build.VERSION_CODES.P
+    }
 
     /**
      * Checks whether log files in the specified storage type are accessible to users via file manager.<br><br>
@@ -169,10 +168,9 @@ object LogxPathUtils {
      * @return `true` if users can access the files via file manager, `false` if only accessible programmatically.<br><br>
      *         사용자가 파일 관리자로 파일에 접근할 수 있으면 `true`, 프로그래밍 방식으로만 접근 가능하면 `false`.<br>
      */
-    fun isUserAccessible(storageType: LogxStorageType): Boolean =
-        when (storageType) {
-            LogxStorageType.INTERNAL -> false // Not accessible to users | 사용자가 직접 접근 불가
-            LogxStorageType.APP_EXTERNAL -> true // Accessible via file manager | 파일 관리자로 접근 가능
-            LogxStorageType.PUBLIC_EXTERNAL -> true // Easily accessible via file manager | 파일 관리자로 쉽게 접근 가능
-        }
+    fun isUserAccessible(storageType: LogxStorageType): Boolean = when (storageType) {
+        LogxStorageType.INTERNAL -> false // Not accessible to users | 사용자가 직접 접근 불가
+        LogxStorageType.APP_EXTERNAL -> true // Accessible via file manager | 파일 관리자로 접근 가능
+        LogxStorageType.PUBLIC_EXTERNAL -> true // Easily accessible via file manager | 파일 관리자로 쉽게 접근 가능
+    }
 }

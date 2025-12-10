@@ -15,13 +15,9 @@ object LogxFileWriterFactory {
      * @param context Android Context (Lifecycle 플러시를 위해 필요)
      * @return 적절한 LogFileWriter 구현체
      */
-    fun create(
-        config: LogxConfig,
-        context: Context? = null,
-    ): LogxFileWriterImp =
-        if (config.isDebugSave) {
-            LogxFileWriter(config.saveFilePath, context)
-        } else {
-            NoOpLogFileWriter()
-        }
+    fun create(config: LogxConfig, context: Context? = null): LogxFileWriterImp = if (config.isDebugSave) {
+        LogxFileWriter(config.saveFilePath, context)
+    } else {
+        NoOpLogFileWriter()
+    }
 }

@@ -66,29 +66,25 @@ public open class VibratorController(
      *         진동 실행 성공 시 `true`, 그렇지 않으면 `false`.<br>
      */
     @RequiresPermission(VIBRATE)
-    public fun createOneShot(
-        timer: Long,
-        effect: Int = VibrationEffect.DEFAULT_AMPLITUDE,
-    ): Boolean =
-        tryCatchSystemManager(false) {
-            checkSdkVersion(
-                Build.VERSION_CODES.Q,
-                positiveWork = {
-                    val oneShot = VibrationEffect.createOneShot(timer, effect)
-                    checkSdkVersion(
-                        Build.VERSION_CODES.S,
-                        positiveWork = { vibratorManager.vibrate(CombinedVibration.createParallel(oneShot)) },
-                        negativeWork = { vibrator.vibrate(oneShot) },
-                    )
-                    return true
-                },
-                negativeWork = {
-                    @Suppress("DEPRECATION")
-                    vibrator.vibrate(timer)
-                    return true
-                },
-            )
-        }
+    public fun createOneShot(timer: Long, effect: Int = VibrationEffect.DEFAULT_AMPLITUDE): Boolean = tryCatchSystemManager(false) {
+        checkSdkVersion(
+            Build.VERSION_CODES.Q,
+            positiveWork = {
+                val oneShot = VibrationEffect.createOneShot(timer, effect)
+                checkSdkVersion(
+                    Build.VERSION_CODES.S,
+                    positiveWork = { vibratorManager.vibrate(CombinedVibration.createParallel(oneShot)) },
+                    negativeWork = { vibrator.vibrate(oneShot) },
+                )
+                return true
+            },
+            negativeWork = {
+                @Suppress("DEPRECATION")
+                vibrator.vibrate(timer)
+                return true
+            },
+        )
+    }
 
     /**
      * Simple vibration execution (duration only).<br><br>
@@ -101,16 +97,15 @@ public open class VibratorController(
      *         진동 실행 성공 시 `true`, 그렇지 않으면 `false`.<br>
      */
     @RequiresPermission(VIBRATE)
-    public fun vibrate(milliseconds: Long): Boolean =
-        tryCatchSystemManager(false) {
-            val effect = VibrationEffect.createOneShot(milliseconds, VibrationEffect.DEFAULT_AMPLITUDE)
-            checkSdkVersion(
-                Build.VERSION_CODES.S,
-                positiveWork = { vibratorManager.vibrate(CombinedVibration.createParallel(effect)) },
-                negativeWork = { vibrator.vibrate(effect) },
-            )
-            return true
-        }
+    public fun vibrate(milliseconds: Long): Boolean = tryCatchSystemManager(false) {
+        val effect = VibrationEffect.createOneShot(milliseconds, VibrationEffect.DEFAULT_AMPLITUDE)
+        checkSdkVersion(
+            Build.VERSION_CODES.S,
+            positiveWork = { vibratorManager.vibrate(CombinedVibration.createParallel(effect)) },
+            negativeWork = { vibrator.vibrate(effect) },
+        )
+        return true
+    }
 
     /**
      * Creates a predefined vibration effect using system-defined patterns.<br>
@@ -126,16 +121,15 @@ public open class VibratorController(
      */
     @RequiresPermission(VIBRATE)
     @RequiresApi(Build.VERSION_CODES.Q)
-    public fun createPredefined(vibrationEffectClick: Int): Boolean =
-        tryCatchSystemManager(false) {
-            val predefinedEffect = VibrationEffect.createPredefined(vibrationEffectClick)
-            checkSdkVersion(
-                Build.VERSION_CODES.S,
-                positiveWork = { vibratorManager.vibrate(CombinedVibration.createParallel(predefinedEffect)) },
-                negativeWork = { vibrator.vibrate(predefinedEffect) },
-            )
-            return true
-        }
+    public fun createPredefined(vibrationEffectClick: Int): Boolean = tryCatchSystemManager(false) {
+        val predefinedEffect = VibrationEffect.createPredefined(vibrationEffectClick)
+        checkSdkVersion(
+            Build.VERSION_CODES.S,
+            positiveWork = { vibratorManager.vibrate(CombinedVibration.createParallel(predefinedEffect)) },
+            negativeWork = { vibrator.vibrate(predefinedEffect) },
+        )
+        return true
+    }
 
     /**
      * Creates a complex waveform vibration pattern with custom timing and amplitudes.<br>
@@ -160,16 +154,15 @@ public open class VibratorController(
         times: LongArray,
         amplitudes: IntArray,
         repeat: Int = -1,
-    ): Boolean =
-        tryCatchSystemManager(false) {
-            val waveformEffect = VibrationEffect.createWaveform(times, amplitudes, repeat)
-            checkSdkVersion(
-                Build.VERSION_CODES.S,
-                positiveWork = { vibratorManager.vibrate(CombinedVibration.createParallel(waveformEffect)) },
-                negativeWork = { vibrator.vibrate(waveformEffect) },
-            )
-            return true
-        }
+    ): Boolean = tryCatchSystemManager(false) {
+        val waveformEffect = VibrationEffect.createWaveform(times, amplitudes, repeat)
+        checkSdkVersion(
+            Build.VERSION_CODES.S,
+            positiveWork = { vibratorManager.vibrate(CombinedVibration.createParallel(waveformEffect)) },
+            negativeWork = { vibrator.vibrate(waveformEffect) },
+        )
+        return true
+    }
 
     /**
      * Pattern vibration execution (timing array only).<br><br>
@@ -185,19 +178,15 @@ public open class VibratorController(
      *         진동 실행 성공 시 `true`, 그렇지 않으면 `false`.<br>
      */
     @RequiresPermission(VIBRATE)
-    public fun vibratePattern(
-        pattern: LongArray,
-        repeat: Int = -1,
-    ): Boolean =
-        tryCatchSystemManager(false) {
-            val waveformEffect = VibrationEffect.createWaveform(pattern, repeat)
-            checkSdkVersion(
-                Build.VERSION_CODES.S,
-                positiveWork = { vibratorManager.vibrate(CombinedVibration.createParallel(waveformEffect)) },
-                negativeWork = { vibrator.vibrate(waveformEffect) },
-            )
-            return true
-        }
+    public fun vibratePattern(pattern: LongArray, repeat: Int = -1): Boolean = tryCatchSystemManager(false) {
+        val waveformEffect = VibrationEffect.createWaveform(pattern, repeat)
+        checkSdkVersion(
+            Build.VERSION_CODES.S,
+            positiveWork = { vibratorManager.vibrate(CombinedVibration.createParallel(waveformEffect)) },
+            negativeWork = { vibrator.vibrate(waveformEffect) },
+        )
+        return true
+    }
 
     /**
      * Cancels any ongoing vibration immediately.<br>
@@ -209,15 +198,14 @@ public open class VibratorController(
      *         취소 성공 시 `true`, 그렇지 않으면 `false`.<br>
      */
     @RequiresPermission(VIBRATE)
-    public fun cancel(): Boolean =
-        tryCatchSystemManager(false) {
-            checkSdkVersion(
-                Build.VERSION_CODES.S,
-                positiveWork = { vibratorManager.cancel() },
-                negativeWork = { vibrator.cancel() },
-            )
-            return true
-        }
+    public fun cancel(): Boolean = tryCatchSystemManager(false) {
+        checkSdkVersion(
+            Build.VERSION_CODES.S,
+            positiveWork = { vibratorManager.cancel() },
+            negativeWork = { vibrator.cancel() },
+        )
+        return true
+    }
 
     /**
      * Check if vibration is supported on this device.<br><br>
@@ -226,12 +214,11 @@ public open class VibratorController(
      * @return `true` if device supports vibration, `false` otherwise.<br><br>
      *         기기가 진동을 지원하면 `true`, 그렇지 않으면 `false`.<br>
      */
-    public fun hasVibrator(): Boolean =
-        tryCatchSystemManager(false) {
-            return checkSdkVersion(
-                Build.VERSION_CODES.S,
-                positiveWork = { vibratorManager.defaultVibrator.hasVibrator() },
-                negativeWork = { vibrator.hasVibrator() },
-            )
-        }
+    public fun hasVibrator(): Boolean = tryCatchSystemManager(false) {
+        return checkSdkVersion(
+            Build.VERSION_CODES.S,
+            positiveWork = { vibratorManager.defaultVibrator.hasVibrator() },
+            negativeWork = { vibrator.hasVibrator() },
+        )
+    }
 }

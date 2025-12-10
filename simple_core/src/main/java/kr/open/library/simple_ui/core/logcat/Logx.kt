@@ -169,14 +169,13 @@ object Logx : ILogx {
      * @return A map of storage types to their absolute paths, or empty map if Context not initialized.<br><br>
      *         저장소 타입과 절대 경로의 맵, Context가 초기화되지 않은 경우 빈 맵.
      */
-    fun getStorageInfo(): Map<LogxStorageType, String> =
-        appContext?.let { context ->
-            mapOf(
-                LogxStorageType.INTERNAL to LogxPathUtils.getInternalLogPath(context),
-                LogxStorageType.APP_EXTERNAL to LogxPathUtils.getAppExternalLogPath(context),
-                LogxStorageType.PUBLIC_EXTERNAL to LogxPathUtils.getPublicExternalLogPath(context),
-            )
-        } ?: emptyMap()
+    fun getStorageInfo(): Map<LogxStorageType, String> = appContext?.let { context ->
+        mapOf(
+            LogxStorageType.INTERNAL to LogxPathUtils.getInternalLogPath(context),
+            LogxStorageType.APP_EXTERNAL to LogxPathUtils.getAppExternalLogPath(context),
+            LogxStorageType.PUBLIC_EXTERNAL to LogxPathUtils.getPublicExternalLogPath(context),
+        )
+    } ?: emptyMap()
 
     /**
      * Checks whether the current storage type requires runtime permissions.<br><br>
@@ -279,10 +278,7 @@ object Logx : ILogx {
      * @param msg The message to log.<br><br>
      *            기록할 메시지.
      */
-    override fun v(
-        tag: String,
-        msg: Any?,
-    ) = logWriter.write(tag, msg, LogxType.VERBOSE)
+    override fun v(tag: String, msg: Any?) = logWriter.write(tag, msg, LogxType.VERBOSE)
 
     /**
      * Logs a VERBOSE level message with extended formatting.<br><br>
@@ -302,10 +298,7 @@ object Logx : ILogx {
      * @param msg The message to log.<br><br>
      *            기록할 메시지.
      */
-    fun v1(
-        tag: String,
-        msg: Any?,
-    ) = logWriter.writeExtensions(tag, msg, LogxType.VERBOSE)
+    fun v1(tag: String, msg: Any?) = logWriter.writeExtensions(tag, msg, LogxType.VERBOSE)
 
     /**
      * Logs a DEBUG level message with stack trace information.<br><br>
@@ -331,10 +324,7 @@ object Logx : ILogx {
      * @param msg The message to log.<br><br>
      *            기록할 메시지.
      */
-    override fun d(
-        tag: String,
-        msg: Any?,
-    ) = logWriter.write(tag, msg, LogxType.DEBUG)
+    override fun d(tag: String, msg: Any?) = logWriter.write(tag, msg, LogxType.DEBUG)
 
     /**
      * Logs a DEBUG level message with extended formatting.<br><br>
@@ -354,10 +344,7 @@ object Logx : ILogx {
      * @param msg The message to log.<br><br>
      *            기록할 메시지.
      */
-    fun d1(
-        tag: String,
-        msg: Any?,
-    ) = logWriter.writeExtensions(tag, msg, LogxType.DEBUG)
+    fun d1(tag: String, msg: Any?) = logWriter.writeExtensions(tag, msg, LogxType.DEBUG)
 
     /**
      * Logs an INFO level message with stack trace information.<br><br>
@@ -383,10 +370,7 @@ object Logx : ILogx {
      * @param msg The message to log.<br><br>
      *            기록할 메시지.
      */
-    override fun i(
-        tag: String,
-        msg: Any?,
-    ) = logWriter.write(tag, msg, LogxType.INFO)
+    override fun i(tag: String, msg: Any?) = logWriter.write(tag, msg, LogxType.INFO)
 
     /**
      * Logs an INFO level message with extended formatting.<br><br>
@@ -406,10 +390,7 @@ object Logx : ILogx {
      * @param msg The message to log.<br><br>
      *            기록할 메시지.
      */
-    fun i1(
-        tag: String,
-        msg: Any?,
-    ) = logWriter.writeExtensions(tag, msg, LogxType.INFO)
+    fun i1(tag: String, msg: Any?) = logWriter.writeExtensions(tag, msg, LogxType.INFO)
 
     /**
      * Logs a WARN level message with stack trace information.<br><br>
@@ -435,10 +416,7 @@ object Logx : ILogx {
      * @param msg The message to log.<br><br>
      *            기록할 메시지.
      */
-    override fun w(
-        tag: String,
-        msg: Any?,
-    ) = logWriter.write(tag, msg, LogxType.WARN)
+    override fun w(tag: String, msg: Any?) = logWriter.write(tag, msg, LogxType.WARN)
 
     /**
      * Logs a WARN level message with extended formatting.<br><br>
@@ -458,10 +436,7 @@ object Logx : ILogx {
      * @param msg The message to log.<br><br>
      *            기록할 메시지.
      */
-    fun w1(
-        tag: String,
-        msg: Any?,
-    ) = logWriter.writeExtensions(tag, msg, LogxType.WARN)
+    fun w1(tag: String, msg: Any?) = logWriter.writeExtensions(tag, msg, LogxType.WARN)
 
     /**
      * Logs an ERROR level message with stack trace information.<br><br>
@@ -487,10 +462,7 @@ object Logx : ILogx {
      * @param msg The message to log.<br><br>
      *            기록할 메시지.
      */
-    override fun e(
-        tag: String,
-        msg: Any?,
-    ) = logWriter.write(tag, msg, LogxType.ERROR)
+    override fun e(tag: String, msg: Any?) = logWriter.write(tag, msg, LogxType.ERROR)
 
     /**
      * Logs an ERROR level message with extended formatting.<br><br>
@@ -510,10 +482,7 @@ object Logx : ILogx {
      * @param msg The message to log.<br><br>
      *            기록할 메시지.
      */
-    fun e1(
-        tag: String,
-        msg: Any?,
-    ) = logWriter.writeExtensions(tag, msg, LogxType.ERROR)
+    fun e1(tag: String, msg: Any?) = logWriter.writeExtensions(tag, msg, LogxType.ERROR)
 
     // 확장 기능들
 
@@ -543,10 +512,7 @@ object Logx : ILogx {
      * @param msg The message to log.<br><br>
      *            기록할 메시지.
      */
-    override fun p(
-        tag: String,
-        msg: Any?,
-    ) = logWriter.writeParent(tag, msg)
+    override fun p(tag: String, msg: Any?) = logWriter.writeParent(tag, msg)
 
     /**
      * Logs the parent method call information with extended formatting.<br><br>
@@ -566,10 +532,7 @@ object Logx : ILogx {
      * @param msg The message to log.<br><br>
      *            기록할 메시지.
      */
-    fun p1(
-        tag: String,
-        msg: Any?,
-    ) = logWriter.writeExtensionsParent(tag, msg)
+    fun p1(tag: String, msg: Any?) = logWriter.writeExtensionsParent(tag, msg)
 
     /**
      * Logs the current thread ID.<br>
@@ -597,10 +560,7 @@ object Logx : ILogx {
      * @param msg The message to log.<br><br>
      *            기록할 메시지.
      */
-    override fun t(
-        tag: String,
-        msg: Any?,
-    ) = logWriter.writeThreadId(tag, msg)
+    override fun t(tag: String, msg: Any?) = logWriter.writeThreadId(tag, msg)
 
     /**
      * Logs a JSON-formatted message with visual markers for enhanced readability.<br><br>
@@ -620,10 +580,7 @@ object Logx : ILogx {
      * @param msg The JSON string to log.<br><br>
      *            기록할 JSON 문자열.
      */
-    override fun j(
-        tag: String,
-        msg: String,
-    ) = logWriter.writeJson(tag, msg)
+    override fun j(tag: String, msg: String) = logWriter.writeJson(tag, msg)
 
     /**
      * Logs a JSON-formatted message with extended formatting and visual markers.<br><br>
@@ -643,10 +600,7 @@ object Logx : ILogx {
      * @param msg The JSON string to log.<br><br>
      *            기록할 JSON 문자열.
      */
-    fun j1(
-        tag: String,
-        msg: String,
-    ) = logWriter.writeJsonExtensions(tag, msg)
+    fun j1(tag: String, msg: String) = logWriter.writeJsonExtensions(tag, msg)
 
     // 레거시 호환성을 위한 getter 메서드들
 

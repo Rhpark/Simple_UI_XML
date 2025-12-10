@@ -640,11 +640,8 @@ public open class CommonTelephonyCallback(
      * @return `true` if same, `false` otherwise.<br><br>
      *         같으면 `true`, 그렇지 않으면 `false`.
      */
-    private fun isSameTelephonyNetworkState(telephonyNetworkState: TelephonyNetworkState): Boolean =
-        currentTelephonyState?.let {
-            (
-                it.networkTypeState == telephonyNetworkState.networkTypeState &&
-                    it.networkTypeDetailState == telephonyNetworkState.networkTypeDetailState
-            )
-        } ?: false
+    private fun isSameTelephonyNetworkState(telephonyNetworkState: TelephonyNetworkState): Boolean = currentTelephonyState?.let {
+        it.networkTypeState == telephonyNetworkState.networkTypeState &&
+            it.networkTypeDetailState == telephonyNetworkState.networkTypeDetailState
+    } ?: false
 }

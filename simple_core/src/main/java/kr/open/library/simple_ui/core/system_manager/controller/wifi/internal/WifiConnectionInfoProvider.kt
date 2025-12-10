@@ -37,29 +37,28 @@ internal class WifiConnectionInfoProvider(
      *         WifiInfo 객체 또는 연결되지 않은 경우 null.<br>
      */
     @RequiresPermission(ACCESS_NETWORK_STATE)
-    fun getConnectionInfo(): WifiInfo? =
-        guard.run(null) {
-            checkSdkVersion(
-                Build.VERSION_CODES.Q,
-                positiveWork = {
-                    getConnectionInfoFromNetworkCapabilities()
-                        ?: run {
-                            checkSdkVersion(
-                                Build.VERSION_CODES.S,
-                                positiveWork = { null },
-                                negativeWork = {
-                                    @Suppress("DEPRECATION")
-                                    wifiManager.connectionInfo?.takeUnless { it.ssid == WifiManager.UNKNOWN_SSID }
-                                },
-                            )
-                        }
-                },
-                negativeWork = {
-                    @Suppress("DEPRECATION")
-                    wifiManager.connectionInfo
-                },
-            )
-        }
+    fun getConnectionInfo(): WifiInfo? = guard.run(null) {
+        checkSdkVersion(
+            Build.VERSION_CODES.Q,
+            positiveWork = {
+                getConnectionInfoFromNetworkCapabilities()
+                    ?: run {
+                        checkSdkVersion(
+                            Build.VERSION_CODES.S,
+                            positiveWork = { null },
+                            negativeWork = {
+                                @Suppress("DEPRECATION")
+                                wifiManager.connectionInfo?.takeUnless { it.ssid == WifiManager.UNKNOWN_SSID }
+                            },
+                        )
+                    }
+            },
+            negativeWork = {
+                @Suppress("DEPRECATION")
+                wifiManager.connectionInfo
+            },
+        )
+    }
 
     /**
      * Gets WiFi connection information from NetworkCapabilities (modern approach).<br>
@@ -71,24 +70,23 @@ internal class WifiConnectionInfoProvider(
      *         WifiInfo 객체 또는 사용 불가능한 경우 null.<br>
      */
     @RequiresPermission(ACCESS_NETWORK_STATE)
-    public fun getConnectionInfoFromNetworkCapabilities(): WifiInfo? =
-        guard.run(null) {
-            val network = connectivityManager.activeNetwork ?: return@run null
-            val caps = connectivityManager.getNetworkCapabilities(network) ?: return@run null
-            if (!caps.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) return@run null
+    public fun getConnectionInfoFromNetworkCapabilities(): WifiInfo? = guard.run(null) {
+        val network = connectivityManager.activeNetwork ?: return@run null
+        val caps = connectivityManager.getNetworkCapabilities(network) ?: return@run null
+        if (!caps.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) return@run null
 
-            checkSdkVersion(
-                Build.VERSION_CODES.S,
-                positiveWork = {
-                    val info = caps.transportInfo as? WifiInfo ?: return@run null
-                    info.takeUnless { it.ssid == WifiManager.UNKNOWN_SSID }
-                },
-                negativeWork = {
-                    @Suppress("DEPRECATION")
-                    wifiManager.connectionInfo?.takeUnless { it.ssid == WifiManager.UNKNOWN_SSID }
-                },
-            )
-        }
+        checkSdkVersion(
+            Build.VERSION_CODES.S,
+            positiveWork = {
+                val info = caps.transportInfo as? WifiInfo ?: return@run null
+                info.takeUnless { it.ssid == WifiManager.UNKNOWN_SSID }
+            },
+            negativeWork = {
+                @Suppress("DEPRECATION")
+                wifiManager.connectionInfo?.takeUnless { it.ssid == WifiManager.UNKNOWN_SSID }
+            },
+        )
+    }
 
     /**
      * Gets detailed modern WiFi network information including bandwidth, validation status, etc.<br>
@@ -100,44 +98,36 @@ internal class WifiConnectionInfoProvider(
      *         WifiNetworkDetails 객체 또는 사용 불가능한 경우 null.<br>
      */
     @RequiresPermission(ACCESS_NETWORK_STATE)
-    fun getModernNetworkDetails(): WifiNetworkDetails? =
-        guard.run(null) {
-            checkSdkVersion(
-                Build.VERSION_CODES.Q,
-                positiveWork = {
-                    val activeNetwork: Network = connectivityManager.activeNetwork ?: return@run null
-                    val networkCapabilities: NetworkCapabilities =
-                        connectivityManager.getNetworkCapabilities(activeNetwork) ?: return@run null
+    fun getModernNetworkDetails(): WifiNetworkDetails? = guard.run(null) {
+        checkSdkVersion(
+            Build.VERSION_CODES.Q,
+            positiveWork = {
+                val activeNetwork: Network = connectivityManager.activeNetwork ?: return@run null
+                val networkCapabilities: NetworkCapabilities =
+                    connectivityManager.getNetworkCapabilities(activeNetwork) ?: return@run null
 
-                    if (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
-                        val linkProperties: LinkProperties? = connectivityManager.getLinkProperties(activeNetwork)
+                if (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
+                    val linkProperties: LinkProperties? = connectivityManager.getLinkProperties(activeNetwork)
 
-                        WifiNetworkDetails(
-                            isConnected = true,
-                            hasInternet =
-                                networkCapabilities.hasCapability(
-                                    NetworkCapabilities.NET_CAPABILITY_INTERNET,
-                                ),
-                            isValidated =
-                                networkCapabilities.hasCapability(
-                                    NetworkCapabilities.NET_CAPABILITY_VALIDATED,
-                                ),
-                            isMetered =
-                                networkCapabilities
-                                    .hasCapability(
-                                        NetworkCapabilities.NET_CAPABILITY_NOT_METERED,
-                                    ).not(),
-                            linkDownstreamBandwidthKbps = networkCapabilities.linkDownstreamBandwidthKbps,
-                            linkUpstreamBandwidthKbps = networkCapabilities.linkUpstreamBandwidthKbps,
-                            interfaceName = linkProperties?.interfaceName,
-                            dnsServers = linkProperties?.dnsServers?.mapNotNull { it.hostAddress } ?: emptyList(),
-                            domains = linkProperties?.domains,
-                        )
-                    } else {
-                        null
-                    }
-                },
-                negativeWork = { null },
-            )
-        }
+                    WifiNetworkDetails(
+                        isConnected = true,
+                        hasInternet = networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET),
+                        isValidated = networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED),
+                        isMetered =
+                            networkCapabilities
+                                .hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_METERED,)
+                                .not(),
+                        linkDownstreamBandwidthKbps = networkCapabilities.linkDownstreamBandwidthKbps,
+                        linkUpstreamBandwidthKbps = networkCapabilities.linkUpstreamBandwidthKbps,
+                        interfaceName = linkProperties?.interfaceName,
+                        dnsServers = linkProperties?.dnsServers?.mapNotNull { it.hostAddress } ?: emptyList(),
+                        domains = linkProperties?.domains,
+                    )
+                } else {
+                    null
+                }
+            },
+            negativeWork = { null },
+        )
+    }
 }

@@ -13,15 +13,11 @@ import kr.open.library.simple_ui.core.logcat.internal.filter.base.LogFilterImp
 class DefaultLogFilter(
     private val config: LogxConfig,
 ) : LogFilterImp {
-    override fun shouldLog(
-        tag: String,
-        fileName: String,
-    ): Boolean =
-        if (!config.isDebugFilter) {
-            true
-        } else {
-            isTagAllowed(tag) || isFileNameAllowed(fileName)
-        }
+    override fun shouldLog(tag: String, fileName: String): Boolean = if (!config.isDebugFilter) {
+        true
+    } else {
+        isTagAllowed(tag) || isFileNameAllowed(fileName)
+    }
 
     private fun isTagAllowed(tag: String): Boolean = config.debugFilterList.contains(tag)
 

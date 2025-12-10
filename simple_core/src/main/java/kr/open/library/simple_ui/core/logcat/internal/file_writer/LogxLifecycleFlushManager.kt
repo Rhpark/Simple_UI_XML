@@ -38,10 +38,7 @@ class LogxLifecycleFlushManager private constructor() :
         /**
          * 초기화 (Context가 필요한 시점에서 호출)
          */
-        fun initialize(
-            context: Context,
-            logWriterScope: CoroutineScope,
-        ) {
+        fun initialize(context: Context, logWriterScope: CoroutineScope) {
             if (isRegistered) return
 
             try {

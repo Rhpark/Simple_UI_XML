@@ -48,12 +48,11 @@ public data class NetworkCapabilitiesData(
      * @return List of capability integer codes.<br><br>
      *         기능 정수 코드 목록.
      */
-    public fun getCapabilities(): IntArray? =
-        checkSdkVersion(
-            Build.VERSION_CODES.S,
-            positiveWork = { networkCapabilities.capabilities },
-            negativeWork = { getCapabilitiesNumber(splitStr("Capabilities: ", " LinkUpBandwidth", "&")) },
-        )
+    public fun getCapabilities(): IntArray? = checkSdkVersion(
+        Build.VERSION_CODES.S,
+        positiveWork = { networkCapabilities.capabilities },
+        negativeWork = { getCapabilitiesNumber(splitStr("Capabilities: ", " LinkUpBandwidth", "&")) },
+    )
 
     /**
      * Converts capability strings to integer codes.<br><br>
@@ -69,97 +68,96 @@ public data class NetworkCapabilitiesData(
 
         val res = mutableListOf<Int>()
         capabilitiesStr.forEach {
-            val data =
-                when (it) {
-                    "MMS" -> NetworkCapabilities.NET_CAPABILITY_MMS
-                    "SUPL" -> NetworkCapabilities.NET_CAPABILITY_SUPL
-                    "DUN" -> NetworkCapabilities.NET_CAPABILITY_DUN
-                    "FOTA" -> NetworkCapabilities.NET_CAPABILITY_FOTA
-                    "IMS" -> NetworkCapabilities.NET_CAPABILITY_IMS
-                    "CBS" -> NetworkCapabilities.NET_CAPABILITY_CBS
-                    "WIFI_P2P" -> NetworkCapabilities.NET_CAPABILITY_WIFI_P2P
-                    "IA" -> NetworkCapabilities.NET_CAPABILITY_IA
-                    "RCS" -> NetworkCapabilities.NET_CAPABILITY_RCS
-                    "XCAP" -> NetworkCapabilities.NET_CAPABILITY_XCAP
-                    "EIMS" -> NetworkCapabilities.NET_CAPABILITY_EIMS
-                    "NOT_METERED" -> NetworkCapabilities.NET_CAPABILITY_NOT_METERED
-                    "INTERNET" -> NetworkCapabilities.NET_CAPABILITY_INTERNET
-                    "NOT_RESTRICTED" -> NetworkCapabilities.NET_CAPABILITY_NOT_RESTRICTED
-                    "TRUSTED" -> NetworkCapabilities.NET_CAPABILITY_TRUSTED
-                    "NOT_VPN" -> NetworkCapabilities.NET_CAPABILITY_NOT_VPN
-                    "VALIDATED" -> NetworkCapabilities.NET_CAPABILITY_VALIDATED
-                    "CAPTIVE_PORTAL" -> NetworkCapabilities.NET_CAPABILITY_CAPTIVE_PORTAL
-                    "NOT_ROAMING" -> NetworkCapabilities.NET_CAPABILITY_NOT_ROAMING
-                    "FOREGROUND" -> NetworkCapabilities.NET_CAPABILITY_FOREGROUND
-                    "NOT_CONGESTED" -> NetworkCapabilities.NET_CAPABILITY_NOT_CONGESTED
-                    "NOT_SUSPENDED" -> NetworkCapabilities.NET_CAPABILITY_NOT_SUSPENDED
-                    "OEM_PAID" -> 22 // NetworkCapabilities.NET_CAPABILITY_OEM_PAID
-                    "MCX" -> {
-                        checkSdkVersion(
-                            Build.VERSION_CODES.S,
-                            positiveWork = { NetworkCapabilities.NET_CAPABILITY_MCX },
-                            negativeWork = { 23 },
-                        )
-                    }
-                    "PARTIAL_CONNECTIVITY" -> 24 // NetworkCapabilities.NET_CAPABILITY_PARTIAL_CONNECTIVITY
-                    "TEMPORARILY_NOT_METERED" -> {
-                        checkSdkVersion(
-                            Build.VERSION_CODES.R,
-                            positiveWork = { NetworkCapabilities.NET_CAPABILITY_TEMPORARILY_NOT_METERED },
-                            negativeWork = { 25 },
-                        )
-                    }
-                    "OEM_PRIVATE" -> 26 // NetworkCapabilities.NET_CAPABILITY_OEM_PRIVATE
-                    "VEHICLE_INTERNAL" -> 27 // NetworkCapabilities.NET_CAPABILITY_VEHICLE_INTERNAL
-                    "NOT_VCN_MANAGED" -> 28 // NetworkCapabilities.NET_CAPABILITY_NOT_VCN_MANAGED
-                    "ENTERPRISE" -> {
-                        checkSdkVersion(
-                            Build.VERSION_CODES.S,
-                            positiveWork = { NetworkCapabilities.NET_CAPABILITY_ENTERPRISE },
-                            negativeWork = { 29 },
-                        )
-                    }
-                    "VSIM" -> 30 // NetworkCapabilities.NET_CAPABILITY_VSIM
-                    "BIP" -> 31 // NetworkCapabilities.NET_CAPABILITY_BIP
-                    "HEAD_UNIT" -> {
-                        checkSdkVersion(
-                            Build.VERSION_CODES.S,
-                            positiveWork = { NetworkCapabilities.NET_CAPABILITY_HEAD_UNIT },
-                            negativeWork = { 32 },
-                        )
-                    }
-                    "MMTEL" -> {
-                        checkSdkVersion(
-                            Build.VERSION_CODES.TIRAMISU,
-                            positiveWork = { NetworkCapabilities.NET_CAPABILITY_MMTEL },
-                            negativeWork = { 33 },
-                        )
-                    }
-                    "PRIORITIZE_LATENCY" -> {
-                        checkSdkVersion(
-                            Build.VERSION_CODES.TIRAMISU,
-                            positiveWork = { NetworkCapabilities.NET_CAPABILITY_PRIORITIZE_LATENCY },
-                            negativeWork = { 34 },
-                        )
-                    }
-                    "PRIORITIZE_BANDWIDTH" -> {
-                        checkSdkVersion(
-                            Build.VERSION_CODES.TIRAMISU,
-                            positiveWork = { NetworkCapabilities.NET_CAPABILITY_PRIORITIZE_BANDWIDTH },
-                            negativeWork = { 35 },
-                        )
-                    }
-                    "LOCAL_NETWORK" -> {
-                        checkSdkVersion(
-                            Build.VERSION_CODES.UPSIDE_DOWN_CAKE,
-                            positiveWork = { NetworkCapabilities.NET_CAPABILITY_LOCAL_NETWORK },
-                            negativeWork = { 36 },
-                        )
-                    }
-                    else -> {
-                        -1
-                    }
+            val data = when (it) {
+                "MMS" -> NetworkCapabilities.NET_CAPABILITY_MMS
+                "SUPL" -> NetworkCapabilities.NET_CAPABILITY_SUPL
+                "DUN" -> NetworkCapabilities.NET_CAPABILITY_DUN
+                "FOTA" -> NetworkCapabilities.NET_CAPABILITY_FOTA
+                "IMS" -> NetworkCapabilities.NET_CAPABILITY_IMS
+                "CBS" -> NetworkCapabilities.NET_CAPABILITY_CBS
+                "WIFI_P2P" -> NetworkCapabilities.NET_CAPABILITY_WIFI_P2P
+                "IA" -> NetworkCapabilities.NET_CAPABILITY_IA
+                "RCS" -> NetworkCapabilities.NET_CAPABILITY_RCS
+                "XCAP" -> NetworkCapabilities.NET_CAPABILITY_XCAP
+                "EIMS" -> NetworkCapabilities.NET_CAPABILITY_EIMS
+                "NOT_METERED" -> NetworkCapabilities.NET_CAPABILITY_NOT_METERED
+                "INTERNET" -> NetworkCapabilities.NET_CAPABILITY_INTERNET
+                "NOT_RESTRICTED" -> NetworkCapabilities.NET_CAPABILITY_NOT_RESTRICTED
+                "TRUSTED" -> NetworkCapabilities.NET_CAPABILITY_TRUSTED
+                "NOT_VPN" -> NetworkCapabilities.NET_CAPABILITY_NOT_VPN
+                "VALIDATED" -> NetworkCapabilities.NET_CAPABILITY_VALIDATED
+                "CAPTIVE_PORTAL" -> NetworkCapabilities.NET_CAPABILITY_CAPTIVE_PORTAL
+                "NOT_ROAMING" -> NetworkCapabilities.NET_CAPABILITY_NOT_ROAMING
+                "FOREGROUND" -> NetworkCapabilities.NET_CAPABILITY_FOREGROUND
+                "NOT_CONGESTED" -> NetworkCapabilities.NET_CAPABILITY_NOT_CONGESTED
+                "NOT_SUSPENDED" -> NetworkCapabilities.NET_CAPABILITY_NOT_SUSPENDED
+                "OEM_PAID" -> 22 // NetworkCapabilities.NET_CAPABILITY_OEM_PAID
+                "MCX" -> {
+                    checkSdkVersion(
+                        Build.VERSION_CODES.S,
+                        positiveWork = { NetworkCapabilities.NET_CAPABILITY_MCX },
+                        negativeWork = { 23 },
+                    )
                 }
+                "PARTIAL_CONNECTIVITY" -> 24 // NetworkCapabilities.NET_CAPABILITY_PARTIAL_CONNECTIVITY
+                "TEMPORARILY_NOT_METERED" -> {
+                    checkSdkVersion(
+                        Build.VERSION_CODES.R,
+                        positiveWork = { NetworkCapabilities.NET_CAPABILITY_TEMPORARILY_NOT_METERED },
+                        negativeWork = { 25 },
+                    )
+                }
+                "OEM_PRIVATE" -> 26 // NetworkCapabilities.NET_CAPABILITY_OEM_PRIVATE
+                "VEHICLE_INTERNAL" -> 27 // NetworkCapabilities.NET_CAPABILITY_VEHICLE_INTERNAL
+                "NOT_VCN_MANAGED" -> 28 // NetworkCapabilities.NET_CAPABILITY_NOT_VCN_MANAGED
+                "ENTERPRISE" -> {
+                    checkSdkVersion(
+                        Build.VERSION_CODES.S,
+                        positiveWork = { NetworkCapabilities.NET_CAPABILITY_ENTERPRISE },
+                        negativeWork = { 29 },
+                    )
+                }
+                "VSIM" -> 30 // NetworkCapabilities.NET_CAPABILITY_VSIM
+                "BIP" -> 31 // NetworkCapabilities.NET_CAPABILITY_BIP
+                "HEAD_UNIT" -> {
+                    checkSdkVersion(
+                        Build.VERSION_CODES.S,
+                        positiveWork = { NetworkCapabilities.NET_CAPABILITY_HEAD_UNIT },
+                        negativeWork = { 32 },
+                    )
+                }
+                "MMTEL" -> {
+                    checkSdkVersion(
+                        Build.VERSION_CODES.TIRAMISU,
+                        positiveWork = { NetworkCapabilities.NET_CAPABILITY_MMTEL },
+                        negativeWork = { 33 },
+                    )
+                }
+                "PRIORITIZE_LATENCY" -> {
+                    checkSdkVersion(
+                        Build.VERSION_CODES.TIRAMISU,
+                        positiveWork = { NetworkCapabilities.NET_CAPABILITY_PRIORITIZE_LATENCY },
+                        negativeWork = { 34 },
+                    )
+                }
+                "PRIORITIZE_BANDWIDTH" -> {
+                    checkSdkVersion(
+                        Build.VERSION_CODES.TIRAMISU,
+                        positiveWork = { NetworkCapabilities.NET_CAPABILITY_PRIORITIZE_BANDWIDTH },
+                        negativeWork = { 35 },
+                    )
+                }
+                "LOCAL_NETWORK" -> {
+                    checkSdkVersion(
+                        Build.VERSION_CODES.UPSIDE_DOWN_CAKE,
+                        positiveWork = { NetworkCapabilities.NET_CAPABILITY_LOCAL_NETWORK },
+                        negativeWork = { 36 },
+                    )
+                }
+                else -> {
+                    -1
+                }
+            }
             res.add(data)
         }
         return res.toIntArray()
@@ -172,22 +170,21 @@ public data class NetworkCapabilitiesData(
      * @return List of subscription IDs.<br><br>
      *         구독 ID 목록.
      */
-    public fun getSubscriptionIds(): List<Int>? =
-        checkSdkVersion(
-            Build.VERSION_CODES.S,
-            positiveWork = {
-                if (SdkExtensions.getExtensionVersion(Build.VERSION_CODES.UPSIDE_DOWN_CAKE) >= 12) {
-                    networkCapabilities.subscriptionIds.toList()
-                } else {
-                    val data = splitStr("SubscriptionIds: {", "}", ",")
-                    data?.map { it -> it.toInt() }?.toList()
-                }
-            },
-            negativeWork = {
+    public fun getSubscriptionIds(): List<Int>? = checkSdkVersion(
+        Build.VERSION_CODES.S,
+        positiveWork = {
+            if (SdkExtensions.getExtensionVersion(Build.VERSION_CODES.UPSIDE_DOWN_CAKE) >= 12) {
+                networkCapabilities.subscriptionIds.toList()
+            } else {
                 val data = splitStr("SubscriptionIds: {", "}", ",")
                 data?.map { it -> it.toInt() }?.toList()
-            },
-        )
+            }
+        },
+        negativeWork = {
+            val data = splitStr("SubscriptionIds: {", "}", ",")
+            data?.map { it -> it.toInt() }?.toList()
+        },
+    )
 
     /**
      * Gets the network specifier (API 30+).<br><br>
@@ -206,12 +203,11 @@ public data class NetworkCapabilitiesData(
      * @return Signal strength value.<br><br>
      *         신호 강도 값.
      */
-    public fun getSignalStrength(): Int =
-        checkSdkVersion(
-            Build.VERSION_CODES.Q,
-            positiveWork = { networkCapabilities.signalStrength },
-            negativeWork = { splitStr("SignalStrength: ", " ", "")?.get(0)?.toInt() ?: Int.MIN_VALUE },
-        )
+    public fun getSignalStrength(): Int = checkSdkVersion(
+        Build.VERSION_CODES.Q,
+        positiveWork = { networkCapabilities.signalStrength },
+        negativeWork = { splitStr("SignalStrength: ", " ", "")?.get(0)?.toInt() ?: Int.MIN_VALUE },
+    )
 
     /**
      * Gets the UID of the app that owns this network (API 30+).<br><br>
@@ -403,26 +399,22 @@ public data class NetworkCapabilitiesData(
      * Helper to extract data from TransportInfo string representation.<br><br>
      * TransportInfo 문자열 표현에서 데이터를 추출하는 헬퍼 함수입니다.<br>
      */
-    private fun getDataInTransportInfoStr(
-        start: String,
-        end: String,
-    ): String? =
-        checkSdkVersion(
-            Build.VERSION_CODES.Q,
-            positiveWork = {
-                networkCapabilities.transportInfo?.let {
-                    val str = networkCapabilities.transportInfo.toString()
-                    str.split(start, end)
-                }
-            },
-            negativeWork = {
-                if (isContains(transportInfoStr)) {
-                    getResStr().split(transportInfoStr)[1]?.split(start, end)
-                } else {
-                    null
-                }
-            },
-        )
+    private fun getDataInTransportInfoStr(start: String, end: String): String? = checkSdkVersion(
+        Build.VERSION_CODES.Q,
+        positiveWork = {
+            networkCapabilities.transportInfo?.let {
+                val str = networkCapabilities.transportInfo.toString()
+                str.split(start, end)
+            }
+        },
+        negativeWork = {
+            if (isContains(transportInfoStr)) {
+                getResStr().split(transportInfoStr)[1]?.split(start, end)
+            } else {
+                null
+            }
+        },
+    )
 
     /**
      * Converts all properties to a readable string.<br><br>

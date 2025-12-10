@@ -134,10 +134,7 @@ abstract class RootActivity :
      * @param isLightSystemBars Whether to use light system bar icons (dark icons for light backgrounds).<br><br>
      *                          라이트 시스템 바 아이콘 사용 여부 (밝은 배경에는 어두운 아이콘).<br>
      */
-    protected fun setSystemBarsColor(
-        @ColorInt color: Int,
-        isLightSystemBars: Boolean = false,
-    ) {
+    protected fun setSystemBarsColor(@ColorInt color: Int, isLightSystemBars: Boolean = false) {
         setStatusBarColor(color, isLightSystemBars)
         setNavigationBarColor(color, isLightSystemBars)
     }
@@ -152,10 +149,7 @@ abstract class RootActivity :
      * @param isLightStatusBar Whether to use light status bar icons. true for dark icons (light mode), false for light icons (dark mode).<br><br>
      *                         라이트 상태 바 아이콘 사용 여부. true일 경우 어두운 아이콘(라이트 모드), false일 경우 밝은 아이콘(다크 모드).<br>
      */
-    protected fun setStatusBarColor(
-        @ColorInt color: Int,
-        isLightStatusBar: Boolean = false,
-    ) {
+    protected fun setStatusBarColor(@ColorInt color: Int, isLightStatusBar: Boolean = false) {
         activityWindow.setStatusBarColor(this@RootActivity, color, isLightStatusBar)
     }
 
@@ -169,10 +163,7 @@ abstract class RootActivity :
      * @param isLightNavigationBar Whether to use light navigation bar icons (dark icons for light backgrounds).<br><br>
      *                             라이트 네비게이션 바 아이콘 사용 여부 (밝은 배경에는 어두운 아이콘).<br>
      */
-    protected fun setNavigationBarColor(
-        @ColorInt color: Int,
-        isLightNavigationBar: Boolean = false,
-    ) {
+    protected fun setNavigationBarColor(@ColorInt color: Int, isLightNavigationBar: Boolean = false) {
         val contentViewHeight =
             checkSdkVersion(
                 Build.VERSION_CODES.VANILLA_ICE_CREAM,

@@ -84,10 +84,7 @@ public abstract class BaseSystemService(
      * @return Returns the result of the block execution if successful, or defaultValue if permissions are missing or an error occurs.<br><br>
      *         성공 시 블록 실행 결과를 반환하고, 권한이 누락되거나 오류 발생 시 defaultValue를 반환.<br>
      */
-    protected inline fun <T> tryCatchSystemManager(
-        defaultValue: T,
-        block: () -> T,
-    ): T {
+    protected inline fun <T> tryCatchSystemManager(defaultValue: T, block: () -> T): T {
         val deniedPermissions = getDeniedPermissionList()
         if (deniedPermissions.isNotEmpty()) {
             Logx.w("${this::class.simpleName}: Missing permissions!!! - $deniedPermissions")
@@ -123,9 +120,7 @@ public abstract class BaseSystemService(
      *         권한 이름을 키로, 부여 상태를 값으로 하는 맵 (부여된 경우 true, 그렇지 않으면 false).<br>
      */
     public fun getPermissionInfo(): Map<String, Boolean> =
-        requiredPermissions?.associateWith { permission ->
-            !remainPermissions.contains(permission)
-        } ?: emptyMap()
+        requiredPermissions?.associateWith { permission -> !remainPermissions.contains(permission) } ?: emptyMap()
 
     /**
      * Checks if a specific permission is granted.<br><br>

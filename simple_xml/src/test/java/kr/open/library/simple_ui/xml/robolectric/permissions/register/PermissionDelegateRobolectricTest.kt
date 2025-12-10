@@ -36,8 +36,14 @@ class PermissionDelegateRobolectricTest {
 
     @Before
     fun setUp() {
+        // Access repository field instead of pendingRequests<br><br>
+        // pendingRequests 대신 repository 필드에 접근합니다.<br>
+        val repositoryField =
+            permissionManager.javaClass.getDeclaredField("repository").apply { isAccessible = true }
+        val repository = repositoryField.get(permissionManager)
         pendingRequestsField =
-            permissionManager.javaClass.getDeclaredField("pendingRequests").apply { isAccessible = true }
+            repository.javaClass.getDeclaredField("pendingRequests").apply { isAccessible = true }
+
         activeDelegatesField =
             permissionManager.javaClass.getDeclaredField("activeDelegates").apply { isAccessible = true }
 
@@ -133,7 +139,10 @@ class PermissionDelegateRobolectricTest {
 
             cleanupMethod.invoke(delegate)
 
-            val pendingRequests = pendingRequestsField.get(permissionManager) as MutableMap<*, *>
+            val repositoryField =
+                permissionManager.javaClass.getDeclaredField("repository").apply { isAccessible = true }
+            val repository = repositoryField.get(permissionManager)
+            val pendingRequests = pendingRequestsField.get(repository) as MutableMap<*, *>
             Assert.assertFalse(pendingRequests.containsKey(requestId))
             assertNull(getCurrentRequestId())
         }
@@ -178,7 +187,10 @@ class PermissionDelegateRobolectricTest {
                 invoke(fragmentDelegate)
             }
 
-            val pendingRequests = pendingRequestsField.get(permissionManager) as MutableMap<*, *>
+            val repositoryField =
+                permissionManager.javaClass.getDeclaredField("repository").apply { isAccessible = true }
+            val repository = repositoryField.get(permissionManager)
+            val pendingRequests = pendingRequestsField.get(repository) as MutableMap<*, *>
             Assert.assertFalse(pendingRequests.containsKey(requestId))
             Assert.assertNull(currentField.get(fragmentDelegate))
         }
@@ -229,8 +241,11 @@ class PermissionDelegateRobolectricTest {
         requestId: String,
         permissions: List<String>,
     ): Any {
-        val pendingRequests = pendingRequestsField.get(permissionManager) as MutableMap<String, Any>
-        val clazz = Class.forName("kr.open.library.simple_ui.xml.permissions.manager.PermissionManager\$PendingRequest")
+        val repositoryField =
+            permissionManager.javaClass.getDeclaredField("repository").apply { isAccessible = true }
+        val repository = repositoryField.get(permissionManager)
+        val pendingRequests = pendingRequestsField.get(repository) as MutableMap<String, Any>
+        val clazz = Class.forName("kr.open.library.simple_ui.xml.permissions.repository.PermissionRequestRepository\$PendingRequest")
         val ctor =
             clazz.getDeclaredConstructor(
                 MutableList::class.java,
@@ -262,7 +277,10 @@ class PermissionDelegateRobolectricTest {
     }
 
     private fun clearPermissionManagerState() {
-        (pendingRequestsField.get(permissionManager) as MutableMap<*, *>).clear()
+        val repositoryField =
+            permissionManager.javaClass.getDeclaredField("repository").apply { isAccessible = true }
+        val repository = repositoryField.get(permissionManager)
+        (pendingRequestsField.get(repository) as MutableMap<*, *>).clear()
         (activeDelegatesField.get(permissionManager) as MutableMap<*, *>).clear()
     }
 

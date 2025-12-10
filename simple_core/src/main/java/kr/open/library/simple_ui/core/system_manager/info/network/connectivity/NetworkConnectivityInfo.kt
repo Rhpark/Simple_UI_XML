@@ -125,12 +125,11 @@ public class NetworkConnectivityInfo(
      *         네트워크가 연결되어 있으면 `true`, 그렇지 않으면 `false`.<br>
      */
     @RequiresPermission(ACCESS_NETWORK_STATE)
-    public fun isNetworkConnected(): Boolean =
-        safeCatch(false) {
-            val caps = getNetworkCapabilities()
-            val linkProperties = getLinkProperties()
-            (caps != null) && (linkProperties != null)
-        }
+    public fun isNetworkConnected(): Boolean = safeCatch(false) {
+        val caps = getNetworkCapabilities()
+        val linkProperties = getLinkProperties()
+        (caps != null) && (linkProperties != null)
+    }
 
     // =================================================
     // Network Capabilities / 네트워크 능력
@@ -144,10 +143,9 @@ public class NetworkConnectivityInfo(
      *         현재 활성 네트워크의 능력, 사용할 수 없는 경우 null.<br>
      */
     @RequiresPermission(ACCESS_NETWORK_STATE)
-    public fun getNetworkCapabilities(): NetworkCapabilities? =
-        safeCatch(defaultValue = null) {
-            connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
-        }
+    public fun getNetworkCapabilities(): NetworkCapabilities? = safeCatch(defaultValue = null) {
+        connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+    }
 
     /**
      * Gets LinkProperties of current network.<br><br>
@@ -157,10 +155,9 @@ public class NetworkConnectivityInfo(
      *         현재 활성 네트워크의 링크 속성, 사용할 수 없는 경우 null.<br>
      */
     @RequiresPermission(ACCESS_NETWORK_STATE)
-    public fun getLinkProperties(): LinkProperties? =
-        safeCatch(defaultValue = null) {
-            connectivityManager.getLinkProperties(connectivityManager.activeNetwork)
-        }
+    public fun getLinkProperties(): LinkProperties? = safeCatch(defaultValue = null) {
+        connectivityManager.getLinkProperties(connectivityManager.activeNetwork)
+    }
 
     // =================================================
     // Transport Type Connectivity / 전송 타입별 연결성
@@ -374,9 +371,7 @@ public class NetworkConnectivityInfo(
      * 일반 네트워크 콜백을 해제합니다.<br>
      */
     public fun unregisterNetworkCallback() {
-        networkCallBack?.let {
-            connectivityManager.unregisterNetworkCallback(it)
-        }
+        networkCallBack?.let { connectivityManager.unregisterNetworkCallback(it) }
         networkCallBack = null
     }
 
@@ -385,9 +380,7 @@ public class NetworkConnectivityInfo(
      * 기본 네트워크 콜백을 해제합니다.<br>
      */
     public fun unregisterDefaultNetworkCallback() {
-        networkDefaultCallback?.let {
-            connectivityManager.unregisterNetworkCallback(it)
-        }
+        networkDefaultCallback?.let { connectivityManager.unregisterNetworkCallback(it) }
         networkDefaultCallback = null
     }
 

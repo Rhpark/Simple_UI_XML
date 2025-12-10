@@ -19,6 +19,7 @@
 
 package kr.open.library.simple_ui.xml.extensions.resource
 
+import android.app.Activity
 import android.content.Context
 import android.graphics.drawable.Drawable
 import androidx.annotation.ColorRes
@@ -171,3 +172,19 @@ public fun Context.getColorSafe(
 public fun Context.getStringSafe(
     @StringRes stringRes: Int,
 ): String = safeCatch(defaultValue = "") { getString(stringRes) }
+
+/**
+ * Checks if the context is destroyed or finishing.<br><br>
+ * 컨텍스트가 파괴되었거나 종료 중인지 확인합니다.<br>
+ *
+ * @param context The context to check.<br><br>
+ *                확인할 컨텍스트입니다.<br>
+ * @return True if the context is destroyed or finishing, false otherwise.<br><br>
+ *         컨텍스트가 파괴되었거나 종료 중이면 true, 그렇지 않으면 false를 반환합니다.<br>
+ */
+public fun Context.isContextDestroyed(): Boolean =
+    if (this is Activity) {
+        this.isDestroyed || this.isFinishing
+    } else {
+        false
+    }

@@ -45,10 +45,7 @@ public open class NetworkBase(
      * @return Split string, or `null` if delimiters are missing.<br><br>
      *         분리된 문자열이며, 구분자를 찾지 못하면 `null`입니다.<br>
      */
-    protected fun splitStr(
-        start: String,
-        end: String,
-    ): String? = resStr.split(start, end)
+    protected fun splitStr(start: String, end: String): String? = resStr.split(start, end)
 
     /**
      * Extension function to split a string between two delimiters.<br><br>
@@ -61,10 +58,7 @@ public open class NetworkBase(
      * @return Extracted string, or `null` if delimiters are missing.<br><br>
      *         추출된 문자열이며, 구분자를 찾지 못하면 `null`입니다.<br>
      */
-    protected fun String.split(
-        start: String,
-        end: String,
-    ): String? =
+    protected fun String.split(start: String, end: String): String? =
         if (contains(start)) {
             val splitRes = split(start)
             // contains(start) == true이면 splitRes.size() >= 2

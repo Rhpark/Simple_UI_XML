@@ -208,10 +208,9 @@ public class TelephonyCallbackManager(
      * 활성화된 구독 정보 목록을 반환합니다.<br>
      */
     @RequiresPermission(READ_PHONE_STATE)
-    private fun getActiveSubscriptionInfoListInternal(): List<SubscriptionInfo> =
-        tryCatchSystemManager(emptyList()) {
-            return subscriptionManager.activeSubscriptionInfoList ?: emptyList()
-        }
+    private fun getActiveSubscriptionInfoListInternal(): List<SubscriptionInfo> = tryCatchSystemManager(emptyList()) {
+        return subscriptionManager.activeSubscriptionInfoList ?: emptyList()
+    }
 
     // =================================================
     // Simple Callback API (기본 SIM, StateFlow 통합)
@@ -249,25 +248,24 @@ public class TelephonyCallbackManager(
         onSignalStrengthChanged: ((SignalStrength) -> Unit)? = null,
         onServiceStateChanged: ((ServiceState) -> Unit)? = null,
         onNetworkStateChanged: ((TelephonyNetworkState) -> Unit)? = null,
-    ): Boolean =
-        tryCatchSystemManager(false) {
-            checkSdkVersion(
-                Build.VERSION_CODES.S,
-                positiveWork = {
-                    registerModernCallback(
-                        handler,
-                        onSignalStrengthChanged,
-                        onServiceStateChanged,
-                        onNetworkStateChanged,
-                    )
-                    return true
-                },
-                negativeWork = {
-                    registerLegacyCallback(onSignalStrengthChanged, onServiceStateChanged, onNetworkStateChanged)
-                    return true
-                },
-            )
-        }
+    ): Boolean = tryCatchSystemManager(false) {
+        checkSdkVersion(
+            Build.VERSION_CODES.S,
+            positiveWork = {
+                registerModernCallback(
+                    handler,
+                    onSignalStrengthChanged,
+                    onServiceStateChanged,
+                    onNetworkStateChanged,
+                )
+                return true
+            },
+            negativeWork = {
+                registerLegacyCallback(onSignalStrengthChanged, onServiceStateChanged, onNetworkStateChanged)
+                return true
+            },
+        )
+    }
 
     /**
      * Registers telephony callback for API 31+.<br><br>
@@ -293,10 +291,7 @@ public class TelephonyCallbackManager(
 
         val executor = handler?.let { h -> Executor { h.post(it) } } ?: context.mainExecutor
 
-        telephonyManager.registerTelephonyCallback(
-            executor,
-            telephonyCallback.baseTelephonyCallback,
-        )
+        telephonyManager.registerTelephonyCallback(executor, telephonyCallback.baseTelephonyCallback)
 
         isCallbackRegistered = true
         Logx.d("TelephonyCallbackManager: Modern callback registered")
@@ -380,15 +375,10 @@ public class TelephonyCallbackManager(
 
             checkSdkVersion(
                 Build.VERSION_CODES.S,
-                positiveWork = {
-                    telephonyManager.unregisterTelephonyCallback(telephonyCallback.baseTelephonyCallback)
-                },
+                positiveWork = { telephonyManager.unregisterTelephonyCallback(telephonyCallback.baseTelephonyCallback) },
                 negativeWork = {
                     @Suppress("DEPRECATION")
-                    telephonyManager.listen(
-                        telephonyCallback.basePhoneStateListener,
-                        android.telephony.PhoneStateListener.LISTEN_NONE,
-                    )
+                    telephonyManager.listen(telephonyCallback.basePhoneStateListener, android.telephony.PhoneStateListener.LISTEN_NONE)
                 },
             )
 
@@ -425,26 +415,25 @@ public class TelephonyCallbackManager(
         onCallState: ((callState: Int, phoneNumber: String?) -> Unit)? = null,
         onDisplayInfo: ((telephonyDisplayInfo: TelephonyDisplayInfo) -> Unit)? = null,
         onTelephonyNetworkState: ((telephonyNetworkState: TelephonyNetworkState) -> Unit)? = null,
-    ): Boolean =
-        tryCatchSystemManager(false) {
-            val subscriptionInfoList = getActiveSubscriptionInfoListInternal()
-            val defaultSim = subscriptionInfoList.firstOrNull() ?: throw IllegalStateException("No default SIM found")
+    ): Boolean = tryCatchSystemManager(false) {
+        val subscriptionInfoList = getActiveSubscriptionInfoListInternal()
+        val defaultSim = subscriptionInfoList.firstOrNull() ?: throw IllegalStateException("No default SIM found")
 
-            registerAdvancedCallback(
-                defaultSim.simSlotIndex,
-                executor,
-                isGpsOn,
-                onActiveDataSubId,
-                onDataConnectionState,
-                onCellInfo,
-                onSignalStrength,
-                onServiceState,
-                onCallState,
-                onDisplayInfo,
-                onTelephonyNetworkState,
-            )
-            return true
-        }
+        registerAdvancedCallback(
+            defaultSim.simSlotIndex,
+            executor,
+            isGpsOn,
+            onActiveDataSubId,
+            onDataConnectionState,
+            onCellInfo,
+            onSignalStrength,
+            onServiceState,
+            onCallState,
+            onDisplayInfo,
+            onTelephonyNetworkState,
+        )
+        return true
+    }
 
     /**
      * Registers advanced telephony callback for specific SIM slot (API 31+).<br><br>
@@ -472,12 +461,10 @@ public class TelephonyCallbackManager(
         onDisplayInfo: ((telephonyDisplayInfo: TelephonyDisplayInfo) -> Unit)? = null,
         onTelephonyNetworkState: ((telephonyNetworkState: TelephonyNetworkState) -> Unit)? = null,
     ) {
-        val tm =
-            uSimTelephonyManagerList[simSlotIndex]
-                ?: throw IllegalStateException("TelephonyManager [$simSlotIndex] is null")
-        val callback =
-            uSimTelephonyCallbackList[simSlotIndex]
-                ?: throw IllegalStateException("telephonyCallbackList [$simSlotIndex] is null")
+        val tm = uSimTelephonyManagerList[simSlotIndex]
+            ?: throw IllegalStateException("TelephonyManager [$simSlotIndex] is null")
+        val callback = uSimTelephonyCallbackList[simSlotIndex]
+            ?: throw IllegalStateException("telephonyCallbackList [$simSlotIndex] is null")
 
         unregisterAdvancedCallback(simSlotIndex)
 
@@ -572,10 +559,7 @@ public class TelephonyCallbackManager(
      * 신호 강도 콜백을 설정합니다.<br>
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun setOnSignalStrength(
-        simSlotIndex: Int,
-        onSignalStrength: ((currentSignalStrength: CurrentSignalStrength) -> Unit)? = null,
-    ) {
+    public fun setOnSignalStrength(simSlotIndex: Int, onSignalStrength: ((currentSignalStrength: CurrentSignalStrength) -> Unit)? = null) {
         uSimTelephonyCallbackList[simSlotIndex]?.setOnSignalStrength(onSignalStrength)
             ?: Logx.w("TelephonyCallbackManager: setOnSignalStrength telephonyCallbackList[$simSlotIndex] is null")
     }
@@ -585,10 +569,7 @@ public class TelephonyCallbackManager(
      * 서비스 상태 콜백을 설정합니다.<br>
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun setOnServiceState(
-        simSlotIndex: Int,
-        onServiceState: ((currentServiceState: CurrentServiceState) -> Unit)? = null,
-    ) {
+    public fun setOnServiceState(simSlotIndex: Int, onServiceState: ((currentServiceState: CurrentServiceState) -> Unit)? = null) {
         uSimTelephonyCallbackList[simSlotIndex]?.setOnServiceState(onServiceState)
             ?: Logx.w("TelephonyCallbackManager: setOnServiceState telephonyCallbackList[$simSlotIndex] is null")
     }
@@ -598,10 +579,7 @@ public class TelephonyCallbackManager(
      * 활성 데이터 구독 ID 콜백을 설정합니다.<br>
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun setOnActiveDataSubId(
-        simSlotIndex: Int,
-        onActiveDataSubId: ((subId: Int) -> Unit)? = null,
-    ) {
+    public fun setOnActiveDataSubId(simSlotIndex: Int, onActiveDataSubId: ((subId: Int) -> Unit)? = null) {
         uSimTelephonyCallbackList[simSlotIndex]?.setOnActiveDataSubId(onActiveDataSubId)
             ?: Logx.w("TelephonyCallbackManager: setOnActiveDataSubId telephonyCallbackList[$simSlotIndex] is null")
     }
@@ -611,10 +589,7 @@ public class TelephonyCallbackManager(
      * 데이터 연결 상태 콜백을 설정합니다.<br>
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun setOnDataConnectionState(
-        simSlotIndex: Int,
-        onDataConnectionState: ((state: Int, networkType: Int) -> Unit)? = null,
-    ) {
+    public fun setOnDataConnectionState(simSlotIndex: Int, onDataConnectionState: ((state: Int, networkType: Int) -> Unit)? = null) {
         uSimTelephonyCallbackList[simSlotIndex]?.setOnDataConnectionState(onDataConnectionState)
             ?: Logx.w("TelephonyCallbackManager: setOnDataConnectionState telephonyCallbackList[$simSlotIndex] is null")
     }
@@ -637,10 +612,7 @@ public class TelephonyCallbackManager(
      * 통화 상태 콜백을 설정합니다.<br>
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun setOnCallState(
-        simSlotIndex: Int,
-        onCallState: ((callState: Int, phoneNumber: String?) -> Unit)? = null,
-    ) {
+    public fun setOnCallState(simSlotIndex: Int, onCallState: ((callState: Int, phoneNumber: String?) -> Unit)? = null) {
         uSimTelephonyCallbackList[simSlotIndex]?.setOnCallState(onCallState)
             ?: Logx.w("TelephonyCallbackManager: setOnCallState telephonyCallbackList[$simSlotIndex] is null")
     }
@@ -650,10 +622,7 @@ public class TelephonyCallbackManager(
      * 디스플레이 정보 콜백을 설정합니다.<br>
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun setOnDisplayState(
-        simSlotIndex: Int,
-        onDisplay: ((telephonyDisplayInfo: TelephonyDisplayInfo) -> Unit)? = null,
-    ) {
+    public fun setOnDisplayState(simSlotIndex: Int, onDisplay: ((telephonyDisplayInfo: TelephonyDisplayInfo) -> Unit)? = null) {
         uSimTelephonyCallbackList[simSlotIndex]?.setOnDisplay(onDisplay)
             ?: Logx.w("TelephonyCallbackManager: setOnDisplayState telephonyCallbackList[$simSlotIndex] is null")
     }

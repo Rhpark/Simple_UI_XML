@@ -56,10 +56,7 @@ public abstract class BaseAlarmReceiver : BroadcastReceiver() {
      * @param alarmVo The alarm data.<br><br>
      *                알람 데이터.
      */
-    protected abstract fun createNotificationChannel(
-        context: Context,
-        alarmVo: AlarmVo,
-    )
+    protected abstract fun createNotificationChannel(context: Context, alarmVo: AlarmVo)
 
     /**
      * Displays a notification for the triggered alarm.<br><br>
@@ -70,10 +67,7 @@ public abstract class BaseAlarmReceiver : BroadcastReceiver() {
      * @param alarmVo The alarm data containing notification details.<br><br>
      *                알림 세부정보를 포함하는 알람 데이터.
      */
-    protected abstract fun showNotification(
-        context: Context,
-        alarmVo: AlarmVo,
-    )
+    protected abstract fun showNotification(context: Context, alarmVo: AlarmVo)
 
     /**
      * Loads all stored alarms from persistent storage.<br>
@@ -125,10 +119,7 @@ public abstract class BaseAlarmReceiver : BroadcastReceiver() {
      * @param intent The received broadcast intent.<br><br>
      *               수신된 브로드캐스트 인텐트.
      */
-    override fun onReceive(
-        context: Context?,
-        intent: Intent?,
-    ) {
+    override fun onReceive(context: Context?, intent: Intent?) {
         Logx.d("BaseAlarmReceiver.onReceive called")
 
         // Early validation
@@ -189,10 +180,7 @@ public abstract class BaseAlarmReceiver : BroadcastReceiver() {
      * @param intent The received broadcast intent.<br><br>
      *               수신된 브로드캐스트 인텐트.
      */
-    private fun processAlarmIntent(
-        context: Context,
-        intent: Intent,
-    ) {
+    private fun processAlarmIntent(context: Context, intent: Intent) {
         try {
             val alarmController = context.getAlarmController()
 
@@ -221,10 +209,7 @@ public abstract class BaseAlarmReceiver : BroadcastReceiver() {
      * @param alarmController The alarm controller instance.<br><br>
      *                        알람 컨트롤러 인스턴스.
      */
-    private fun handleBootCompleted(
-        context: Context,
-        alarmController: AlarmController,
-    ) {
+    private fun handleBootCompleted(context: Context, alarmController: AlarmController) {
         try {
             val allAlarms = loadAllalarmVoList(context)
             Logx.d("Re-registering ${allAlarms.size} alarms after boot")
@@ -249,10 +234,7 @@ public abstract class BaseAlarmReceiver : BroadcastReceiver() {
      * @param intent The received broadcast intent.<br><br>
      *               수신된 브로드캐스트 인텐트.
      */
-    private fun handleAlarmTrigger(
-        context: Context,
-        intent: Intent,
-    ) {
+    private fun handleAlarmTrigger(context: Context, intent: Intent) {
         try {
             val key = intent.getIntExtra(ALARM_KEY, ALARM_KEY_DEFAULT_VALUE)
 
@@ -287,23 +269,19 @@ public abstract class BaseAlarmReceiver : BroadcastReceiver() {
      * @return `true` if registration succeeded, `false` otherwise.<br><br>
      *         등록 성공 시 `true`, 그렇지 않으면 `false`.<br>
      */
-    private fun registerAlarm(
-        alarmController: AlarmController,
-        alarmVo: AlarmVo,
-    ): Boolean =
-        when (registerType) {
-            RegisterType.ALARM_AND_ALLOW_WHILE_IDLE -> {
-                alarmController.registerAlarmAndAllowWhileIdle(classType, alarmVo)
-            }
-
-            RegisterType.ALARM_CLOCK -> {
-                alarmController.registerAlarmClock(classType, alarmVo)
-            }
-
-            RegisterType.ALARM_EXACT_AND_ALLOW_WHILE_IDLE -> {
-                alarmController.registerAlarmExactAndAllowWhileIdle(classType, alarmVo)
-            }
+    private fun registerAlarm(alarmController: AlarmController, alarmVo: AlarmVo): Boolean = when (registerType) {
+        RegisterType.ALARM_AND_ALLOW_WHILE_IDLE -> {
+            alarmController.registerAlarmAndAllowWhileIdle(classType, alarmVo)
         }
+
+        RegisterType.ALARM_CLOCK -> {
+            alarmController.registerAlarmClock(classType, alarmVo)
+        }
+
+        RegisterType.ALARM_EXACT_AND_ALLOW_WHILE_IDLE -> {
+            alarmController.registerAlarmExactAndAllowWhileIdle(classType, alarmVo)
+        }
+    }
 
     /**
      * Enum defining the available alarm registration types.<br>
