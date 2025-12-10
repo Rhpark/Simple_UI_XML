@@ -29,7 +29,6 @@ package kr.open.library.simple_ui.xml.extensions.view
 import android.content.Context
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.xml.extensions.fragment.withContext
 
 /**
