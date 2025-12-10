@@ -53,6 +53,9 @@ Complete Activity/Fragment initialization in just 3 lines!" – See how much fas
 | Bar color/transparency control | 10+ lines of `WindowCompat` code | One-liner: `setStatusBarColor()`, `setSystemBarsColor()`  |
 | API 35+ support | Manually add custom view | RootActivity already handles it |
 
+**API 35+ note:** By default, Android 15+ keeps status/navigation bars transparent. Simple UI overlays custom views and forces `WindowCompat.setDecorFitsSystemWindows(false)`. Use inset padding because your content extends under the bars. `statusBarHeight` / `navigationBarHeight` update live from WindowInsets on rotation or gesture-nav changes.<br><br>
+> **API 35+ 주의:** 기본적으로 Android 15+에서는 상태·내비게이션 바가 항상 투명합니다. 색상을 입히기 위해 decorView 상단에 오버레이 뷰를 추가하고 `WindowCompat.setDecorFitsSystemWindows(false)`를 자동 적용합니다. 바 영역까지 레이아웃이 확장되므로 인셋 기반 패딩을 사용하세요. 회전·제스처 내비 변경 시 `statusBarHeight` / `navigationBarHeight`가 WindowInsets로 자동 갱신됩니다.
+
 <br></br>
 
 ## 💡 Why It Matters (왜 중요한가)

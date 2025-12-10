@@ -245,7 +245,7 @@ class PermissionDelegateRobolectricTest {
             permissionManager.javaClass.getDeclaredField("repository").apply { isAccessible = true }
         val repository = repositoryField.get(permissionManager)
         val pendingRequests = pendingRequestsField.get(repository) as MutableMap<String, Any>
-        val clazz = Class.forName("kr.open.library.simple_ui.xml.permissions.repository.PermissionRequestRepository\$PendingRequest")
+        val clazz = Class.forName("kr.open.library.simple_ui.xml.permissions.repository.PermissionPendingRequest")
         val ctor =
             clazz.getDeclaredConstructor(
                 MutableList::class.java,

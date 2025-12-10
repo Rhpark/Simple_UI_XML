@@ -5,7 +5,6 @@
 
 package kr.open.library.simple_ui.xml.permissions.repository
 
-import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.core.permissions.manager.PermissionCallbackAddResult
 import kr.open.library.simple_ui.core.permissions.vo.PermissionConstants
 
@@ -149,7 +148,8 @@ internal class PermissionRequestRepository {
             try {
                 callback(deniedPermissions)
             } catch (e: Exception) {
-                Logx.w("Callback invocation failed: $deniedPermissions, error: ${e.message}")
+                // Print stack trace without using Logx to maintain unit testability.<br><br>
+                // Unit 테스트 가능성을 유지하기 위해 Logx 없이 스택 트레이스만 출력합니다.<br>
                 e.printStackTrace()
                 // Silently catch exceptions to prevent one failing callback from affecting others.<br><br>
                 // 하나의 콜백 실패가 다른 콜백에 영향을 주지 않도록 예외를 조용히 처리합니다.<br>

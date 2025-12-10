@@ -22,6 +22,19 @@ import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.core.system_manager.base.BaseSystemService
 import kr.open.library.simple_ui.core.system_manager.base.DataUpdate
 import kr.open.library.simple_ui.core.system_manager.extensions.getBatteryManager
+import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateVo.BATTERY_ERROR_VALUE
+import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateVo.BATTERY_UPDATE_ACTION
+import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateVo.DEFAULT_UPDATE_CYCLE_TIME_MS
+import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateVo.STR_BATTERY_HEALTH_COLD
+import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateVo.STR_BATTERY_HEALTH_DEAD
+import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateVo.STR_BATTERY_HEALTH_GOOD
+import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateVo.STR_BATTERY_HEALTH_OVER_VOLTAGE
+import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateVo.STR_BATTERY_HEALTH_UNKNOWN
+import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateVo.STR_CHARGE_PLUG_AC
+import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateVo.STR_CHARGE_PLUG_DOCK
+import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateVo.STR_CHARGE_PLUG_UNKNOWN
+import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateVo.STR_CHARGE_PLUG_USB
+import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateVo.STR_CHARGE_PLUG_WIRELESS
 import kr.open.library.simple_ui.core.system_manager.info.battery.power.PowerProfile
 
 /**
@@ -75,40 +88,6 @@ public open class BatteryStateInfo(
      */
     public val errorValueDouble: Double = BATTERY_ERROR_VALUE.toDouble()
 
-    companion object {
-        /**
-         * Default update cycle time in milliseconds.<br><br>
-         * 기본 업데이트 주기 시간 (밀리초)입니다.<br>
-         */
-        public const val DEFAULT_UPDATE_CYCLE_TIME_MS = 1000L
-
-        /**
-         * Custom battery update action for internal broadcasts.<br><br>
-         * 내부 브로드캐스트용 사용자 정의 배터리 업데이트 액션입니다.<br>
-         */
-        public const val BATTERY_UPDATE_ACTION = "RHPARK_BATTERY_STATE_UPDATE"
-
-        /**
-         * Error value used when battery information cannot be retrieved.<br><br>
-         * 배터리 정보를 가져올 수 없을 때 사용하는 오류 값입니다.<br>
-         */
-        public const val BATTERY_ERROR_VALUE: Int = Integer.MIN_VALUE
-
-        // Charge plug type strings / 충전 플러그 유형 문자열
-        public const val STR_CHARGE_PLUG_USB: String = "USB"
-        public const val STR_CHARGE_PLUG_AC: String = "AC"
-        public const val STR_CHARGE_PLUG_DOCK: String = "DOCK"
-        public const val STR_CHARGE_PLUG_UNKNOWN: String = "UNKNOWN"
-        public const val STR_CHARGE_PLUG_WIRELESS: String = "WIRELESS"
-
-        // Battery health status strings / 배터리 상태 문자열
-        public const val STR_BATTERY_HEALTH_GOOD: String = "GOOD"
-        public const val STR_BATTERY_HEALTH_COLD: String = "COLD"
-        public const val STR_BATTERY_HEALTH_DEAD: String = "DEAD"
-        public const val STR_BATTERY_HEALTH_OVER_VOLTAGE: String = "OVER_VOLTAGE"
-        public const val STR_BATTERY_HEALTH_UNKNOWN: String = "UNKNOWN"
-    }
-
     /**
      * Lazy PowerProfile instance used for capacity estimation fallbacks.<br><br>
      * 용량 추정 폴백에 사용하는 지연 초기화 PowerProfile 인스턴스입니다.<br>
@@ -119,8 +98,7 @@ public open class BatteryStateInfo(
      * Mutable flow that stores the latest battery event.<br><br>
      * 최신 배터리 이벤트를 보관하는 MutableStateFlow입니다.<br>
      */
-    private val msfUpdate: MutableStateFlow<BatteryStateEvent> =
-        MutableStateFlow(BatteryStateEvent.OnCapacity(getCapacity()))
+    private val msfUpdate: MutableStateFlow<BatteryStateEvent> = MutableStateFlow(BatteryStateEvent.OnCapacity(getCapacity()))
 
     /**
      * StateFlow that emits battery state events whenever battery information changes.<br><br>
@@ -161,16 +139,15 @@ public open class BatteryStateInfo(
             }
         }
 
-    private val intentFilter =
-        IntentFilter().apply {
-            addAction(Intent.ACTION_BATTERY_CHANGED)
-            addAction(Intent.ACTION_BATTERY_LOW)
-            addAction(Intent.ACTION_BATTERY_OKAY)
-            addAction(Intent.ACTION_POWER_CONNECTED)
-            addAction(Intent.ACTION_POWER_DISCONNECTED)
-            addAction(Intent.ACTION_POWER_USAGE_SUMMARY)
-            addAction(updateBattery)
-        }
+    private val intentFilter = IntentFilter().apply {
+        addAction(Intent.ACTION_BATTERY_CHANGED)
+        addAction(Intent.ACTION_BATTERY_LOW)
+        addAction(Intent.ACTION_BATTERY_OKAY)
+        addAction(Intent.ACTION_POWER_CONNECTED)
+        addAction(Intent.ACTION_POWER_DISCONNECTED)
+        addAction(Intent.ACTION_POWER_USAGE_SUMMARY)
+        addAction(updateBattery)
+    }
 
     /**
      * Cache for the latest battery intent.<br><br>
@@ -219,13 +196,7 @@ public open class BatteryStateInfo(
         coroutineScope?.let { scope ->
             scope.launch { capacity.state.collect { sendFlow(BatteryStateEvent.OnCapacity(it)) } }
             scope.launch { currentAmpere.state.collect { sendFlow(BatteryStateEvent.OnCurrentAmpere(it)) } }
-            scope.launch {
-                currentAverageAmpere.state.collect {
-                    sendFlow(
-                        BatteryStateEvent.OnCurrentAverageAmpere(it),
-                    )
-                }
-            }
+            scope.launch { currentAverageAmpere.state.collect { sendFlow(BatteryStateEvent.OnCurrentAverageAmpere(it)) } }
             scope.launch { chargeStatus.state.collect { sendFlow(BatteryStateEvent.OnChargeStatus(it)) } }
             scope.launch { chargeCounter.state.collect { sendFlow(BatteryStateEvent.OnChargeCounter(it)) } }
             scope.launch { chargePlug.state.collect { sendFlow(BatteryStateEvent.OnChargePlug(it)) } }
@@ -273,12 +244,8 @@ public open class BatteryStateInfo(
         unRegisterReceiver()
         checkSdkVersion(
             Build.VERSION_CODES.TIRAMISU,
-            positiveWork = {
-                batteryStatus = context.registerReceiver(batteryBroadcastReceiver, intentFilter, RECEIVER_EXPORTED)
-            },
-            negativeWork = {
-                batteryStatus = context.registerReceiver(batteryBroadcastReceiver, intentFilter)
-            },
+            positiveWork = { batteryStatus = context.registerReceiver(batteryBroadcastReceiver, intentFilter, RECEIVER_EXPORTED) },
+            negativeWork = { batteryStatus = context.registerReceiver(batteryBroadcastReceiver, intentFilter) },
         )
         isReceiverRegistered = true
         return true
@@ -310,14 +277,13 @@ public open class BatteryStateInfo(
 
             coroutineScope = coroutine
             setupDataFlows() // Setup reactive flows for data updates
-            updateJob =
-                coroutine.launch {
-                    while (isActive) {
-                        sendBroadcast()
-                        delay(updateCycleTime)
-                    }
-                    updateStop()
+            updateJob = coroutine.launch {
+                while (isActive) {
+                    sendBroadcast()
+                    delay(updateCycleTime)
                 }
+                updateStop()
+            }
             return true
         }
 
@@ -764,15 +730,13 @@ public open class BatteryStateInfo(
     public fun getVoltage(): Double = tryCatchSystemManager(errorValueDouble) {
         // Try to get voltage from current batteryStatus first
         // 먼저 현재 batteryStatus에서 전압을 가져오기 시도
-        var voltage =
-            batteryStatus?.getIntExtra(BatteryManager.EXTRA_VOLTAGE, errorValue * 1000) ?: errorValue * 1000
+        var voltage = batteryStatus?.getIntExtra(BatteryManager.EXTRA_VOLTAGE, errorValue * 1000) ?: errorValue * 1000
 
         // If batteryStatus is null or doesn't have voltage info, get fresh battery intent
         // batteryStatus가 null이거나 전압 정보가 없는 경우, 새로운 배터리 intent를 가져옴
         if (voltage == errorValue * 1000) {
             val batteryIntent = context.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
-            voltage =
-                batteryIntent?.getIntExtra(BatteryManager.EXTRA_VOLTAGE, errorValue * 1000) ?: errorValue * 1000
+            voltage = batteryIntent?.getIntExtra(BatteryManager.EXTRA_VOLTAGE, errorValue * 1000) ?: errorValue * 1000
         }
 
         return voltage.toDouble() / 1000
