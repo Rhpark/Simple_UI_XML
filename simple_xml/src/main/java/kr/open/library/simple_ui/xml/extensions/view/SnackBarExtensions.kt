@@ -31,6 +31,7 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import kr.open.library.simple_ui.core.logcat.Logx
+import kr.open.library.simple_ui.xml.extensions.fragment.withView
 
 /**
  * Configuration options for customizing SnackBar appearance and behavior.<br><br>
@@ -204,9 +205,9 @@ public fun Fragment.snackBarShowShort(
     msg: CharSequence,
     snackBarOption: SnackBarOption? = null,
 ) {
-    this.view?.let {
+    withView("Fragment view is null, can not show SnackBar!!!") {
         it.snackBarMakeShort(msg, snackBarOption).show()
-    } ?: Logx.e("Fragment view is null, can not show SnackBar!!!")
+    }
 }
 
 /**
@@ -233,19 +234,8 @@ public fun View.snackBarShowShort(
     isGestureInsetBottomIgnored: Boolean? = null,
 ) {
     snackBarMakeShort(msg)
-        .apply {
-            val snackBarLayout =
-                (this.view as? Snackbar.SnackbarLayout)?.let {
-                    it.removeAllViews()
-                    it.setPadding(0, 0, 0, 0)
-                    it.addView(customView)
-                    animMode?.let { animationMode = it }
-                    isGestureInsetBottomIgnored?.let { setGestureInsetBottomIgnored(it) }
-                }
-            if (snackBarLayout == null) {
-                Logx.e("Snackbar view is not of type Snackbar.SnackbarLayout")
-            }
-        }.show()
+        .applyCustomView(customView, animMode, isGestureInsetBottomIgnored)
+        .show()
 }
 
 /**
@@ -281,9 +271,9 @@ public fun Fragment.snackBarShowLong(
     msg: CharSequence,
     snackBarOption: SnackBarOption?,
 ) {
-    this.view?.let {
+    withView("Fragment view is null, can not show SnackBar!!!") {
         it.snackBarMakeLong(msg, snackBarOption).show()
-    } ?: Logx.e("Fragment view is null, can not show SnackBar!!!")
+    }
 }
 
 /**
@@ -310,19 +300,8 @@ public fun View.snackBarShowLong(
     isGestureInsetBottomIgnored: Boolean? = null,
 ) {
     snackBarMakeLong(msg)
-        .apply {
-            val snackBarLayout =
-                (this.view as? Snackbar.SnackbarLayout)?.let {
-                    it.removeAllViews()
-                    it.setPadding(0, 0, 0, 0)
-                    it.addView(customView)
-                    animMode?.let { animationMode = it }
-                    isGestureInsetBottomIgnored?.let { setGestureInsetBottomIgnored(it) }
-                }
-            if (snackBarLayout == null) {
-                Logx.e("Snackbar view is not of type Snackbar.SnackbarLayout")
-            }
-        }.show()
+        .applyCustomView(customView, animMode, isGestureInsetBottomIgnored)
+        .show()
 }
 
 /**
@@ -358,9 +337,9 @@ public fun Fragment.snackBarShowIndefinite(
     msg: CharSequence,
     snackBarOption: SnackBarOption?,
 ) {
-    this.view?.let {
+    withView("Fragment view is null, can not show SnackBar!!!") {
         it.snackBarMakeIndefinite(msg, snackBarOption).show()
-    } ?: Logx.e("Fragment view is null, can not show SnackBar!!!")
+    }
 }
 
 /**
@@ -387,18 +366,43 @@ public fun View.snackBarShowIndefinite(
     isGestureInsetBottomIgnored: Boolean? = null,
 ) {
     snackBarMakeIndefinite(msg)
-        .apply {
-            val snackBarLayout =
-                (this.view as? Snackbar.SnackbarLayout)?.let {
-                    it.removeAllViews()
-                    it.setPadding(0, 0, 0, 0)
-                    it.addView(customView)
-                    animMode?.let { animationMode = it }
-                    isGestureInsetBottomIgnored?.let { setGestureInsetBottomIgnored(it) }
-                }
+        .applyCustomView(customView, animMode, isGestureInsetBottomIgnored)
+        .show()
+}
 
-            if (snackBarLayout == null) {
-                Logx.e("Snackbar view is not of type Snackbar.SnackbarLayout")
-            }
-        }.show()
+/**
+ * Applies a custom view to a Snackbar and configures its animation and gesture settings.<br>
+ * This is an internal helper function to avoid code duplication across different duration methods.<br><br>
+ * Snackbar에 커스텀 뷰를 적용하고 애니메이션 및 제스처 설정을 구성합니다.<br>
+ * 이는 다양한 지속 시간 메서드에서 코드 중복을 피하기 위한 내부 헬퍼 함수입니다.<br>
+ *
+ * @param customView The custom view to display in the Snackbar.<br><br>
+ *                   Snackbar에 표시할 커스텀 뷰.<br>
+ *
+ * @param animMode Optional animation mode for the Snackbar.<br><br>
+ *                 Snackbar의 선택적 애니메이션 모드.<br>
+ *
+ * @param isGestureInsetBottomIgnored Whether to ignore bottom gesture insets.<br><br>
+ *                                     하단 제스처 인셋을 무시할지 여부.<br>
+ *
+ * @return The modified Snackbar instance for method chaining.<br><br>
+ *         메서드 체이닝을 위한 수정된 Snackbar 인스턴스.<br>
+ */
+@SuppressLint("RestrictedApi")
+private fun Snackbar.applyCustomView(
+    customView: View,
+    @BaseTransientBottomBar.AnimationMode animMode: Int? = null,
+    isGestureInsetBottomIgnored: Boolean? = null,
+): Snackbar = apply {
+    val snackBarLayout = (this.view as? Snackbar.SnackbarLayout)?.let {
+        it.removeAllViews()
+        it.setPadding(0, 0, 0, 0)
+        it.addView(customView)
+        animMode?.let { mode -> animationMode = mode }
+        isGestureInsetBottomIgnored?.let { ignored -> setGestureInsetBottomIgnored(ignored) }
+    }
+
+    if (snackBarLayout == null) {
+        Logx.e("Snackbar view is not of type Snackbar.SnackbarLayout")
+    }
 }

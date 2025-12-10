@@ -30,6 +30,7 @@ import android.content.Context
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import kr.open.library.simple_ui.core.logcat.Logx
+import kr.open.library.simple_ui.xml.extensions.fragment.withContext
 
 /**
  * Creates and shows a short duration Toast message.<br><br>
@@ -91,8 +92,9 @@ public fun Context.toastLong(msg: CharSequence): Toast = Toast.makeText(this, ms
  *            Toast에 표시할 메시지.<br>
  */
 public fun Fragment.toastShowShort(msg: CharSequence) {
-    this.context?.toastShowShort(msg)
-        ?: Logx.e("Can not Toast Show, Fragment Context is null!!")
+    withContext("Can not Toast Show, Fragment Context is null!!") {
+        it.toastShowShort(msg)
+    }
 }
 
 /**
@@ -105,6 +107,7 @@ public fun Fragment.toastShowShort(msg: CharSequence) {
  *            Toast에 표시할 메시지.<br>
  */
 public fun Fragment.toastShowLong(msg: CharSequence) {
-    this.context?.toastShowLong(msg)
-        ?: Logx.e("Can not Toast Show, Fragment Context is null!!")
+    withContext("Can not Toast Show, Fragment Context is null!!") {
+        it.toastShowLong(msg)
+    }
 }
