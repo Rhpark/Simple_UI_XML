@@ -154,10 +154,7 @@ class PermissionManager private constructor() {
         // 진행 중인 요청이 있는 동안 자동 정리 작업이 계속되도록 예약합니다.<br>
         scheduleCleanup()
 
-        val (specialPermissions, normalPermissions) =
-            remainingPermissions.partition {
-                isSpecialPermission(it)
-            }
+        val (specialPermissions, normalPermissions) = remainingPermissions.partition { isSpecialPermission(it) }
 
         // Launches the normal permission flow first when necessary.<br><br>
         // 필요 시 먼저 일반 권한 요청을 실행합니다.<br>
@@ -193,9 +190,7 @@ class PermissionManager private constructor() {
             if (launcher != null) {
                 launchSpecialPermissionWithRetry(context, firstSpecialPermission, launcher, requestId)
             } else {
-                Logx.e(
-                    "No launcher found for special permission: $firstSpecialPermission (Delegate not registered?)",
-                )
+                Logx.e("No launcher found for special permission: $firstSpecialPermission (Delegate not registered?)",)
                 handleSpecialPermissionFailure(context, requestId, firstSpecialPermission)
             }
         } else if (specialPermissions.isNotEmpty() && normalPermissions.isNotEmpty()) {
@@ -340,10 +335,7 @@ class PermissionManager private constructor() {
      * @param delegate Delegate that mediates permission launches.<br><br>
      *                 권한 실행을 중계할 Delegate 입니다.<br>
      */
-    suspend fun registerDelegate(
-        requestId: String,
-        delegate: PermissionDelegate<*>,
-    ) = mutex.withLock {
+    suspend fun registerDelegate(requestId: String, delegate: PermissionDelegate<*>) = mutex.withLock {
         val existingRef = activeDelegates[requestId]
         val existingDelegate = existingRef?.get()
 
@@ -450,10 +442,7 @@ class PermissionManager private constructor() {
      * @param deniedPermissions Permissions that remain denied.<br><br>
      *                          거부 상태로 남아 있는 권한 목록입니다.<br>
      */
-    private fun invokeAllCallbacks(
-        request: PermissionPendingRequest,
-        deniedPermissions: List<String>,
-    ) {
+    private fun invokeAllCallbacks(request: PermissionPendingRequest, deniedPermissions: List<String>) {
         repository.invokeAllCallbacks(request, deniedPermissions)
     }
 
