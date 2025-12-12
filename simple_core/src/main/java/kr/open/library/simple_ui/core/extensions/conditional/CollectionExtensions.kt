@@ -15,10 +15,7 @@ package kr.open.library.simple_ui.core.extensions.conditional
  * @return Filtered list when [condition] is `true`, otherwise `this`.<br><br>
  *         조건이 참이면 필터링된 리스트, 거짓이면 현재 리스트를 그대로 반환합니다.<br>
  */
-public inline fun <T> List<T>.filterIf(
-    condition: Boolean,
-    predicate: (T) -> Boolean,
-): List<T> = if (condition) filter(predicate) else this
+public inline fun <T> List<T>.filterIf(condition: Boolean, predicate: (T) -> Boolean): List<T> = if (condition) filter(predicate) else this
 
 /**
  * Runs [action] only when the list is not empty and keeps fluent chains intact.<br><br>

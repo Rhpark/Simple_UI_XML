@@ -24,7 +24,7 @@ ktlint_standard_function-signature = disabled # 함수 선언부를 어떻게 �
 
 # 체이닝 규칙
 ij_kotlin_method_call_chain_wrap = off # normal - 적절한 바꿈, off - 줄바꿈 X, wrap_always - 항상 바꿈
-ktlint_function_naming_ignore_when_annotated_with = Composable # 특정 어노테이션이 붙은 함수의 네이밍 규칙 무시 - Composable 함수는 PascalCase 사용하므로 예외 처리
+# ktlint_function_naming_ignore_when_annotated_with = Composable # 특정 어노테이션이 붙은 함수의 네이밍 규칙 무시 - Composable 함수는 PascalCase 사용하므로 예외 처리
 ij_kotlin_wrap_first_method_in_call_chain = false # false = 첫 호출부터 이어서 작성
 ktlint_standard_chain-wrapping = disabled # disabled = 체인 줄바꿈 강제 안 함
 
@@ -35,6 +35,13 @@ ktlint_standard_argument-list-wrapping = disabled # 인자 줄바꿈 스타일�
 ktlint_standard_multiline-expression-wrapping = disabled
 ktlint_standard_parameter-list-wrapping = disabled
 
+# if문 및 중괄호 규칙
+ktlint_standard_if-else-bracing = disabled # 한 줄 if문에서 블록 사용 허용
+ktlint_standard_if-else-wrapping = disabled # if-else 줄바꿈 강제 안 함
+ktlint_standard_wrapping = disabled # 중괄호 앞뒤 줄바꿈 강제 안 함
+ktlint_standard_function-literal = disabled # 함수 리터럴 중괄호 줄바꿈 강제 안 함
+ktlint_standard_multiline-if-else = disabled # 멀티라인 if-else 줄바꿈 강제 안 함
+
 # 파일 인코딩 규칙
 charset = utf-8
 
@@ -44,11 +51,12 @@ end_of_line = lf # lf = \n, crlf = \r\n , cr = \r
 
 
 # 함수, 프로퍼티 규칙 비활성화 여부
-ktlint_standard_function-naming = disabled # Kotlin에서는 최상위 함수도 허용하므로 상황에 따라 조정
-ktlint_standard_property-naming = disabled # 프로퍼티 명명 규칙
-ktlint_standard_function-expression-body = enabled # 표현식 본문으로 변환 가능한 함수를 강제할지 여부, enabled = 간단한 함수는 expression body 사용 강제
-ij_kotlin_function_body_expression = true # IDE가 expression body 제안하도록 설정
 ij_kotlin_keep_first_column_comment = true # 한 줄로 작성 가능한 경우 한 줄로 유지
+ktlint_standard_function-naming = disabled # Kotlin에서는 최상위 함수도 허용하므로 상황에 따라 조정
+# ktlint_standard_property-naming = disabled # 프로퍼티 명명 규칙
+# ktlint_standard_function-expression-body = enabled # 표현식 본문으로 변환 가능한 함수를 강제할지 여부, enabled = 간단한 함수는 expression body 사용 강제
+ij_kotlin_function_body_expression = true # IDE가 expression body 제안하도록 설정
+
 
 [app/src/androidTest/**.kt]
 ktlint_standard_package-name = disabled
@@ -80,7 +88,9 @@ ktlint_standard_package-name = disabled
 
 [app/src/main/java/kr/open/library/simpleui_xml/**.kt]
 ktlint_standard_package-name = disabled
-
+#
+# [simple_core/src/main/java/kr/open/library/simple_ui/core/system_manager/controller/notification/SimpleNotificationController.kt]
+# ktlint_standard_chain-wrapping = disabled
 
 
 

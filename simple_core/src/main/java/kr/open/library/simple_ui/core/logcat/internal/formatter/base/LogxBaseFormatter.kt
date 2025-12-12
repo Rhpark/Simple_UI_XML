@@ -34,8 +34,5 @@ abstract class LogxBaseFormatter(
 
     protected abstract fun isIncludeLogType(logType: LogxType): Boolean
 
-    protected abstract fun formatMessage(
-        message: Any?,
-        stackInfo: String,
-    ): String
+    protected abstract fun formatMessage(message: Any?, stackInfo: String): String
 }

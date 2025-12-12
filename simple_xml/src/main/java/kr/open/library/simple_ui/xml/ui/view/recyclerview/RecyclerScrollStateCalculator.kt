@@ -279,10 +279,7 @@ internal class RecyclerScrollStateCalculator(
      * @param scrollDirectionThreshold Scroll direction threshold (null to keep unchanged).<br><br>
      *                                  스크롤 방향 임계값 (null이면 변경하지 않음).<br>
      */
-    fun updateThresholds(
-        edgeReachThreshold: Int? = null,
-        scrollDirectionThreshold: Int? = null,
-    ) {
+    fun updateThresholds(edgeReachThreshold: Int? = null, scrollDirectionThreshold: Int? = null) {
         edgeReachThreshold?.let { this.edgeReachThreshold = it }
         scrollDirectionThreshold?.let { this.scrollDirectionThreshold = it }
     }

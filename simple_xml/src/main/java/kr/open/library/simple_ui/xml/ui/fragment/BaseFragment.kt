@@ -69,9 +69,8 @@ abstract class BaseFragment(
      *                               onDestroyView() 이후에 접근하는 경우.
      */
     public val rootView: View
-        get() =
-            _rootView
-                ?: throw IllegalStateException("View accessed after onDestroyView()")
+        get() = _rootView
+            ?: throw IllegalStateException("View accessed after onDestroyView()")
 
     /**
      * Called to have the fragment instantiate its user interface view.<br><br>

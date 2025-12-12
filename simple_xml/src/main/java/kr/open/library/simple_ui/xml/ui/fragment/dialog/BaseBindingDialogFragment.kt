@@ -85,9 +85,8 @@ public abstract class BaseBindingDialogFragment<BINDING : ViewDataBinding>(
      * onDestroyView() 이후에 접근하면 IllegalStateException이 발생합니다.<br>
      */
     public val binding: BINDING
-        get() =
-            _binding
-                ?: throw IllegalStateException("Binding accessed after onDestroyView()")
+        get() = _binding
+            ?: throw IllegalStateException("Binding accessed after onDestroyView()")
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -110,16 +109,9 @@ public abstract class BaseBindingDialogFragment<BINDING : ViewDataBinding>(
      * @param savedInstanceState If non-null, this dialog is being re-constructed from a previous saved state.<br><br>
      *                           null이 아닌 경우 이 다이얼로그는 이전에 저장된 상태에서 다시 생성됩니다.<br>
      */
-    protected open fun afterOnCreateView(
-        rootView: View,
-        savedInstanceState: Bundle?,
-    ) {
-    }
+    protected open fun afterOnCreateView(rootView: View, savedInstanceState: Bundle?) {}
 
-    override fun onViewCreated(
-        view: View,
-        savedInstanceState: Bundle?,
-    ) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.lifecycleOwner = viewLifecycleOwner
         getBackgroundColor()?.let { setBackgroundColor(it) }

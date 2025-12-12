@@ -1,6 +1,7 @@
 package kr.open.library.simple_ui.core.logcat.internal.stacktrace
 
 import android.util.Log
+import kr.open.library.simple_ui.core.extensions.trycatch.requireInBounds
 import kr.open.library.simple_ui.core.logcat.Logx
 
 /**
@@ -26,12 +27,9 @@ class LogxStackTrace {
         val currentThread = Thread.currentThread()
         val stackTraceSize = currentThread.stackTrace.size
 
-        if (level >= stackTraceSize) {
-            Log.e(
-                Logx.getAppName(),
-                "[Error] Logx: Stack trace level $level exceeds available stack size $stackTraceSize",
-            )
-            throw IndexOutOfBoundsException("Stack trace level $level exceeds available stack size $stackTraceSize")
+        requireInBounds(level < stackTraceSize) {
+            Log.e(Logx.getAppName(), "[Error] Logx: Stack trace level $level exceeds available stack size $stackTraceSize")
+            "Stack trace level $level exceeds available stack size $stackTraceSize"
         }
 
         var isCoroutine = false
@@ -67,9 +65,7 @@ class LogxStackTrace {
     }
 
     private fun isCoroutinePath(className: String): Boolean =
-        (
-            className.startsWith("kotlin.coroutines") || className.startsWith("kotlinx.coroutines")
-        )
+        (className.startsWith("kotlin.coroutines") || className.startsWith("kotlinx.coroutines"))
 
     private fun isNormalMethod(item: StackTraceElement): Boolean =
         !(

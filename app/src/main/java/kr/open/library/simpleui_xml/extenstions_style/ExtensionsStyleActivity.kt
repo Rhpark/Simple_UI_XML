@@ -211,12 +211,11 @@ class ExtensionsStyleActivity : BaseBindingActivity<ActivityExtensionsStyleBindi
     private fun setupTryCatchExtensions() {
         binding.btnSafeCatch.setOnClickListener {
             // 에러 발생 가능한 코드
-            val result =
-                safeCatch(defaultValue = "에러 발생!") {
-                    val text = binding.edtDisplayValue.text.toString()
-                    if (text.isEmpty()) throw IllegalArgumentException("값이 비어있습니다")
-                    "성공: $text"
-                }
+            val result = safeCatch(defaultValue = "에러 발생!") {
+                val text = binding.edtDisplayValue.text.toString()
+                require(text.isNotEmpty()) { "text isEmpty" }
+                "성공: $text"
+            }
 
             binding.tvSafeCatchResult.text = "결과: $result"
         }

@@ -1,5 +1,6 @@
 ﻿package kr.open.library.simple_ui.core.extensions.date
 
+import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
 import java.text.ParsePosition
 import java.text.SimpleDateFormat
 import java.time.Instant
@@ -24,10 +25,8 @@ import java.util.Locale
  * @return A formatted date-time string.<br><br>
  *         포맷된 날짜-시간 문자열.<br>
  */
-public fun Long.toDateString(
-    format: String,
-    locale: Locale = Locale.getDefault(),
-): String = SimpleDateFormat(format, locale).format(Date(this))
+public fun Long.toDateString(format: String, locale: Locale = Locale.getDefault()): String =
+    SimpleDateFormat(format, locale).format(Date(this))
 
 /**
  * Parses a date-time string using the specified pattern and locale, and returns the timestamp in milliseconds.<br><br>
@@ -45,20 +44,13 @@ public fun Long.toDateString(
  * @throws IllegalArgumentException if the string cannot be parsed or doesn't match the format completely.<br><br>
  *                                  문자열을 파싱할 수 없거나 형식과 완전히 일치하지 않을 경우.<br>
  */
-public fun String.toDateLong(
-    format: String,
-    locale: Locale = Locale.getDefault(),
-): Long {
+public fun String.toDateLong(format: String, locale: Locale = Locale.getDefault()): Long {
     val formatter = SimpleDateFormat(format, locale)
     val parsePosition = ParsePosition(0)
 
-    val parsedDate =
-        formatter.parse(this, parsePosition)
-            ?: throw IllegalArgumentException("Invalid time string")
+    val parsedDate = formatter.parse(this, parsePosition) ?: throw IllegalArgumentException("Invalid time string")
 
-    if (parsePosition.index != length) {
-        throw IllegalArgumentException("Invalid time string")
-    }
+    require(parsePosition.index == length) { "Invalid time string" }
 
     return parsedDate.time
 }
@@ -76,15 +68,9 @@ public fun String.toDateLong(
  * @return A Date object if parsing succeeds, or null if parsing fails.<br><br>
  *         파싱이 성공하면 Date 객체, 실패하면 null.<br>
  */
-public fun String.toDate(
-    format: String,
-    locale: Locale = Locale.getDefault(),
-): Date? =
-    try {
-        SimpleDateFormat(format, locale).parse(this)
-    } catch (e: Exception) {
-        null
-    }
+public fun String.toDate(format: String, locale: Locale = Locale.getDefault()): Date? = safeCatch(null) {
+    return SimpleDateFormat(format, locale).parse(this)
+}
 
 /**
  * Converts a timestamp in milliseconds to a LocalDateTime using the system default time zone.<br>
@@ -122,10 +108,7 @@ public fun Long.toLocalDateTime(): LocalDateTime = Instant.ofEpochMilli(this).at
  * @return A formatted date-time string.<br><br>
  *         포맷된 날짜-시간 문자열.<br>
  */
-public fun LocalDateTime.format(
-    pattern: String,
-    locale: Locale = Locale.getDefault(),
-): String {
+public fun LocalDateTime.format(pattern: String, locale: Locale = Locale.getDefault()): String {
     val formatter = DateTimeFormatter.ofPattern(pattern, locale)
     return this.format(formatter)
 }
@@ -165,10 +148,8 @@ public fun Date.toLocalDateTime(): LocalDateTime = this.toInstant().atZone(ZoneI
  * @return A formatted date-time string.<br><br>
  *         포맷된 날짜-시간 문자열.<br>
  */
-public fun Date.toStringFormat(
-    pattern: String,
-    locale: Locale = Locale.getDefault(),
-): String = this.toLocalDateTime().format(pattern, locale)
+public fun Date.toStringFormat(pattern: String, locale: Locale = Locale.getDefault()): String =
+    this.toLocalDateTime().format(pattern, locale)
 
 /**
  * Formats a Date object to a string using SimpleDateFormat with the specified pattern and locale.<br>
@@ -185,10 +166,8 @@ public fun Date.toStringFormat(
  * @return A formatted date-time string.<br><br>
  *         포맷된 날짜-시간 문자열.<br>
  */
-public fun Date.toStringSimpleFormat(
-    format: String,
-    locale: Locale = Locale.getDefault(),
-): String = SimpleDateFormat(format, locale).format(this)
+public fun Date.toStringSimpleFormat(format: String, locale: Locale = Locale.getDefault()): String =
+    SimpleDateFormat(format, locale).format(this)
 
 /**
  * Calculates the absolute time difference in seconds between this Date and another Date.<br><br>

@@ -6,6 +6,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
+import kr.open.library.simple_ui.core.extensions.trycatch.requireLogFileWriter
 import kr.open.library.simple_ui.core.logcat.internal.file_writer.base.LogxFileWriterImp
 import kr.open.library.simple_ui.core.logcat.model.LogxType
 import java.io.BufferedWriter
@@ -77,15 +78,11 @@ class LogxFileWriter(
         if (directory.exists()) return
 
         try {
-            if (directory.mkdirs()) {
-                Log.d("ImmediateLogFileWriter", "Directory created: $filePath")
-            } else {
-                Log.e("ImmediateLogFileWriter", "Failed to create directory: $filePath")
-                throw LogFileWriteException("Failed to create directory: $filePath")
-            }
-        } catch (e: Exception) {
-            Log.e("ImmediateLogFileWriter", "Exception while creating directory", e)
-            throw LogFileWriteException("Exception while creating directory", e)
+            requireLogFileWriter(directory.mkdirs()) { "Failed to create directory: $filePath" }
+            Log.d("ImmediateLogFileWriter", "Directory created: $filePath")
+        } catch (e: LogFileWriteException) {
+            Log.e("ImmediateLogFileWriter", "LogFileWriteException while creating directory", e)
+            e.printStackTrace()
         }
     }
 
@@ -95,15 +92,10 @@ class LogxFileWriter(
 
         if (!logFile.exists()) {
             try {
-                if (logFile.createNewFile()) {
-                    Log.d("ImmediateLogFileWriter", "Log file created: ${logFile.path}")
-                } else {
-                    Log.e("ImmediateLogFileWriter", "Failed to create log file: ${logFile.path}")
-                    throw LogFileWriteException("Failed to create log file: ${logFile.path}")
-                }
-            } catch (e: IOException) {
-                Log.e("ImmediateLogFileWriter", "IOException creating file: ${logFile.path}", e)
-                throw LogFileWriteException("IOException creating file: ${logFile.path}", e)
+                requireLogFileWriter(logFile.createNewFile()) { "Failed to create directory: $filePath" }
+            } catch (e: LogFileWriteException) {
+                Log.e("ImmediateLogFileWriter", "LogFileWriteException creating file: ${logFile.path}", e)
+                e.printStackTrace()
             }
         }
 

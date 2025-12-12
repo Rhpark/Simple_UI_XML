@@ -1,6 +1,7 @@
 package kr.open.library.simple_ui.xml.ui.adapter.queue
 
 import androidx.recyclerview.widget.RecyclerView
+import kr.open.library.simple_ui.core.extensions.trycatch.requireInBounds
 import kr.open.library.simple_ui.core.logcat.Logx
 
 /**
@@ -52,10 +53,8 @@ internal class AdapterOperationQueue<ITEM>(
         override val callback: (() -> Unit)?,
     ) : Operation<ITEM>() {
         override fun execute(currentList: List<ITEM>): List<ITEM> {
-            if (position < 0 || position > currentList.size) {
-                throw IndexOutOfBoundsException(
-                    "Cannot add item at position $position. Valid range: 0..${currentList.size}",
-                )
+            requireInBounds(position >= 0 && position <= currentList.size) {
+                "Cannot add item at position $position. Valid range: 0..${currentList.size}"
             }
             return currentList.toMutableList().apply { add(position, item) }
         }
@@ -74,10 +73,8 @@ internal class AdapterOperationQueue<ITEM>(
         override val callback: (() -> Unit)?,
     ) : Operation<ITEM>() {
         override fun execute(currentList: List<ITEM>): List<ITEM> {
-            if (position < 0 || position > currentList.size) {
-                throw IndexOutOfBoundsException(
-                    "Cannot add items at position $position. Valid range: 0..${currentList.size}",
-                )
+            requireInBounds(position >= 0 && position <= currentList.size) {
+                "Cannot add items at position $position. Valid range: 0..${currentList.size}"
             }
             return currentList.toMutableList().apply { addAll(position, items) }
         }
@@ -88,10 +85,8 @@ internal class AdapterOperationQueue<ITEM>(
         override val callback: (() -> Unit)?,
     ) : Operation<ITEM>() {
         override fun execute(currentList: List<ITEM>): List<ITEM> {
-            if (position < 0 || position >= currentList.size) {
-                throw IndexOutOfBoundsException(
-                    "Cannot remove item at position $position. Valid range: 0 until ${currentList.size}",
-                )
+            requireInBounds(position >= 0 && position < currentList.size) {
+                "Cannot remove item at position $position. Valid range: 0 until ${currentList.size}"
             }
             return currentList.toMutableList().apply { removeAt(position) }
         }
@@ -103,9 +98,7 @@ internal class AdapterOperationQueue<ITEM>(
     ) : Operation<ITEM>() {
         override fun execute(currentList: List<ITEM>): List<ITEM> {
             val position = currentList.indexOf(item)
-            if (position == RecyclerView.NO_POSITION) {
-                throw IllegalArgumentException("Item not found in the list")
-            }
+            require(position != RecyclerView.NO_POSITION) { "Item not found in the list" }
             return currentList.toMutableList().apply { removeAt(position) }
         }
     }
@@ -122,16 +115,13 @@ internal class AdapterOperationQueue<ITEM>(
         override val callback: (() -> Unit)?,
     ) : Operation<ITEM>() {
         override fun execute(currentList: List<ITEM>): List<ITEM> {
-            if (fromPosition < 0 || fromPosition >= currentList.size) {
-                throw IndexOutOfBoundsException(
-                    "Invalid fromPosition $fromPosition. Valid range: 0 until ${currentList.size}",
-                )
+            requireInBounds(fromPosition >= 0 && fromPosition < currentList.size) {
+                "Invalid fromPosition $fromPosition. Valid range: 0 until ${currentList.size}"
             }
-            if (toPosition < 0 || toPosition >= currentList.size) {
-                throw IndexOutOfBoundsException(
-                    "Invalid toPosition $toPosition. Valid range: 0 until ${currentList.size}",
-                )
+            requireInBounds(toPosition >= 0 && toPosition < currentList.size) {
+                "Invalid toPosition $toPosition. Valid range: 0 until ${currentList.size}"
             }
+
             return currentList.toMutableList().apply {
                 val item = removeAt(fromPosition)
                 add(toPosition.coerceAtMost(size), item)
@@ -145,11 +135,10 @@ internal class AdapterOperationQueue<ITEM>(
         override val callback: (() -> Unit)?,
     ) : Operation<ITEM>() {
         override fun execute(currentList: List<ITEM>): List<ITEM> {
-            if (position < 0 || position >= currentList.size) {
-                throw IndexOutOfBoundsException(
-                    "Invalid position $position. Valid range: 0 until ${currentList.size}",
-                )
+            requireInBounds(position >= 0 && position < currentList.size) {
+                "Invalid position $position. Valid range: 0 until ${currentList.size}"
             }
+
             return currentList.toMutableList().apply { set(position, item) }
         }
     }
@@ -161,9 +150,7 @@ internal class AdapterOperationQueue<ITEM>(
     fun enqueueOperation(operation: Operation<ITEM>) {
         synchronized(queueLock) {
             operationQueue.add(operation)
-            if (!isProcessingOperation) {
-                processNextOperation()
-            }
+            if (!isProcessingOperation) processNextOperation()
         }
     }
 
@@ -175,9 +162,7 @@ internal class AdapterOperationQueue<ITEM>(
         synchronized(queueLock) {
             operationQueue.clear()
             operationQueue.add(operation)
-            if (!isProcessingOperation) {
-                processNextOperation()
-            }
+            if (!isProcessingOperation) processNextOperation()
         }
     }
 

@@ -67,9 +67,8 @@ public abstract class BaseDialogFragment(
      * onDestroyView() 이후에 접근하면 IllegalStateException이 발생합니다.<br>
      */
     public val rootView: View
-        get() =
-            _rootView
-                ?: throw IllegalStateException("View accessed after onDestroyView()")
+        get() = _rootView
+            ?: throw IllegalStateException("View accessed after onDestroyView()")
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -80,10 +79,7 @@ public abstract class BaseDialogFragment(
         return rootView
     }
 
-    override fun onViewCreated(
-        view: View,
-        savedInstanceState: Bundle?,
-    ) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         getBackgroundColor()?.let { setBackgroundColor(it) }
         getBackgroundResId()?.let { setBackgroundDrawable(it) }

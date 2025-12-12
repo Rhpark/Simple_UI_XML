@@ -58,8 +58,8 @@ public open class SimpleNotificationController(
         checkSdkVersion(
             Build.VERSION_CODES.TIRAMISU,
             positiveWork = { listOf(POST_NOTIFICATIONS) },
-            negativeWork = { null },
-        ),
+            negativeWork = { null }
+        )
     ) {
     /**
      * Lazy-initialized NotificationManager instance for managing notifications.<br><br>
@@ -204,19 +204,18 @@ public open class SimpleNotificationController(
      */
     public fun getBuilder(notificationOption: SimpleNotificationOptionVo): NotificationCompat.Builder = with(notificationOption) {
         val channel = currentChannel ?: getOrCreateDefaultChannel()
-        val builder =
-            NotificationCompat.Builder(context, channel.id).apply {
-                title?.let { setContentTitle(it) }
-                content?.let { setContentText(it) }
-                setAutoCancel(isAutoCancel)
-                smallIcon?.let { setSmallIcon(it) }
-                largeIcon?.let { setLargeIcon(it) }
-                setOngoing(onGoing)
-                clickIntent?.let {
-                    setContentIntent(getPendingIntentType(SimplePendingIntentOptionVo(notificationId, it)))
-                }
-                actions?.forEach { addAction(it) }
+        val builder = NotificationCompat.Builder(context, channel.id).apply {
+            title?.let { setContentTitle(it) }
+            content?.let { setContentText(it) }
+            setAutoCancel(isAutoCancel)
+            smallIcon?.let { setSmallIcon(it) }
+            largeIcon?.let { setLargeIcon(it) }
+            setOngoing(onGoing)
+            clickIntent?.let {
+                setContentIntent(getPendingIntentType(SimplePendingIntentOptionVo(notificationId, it)))
             }
+            actions?.forEach { addAction(it) }
+        }
         builder
     }
 
@@ -232,20 +231,19 @@ public open class SimpleNotificationController(
     public fun getProgressBuilder(notificationOption: SimpleProgressNotificationOptionVo): NotificationCompat.Builder =
         with(notificationOption) {
             val channel = currentChannel ?: getOrCreateDefaultChannel()
-            val builder =
-                NotificationCompat.Builder(context, channel.id).apply {
-                    title?.let { setContentTitle(it) }
-                    content?.let { setContentText(it) }
-                    setAutoCancel(isAutoCancel)
-                    smallIcon?.let { setSmallIcon(it) }
-                    setOngoing(onGoing)
-                    clickIntent?.let {
-                        setContentIntent(getPendingIntentType(SimplePendingIntentOptionVo(notificationId, it)))
-                    }
-                    actions?.forEach { addAction(it) }
-                    setPriority(PRIORITY_LOW)
-                    setProgress(100, progressPercent, false)
+            val builder = NotificationCompat.Builder(context, channel.id).apply {
+                title?.let { setContentTitle(it) }
+                content?.let { setContentText(it) }
+                setAutoCancel(isAutoCancel)
+                smallIcon?.let { setSmallIcon(it) }
+                setOngoing(onGoing)
+                clickIntent?.let {
+                    setContentIntent(getPendingIntentType(SimplePendingIntentOptionVo(notificationId, it)))
                 }
+                actions?.forEach { addAction(it) }
+                setPriority(PRIORITY_LOW)
+                setProgress(100, progressPercent, false)
+            }
 
             progressBuilders[notificationId] = ProgressNotificationInfo(builder) // 진행률 업데이트를 위해 빌더 저장
 
@@ -466,19 +464,18 @@ public open class SimpleNotificationController(
      * @return `true` if completion was successful, `false` otherwise.<br><br>
      *         완료 처리 성공 시 `true`, 그렇지 않으면 `false`.<br>
      */
-    public fun completeProgress(notificationId: Int, completedContent: String? = null): Boolean =
-        tryCatchSystemManager(false) {
-            progressBuilders[notificationId]?.let { info ->
-                info.builder.setProgress(0, 0, false) // 진행률 바 제거
-                completedContent?.let { info.builder.setContentText(it) }
-                showNotification(notificationId, info.builder)
-                progressBuilders.remove(notificationId) // 빌더 제거로 메모리 정리
-                return true
-            } ?: run {
-                Logx.w("Progress notification not found for ID: $notificationId")
-                return false
-            }
+    public fun completeProgress(notificationId: Int, completedContent: String? = null): Boolean = tryCatchSystemManager(false) {
+        progressBuilders[notificationId]?.let { info ->
+            info.builder.setProgress(0, 0, false) // 진행률 바 제거
+            completedContent?.let { info.builder.setContentText(it) }
+            showNotification(notificationId, info.builder)
+            progressBuilders.remove(notificationId) // 빌더 제거로 메모리 정리
+            return true
+        } ?: run {
+            Logx.w("Progress notification not found for ID: $notificationId")
+            return false
         }
+    }
 
     /**
      * Cancels a specific notification by ID.<br><br>
@@ -491,13 +488,12 @@ public open class SimpleNotificationController(
      * @return `true` if cancellation was successful, `false` otherwise.<br><br>
      *         취소 성공 시 `true`, 그렇지 않으면 `false`.<br>
      */
-    public fun cancelNotification(tag: String? = null, notificationId: Int): Boolean =
-        tryCatchSystemManager(false) {
-            tag?.let { notificationManager.cancel(tag, notificationId) }
-                ?: notificationManager.cancel(notificationId)
-            progressBuilders.remove(notificationId) // 진행률 빌더도 함께 제거
-            return true
-        }
+    public fun cancelNotification(tag: String? = null, notificationId: Int): Boolean = tryCatchSystemManager(false) {
+        tag?.let { notificationManager.cancel(tag, notificationId) }
+            ?: notificationManager.cancel(notificationId)
+        progressBuilders.remove(notificationId) // 진행률 빌더도 함께 제거
+        return true
+    }
 
     /**
      * Cancels all active notifications.<br><br>
@@ -547,14 +543,13 @@ public open class SimpleNotificationController(
      *         기본 NotificationChannel 인스턴스.<br>
      */
     private fun getOrCreateDefaultChannel(): NotificationChannel = currentChannel ?: run {
-        val defaultChannel =
-            NotificationChannel(
-                DEFAULT_CHANNEL_ID,
-                DEFAULT_CHANNEL_NAME,
-                NotificationManager.IMPORTANCE_DEFAULT,
-            ).apply {
-                description = DEFAULT_CHANNEL_DESCRIPTION
-            }
+        val defaultChannel = NotificationChannel(
+            DEFAULT_CHANNEL_ID,
+            DEFAULT_CHANNEL_NAME,
+            NotificationManager.IMPORTANCE_DEFAULT,
+        ).apply {
+            description = DEFAULT_CHANNEL_DESCRIPTION
+        }
         createChannel(defaultChannel)
         defaultChannel
     }
@@ -577,10 +572,7 @@ public open class SimpleNotificationController(
                     val staleThreshold = 30 * 60 * 1000L // 30분
 
                     val staleNotifications =
-                        progressBuilders
-                            .filter { (_, info) ->
-                                currentTime - info.lastUpdateTime > staleThreshold
-                            }.keys
+                        progressBuilders.filter { (_, info) -> currentTime - info.lastUpdateTime > staleThreshold }.keys
 
                     staleNotifications.forEach { notificationId ->
                         progressBuilders.remove(notificationId)

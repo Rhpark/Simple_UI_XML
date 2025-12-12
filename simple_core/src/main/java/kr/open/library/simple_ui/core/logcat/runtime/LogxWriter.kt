@@ -3,6 +3,7 @@ package kr.open.library.simple_ui.core.logcat.runtime
 import android.content.Context
 import android.util.Log
 import kr.open.library.simple_ui.core.logcat.config.LogxConfig
+import kr.open.library.simple_ui.core.logcat.internal.file_writer.LogxFileWriter
 import kr.open.library.simple_ui.core.logcat.internal.file_writer.LogxFileWriterFactory
 import kr.open.library.simple_ui.core.logcat.internal.file_writer.base.LogxFileWriterImp
 import kr.open.library.simple_ui.core.logcat.internal.filter.DefaultLogFilter
@@ -399,7 +400,7 @@ class LogxWriter(
         try {
             fileWriter.writeLog(formattedLog.logType, formattedLog.tag, formattedLog.message)
         } catch (e: Exception) {
-            Log.e("LogxWriter", "Failed to save log to file: ${e.message}", e)
+            Log.e("LogxWriter", "Exception Failed to save log to file: ${e.message}", e)
         }
     }
 

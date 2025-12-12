@@ -46,12 +46,11 @@ public fun Number.dpToPx(context: Context): Float =
  * @return The converted sp value as Float.<br><br>
  *         Float로 변환된 sp 값.<br>
  */
-public fun Number.dpToSp(context: Context): Float =
-    TypedValue.applyDimension(
-        TypedValue.COMPLEX_UNIT_DIP,
-        this.toFloat(),
-        context.resources.displayMetrics,
-    ) / (context.resources.displayMetrics.density * context.resources.configuration.fontScale)
+public fun Number.dpToSp(context: Context): Float = TypedValue.applyDimension(
+    TypedValue.COMPLEX_UNIT_DIP,
+    this.toFloat(),
+    context.resources.displayMetrics,
+) / (context.resources.displayMetrics.density * context.resources.configuration.fontScale)
 
 /**
  * Converts pixel value to dp.<br><br>

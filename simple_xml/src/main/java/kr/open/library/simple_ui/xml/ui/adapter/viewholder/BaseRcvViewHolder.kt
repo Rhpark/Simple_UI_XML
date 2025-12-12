@@ -21,9 +21,7 @@ public open class BaseRcvViewHolder(
     @LayoutRes xmlRes: Int,
     parent: ViewGroup,
     attachToRoot: Boolean = false,
-) : RecyclerView.ViewHolder(
-        LayoutInflater.from(parent.context).inflate(xmlRes, parent, attachToRoot),
-    ) {
+) : RecyclerView.ViewHolder(LayoutInflater.from(parent.context).inflate(xmlRes, parent, attachToRoot)) {
     @PublishedApi
     internal val viewCache = mutableMapOf<Int, View>()
 
@@ -41,14 +39,11 @@ public open class BaseRcvViewHolder(
         val cached = viewCache[id]
         if (cached != null && cached is T) return cached
 
-        val view =
-            itemView.findViewById<View>(id)
-                ?: throw IllegalArgumentException("View with id $id not found in layout")
+        val view = itemView.findViewById<View>(id)
+            ?: throw IllegalArgumentException("View with id $id not found in layout")
 
         if (view !is T) {
-            throw ClassCastException(
-                "View with id $id is ${view::class.java.simpleName}, not ${T::class.java.simpleName}",
-            )
+            throw ClassCastException("View with id $id is ${view::class.java.simpleName}, not ${T::class.java.simpleName}")
         }
 
         viewCache[id] = view

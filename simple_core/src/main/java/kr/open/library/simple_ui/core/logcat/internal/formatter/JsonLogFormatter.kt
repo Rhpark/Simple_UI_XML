@@ -20,10 +20,7 @@ class JsonLogFormatter(
     /**
      * JSON 문자열을 보기 좋게 포맷팅
      */
-    override fun formatMessage(
-        message: Any?,
-        stackInfo: String,
-    ): String = formatJsonMessage(message.toString())
+    override fun formatMessage(message: Any?, stackInfo: String): String = formatJsonMessage(message.toString())
 
     private fun formatJsonMessage(jsonString: String): String {
         val trimmed = jsonString.trim()

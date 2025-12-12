@@ -31,78 +31,67 @@ import kr.open.library.simple_ui.core.permissions.vo.PermissionSpecialType
  * @return true when the permission (or equivalent toggle) is granted, otherwise false.<br><br>
  *         권한 또는 동등한 토글이 허용되면 true, 그렇지 않으면 false입니다.<br>
  */
-public inline fun Context.hasPermission(permission: String): Boolean =
-    when (permission) {
-        Manifest.permission.SYSTEM_ALERT_WINDOW -> Settings.canDrawOverlays(this)
+public inline fun Context.hasPermission(permission: String): Boolean = when (permission) {
+    Manifest.permission.SYSTEM_ALERT_WINDOW -> Settings.canDrawOverlays(this)
 
-        Manifest.permission.WRITE_SETTINGS -> Settings.System.canWrite(this)
+    Manifest.permission.WRITE_SETTINGS -> Settings.System.canWrite(this)
 
-        Manifest.permission.PACKAGE_USAGE_STATS -> hasUsageStatsPermission()
+    Manifest.permission.PACKAGE_USAGE_STATS -> hasUsageStatsPermission()
 
-        Manifest.permission.BIND_ACCESSIBILITY_SERVICE -> hasAccessibilityServicePermission()
+    Manifest.permission.BIND_ACCESSIBILITY_SERVICE -> hasAccessibilityServicePermission()
 
-        Manifest.permission.BIND_NOTIFICATION_LISTENER_SERVICE -> hasNotificationListenerPermission()
+    Manifest.permission.BIND_NOTIFICATION_LISTENER_SERVICE -> hasNotificationListenerPermission()
 
-        Manifest.permission.MANAGE_EXTERNAL_STORAGE -> {
-            checkSdkVersion(
-                Build.VERSION_CODES.R,
-                positiveWork = { Environment.isExternalStorageManager() },
-                negativeWork = {
-                    ContextCompat.checkSelfPermission(
-                        this,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE
-                    ) == PackageManager.PERMISSION_GRANTED
-                },
-            )
-        }
+    Manifest.permission.MANAGE_EXTERNAL_STORAGE -> checkSdkVersion(
+        Build.VERSION_CODES.R,
+        positiveWork = { Environment.isExternalStorageManager() },
+        negativeWork = {
+            ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ) == PackageManager.PERMISSION_GRANTED
+        },
+    )
 
-        Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS -> {
-            val powerManager = getSystemService(Context.POWER_SERVICE) as? PowerManager
-            powerManager?.isIgnoringBatteryOptimizations(packageName) ?: false
-        }
+    Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS -> {
+        val powerManager = getSystemService(Context.POWER_SERVICE) as? PowerManager
+        powerManager?.isIgnoringBatteryOptimizations(packageName) ?: false
+    }
 
-        Manifest.permission.SCHEDULE_EXACT_ALARM -> {
-            checkSdkVersion(
-                Build.VERSION_CODES.S,
-                positiveWork = {
-                    val alarmManager = getSystemService(Context.ALARM_SERVICE) as? AlarmManager
-                    alarmManager?.canScheduleExactAlarms() ?: false
-                },
-                negativeWork = { true },
-            )
-        }
+    Manifest.permission.SCHEDULE_EXACT_ALARM -> checkSdkVersion(
+        Build.VERSION_CODES.S,
+        positiveWork = {
+            val alarmManager = getSystemService(Context.ALARM_SERVICE) as? AlarmManager
+            alarmManager?.canScheduleExactAlarms() ?: false
+        },
+        negativeWork = { true },
+    )
 
-        Manifest.permission.POST_NOTIFICATIONS -> {
-            checkSdkVersion(
-                Build.VERSION_CODES.TIRAMISU,
-                positiveWork = {
-                    NotificationManagerCompat.from(this).areNotificationsEnabled()
-                },
-                negativeWork = { true },
-            )
-        }
+    Manifest.permission.POST_NOTIFICATIONS -> checkSdkVersion(
+        Build.VERSION_CODES.TIRAMISU,
+        positiveWork = { NotificationManagerCompat.from(this).areNotificationsEnabled() },
+        negativeWork = { true },
+    )
 
-        Manifest.permission.REQUEST_INSTALL_PACKAGES -> {
-            checkSdkVersion(
-                Build.VERSION_CODES.O,
-                positiveWork = { packageManager.canRequestPackageInstalls() },
-                negativeWork = { true },
-            )
-        }
+    Manifest.permission.REQUEST_INSTALL_PACKAGES -> checkSdkVersion(
+        Build.VERSION_CODES.O,
+        positiveWork = { packageManager.canRequestPackageInstalls() },
+        negativeWork = { true },
+    )
 
-        Manifest.permission.ACCESS_NOTIFICATION_POLICY -> {
-            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
-            notificationManager?.isNotificationPolicyAccessGranted ?: false
-        }
+    Manifest.permission.ACCESS_NOTIFICATION_POLICY -> {
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
+        notificationManager?.isNotificationPolicyAccessGranted ?: false
+    }
 
-        else -> {
-            if (getPermissionProtectionLevel(permission) == PermissionInfo.PROTECTION_DANGEROUS) {
-                ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
-            } else {
-                true
-            }
+    else -> {
+        if (getPermissionProtectionLevel(permission) == PermissionInfo.PROTECTION_DANGEROUS) {
+            ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
+        } else {
+            true
         }
     }
+}
 
 /**
  * Returns true only when every entry in [permissions] is granted.<br><br>
@@ -126,10 +115,7 @@ public inline fun Context.hasPermissions(vararg permissions: String): Boolean = 
  * @return true when [doWork] ran because every permission was granted.<br><br>
  *         모든 권한이 허용되어 [doWork]가 실행되면 true입니다.<br>
  */
-public inline fun Context.hasPermissions(
-    vararg permissions: String,
-    doWork: () -> Unit,
-): Boolean =
+public inline fun Context.hasPermissions(vararg permissions: String, doWork: () -> Unit): Boolean =
     if (permissions.all { permission -> hasPermission(permission) }) {
         doWork()
         true
@@ -155,15 +141,14 @@ public inline fun Context.remainPermissions(permissions: List<String>): List<Str
  * @return true when usage stats access is granted, otherwise false.<br><br>
  *         사용량 통계 권한이 허용되면 true, 아니면 false입니다.<br>
  */
-public inline fun Context.hasUsageStatsPermission(): Boolean =
-    safeCatch(defaultValue = false) {
-        val appOps = getSystemService(Context.APP_OPS_SERVICE) as? AppOpsManager
-        appOps?.checkOpNoThrow(
-            AppOpsManager.OPSTR_GET_USAGE_STATS,
-            Process.myUid(),
-            packageName,
-        ) == AppOpsManager.MODE_ALLOWED
-    }
+public inline fun Context.hasUsageStatsPermission(): Boolean = safeCatch(defaultValue = false) {
+    val appOps = getSystemService(Context.APP_OPS_SERVICE) as? AppOpsManager
+    appOps?.checkOpNoThrow(
+        AppOpsManager.OPSTR_GET_USAGE_STATS,
+        Process.myUid(),
+        packageName,
+    ) == AppOpsManager.MODE_ALLOWED
+}
 
 /**
  * Checks whether at least one accessibility service from this package is enabled.<br><br>
@@ -172,15 +157,10 @@ public inline fun Context.hasUsageStatsPermission(): Boolean =
  * @return true when the package appears in enabled accessibility services.<br><br>
  *         접근성 서비스 활성 목록에 패키지가 있으면 true입니다.<br>
  */
-public inline fun Context.hasAccessibilityServicePermission(): Boolean =
-    safeCatch(defaultValue = false) {
-        val enabledServices =
-            Settings.Secure.getString(
-                contentResolver,
-                Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES,
-            )
-        enabledServices?.contains(packageName) == true
-    }
+public inline fun Context.hasAccessibilityServicePermission(): Boolean = safeCatch(defaultValue = false) {
+    val enabledServices = Settings.Secure.getString(contentResolver, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES,)
+    enabledServices?.contains(packageName) == true
+}
 
 /**
  * Checks whether the app is listed as a notification listener.<br><br>
@@ -189,15 +169,10 @@ public inline fun Context.hasAccessibilityServicePermission(): Boolean =
  * @return true when the package is present in the enabled listener list.<br><br>
  *         활성 알림 리스너 목록에 패키지가 있으면 true입니다.<br>
  */
-public inline fun Context.hasNotificationListenerPermission(): Boolean =
-    safeCatch(defaultValue = false) {
-        val enabledListeners =
-            Settings.Secure.getString(
-                contentResolver,
-                "enabled_notification_listeners",
-            )
-        enabledListeners?.contains(packageName) == true
-    }
+public inline fun Context.hasNotificationListenerPermission(): Boolean = safeCatch(defaultValue = false) {
+    val enabledListeners = Settings.Secure.getString(contentResolver, "enabled_notification_listeners",)
+    enabledListeners?.contains(packageName) == true
+}
 
 /**
  * Determines whether [permission] is one of the framework-defined special cases.<br><br>

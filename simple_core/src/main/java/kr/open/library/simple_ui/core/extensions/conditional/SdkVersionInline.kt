@@ -17,10 +17,7 @@ import androidx.annotation.ChecksSdkIntAtLeast
  *        SDK 조건을 만족했을 때 실행할 람다입니다.
  */
 @ChecksSdkIntAtLeast(parameter = 0, lambda = 1)
-public inline fun checkSdkVersion(
-    ver: Int,
-    doWork: () -> Unit,
-) {
+public inline fun checkSdkVersion(ver: Int, doWork: () -> Unit) {
     if (Build.VERSION.SDK_INT >= ver) {
         doWork()
     }
@@ -38,15 +35,11 @@ public inline fun checkSdkVersion(
  *         조건이 충족되면 [doWork] 반환값을, 아니면 null을 돌려줍니다.<br>
  */
 @ChecksSdkIntAtLeast(parameter = 0, lambda = 1)
-public inline fun <T> checkSdkVersion(
-    ver: Int,
-    doWork: () -> T,
-): T? =
-    if (Build.VERSION.SDK_INT >= ver) {
-        doWork()
-    } else {
-        null
-    }
+public inline fun <T> checkSdkVersion(ver: Int, doWork: () -> T): T? = if (Build.VERSION.SDK_INT >= ver) {
+    doWork()
+} else {
+    null
+}
 
 /**
  * Chooses between [positiveWork] and [negativeWork] based on the SDK requirement defined by [ver].<br><br>
@@ -65,10 +58,9 @@ public inline fun <T> checkSdkVersion(
 public inline fun <T> checkSdkVersion(
     ver: Int,
     positiveWork: () -> T,
-    negativeWork: () -> T,
-): T =
-    if (Build.VERSION.SDK_INT >= ver) {
-        positiveWork()
-    } else {
-        negativeWork()
-    }
+    negativeWork: (ver: Int) -> T,
+): T = if (Build.VERSION.SDK_INT >= ver) {
+    positiveWork()
+} else {
+    negativeWork(ver)
+}

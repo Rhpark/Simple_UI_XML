@@ -11,8 +11,5 @@ interface LogFilterImp {
      * @param fileName 파일명
      * @return true면 로그 출력, false면 필터링
      */
-    fun shouldLog(
-        tag: String,
-        fileName: String,
-    ): Boolean
+    fun shouldLog(tag: String, fileName: String): Boolean
 }

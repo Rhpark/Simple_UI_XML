@@ -62,20 +62,10 @@ public abstract class BaseSharedPreference(
      * @return Read/write property delegate backed by SharedPreferences.<br><br>
      *         SharedPreferences를 기반으로 하는 읽기·쓰기 위임자를 반환합니다.<br>
      */
-    protected fun stringPref(
-        key: String,
-        defaultValue: String? = null,
-    ) = object : ReadWriteProperty<Any?, String?> {
-        override fun getValue(
-            thisRef: Any?,
-            property: KProperty<*>,
-        ): String? = getString(key, defaultValue)
+    protected fun stringPref(key: String, defaultValue: String? = null) = object : ReadWriteProperty<Any?, String?> {
+        override fun getValue(thisRef: Any?, property: KProperty<*>): String? = getString(key, defaultValue)
 
-        override fun setValue(
-            thisRef: Any?,
-            property: KProperty<*>,
-            value: String?,
-        ) = saveApply(key, value)
+        override fun setValue(thisRef: Any?, property: KProperty<*>, value: String?) = saveApply(key, value)
     }
 
     /**
@@ -89,20 +79,10 @@ public abstract class BaseSharedPreference(
      * @return Read/write property delegate backed by SharedPreferences.<br><br>
      *         SharedPreferences를 기반으로 하는 읽기·쓰기 위임자를 반환합니다.<br>
      */
-    protected fun intPref(
-        key: String,
-        defaultValue: Int,
-    ) = object : ReadWriteProperty<Any?, Int> {
-        override fun getValue(
-            thisRef: Any?,
-            property: KProperty<*>,
-        ): Int = getInt(key, defaultValue)
+    protected fun intPref(key: String, defaultValue: Int) = object : ReadWriteProperty<Any?, Int> {
+        override fun getValue(thisRef: Any?, property: KProperty<*>): Int = getInt(key, defaultValue)
 
-        override fun setValue(
-            thisRef: Any?,
-            property: KProperty<*>,
-            value: Int,
-        ) = saveApply(key, value)
+        override fun setValue(thisRef: Any?, property: KProperty<*>, value: Int) = saveApply(key, value)
     }
 
     /**
@@ -116,20 +96,10 @@ public abstract class BaseSharedPreference(
      * @return Read/write property delegate backed by SharedPreferences.<br><br>
      *         SharedPreferences를 기반으로 하는 읽기·쓰기 위임자를 반환합니다.<br>
      */
-    protected fun booleanPref(
-        key: String,
-        defaultValue: Boolean,
-    ) = object : ReadWriteProperty<Any?, Boolean> {
-        override fun getValue(
-            thisRef: Any?,
-            property: KProperty<*>,
-        ): Boolean = getBoolean(key, defaultValue)
+    protected fun booleanPref(key: String, defaultValue: Boolean) = object : ReadWriteProperty<Any?, Boolean> {
+        override fun getValue(thisRef: Any?, property: KProperty<*>): Boolean = getBoolean(key, defaultValue)
 
-        override fun setValue(
-            thisRef: Any?,
-            property: KProperty<*>,
-            value: Boolean,
-        ) = saveApply(key, value)
+        override fun setValue(thisRef: Any?, property: KProperty<*>, value: Boolean) = saveApply(key, value)
     }
 
     /**
@@ -143,20 +113,10 @@ public abstract class BaseSharedPreference(
      * @return Read/write property delegate backed by SharedPreferences.<br><br>
      *         SharedPreferences를 기반으로 하는 읽기·쓰기 위임자를 반환합니다.<br>
      */
-    protected fun longPref(
-        key: String,
-        defaultValue: Long,
-    ) = object : ReadWriteProperty<Any?, Long> {
-        override fun getValue(
-            thisRef: Any?,
-            property: KProperty<*>,
-        ): Long = getLong(key, defaultValue)
+    protected fun longPref(key: String, defaultValue: Long) = object : ReadWriteProperty<Any?, Long> {
+        override fun getValue(thisRef: Any?, property: KProperty<*>): Long = getLong(key, defaultValue)
 
-        override fun setValue(
-            thisRef: Any?,
-            property: KProperty<*>,
-            value: Long,
-        ) = saveApply(key, value)
+        override fun setValue(thisRef: Any?, property: KProperty<*>, value: Long) = saveApply(key, value)
     }
 
     /**
@@ -170,20 +130,10 @@ public abstract class BaseSharedPreference(
      * @return Read/write property delegate backed by SharedPreferences.<br><br>
      *         SharedPreferences를 기반으로 하는 읽기·쓰기 위임자를 반환합니다.<br>
      */
-    protected fun floatPref(
-        key: String,
-        defaultValue: Float,
-    ) = object : ReadWriteProperty<Any?, Float> {
-        override fun getValue(
-            thisRef: Any?,
-            property: KProperty<*>,
-        ): Float = getFloat(key, defaultValue)
+    protected fun floatPref(key: String, defaultValue: Float) = object : ReadWriteProperty<Any?, Float> {
+        override fun getValue(thisRef: Any?, property: KProperty<*>): Float = getFloat(key, defaultValue)
 
-        override fun setValue(
-            thisRef: Any?,
-            property: KProperty<*>,
-            value: Float,
-        ) = saveApply(key, value)
+        override fun setValue(thisRef: Any?, property: KProperty<*>, value: Float) = saveApply(key, value)
     }
 
     /**
@@ -197,20 +147,10 @@ public abstract class BaseSharedPreference(
      * @return Read/write property delegate backed by SharedPreferences.<br><br>
      *         SharedPreferences를 기반으로 하는 읽기·쓰기 위임자를 반환합니다.<br>
      */
-    protected fun doublePref(
-        key: String,
-        defaultValue: Double,
-    ) = object : ReadWriteProperty<Any?, Double> {
-        override fun getValue(
-            thisRef: Any?,
-            property: KProperty<*>,
-        ): Double = getDouble(key, defaultValue)
+    protected fun doublePref(key: String, defaultValue: Double) = object : ReadWriteProperty<Any?, Double> {
+        override fun getValue(thisRef: Any?, property: KProperty<*>): Double = getDouble(key, defaultValue)
 
-        override fun setValue(
-            thisRef: Any?,
-            property: KProperty<*>,
-            value: Double,
-        ) = saveApply(key, value)
+        override fun setValue(thisRef: Any?, property: KProperty<*>, value: Double) = saveApply(key, value)
     }
 
     /**
@@ -224,10 +164,7 @@ public abstract class BaseSharedPreference(
      * @return The stored string or [defaultValue].<br><br>
      *         저장된 문자열 또는 [defaultValue].<br>
      */
-    protected fun getString(
-        key: String,
-        defaultValue: String?,
-    ): String? = sp.getString(key, defaultValue)
+    protected fun getString(key: String, defaultValue: String?): String? = sp.getString(key, defaultValue)
 
     /**
      * Reads an `Int` from preferences.<br><br>
@@ -240,10 +177,7 @@ public abstract class BaseSharedPreference(
      * @return The stored integer or [defaultValue].<br><br>
      *         저장된 정수 또는 [defaultValue].<br>
      */
-    protected fun getInt(
-        key: String,
-        defaultValue: Int,
-    ): Int = sp.getInt(key, defaultValue)
+    protected fun getInt(key: String, defaultValue: Int): Int = sp.getInt(key, defaultValue)
 
     /**
      * Reads a `Float` from preferences.<br><br>
@@ -256,10 +190,7 @@ public abstract class BaseSharedPreference(
      * @return The stored float or [defaultValue].<br><br>
      *         저장된 Float 값 또는 [defaultValue].<br>
      */
-    protected fun getFloat(
-        key: String,
-        defaultValue: Float,
-    ): Float = sp.getFloat(key, defaultValue)
+    protected fun getFloat(key: String, defaultValue: Float): Float = sp.getFloat(key, defaultValue)
 
     /**
      * Reads a `Boolean` from preferences.<br><br>
@@ -272,10 +203,7 @@ public abstract class BaseSharedPreference(
      * @return The stored boolean or [defaultValue].<br><br>
      *         저장된 불리언 또는 [defaultValue].<br>
      */
-    protected fun getBoolean(
-        key: String,
-        defaultValue: Boolean,
-    ): Boolean = sp.getBoolean(key, defaultValue)
+    protected fun getBoolean(key: String, defaultValue: Boolean): Boolean = sp.getBoolean(key, defaultValue)
 
     /**
      * Reads a `Long` from preferences.<br><br>
@@ -288,10 +216,7 @@ public abstract class BaseSharedPreference(
      * @return The stored long or [defaultValue].<br><br>
      *         저장된 Long 값 또는 [defaultValue].<br>
      */
-    protected fun getLong(
-        key: String,
-        defaultValue: Long,
-    ): Long = sp.getLong(key, defaultValue)
+    protected fun getLong(key: String, defaultValue: Long): Long = sp.getLong(key, defaultValue)
 
     /**
      * Reads a `Set<String>` from preferences.<br><br>
@@ -304,10 +229,7 @@ public abstract class BaseSharedPreference(
      * @return The stored set or [defaultValue].<br><br>
      *         저장된 Set 또는 [defaultValue].<br>
      */
-    protected fun getSet(
-        key: String,
-        defaultValue: Set<String>?,
-    ): Set<String>? = sp.getStringSet(key, defaultValue)
+    protected fun getSet(key: String, defaultValue: Set<String>?): Set<String>? = sp.getStringSet(key, defaultValue)
 
     /**
      * Reads a `Double` by mapping to raw long bits stored with a suffix.<br><br>
@@ -320,10 +242,8 @@ public abstract class BaseSharedPreference(
      * @return The stored double or [defaultValue].<br><br>
      *         저장된 Double 값 또는 [defaultValue].<br>
      */
-    protected fun getDouble(
-        key: String,
-        defaultValue: Double,
-    ): Double = longBitsToDouble(sp.getLong(key + DOUBLE_TYPE, doubleToRawLongBits(defaultValue)))
+    protected fun getDouble(key: String, defaultValue: Double): Double =
+        longBitsToDouble(sp.getLong(key + DOUBLE_TYPE, doubleToRawLongBits(defaultValue)))
 
     /**
      * Writes the provided [value] into the editor, handling primitive and Set<String> types.<br><br>
@@ -336,33 +256,29 @@ public abstract class BaseSharedPreference(
      * @return Same [SharedPreferences.Editor] for chaining.<br><br>
      *         체이닝을 위한 동일한 [SharedPreferences.Editor]를 반환합니다.<br>
      */
-    protected fun SharedPreferences.Editor.putValue(
-        key: String,
-        value: Any?,
-    ): SharedPreferences.Editor =
-        when (value) {
-            is String -> putString(key, value)
-            is Boolean -> putBoolean(key, value)
-            is Float -> putFloat(key, value)
-            is Int -> putInt(key, value)
-            is Double -> putLong(key + DOUBLE_TYPE, doubleToRawLongBits(value))
-            is Long -> putLong(key, value)
-            is Set<*> -> {
-                val stringSet = value.filterIsInstance<String>().toSet()
-                if (stringSet.size != value.size) {
-                    Logx.e("[ERROR] Set<*> is not Set<String>. Key: $key, Value: $value")
-                    throw ClassCastException("[ERROR] Set<*> is not Set<String>. Key: $key, Value: $value")
-                }
-                putStringSet(key, stringSet)
+    protected fun SharedPreferences.Editor.putValue(key: String, value: Any?): SharedPreferences.Editor = when (value) {
+        is String -> putString(key, value)
+        is Boolean -> putBoolean(key, value)
+        is Float -> putFloat(key, value)
+        is Int -> putInt(key, value)
+        is Double -> putLong(key + DOUBLE_TYPE, doubleToRawLongBits(value))
+        is Long -> putLong(key, value)
+        is Set<*> -> {
+            val stringSet = value.filterIsInstance<String>().toSet()
+            if (stringSet.size != value.size) {
+                Logx.e("[ERROR] Set<*> is not Set<String>. Key: $key, Value: $value")
+                throw ClassCastException("[ERROR] Set<*> is not Set<String>. Key: $key, Value: $value")
             }
-
-            else -> {
-                if (value != null) {
-                    Logx.e("Unsupported value type: $key, ${value.javaClass}")
-                }
-                remove(key)
-            }
+            putStringSet(key, stringSet)
         }
+
+        else -> {
+            if (value != null) {
+                Logx.e("Unsupported value type: $key, ${value.javaClass}")
+            }
+            remove(key)
+        }
+    }
 
     /**
      * Returns a fresh [SharedPreferences.Editor] instance.<br><br>
@@ -377,9 +293,7 @@ public abstract class BaseSharedPreference(
      * Applies pending edits without another mutation.<br><br>
      * 추가 수정 없이 보류 중인 변경 사항을 적용합니다.<br>
      */
-    protected fun saveApply() {
-        sp.edit().apply()
-    }
+    protected fun saveApply(): Unit = sp.edit().apply()
 
     /**
      * Applies a single [key]/[value] mutation asynchronously.<br><br>
@@ -390,12 +304,7 @@ public abstract class BaseSharedPreference(
      * @param value Value to store.<br><br>
      *        저장할 값입니다.
      */
-    protected fun saveApply(
-        key: String,
-        value: Any?,
-    ) {
-        sp.edit().putValue(key, value).apply()
-    }
+    protected fun saveApply(key: String, value: Any?) = sp.edit().putValue(key, value).apply()
 
     /**
      * Commits a [key]/[value] mutation using a coroutine-friendly mutex.<br><br>
@@ -404,10 +313,7 @@ public abstract class BaseSharedPreference(
      * @return true when `commit()` succeeded, otherwise false.<br><br>
      *         `commit()`이 성공하면 true, 아니면 false를 반환합니다.<br>
      */
-    protected suspend fun saveCommit(
-        key: String,
-        value: Any?,
-    ): Boolean = commitDoWork { putValue(key, value) }
+    protected suspend fun saveCommit(key: String, value: Any?): Boolean = commitDoWork { putValue(key, value) }
 
     /**
      * Runs [doWork] inside `Dispatchers.IO` and mutual exclusion, then commits synchronously.<br><br>
@@ -423,9 +329,7 @@ public abstract class BaseSharedPreference(
      * Clears all entries using `apply()`. Use when asynchronous removal is acceptable.<br><br>
      * `apply()`를 사용해 모든 항목을 삭제하며, 비동기 삭제가 허용될 때 이용합니다.<br>
      */
-    protected fun removeAllApply() {
-        sp.edit().clear().apply()
-    }
+    protected fun removeAllApply() = sp.edit().clear().apply()
 
     /**
      * Removes a specific key using `apply()`.<br><br>
@@ -434,9 +338,7 @@ public abstract class BaseSharedPreference(
      * @param key SharedPreferences entry key to remove.<br><br>
      *        삭제할 키입니다.
      */
-    private fun removeAt(key: String) {
-        sp.edit().remove(key).apply()
-    }
+    private fun removeAt(key: String) = sp.edit().remove(key).apply()
 
     /**
      * Removes an `Int` entry using [removeAt].<br><br>
@@ -445,9 +347,7 @@ public abstract class BaseSharedPreference(
      * @param key SharedPreferences entry key to remove.<br><br>
      *        삭제할 키입니다.
      */
-    protected fun removeAtInt(key: String) {
-        removeAt(key)
-    }
+    protected fun removeAtInt(key: String) = removeAt(key)
 
     /**
      * Removes a `String` entry using [removeAt].<br><br>
@@ -456,9 +356,7 @@ public abstract class BaseSharedPreference(
      * @param key SharedPreferences entry key to remove.<br><br>
      *        삭제할 키입니다.
      */
-    protected fun removeAtString(key: String) {
-        removeAt(key)
-    }
+    protected fun removeAtString(key: String) = removeAt(key)
 
     /**
      * Removes a `Float` entry using [removeAt].<br><br>
@@ -467,9 +365,7 @@ public abstract class BaseSharedPreference(
      * @param key SharedPreferences entry key to remove.<br><br>
      *        삭제할 키입니다.
      */
-    protected fun removeAtFloat(key: String) {
-        removeAt(key)
-    }
+    protected fun removeAtFloat(key: String) = removeAt(key)
 
     /**
      * Removes a `Long` entry using [removeAt].<br><br>
@@ -478,9 +374,7 @@ public abstract class BaseSharedPreference(
      * @param key SharedPreferences entry key to remove.<br><br>
      *        삭제할 키입니다.
      */
-    protected fun removeAtLong(key: String) {
-        removeAt(key)
-    }
+    protected fun removeAtLong(key: String) = removeAt(key)
 
     /**
      * Removes a `Boolean` entry using [removeAt].<br><br>
@@ -489,9 +383,7 @@ public abstract class BaseSharedPreference(
      * @param key SharedPreferences entry key to remove.<br><br>
      *        삭제할 키입니다.
      */
-    protected fun removeAtBoolean(key: String) {
-        removeAt(key)
-    }
+    protected fun removeAtBoolean(key: String) = removeAt(key)
 
     /**
      * Removes a `Double` entry by deleting the suffixed key.<br><br>
@@ -500,9 +392,7 @@ public abstract class BaseSharedPreference(
      * @param key SharedPreferences entry key to remove.<br><br>
      *        삭제할 키입니다.
      */
-    protected fun removeAtDouble(key: String) {
-        removeAt(key + DOUBLE_TYPE)
-    }
+    protected fun removeAtDouble(key: String) = removeAt(key + DOUBLE_TYPE)
 
     /**
      * Clears all entries with a synchronous commit.<br><br>

@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.AsyncDifferConfig
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import kr.open.library.simple_ui.core.extensions.trycatch.requireInBounds
 import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.xml.ui.adapter.queue.AdapterOperationQueue
 import kr.open.library.simple_ui.xml.ui.adapter.viewholder.BaseRcvViewHolder
@@ -229,11 +230,7 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder>(
      *                                   위치가 유효하지 않은 경우.
      */
     public fun getItem(position: Int): ITEM {
-        if (!isPositionValid(position)) {
-            val size = differ.currentList.size
-            Logx.e("getItem() called with invalid position: $position, size: $size")
-            throw IndexOutOfBoundsException("Invalid position: $position, size: $size")
-        }
+        requireInBounds(isPositionValid(position)) { "Invalid position: $position, size: ${differ.currentList.size}" }
         return differ.currentList[position]
     }
 

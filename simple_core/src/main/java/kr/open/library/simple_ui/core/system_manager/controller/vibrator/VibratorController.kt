@@ -10,6 +10,7 @@ import android.os.VibratorManager
 import androidx.annotation.RequiresApi
 import androidx.annotation.RequiresPermission
 import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
+import kr.open.library.simple_ui.core.extensions.trycatch.throwMinSdkVersion
 import kr.open.library.simple_ui.core.system_manager.base.BaseSystemService
 import kr.open.library.simple_ui.core.system_manager.extensions.getVibrator
 import kr.open.library.simple_ui.core.system_manager.extensions.getVibratorManager
@@ -46,7 +47,7 @@ public open class VibratorController(
         checkSdkVersion(
             Build.VERSION_CODES.S,
             positiveWork = { context.getVibratorManager() },
-            negativeWork = { throw Exception("SDK 31 이상이 필요합니다.") },
+            negativeWork = { throwMinSdkVersion(it) }
         )
     }
 

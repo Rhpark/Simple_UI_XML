@@ -270,17 +270,11 @@ public abstract class BaseAlarmReceiver : BroadcastReceiver() {
      *         등록 성공 시 `true`, 그렇지 않으면 `false`.<br>
      */
     private fun registerAlarm(alarmController: AlarmController, alarmVo: AlarmVo): Boolean = when (registerType) {
-        RegisterType.ALARM_AND_ALLOW_WHILE_IDLE -> {
-            alarmController.registerAlarmAndAllowWhileIdle(classType, alarmVo)
-        }
+        RegisterType.ALARM_AND_ALLOW_WHILE_IDLE -> alarmController.registerAlarmAndAllowWhileIdle(classType, alarmVo)
 
-        RegisterType.ALARM_CLOCK -> {
-            alarmController.registerAlarmClock(classType, alarmVo)
-        }
+        RegisterType.ALARM_CLOCK -> alarmController.registerAlarmClock(classType, alarmVo)
 
-        RegisterType.ALARM_EXACT_AND_ALLOW_WHILE_IDLE -> {
-            alarmController.registerAlarmExactAndAllowWhileIdle(classType, alarmVo)
-        }
+        RegisterType.ALARM_EXACT_AND_ALLOW_WHILE_IDLE -> alarmController.registerAlarmExactAndAllowWhileIdle(classType, alarmVo)
     }
 
     /**

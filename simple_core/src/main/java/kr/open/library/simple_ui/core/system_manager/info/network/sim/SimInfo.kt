@@ -378,11 +378,11 @@ public class SimInfo(
      *         MCC 문자열, 사용할 수 없는 경우 null.
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun getMccFromDefaultUSimString(): String? = getSubscriptionInfoSubIdFromDefaultUSim()?.let {
+    public fun getMccFromDefaultUSimString(): String? = getSubscriptionInfoSubIdFromDefaultUSim()?.let { info ->
         checkSdkVersion(
             Build.VERSION_CODES.Q,
-            positiveWork = { it.mccString },
-            negativeWork = { it.mcc.toString() },
+            positiveWork = { info.mccString },
+            negativeWork = { info.mcc.toString() },
         )
     }
 
@@ -394,11 +394,11 @@ public class SimInfo(
      *         MNC 문자열, 사용할 수 없는 경우 null.
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun getMncFromDefaultUSimString(): String? = getSubscriptionInfoSubIdFromDefaultUSim()?.let {
+    public fun getMncFromDefaultUSimString(): String? = getSubscriptionInfoSubIdFromDefaultUSim()?.let { info ->
         checkSdkVersion(
             Build.VERSION_CODES.Q,
-            positiveWork = { it.mncString },
-            negativeWork = { it.mnc.toString() },
+            positiveWork = { info.mncString },
+            negativeWork = { info.mnc.toString() },
         )
     }
 
@@ -412,11 +412,11 @@ public class SimInfo(
      *         MCC 문자열, 사용할 수 없는 경우 null.
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun getMcc(slotIndex: Int): String? = getActiveSubscriptionInfoSimSlot(slotIndex)?.let {
+    public fun getMcc(slotIndex: Int): String? = getActiveSubscriptionInfoSimSlot(slotIndex)?.let { info ->
         checkSdkVersion(
             Build.VERSION_CODES.Q,
-            positiveWork = { it.mccString },
-            negativeWork = { it.mcc.toString() },
+            positiveWork = { info.mccString },
+            negativeWork = { info.mcc.toString() },
         )
     }
 
@@ -430,11 +430,11 @@ public class SimInfo(
      *         MNC 문자열, 사용할 수 없는 경우 null.
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun getMnc(slotIndex: Int): String? = getActiveSubscriptionInfoSimSlot(slotIndex)?.let {
+    public fun getMnc(slotIndex: Int): String? = getActiveSubscriptionInfoSimSlot(slotIndex)?.let { info ->
         checkSdkVersion(
             Build.VERSION_CODES.Q,
-            positiveWork = { it.mncString },
-            negativeWork = { it.mnc.toString() },
+            positiveWork = { info.mncString },
+            negativeWork = { info.mnc.toString() },
         )
     }
 

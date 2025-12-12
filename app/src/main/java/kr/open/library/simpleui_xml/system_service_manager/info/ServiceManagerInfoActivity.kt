@@ -341,17 +341,14 @@ class ServiceManagerInfoActivity : BaseBindingActivity<ActivityServiceManagerInf
                                     is BatteryStateEvent.OnChargeCounter -> addItem("ChargeCounter = ${type.counter}")
                                     is BatteryStateEvent.OnChargePlug -> addItem("ChargePlugStr = ${type.type}")
                                     is BatteryStateEvent.OnChargeStatus -> addItem("OnChargeStatus = ${type.status}")
-                                    is BatteryStateEvent.OnCurrentAmpere ->
-                                        addItem("Current Ampere = ${type.current} mA",)
+                                    is BatteryStateEvent.OnCurrentAmpere -> addItem("Current Ampere = ${type.current} mA")
                                     is BatteryStateEvent.OnEnergyCounter -> addItem("EnergyCounte = ${type.energy}")
                                     is BatteryStateEvent.OnHealth -> addItem("Health = ${type.health}")
                                     is BatteryStateEvent.OnPresent -> addItem("Present = ${type.present}")
                                     is BatteryStateEvent.OnTemperature -> addItem("Temperature = ${type.temperature}")
-                                    is BatteryStateEvent.OnTotalCapacity ->
-                                        addItem("TotalCapacity = ${type.totalCapacity} ",)
+                                    is BatteryStateEvent.OnTotalCapacity -> addItem("TotalCapacity = ${type.totalCapacity} ")
                                     is BatteryStateEvent.OnVoltage -> addItem("Charge voltage = ${type.voltage} v")
-                                    is BatteryStateEvent.OnCurrentAverageAmpere ->
-                                        addItem("Current AverageAmpere = ${type.current} mA",)
+                                    is BatteryStateEvent.OnCurrentAverageAmpere -> addItem("Current AverageAmpere = ${type.current} mA")
                                 }
                             }
                         }
@@ -371,13 +368,10 @@ class ServiceManagerInfoActivity : BaseBindingActivity<ActivityServiceManagerInf
                             locationInfo.sfUpdate.collect { type ->
                                 when (type) {
                                     is LocationStateEvent.OnGpsEnabled -> addItem("OnGpsEnabled ${type.isEnabled}")
-                                    is LocationStateEvent.OnNetworkEnabled ->
-                                        addItem("OnNetworkEnabled ${type.isEnabled}",)
+                                    is LocationStateEvent.OnNetworkEnabled -> addItem("OnNetworkEnabled ${type.isEnabled}")
                                     is LocationStateEvent.OnFusedEnabled -> addItem("OnFusedEnabled ${type.isEnabled}")
-                                    is LocationStateEvent.OnPassiveEnabled ->
-                                        addItem("OnPassiveEnabled ${type.isEnabled}",)
-                                    is LocationStateEvent.OnLocationChanged ->
-                                        addItem("OnLocationChanged ${type.location}",)
+                                    is LocationStateEvent.OnPassiveEnabled -> addItem("OnPassiveEnabled ${type.isEnabled}")
+                                    is LocationStateEvent.OnLocationChanged -> addItem("OnLocationChanged ${type.location}")
                                 }
                             }
                         }

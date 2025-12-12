@@ -16,8 +16,5 @@ class ThreadIdLogFormatter(
 
     override fun isIncludeLogType(logType: LogxType): Boolean = logType == LogxType.THREAD_ID
 
-    override fun formatMessage(
-        message: Any?,
-        stackInfo: String,
-    ): String = "[${Thread.currentThread().id}]${stackInfo}${message ?: ""}"
+    override fun formatMessage(message: Any?, stackInfo: String): String = "[${Thread.currentThread().id}]${stackInfo}${message ?: ""}"
 }

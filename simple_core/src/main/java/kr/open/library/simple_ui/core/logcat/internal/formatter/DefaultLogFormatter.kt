@@ -23,8 +23,5 @@ class DefaultLogFormatter(
 
     override fun getTagSuffix(): String = ""
 
-    override fun formatMessage(
-        message: Any?,
-        stackInfo: String,
-    ): String = "$stackInfo${message ?: ""}"
+    override fun formatMessage(message: Any?, stackInfo: String): String = "$stackInfo${message ?: ""}"
 }

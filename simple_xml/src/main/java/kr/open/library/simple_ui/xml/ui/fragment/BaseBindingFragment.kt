@@ -88,9 +88,8 @@ public abstract class BaseBindingFragment<BINDING : ViewDataBinding>(
      *                               onDestroyView() 이후에 접근하는 경우.
      */
     public val binding: BINDING
-        get() =
-            _binding
-                ?: throw IllegalStateException("Binding accessed after onDestroyView()")
+        get() = _binding
+            ?: throw IllegalStateException("Binding accessed after onDestroyView()")
 
     /**
      * Called to have the fragment instantiate its user interface view.
@@ -128,11 +127,7 @@ public abstract class BaseBindingFragment<BINDING : ViewDataBinding>(
      * @param savedInstanceState If non-null, this fragment is being re-constructed from a previous saved state.<br><br>
      *                           null이 아닌 경우 이 Fragment는 이전에 저장된 상태에서 다시 생성됩니다.<br>
      */
-    protected open fun afterOnCreateView(
-        rootView: View,
-        savedInstanceState: Bundle?,
-    ) {
-    }
+    protected open fun afterOnCreateView(rootView: View, savedInstanceState: Bundle?) {}
 
     /**
      * Called immediately after onCreateView has returned, but before any saved state has been restored in to the view.
@@ -145,10 +140,7 @@ public abstract class BaseBindingFragment<BINDING : ViewDataBinding>(
      * @param savedInstanceState If non-null, this fragment is being re-constructed from a previous saved state.<br><br>
      *                           null이 아닌 경우, 이 Fragment는 이전에 저장된 상태에서 다시 구성되고 있습니다.
      */
-    override fun onViewCreated(
-        view: View,
-        savedInstanceState: Bundle?,
-    ) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.lifecycleOwner = viewLifecycleOwner
     }

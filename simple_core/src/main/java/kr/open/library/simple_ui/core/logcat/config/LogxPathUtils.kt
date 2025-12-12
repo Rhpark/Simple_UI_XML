@@ -62,15 +62,11 @@ object LogxPathUtils {
      * @return The absolute path to the log directory for the specified storage type.<br><br>
      *         지정된 저장소 타입의 로그 디렉토리에 대한 절대 경로.<br>
      */
-    fun getLogPath(
-        context: Context,
-        storageType: LogxStorageType,
-    ): String =
-        when (storageType) {
-            LogxStorageType.INTERNAL -> getInternalLogPath(context)
-            LogxStorageType.APP_EXTERNAL -> getAppExternalLogPath(context)
-            LogxStorageType.PUBLIC_EXTERNAL -> getPublicExternalLogPath(context)
-        }
+    fun getLogPath(context: Context, storageType: LogxStorageType): String = when (storageType) {
+        LogxStorageType.INTERNAL -> getInternalLogPath(context)
+        LogxStorageType.APP_EXTERNAL -> getAppExternalLogPath(context)
+        LogxStorageType.PUBLIC_EXTERNAL -> getPublicExternalLogPath(context)
+    }
 
     /**
      * Returns the log path in app internal storage.<br>
@@ -123,24 +119,23 @@ object LogxPathUtils {
      * @return The absolute path to the public external log directory, with fallback to app-specific external storage.<br><br>
      *         공용 외부 로그 디렉토리의 절대 경로, 사용 불가 시 앱 전용 외부 저장소로 폴백.<br>
      */
-    fun getPublicExternalLogPath(context: Context): String =
-        checkSdkVersion(
-            Build.VERSION_CODES.Q,
-            positiveWork = {
-                // API 29+: Scoped storage | 범위 지정 저장소
-                val documentsDir = context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)
-                if (documentsDir != null) {
-                    documentsDir.absolutePath + "/$LOG_DIR_NAME"
-                } else {
-                    getAppExternalLogPath(context)
-                }
-            },
-            negativeWork = {
-                // API 28 and below: Legacy external storage | API 28 이하: 레거시 외부 저장소
-                @Suppress("DEPRECATION")
-                Environment.getExternalStorageDirectory().absolutePath + "/$LOG_DIR_NAME"
-            },
-        )
+    fun getPublicExternalLogPath(context: Context): String = checkSdkVersion(
+        Build.VERSION_CODES.Q,
+        positiveWork = {
+            // API 29+: Scoped storage | 범위 지정 저장소
+            val documentsDir = context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)
+            if (documentsDir != null) {
+                documentsDir.absolutePath + "/$LOG_DIR_NAME"
+            } else {
+                getAppExternalLogPath(context)
+            }
+        },
+        negativeWork = {
+            // API 28 and below: Legacy external storage | API 28 이하: 레거시 외부 저장소
+            @Suppress("DEPRECATION")
+            Environment.getExternalStorageDirectory().absolutePath + "/$LOG_DIR_NAME"
+        },
+    )
 
     /**
      * Checks whether the specified storage type requires runtime permissions.<br><br>

@@ -43,10 +43,7 @@ public inline fun <T> measureTimeNanos(block: () -> T): Pair<T, Long> = measureT
  * @return Elapsed time computed from the difference between consecutive timeProvider calls.<br><br>
  *         두 번 호출한 timeProvider 값의 차이로 계산된 경과 시간입니다.<br>
  */
-public inline fun measureTime(
-    timeProvider: () -> Long,
-    block: () -> Unit,
-): Long {
+public inline fun measureTime(timeProvider: () -> Long, block: () -> Unit): Long {
     val start = timeProvider()
     block()
     return timeProvider() - start
@@ -68,10 +65,7 @@ public inline fun measureTime(
  * @return Pair containing the block result and elapsed time computed from the time provider.<br><br>
  *         블록 실행 결과와 시간 공급원 차이로 계산된 경과 시간이 들어 있는 Pair 입니다.<br>
  */
-public inline fun <T> measureTimeWithResult(
-    timeProvider: () -> Long,
-    block: () -> T,
-): Pair<T, Long> {
+public inline fun <T> measureTimeWithResult(timeProvider: () -> Long, block: () -> T): Pair<T, Long> {
     val start = timeProvider()
     val result = block()
     return Pair(result, timeProvider() - start)
