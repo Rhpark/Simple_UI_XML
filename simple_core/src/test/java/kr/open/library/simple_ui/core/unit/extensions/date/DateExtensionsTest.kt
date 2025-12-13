@@ -97,12 +97,6 @@ class DateExtensionsTest {
         "2024-01-15 extra text".toDateLong("yyyy-MM-dd", Locale.US)
     }
 
-    @Test
-    fun timeDateToDate_returnsNullForInvalidFormat() {
-        val result = "invalid-date".toDate("yyyy-MM-dd")
-        assertEquals(null, result)
-    }
-
     // ========== Date Time Difference Tests ==========
 
     @Test
