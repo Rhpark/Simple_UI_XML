@@ -21,7 +21,8 @@ import androidx.lifecycle.ViewModelProvider
  * - Inflates the layout and sets up DataBinding<br>
  * - Sets the lifecycle owner for the binding (viewLifecycleOwner)<br>
  * - Provides a convenient method to obtain a ViewModel<br>
- * - Provides hook methods for view creation and event collection<br>
+ * - Provides hook methods for view creation and optional event collection (`eventVmCollect()`)<br>
+ * - `eventVmCollect()` is not invoked automatically; call it manually when needed<br>
  * - Background color and drawable customization<br>
  * - Proper binding cleanup in onDestroyView<br>
  * - All RootDialogFragment features (animation, gravity, permissions)<br><br>
@@ -29,7 +30,8 @@ import androidx.lifecycle.ViewModelProvider
  * - 레이아웃을 인플레이션하고 DataBinding을 설정합니다<br>
  * - 바인딩에 대한 생명주기 소유자를 설정합니다 (viewLifecycleOwner)<br>
  * - ViewModel을 얻는 편리한 메서드를 제공합니다<br>
- * - 뷰 생성 및 이벤트 수집을 위한 훅 메서드를 제공합니다<br>
+ * - 뷰 생성 훅과 선택적 이벤트 수집 훅(`eventVmCollect()`)을 제공합니다<br>
+ * - `eventVmCollect()`는 베이스에서 자동 호출되지 않으므로 필요 시 직접 호출하세요<br>
  * - 배경색 및 drawable 커스터마이징<br>
  * - onDestroyView에서 적절한 바인딩 정리<br>
  * - 모든 RootDialogFragment 기능 (애니메이션, gravity, 권한)<br>
@@ -42,6 +44,11 @@ import androidx.lifecycle.ViewModelProvider
  *     override fun afterOnCreateView(rootView: View, savedInstanceState: Bundle?) {
  *         binding.viewModel = viewModel
  *         binding.btnOk.setOnClickListener { safeDismiss() }
+ *     }
+ *
+ *     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+ *         super.onViewCreated(view, savedInstanceState)
+ *         eventVmCollect()
  *     }
  *
  *     override fun eventVmCollect() {
@@ -121,8 +128,10 @@ public abstract class BaseBindingDialogFragment<BINDING : ViewDataBinding>(
     /**
      * Override this method to set up ViewModel event collection.<br>
      * Typically used to collect Flow events from ViewModel using viewLifecycleOwner.lifecycleScope.<br><br>
+     * Note: This method is not called automatically. Call `eventVmCollect()` from `onViewCreated()` (after `super.onViewCreated`) when needed.<br><br>
      * ViewModel 이벤트 수집을 설정하려면 이 메서드를 오버라이드하세요.<br>
      * 일반적으로 viewLifecycleOwner.lifecycleScope를 사용하여 ViewModel의 Flow 이벤트를 수집하는 데 사용됩니다.<br>
+     * 주의: 이 메서드는 자동 호출되지 않습니다. 필요 시 `onViewCreated()`(super 이후) 등에서 `eventVmCollect()`를 직접 호출하세요.<br>
      */
     protected open fun eventVmCollect() {}
 

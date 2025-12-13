@@ -168,8 +168,8 @@ android {
 | SavedState | 별도 Bundle 처리 | ViewModelProvider가 자동 처리 |
 
 ### MVVM Pattern Tip 
-BaseBinding classes call `binding.setVariable()` and `binding.executePendingBindings()` inside `onCreateView()`, so you can use @{} expressions in XML right away. Also, override `eventVmCollect()` to safely receive one-time events flowing from the ViewModel.
-> BaseBinding 계열은 `binding.setVariable()`과 `binding.executePendingBindings()`를 `onCreateView()` 내부에서 호출해주므로 XML의 `@{}` 표현식을 바로 사용할 수 있습니다. 또한 `eventVmCollect()`를 override하여 ViewModel에서 흘러오는 단발성 이벤트를 안전하게 수신하세요.
+BaseBinding classes call `binding.setVariable()` and `binding.executePendingBindings()` inside `onCreateView()`, so you can use @{} expressions in XML right away. Also, override `eventVmCollect()` and call it manually when needed to safely receive one-time events flowing from the ViewModel.
+> BaseBinding 계열은 `binding.setVariable()`과 `binding.executePendingBindings()`를 `onCreateView()` 내부에서 호출해주므로 XML의 `@{}` 표현식을 바로 사용할 수 있습니다. 또한 필요 시 `eventVmCollect()`를 override한 뒤 직접 호출하여 ViewModel에서 흘러오는 단발성 이벤트를 안전하게 수신하세요.
 
 <br></br>
 
@@ -281,14 +281,14 @@ DialogFragment also overrides `onCreateView()`, `eventVmCollect()`, etc. in the 
 1. `beforeOnCreated()` – Ready to Window/Theme   
 2. `onCreate()` – Ready to RootActivity Permission delegate  
 3. (BaseBindingActivity) `onCreateView()` – Binding inflate & viewModel bind  
-4. `eventVmCollect()` – event Collect form Viewmodel to Activity  
+4. `eventVmCollect()` – manually start ViewModel event collection (call it when needed) / ViewModel 이벤트 수집 수동 시작(필요 시 직접 호출)  
 5. `onDestroy()` – Binding unBind
 
 ### Fragment
 1. `onCreate()` – RootFragment 권한 delegate 준비  
 2. `onCreateView()` – Layout inflate (BaseBinding이면 Binding 생성)  
 3. `afterOnCreateView()` – UI initialization 
-4. `eventVmCollect()` –event Collect form Viewmodel to Fragment
+4. `eventVmCollect()` – manually start ViewModel event collection (call it when needed) / ViewModel 이벤트 수집 수동 시작(필요 시 직접 호출)
 5. `onDestroyView()` – Binding/리소스 자동 정리
 
 <br></br>
@@ -378,7 +378,7 @@ class SampleActivity :
 
     private val vm: SampleViewModel by lazy { getViewModel() }
 
-    override fun onCreateView() {
+    override fun onCreateView(rootView: View, savedInstanceState: Bundle?) {
         binding.vm = vm
     }
 }
@@ -386,7 +386,19 @@ class SampleActivity :
 - SavedStateHandle까지 자동 연결되어 Configuration 변화에도 안전합니다.
 
 ### `eventVmCollect()` - ViewModel Event Subscription (ViewModel 이벤트 수집)
+- Note: BaseBindingActivity/Fragment does not invoke `eventVmCollect()` automatically. Call it manually when needed (Activity: `onCreate()` after `super.onCreate`, Fragment: `onViewCreated()` after `super.onViewCreated`).  
+> - 주의: BaseBindingActivity/Fragment는 `eventVmCollect()`를 자동 호출하지 않습니다. 필요 시 직접 호출하세요 (Activity: `onCreate()`에서 `super.onCreate` 이후, Fragment: `onViewCreated()`에서 `super.onViewCreated` 이후).  
+
+#### Activity example (Activity 예제)
 ```kotlin
+override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+
+    // ViewModel 이벤트 수집 시작 (필요 시 직접 호출)
+    // BaseBindingActivity는 eventVmCollect()를 자동 호출하지 않습니다.
+    eventVmCollect()
+}
+
 override fun eventVmCollect() {
     lifecycleScope.launch {
         vm.eventFlow.collect { event ->
@@ -397,8 +409,29 @@ override fun eventVmCollect() {
     }
 }
 ```
-- Activity automatically connects to lifecycleScope, Fragment to viewLifecycleOwner.lifecycleScope, allowing safe handling of one-time events.
-> - Activity는 `lifecycleScope`, Fragment는 `viewLifecycleOwner.lifecycleScope`로 자동 연결해 단발성 이벤트를 안전하게 처리할 수 있습니다.
+
+#### Fragment example (Fragment 예제)
+```kotlin
+override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    super.onViewCreated(view, savedInstanceState)
+
+    // ViewModel 이벤트 수집 시작 (필요 시 직접 호출)
+    // BaseBindingFragment는 eventVmCollect()를 자동 호출하지 않습니다.
+    eventVmCollect()
+}
+
+override fun eventVmCollect() {
+    viewLifecycleOwner.lifecycleScope.launch {
+        vm.eventFlow.collect { event ->
+            when (event) {
+                is SampleEvent.ShowToast -> toastShowShort(event.message)
+            }
+        }
+    }
+}
+```
+- Use `lifecycleScope` in Activity and `viewLifecycleOwner.lifecycleScope` in Fragment to safely handle one-time events.
+> - Activity는 `lifecycleScope`, Fragment는 `viewLifecycleOwner.lifecycleScope`를 사용해 단발성 이벤트를 안전하게 처리할 수 있습니다.
 
 <br></br>
 

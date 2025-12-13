@@ -232,20 +232,35 @@ class PermissionsActivityVm : BaseViewModelEvent<PermissionsActivityVmEvent>() {
     fun onClickPermissionMulti() = sendEventVm(PermissionsActivityVmEvent.OnClickPermissionsMulti)
 }
 
-// Activity에서 구독
-override fun eventVmCollect() {
-    lifecycleScope.launch {
-        vm.mEventVm.collect { event ->
-            when (event) {
-                is PermissionsActivityVmEvent.OnClickPermissionsCamera ->
-                    permissions(listOf(Manifest.permission.CAMERA))
-                is PermissionsActivityVmEvent.OnClickPermissionsLocation ->
-                    permissions(listOf(Manifest.permission.ACCESS_FINE_LOCATION))
-                is PermissionsActivityVmEvent.OnClickPermissionsMulti ->
-                    permissions(listOf(
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                        Manifest.permission.SYSTEM_ALERT_WINDOW
-                    ))
+class PermissionsActivity :
+    BaseBindingActivity<ActivityPermissionsBinding>(R.layout.activity_permissions) {
+
+    private val vm: PermissionsActivityVm by lazy { getViewModel<PermissionsActivityVm>() }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        // ViewModel 이벤트 수집 시작 (필요 시 직접 호출)
+        // BaseBindingActivity는 eventVmCollect()를 자동 호출하지 않습니다.
+        eventVmCollect()
+    }
+
+    override fun eventVmCollect() {
+        lifecycleScope.launch {
+            vm.mEventVm.collect { event ->
+                when (event) {
+                    is PermissionsActivityVmEvent.OnClickPermissionsCamera ->
+                        permissions(listOf(Manifest.permission.CAMERA))
+                    is PermissionsActivityVmEvent.OnClickPermissionsLocation ->
+                        permissions(listOf(Manifest.permission.ACCESS_FINE_LOCATION))
+                    is PermissionsActivityVmEvent.OnClickPermissionsMulti ->
+                        permissions(
+                            listOf(
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                Manifest.permission.SYSTEM_ALERT_WINDOW,
+                            ),
+                        )
+                }
             }
         }
     }

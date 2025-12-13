@@ -55,7 +55,7 @@ This feature **spans two modules** (이 기능은 **두 모듈**에 걸쳐 있�
 | Event channel setup  | Manually wire Flow/Channel (10+ lines) | Automatically handled by `BaseViewModelEvent` ✅ |
 | Event dispatch  | `viewModelScope.launch` + `send` | Single-line `sendEventVm()` ✅ |
 | Channel resource management  | Manually call `close()` | Managed automatically ✅ |
-| Event collection  | Manually launch with `lifecycleScope` | Override `eventVmCollect()` ✅ |
+| Event collection  | Manually launch with `lifecycleScope` | Override & call `eventVmCollect()` ✅ (필요 시 직접 호출) |
 
 **Key takeaway:** Simple UI boosts development speed through **automation of complex MVVM boilerplate**.
 > **핵심:** Simple UI는 "복잡한 MVVM 보일러플레이트"의 **자동화**를 통해 개발 속도를 향상시킵니다.
@@ -242,7 +242,8 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
         // 3. 생명 주기 콜백
         lifecycle.addObserver(vm)
 
-        // 4. viewmodel 이벤트 수집 설정
+        // 4. ViewModel 이벤트 수집 시작 (필요 시 직접 호출)
+        // BaseBindingActivity는 eventVmCollect()를 자동 호출하지 않습니다.
         eventVmCollect()
 
         // 5. 핵심 로직만 집중!
@@ -395,7 +396,8 @@ class MainFragment : BaseBindingFragment<FragmentMainBinding>(R.layout.fragment_
         // 3. 생명 주기 콜백
         lifecycle.addObserver(vm)
 
-        // 4. 이벤트 수집 설정
+        // ViewModel 이벤트 수집 시작 (필요 시 직접 호출)
+        // BaseBindingFragment는 eventVmCollect()를 자동 호출하지 않습니다.
         eventVmCollect()
 
         // 5. 핵심 로직만 집중!
@@ -504,6 +506,8 @@ class InfoDialog : BaseBindingDialogFragment<DialogInfoBinding>(R.layout.dialog_
         // 필요 시 다이얼로그 크기/배경 제어도 즉시 가능
         resizeDialog(0.85f, 0.5f)
 
+        // ViewModel 이벤트 수집 시작 (필요 시 직접 호출)
+        // BaseBindingDialogFragment는 eventVmCollect()를 자동 호출하지 않습니다.
         eventVmCollect()
     }
 
@@ -658,11 +662,11 @@ sealed class MainEvent {
 ### 2. **🛠️ Standardized Event System (표준화된 이벤트 시스템)**
 - **`BaseViewModelEvent`:** Flow/Channel automatically prepared.
 - **`sendEventVm()`:** Dispatch events in one line.
-- **`eventVmCollect()`:** Unified entry point for event collection.
+- **`eventVmCollect()`:** Unified entry point (hook) for event collection; call it manually when needed.
 - **Resource management:** Channels are released automatically.
 > - **`BaseViewModelEvent`**: Flow/Channel 자동 구성
 > - **`sendEventVm()`**: 이벤트 전송 한 줄
-> - **`eventVmCollect()`**: 표준화된 이벤트 수집 함수
+> - **`eventVmCollect()`**: 표준화된 이벤트 수집 훅 (필요 시 직접 호출)
 > - **리소스 관리**: 채널 자동 해제
 
 <br>
@@ -763,7 +767,7 @@ Leave the old complexity behind.
 - DialogFragment + ViewModel automatic initialization
 - `BaseViewModelEvent` event system
 - Event dispatch via `sendEventVm()`
-- Event collection via `eventVmCollect()`
+- Event collection via `eventVmCollect()` (manual call when needed)
 - Automatic DataBinding wiring
 - Automated lifecycle management
 - Automatic nullable binding handling
@@ -773,7 +777,7 @@ Leave the old complexity behind.
 > - DialogFragment + ViewModel 자동 초기화
 > - BaseViewModelEvent 이벤트 시스템
 > - sendEventVm() 이벤트 전송
-> - eventVmCollect() 이벤트 수집
+> - eventVmCollect() 이벤트 수집 (필요 시 직접 호출)
 > - DataBinding 자동 연동
 > - Lifecycle 자동 관리
 > - nullable binding 자동 처리

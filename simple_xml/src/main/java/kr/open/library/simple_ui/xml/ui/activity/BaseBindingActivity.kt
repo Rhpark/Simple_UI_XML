@@ -18,17 +18,24 @@ import androidx.lifecycle.ViewModelProvider
  * - Inflates the layout and sets up DataBinding<br>
  * - Sets the lifecycle owner for the binding<br>
  * - Provides a convenient method to obtain a ViewModel<br>
- * - Provides hook methods for view creation and event collection<br><br>
+ * - Provides hook methods for view creation and optional event collection (`eventVmCollect()`)<br>
+ * - `eventVmCollect()` is not invoked automatically; call it manually when needed<br><br>
  * 이 클래스는 다음과 같은 작업을 처리합니다:<br>
  * - 레이아웃을 인플레이션하고 DataBinding을 설정합니다<br>
  * - 바인딩에 대한 생명주기 소유자를 설정합니다<br>
  * - ViewModel을 얻는 편리한 메서드를 제공합니다<br>
- * - 뷰 생성 및 이벤트 수집을 위한 훅 메서드를 제공합니다<br>
+ * - 뷰 생성 훅과 선택적 이벤트 수집 훅(`eventVmCollect()`)을 제공합니다<br>
+ * - `eventVmCollect()`는 베이스에서 자동 호출되지 않으므로 필요 시 직접 호출하세요<br>
  *
  * Usage example:<br>
  * ```kotlin
  * class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
  *     private val viewModel: MainViewModel by lazy { getViewModel() }
+ *
+ *     override fun onCreate(savedInstanceState: Bundle?) {
+ *         super.onCreate(savedInstanceState)
+ *         eventVmCollect()
+ *     }
  *
  *     override fun onCreateView(rootView: View, savedInstanceState: Bundle?) {
  *         binding.viewModel = viewModel
@@ -51,6 +58,11 @@ import androidx.lifecycle.ViewModelProvider
  * ```kotlin
  * class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
  *     private val viewModel: MainViewModel by lazy { getViewModel() }
+ *
+ *     override fun onCreate(savedInstanceState: Bundle?) {
+ *         super.onCreate(savedInstanceState)
+ *         eventVmCollect()
+ *     }
  *
  *     override fun onCreateView(rootView: View, savedInstanceState: Bundle?) {
  *         binding.viewModel = viewModel
@@ -124,17 +136,15 @@ public abstract class BaseBindingActivity<BINDING : ViewDataBinding>(
      * @param savedInstanceState The saved instance state bundle, if any.<br><br>
      *                           저장된 인스턴스 상태 번들 (있는 경우).<br>
      */
-    protected open fun onCreateView(
-        rootView: View,
-        savedInstanceState: Bundle?,
-    ) {
-    }
+    protected open fun onCreateView(rootView: View, savedInstanceState: Bundle?) {}
 
     /**
      * Override this method to set up ViewModel event collection.<br>
      * Typically used to collect Flow events from ViewModel using lifecycleScope.<br><br>
+     * Note: This method is not called automatically. Call `eventVmCollect()` from `onCreate()` (after `super.onCreate`) when needed.<br><br>
      * ViewModel 이벤트 수집을 설정하려면 이 메서드를 오버라이드하세요.<br>
      * 일반적으로 lifecycleScope를 사용하여 ViewModel의 Flow 이벤트를 수집하는 데 사용됩니다.<br>
+     * 주의: 이 메서드는 자동 호출되지 않습니다. 필요 시 `onCreate()`(super 이후) 등에서 `eventVmCollect()`를 직접 호출하세요.<br>
      */
     protected open fun eventVmCollect() {}
 

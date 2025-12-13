@@ -34,6 +34,9 @@ class NotificationControllerActivity :
         lifecycle.addObserver(vm)
         createNotificationChannels()
         requestNotificationPermission()
+
+        // ViewModel 이벤트 수집 시작 (필요 시 직접 호출)
+        // BaseBindingActivity는 eventVmCollect()를 자동 호출하지 않습니다.
         eventVmCollect()
     }
 
