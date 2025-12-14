@@ -18,13 +18,13 @@ This feature **spans two modules** (이 기능은 **두 모듈**에 걸쳐 있�
 <br></br>
 
 ### Activity + ViewModel Quick Setup (Activity + ViewModel 초기 설정)
-![mvvm_activity_init.gif](example_gif%2Fmvvm_activity_init.gif)
+![mvvm_activity_init.gif](../../example_gif/mvvm_activity_init.gif)
 
 ### Activity + ViewModel Immediate Usage (Activity + ViewModel 초기 사용)
-![mvvm_activity_vm_init_2.gif](example_gif%2Fmvvm_activity_vm_init_2.gif)![mvvm_activity_vm_init_2_example.gif](example%2Fmvvm_activity_vm_init_2_example.gif)
+![mvvm_activity_vm_init_2.gif](../../example_gif/mvvm_activity_vm_init_2.gif)
 
 ### ViewModel Event System (ViewModel 이벤트 시스템)
-![mvvm_vm.png](example_gif%2Fmvvm_vm.png)
+![mvvm_vm.png](../../example_gif/mvvm_vm.png)
 
 **"Wrap up your MVVM setup in just 10 lines!"** Experience the difference Simple UI delivers compared to classic Activity/Fragment + ViewModel development.
 > **"MVVM 세팅을 10줄로 끝내자!"** 기존 Activity/Fragment + ViewModel 개발 대비 Simple UI가 주는 체감 차이를 한눈에 확인하세요.

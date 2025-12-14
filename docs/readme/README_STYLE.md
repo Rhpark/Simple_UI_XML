@@ -11,7 +11,7 @@
   - Weight-based layouts
 
 ### Style Output Example (style 출력 예시)
-![xml_style.png](example_gif%2Fxml_style.png)
+![xml_style.png](../../example_gif/xml_style.png)
 
 > **"Achieve Simpler Layouts with Style XML!"** See the tangible difference that Style provides compared to Plain XML at a glance.
 <br></br>

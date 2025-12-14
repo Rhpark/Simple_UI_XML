@@ -2,7 +2,7 @@
  - **Kotlin 기반 Android XML 개발 향상 라이브러리**
  - 샘플 앱으로 활용법을 검증함 (settings.gradle.kts, app/build.gradle.kts).
  - 배포는 JitPack 0.3.37 기준, minSdk 28/compileSdk 35, Kotlin 2.0.21/AGP 8.8.2 설정 (gradle/libs.versions.toml).
- - 반복되는 Activity/Fragment/권한/로깅/시스템 서비스 보일러플레이트를 제거하고 생산성을 높이는 것이 1차 목표 (README_START.md, README_ACTIVITY_FRAGMENT.md 등).
+- 반복되는 Activity/Fragment/권한/로깅/시스템 서비스 보일러플레이트를 제거하고 생산성을 높이는 것이 1차 목표 (docs/readme/README_START.md, docs/readme/README_ACTIVITY_FRAGMENT.md 등).
  
 
 
@@ -91,7 +91,7 @@
  ## 프로젝트 가치 제안
 
   ### 대폭 보일러플레이트 절감
-   - 기본 Activity/Fragment/Adapter/권한/로그/시스템 서비스 래퍼로 표준 흐름만 남기도록 설계 (README_RECYCLERVIEW.md, README_SERVICE_MANAGER_INFO.md, README_SERVICE_MANAGER_CONTROL.md).
+  - 기본 Activity/Fragment/Adapter/권한/로그/시스템 서비스 래퍼로 표준 흐름만 남기도록 설계 (docs/readme/README_RECYCLERVIEW.md, docs/readme/README_SERVICE_MANAGER_INFO.md, docs/readme/README_SERVICE_MANAGER_CONTROL.md).
 
 
   ### 안정성과 일관성
@@ -355,16 +355,16 @@
  ## README 파일 업데이트 가이드
 
   ### README 파일 매핑
-   - Activity/Fragment 변경 → README_ACTIVITY_FRAGMENT.md
-   - 확장 함수 추가/변경 → README_EXTENSIONS.md
-   - Logx 기능 변경 → README_LOGX.md
-   - ViewModel 관련 → README_MVVM.md
-   - RecyclerView 관련 → README_RECYCLERVIEW.md
-   - System Manager Info → README_SERVICE_MANAGER_INFO.md
-   - System Manager Control → README_SERVICE_MANAGER_CONTROL.md
-   - 스타일 가이드 변경 → README_STYLE.md
-   - 샘플 앱 변경 → README_SAMPLE.md
-   - 시작 가이드 변경 → README_START.md
+  - Activity/Fragment 변경 → docs/readme/README_ACTIVITY_FRAGMENT.md
+  - 확장 함수 추가/변경 → docs/readme/README_EXTENSIONS.md
+  - Logx 기능 변경 → docs/readme/README_LOGX.md
+  - ViewModel 관련 → docs/readme/README_MVVM.md
+  - RecyclerView 관련 → docs/readme/README_RECYCLERVIEW.md
+  - System Manager Info → docs/readme/README_SERVICE_MANAGER_INFO.md
+  - System Manager Control → docs/readme/README_SERVICE_MANAGER_CONTROL.md
+  - 스타일 가이드 변경 → docs/readme/README_STYLE.md
+  - 샘플 앱 변경 → docs/readme/README_SAMPLE.md
+  - 시작 가이드 변경 → docs/readme/README_START.md
    - 전체 개요 변경 → README.md
 
 
@@ -372,5 +372,4 @@
    - 새 기능 추가 시: 해당 README + README.md 개요 섹션
    - Breaking change: 해당 README + README.md 버전 정보
    - 예제 코드 변경: 반드시 실행 가능한 코드로 유지
-
 

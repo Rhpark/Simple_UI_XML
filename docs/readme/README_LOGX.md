@@ -8,7 +8,7 @@
 <br></br>
 
 ### Logx Output Preview
-![logx.gif](example_gif%2Flogx.gif)
+![logx.gif](../../example_gif/logx.gif)
 **"Premium logging done in a single line."** See at a glance how Logx feels compared to the classic `Log` API.
 
 > **“단 한 줄로 끝내는 고급 로깅.”** 기존 `Log` 대비 Logx가 주는 체감 차이를 한눈에 확인하세요.

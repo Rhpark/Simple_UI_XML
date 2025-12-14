@@ -24,7 +24,6 @@ This feature **spans two modules** (이 기능은 **두 모듈**에 걸쳐 있�
   - `resource/` - Resource access (Drawable, Color)
 
 <br></br>
-![extensions_style_example.gif](example%2Fextensions_style_example.gif)
 
 **"Achieve more with shorter extension code!"** See at a glance how Simple UI Extensions transform your workflow compared to Plain Android.
 

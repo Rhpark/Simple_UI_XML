@@ -134,8 +134,8 @@ The second goal is to make code predictable and easy to maintain over time.
 - **Encourage documentation-first changes**  
   **문서를 먼저 고치는 변경 문화를 장려**
 
-  Update `claude.md` and the relevant `README_*.md` before adding or modifying features in the code.  
-  코드를 추가·수정하기 전에 `claude.md`와 관련 `README_*.md`를 먼저 수정하는 흐름을 권장합니다.
+  Update `claude.md` and the relevant `docs/readme/README_*.md` before adding or modifying features in the code.  
+  코드를 추가·수정하기 전에 `claude.md`와 관련 `docs/readme/README_*.md`를 먼저 수정하는 흐름을 권장합니다.
 
 ---
 
@@ -694,4 +694,3 @@ By following the guidelines in this document, you can extend the library while p
 
 > **Handle the complexity here, and keep your app code simple.**  
 > **복잡함은 여기서 처리하고, 앱 코드는 단순하게 유지하십시오.**
-

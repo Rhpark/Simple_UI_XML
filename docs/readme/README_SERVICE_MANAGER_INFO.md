@@ -617,7 +617,7 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 
 **Example Code:**
 
-System Service Manager Info : [ServiceManagerInfoActivity.kt](app/src/main/java/kr/open/library/simpleui_xml/system_service_manager/info/ServiceManagerInfoActivity.kt)
+System Service Manager Info : [ServiceManagerInfoActivity.kt](../../app/src/main/java/kr/open/library/simpleui_xml/system_service_manager/info/ServiceManagerInfoActivity.kt)
 > - Run the app to see actual implementation examples! (실제로 앱을 구동 시켜서 실제 구현 예제를 확인해 보세요!)
 
 <br>

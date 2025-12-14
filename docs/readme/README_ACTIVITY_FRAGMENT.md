@@ -13,10 +13,10 @@ Simple UI's Activity/Fragment base classes are productivity tools that eliminate
  > Simple UI의 Activity/Fragment 베이스 클래스는 반복되는 초기화 코드를 걷어내고, 권한/시스템바 처리, MVVM 상호 작용까지 한 곳에 모아둔 생산성 도구입니다. 이 문서는 각 베이스 클래스의 철학과 사용 시나리오, 실제 예제까지 상세히 정리했습니다.
 
 ### BaseBindingActivity Quick Setup (BaseBindingActivity 빠른 설정)
-![mvvm_activity_init.gif](example_gif%2Fmvvm_activity_init.gif)
+![mvvm_activity_init.gif](../../example_gif/mvvm_activity_init.gif)
 
 ### BaseActivity Quick Setup (BaseActivity 빠른 설정)
-![baseActivity.gif](example_gif%2FbaseActivity.gif)
+![baseActivity.gif](../../example_gif/baseActivity.gif)
 
 **“Complete Activity / Fragment initialization in just three lines!”
 >** – Simple UI는 순정 Android 대비 초기화 시간을 압축합니다.

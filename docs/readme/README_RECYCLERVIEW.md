@@ -10,10 +10,10 @@
   - RecyclerScrollStateView for scroll state management
 
 ### RecyclerView Example (RecyclerView 예시)
-![recyclerview.gif](example_gif%2Frecyclerview.gif)
+![recyclerview.gif](../../example_gif/recyclerview.gif)
 
 ### Adapter Code Example (adapter code 예시)
-![adapter.png](example_gif%2Fadapter.png)
+![adapter.png](../../example_gif/adapter.png)
 
 **"Wrap complex RecyclerView logic in just a few lines!"** Feel the difference Simple UI brings compared to traditional RecyclerView development.
 > **"복잡한 RecyclerView 구현을 단 몇 줄로 끝내자!"** 기존 RecyclerView 개발 대비 Simple UI가 주는 체감 차이를 한눈에 확인하세요.

@@ -1,6 +1,6 @@
 # 📊 Simple UI XML vs Plain Android - 완벽 비교 가이드
 
-![simple_example.gif](example_gif%2Fsimple_example.gif)
+![simple_example.gif](../../example_gif/simple_example.gif)
 
 > 기존 권한 관리 개발 대비 Simple UI가 주는 체감 차이를 한눈에 확인하세요.
 
