@@ -1,8 +1,8 @@
 # simple_core 모듈 개요
  - **전역 규칙은 루트 claude.md 참조**  
  - 주석 스타일, 코딩 컨벤션, 대화 규칙 등은 루트 claude.md를 따름
- - **현재 버전**: 0.3.38 (JitPack)
- - **Maven 좌표**: `com.github.Rhpark:Simple_UI_Core:0.3.38`
+ - **현재 버전**: 0.3.39 (JitPack)
+ - **Maven 좌표**: `com.github.Rhpark:Simple_UI_Core:0.3.39`
 
 
 
