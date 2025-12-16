@@ -1,5 +1,6 @@
 package kr.open.library.simpleui_xml.system_service_manager.controller.alarm
 
+import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
@@ -94,6 +95,7 @@ public class AlarmReceiver : BaseAlarmReceiver() {
             }
     }
 
+    @SuppressLint("MissingPermission")
     override fun showNotification(
         context: Context,
         alarmVo: AlarmVo,
