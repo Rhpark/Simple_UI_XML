@@ -59,6 +59,11 @@ android {
             }
         }
     }
+
+    lint {
+        // lint.xml 파일을 AAR에 포함시키기 위한 설정
+        lintConfig = file("src/main/lint.xml")
+    }
 }
 
 dependencies {
