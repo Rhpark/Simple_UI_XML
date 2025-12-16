@@ -1,6 +1,7 @@
 package kr.open.library.simpleui_xml.system_service_manager.controller.notification
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Intent
@@ -93,6 +94,7 @@ class NotificationControllerActivity :
         }
     }
 
+    @SuppressLint("MissingPermission")
     private fun showBasicNotification() {
         Logx.d()
         val option =
@@ -109,6 +111,7 @@ class NotificationControllerActivity :
         toastShowShort("Basic notification shown")
     }
 
+    @SuppressLint("MissingPermission")
     private fun showBigTextNotification() {
         val option =
             SimpleNotificationOptionVo(
@@ -128,6 +131,7 @@ class NotificationControllerActivity :
         toastShowShort("BigText notification shown")
     }
 
+    @SuppressLint("MissingPermission")
     private fun showProgressNotification() {
         val option =
             SimpleProgressNotificationOptionVo(
@@ -143,11 +147,13 @@ class NotificationControllerActivity :
         toastShowShort("Progress notification shown")
     }
 
+    @SuppressLint("MissingPermission")
     private fun updateProgress() {
         notificationController.updateProgress(3, 50)
         toastShowShort("Progress updated to 50%")
     }
 
+    @SuppressLint("MissingPermission")
     private fun completeProgress() {
         notificationController.completeProgress(3, "Download complete!")
         toastShowShort("Progress completed")
