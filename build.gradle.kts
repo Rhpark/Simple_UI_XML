@@ -34,6 +34,17 @@ subprojects {
             exclude { it.file.path.contains("${File.separator}build${File.separator}") }
         }
     }
+
+    // Android 라이브러리 모듈에만 적용
+    plugins.withId("com.android.library") {
+        configure<com.android.build.gradle.LibraryExtension> {
+            lint {
+                checkDependencies = true // 의존성 까지 포함해 분석
+                abortOnError = false // 에러가 있으면 빌드를 실패시킨다.
+                disable += setOf("MissingPermission", "NotificationPermission")
+            }
+        }
+    }
 }
 
 // Dokka 멀티 모듈 HTML 문서를 docs/api 이하로 복사·정리하는 커스텀 태스크

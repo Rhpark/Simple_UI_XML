@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <!--
+        Simple_UI_XML 라이브러리 Lint 설정
+
+        이 파일은 라이브러리를 사용하는 앱의 빌드 시 자동으로 적용됩니다.
+        라이브러리 내부에서는 BaseSystemService의 tryCatchSystemManager()로
+        권한이 없을 때 안전하게 처리하므로, 사용자 앱에서 Lint 경고를 무시합니다.
+    -->
+
+    <!--
+        권한 관련 Lint 경고 무시 설정
+        FloatingViewController는 SYSTEM_ALERT_WINDOW 특수 권한이 필요하지만,
+        권한이 없을 때 안전하게 처리됩니다.
+    -->
+
+    <!-- MissingPermission: 권한 누락 경고 무시 -->
+    <issue id="MissingPermission" severity="ignore">
+        <!-- FloatingViewController 관련 -->
+        <ignore path="**/controller/window/**"/>
+        <!-- system_manager 하위 모든 클래스 -->
+        <ignore path="**/system_manager/**"/>
+    </issue>
+</lint>

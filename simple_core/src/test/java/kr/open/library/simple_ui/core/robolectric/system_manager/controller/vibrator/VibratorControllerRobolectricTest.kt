@@ -39,11 +39,11 @@ class VibratorControllerRobolectricTest {
         application = ApplicationProvider.getApplicationContext()
         val shadowApp = Shadows.shadowOf(application)
 
-        val permissionInfo =
-            PermissionInfo().apply {
-                name = Manifest.permission.VIBRATE
-                protectionLevel = PermissionInfo.PROTECTION_DANGEROUS
-            }
+        val permissionInfo = PermissionInfo().apply {
+            name = Manifest.permission.VIBRATE
+            protectionLevel = PermissionInfo.PROTECTION_DANGEROUS
+        }
+
         Shadows.shadowOf(application.packageManager).addPermissionInfo(permissionInfo)
 
         vibrator = mock(Vibrator::class.java)
