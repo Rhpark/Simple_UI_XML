@@ -7,6 +7,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.os.Build
+import androidx.annotation.RequiresPermission
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.PRIORITY_LOW
 import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
@@ -177,6 +178,7 @@ public open class SimpleNotificationController(
      * @return `true` if notification was shown successfully, `false` otherwise.<br><br>
      *         알림 표시 성공 시 `true`, 그렇지 않으면 `false`.<br>
      */
+    @RequiresPermission(POST_NOTIFICATIONS)
     public fun showNotification(notificationOption: SimpleNotificationOptionVo): Boolean =
         tryCatchSystemManager(false) {
             val builder = when (notificationOption.style) {
@@ -264,6 +266,7 @@ public open class SimpleNotificationController(
      * @param builder Configured notification builder.<br><br>
      *                구성된 알림 빌더.<br>
      */
+    @RequiresPermission(POST_NOTIFICATIONS)
     private fun showNotification(notificationId: Int, builder: NotificationCompat.Builder) {
         notificationManager.notify(notificationId, builder.build())
     }
@@ -328,6 +331,7 @@ public open class SimpleNotificationController(
      * @param build Pre-built Notification object.<br><br>
      *              미리 빌드된 알림 객체.<br>
      */
+    @RequiresPermission(POST_NOTIFICATIONS)
     public fun notify(notificationId: Int, build: Notification) {
         notificationManager.notify(notificationId, build)
     }
@@ -413,6 +417,7 @@ public open class SimpleNotificationController(
      * @return `true` if notification was created successfully, `false` otherwise.<br><br>
      *         알림 생성 성공 시 `true`, 그렇지 않으면 `false`.<br>
      */
+    @RequiresPermission(POST_NOTIFICATIONS)
     public fun showProgressNotification(simpleProgressNotificationOption: SimpleProgressNotificationOptionVo): Boolean =
         tryCatchSystemManager(false) {
             with(simpleProgressNotificationOption) {
@@ -433,6 +438,7 @@ public open class SimpleNotificationController(
      * @return `true` if update was successful, `false` otherwise.<br><br>
      *         업데이트 성공 시 `true`, 그렇지 않으면 `false`.<br>
      */
+    @RequiresPermission(POST_NOTIFICATIONS)
     public fun updateProgress(notificationId: Int, progressPercent: Int): Boolean {
         // 진행률 범위 검증
         if (progressPercent !in 0..100) {
@@ -464,6 +470,7 @@ public open class SimpleNotificationController(
      * @return `true` if completion was successful, `false` otherwise.<br><br>
      *         완료 처리 성공 시 `true`, 그렇지 않으면 `false`.<br>
      */
+    @RequiresPermission(POST_NOTIFICATIONS)
     public fun completeProgress(notificationId: Int, completedContent: String? = null): Boolean = tryCatchSystemManager(false) {
         progressBuilders[notificationId]?.let { info ->
             info.builder.setProgress(0, 0, false) // 진행률 바 제거
