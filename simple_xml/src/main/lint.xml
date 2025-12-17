@@ -15,10 +15,10 @@
     -->
 
     <!-- MissingPermission: 권한 누락 경고 무시 -->
-    <issue id="MissingPermission" severity="ignore">
-        <!-- FloatingViewController 관련 -->
-        <ignore path="**/controller/window/**"/>
-        <!-- system_manager 하위 모든 클래스 -->
-        <ignore path="**/system_manager/**"/>
-    </issue>
+<!--    <issue id="MissingPermission" severity="ignore">-->
+<!--        &lt;!&ndash; FloatingViewController 관련 &ndash;&gt;-->
+<!--        <ignore path="**/controller/window/**"/>-->
+<!--        &lt;!&ndash; system_manager 하위 모든 클래스 &ndash;&gt;-->
+<!--        <ignore path="**/system_manager/**"/>-->
+<!--    </issue>-->
 </lint>

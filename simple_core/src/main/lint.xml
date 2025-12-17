@@ -15,22 +15,22 @@
     -->
 
     <!-- MissingPermission: 권한 누락 경고 무시 -->
-    <issue id="MissingPermission" severity="ignore">
-        <!-- 모든 system_manager 하위 클래스 -->
-        <ignore path="**/system_manager/**"/>
-    </issue>
+<!--    <issue id="MissingPermission" severity="ignore">-->
+<!--        &lt;!&ndash; 모든 system_manager 하위 클래스 &ndash;&gt;-->
+<!--        <ignore path="**/system_manager/**"/>-->
+<!--    </issue>-->
 
-    <!-- NotificationPermission: Android 13+ 알림 권한 경고 무시 -->
-    <issue id="NotificationPermission" severity="ignore">
-        <ignore path="**/controller/notification/**"/>
-    </issue>
+<!--    &lt;!&ndash; NotificationPermission: Android 13+ 알림 권한 경고 무시 &ndash;&gt;-->
+<!--    <issue id="NotificationPermission" severity="ignore">-->
+<!--        <ignore path="**/controller/notification/**"/>-->
+<!--    </issue>-->
 
-    <!--
-        특수 권한 관련 경고
-        BATTERY_STATS는 시스템 앱만 사용 가능하지만,
-        라이브러리에서는 권한 없을 때 기본값 반환하므로 안전합니다.
-    -->
-    <issue id="ProtectedPermissions" severity="ignore">
-        <ignore path="**/info/battery/**"/>
-    </issue>
+<!--    &lt;!&ndash;-->
+<!--        특수 권한 관련 경고-->
+<!--        BATTERY_STATS는 시스템 앱만 사용 가능하지만,-->
+<!--        라이브러리에서는 권한 없을 때 기본값 반환하므로 안전합니다.-->
+<!--    &ndash;&gt;-->
+<!--    <issue id="ProtectedPermissions" severity="ignore">-->
+<!--        <ignore path="**/info/battery/**"/>-->
+<!--    </issue>-->
 </lint>

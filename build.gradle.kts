@@ -40,8 +40,8 @@ subprojects {
         configure<com.android.build.gradle.LibraryExtension> {
             lint {
                 checkDependencies = true // 의존성 까지 포함해 분석
-                abortOnError = false // 에러가 있으면 빌드를 실패시킨다.
-                disable += setOf("MissingPermission", "NotificationPermission")
+                abortOnError = true // 에러가 있으면 빌드를 실패시킨다.
+//                disable += setOf("MissingPermission", "NotificationPermission")
             }
         }
     }
