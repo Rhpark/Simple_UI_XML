@@ -1,0 +1,334 @@
+package kr.open.library.simple_ui.core.system_manager.info.battery
+
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.os.BatteryManager
+import android.os.BatteryManager.EXTRA_TEMPERATURE
+import android.os.BatteryManager.EXTRA_VOLTAGE
+import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
+import kr.open.library.simple_ui.core.logcat.Logx
+import kr.open.library.simple_ui.core.system_manager.extensions.getBatteryManager
+import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateVo.BATTERY_ERROR_VALUE
+import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateVo.BATTERY_ERROR_VALUE_BOOLEAN
+import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateVo.BATTERY_ERROR_VALUE_DOUBLE
+import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateVo.BATTERY_ERROR_VALUE_LONG
+import kr.open.library.simple_ui.core.system_manager.info.battery.power.PowerProfile
+
+internal class BatteryState(
+    private val context: Context,
+    /**
+     * Lazy BatteryManager instance used to query battery properties.<br><br>
+     * 배터리 속성을 조회하기 위해 사용하는 지연 초기화 BatteryManager입니다.<br>
+     */
+    public val bm: BatteryManager = context.getBatteryManager(),
+    /**
+     * Lazy PowerProfile instance used for capacity estimation fallbacks.<br><br>
+     * 용량 추정 폴백에 사용하는 지연 초기화 PowerProfile 인스턴스입니다.<br>
+     */
+    private val powerProfile: PowerProfile = PowerProfile(context)
+) {
+    /**
+     * Gets the instantaneous battery current in microamperes.<br>
+     * Positive values indicate charging, negative values indicate discharging.<br><br>
+     * 순간 배터리 전류를 마이크로암페어 단위로 반환합니다.<br>
+     * 양수 값은 충전 소스에서 배터리로 들어오는 순 전류, 음수 값은 배터리에서 방전되는 순 전류입니다.<br>
+     *
+     * @return The instantaneous battery current in microamperes.<br><br>
+     *         순간 배터리 전류 (마이크로암페어).
+     */
+    public fun getCurrentAmpere(): Int = safeCatch(BATTERY_ERROR_VALUE) {
+        bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW)
+    }
+
+    /**
+     * Average battery current in microamperes, as an integer.<br><br>
+     * 평균 배터리 전류를 마이크로암페어 단위로 반환합니다.<br>
+     *
+     * Positive values indicate net current entering the battery from a charge source,<br>
+     * negative values indicate net current discharging from the battery.<br><br>
+     * 양수 값은 충전 소스에서 배터리로 들어오는 순 전류, 음수 값은 배터리에서 방전되는 순 전류입니다.<br>
+     *
+     *
+     * @return The average battery current in microamperes (µA).<br><br>
+     *         평균 배터리 전류 (마이크로암페어, µA).
+     */
+    public fun getCurrentAverageAmpere(): Int = safeCatch(BATTERY_ERROR_VALUE) {
+        bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_AVERAGE)
+    }
+
+    private fun getStatus(batteryStatus: Intent?, type: String, defaultValue: Int = BATTERY_ERROR_VALUE): Int = safeCatch(defaultValue) {
+        // Try to get charge status from current batteryStatus first
+        // 먼저 현재 batteryStatus에서 충전 상태를 가져오기 시도
+        var chargeStatus = defaultValue
+        batteryStatus?.let {
+            chargeStatus = it.getIntExtra(type, defaultValue)
+        }
+
+        // If batteryStatus is null or doesn't have charge status, get fresh battery intent
+        // batteryStatus가 null이거나 충전 상태가 없는 경우, 새로운 배터리 intent를 가져옴
+        if (chargeStatus != defaultValue) {
+            return chargeStatus
+        }
+        context.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))?.let {
+            chargeStatus = it.getIntExtra(type, defaultValue)
+        }
+        return chargeStatus
+    }
+
+    /**
+     * Battery charge status, from a BATTERY_STATUS_* value.<br><br>
+     * 배터리 충전 상태를 반환합니다.<br>
+     *
+     * @return The battery charge status.<br><br>
+     *         배터리 충전 상태.
+     * @see BatteryManager.BATTERY_STATUS_CHARGING
+     * @see BatteryManager.BATTERY_STATUS_FULL
+     * @see BatteryManager.BATTERY_STATUS_DISCHARGING
+     * @see BatteryManager.BATTERY_STATUS_NOT_CHARGING
+     * @see BatteryManager.BATTERY_STATUS_UNKNOWN
+     */
+    public fun getChargeStatus(batteryStatus: Intent? = null): Int = safeCatch(BATTERY_ERROR_VALUE) {
+        val res = bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_STATUS)
+        return if (res == BATTERY_ERROR_VALUE) {
+            getStatus(batteryStatus, BatteryManager.EXTRA_STATUS, BATTERY_ERROR_VALUE)
+        } else {
+            res
+        }
+    }
+
+    /**
+     * Gets an integer battery property from `BatteryManager`.<br><br>
+     * `BatteryManager`에서 정수형 배터리 속성을 가져옵니다.<br>
+     */
+    private fun getIntProperty(batteryType: Int) = bm.getIntProperty(batteryType)
+
+    /**
+     * Gets a long battery property from `BatteryManager`.<br><br>
+     * `BatteryManager`에서 Long 타입 배터리 속성을 가져옵니다.<br>
+     */
+    private fun getLongProperty(batteryType: Int) = bm.getLongProperty(batteryType)
+
+    /**
+     * Gets the remaining battery capacity as a percentage (0-100).<br><br>
+     * 남은 배터리 용량을 백분율(0-100)로 가져옵니다.<br>
+     *
+     * @return The remaining battery capacity as a percentage.<br><br>
+     *         남은 배터리 용량 (백분율).
+     */
+    public fun getCapacity(): Int = safeCatch(BATTERY_ERROR_VALUE) {
+        getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
+    }
+
+    /**
+     * Battery capacity in microampere-hours, as an integer.<br><br>
+     * 배터리 용량을 마이크로암페어시 단위로 반환합니다.<br>
+     *
+     * @return The battery capacity in microampere-hours.<br><br>
+     *         배터리 용량 (마이크로암페어시).
+     */
+    public fun getChargeCounter(): Int = safeCatch(BATTERY_ERROR_VALUE) {
+        getIntProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER)
+    }
+
+    /**
+     * Returns the battery remaining energy in nanowatt-hours.<br><br>
+     * 배터리 잔여 에너지를 나노와트시 단위로 반환합니다.<br>
+     *
+     * Warning!!, Values may not be accurate.<br><br>
+     * 경고!!, 값이 정확하지 않을 수 있습니다.<br>
+     *
+     * Error value may be Long.MIN_VALUE.<br><br>
+     * 오류 값은 Long.MIN_VALUE일 수 있습니다.<br>
+     *
+     * @return The battery remaining energy in nanowatt-hours.<br><br>
+     *         배터리 잔여 에너지 (나노와트시).
+     */
+    public fun getEnergyCounter(): Long = safeCatch(BATTERY_ERROR_VALUE_LONG) {
+        getLongProperty(BatteryManager.BATTERY_PROPERTY_ENERGY_COUNTER)
+    }
+
+    /**
+     * get charge plug type.<br><br>
+     * 충전 플러그 타입을 반환합니다.<br>
+     *
+     * @param batteryStatus Intent of battery status.<br><br>
+     *                      배터리 상태 인텐트<br>
+     * @return Charge plug type.<br><br>
+     *         충전 플러그 타입.(Error  = BATTERY_ERROR_VALUE(-999))<br>
+     * @see BatteryManager.BATTERY_PLUGGED_USB
+     * @see BatteryManager.BATTERY_PLUGGED_AC
+     * @see BatteryManager.BATTERY_PLUGGED_DOCK
+     * @see BatteryManager.BATTERY_PLUGGED_WIRELESS
+     */
+    public fun getChargePlug(batteryStatus: Intent?): Int = getStatus(batteryStatus, BatteryManager.EXTRA_PLUGGED, BATTERY_ERROR_VALUE)
+
+    /**
+     * Gets the battery temperature in Celsius.<br>
+     * Android returns temperature in tenths of a degree Celsius, so we divide by 10.<br><br>
+     * 배터리 온도를 섭씨로 가져옵니다.<br>
+     * Android는 온도를 섭씨 1/10도 단위로 반환하므로 10으로 나눕니다.<br>
+     *
+     * @return Battery temperature in Celsius (°C), or @ERROR_VALUE_FLOAT if unavailable.<br><br>
+     *         배터리 온도 (섭씨), 사용할 수 없는 경우 @ERROR_VALUE_FLOAT.
+     *
+     * Example: Android returns 350 → 35.0°C<br><br>
+     * 예시: Android가 350을 반환 → 35.0°C<br>
+     *
+     * Note: If you see very negative values like -214748364.8°C, it means temperature is unavailable.<br><br>
+     * 참고: -214748364.8°C 같은 매우 낮은 음수가 보이면 온도를 사용할 수 없다는 뜻입니다.<br>
+     */
+    public fun getTemperature(batteryStatus: Intent?): Double = safeCatch(BATTERY_ERROR_VALUE_DOUBLE) {
+        val rawTemperature = getStatus(batteryStatus, EXTRA_TEMPERATURE, BATTERY_ERROR_VALUE)
+
+        return if (rawTemperature == BATTERY_ERROR_VALUE) {
+            BATTERY_ERROR_VALUE_DOUBLE // Use a reasonable error value instead of Integer.MIN_VALUE / 10
+        } else {
+            val convertedTemp = rawTemperature.toDouble() / 10.0
+            // Sanity check: reasonable battery temperature range (-40°C to 100°C)
+            // 정상성 검사: 합리적인 배터리 온도 범위 (-40°C ~ 100°C)
+            if (convertedTemp in -40.0..100.0) {
+                convertedTemp
+            } else {
+                BATTERY_ERROR_VALUE_DOUBLE // Invalid temperature value
+            }
+        }
+    }
+
+    /**
+     * Checks if a battery is present in the device.<br><br>
+     * 기기에 배터리가 장착되어 있는지 확인합니다.<br>
+     */
+    public fun getPresent(batteryStatus: Intent?): Boolean = safeCatch(BATTERY_ERROR_VALUE_BOOLEAN) {
+        // Try to get present status from current batteryStatus first
+        // 먼저 현재 batteryStatus에서 배터리 존재 상태를 가져오기 시도
+        batteryStatus?.let {
+            return it.getBooleanExtra(BatteryManager.EXTRA_PRESENT, BATTERY_ERROR_VALUE_BOOLEAN)
+        }
+
+        context.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))?.let {
+            return it.getBooleanExtra(BatteryManager.EXTRA_PRESENT, BATTERY_ERROR_VALUE_BOOLEAN)
+        }
+
+        return BATTERY_ERROR_VALUE_BOOLEAN
+    }
+
+    /**
+     * get battery health status.<br><br>
+     * 배터리 건강 상태를 반환합니다.<br>
+     *
+     * @param batteryStatus Intent of battery status.<br><br>
+     *                      배터리 상태 인텐트<br>
+     * @return Battery health status.<br><br>
+     *         배터리 건강 상태(Error  = BATTERY_ERROR_VALUE(-999).<br>
+     * @see BatteryManager.BATTERY_HEALTH_GOOD
+     * @see BatteryManager.BATTERY_HEALTH_COLD
+     * @see BatteryManager.BATTERY_HEALTH_DEAD
+     * @see BatteryManager.BATTERY_HEALTH_OVER_VOLTAGE
+     * @see BatteryManager.BATTERY_HEALTH_UNKNOWN
+     */
+    public fun getHealth(batteryStatus: Intent?): Int = getStatus(batteryStatus, BatteryManager.EXTRA_HEALTH)
+
+    /**
+     * get battery voltage.<br><br>
+     * 배터리 전압을 반환합니다.<br>
+     *
+     * @param batteryStatus Intent of battery status.<br><br>
+     *                      배터리 상태 인텐트<br>
+     * @return Battery voltage in volts (ex 3.5). Returns [BATTERY_ERROR_VALUE_DOUBLE] on error.<br><br>
+     *         볼트 단위의 배터리 전압 (예: 3.5). 오류 시 [BATTERY_ERROR_VALUE_DOUBLE] 반환.<br>
+     */
+    public fun getVoltage(batteryStatus: Intent?): Double = safeCatch(BATTERY_ERROR_VALUE_DOUBLE) {
+        val voltage = getStatus(batteryStatus, EXTRA_VOLTAGE, BATTERY_ERROR_VALUE)
+        if (voltage == BATTERY_ERROR_VALUE) {
+            return BATTERY_ERROR_VALUE_DOUBLE
+        }
+        return voltage.toDouble() / 1000
+    }
+
+    /**
+     * get battery technology.<br><br>
+     * 배터리 기술 방식을 반환합니다.<br>
+     *
+     * @param batteryStatus Intent of battery status.<br><br>
+     *                      배터리 상태 인텐트<br>
+     * @return Battery technology (ex Li-ion). Returns null on error.<br><br>
+     *         배터리 기술 방식 (예: Li-ion). 오류 시 null 반환.<br>
+     */
+    public fun getTechnology(batteryStatus: Intent?): String? = safeCatch(null) {
+        // Try to get technology from current batteryStatus first
+        // 먼저 현재 batteryStatus에서 배터리 기술을 가져오기 시도
+        batteryStatus?.let {
+            val technology = it.getStringExtra(BatteryManager.EXTRA_TECHNOLOGY)
+            if (technology != null) {
+                return technology
+            }
+        }
+        context.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))?.let {
+            return it.getStringExtra(BatteryManager.EXTRA_TECHNOLOGY)
+        }
+        return null
+    }
+
+    /**
+     * Gets the total battery capacity (rated capacity) in milliampere-hours (mAh).<br>
+     * Uses multiple fallback methods for better compatibility across Android versions.<br><br>
+     * 배터리의 총 용량(정격 용량)을 밀리암페어시(mAh) 단위로 가져옵니다.<br>
+     * Android 버전 간 호환성을 위해 여러 fallback 방법을 사용합니다.<br>
+     *
+     * @return The total battery capacity in mAh, or default value if unavailable.<br><br>
+     *         총 배터리 용량(mAh), 사용할 수 없는 경우 기본값.
+     */
+    public fun getTotalCapacity(): Double = safeCatch(BATTERY_ERROR_VALUE_DOUBLE) {
+        // Primary method: Use PowerProfile
+        // 주요 방법: PowerProfile 사용
+        val powerProfileCapacity = powerProfile.getBatteryCapacity()
+        if (powerProfileCapacity > 0) {
+            return powerProfileCapacity
+        }
+
+        // Fallback 1: Try to estimate from charge counter (API 21+)
+        // Fallback 1: 충전 카운터로부터 추정 (API 21+)
+        val estimatedCapacity = getEstimatedCapacityFromChargeCounter()
+        if (estimatedCapacity > 0) {
+            return estimatedCapacity
+        }
+
+        // Last resort: return reasonable default
+        // 최후 수단: 합리적인 기본값 반환
+        Logx.w("Unable to determine battery capacity, using default: $BATTERY_ERROR_VALUE_DOUBLE mAh")
+        return BATTERY_ERROR_VALUE_DOUBLE
+    }
+
+    /**
+     * Estimates total battery capacity from current charge counter and battery percentage.<br>
+     * This is a fallback method when PowerProfile is not available.<br><br>
+     * 현재 충전 카운터와 배터리 백분율로부터 총 배터리 용량을 추정합니다.<br>
+     * PowerProfile을 사용할 수 없을 때의 fallback 방법입니다.<br>
+     *
+     * Formula: Total Capacity = (Current Charge Counter / Current Percentage) * 100<br><br>
+     * 공식: 총 용량 = (현재 충전량 / 현재 백분율) * 100<br>
+     */
+    private fun getEstimatedCapacityFromChargeCounter(): Double = safeCatch(BATTERY_ERROR_VALUE_DOUBLE) {
+        val chargeCounter = getChargeCounter() // Current charge in µAh
+        val capacity = getCapacity() // Current percentage (0-100)
+
+        return if (chargeCounter > 0 && capacity > 5 && capacity <= 100) { // Avoid division by very small numbers
+            // Calculate total capacity: (current_charge_µAh / current_percentage) * 100 / 1000 = mAh
+            // 총 용량 계산: (현재_충전량_µAh / 현재_백분율) * 100 / 1000 = mAh
+            val estimatedTotalCapacity = (chargeCounter.toDouble() / capacity.toDouble()) * 100.0 / 1000.0
+
+            // Sanity check: reasonable mobile device battery capacity range
+            // 정상성 검사: 합리적인 모바일 기기 배터리 용량 범위
+            if (estimatedTotalCapacity in 1000.0..10000.0) {
+                estimatedTotalCapacity
+            } else {
+                Logx.w("Estimated capacity out of range: $estimatedTotalCapacity mAh")
+                BATTERY_ERROR_VALUE_DOUBLE
+            }
+        } else {
+            Logx.w("Invalid values for estimation - chargeCounter: $chargeCounter µAh, capacity: $capacity%")
+            BATTERY_ERROR_VALUE_DOUBLE
+        }
+    }
+}

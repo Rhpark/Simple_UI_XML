@@ -14,3 +14,8 @@ firebase-debug.*.log
 # Environment files (보안)
 .env
 .env.local
+firebase.json
+package.json
+package-lock.json
+tsconfig.json
+.eslintrc.js

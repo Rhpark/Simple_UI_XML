@@ -5,19 +5,16 @@ object BatteryStateVo {
      * Default update cycle time in milliseconds.<br><br>
      * 기본 업데이트 주기 시간 (밀리초)입니다.<br>
      */
-    public const val DEFAULT_UPDATE_CYCLE_TIME_MS = 1000L
-
-    /**
-     * Custom battery update action for internal broadcasts.<br><br>
-     * 내부 브로드캐스트용 사용자 정의 배터리 업데이트 액션입니다.<br>
-     */
-    public const val BATTERY_UPDATE_ACTION = "RHPARK_BATTERY_STATE_UPDATE"
+    public const val DEFAULT_UPDATE_CYCLE_TIME = 1000L
 
     /**
      * Error value used when battery information cannot be retrieved.<br><br>
      * 배터리 정보를 가져올 수 없을 때 사용하는 오류 값입니다.<br>
      */
     public const val BATTERY_ERROR_VALUE: Int = Integer.MIN_VALUE
+    public const val BATTERY_ERROR_VALUE_LONG: Long = Long.MIN_VALUE
+    public const val BATTERY_ERROR_VALUE_DOUBLE: Double = Integer.MIN_VALUE.toDouble()
+    public const val BATTERY_ERROR_VALUE_BOOLEAN: Boolean = false
 
     // Charge plug type strings / 충전 플러그 유형 문자열
     public const val STR_CHARGE_PLUG_USB: String = "USB"

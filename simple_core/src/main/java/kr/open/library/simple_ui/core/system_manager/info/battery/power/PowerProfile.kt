@@ -60,7 +60,7 @@ public class PowerProfile(
          * Default battery capacity when PowerProfile is unavailable.<br><br>
          * PowerProfile을 사용할 수 없을 때의 기본 배터리 용량입니다.<br>
          */
-        private const val DEFAULT_BATTERY_CAPACITY = 3000.0
+        private const val DEFAULT_BATTERY_CAPACITY = 0.0
     }
 
     /**
