@@ -365,6 +365,7 @@ public open class SimpleNotificationController(
      * @deprecated Use showNotification() with style parameter instead.<br><br>
      *             style 파라미터와 함께 showNotification()을 사용하세요.
      */
+    @RequiresPermission(POST_NOTIFICATIONS)
     @Deprecated(
         "Use showNotification() with style parameter instead",
         ReplaceWith("showNotification(notificationOption.copy(style = NotificationStyle.BIG_PICTURE))"),
@@ -405,6 +406,7 @@ public open class SimpleNotificationController(
         "Use showNotification() with style parameter instead",
         ReplaceWith("showNotification(notificationOption.copy(style = NotificationStyle.BIG_TEXT))"),
     )
+    @RequiresPermission(POST_NOTIFICATIONS)
     public fun showNotificationBigText(notificationOption: SimpleNotificationOptionVo): Boolean =
         showNotification(notificationOption.copy(style = NotificationStyle.BIG_TEXT))
 
