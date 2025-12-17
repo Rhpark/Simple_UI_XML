@@ -3,7 +3,7 @@
 > 
 > **종합 Android XML 개발 생산성 라이브러리**
 
-**Version**: 0.3.41<br/>
+**Version**: 0.3.42<br/>
 **Date**: 2025-01-04<br/>
 **Status**: Active Development<br/>
 **Target Audience**: Android XML Developers, Contributors, Portfolio Reviewers, Project Stakeholders<br/>
