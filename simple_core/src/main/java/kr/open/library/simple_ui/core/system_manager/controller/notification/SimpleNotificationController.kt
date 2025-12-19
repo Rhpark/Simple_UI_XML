@@ -179,21 +179,20 @@ public open class SimpleNotificationController(
      *         알림 표시 성공 시 `true`, 그렇지 않으면 `false`.<br>
      */
     @RequiresPermission(POST_NOTIFICATIONS)
-    public fun showNotification(notificationOption: SimpleNotificationOptionVo): Boolean =
-        tryCatchSystemManager(false) {
-            val builder = when (notificationOption.style) {
-                NotificationStyle.DEFAULT -> getBuilder(notificationOption)
-                NotificationStyle.BIG_PICTURE -> getBigPictureBuilder(notificationOption)
-                NotificationStyle.BIG_TEXT -> getBigTextBuilder(notificationOption)
-                NotificationStyle.PROGRESS -> {
-                    // Progress 스타일은 SimpleProgressNotificationOption 사용 권장
-                    Logx.w("Progress style should use SimpleProgressNotificationOption instead")
-                    getBuilder(notificationOption)
-                }
+    public fun showNotification(notificationOption: SimpleNotificationOptionVo): Boolean = tryCatchSystemManager(false) {
+        val builder = when (notificationOption.style) {
+            NotificationStyle.DEFAULT -> getBuilder(notificationOption)
+            NotificationStyle.BIG_PICTURE -> getBigPictureBuilder(notificationOption)
+            NotificationStyle.BIG_TEXT -> getBigTextBuilder(notificationOption)
+            NotificationStyle.PROGRESS -> {
+                // Progress 스타일은 SimpleProgressNotificationOption 사용 권장
+                Logx.w("Progress style should use SimpleProgressNotificationOption instead")
+                getBuilder(notificationOption)
             }
-            showNotification(notificationOption.notificationId, builder)
-            return true
         }
+        showNotification(notificationOption.notificationId, builder)
+        return true
+    }
 
     /**
      * Creates a notification builder with standard configuration.<br><br>
@@ -213,9 +212,7 @@ public open class SimpleNotificationController(
             smallIcon?.let { setSmallIcon(it) }
             largeIcon?.let { setLargeIcon(it) }
             setOngoing(onGoing)
-            clickIntent?.let {
-                setContentIntent(getPendingIntentType(SimplePendingIntentOptionVo(notificationId, it)))
-            }
+            clickIntent?.let { setContentIntent(getPendingIntentType(SimplePendingIntentOptionVo(notificationId, it))) }
             actions?.forEach { addAction(it) }
         }
         builder
@@ -239,9 +236,7 @@ public open class SimpleNotificationController(
                 setAutoCancel(isAutoCancel)
                 smallIcon?.let { setSmallIcon(it) }
                 setOngoing(onGoing)
-                clickIntent?.let {
-                    setContentIntent(getPendingIntentType(SimplePendingIntentOptionVo(notificationId, it)))
-                }
+                clickIntent?.let { setContentIntent(getPendingIntentType(SimplePendingIntentOptionVo(notificationId, it))) }
                 actions?.forEach { addAction(it) }
                 setPriority(PRIORITY_LOW)
                 setProgress(100, progressPercent, false)
@@ -539,9 +534,10 @@ public open class SimpleNotificationController(
      * 기본 채널이 존재하는지 확인하고 필요한 경우 생성합니다.<br>
      */
     private fun ensureDefaultChannel() {
-        if (currentChannel == null) {
-            getOrCreateDefaultChannel()
+        if (currentChannel != null) {
+            return
         }
+        getOrCreateDefaultChannel()
     }
 
     /**
