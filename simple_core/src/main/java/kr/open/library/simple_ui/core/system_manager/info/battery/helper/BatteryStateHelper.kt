@@ -1,4 +1,4 @@
-package kr.open.library.simple_ui.core.system_manager.info.battery
+package kr.open.library.simple_ui.core.system_manager.info.battery.helper
 
 import android.content.Context
 import android.content.Intent
@@ -6,16 +6,27 @@ import android.content.IntentFilter
 import android.os.BatteryManager
 import android.os.BatteryManager.EXTRA_TEMPERATURE
 import android.os.BatteryManager.EXTRA_VOLTAGE
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.launch
 import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
 import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.core.system_manager.extensions.getBatteryManager
+import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateEvent
 import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateVo.BATTERY_ERROR_VALUE
 import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateVo.BATTERY_ERROR_VALUE_BOOLEAN
 import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateVo.BATTERY_ERROR_VALUE_DOUBLE
 import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateVo.BATTERY_ERROR_VALUE_LONG
-import kr.open.library.simple_ui.core.system_manager.info.battery.power.PowerProfile
+import kr.open.library.simple_ui.core.system_manager.info.battery.helper.power.PowerProfile
 
-internal class BatteryState(
+/**
+ * Internal helper that queries battery properties from the system services.<br><br>
+ * 시스템 서비스에서 배터리 속성을 조회하는 내부 헬퍼입니다.<br>
+ */
+internal class BatteryStateHelper(
     private val context: Context,
     /**
      * Lazy BatteryManager instance used to query battery properties.<br><br>
@@ -29,13 +40,106 @@ internal class BatteryState(
     private val powerProfile: PowerProfile = PowerProfile(context)
 ) {
     /**
+     * SharedFlow that stores battery events with buffering.<br>
+     * Buffer size: 1 (replay) + 16 (extra) = 17 total.<br><br>
+     * 버퍼링을 통해 배터리 이벤트를 보관하는 SharedFlow입니다.<br>
+     * 버퍼 크기: 1 (replay) + 16 (추가) = 총 17개.<br>
+     */
+    private val msfUpdate: MutableSharedFlow<BatteryStateEvent> = MutableSharedFlow(
+        replay = 1,
+        extraBufferCapacity = 16,
+        onBufferOverflow = kotlinx.coroutines.channels.BufferOverflow.DROP_OLDEST
+    )
+
+    public fun getSfUpdate(): SharedFlow<BatteryStateEvent> = msfUpdate.asSharedFlow()
+
+    /**
+     * Cached battery metrics using MutableStateFlow for reactive flows.<br><br>
+     * 반응형 플로우용 MutableStateFlow로 관리되는 배터리 메트릭 캐시입니다.<br>
+     */
+    private val msfCapacity = MutableStateFlow(BATTERY_ERROR_VALUE)
+    private val msfCurrentAmpere = MutableStateFlow(BATTERY_ERROR_VALUE)
+    private val msfCurrentAverageAmpere = MutableStateFlow(BATTERY_ERROR_VALUE)
+    private val msfChargeStatus = MutableStateFlow(BATTERY_ERROR_VALUE)
+    private val msfChargeCounter = MutableStateFlow(BATTERY_ERROR_VALUE)
+    private val msfChargePlug = MutableStateFlow(BATTERY_ERROR_VALUE)
+    private val msfEnergyCounter = MutableStateFlow(BATTERY_ERROR_VALUE_LONG)
+    private val msfHealth = MutableStateFlow(BATTERY_ERROR_VALUE)
+    private val msfPresent = MutableStateFlow(BATTERY_ERROR_VALUE_BOOLEAN)
+    private val msfTemperature = MutableStateFlow(BATTERY_ERROR_VALUE_DOUBLE)
+    private val msfVoltage = MutableStateFlow(BATTERY_ERROR_VALUE_DOUBLE)
+
+    /**
+     * Safely sends a battery state event to the flow.<br><br>
+     * 배터리 상태 이벤트를 플로우로 안전하게 전송합니다.<br>
+     *
+     * @param event The event to send.<br><br>
+     *              전송할 이벤트.<br>
+     */
+    private suspend fun sendFlow(event: BatteryStateEvent) {
+        msfUpdate.emit(event)
+    }
+
+    /**
+     * Sets up reactive flows for all battery data updates.<br>
+     * This method should be called after setting the coroutineScope.<br><br>
+     * 모든 배터리 데이터 업데이트를 위한 반응형 플로우를 설정합니다.<br>
+     * 이 메서드는 coroutineScope를 설정한 후에 호출해야 합니다.<br>
+     */
+    public fun setupDataFlows(coroutineScope: CoroutineScope) {
+        coroutineScope.let { scope ->
+            scope.launch { msfCapacity.collect { sendFlow(BatteryStateEvent.OnCapacity(it)) } }
+            scope.launch { msfCurrentAmpere.collect { sendFlow(BatteryStateEvent.OnCurrentAmpere(it)) } }
+            scope.launch { msfCurrentAverageAmpere.collect { sendFlow(BatteryStateEvent.OnCurrentAverageAmpere(it)) } }
+            scope.launch { msfChargeStatus.collect { sendFlow(BatteryStateEvent.OnChargeStatus(it)) } }
+            scope.launch { msfChargeCounter.collect { sendFlow(BatteryStateEvent.OnChargeCounter(it)) } }
+            scope.launch { msfChargePlug.collect { sendFlow(BatteryStateEvent.OnChargePlug(it)) } }
+            scope.launch { msfEnergyCounter.collect { sendFlow(BatteryStateEvent.OnEnergyCounter(it)) } }
+            scope.launch { msfHealth.collect { sendFlow(BatteryStateEvent.OnHealth(it)) } }
+            scope.launch { msfPresent.collect { sendFlow(BatteryStateEvent.OnPresent(it)) } }
+            scope.launch { msfTemperature.collect { sendFlow(BatteryStateEvent.OnTemperature(it)) } }
+            scope.launch { msfVoltage.collect { sendFlow(BatteryStateEvent.OnVoltage(it)) } }
+        }
+    }
+
+    /**
+     * Refreshes cached battery metrics and emits events.<br><br>
+     * 캐시된 배터리 지표를 갱신하고 이벤트를 방출합니다.<br>
+     */
+    public fun updateBatteryInfo(
+        capacity: Int,
+        currentAmpere: Int,
+        chargeCounter: Int,
+        chargePlug: Int,
+        chargeStatus: Int,
+        currentAverageAmpere: Int,
+        energyCounter: Long,
+        health: Int,
+        present: Boolean,
+        temperature: Double,
+        voltage: Double
+    ) {
+        msfCapacity.value = capacity
+        msfCurrentAmpere.value = currentAmpere
+        msfChargeCounter.value = chargeCounter
+        msfChargePlug.value = chargePlug
+        msfChargeStatus.value = chargeStatus
+        msfCurrentAverageAmpere.value = currentAverageAmpere
+        msfEnergyCounter.value = energyCounter
+        msfHealth.value = health
+        msfPresent.value = present
+        msfTemperature.value = temperature
+        msfVoltage.value = voltage
+    }
+
+    /**
      * Gets the instantaneous battery current in microamperes.<br>
      * Positive values indicate charging, negative values indicate discharging.<br><br>
      * 순간 배터리 전류를 마이크로암페어 단위로 반환합니다.<br>
      * 양수 값은 충전 소스에서 배터리로 들어오는 순 전류, 음수 값은 배터리에서 방전되는 순 전류입니다.<br>
      *
      * @return The instantaneous battery current in microamperes.<br><br>
-     *         순간 배터리 전류 (마이크로암페어).
+     *         순간 배터리 전류 (마이크로암페어).<br>
      */
     public fun getCurrentAmpere(): Int = safeCatch(BATTERY_ERROR_VALUE) {
         bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW)
@@ -51,12 +155,25 @@ internal class BatteryState(
      *
      *
      * @return The average battery current in microamperes (µA).<br><br>
-     *         평균 배터리 전류 (마이크로암페어, µA).
+     *         평균 배터리 전류 (마이크로암페어, µA).<br>
      */
     public fun getCurrentAverageAmpere(): Int = safeCatch(BATTERY_ERROR_VALUE) {
         bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_AVERAGE)
     }
 
+    /**
+     * Reads a battery extra value from the given intent, falling back to a fresh system query when needed.<br><br>
+     * 배터리 인텐트에서 값을 읽고, 없을 경우 시스템 쿼리로 폴백합니다.<br>
+     *
+     * @param batteryStatus Current battery status intent, if available.<br><br>
+     *                      현재 배터리 상태 인텐트(가능한 경우).<br>
+     * @param type Intent extra key to read (e.g., BatteryManager.EXTRA_STATUS).<br><br>
+     *             읽을 인텐트 extra 키 (예: BatteryManager.EXTRA_STATUS).<br>
+     * @param defaultValue Default value returned when the extra is unavailable.<br><br>
+     *                     값이 없을 때 반환할 기본값.<br>
+     * @return The resolved value from intent or fallback query.<br><br>
+     *         인텐트 또는 폴백 조회로 얻은 값.<br>
+     */
     private fun getStatus(batteryStatus: Intent?, type: String, defaultValue: Int = BATTERY_ERROR_VALUE): Int = safeCatch(defaultValue) {
         // Try to get charge status from current batteryStatus first
         // 먼저 현재 batteryStatus에서 충전 상태를 가져오기 시도
@@ -81,7 +198,7 @@ internal class BatteryState(
      * 배터리 충전 상태를 반환합니다.<br>
      *
      * @return The battery charge status.<br><br>
-     *         배터리 충전 상태.
+     *         배터리 충전 상태.<br>
      * @see BatteryManager.BATTERY_STATUS_CHARGING
      * @see BatteryManager.BATTERY_STATUS_FULL
      * @see BatteryManager.BATTERY_STATUS_DISCHARGING
@@ -114,7 +231,7 @@ internal class BatteryState(
      * 남은 배터리 용량을 백분율(0-100)로 가져옵니다.<br>
      *
      * @return The remaining battery capacity as a percentage.<br><br>
-     *         남은 배터리 용량 (백분율).
+     *         남은 배터리 용량 (백분율).<br>
      */
     public fun getCapacity(): Int = safeCatch(BATTERY_ERROR_VALUE) {
         getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
@@ -125,7 +242,7 @@ internal class BatteryState(
      * 배터리 용량을 마이크로암페어시 단위로 반환합니다.<br>
      *
      * @return The battery capacity in microampere-hours.<br><br>
-     *         배터리 용량 (마이크로암페어시).
+     *         배터리 용량 (마이크로암페어시).<br>
      */
     public fun getChargeCounter(): Int = safeCatch(BATTERY_ERROR_VALUE) {
         getIntProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER)
@@ -142,7 +259,7 @@ internal class BatteryState(
      * 오류 값은 Long.MIN_VALUE일 수 있습니다.<br>
      *
      * @return The battery remaining energy in nanowatt-hours.<br><br>
-     *         배터리 잔여 에너지 (나노와트시).
+     *         배터리 잔여 에너지 (나노와트시).<br>
      */
     public fun getEnergyCounter(): Long = safeCatch(BATTERY_ERROR_VALUE_LONG) {
         getLongProperty(BatteryManager.BATTERY_PROPERTY_ENERGY_COUNTER)
@@ -169,8 +286,8 @@ internal class BatteryState(
      * 배터리 온도를 섭씨로 가져옵니다.<br>
      * Android는 온도를 섭씨 1/10도 단위로 반환하므로 10으로 나눕니다.<br>
      *
-     * @return Battery temperature in Celsius (°C), or @ERROR_VALUE_FLOAT if unavailable.<br><br>
-     *         배터리 온도 (섭씨), 사용할 수 없는 경우 @ERROR_VALUE_FLOAT.
+     * @return Battery temperature in Celsius (°C), or [BATTERY_ERROR_VALUE_DOUBLE] if unavailable.<br><br>
+     *         배터리 온도 (섭씨), 사용할 수 없는 경우 [BATTERY_ERROR_VALUE_DOUBLE].<br>
      *
      * Example: Android returns 350 → 35.0°C<br><br>
      * 예시: Android가 350을 반환 → 35.0°C<br>
@@ -277,7 +394,7 @@ internal class BatteryState(
      * Android 버전 간 호환성을 위해 여러 fallback 방법을 사용합니다.<br>
      *
      * @return The total battery capacity in mAh, or default value if unavailable.<br><br>
-     *         총 배터리 용량(mAh), 사용할 수 없는 경우 기본값.
+     *         총 배터리 용량(mAh), 사용할 수 없는 경우 기본값.<br>
      */
     public fun getTotalCapacity(): Double = safeCatch(BATTERY_ERROR_VALUE_DOUBLE) {
         // Primary method: Use PowerProfile

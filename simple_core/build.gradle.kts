@@ -148,7 +148,7 @@ kover {
                 classes("kr.open.library.simple_ui.core.extensions.display.DisplayUnitExtensions*")
 
                 classes("kr.open.library.simple_ui.core.system_manager.controller.alarm.receiver.BaseAlarmReceiver*")
-                classes("kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateInfo*")
+                // BatteryStateInfo tests completed - coverage enabled
                 classes("kr.open.library.simple_ui.core.system_manager.info.battery.power.PowerProfile*")
                 classes("kr.open.library.simple_ui.core.system_manager.info.location.LocationStateInfo*")
                 classes("kr.open.library.simple_ui.core.system_manager.info.network.sim.SimInfo*")

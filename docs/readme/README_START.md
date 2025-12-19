@@ -88,12 +88,12 @@ We built **Simple UI XML** to give you that time back.
 - **Safe coding**: Simplified exception handling with safeCatch
 - **Permission management**: Unified support through PermissionManager
 - **Advanced logging**: Logx with file storage, filtering, and custom formatting
-- **Local storage**: Manage preferences with BaseSharedPreference
+- **Local storage**: Delegate-based preferences with safe commits (BaseSharedPreference)
 > - **확장 함수**: Bundle, String, Date, Time, TryCatch 등 실용적인 Extensions
 > - **안전한 코딩**: safeCatch를 통한 예외 처리 간소화
 > - **권한 관리**: PermissionManager 통합 지원
 > - **고급 로깅**: Logx - 파일 저장, 필터링, 커스텀 포매팅 지원
-> - **로컬 저장**: BaseSharedPreference 관리
+> - **로컬 저장**: 위임자 기반 설정 관리 + 안전 커밋 (BaseSharedPreference)
   
 <br> </br>
 

@@ -127,15 +127,4 @@ public sealed class BatteryStateEvent {
     public data class OnPresent(
         val present: Boolean,
     ) : BatteryStateEvent()
-
-    /**
-     * Event for battery total capacity updates.<br><br>
-     * 배터리 총 용량 추정값 변경에 대한 이벤트입니다.<br>
-     *
-     * @param totalCapacity Total battery capacity in milliampere-hours (mAh).<br><br>
-     *                      배터리 총 용량(mAh)<br>
-     */
-    public data class OnTotalCapacity(
-        val totalCapacity: Double,
-    ) : BatteryStateEvent()
 }

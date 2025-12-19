@@ -1,4 +1,4 @@
-package kr.open.library.simple_ui.core.system_manager.info.battery.power
+package kr.open.library.simple_ui.core.system_manager.info.battery.helper.power
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -24,7 +24,8 @@ import java.lang.reflect.Method
  * 모든 기기나 향후 Android 버전에서 작동하지 않을 수 있습니다.<br>
  *
  * @param context The application context.<br><br>
- *                애플리케이션 컨텍스트.
+ *                애플리케이션 컨텍스트.<br>
+ *
  * @see PowerProfileVO for available power metrics
  */
 @SuppressLint("PrivateApi")
@@ -109,7 +110,8 @@ public class PowerProfile(
      * 지정된 전력 프로파일 유형에 대한 평균 전력 소비를 가져옵니다.<br>
      *
      * @param type The power profile type to retrieve from [PowerProfileVO].<br><br>
-     *             [PowerProfileVO]에서 가져올 전력 프로파일 유형.
+     *             [PowerProfileVO]에서 가져올 전력 프로파일 유형.<br>
+     *
      * @return The average power consumption, or null if an error occurred.<br><br>
      *         평균 전력 소비량, 오류 발생 시 null.<br>
      */
@@ -128,9 +130,11 @@ public class PowerProfile(
      * 여러 값을 가진 메트릭(예: CPU 클러스터)에 사용됩니다.<br>
      *
      * @param type The power profile type to retrieve from [PowerProfileVO].<br><br>
-     *             [PowerProfileVO]에서 가져올 전력 프로파일 유형.
+     *             [PowerProfileVO]에서 가져올 전력 프로파일 유형.<br>
+     *
      * @param index The index of the power profile value.<br><br>
-     *              전력 프로파일 값의 인덱스.
+     *              전력 프로파일 값의 인덱스.<br>
+     *
      * @return The average power consumption, or null if an error occurred.<br><br>
      *         평균 전력 소비량, 오류 발생 시 null.<br>
      */
@@ -179,7 +183,8 @@ public class PowerProfile(
      * 현재 충전량과 백분율로부터 총 용량을 계산합니다.<br>
      *
      * @param defaultValue Default value to return if estimation fails.<br><br>
-     *                     추정 실패 시 반환할 기본값.
+     *                     추정 실패 시 반환할 기본값.<br>
+     *
      * @return Estimated total battery capacity in mAh, or defaultValue if unavailable.<br><br>
      *         추정된 총 배터리 용량(mAh), 사용할 수 없는 경우 defaultValue.<br>
      */

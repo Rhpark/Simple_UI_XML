@@ -346,7 +346,6 @@ class ServiceManagerInfoActivity : BaseBindingActivity<ActivityServiceManagerInf
                                     is BatteryStateEvent.OnHealth -> addItem("Health = ${type.health}")
                                     is BatteryStateEvent.OnPresent -> addItem("Present = ${type.present}")
                                     is BatteryStateEvent.OnTemperature -> addItem("Temperature = ${type.temperature}")
-                                    is BatteryStateEvent.OnTotalCapacity -> addItem("TotalCapacity = ${type.totalCapacity} ")
                                     is BatteryStateEvent.OnVoltage -> addItem("Charge voltage = ${type.voltage} v")
                                     is BatteryStateEvent.OnCurrentAverageAmpere -> addItem("Current AverageAmpere = ${type.current} mA")
                                 }

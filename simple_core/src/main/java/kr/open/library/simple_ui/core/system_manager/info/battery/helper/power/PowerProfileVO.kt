@@ -1,4 +1,4 @@
-package kr.open.library.simple_ui.core.system_manager.info.battery.power
+package kr.open.library.simple_ui.core.system_manager.info.battery.helper.power
 
 /**
  * Enum class defining power profile metric types for device power consumption information.<br><br>

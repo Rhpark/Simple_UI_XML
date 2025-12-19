@@ -1,7 +1,3 @@
-/**
- * Structured SharedPreferences helpers that centralize read/write delegates and commit safety.<br><br>
- * 위임 프로퍼티와 안전한 커밋 로직으로 구성된 SharedPreferences 도우미 기반 클래스입니다.<br>
- */
 package kr.open.library.simple_ui.core.local.base
 
 import android.content.Context
@@ -20,6 +16,24 @@ import kotlin.reflect.KProperty
  * Base class that exposes delegate builders and thread-safe commit utilities for SharedPreferences.<br><br>
  * SharedPreferences 위임자 생성기와 스레드 안전한 커밋 도구를 제공하는 기반 클래스입니다.<br>
  *
+ * **Why this class exists / 이 클래스가 필요한 이유:**<br>
+ * - SharedPreferences access repeats read/write boilerplate and safety checks.<br>
+ * - Thread-safe commits and type-safe delegates reduce error-prone code.<br><br>
+ * - SharedPreferences 접근은 읽기/쓰기 보일러플레이트와 안전 처리 반복이 많습니다.<br>
+ * - 스레드 안전 커밋과 타입 안전 위임자가 오류를 줄입니다.<br>
+ *
+ * **Design decisions / 설계 결정 이유:**<br>
+ * - Delegates wrap common types and centralize default handling.<br>
+ * - Mutex-based commits ensure sequential writes across coroutines.<br><br>
+ * - 위임자를 통해 공통 타입 처리와 기본값 로직을 중앙화합니다.<br>
+ * - 뮤텍스를 사용해 코루틴 환경에서 순차 커밋을 보장합니다.<br>
+ *
+ * **Usage / 사용법:**<br>
+ * 1. Extend this class with a preference group key.<br>
+ * 2. Define properties using provided delegates (stringPref, intPref, ...).<br><br>
+ * 1. groupKey를 지정해 이 클래스를 상속합니다.<br>
+ * 2. 제공된 위임자(stringPref, intPref, ...)로 프로퍼티를 정의합니다.<br>
+ *
  * Example:<br><br>
  * 예시:<br>
  * ```
@@ -30,9 +44,9 @@ import kotlin.reflect.KProperty
  * ```
  *
  * @param context Android context used to obtain application-level SharedPreferences.<br><br>
- *        애플리케이션 범위 SharedPreferences를 얻기 위한 콘텍스트입니다.
+ *        애플리케이션 범위 SharedPreferences를 얻기 위한 콘텍스트입니다.<br>
  * @param groupKey Preference file name.<br><br>
- *        SharedPreferences 파일 이름입니다.
+ *        SharedPreferences 파일 이름입니다.<br>
  * @param sharedPrivateMode File mode, defaults to [Context.MODE_PRIVATE].<br><br>
  *        파일 모드이며 기본값은 [Context.MODE_PRIVATE]입니다.<br>
  */
@@ -56,9 +70,9 @@ public abstract class BaseSharedPreference(
      * [key]와 기본값을 바인딩한 Nullable `String` 위임자를 만듭니다.<br>
      *
      * @param key SharedPreferences entry key.<br><br>
-     *        SharedPreferences에 사용할 키입니다.
+     *        SharedPreferences에 사용할 키입니다.<br>
      * @param defaultValue Fallback string when the key has no value.<br><br>
-     *        값이 없을 때 사용할 기본 문자열입니다.
+     *        값이 없을 때 사용할 기본 문자열입니다.<br>
      * @return Read/write property delegate backed by SharedPreferences.<br><br>
      *         SharedPreferences를 기반으로 하는 읽기·쓰기 위임자를 반환합니다.<br>
      */
@@ -73,9 +87,9 @@ public abstract class BaseSharedPreference(
      * [key]와 [defaultValue]를 바인딩한 `Int` 위임자를 만듭니다.<br>
      *
      * @param key SharedPreferences entry key.<br><br>
-     *        SharedPreferences에 사용할 키입니다.
+     *        SharedPreferences에 사용할 키입니다.<br>
      * @param defaultValue Fallback integer when the key has no value.<br><br>
-     *        값이 없을 때 사용할 기본 정수입니다.
+     *        값이 없을 때 사용할 기본 정수입니다.<br>
      * @return Read/write property delegate backed by SharedPreferences.<br><br>
      *         SharedPreferences를 기반으로 하는 읽기·쓰기 위임자를 반환합니다.<br>
      */
@@ -90,9 +104,9 @@ public abstract class BaseSharedPreference(
      * [key]와 [defaultValue]를 바인딩한 `Boolean` 위임자를 만듭니다.<br>
      *
      * @param key SharedPreferences entry key.<br><br>
-     *        SharedPreferences에 사용할 키입니다.
+     *        SharedPreferences에 사용할 키입니다.<br>
      * @param defaultValue Fallback boolean when the key has no value.<br><br>
-     *        값이 없을 때 사용할 기본 불리언입니다.
+     *        값이 없을 때 사용할 기본 불리언입니다.<br>
      * @return Read/write property delegate backed by SharedPreferences.<br><br>
      *         SharedPreferences를 기반으로 하는 읽기·쓰기 위임자를 반환합니다.<br>
      */
@@ -107,9 +121,9 @@ public abstract class BaseSharedPreference(
      * [key]와 [defaultValue]를 바인딩한 `Long` 위임자를 만듭니다.<br>
      *
      * @param key SharedPreferences entry key.<br><br>
-     *        SharedPreferences에 사용할 키입니다.
+     *        SharedPreferences에 사용할 키입니다.<br>
      * @param defaultValue Fallback long when the key has no value.<br><br>
-     *        값이 없을 때 사용할 기본 Long 값입니다.
+     *        값이 없을 때 사용할 기본 Long 값입니다.<br>
      * @return Read/write property delegate backed by SharedPreferences.<br><br>
      *         SharedPreferences를 기반으로 하는 읽기·쓰기 위임자를 반환합니다.<br>
      */
@@ -124,9 +138,9 @@ public abstract class BaseSharedPreference(
      * [key]와 [defaultValue]를 바인딩한 `Float` 위임자를 만듭니다.<br>
      *
      * @param key SharedPreferences entry key.<br><br>
-     *        SharedPreferences에 사용할 키입니다.
+     *        SharedPreferences에 사용할 키입니다.<br>
      * @param defaultValue Fallback float when the key has no value.<br><br>
-     *        값이 없을 때 사용할 기본 Float 값입니다.
+     *        값이 없을 때 사용할 기본 Float 값입니다.<br>
      * @return Read/write property delegate backed by SharedPreferences.<br><br>
      *         SharedPreferences를 기반으로 하는 읽기·쓰기 위임자를 반환합니다.<br>
      */
@@ -141,9 +155,9 @@ public abstract class BaseSharedPreference(
      * [key]와 [defaultValue]를 바인딩한 `Double` 위임자를 만들고 내부적으로 `Long` 비트로 저장합니다.<br>
      *
      * @param key SharedPreferences entry key.<br><br>
-     *        SharedPreferences에 사용할 키입니다.
+     *        SharedPreferences에 사용할 키입니다.<br>
      * @param defaultValue Fallback double when the key has no value.<br><br>
-     *        값이 없을 때 사용할 기본 Double 값입니다.
+     *        값이 없을 때 사용할 기본 Double 값입니다.<br>
      * @return Read/write property delegate backed by SharedPreferences.<br><br>
      *         SharedPreferences를 기반으로 하는 읽기·쓰기 위임자를 반환합니다.<br>
      */
@@ -158,9 +172,9 @@ public abstract class BaseSharedPreference(
      * SharedPreferences에서 Nullable `String` 값을 읽어옵니다.<br>
      *
      * @param key SharedPreferences entry key.<br><br>
-     *        읽어올 키입니다.
+     *        읽어올 키입니다.<br>
      * @param defaultValue Fallback string when the key has no value.<br><br>
-     *        값이 없을 때 사용할 기본 문자열입니다.
+     *        값이 없을 때 사용할 기본 문자열입니다.<br>
      * @return The stored string or [defaultValue].<br><br>
      *         저장된 문자열 또는 [defaultValue].<br>
      */
@@ -171,9 +185,9 @@ public abstract class BaseSharedPreference(
      * SharedPreferences에서 `Int` 값을 읽어옵니다.<br>
      *
      * @param key SharedPreferences entry key.<br><br>
-     *        읽어올 키입니다.
+     *        읽어올 키입니다.<br>
      * @param defaultValue Fallback integer when the key has no value.<br><br>
-     *        값이 없을 때 사용할 기본 정수입니다.
+     *        값이 없을 때 사용할 기본 정수입니다.<br>
      * @return The stored integer or [defaultValue].<br><br>
      *         저장된 정수 또는 [defaultValue].<br>
      */
@@ -184,9 +198,9 @@ public abstract class BaseSharedPreference(
      * SharedPreferences에서 `Float` 값을 읽어옵니다.<br>
      *
      * @param key SharedPreferences entry key.<br><br>
-     *        읽어올 키입니다.
+     *        읽어올 키입니다.<br>
      * @param defaultValue Fallback float when the key has no value.<br><br>
-     *        값이 없을 때 사용할 기본 Float 값입니다.
+     *        값이 없을 때 사용할 기본 Float 값입니다.<br>
      * @return The stored float or [defaultValue].<br><br>
      *         저장된 Float 값 또는 [defaultValue].<br>
      */
@@ -197,9 +211,9 @@ public abstract class BaseSharedPreference(
      * SharedPreferences에서 `Boolean` 값을 읽어옵니다.<br>
      *
      * @param key SharedPreferences entry key.<br><br>
-     *        읽어올 키입니다.
+     *        읽어올 키입니다.<br>
      * @param defaultValue Fallback boolean when the key has no value.<br><br>
-     *        값이 없을 때 사용할 기본 불리언입니다.
+     *        값이 없을 때 사용할 기본 불리언입니다.<br>
      * @return The stored boolean or [defaultValue].<br><br>
      *         저장된 불리언 또는 [defaultValue].<br>
      */
@@ -210,9 +224,9 @@ public abstract class BaseSharedPreference(
      * SharedPreferences에서 `Long` 값을 읽어옵니다.<br>
      *
      * @param key SharedPreferences entry key.<br><br>
-     *        읽어올 키입니다.
+     *        읽어올 키입니다.<br>
      * @param defaultValue Fallback long when the key has no value.<br><br>
-     *        값이 없을 때 사용할 기본 Long 값입니다.
+     *        값이 없을 때 사용할 기본 Long 값입니다.<br>
      * @return The stored long or [defaultValue].<br><br>
      *         저장된 Long 값 또는 [defaultValue].<br>
      */
@@ -223,9 +237,9 @@ public abstract class BaseSharedPreference(
      * SharedPreferences에서 `Set<String>` 값을 읽어옵니다.<br>
      *
      * @param key SharedPreferences entry key.<br><br>
-     *        읽어올 키입니다.
+     *        읽어올 키입니다.<br>
      * @param defaultValue Fallback set when the key has no value.<br><br>
-     *        값이 없을 때 사용할 기본 Set입니다.
+     *        값이 없을 때 사용할 기본 Set입니다.<br>
      * @return The stored set or [defaultValue].<br><br>
      *         저장된 Set 또는 [defaultValue].<br>
      */
@@ -233,12 +247,12 @@ public abstract class BaseSharedPreference(
 
     /**
      * Reads a `Double` by mapping to raw long bits stored with a suffix.<br><br>
-     * 접미사를 덫붙여 저장된 `Long` 비트를 다시 `Double`로 변환해 읽어옵니다.<br>
+     * 접미사를 덧붙여 저장된 `Long` 비트를 다시 `Double`로 변환해 읽어옵니다.<br>
      *
      * @param key SharedPreferences entry key.<br><br>
-     *        읽어올 키입니다.
+     *        읽어올 키입니다.<br>
      * @param defaultValue Fallback double when the key has no value.<br><br>
-     *        값이 없을 때 사용할 기본 Double 값입니다.
+     *        값이 없을 때 사용할 기본 Double 값입니다.<br>
      * @return The stored double or [defaultValue].<br><br>
      *         저장된 Double 값 또는 [defaultValue].<br>
      */
@@ -250,9 +264,9 @@ public abstract class BaseSharedPreference(
      * 프리미티브 및 `Set<String>` 타입을 처리하면서 [value]를 에디터에 기록합니다.<br>
      *
      * @param key Preference entry key.<br><br>
-     *        SharedPreferences 키입니다.
+     *        SharedPreferences 키입니다.<br>
      * @param value Value to store; unsupported types remove the key.<br><br>
-     *        저장할 값이며 지원되지 않는 타입이면 키를 삭제합니다.
+     *        저장할 값이며 지원되지 않는 타입이면 키를 삭제합니다.<br>
      * @return Same [SharedPreferences.Editor] for chaining.<br><br>
      *         체이닝을 위한 동일한 [SharedPreferences.Editor]를 반환합니다.<br>
      */
@@ -300,9 +314,9 @@ public abstract class BaseSharedPreference(
      * [key]/[value] 쌍을 비동기적으로 적용합니다.<br>
      *
      * @param key SharedPreferences entry key.<br><br>
-     *        저장할 키입니다.
+     *        저장할 키입니다.<br>
      * @param value Value to store.<br><br>
-     *        저장할 값입니다.
+     *        저장할 값입니다.<br>
      */
     protected fun saveApply(key: String, value: Any?) = sp.edit().putValue(key, value).apply()
 
@@ -336,7 +350,7 @@ public abstract class BaseSharedPreference(
      * 특정 키를 `apply()` 방식으로 삭제합니다.<br>
      *
      * @param key SharedPreferences entry key to remove.<br><br>
-     *        삭제할 키입니다.
+     *        삭제할 키입니다.<br>
      */
     private fun removeAt(key: String) = sp.edit().remove(key).apply()
 
@@ -345,7 +359,7 @@ public abstract class BaseSharedPreference(
      * [removeAt]을 통해 `Int` 항목을 삭제합니다.<br>
      *
      * @param key SharedPreferences entry key to remove.<br><br>
-     *        삭제할 키입니다.
+     *        삭제할 키입니다.<br>
      */
     protected fun removeAtInt(key: String) = removeAt(key)
 
@@ -354,7 +368,7 @@ public abstract class BaseSharedPreference(
      * [removeAt]을 통해 `String` 항목을 삭제합니다.<br>
      *
      * @param key SharedPreferences entry key to remove.<br><br>
-     *        삭제할 키입니다.
+     *        삭제할 키입니다.<br>
      */
     protected fun removeAtString(key: String) = removeAt(key)
 
@@ -363,7 +377,7 @@ public abstract class BaseSharedPreference(
      * [removeAt]을 통해 `Float` 항목을 삭제합니다.<br>
      *
      * @param key SharedPreferences entry key to remove.<br><br>
-     *        삭제할 키입니다.
+     *        삭제할 키입니다.<br>
      */
     protected fun removeAtFloat(key: String) = removeAt(key)
 
@@ -372,7 +386,7 @@ public abstract class BaseSharedPreference(
      * [removeAt]을 통해 `Long` 항목을 삭제합니다.<br>
      *
      * @param key SharedPreferences entry key to remove.<br><br>
-     *        삭제할 키입니다.
+     *        삭제할 키입니다.<br>
      */
     protected fun removeAtLong(key: String) = removeAt(key)
 
@@ -381,7 +395,7 @@ public abstract class BaseSharedPreference(
      * [removeAt]을 통해 `Boolean` 항목을 삭제합니다.<br>
      *
      * @param key SharedPreferences entry key to remove.<br><br>
-     *        삭제할 키입니다.
+     *        삭제할 키입니다.<br>
      */
     protected fun removeAtBoolean(key: String) = removeAt(key)
 
@@ -390,7 +404,7 @@ public abstract class BaseSharedPreference(
      * 접미사가 붙은 키를 삭제해 `Double` 항목을 제거합니다.<br>
      *
      * @param key SharedPreferences entry key to remove.<br><br>
-     *        삭제할 키입니다.
+     *        삭제할 키입니다.<br>
      */
     protected fun removeAtDouble(key: String) = removeAt(key + DOUBLE_TYPE)
 
@@ -408,7 +422,7 @@ public abstract class BaseSharedPreference(
      * 특정 키를 동기 커밋 방식으로 삭제합니다.<br>
      *
      * @param key SharedPreferences entry key to remove.<br><br>
-     *        삭제할 키입니다.
+     *        삭제할 키입니다.<br>
      * @return `true` if commit succeeded, `false` otherwise.<br><br>
      *         커밋이 성공하면 `true`, 실패하면 `false`.<br>
      */
@@ -419,7 +433,7 @@ public abstract class BaseSharedPreference(
      * `Int` 항목을 동기 커밋 방식으로 삭제합니다.<br>
      *
      * @param key SharedPreferences entry key to remove.<br><br>
-     *        삭제할 키입니다.
+     *        삭제할 키입니다.<br>
      * @return `true` if commit succeeded, `false` otherwise.<br><br>
      *         커밋이 성공하면 `true`, 실패하면 `false`.<br>
      */
@@ -430,7 +444,7 @@ public abstract class BaseSharedPreference(
      * `Float` 항목을 동기 커밋 방식으로 삭제합니다.<br>
      *
      * @param key SharedPreferences entry key to remove.<br><br>
-     *        삭제할 키입니다.
+     *        삭제할 키입니다.<br>
      * @return `true` if commit succeeded, `false` otherwise.<br><br>
      *         커밋이 성공하면 `true`, 실패하면 `false`.<br>
      */
@@ -441,7 +455,7 @@ public abstract class BaseSharedPreference(
      * `Long` 항목을 동기 커밋 방식으로 삭제합니다.<br>
      *
      * @param key SharedPreferences entry key to remove.<br><br>
-     *        삭제할 키입니다.
+     *        삭제할 키입니다.<br>
      * @return `true` if commit succeeded, `false` otherwise.<br><br>
      *         커밋이 성공하면 `true`, 실패하면 `false`.<br>
      */
@@ -452,7 +466,7 @@ public abstract class BaseSharedPreference(
      * `String` 항목을 동기 커밋 방식으로 삭제합니다.<br>
      *
      * @param key SharedPreferences entry key to remove.<br><br>
-     *        삭제할 키입니다.
+     *        삭제할 키입니다.<br>
      * @return `true` if commit succeeded, `false` otherwise.<br><br>
      *         커밋이 성공하면 `true`, 실패하면 `false`.<br>
      */
@@ -463,7 +477,7 @@ public abstract class BaseSharedPreference(
      * 접미사 키를 사용하는 `Double` 항목을 동기 커밋 방식으로 삭제합니다.<br>
      *
      * @param key SharedPreferences entry key to remove.<br><br>
-     *        삭제할 키입니다.
+     *        삭제할 키입니다.<br>
      * @return `true` if commit succeeded, `false` otherwise.<br><br>
      *         커밋이 성공하면 `true`, 실패하면 `false`.<br>
      */

@@ -1,4 +1,4 @@
-# System Service Manager Info vs Plain Android - Complete Comparison Guide
+﻿# System Service Manager Info vs Plain Android - Complete Comparison Guide
 > **System Service Manager Info vs 순수 Android - 완벽 비교 가이드**
 
 ## 📦 Module Information (모듈 정보)
@@ -17,25 +17,25 @@
 
 | Category                          |                           Plain Android                            |                  Simple UI Info                  |            Impact             |
 |:----------------------------------|:------------------------------------------------------------------:|:------------------------------------------------:|:-----------------------------:|
-| **Battery Info**                  |      `BroadcastReceiver` + `IntentFilter` + Manual management      |      `BatteryStateInfo().registerStart()`        |   **StateFlow automation**    |
+| **Battery Info**                  |      `BroadcastReceiver` + `IntentFilter` + Manual management      |      `BatteryStateInfo().registerStart()`        |   **SharedFlow automation**   |
 | **Location Info**                 |     `LocationManager` + Permissions + Callback implementation      |      `LocationStateInfo().registerStart()`       | **Auto Provider management**  |
 | **Display Info**                  |           SDK branching + WindowManager + DisplayMetrics           |       `DisplayInfo().getFullScreenSize()`        |     **Auto SDK handling**     |
 | **SIM Card Info**                 |        `SubscriptionManager` + Manual multi-SIM management         |         `SimInfo().getActiveSimCount()`          |   **Multi-SIM automation**    |
 | **Telephony Info**                |        `TelephonyManager` + Manual Callback implementation         |       `TelephonyInfo().registerCallback()`       |  **Auto API compatibility**   |
 | **Network Connectivity**          |          `ConnectivityManager` + Callback implementation           | `NetworkConnectivityInfo().isNetworkConnected()` | **Auto Transport detection**  |
 
-**Key takeaway:** System Service Manager Info simplifies complex system information collection with **StateFlow-based** architecture.
-> **핵심:** System Service Manager Info는 복잡한 시스템 정보 수집을 **StateFlow 기반**으로 단순화합니다.
+**Key takeaway:** System Service Manager Info simplifies complex system information collection with **StateFlow/SharedFlow-based** architecture.
+> **핵심:** System Service Manager Info는 복잡한 시스템 정보 수집을 **StateFlow/SharedFlow 기반**으로 단순화합니다.
 
 <br></br>
 
 ## 💡 Why It Matters (왜 중요한가)
 
-### StateFlow-Based Reactive Architecture (StateFlow 기반 반응형 구조)
-- **Real-time Updates:** Manual BroadcastReceiver management → Automatic StateFlow collect
+### StateFlow/SharedFlow-Based Reactive Architecture (StateFlow/SharedFlow 기반 반응형 구조)
+- **Real-time Updates:** Manual BroadcastReceiver management → Automatic StateFlow/SharedFlow collect
 - **Lifecycle Safety:** Coroutine scope integration prevents memory leaks
 - **Event Type Separation:** Type-safe event handling with Sealed Classes
-> - **실시간 업데이트**: BroadcastReceiver 수동 관리 → StateFlow 자동 collect
+> - **실시간 업데이트**: BroadcastReceiver 수동 관리 → StateFlow/SharedFlow 자동 collect
 > - **Lifecycle 안전**: 코루틴 스코프 연동으로 메모리 누수 방지
 > - **이벤트 타입 분리**: Sealed Class로 타입 안전한 이벤트 처리
 
@@ -176,7 +176,7 @@ class BatteryMonitor(private val context: Context) {
 <summary><strong>Simple UI - Battery State Info</strong></summary>
 
 ```kotlin
-// Simple Battery information collection - StateFlow based (간단한 Battery 정보 수집 - StateFlow 기반)
+// Simple Battery information collection - SharedFlow based (간단한 Battery 정보 수집 - SharedFlow 기반)
 class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
 
     private val batteryInfo by lazy { BatteryStateInfo(this) }
@@ -184,8 +184,12 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // 1. Start battery monitoring - One line (배터리 모니터링 시작 - 한 줄)
+        // 1. Start battery monitoring with default update cycle (1000ms)
+        // (기본 업데이트 주기로 배터리 모니터링 시작 (1000ms))
         batteryInfo.registerStart(lifecycleScope)
+
+        // Or use custom update cycle (500ms) (또는 커스텀 업데이트 주기 사용 (500ms))
+        // batteryInfo.registerStart(lifecycleScope, updateCycleTime = 500L)
 
         // 2. Query initial values - Simple getters (초기 값 조회 - 간단한 getter)
         val capacity = batteryInfo.getCapacity()
@@ -193,7 +197,13 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
         val voltage = batteryInfo.getVoltage()
         val health = batteryInfo.getCurrentHealthStr()
 
-        // 3. StateFlow-based real-time updates - Auto collect (StateFlow 기반 실시간 업데이트 - 자동 collect)
+        // 3. Manual one-time update (optional) (수동 일회성 업데이트 (선택))
+        val success = batteryInfo.updateBatteryState()
+        if (success) {
+            Log.d("Battery", "Manual update triggered successfully")
+        }
+
+        // 4. SharedFlow-based real-time updates - Auto collect (SharedFlow 기반 실시간 업데이트 - 자동 collect)
         lifecycleScope.launch {
             batteryInfo.sfUpdate.collect { event ->
                 when (event) {
@@ -205,26 +215,27 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
                         updateVoltage(event.voltage)
                     is BatteryStateEvent.OnCurrentAmpere ->
                         updateCurrent(event.current)
-                    // 12 event types supported (12가지 이벤트 타입 지원)
+                    // 11 event types supported (11가지 이벤트 타입 지원)
                     else -> {}
                 }
             }
         }
     }
-    // Auto cleanup in onDestroy() (onDestroy()에서 자동 정리)
+    // Auto cleanup in onDestroy() - internally calls unRegister()
+    // (onDestroy()에서 자동 정리 - 내부적으로 unRegister() 호출)
 }
 ```
 **Advantages:**
 - **Dramatically simplified** (Complex Receiver → One line registration)
 - Automatic BroadcastReceiver management
-- StateFlow-based reactive updates
-- 12 type-safe events
+- SharedFlow-based reactive updates
+- 11 type-safe events
 - Automatic Lifecycle cleanup
 > **장점:**
 > - **대폭 간소화** (복잡한 Receiver → 한 줄 등록)
 > - BroadcastReceiver 자동 관리
-> - StateFlow 기반 반응형 업데이트
-> - 12가지 타입 안전한 이벤트
+> - SharedFlow 기반 반응형 업데이트
+> - 11가지 타입 안전한 이벤트
 > - Lifecycle 자동 정리
 </details>
 
@@ -589,8 +600,8 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 
 ## Core Advantages of System Service Manager Info
 
-### 1. **StateFlow-Based Reactive Architecture (StateFlow 기반 반응형 구조)**
-- Battery: BroadcastReceiver → StateFlow
+### 1. **StateFlow/SharedFlow-Based Reactive Architecture (StateFlow/SharedFlow 기반 반응형 구조)**
+- Battery: BroadcastReceiver → SharedFlow
 - Location: LocationListener → StateFlow
 - Sealed Class type safety
 
@@ -630,8 +641,9 @@ System Service Manager Info : [ServiceManagerInfoActivity.kt](../../app/src/main
 **System Service Manager Info**는 6가지 핵심 시스템 정보를 제공합니다:
 
 ### **Battery State Info** - Battery Status Information
-- **Real-time Updates:** `registerStart(coroutine: CoroutineScope, updateCycleTimeMs)` - StateFlow-based auto-updates
-  - `updateCycleTime` - Update cycle (default: 1000ms) (업데이트 주기 (기본값: 1000ms))
+- **Real-time Updates:** `registerStart(coroutine: CoroutineScope, updateCycleTime: Long = 1000L)` - SharedFlow-based event updates
+  - `coroutineScope` - Coroutine scope (Lifecycle integrated) (코루틴 스코프 (Lifecycle과 연동))
+  - `updateCycleTime` - Update cycle in milliseconds (default: 1000ms) (밀리초 단위 업데이트 주기 (기본값: 1000ms))
   - Automatic BroadcastReceiver registration/unregistration (자동 BroadcastReceiver 등록/해제)
 - **Capacity Info:** `getCapacity()` - Battery level (0~100%) (배터리 잔량 (0~100%))
 - **Current Info:** `getCurrentAmpere()`, `getCurrentAverageAmpere()` - Instant/average current (microamperes) (순간/평균 전류 (마이크로암페어))
@@ -643,11 +655,12 @@ System Service Manager Info : [ServiceManagerInfoActivity.kt](../../app/src/main
 - **Temperature/Voltage:** `getTemperature()` - Battery temperature (Celsius) (배터리 온도 (섭씨)), `getVoltage()` - Battery voltage (Volts) (배터리 전압 (볼트))
 - **Total Capacity:** `getTotalCapacity()` - Total battery capacity (mAh) (배터리 총 용량 (mAh))
 - **Battery Technology:** `getTechnology()` - Battery technology info (Li-ion, Li-poly, etc.) (배터리 기술 정보 (Li-ion, Li-poly 등))
-- **Manual Control:**
-  - `updateBatteryState()` - Trigger one-time battery state update (일회성 배터리 상태 업데이트 트리거)
-  - `unRegister()` - Manual unregistration (stop BroadcastReceiver and updates) (수동 등록 해제 (BroadcastReceiver 및 업데이트 중지))
+- **Lifecycle Management:**
+  - `onDestroy()` - Automatic cleanup (internally calls unRegister()) (자동 정리 (내부적으로 unRegister() 호출))
+  - `unRegister()` - Manual early unregistration if needed before destruction (파괴 전에 조기 해제가 필요한 경우 수동 호출)
+  - `updateBatteryState(): Boolean` - Trigger one-time battery state update, returns true on success (일회성 배터리 상태 업데이트 트리거, 성공 시 true 반환)
 - **Error Handling:** `BATTERY_ERROR_VALUE = Integer.MIN_VALUE` - Return value on error (오류 시 반환값)
-- **BatteryStateEvent:** 12 event types (OnCapacity, OnTemperature, OnVoltage, OnCurrentAmpere, OnCurrentAverageAmpere, OnChargeStatus, OnChargePlug, OnHealth, OnChargeCounter, OnEnergyCounter, OnPresent, OnTotalCapacity) (12가지 이벤트 타입)
+- **BatteryStateEvent:** 11 event types (OnCapacity, OnTemperature, OnVoltage, OnCurrentAmpere, OnCurrentAverageAmpere, OnChargeStatus, OnChargePlug, OnHealth, OnChargeCounter, OnEnergyCounter, OnPresent) (11가지 이벤트 타입)
 
 <br>
 </br>
@@ -811,22 +824,32 @@ Each Info requires permissions **based on features used**. Add only the permissi
 
 | Info                        | Required Permissions (필수 권한)                                         | Runtime Permission (런타임 권한) | No Permission Required (권한 불필요) |
 |:----------------------------|:---------------------------------------------------------------------|:--:|:--:|
-| **BatteryStateInfo**        | `BATTERY_STATS` (system-level)                                       | - | - |
+| **BatteryStateInfo**        | `BATTERY_STATS` (system-only, optional)                              | - | ✅ |
 | **DisplayInfo**             | -                                                                    | - | ✅ |
 | **LocationStateInfo**       | `ACCESS_FINE_LOCATION`<br>`ACCESS_COARSE_LOCATION`                   | ✅ | - |
 | **SimInfo**                 | `READ_PHONE_STATE`<br>`READ_PHONE_NUMBERS`<br>`ACCESS_FINE_LOCATION` | ✅ | - |
 | **TelephonyInfo**           | `READ_PHONE_STATE`<br>`READ_PHONE_NUMBERS`<br>`ACCESS_FINE_LOCATION` | ✅ | - |
 | **NetworkConnectivityInfo** | `ACCESS_NETWORK_STATE`<br>`ACCESS_WIFI_STATE` (선택)                   | - | - |
 
+### 🧭 Permission Policy (BaseSystemService 기준)
+- **Runtime/Special only** – BaseSystemService validates runtime/special permissions only; non-dangerous permissions are treated as granted by design.
+- **Default value fallback** – If runtime/special permission is missing or an error occurs, tryCatchSystemManager() returns a default value and logs a warning.
+- **Refresh after grant** – Call BaseSystemService.refreshPermissions() after permissions are granted to update the internal cache.
+> - **런타임/특수 권한만 검증** – BaseSystemService는 런타임/특수 권한만 검증하며, non-dangerous 권한은 설계상 허용된 것으로 간주합니다.
+> - **기본값 반환** – 런타임/특수 권한이 없거나 오류가 발생하면 tryCatchSystemManager()가 기본값을 반환하고 경고를 기록합니다.
+> - **권한 갱신** – 권한 허용 후 BaseSystemService.refreshPermissions()를 호출해 내부 캐시를 갱신하세요.
+
 ### ⚠️ Permission Troubleshooting Checklist (권한 점검 체크리스트)
+- **Runtime/Special only** – BaseSystemService validates runtime/special permissions only; non-dangerous permissions are treated as granted by design.
 - **Check Manifest declaration** – Verify all required permissions are added to AndroidManifest.xml.
 - **Runtime request** – Request dangerous permissions with onRequestPermissions() or your own ActivityResult logic.
 - **Call refreshPermissions()** – After granting permission, call BaseSystemService.refreshPermissions() and Simple UI will immediately reflect the new state.
-- **Check Logx** – If permission is missing, tryCatchSystemManager() returns a default value and logs a warning to Logx.
+- **Check Logx** – If runtime/special permission is missing, tryCatchSystemManager() returns a default value and logs a warning to Logx.
+> - **런타임/특수 권한만 검증** – BaseSystemService는 런타임/특수 권한만 검증하며, non-dangerous 권한은 설계상 허용된 것으로 간주합니다.
 > - **Manifest 선언 확인** – 필요한 모든 권한을 `AndroidManifest.xml`에 추가했는지 확인하세요.
 > - **런타임 요청** – 위험 권한은 `onRequestPermissions()` 또는 자체 ActivityResult 로직으로 요청합니다.
 > - **refreshPermissions() 호출** – 권한 허용 후 `BaseSystemService.refreshPermissions()`를 호출하면 Simple UI가 즉시 새 상태를 반영합니다.
-> - **Logx 확인** – 권한이 없으면 `tryCatchSystemManager()`가 기본값을 반환하며 Logx에 경고를 남깁니다.
+> - **Logx 확인** – 런타임/특수 권한이 없으면 `tryCatchSystemManager()`가 기본값을 반환하며 Logx에 경고를 남깁니다.
 
 <br>
 </br>
@@ -834,10 +857,10 @@ Each Info requires permissions **based on features used**. Add only the permissi
 ## ⚙️ Detailed Permission Settings by Info (Info별 상세 권한 설정)
 
 
-### 1️⃣ **Battery State Info** - `BATTERY_STATS` (System Permission)
+### 1️⃣ **Battery State Info** - `BATTERY_STATS` (System Only, Optional)
 
-`BatteryStateInfo` requests `android.permission.BATTERY_STATS` via `BaseSystemService`.
->`android.permission.BATTERY_STATS` 권한을 요구하며, 이는 시스템/프리로드 앱 전용입니다.
+`BatteryStateInfo` does not enforce `android.permission.BATTERY_STATS`. BaseSystemService validates runtime/special permissions only.
+>`BatteryStateInfo`는 `android.permission.BATTERY_STATS`를 강제 검증하지 않습니다. BaseSystemService는 런타임/특수 권한만 검증합니다.
 
 **Usage Example (사용 예시)**:
 ```kotlin
@@ -845,7 +868,7 @@ Each Info requires permissions **based on features used**. Add only the permissi
 val batteryInfo = BatteryStateInfo(context)
 batteryInfo.registerStart(lifecycleScope)
 
-// Real-time battery status via StateFlow (StateFlow로 배터리 상태 실시간 수신)
+// Real-time battery status via SharedFlow (SharedFlow로 배터리 상태 실시간 수신)
 lifecycleScope.launch {
     batteryInfo.sfUpdate.collect { event ->
         when (event) {
@@ -860,10 +883,10 @@ lifecycleScope.launch {
     }
 }
 ```
-**Note** Most third-party apps cannot be granted BATTERY_STATS. If permission is missing, tryCatchSystemManager() returns a default value.
-**Note** BATTERY_STATS is a system-only permission, so a default value is returned when not granted.
-> **Note (참고)**: 대부분의 서드파티 앱은 BATTERY_STATS를 부여받을 수 없습니다. 권한이 없으면 `tryCatchSystemManager()`가 기본값을 반환합니다.
-> **참고**: BATTERY_STATS는 시스템 전용 권한이므로 미부여 시 기본값이 반환됩니다.
+**Note** BATTERY_STATS is system-only. This library does not enforce it, and some values may be limited depending on device/OS support.
+**Note** Unsupported fields return default values.
+> **Note (참고)**: BATTERY_STATS는 시스템 전용 권한입니다. 본 라이브러리는 이를 강제 검증하지 않으며, 기기/OS 지원 범위에 따라 일부 값이 제한될 수 있습니다.
+> **참고**: 미지원 필드는 기본값을 반환합니다.
 
 <br></br>
 
@@ -1138,7 +1161,7 @@ lifecycleScope.launch {
 |:----------------------------------------------|:-------------------------------------------------------------------------------------------------|:-------------------------------------------------------------|:----------------------------------------------|
 | **Normal Permissions**                        | `ACCESS_NETWORK_STATE`<br>`ACCESS_WIFI_STATE`                                                    | Auto-granted with Manifest declaration                       | NetworkConnectivityInfo                       |
 | **Dangerous Permissions**                     | `ACCESS_FINE_LOCATION`<br>`ACCESS_COARSE_LOCATION`<br>`READ_PHONE_STATE`<br>`READ_PHONE_NUMBERS` | Runtime permission request required                          | LocationStateInfo<br>SimInfo<br>TelephonyInfo |
-| **Signature/System Permissions**              | `BATTERY_STATS`                                                                                  | System/privileged apps only                                  | BatteryStateInfo                              |
+| **Signature/System Permissions**              | `BATTERY_STATS`                                                                                  | System/privileged apps only (library does not enforce)       | BatteryStateInfo (optional)                   |
 
 <br>
 </br>

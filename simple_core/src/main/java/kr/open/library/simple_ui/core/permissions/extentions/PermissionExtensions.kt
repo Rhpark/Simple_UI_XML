@@ -5,7 +5,6 @@
 package kr.open.library.simple_ui.core.permissions.extentions
 
 import android.Manifest
-import android.app.AlarmManager
 import android.app.AppOpsManager
 import android.app.NotificationManager
 import android.content.Context
@@ -13,7 +12,6 @@ import android.content.pm.PackageManager
 import android.content.pm.PermissionInfo
 import android.os.Build
 import android.os.Environment
-import android.os.PowerManager
 import android.os.Process
 import android.provider.Settings
 import androidx.core.app.NotificationManagerCompat
@@ -21,10 +19,16 @@ import androidx.core.content.ContextCompat
 import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
 import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
 import kr.open.library.simple_ui.core.permissions.vo.PermissionSpecialType
+import kr.open.library.simple_ui.core.system_manager.extensions.getAlarmManager
+import kr.open.library.simple_ui.core.system_manager.extensions.getPowerManager
 
 /**
- * Evaluates whether the caller already holds [permission], including platform-specific toggles.<br><br>
+ * Evaluates whether the caller already holds [permission], including platform-specific toggles.<br>
+ * Only dangerous permissions are checked via runtime, special APIs; non-dangerous (normal/signature/privileged)
+ * permissions are treated as granted by design.<br><br>
  * 필요한 플랫폼 토글 여부까지 확인하여 [permission] 권한을 보유했는지 판단합니다.<br>
+ * 런타임,특수 권한(위험 권한)만 실제 검사하며, non-dangerous(일반/서명/특권) 권한은
+ * 설계상 허용된 것으로 간주합니다.<br>
  *
  * @param permission Android permission string being evaluated.<br><br>
  *        확인할 Android 권한 문자열입니다.<br>
@@ -53,17 +57,11 @@ public inline fun Context.hasPermission(permission: String): Boolean = when (per
         },
     )
 
-    Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS -> {
-        val powerManager = getSystemService(Context.POWER_SERVICE) as? PowerManager
-        powerManager?.isIgnoringBatteryOptimizations(packageName) ?: false
-    }
+    Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS -> getPowerManager().isIgnoringBatteryOptimizations(packageName)
 
     Manifest.permission.SCHEDULE_EXACT_ALARM -> checkSdkVersion(
         Build.VERSION_CODES.S,
-        positiveWork = {
-            val alarmManager = getSystemService(Context.ALARM_SERVICE) as? AlarmManager
-            alarmManager?.canScheduleExactAlarms() ?: false
-        },
+        positiveWork = { getAlarmManager().canScheduleExactAlarms() },
         negativeWork = { true },
     )
 
@@ -85,6 +83,7 @@ public inline fun Context.hasPermission(permission: String): Boolean = when (per
     }
 
     else -> {
+        // Non-dangerous permissions are treated as granted by design (runtime-only validation).
         if (getPermissionProtectionLevel(permission) == PermissionInfo.PROTECTION_DANGEROUS) {
             ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
         } else {
@@ -94,8 +93,10 @@ public inline fun Context.hasPermission(permission: String): Boolean = when (per
 }
 
 /**
- * Returns true only when every entry in [permissions] is granted.<br><br>
+ * Returns true only when every entry in [permissions] is granted.<br>
+ * Non-dangerous (normal/signature/privileged) permissions are treated as granted by design.<br><br>
  * [permissions]의 모든 항목이 허용되었을 때만 true를 반환합니다.<br>
+ * non-dangerous(일반/서명/특권) 권한은 설계상 허용된 것으로 간주합니다.<br>
  *
  * @param permissions List of permission strings to verify.<br><br>
  *        확인할 권한 문자열 목록입니다.<br>
@@ -105,8 +106,10 @@ public inline fun Context.hasPermission(permission: String): Boolean = when (per
 public inline fun Context.hasPermissions(vararg permissions: String): Boolean = permissions.all { permission -> hasPermission(permission) }
 
 /**
- * Executes [doWork] only when every permission in [permissions] is granted.<br><br>
+ * Executes [doWork] only when every permission in [permissions] is granted.<br>
+ * Non-dangerous (normal/signature/privileged) permissions are treated as granted by design.<br><br>
  * [permissions]에 포함된 권한이 모두 허용된 경우에만 [doWork]를 실행합니다.<br>
+ * non-dangerous(일반/서명/특권) 권한은 설계상 허용된 것으로 간주합니다.<br>
  *
  * @param permissions Permission strings to validate.<br><br>
  *        검증할 권한 문자열 목록입니다.<br>
@@ -124,8 +127,12 @@ public inline fun Context.hasPermissions(vararg permissions: String, doWork: () 
     }
 
 /**
- * Produces a list of permissions from [permissions] that are still missing.<br><br>
+ * Produces a list of permissions from [permissions] that are still missing.<br>
+ * Only dangerous permissions are checked; non-dangerous (normal/signature/privileged) permissions
+ * are treated as granted by design.<br><br>
  * [permissions] 중 아직 허용되지 않은 권한 목록을 반환합니다.<br>
+ * (런타임/특수 권한(위험 권한)만 검사하며, non-dangerous(일반/서명/특권) 권한은
+ * 설계상 허용된 것으로 간주합니다.<br>
  *
  * @param permissions Requested permission list.<br><br>
  *        요청할 권한 목록입니다.<br>

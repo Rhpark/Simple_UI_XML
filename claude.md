@@ -167,8 +167,45 @@
   - 각 @param 블록은 첫 줄에 영어 설명을 적고 <br><br>로 두 줄을 비운다
   - 다음, 동일 의미의 한글을 다음 줄에 쓴다.
   - 추가 설명이 필요하면 들여쓰기를 유지한 채 이어지는 줄에 적는다.
-  - 주석 예제 코드 (package kr.open.library.simple_ui.core.extensions.date) 
+  - 주석 예제 코드 (package kr.open.library.simple_ui.core.extensions.date)
 
+
+ ## 클래스 문서화 템플릿 (선택 사항)
+  - 복잡한 클래스나 라이브러리의 핵심 클래스는 아래 템플릿을 사용하여 포괄적인 문서를 작성할 수 있다.
+  - 템플릿의 각 섹션 제목은 "**영문 / 한글:**<br>" 형식을 따른다.
+  - 템플릿의 내용은 "영문 → <br><br> → 한글 → <br>" 형식을 따른다.
+  - "Important notes / 주의사항" 섹션은 선택 사항이며, 필요시에만 추가한다.
+
+  ```kotlin
+  /**
+   * Brief description.<br><br>
+   * 간단한 설명.<br>
+   *
+   * **Why this class exists / 이 클래스가 필요한 이유:**<br>
+   * - Reason 1<br>
+   * - Reason 2<br><br>
+   * - 이유 1<br>
+   * - 이유 2<br>
+   *
+   * **Design decisions / 설계 결정 이유:**<br>
+   * - Decision 1<br>
+   * - Decision 2<br><br>
+   * - 결정 1<br>
+   * - 결정 2<br>
+   *
+   * **Important notes / 주의사항:**<br>
+   * - Note 1<br>
+   * - Note 2<br><br>
+   * - 주의사항 1<br>
+   * - 주의사항 2<br>
+   *
+   * **Usage / 사용법:**<br>
+   * 1. Step 1<br>
+   * 2. Step 2<br><br>
+   * 1. 단계 1<br>
+   * 2. 단계 2<br>
+   */
+  ```
 
 
  ## 에러 처리 규칙
