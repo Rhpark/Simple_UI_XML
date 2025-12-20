@@ -10,7 +10,9 @@ import android.os.VibratorManager
 import androidx.annotation.RequiresApi
 import androidx.annotation.RequiresPermission
 import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
+import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
 import kr.open.library.simple_ui.core.extensions.trycatch.throwMinSdkVersion
+import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.core.system_manager.base.BaseSystemService
 import kr.open.library.simple_ui.core.system_manager.extensions.getVibrator
 import kr.open.library.simple_ui.core.system_manager.extensions.getVibratorManager
@@ -21,13 +23,47 @@ import kr.open.library.simple_ui.core.system_manager.extensions.getVibratorManag
  * 기기 진동 작업을 관리하는 컨트롤러로 하위 호환성을 제공합니다.<br>
  * 레거시 Vibrator API (SDK < 31)와 최신 VibratorManager API (SDK >= 31)를 모두 처리합니다.<br>
  *
+ * **Why this class exists / 이 클래스가 필요한 이유:**<br>
+ * - Android vibration APIs changed significantly in SDK 31 (VibratorManager introduction).<br>
+ * - Direct usage of system vibration APIs requires extensive SDK version checking.<br>
+ * - Permission handling and error management need to be consistent across all methods.<br><br>
+ * - Android 진동 API가 SDK 31에서 크게 변경되었습니다 (VibratorManager 도입).<br>
+ * - 시스템 진동 API 직접 사용 시 광범위한 SDK 버전 체크가 필요합니다.<br>
+ * - 모든 메서드에서 일관된 권한 처리와 에러 관리가 필요합니다.<br>
+ *
+ * **Design decisions / 설계 결정 이유:**<br>
+ * - **Automatic SDK branching**: Internally handles SDK version differences, exposing unified API.<br>
+ * - **Input validation**: All methods validate parameters before system calls to prevent exceptions.<br>
+ * - **Boolean return pattern**: Simple true/false return instead of exceptions for easier usage.<br><br>
+ * - **자동 SDK 분기**: 내부적으로 SDK 버전 차이를 처리하여 통일된 API를 제공합니다.<br>
+ * - **입력 검증**: 모든 메서드가 시스템 호출 전 파라미터를 검증하여 예외를 방지합니다.<br>
+ * - **Boolean 반환 패턴**: 예외 대신 간단한 true/false 반환으로 사용성을 높였습니다.<br>
+ *
+ * **Important notes / 주의사항:**<br>
+ * - Requires VIBRATE permission in AndroidManifest.xml.<br>
+ * - Amplitude control may be ignored on devices without hardware support.<br>
+ * - SDK O(26) or higher required for amplitude-based vibration effects.<br><br>
+ * - AndroidManifest.xml에 VIBRATE 권한이 필요합니다.<br>
+ * - 하드웨어 지원이 없는 기기에서는 강도 조절이 무시될 수 있습니다.<br>
+ * - 강도 기반 진동 효과는 SDK O(26) 이상이 필요합니다.<br>
+ *
+ * **Usage / 사용법:**<br>
+ * 1. Get controller instance: `context.getVibratorController()`<br>
+ * 2. Check vibration support: `controller.hasVibrator()`<br>
+ * 3. Trigger vibration: `controller.vibrate(200L)` or `controller.createOneShot(200L, 128)`<br>
+ * 4. Cancel if needed: `controller.cancel()`<br><br>
+ * 1. 컨트롤러 인스턴스 획득: `context.getVibratorController()`<br>
+ * 2. 진동 지원 확인: `controller.hasVibrator()`<br>
+ * 3. 진동 실행: `controller.vibrate(200L)` 또는 `controller.createOneShot(200L, 128)`<br>
+ * 4. 필요시 취소: `controller.cancel()`<br>
+ *
  * Required manifest permission:<br>
  * `<uses-permission android:name="android.permission.VIBRATE"/>`<br><br>
  * 필수 매니페스트 권한:<br>
  * `<uses-permission android:name="android.permission.VIBRATE"/>`<br>
  *
  * @param context The application context.<br><br>
- *                애플리케이션 컨텍스트.
+ *                애플리케이션 컨텍스트.<br>
  */
 public open class VibratorController(
     context: Context,
@@ -53,38 +89,44 @@ public open class VibratorController(
 
     /**
      * Creates a one-shot vibration with specified duration and amplitude.<br>
-     * Supports different APIs based on SDK version for backward compatibility.<br><br>
+     * Notes.<br>
+     * - `effect` is an amplitude value (DEFAULT_AMPLITUDE(-1) or 1..255).<br>
+     * - Available since SDK O (26) (this library minSdk=28).<br>
+     * - Devices without amplitude control may ignore the requested amplitude.<br><br>
+     *
      * 지정된 지속 시간과 강도로 단발성 진동을 생성합니다.<br>
-     * 하위 호환성을 위해 SDK 버전에 따라 다른 API를 지원합니다.<br>
+     * 참고.<br>
+     * - `effect`는 강도(amplitude) 값이며 DEFAULT_AMPLITUDE(-1) 또는 1..255를 사용합니다.<br>
+     * - SDK O(26)부터 지원되며, 본 라이브러리 minSdk=28에서는 런타임에서 항상 사용 가능합니다.<br>
+     * - 기기가 amplitude control을 지원하지 않으면 지정한 강도가 무시될 수 있습니다.<br>
      *
      * @param timer Duration in milliseconds.<br><br>
      *              진동 지속 시간 (밀리초).
      *
-     * @param effect Amplitude from -1 to 255, where -1 is default.<br><br>
-     *               강도 -1~255, -1은 기본값.
+     * @param effect Amplitude value (DEFAULT_AMPLITUDE(-1) or 1..255).<br><br>
+     *               강도 값 (DEFAULT_AMPLITUDE(-1) 또는 1..255).
      *
      * @return `true` if vibration was triggered successfully, `false` otherwise.<br><br>
-     *         진동 실행 성공 시 `true`, 그렇지 않으면 `false`.<br>
+     *         진동 실행 성공 시 `true`, 그렇지 않으면 `false`.
      */
     @RequiresPermission(VIBRATE)
     public fun createOneShot(timer: Long, effect: Int = VibrationEffect.DEFAULT_AMPLITUDE): Boolean = tryCatchSystemManager(false) {
+        if (timer <= 0L) {
+            Logx.e("timer > 0L, timer $timer")
+            return false
+        }
+        if (effect != VibrationEffect.DEFAULT_AMPLITUDE && effect !in 1..255) {
+            Logx.e("effect must be 1..255 or DEFAULT_AMPLITUDE(-1). effect=$effect")
+            return false
+        }
+
+        val oneShot = VibrationEffect.createOneShot(timer, effect)
         checkSdkVersion(
-            Build.VERSION_CODES.Q,
-            positiveWork = {
-                val oneShot = VibrationEffect.createOneShot(timer, effect)
-                checkSdkVersion(
-                    Build.VERSION_CODES.S,
-                    positiveWork = { vibratorManager.vibrate(CombinedVibration.createParallel(oneShot)) },
-                    negativeWork = { vibrator.vibrate(oneShot) },
-                )
-                return true
-            },
-            negativeWork = {
-                @Suppress("DEPRECATION")
-                vibrator.vibrate(timer)
-                return true
-            },
+            Build.VERSION_CODES.S,
+            positiveWork = { vibratorManager.vibrate(CombinedVibration.createParallel(oneShot)) },
+            negativeWork = { vibrator.vibrate(oneShot) },
         )
+        return true
     }
 
     /**
@@ -98,14 +140,13 @@ public open class VibratorController(
      *         진동 실행 성공 시 `true`, 그렇지 않으면 `false`.<br>
      */
     @RequiresPermission(VIBRATE)
-    public fun vibrate(milliseconds: Long): Boolean = tryCatchSystemManager(false) {
-        val effect = VibrationEffect.createOneShot(milliseconds, VibrationEffect.DEFAULT_AMPLITUDE)
-        checkSdkVersion(
-            Build.VERSION_CODES.S,
-            positiveWork = { vibratorManager.vibrate(CombinedVibration.createParallel(effect)) },
-            negativeWork = { vibrator.vibrate(effect) },
-        )
-        return true
+    public fun vibrate(milliseconds: Long): Boolean {
+        if (milliseconds <= 0L) {
+            Logx.e("milliseconds > 0L, milliseconds $milliseconds")
+            return false
+        }
+
+        return createOneShot(milliseconds)
     }
 
     /**
@@ -123,26 +164,43 @@ public open class VibratorController(
     @RequiresPermission(VIBRATE)
     @RequiresApi(Build.VERSION_CODES.Q)
     public fun createPredefined(vibrationEffectClick: Int): Boolean = tryCatchSystemManager(false) {
-        val predefinedEffect = VibrationEffect.createPredefined(vibrationEffectClick)
         checkSdkVersion(
-            Build.VERSION_CODES.S,
-            positiveWork = { vibratorManager.vibrate(CombinedVibration.createParallel(predefinedEffect)) },
-            negativeWork = { vibrator.vibrate(predefinedEffect) },
+            Build.VERSION_CODES.Q,
+            positiveWork = {
+                val predefinedEffect = VibrationEffect.createPredefined(vibrationEffectClick)
+                checkSdkVersion(
+                    Build.VERSION_CODES.S,
+                    positiveWork = { vibratorManager.vibrate(CombinedVibration.createParallel(predefinedEffect)) },
+                    negativeWork = { vibrator.vibrate(predefinedEffect) },
+                )
+                return true
+            },
+            negativeWork = { return false },
         )
-        return true
     }
 
     /**
-     * Creates a complex waveform vibration pattern with custom timing and amplitudes.<br>
-     * Supports different APIs based on SDK version for backward compatibility.<br><br>
-     * 사용자 정의 타이밍과 강도로 복잡한 웨이브폼 진동 패턴을 생성합니다.<br>
-     * 하위 호환성을 위해 SDK 버전에 따라 다른 API를 지원합니다.<br>
+     * Creates a waveform vibration pattern with custom timings and amplitudes.<br>
+     * Notes.<br>
+     * - `times` and `amplitudes` must be non-empty and have the same length.<br>
+     * - Every value in `times` must be >= 0.<br>
+     * - `amplitudes` supports DEFAULT_AMPLITUDE(-1) or 0..255 (0 = motor off for that segment).<br>
+     * - `repeat` must be -1 or a valid index; when >= 0, it repeats until `cancel()` is called.<br>
+     * - Amplitude control may be ignored on devices without hardware support.<br><br>
+     *
+     * 사용자 정의 타이밍과 강도로 웨이브폼 진동을 생성합니다.<br>
+     * 참고.<br>
+     * - `times`와 `amplitudes`는 비어있으면 안 되며, 길이가 동일해야 합니다.<br>
+     * - `times`의 모든 값은 0 이상이어야 합니다.<br>
+     * - `amplitudes`는 DEFAULT_AMPLITUDE(-1) 또는 0..255를 허용합니다(0은 해당 구간 진동 끔).<br>
+     * - `repeat`는 -1 또는 유효한 인덱스여야 하며, 0 이상이면 `cancel()` 호출 전까지 반복됩니다.<br>
+     * - 기기가 amplitude control을 지원하지 않으면 강도 값이 무시될 수 있습니다.<br>
      *
      * @param times Timing values in milliseconds.<br><br>
      *              타이밍 값 (밀리초 단위).
      *
-     * @param amplitudes Amplitude values (0-255) where 0 = motor off.<br><br>
-     *                   강도 값 (0-255), 0은 모터 끔.
+     * @param amplitudes Amplitude values (DEFAULT_AMPLITUDE(-1) or 0..255).<br><br>
+     *                   강도 값 (DEFAULT_AMPLITUDE(-1) 또는 0..255).
      *
      * @param repeat Index to start repeating from, -1 for no repeat.<br><br>
      *               반복 시작 인덱스, -1은 반복 없음.
@@ -156,6 +214,28 @@ public open class VibratorController(
         amplitudes: IntArray,
         repeat: Int = -1,
     ): Boolean = tryCatchSystemManager(false) {
+        // 배열 검증 추가
+        if (times.isEmpty() || amplitudes.isEmpty()) {
+            Logx.e("times or amplitudes array is empty, times: ${times.size}, amplitudes: ${amplitudes.size}")
+            return false
+        }
+        if (times.size != amplitudes.size) {
+            Logx.e("times and amplitudes array size must be same, times: ${times.size}, amplitudes: ${amplitudes.size}")
+            return false
+        }
+        if (times.any { it < 0L }) {
+            Logx.e("times must be >= 0. times=${times.contentToString()}")
+            return false
+        }
+        if (amplitudes.any { it != VibrationEffect.DEFAULT_AMPLITUDE && it !in 0..255 }) {
+            Logx.e("amplitudes must be 0..255 or DEFAULT_AMPLITUDE(-1). amplitudes=${amplitudes.contentToString()}")
+            return false
+        }
+        if (repeat != -1 && repeat !in times.indices) {
+            Logx.e("repeat must be between 0 and ${times.size - 1}, repeat: $repeat")
+            return false
+        }
+
         val waveformEffect = VibrationEffect.createWaveform(times, amplitudes, repeat)
         checkSdkVersion(
             Build.VERSION_CODES.S,
@@ -180,6 +260,20 @@ public open class VibratorController(
      */
     @RequiresPermission(VIBRATE)
     public fun vibratePattern(pattern: LongArray, repeat: Int = -1): Boolean = tryCatchSystemManager(false) {
+        // 배열 검증 추가
+        if (pattern.isEmpty()) {
+            Logx.e("vibratePattern: pattern is empty.")
+            return false
+        }
+        if (pattern.any { it < 0L }) {
+            Logx.e("vibratePattern: pattern must be >= 0. pattern=${pattern.contentToString()}")
+            return false
+        }
+        if (repeat != -1 && repeat !in pattern.indices) {
+            Logx.e("vibratePattern: repeat must be -1 or within 0..${pattern.size - 1}. repeat=$repeat")
+            return false
+        }
+
         val waveformEffect = VibrationEffect.createWaveform(pattern, repeat)
         checkSdkVersion(
             Build.VERSION_CODES.S,
@@ -215,7 +309,7 @@ public open class VibratorController(
      * @return `true` if device supports vibration, `false` otherwise.<br><br>
      *         기기가 진동을 지원하면 `true`, 그렇지 않으면 `false`.<br>
      */
-    public fun hasVibrator(): Boolean = tryCatchSystemManager(false) {
+    public fun hasVibrator(): Boolean = safeCatch(false) {
         return checkSdkVersion(
             Build.VERSION_CODES.S,
             positiveWork = { vibratorManager.defaultVibrator.hasVibrator() },
