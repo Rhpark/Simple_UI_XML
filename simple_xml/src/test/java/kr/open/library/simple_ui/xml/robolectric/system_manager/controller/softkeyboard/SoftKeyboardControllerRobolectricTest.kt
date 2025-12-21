@@ -105,20 +105,23 @@ class SoftKeyboardControllerRobolectricTest {
 
     @Test
     @Config(sdk = [Build.VERSION_CODES.R]) // API 30 (Android 11+)
-    fun `setAdjustResize uses WindowInsetsController on API 30+`() {
+    fun `setAdjustResize uses WindowCompat and WindowInsetsController on API 30+`() {
         val mockInsetsController = mock(WindowInsetsController::class.java)
         `when`(mockWindow.insetsController).thenReturn(mockInsetsController)
 
-        controller.setAdjustResize(mockWindow)
+        val result = controller.setAdjustResize(mockWindow)
 
-        verify(mockInsetsController).systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        assertTrue(result)
+        // Note: WindowCompat.setDecorFitsSystemWindows is called but difficult to verify in unit tests
+        verify(mockInsetsController).systemBarsBehavior = WindowInsetsController.BEHAVIOR_DEFAULT
     }
 
     @Test
     @Config(sdk = [Build.VERSION_CODES.Q]) // API 29 (Android 10)
     fun `setAdjustResize uses legacy setSoftInputMode on API below 30`() {
-        controller.setAdjustResize(mockWindow)
+        val result = controller.setAdjustResize(mockWindow)
 
+        assertTrue(result)
         verify(mockWindow).setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
     }
 
@@ -176,7 +179,7 @@ class SoftKeyboardControllerRobolectricTest {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun `showDelay with coroutine launches delayed task`() =
+    fun `showDelay with coroutine returns Job and launches delayed task`() =
         runTest {
             val testDispatcher = StandardTestDispatcher(testScheduler)
             val testScope = TestScope(testDispatcher)
@@ -184,9 +187,10 @@ class SoftKeyboardControllerRobolectricTest {
             `when`(mockView.requestFocus()).thenReturn(true)
             `when`(mockImm.showSoftInput(mockView, InputMethodManager.SHOW_IMPLICIT)).thenReturn(true)
 
-            val result = controller.showDelay(mockView, 100L, InputMethodManager.SHOW_IMPLICIT, testScope)
+            val job = controller.showDelay(mockView, 100L, InputMethodManager.SHOW_IMPLICIT, testScope)
 
-            assertTrue(result)
+            // Verify Job is returned
+            assertNotNull(job)
 
             // Advance time to trigger the delayed coroutine
             testScope.testScheduler.advanceTimeBy(100L)
@@ -201,27 +205,38 @@ class SoftKeyboardControllerRobolectricTest {
     // ========================================
 
     @Test
-    fun `hide returns true when view requests focus successfully`() {
+    fun `hide returns true when windowToken is available`() {
         val mockWindowToken = mock(android.os.IBinder::class.java)
-        `when`(mockView.requestFocus()).thenReturn(true)
         `when`(mockView.windowToken).thenReturn(mockWindowToken)
         `when`(mockImm.hideSoftInputFromWindow(mockWindowToken, 0)).thenReturn(true)
 
         val result = controller.hide(mockView)
 
         assertTrue(result)
-        verify(mockView).requestFocus()
         verify(mockImm).hideSoftInputFromWindow(mockWindowToken, 0)
     }
 
     @Test
-    fun `hide returns false when view fails to request focus`() {
-        `when`(mockView.requestFocus()).thenReturn(false)
+    fun `hide returns false when windowToken is null but applicationWindowToken is available`() {
+        val mockApplicationWindowToken = mock(android.os.IBinder::class.java)
+        `when`(mockView.windowToken).thenReturn(null)
+        `when`(mockView.applicationWindowToken).thenReturn(mockApplicationWindowToken)
+        `when`(mockImm.hideSoftInputFromWindow(mockApplicationWindowToken, 0)).thenReturn(true)
+
+        val result = controller.hide(mockView)
+
+        assertTrue(result)
+        verify(mockImm).hideSoftInputFromWindow(mockApplicationWindowToken, 0)
+    }
+
+    @Test
+    fun `hide returns false when both windowToken and applicationWindowToken are null`() {
+        `when`(mockView.windowToken).thenReturn(null)
+        `when`(mockView.applicationWindowToken).thenReturn(null)
 
         val result = controller.hide(mockView)
 
         assertFalse(result)
-        verify(mockView).requestFocus()
         verify(mockImm, never()).hideSoftInputFromWindow(any(), anyInt())
     }
 
@@ -229,7 +244,6 @@ class SoftKeyboardControllerRobolectricTest {
     fun `hide uses custom flag when provided`() {
         val customFlag = InputMethodManager.HIDE_IMPLICIT_ONLY
         val mockWindowToken = mock(android.os.IBinder::class.java)
-        `when`(mockView.requestFocus()).thenReturn(true)
         `when`(mockView.windowToken).thenReturn(mockWindowToken)
         `when`(mockImm.hideSoftInputFromWindow(mockWindowToken, customFlag)).thenReturn(true)
 
@@ -251,25 +265,24 @@ class SoftKeyboardControllerRobolectricTest {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun `hideDelay with coroutine launches delayed task`() =
+    fun `hideDelay with coroutine returns Job and launches delayed task`() =
         runTest {
             val testDispatcher = StandardTestDispatcher(testScheduler)
             val testScope = TestScope(testDispatcher)
 
             val mockWindowToken = mock(android.os.IBinder::class.java)
-            `when`(mockView.requestFocus()).thenReturn(true)
             `when`(mockView.windowToken).thenReturn(mockWindowToken)
             `when`(mockImm.hideSoftInputFromWindow(mockWindowToken, 0)).thenReturn(true)
 
-            val result = controller.hideDelay(mockView, 100L, 0, testScope)
+            val job = controller.hideDelay(mockView, 100L, 0, testScope)
 
-            assertTrue(result)
+            // Verify Job is returned
+            assertNotNull(job)
 
             // Advance time to trigger the delayed coroutine
             testScope.testScheduler.advanceTimeBy(100L)
             testScope.testScheduler.runCurrent()
 
-            verify(mockView).requestFocus()
             verify(mockImm).hideSoftInputFromWindow(mockWindowToken, 0)
         }
 
@@ -353,7 +366,6 @@ class SoftKeyboardControllerRobolectricTest {
     @Test
     fun `hide returns false when exception occurs during hideSoftInputFromWindow`() {
         val mockWindowToken = mock(android.os.IBinder::class.java)
-        `when`(mockView.requestFocus()).thenReturn(true)
         `when`(mockView.windowToken).thenReturn(mockWindowToken)
         `when`(mockImm.hideSoftInputFromWindow(mockWindowToken, 0))
             .thenThrow(RuntimeException("Test exception"))
@@ -362,4 +374,58 @@ class SoftKeyboardControllerRobolectricTest {
 
         assertFalse(result)
     }
+
+    // ========================================
+    // 7. Job Cancellation Tests
+    // ========================================
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `showDelay Job can be cancelled before execution`() =
+        runTest {
+            val testDispatcher = StandardTestDispatcher(testScheduler)
+            val testScope = TestScope(testDispatcher)
+
+            `when`(mockView.requestFocus()).thenReturn(true)
+            `when`(mockImm.showSoftInput(mockView, InputMethodManager.SHOW_IMPLICIT)).thenReturn(true)
+
+            val job = controller.showDelay(mockView, 100L, InputMethodManager.SHOW_IMPLICIT, testScope)
+            assertNotNull(job)
+
+            // Cancel before time advances
+            job?.cancel()
+
+            // Advance time
+            testScope.testScheduler.advanceTimeBy(100L)
+            testScope.testScheduler.runCurrent()
+
+            // Verify show was NOT called because job was cancelled
+            verify(mockView, never()).requestFocus()
+            verify(mockImm, never()).showSoftInput(any(), anyInt())
+        }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `hideDelay Job can be cancelled before execution`() =
+        runTest {
+            val testDispatcher = StandardTestDispatcher(testScheduler)
+            val testScope = TestScope(testDispatcher)
+
+            val mockWindowToken = mock(android.os.IBinder::class.java)
+            `when`(mockView.windowToken).thenReturn(mockWindowToken)
+            `when`(mockImm.hideSoftInputFromWindow(mockWindowToken, 0)).thenReturn(true)
+
+            val job = controller.hideDelay(mockView, 100L, 0, testScope)
+            assertNotNull(job)
+
+            // Cancel before time advances
+            job?.cancel()
+
+            // Advance time
+            testScope.testScheduler.advanceTimeBy(100L)
+            testScope.testScheduler.runCurrent()
+
+            // Verify hide was NOT called because job was cancelled
+            verify(mockImm, never()).hideSoftInputFromWindow(any(), anyInt())
+        }
 }

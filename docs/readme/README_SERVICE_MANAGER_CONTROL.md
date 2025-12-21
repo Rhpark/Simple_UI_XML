@@ -169,14 +169,31 @@ private fun showKeyboard(editText: EditText) {
     getSoftKeyboardController().show(editText) // Done! (끝!)
 }
 
-// Delayed display - One line (지연 표시 - 한 줄)
-private fun showKeyboardWithDelay(editText: EditText, delayMillis: Long) {
-    getSoftKeyboardController().showDelay(editText, delayMillis) // Done! (끝!)
+// Hide keyboard - Safe windowToken handling (키보드 숨김 - 안전한 windowToken 처리)
+private fun hideKeyboard(editText: EditText) {
+    getSoftKeyboardController().hide(editText) // Auto fallback to applicationWindowToken! (applicationWindowToken으로 자동 Fallback!)
 }
 
-// Coroutine support (Coroutine 지원)
-private fun showKeyboardWithCoroutine(editText: EditText) {
-    getSoftKeyboardController().showDelay(editText, 300, lifecycleScope)
+// Delayed display - Runnable version (지연 표시 - Runnable 버전)
+private fun showKeyboardWithDelay(editText: EditText, delayMillis: Long) {
+    getSoftKeyboardController().showDelay(editText, delayMillis) // Returns Boolean (Boolean 반환)
+}
+
+// ⭐ NEW: Delayed display with Job (cancellable) (⭐ 신규: Job으로 지연 표시 (취소 가능))
+private var showDelayJob: Job? = null
+
+private fun showKeyboardWithJobControl(editText: EditText) {
+    // Cancel previous job if exists (이전 작업이 있으면 취소)
+    showDelayJob?.cancel()
+
+    // Launch new delayed show and store Job for cancellation
+    // (새로운 지연 표시 실행 및 취소를 위한 Job 저장)
+    showDelayJob = getSoftKeyboardController().showDelay(editText, 300, coroutineScope = lifecycleScope)
+}
+
+// ⭐ NEW: Manual cancellation (⭐ 신규: 수동 취소)
+private fun cancelDelayedShow() {
+    showDelayJob?.cancel() // Cancel if user navigates away (사용자가 벗어나면 취소)
 }
 
 // Window Input Mode setup (Window Input Mode 설정)
@@ -193,16 +210,17 @@ override fun onCreate(savedInstanceState: Bundle?) {
 
 // ⭐ setAdjustResize() internal implementation (Library code)
 // (⭐ setAdjustResize() 내부 구현 (라이브러리 코드))
-public fun setAdjustResize(window: Window) {
+public fun setAdjustResize(window: Window): Boolean = tryCatchSystemManager(false) {
     checkSdkVersion(Build.VERSION_CODES.R,
         positiveWork = {
-            // Android 11+: Use WindowInsetsController (WindowInsetsController 사용)
-            val controller = window.insetsController
-            if (controller != null) {
-                controller.systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-            } else {
-                // Fallback: Use WindowCompat (Fallback: WindowCompat 사용)
-                WindowCompat.setDecorFitsSystemWindows(window, true)
+            // Android 11+: Use WindowCompat for edge-to-edge + IME handling
+            // (Android 11+: edge-to-edge + IME 처리를 위한 WindowCompat 사용)
+            WindowCompat.setDecorFitsSystemWindows(window, true)
+
+            // Additionally, ensure IME animations are handled properly
+            // (추가로, IME 애니메이션이 올바르게 처리되도록 보장)
+            window.insetsController?.let { controller ->
+                controller.systemBarsBehavior = WindowInsetsController.BEHAVIOR_DEFAULT
             }
         },
         negativeWork = {
@@ -211,24 +229,29 @@ public fun setAdjustResize(window: Window) {
             window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
         }
     )
+    true
 }
 ```
 **Advantages:**
 - **Dramatically simplified** (Dozens of lines → One line)
 - Automated null handling and focus handling
 - Built-in delayed execution (Runnable/Coroutine)
+- **⭐ NEW: Job-based cancellation support** (Coroutine version returns Job? for manual cancellation)
+- **⭐ NEW: Safe windowToken fallback** (Auto fallback to applicationWindowToken if windowToken is null)
 - **Clean SDK version branching with checkSdkVersion() helper**
-- **Automatic SDK version branching** (Android 11+ WindowInsetsController auto-used)
+- **Automatic SDK version branching** (Android 11+ WindowCompat + BEHAVIOR_DEFAULT auto-used)
 - Automated WindowInsetsController null handling and WindowCompat fallback
-- Safe exception handling, Boolean return
+- Safe exception handling with tryCatchSystemManager, Boolean return
 > **장점:**
 > - **극적인 코드 간소화** (수십 줄 → 한 줄)
 > - Null 처리, Focus 처리 자동화
 > - 지연 실행 (Runnable/Coroutine) 기본 제공
+> - **⭐ 신규: Job 기반 취소 지원** (Coroutine 버전은 수동 취소를 위해 Job? 반환)
+> - **⭐ 신규: 안전한 windowToken fallback** (windowToken이 null이면 applicationWindowToken으로 자동 Fallback)
 > - **checkSdkVersion() 헬퍼로 깔끔한 SDK 버전 분기**
-> - **SDK 버전 자동 분기 처리** (Android 11+ WindowInsetsController 자동 사용)
+> - **SDK 버전 자동 분기 처리** (Android 11+ WindowCompat + BEHAVIOR_DEFAULT 자동 사용)
 > - WindowInsetsController null 처리 및 WindowCompat fallback 자동화
-> - 안전한 예외 처리, Boolean 반환
+> - tryCatchSystemManager로 안전한 예외 처리, Boolean 반환
 </details>
 
 <br>

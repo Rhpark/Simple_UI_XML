@@ -10,8 +10,11 @@ import android.view.inputmethod.InputMethodManager
 import androidx.annotation.RequiresApi
 import androidx.core.view.WindowCompat
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
 import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.core.system_manager.base.BaseSystemService
@@ -21,10 +24,83 @@ import kr.open.library.simple_ui.core.system_manager.extensions.getInputMethodMa
  * Controller for managing soft keyboard operations using InputMethodManager.<br><br>
  * InputMethodManager를 사용하여 소프트 키보드 작업을 관리하는 컨트롤러입니다.<br>
  *
- * Provides comprehensive keyboard show/hide functionality with error handling.<br><br>
- * 오류 처리와 함께 포괄적인 키보드 표시/숨김 기능을 제공합니다.<br>
+ * **Why this class exists / 이 클래스가 필요한 이유:**<br>
+ * - Android's InputMethodManager API requires boilerplate code for focus handling, window token checks, and null safety.<br>
+ * - Different Android versions require different approaches for keyboard control (WindowInsetsController on API 30+, legacy flags below).<br>
+ * - Developers need both immediate and delayed keyboard operations with proper cancellation support.<br>
+ * - Window soft input mode configuration is scattered across manifest and runtime code.<br><br>
+ * - Android의 InputMethodManager API는 포커스 처리, 윈도우 토큰 체크, null 안전성을 위한 보일러플레이트 코드가 필요합니다.<br>
+ * - 안드로이드 버전마다 키보드 제어 방식이 다릅니다 (API 30+ WindowInsetsController, 이하 레거시 플래그).<br>
+ * - 개발자는 즉시 실행과 지연 실행, 그리고 취소 지원이 모두 필요합니다.<br>
+ * - 윈도우 소프트 입력 모드 설정이 매니페스트와 런타임 코드에 분산되어 있습니다.<br>
  *
- * @see <a href="https://blog.naver.com/il7942li/222671675950">windowSoftInputMode reference</a>
+ * **Design decisions / 설계 결정 이유:**<br>
+ * - **No permission required**: InputMethodManager does not require runtime permissions, so requiredPermissions is null.<br>
+ * - **Dual delay mechanisms**: Provides both Runnable-based (postDelayed) and Coroutine-based delay methods for flexibility.<br>
+ * - **Job return for cancellation**: Coroutine-based delay methods return Job? to enable cancellation when needed (e.g., view detachment, rapid user actions).<br>
+ * - **Method overloading for hideDelay/showDelay**: Same method name with different signatures - Runnable version returns Boolean, Coroutine version returns Job?.<br>
+ * - **API-specific branching**: setAdjustResize uses checkSdkVersion to handle API 30+ (WindowCompat) vs legacy (SOFT_INPUT_ADJUST_RESIZE) approaches.<br>
+ * - **Safe fallback for window token**: hide() checks both windowToken and applicationWindowToken with clear error logging.<br><br>
+ * - **권한 불필요**: InputMethodManager는 런타임 권한이 필요 없으므로 requiredPermissions는 null입니다.<br>
+ * - **이중 지연 메커니즘**: 유연성을 위해 Runnable 기반(postDelayed)과 Coroutine 기반 지연 메서드를 모두 제공합니다.<br>
+ * - **취소를 위한 Job 반환**: Coroutine 기반 지연 메서드는 필요 시 취소할 수 있도록 Job?을 반환합니다 (예: 뷰 분리, 빠른 사용자 액션).<br>
+ * - **hideDelay/showDelay 메서드 오버로딩**: 동일한 메서드명에 다른 시그니처 - Runnable 버전은 Boolean, Coroutine 버전은 Job? 반환.<br>
+ * - **API별 분기 처리**: setAdjustResize는 checkSdkVersion을 사용하여 API 30+ (WindowCompat)와 레거시 (SOFT_INPUT_ADJUST_RESIZE) 방식을 처리합니다.<br>
+ * - **윈도우 토큰 안전 Fallback**: hide()는 windowToken과 applicationWindowToken을 모두 확인하고 명확한 에러 로깅을 합니다.<br>
+ *
+ * **Usage / 사용법:**<br>
+ * ```kotlin
+ * // Get controller instance
+ * val controller = context.getSoftKeyboardController()
+ *
+ * // Basic show/hide
+ * controller.show(editText)
+ * controller.hide(editText)
+ *
+ * // Delayed operations - Runnable version (returns Boolean)
+ * controller.showDelay(editText, 300)
+ * controller.hideDelay(editText, 300)
+ *
+ * // Delayed operations - Coroutine version with cancellation (returns Job?)
+ * val showJob = controller.showDelay(editText, 300, coroutineScope = lifecycleScope)
+ * val hideJob = controller.hideDelay(editText, 300, coroutineScope = lifecycleScope)
+ * hideJob?.cancel() // Cancel if needed
+ *
+ * // Window configuration
+ * controller.setAdjustPan(window)
+ * controller.setAdjustResize(window)
+ *
+ * // Stylus handwriting (API 33+)
+ * if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+ *     controller.startStylusHandwriting(view)
+ * }
+ * ```<br><br>
+ * ```kotlin
+ * // 컨트롤러 인스턴스 가져오기
+ * val controller = context.getSoftKeyboardController()
+ *
+ * // 기본 표시/숨김
+ * controller.show(editText)
+ * controller.hide(editText)
+ *
+ * // 지연 작업 - Runnable 버전 (Boolean 반환)
+ * controller.showDelay(editText, 300)
+ * controller.hideDelay(editText, 300)
+ *
+ * // 지연 작업 - 취소 가능한 Coroutine 버전 (Job? 반환)
+ * val showJob = controller.showDelay(editText, 300, coroutineScope = lifecycleScope)
+ * val hideJob = controller.hideDelay(editText, 300, coroutineScope = lifecycleScope)
+ * hideJob?.cancel() // 필요시 취소
+ *
+ * // 윈도우 설정
+ * controller.setAdjustPan(window)
+ * controller.setAdjustResize(window)
+ *
+ * // 스타일러스 필기 (API 33+)
+ * if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+ *     controller.startStylusHandwriting(view)
+ * }
+ * ```<br>
  */
 public open class SoftKeyboardController(
     context: Context,
@@ -43,11 +119,10 @@ public open class SoftKeyboardController(
      * @return true if the mode was set without errors.<br><br>
      *         오류 없이 설정되면 true를 반환합니다.<br>
      */
-    public fun setAdjustPan(window: Window): Boolean =
-        tryCatchSystemManager(false) {
-            window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
-            return true
-        }
+    public fun setAdjustPan(window: Window): Boolean = tryCatchSystemManager(false) {
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
+        true
+    }
 
     /**
      * Sets custom soft input mode for the window.<br><br>
@@ -63,14 +138,10 @@ public open class SoftKeyboardController(
      * @return true if the mode was set without errors.<br><br>
      *         오류 없이 설정되면 true를 반환합니다.<br>
      */
-    public fun setSoftInputMode(
-        window: Window,
-        softInputTypes: Int,
-    ): Boolean =
-        tryCatchSystemManager(false) {
-            window.setSoftInputMode(softInputTypes)
-            return true
-        }
+    public fun setSoftInputMode(window: Window, softInputTypes: Int): Boolean = tryCatchSystemManager(false) {
+        window.setSoftInputMode(softInputTypes)
+        true
+    }
 
     /**
      * Shows the soft keyboard for input-capable views (EditText, SearchView, etc.).<br><br>
@@ -86,18 +157,14 @@ public open class SoftKeyboardController(
      * @return true if focus was obtained and the request was issued.<br><br>
      *         포커스를 얻고 요청을 전달하면 true를 반환합니다.<br>
      */
-    public fun show(
-        v: View,
-        flag: Int = InputMethodManager.SHOW_IMPLICIT,
-    ): Boolean =
-        tryCatchSystemManager(false) {
-            return if (v.requestFocus()) {
-                imm.showSoftInput(v, flag)
-            } else {
-                Logx.e("view requestFocus() is false!!")
-                false
-            }
+    public fun show(v: View, flag: Int = InputMethodManager.SHOW_IMPLICIT): Boolean = tryCatchSystemManager(false) {
+        return if (v.requestFocus()) {
+            imm.showSoftInput(v, flag)
+        } else {
+            Logx.e("SoftKeyboardController: View requestFocus failed")
+            false
         }
+    }
 
     /**
      * Shows the soft keyboard for input-capable views after a delay.<br><br>
@@ -112,18 +179,13 @@ public open class SoftKeyboardController(
      * @return true if the runnable was posted to the message queue.<br><br>
      *         Runnable이 메시지 큐에 등록되면 true를 반환합니다.<br>
      */
-    public fun showDelay(
-        v: View,
-        delay: Long,
-        flag: Int = InputMethodManager.SHOW_IMPLICIT,
-    ): Boolean =
-        tryCatchSystemManager(false) {
-            return v.postDelayed(Runnable { show(v, flag) }, delay)
-        }
+    public fun showDelay(v: View, delay: Long, flag: Int = InputMethodManager.SHOW_IMPLICIT): Boolean = tryCatchSystemManager(false) {
+        return v.postDelayed(Runnable { show(v, flag) }, delay)
+    }
 
     /**
-     * Shows the soft keyboard using a coroutine-based delay.<br><br>
-     * 코루틴 기반 지연으로 소프트 키보드를 표시합니다.<br>
+     * Shows the soft keyboard using a coroutine-based delay with cancellation support.<br><br>
+     * 취소 가능한 코루틴 기반 지연으로 소프트 키보드를 표시합니다.<br>
      *
      * @param v Target view.<br><br>
      *          대상 뷰입니다.<br>
@@ -133,21 +195,17 @@ public open class SoftKeyboardController(
      *             입력기 표시 플래그입니다.<br>
      * @param coroutineScope Scope used to launch the delayed task.<br><br>
      *                       지연 작업을 실행할 코루틴 스코프입니다.<br>
-     * @return true after scheduling the coroutine.<br><br>
-     *         코루틴 예약을 완료하면 true를 반환합니다.<br>
+     * @return Job instance that can be used to cancel the delayed operation.<br><br>
+     *         지연 작업을 취소할 수 있는 Job 인스턴스를 반환합니다.<br>
      */
-    public fun showDelay(
-        v: View,
-        delay: Long,
-        flag: Int = InputMethodManager.SHOW_IMPLICIT,
-        coroutineScope: CoroutineScope,
-    ): Boolean =
-        tryCatchSystemManager(false) {
+    public fun showDelay(v: View, delay: Long, flag: Int = InputMethodManager.SHOW_IMPLICIT, coroutineScope: CoroutineScope): Job? =
+        tryCatchSystemManager(null) {
             coroutineScope.launch {
                 delay(delay)
-                show(v, flag)
+                withContext(Dispatchers.Main.immediate) {
+                    show(v, flag)
+                }
             }
-            return true
         }
 
     /**
@@ -161,21 +219,18 @@ public open class SoftKeyboardController(
      *          윈도우 토큰을 가져올 대상 뷰입니다.<br>
      * @param flag Hide flag for the input method manager.<br><br>
      *             입력기 숨김 플래그입니다.<br>
-     * @return true if focus was obtained and the request was issued.<br><br>
-     *         포커스를 얻고 요청을 전달하면 true를 반환합니다.<br>
+     * @return true if the window token was obtained and the hide request was issued.<br><br>
+     *         윈도우 토큰을 얻고 숨김 요청을 전달하면 true를 반환합니다.<br>
      */
-    public fun hide(
-        v: View,
-        flag: Int = 0,
-    ): Boolean =
-        tryCatchSystemManager(false) {
-            return if (v.requestFocus()) {
-                imm.hideSoftInputFromWindow(v.windowToken, flag)
-            } else {
-                Logx.e("view requestFocus() is false!!")
-                false
-            }
+    public fun hide(v: View, flag: Int = 0): Boolean = tryCatchSystemManager(false) {
+
+        val windowToken = v.windowToken ?: v.applicationWindowToken ?: run {
+            Logx.e("SoftKeyboardController: View windowToken is null")
+            return false
         }
+
+        imm.hideSoftInputFromWindow(windowToken, flag)
+    }
 
     /**
      * Hides the soft keyboard from input-capable views after a delay.<br><br>
@@ -190,18 +245,13 @@ public open class SoftKeyboardController(
      * @return true if the runnable was posted to the message queue.<br><br>
      *         Runnable이 메시지 큐에 등록되면 true를 반환합니다.<br>
      */
-    public fun hideDelay(
-        v: View,
-        delay: Long,
-        flag: Int = 0,
-    ): Boolean =
-        tryCatchSystemManager(false) {
-            return v.postDelayed(Runnable { hide(v, flag) }, delay)
-        }
+    public fun hideDelay(v: View, delay: Long, flag: Int = 0): Boolean = tryCatchSystemManager(false) {
+        return v.postDelayed(Runnable { hide(v, flag) }, delay)
+    }
 
     /**
-     * Hides the soft keyboard using a coroutine-based delay.<br><br>
-     * 코루틴 기반 지연으로 소프트 키보드를 숨깁니다.<br>
+     * Hides the soft keyboard using a coroutine-based delay with cancellation support.<br><br>
+     * 취소 가능한 코루틴 기반 지연으로 소프트 키보드를 숨깁니다.<br>
      *
      * @param v Target view.<br><br>
      *          대상 뷰입니다.<br>
@@ -211,22 +261,17 @@ public open class SoftKeyboardController(
      *             입력기 숨김 플래그입니다.<br>
      * @param coroutineScope Scope used to launch the delayed task.<br><br>
      *                       지연 작업을 실행할 코루틴 스코프입니다.<br>
-     * @return true after scheduling the coroutine.<br><br>
-     *         코루틴 예약을 완료하면 true를 반환합니다.<br>
+     * @return Job instance that can be used to cancel the delayed operation, or null if an error occurs.<br><br>
+     *         지연 작업을 취소할 수 있는 Job 인스턴스를 반환하며, 오류 발생 시 null을 반환합니다.<br>
      */
-    public fun hideDelay(
-        v: View,
-        delay: Long,
-        flag: Int = 0,
-        coroutineScope: CoroutineScope,
-    ): Boolean =
-        tryCatchSystemManager(false) {
-            coroutineScope.launch {
-                delay(delay)
+    public fun hideDelay(v: View, delay: Long, flag: Int = 0, coroutineScope: CoroutineScope): Job? = tryCatchSystemManager(null) {
+        coroutineScope.launch {
+            delay(delay)
+            withContext(Dispatchers.Main.immediate) {
                 hide(v, flag)
             }
-            return true
         }
+    }
 
     /**
      * Starts stylus handwriting mode for the given view.<br><br>
@@ -241,36 +286,41 @@ public open class SoftKeyboardController(
      *         포커스를 얻고 요청을 전달하면 true를 반환합니다.<br>
      */
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    public fun startStylusHandwriting(v: View): Boolean =
-        tryCatchSystemManager(false) {
-            return if (v.requestFocus()) {
-                imm.startStylusHandwriting(v)
-                true
-            } else {
-                Logx.e("[ERROR]view requestFocus() is false!!")
-                false
-            }
+    public fun startStylusHandwriting(v: View): Boolean = tryCatchSystemManager(false) {
+        return if (v.requestFocus()) {
+            imm.startStylusHandwriting(v)
+            true
+        } else {
+            Logx.e("SoftKeyboardController: View requestFocus failed")
+            false
         }
+    }
 
     /**
-     * Configures the window to adjust resize, using WindowInsetsController on Android 11+ and legacy flags otherwise.<br><br>
-     * Android 11 이상에서는 WindowInsetsController로 IME 동작을 제어하고, 그 미만에서는 기존 adjustResize 플래그를 적용합니다.<br>
+     * Configures the window to adjust resize when the keyboard is shown.<br><br>
+     * 키보드가 표시될 때 화면이 resize되도록 윈도우를 설정합니다.<br>
+     *
+     * On Android 11+ (API 30+), uses WindowCompat for proper edge-to-edge and IME handling.<br>
+     * On older versions, uses the legacy SOFT_INPUT_ADJUST_RESIZE flag.<br><br>
+     * Android 11 이상에서는 WindowCompat을 사용하여 올바른 edge-to-edge 및 IME 처리를 수행하며,<br>
+     * 이전 버전에서는 레거시 SOFT_INPUT_ADJUST_RESIZE 플래그를 사용합니다.<br>
      *
      * @param window Target window to configure.<br><br>
      *               설정할 대상 윈도우입니다.<br>
+     * @return true if the mode was set without errors.<br><br>
+     *         오류 없이 설정되면 true를 반환합니다.<br>
      */
-    public fun setAdjustResize(window: Window) {
+    public fun setAdjustResize(window: Window): Boolean = tryCatchSystemManager(false) {
         checkSdkVersion(
             Build.VERSION_CODES.R,
             positiveWork = {
-                // Android 11+: rely on WindowInsetsController
-                val controller = window.insetsController
-                if (controller != null) {
-                    // Let system adjust layout when IME is shown
-                    controller.systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-                } else {
-                    // Fallback to WindowCompat when controller is unavailable
-                    WindowCompat.setDecorFitsSystemWindows(window, true)
+                // Android 11+: Use WindowCompat for edge-to-edge + IME handling
+                WindowCompat.setDecorFitsSystemWindows(window, true)
+
+                // Additionally, ensure IME animations are handled properly
+                window.insetsController?.let { controller ->
+                    // This doesn't directly affect resize, but ensures smooth IME transitions
+                    controller.systemBarsBehavior = WindowInsetsController.BEHAVIOR_DEFAULT
                 }
             },
             negativeWork = {
@@ -278,6 +328,7 @@ public open class SoftKeyboardController(
                 window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
             },
         )
+        true
     }
 
     /**
@@ -292,11 +343,7 @@ public open class SoftKeyboardController(
      *         Runnable이 메시지 큐에 등록되면 true를 반환합니다.<br>
      */
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    public fun startStylusHandwriting(
-        v: View,
-        delay: Long,
-    ): Boolean =
-        tryCatchSystemManager(false) {
-            return v.postDelayed(Runnable { startStylusHandwriting(v) }, delay)
-        }
+    public fun startStylusHandwriting(v: View, delay: Long): Boolean = tryCatchSystemManager(false) {
+        return v.postDelayed(Runnable { startStylusHandwriting(v) }, delay)
+    }
 }
