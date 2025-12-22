@@ -314,16 +314,17 @@ public open class SoftKeyboardController(
         checkSdkVersion(
             Build.VERSION_CODES.R,
             positiveWork = {
-                // Android 11+: Use WindowCompat for edge-to-edge + IME handling
-                WindowCompat.setDecorFitsSystemWindows(window, true)
-
-                // Additionally, ensure IME animations are handled properly
-                window.insetsController?.let { controller ->
-                    // This doesn't directly affect resize, but ensures smooth IME transitions
-                    controller.systemBarsBehavior = WindowInsetsController.BEHAVIOR_DEFAULT
+                // Android 11+: Use WindowCompat for proper IME resize handling
+                // setDecorFitsSystemWindows(true) ensures system handles IME insets automatically
+                try {
+                    WindowCompat.setDecorFitsSystemWindows(window, true)
+                } catch (e: Exception) {
+                    Logx.e("SoftKeyboardController: setDecorFitsSystemWindows failed: ${e.message}")
+                    return@tryCatchSystemManager false
                 }
             },
             negativeWork = {
+                // Android 10 and below: Use legacy SOFT_INPUT_ADJUST_RESIZE flag
                 @Suppress("DEPRECATION")
                 window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
             },

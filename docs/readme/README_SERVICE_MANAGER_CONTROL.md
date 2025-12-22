@@ -213,18 +213,15 @@ override fun onCreate(savedInstanceState: Bundle?) {
 public fun setAdjustResize(window: Window): Boolean = tryCatchSystemManager(false) {
     checkSdkVersion(Build.VERSION_CODES.R,
         positiveWork = {
-            // Android 11+: Use WindowCompat for edge-to-edge + IME handling
-            // (Android 11+: edge-to-edge + IME 처리를 위한 WindowCompat 사용)
+            // Android 11+: Use WindowCompat for proper IME resize handling
+            // setDecorFitsSystemWindows(true) ensures system handles IME insets automatically
+            // (Android 11+: 올바른 IME resize 처리를 위한 WindowCompat 사용)
+            // (setDecorFitsSystemWindows(true)가 시스템이 IME insets를 자동 처리하도록 보장)
             WindowCompat.setDecorFitsSystemWindows(window, true)
-
-            // Additionally, ensure IME animations are handled properly
-            // (추가로, IME 애니메이션이 올바르게 처리되도록 보장)
-            window.insetsController?.let { controller ->
-                controller.systemBarsBehavior = WindowInsetsController.BEHAVIOR_DEFAULT
-            }
         },
         negativeWork = {
-            // Android 10 and below: Traditional method (Android 10 이하: 기존 방식)
+            // Android 10 and below: Use legacy SOFT_INPUT_ADJUST_RESIZE flag
+            // (Android 10 이하: 레거시 SOFT_INPUT_ADJUST_RESIZE 플래그 사용)
             @Suppress("DEPRECATION")
             window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
         }
@@ -239,8 +236,7 @@ public fun setAdjustResize(window: Window): Boolean = tryCatchSystemManager(fals
 - **⭐ NEW: Job-based cancellation support** (Coroutine version returns Job? for manual cancellation)
 - **⭐ NEW: Safe windowToken fallback** (Auto fallback to applicationWindowToken if windowToken is null)
 - **Clean SDK version branching with checkSdkVersion() helper**
-- **Automatic SDK version branching** (Android 11+ WindowCompat + BEHAVIOR_DEFAULT auto-used)
-- Automated WindowInsetsController null handling and WindowCompat fallback
+- **Automatic SDK version branching** (Android 11+ uses WindowCompat.setDecorFitsSystemWindows, Android 10- uses legacy SOFT_INPUT_ADJUST_RESIZE)
 - Safe exception handling with tryCatchSystemManager, Boolean return
 > **장점:**
 > - **극적인 코드 간소화** (수십 줄 → 한 줄)
@@ -249,8 +245,7 @@ public fun setAdjustResize(window: Window): Boolean = tryCatchSystemManager(fals
 > - **⭐ 신규: Job 기반 취소 지원** (Coroutine 버전은 수동 취소를 위해 Job? 반환)
 > - **⭐ 신규: 안전한 windowToken fallback** (windowToken이 null이면 applicationWindowToken으로 자동 Fallback)
 > - **checkSdkVersion() 헬퍼로 깔끔한 SDK 버전 분기**
-> - **SDK 버전 자동 분기 처리** (Android 11+ WindowCompat + BEHAVIOR_DEFAULT 자동 사용)
-> - WindowInsetsController null 처리 및 WindowCompat fallback 자동화
+> - **SDK 버전 자동 분기 처리** (Android 11+는 WindowCompat.setDecorFitsSystemWindows 사용, Android 10 이하는 레거시 SOFT_INPUT_ADJUST_RESIZE 사용)
 > - tryCatchSystemManager로 안전한 예외 처리, Boolean 반환
 </details>
 

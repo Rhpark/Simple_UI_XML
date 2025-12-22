@@ -105,15 +105,16 @@ class SoftKeyboardControllerRobolectricTest {
 
     @Test
     @Config(sdk = [Build.VERSION_CODES.R]) // API 30 (Android 11+)
-    fun `setAdjustResize uses WindowCompat and WindowInsetsController on API 30+`() {
-        val mockInsetsController = mock(WindowInsetsController::class.java)
-        `when`(mockWindow.insetsController).thenReturn(mockInsetsController)
+    fun `setAdjustResize uses WindowCompat on API 30+`() {
+        // Mock decorView to prevent WindowCompat.setDecorFitsSystemWindows from failing
+        val mockDecorView = mock(View::class.java)
+        `when`(mockWindow.decorView).thenReturn(mockDecorView)
 
         val result = controller.setAdjustResize(mockWindow)
 
         assertTrue(result)
         // Note: WindowCompat.setDecorFitsSystemWindows is called but difficult to verify in unit tests
-        verify(mockInsetsController).systemBarsBehavior = WindowInsetsController.BEHAVIOR_DEFAULT
+        // The method only sets DecorFitsSystemWindows(true) for proper IME resize handling
     }
 
     @Test
@@ -217,7 +218,7 @@ class SoftKeyboardControllerRobolectricTest {
     }
 
     @Test
-    fun `hide returns false when windowToken is null but applicationWindowToken is available`() {
+    fun `hide returns true when windowToken is null but applicationWindowToken is available`() {
         val mockApplicationWindowToken = mock(android.os.IBinder::class.java)
         `when`(mockView.windowToken).thenReturn(null)
         `when`(mockView.applicationWindowToken).thenReturn(mockApplicationWindowToken)
