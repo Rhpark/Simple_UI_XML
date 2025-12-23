@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Build
 import android.view.View
 import android.view.Window
-import android.view.WindowInsetsController
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import androidx.annotation.RequiresApi
@@ -223,7 +222,6 @@ public open class SoftKeyboardController(
      *         윈도우 토큰을 얻고 숨김 요청을 전달하면 true를 반환합니다.<br>
      */
     public fun hide(v: View, flag: Int = 0): Boolean = tryCatchSystemManager(false) {
-
         val windowToken = v.windowToken ?: v.applicationWindowToken ?: run {
             Logx.e("SoftKeyboardController: View windowToken is null")
             return false

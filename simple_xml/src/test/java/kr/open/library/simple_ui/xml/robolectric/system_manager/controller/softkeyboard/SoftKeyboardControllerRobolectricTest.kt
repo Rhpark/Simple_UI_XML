@@ -4,7 +4,6 @@ import android.app.Application
 import android.os.Build
 import android.view.View
 import android.view.Window
-import android.view.WindowInsetsController
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import androidx.test.core.app.ApplicationProvider

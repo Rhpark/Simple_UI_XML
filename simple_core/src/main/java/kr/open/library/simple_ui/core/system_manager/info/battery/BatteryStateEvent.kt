@@ -121,10 +121,10 @@ public sealed class BatteryStateEvent {
      * Event for battery presence status updates.<br><br>
      * 배터리 존재 여부 변경에 대한 이벤트입니다.<br>
      *
-     * @param present `true` if battery is present; `false` otherwise.<br><br>
-     *                배터리가 있으면 `true`, 없으면 `false`<br>
+     * @param present `true` if battery is present, `false` if not present, `null` if status is unavailable.<br><br>
+     *                배터리가 장착되어 있으면 `true`, 장착되어 있지 않으면 `false`, 상태를 알 수 없으면 `null`.<br>
      */
     public data class OnPresent(
-        val present: Boolean,
+        val present: Boolean?,
     ) : BatteryStateEvent()
 }

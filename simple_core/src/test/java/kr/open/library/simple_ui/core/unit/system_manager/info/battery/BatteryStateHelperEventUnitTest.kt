@@ -10,7 +10,7 @@ import org.junit.Test
 /**
  * Unit tests for BatteryStateEvent sealed class and its data classes
  */
-class BatteryStateEventUnitTest {
+class BatteryStateHelperEventUnitTest {
     // ==============================================
     // OnCapacity Tests
     // ==============================================
@@ -303,37 +303,6 @@ class BatteryStateEventUnitTest {
     }
 
     // ==============================================
-    // OnTotalCapacity Tests
-    // ==============================================
-
-    @Test
-    fun onTotalCapacity_createsCorrectly() {
-        val event = BatteryStateEvent.OnTotalCapacity(5000.0)
-
-        assertEquals(5000.0, event.totalCapacity, 0.001)
-        assertTrue(event is BatteryStateEvent)
-    }
-
-    @Test
-    fun onTotalCapacity_dataClassEquality() {
-        val event1 = BatteryStateEvent.OnTotalCapacity(4000.0)
-        val event2 = BatteryStateEvent.OnTotalCapacity(4000.0)
-        val event3 = BatteryStateEvent.OnTotalCapacity(5000.0)
-
-        assertEquals(event1, event2)
-        assertNotEquals(event1, event3)
-    }
-
-    @Test
-    fun onTotalCapacity_copy() {
-        val original = BatteryStateEvent.OnTotalCapacity(3500.0)
-        val copied = original.copy(totalCapacity = 4500.0)
-
-        assertEquals(3500.0, original.totalCapacity, 0.001)
-        assertEquals(4500.0, copied.totalCapacity, 0.001)
-    }
-
-    // ==============================================
     // Sealed Class Hierarchy Tests
     // ==============================================
 
@@ -352,7 +321,6 @@ class BatteryStateEventUnitTest {
                 BatteryStateEvent.OnHealth(2),
                 BatteryStateEvent.OnEnergyCounter(12000000000L),
                 BatteryStateEvent.OnPresent(true),
-                BatteryStateEvent.OnTotalCapacity(4200.0),
             )
 
         events.forEach { event ->
@@ -375,7 +343,6 @@ class BatteryStateEventUnitTest {
                 BatteryStateEvent.OnHealth(2),
                 BatteryStateEvent.OnEnergyCounter(15000000000L),
                 BatteryStateEvent.OnPresent(true),
-                BatteryStateEvent.OnTotalCapacity(5000.0),
             )
 
         events.forEach { event ->
@@ -392,7 +359,6 @@ class BatteryStateEventUnitTest {
                     is BatteryStateEvent.OnHealth -> "Health"
                     is BatteryStateEvent.OnEnergyCounter -> "EnergyCounter"
                     is BatteryStateEvent.OnPresent -> "Present"
-                    is BatteryStateEvent.OnTotalCapacity -> "TotalCapacity"
                 }
             assertTrue(eventType.isNotEmpty())
         }

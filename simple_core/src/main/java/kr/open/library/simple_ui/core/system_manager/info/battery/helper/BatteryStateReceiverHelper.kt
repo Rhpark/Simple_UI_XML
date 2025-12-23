@@ -50,12 +50,20 @@ internal class BatteryStateReceiverHelper(
          */
         override fun onReceive(context: Context, intent: Intent) {
             if (intent.action == Intent.ACTION_BATTERY_CHANGED) {
-                batteryStatus = intent
+                synchronized(batteryStatusLock) {
+                    batteryStatus = intent
+                }
             }
             receiveBatteryInfo.invoke()
         }
     }
 
+    /**
+     * IntentFilter for battery-related broadcast events.<br>
+     * Listens to battery changes, low/okay battery, power connection/disconnection, and power usage summary.<br><br>
+     * 배터리 관련 브로드캐스트 이벤트를 위한 IntentFilter입니다.<br>
+     * 배터리 변경, 배터리 부족/정상, 전원 연결/해제, 전원 사용 요약을 수신합니다.<br>
+     */
     private val intentFilter = IntentFilter().apply {
         addAction(Intent.ACTION_BATTERY_CHANGED)
         addAction(Intent.ACTION_BATTERY_LOW)
@@ -69,7 +77,9 @@ internal class BatteryStateReceiverHelper(
      * Cache for the latest battery intent.<br><br>
      * 최신 배터리 인텐트를 보관하는 캐시입니다.<br>
      */
+    @Volatile
     private var batteryStatus: Intent? = null
+    private val batteryStatusLock = Any()
 
     /**
      * Indicates whether the broadcast receiver is currently registered.<br><br>
@@ -77,7 +87,6 @@ internal class BatteryStateReceiverHelper(
      */
     @Volatile
     private var isReceiverRegistered = false
-
     private val registerLock = Any()
 
     /**
@@ -94,8 +103,14 @@ internal class BatteryStateReceiverHelper(
             unRegisterReceiver()
             checkSdkVersion(
                 Build.VERSION_CODES.TIRAMISU,
-                positiveWork = { batteryStatus = context.registerReceiver(batteryBroadcastReceiver, intentFilter, RECEIVER_NOT_EXPORTED) },
-                negativeWork = { batteryStatus = context.registerReceiver(batteryBroadcastReceiver, intentFilter) },
+                positiveWork = {
+                    val intent = context.registerReceiver(batteryBroadcastReceiver, intentFilter, RECEIVER_NOT_EXPORTED)
+                    synchronized(batteryStatusLock) { batteryStatus = intent }
+                },
+                negativeWork = {
+                    val intent = context.registerReceiver(batteryBroadcastReceiver, intentFilter)
+                    synchronized(batteryStatusLock) { batteryStatus = intent }
+                },
             )
             isReceiverRegistered = true
             return true
@@ -115,7 +130,9 @@ internal class BatteryStateReceiverHelper(
 
             context.unregisterReceiver(batteryBroadcastReceiver)
             isReceiverRegistered = false
-            batteryStatus = null
+            synchronized(batteryStatusLock) {
+                batteryStatus = null
+            }
             internalCoroutineScope?.cancel()
             internalCoroutineScope = null
             updateJob = null
@@ -125,8 +142,12 @@ internal class BatteryStateReceiverHelper(
     /**
      * Starts periodic battery state updates with the given coroutine scope.<br>
      * Before calling this method, ensure registerBatteryReceiver() has been called.<br><br>
+     * If the CoroutineScope has no Job, automatic cleanup is NOT guaranteed.
+     * In that case, you must call unRegister() explicitly. Using a Job-bound scope (e.g., lifecycleScope/viewModelScope) is strongly recommended.<br><br>
      * 주어진 코루틴 스코프로 주기적인 배터리 상태 업데이트를 시작합니다.<br>
      * 이 메서드를 호출하기 전에 registerBatteryReceiver()가 호출되었는지 확인하세요.<br>
+     * CoroutineScope에 Job이 없으면 자동 해제는 보장되지 않습니다. 이 경우 반드시 unRegister()를 직접 호출해야 합니다.
+     * Job이 있는 스코프(lifecycleScope/viewModelScope) 사용을 강력히 권장합니다.<br>
      *
      * @param coroutine The coroutine scope to use for updates.<br><br>
      *                  업데이트에 사용할 코루틴 스코프.<br>
@@ -149,8 +170,13 @@ internal class BatteryStateReceiverHelper(
 
         updateStop()
 
+        internalCoroutineScope?.cancel()
+        internalCoroutineScope = null
         // coroutine init
         val parentJob = coroutineScope.coroutineContext[Job]
+        if (parentJob == null) {
+            Logx.w("BatteryStateInfo: coroutineScope has no Job. Call unRegister() explicitly!!!.")
+        }
         val supervisor = SupervisorJob(parentJob)
         internalCoroutineScope = CoroutineScope(coroutineScope.coroutineContext + supervisor)
 
@@ -193,7 +219,28 @@ internal class BatteryStateReceiverHelper(
      * @return The battery status intent, or `null` if not available.<br><br>
      *         배터리 상태 인텐트, 없으면 `null`입니다.<br>
      */
-    public fun getBatteryStatusIntent() = batteryStatus
+    public fun getBatteryStatusIntent(): Intent? = synchronized(batteryStatusLock) {
+        batteryStatus
+    }
+
+    /**
+     * Fetches the latest battery status intent.<br>
+     * First tries to return the cached intent, then queries the system for a fresh intent if unavailable.<br><br>
+     * 최신 배터리 상태 인텐트를 가져옵니다.<br>
+     * 먼저 캐시된 인텐트를 반환하려 시도하고, 없으면 시스템에서 새 인텐트를 조회합니다.<br>
+     *
+     * @return Fresh battery status intent, or `null` if unavailable.<br><br>
+     *         새로운 배터리 상태 인텐트, 사용할 수 없으면 `null`.<br>
+     */
+    public fun fetchBatteryStatusIntent(): Intent? = safeCatch(null) {
+        getBatteryStatusIntent()?.let { return@safeCatch it }
+
+        val latest = context.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
+        if (latest != null) {
+            synchronized(batteryStatusLock) { batteryStatus = latest }
+        }
+        latest
+    }
 
     /**
      * Gets the internal coroutine scope.<br><br>

@@ -329,7 +329,7 @@ class ServiceManagerInfoActivity : BaseBindingActivity<ActivityServiceManagerInf
                         batteryInfo.registerStart(lifecycleScope)
                         addItem("Capacity :" + batteryInfo.getCapacity())
                         addItem("Technology :" + batteryInfo.getTechnology())
-                        addItem("ChargePlugStr :" + batteryInfo.getChargePlugStr())
+                        addItem("ChargePlugStr :" + batteryInfo.getChargePlugList())
                         addItem("Health :" + batteryInfo.getHealth())
                         addItem("ChargeStatus :" + batteryInfo.getChargeStatus())
                         addItem("CurrentAmpere :" + batteryInfo.getCurrentAmpere())

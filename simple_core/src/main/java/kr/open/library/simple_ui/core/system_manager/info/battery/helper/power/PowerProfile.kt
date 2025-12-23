@@ -2,9 +2,6 @@ package kr.open.library.simple_ui.core.system_manager.info.battery.helper.power
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.os.BatteryManager
-import android.os.Build
-import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
 import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
 import kr.open.library.simple_ui.core.logcat.Logx
 import java.lang.reflect.Method
@@ -148,9 +145,7 @@ public class PowerProfile(
 
     /**
      * Gets the total battery capacity in milliampere-hours (mAh).<br>
-     * Uses multiple fallback methods for better compatibility.<br><br>
      * 배터리의 총 용량을 밀리암페어시(mAh) 단위로 가져옵니다.<br>
-     * 더 나은 호환성을 위해 여러 fallback 방법을 사용합니다.<br>
      *
      * @return The battery capacity in mAh, or default value if unable to retrieve.<br><br>
      *         배터리 용량(mAh), 가져올 수 없는 경우 기본값.<br>
@@ -163,66 +158,9 @@ public class PowerProfile(
             return powerProfileCapacity
         }
 
-        // Fallback to BatteryManager if available (API 21+)
-        // BatteryManager로 fallback (API 21+)
-        val batteryManagerCapacity = getBatteryCapacityFromBatteryManager()
-        if (batteryManagerCapacity > 0) {
-            return batteryManagerCapacity
-        }
-
         // Last resort: return default capacity
         // 최후 수단: 기본 용량 반환
         Logx.w("Unable to retrieve battery capacity, using default: $DEFAULT_BATTERY_CAPACITY mAh")
         return DEFAULT_BATTERY_CAPACITY
-    }
-
-    /**
-     * Fallback method to estimate total battery capacity using BatteryManager.<br>
-     * This method calculates total capacity from current charge and percentage.<br><br>
-     * BatteryManager를 사용하여 총 배터리 용량을 추정하는 fallback 메서드입니다.<br>
-     * 현재 충전량과 백분율로부터 총 용량을 계산합니다.<br>
-     *
-     * @param defaultValue Default value to return if estimation fails.<br><br>
-     *                     추정 실패 시 반환할 기본값.<br>
-     *
-     * @return Estimated total battery capacity in mAh, or defaultValue if unavailable.<br><br>
-     *         추정된 총 배터리 용량(mAh), 사용할 수 없는 경우 defaultValue.<br>
-     */
-    private fun getBatteryCapacityFromBatteryManager(defaultValue: Double = 0.0): Double = safeCatch(defaultValue = defaultValue) {
-        checkSdkVersion(
-            Build.VERSION_CODES.LOLLIPOP,
-            positiveWork = {
-                val batteryManager = context.getSystemService(Context.BATTERY_SERVICE) as? BatteryManager
-
-                // Current charge in µAh
-                val chargeCounter = batteryManager?.getIntProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER)
-
-                // Current percentage
-                val capacity = batteryManager?.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
-
-                return if (
-                    chargeCounter != null &&
-                    capacity != null &&
-                    chargeCounter > 0 &&
-                    capacity > 5 &&
-                    capacity <= 100
-                ) {
-                    // Calculate total capacity: (current_charge_µAh / current_percentage) * 100 / 1000 = mAh
-                    // 총 용량 계산: (현재_충전량_µAh / 현재_백분율) * 100 / 1000 = mAh
-                    val estimatedTotalCapacity = (chargeCounter.toDouble() / capacity.toDouble()) * 100.0 / 1000.0
-
-                    // Sanity check: reasonable mobile device battery capacity
-                    // 정상성 검사: 합리적인 모바일 기기 배터리 용량
-                    if (estimatedTotalCapacity in 1000.0..10000.0) {
-                        estimatedTotalCapacity
-                    } else {
-                        defaultValue
-                    }
-                } else {
-                    defaultValue
-                }
-            },
-            negativeWork = { defaultValue },
-        )
     }
 }

@@ -10,28 +10,30 @@ package kr.open.library.simple_ui.core.system_manager.info.battery.helper.power
 public enum class PowerProfileVO(
     public val res: String,
 ) {
-    /*
-     * POWER_CPU_SUSPEND: Power consumption when CPU is in power collapse mode.
-     * POWER_CPU_IDLE: Power consumption when CPU is awake (when a wake lock is held). This should
-     *                 be zero on devices that can go into full CPU power collapse even when a wake
-     *                 lock is held. Otherwise, this is the power consumption in addition to
-     * POWER_CPU_SUSPEND due to a wake lock being held but with no CPU activity.
-     * POWER_CPU_ACTIVE: Power consumption when CPU is running, excluding power consumed by clusters
-     *                   and cores.
-     *
-     * CPU Power Equation (assume two clusters):
-     * Total power(POWER_CPU_SUSPEND  (always added)
-     *               + POWER_CPU_IDLE   (skip this and below if in power collapse mode)
-     *               + POWER_CPU_ACTIVE (skip this and below if CPU is not running, but a wakelock
-     *                                   is held)
-     *               + cluster_power.cluster0 + cluster_power.cluster1 (skip cluster not running)
-     *               + core_power.cluster0 * num running cores in cluster 0
-     *               + core_power.cluster1 * num running cores in cluster 1
+    /**
+     * Power consumption when CPU is in power collapse mode (deepest sleep state).<br><br>
+     * CPU가 전원 차단 모드(가장 깊은 절전 상태)일 때의 전력 소비입니다.<br>
      */
     POWER_CPU_SUSPEND("cpu.suspend"),
+
+    /**
+     * Power consumption when CPU is awake but idle (wake lock held, no CPU activity).<br>
+     * Should be zero on devices with full CPU power collapse support.<br><br>
+     * CPU가 깨어 있지만 유휴 상태일 때의 전력 소비(wake lock 유지, CPU 활동 없음)입니다.<br>
+     * 완전한 CPU 전원 차단을 지원하는 기기에서는 0이어야 합니다.<br>
+     */
     POWER_CPU_IDLE("cpu.idle"),
+
+    /**
+     * Power consumption when CPU is actively running, excluding cluster and core power.<br><br>
+     * CPU가 활발히 실행 중일 때의 전력 소비(클러스터 및 코어 전력 제외)입니다.<br>
+     */
     POWER_CPU_ACTIVE("cpu.active"),
 
+    /**
+     * Power consumption when screen is at full brightness.<br><br>
+     * 화면이 최대 밝기일 때의 전력 소비입니다.<br>
+     */
     POWER_SCREEN_FULL("screen.full"),
 
     /**
@@ -52,25 +54,88 @@ public enum class PowerProfileVO(
      */
     POWER_WIFI_ACTIVE("wifi.active"),
 
-    //
-    // Updated power constants. These are not estimated, they are real world
-    // currents and voltages for the underlying bluetooth and wifi controllers.
-    //
+    /**
+     * WiFi controller power when idle (not transmitting or receiving).<br><br>
+     * WiFi 컨트롤러가 유휴 상태(송수신하지 않음)일 때의 전력입니다.<br>
+     */
     POWER_WIFI_CONTROLLER_IDLE("wifi.controller.idle"),
+
+    /**
+     * WiFi controller power when receiving data.<br><br>
+     * WiFi 컨트롤러가 데이터를 수신할 때의 전력입니다.<br>
+     */
     POWER_WIFI_CONTROLLER_RX("wifi.controller.rx"),
+
+    /**
+     * WiFi controller power when transmitting data.<br><br>
+     * WiFi 컨트롤러가 데이터를 송신할 때의 전력입니다.<br>
+     */
     POWER_WIFI_CONTROLLER_TX("wifi.controller.tx"),
+
+    /**
+     * WiFi controller transmit power levels.<br><br>
+     * WiFi 컨트롤러 송신 전력 레벨입니다.<br>
+     */
     POWER_WIFI_CONTROLLER_TX_LEVELS("wifi.controller.tx_levels"),
+
+    /**
+     * WiFi controller operating voltage.<br><br>
+     * WiFi 컨트롤러 작동 전압입니다.<br>
+     */
     POWER_WIFI_CONTROLLER_OPERATING_VOLTAGE("wifi.controller.voltage"),
 
+    /**
+     * Bluetooth controller power when idle (not transmitting or receiving).<br><br>
+     * 블루투스 컨트롤러가 유휴 상태(송수신하지 않음)일 때의 전력입니다.<br>
+     */
     POWER_BLUETOOTH_CONTROLLER_IDLE("bluetooth.controller.idle"),
+
+    /**
+     * Bluetooth controller power when receiving data.<br><br>
+     * 블루투스 컨트롤러가 데이터를 수신할 때의 전력입니다.<br>
+     */
     POWER_BLUETOOTH_CONTROLLER_RX("bluetooth.controller.rx"),
+
+    /**
+     * Bluetooth controller power when transmitting data.<br><br>
+     * 블루투스 컨트롤러가 데이터를 송신할 때의 전력입니다.<br>
+     */
     POWER_BLUETOOTH_CONTROLLER_TX("bluetooth.controller.tx"),
+
+    /**
+     * Bluetooth controller operating voltage.<br><br>
+     * 블루투스 컨트롤러 작동 전압입니다.<br>
+     */
     POWER_BLUETOOTH_CONTROLLER_OPERATING_VOLTAGE("bluetooth.controller.voltage"),
 
+    /**
+     * Modem controller power when in sleep mode.<br><br>
+     * 모뎀 컨트롤러가 절전 모드일 때의 전력입니다.<br>
+     */
     POWER_MODEM_CONTROLLER_SLEEP("modem.controller.sleep"),
+
+    /**
+     * Modem controller power when idle (registered but not transmitting/receiving).<br><br>
+     * 모뎀 컨트롤러가 유휴 상태(등록되었지만 송수신하지 않음)일 때의 전력입니다.<br>
+     */
     POWER_MODEM_CONTROLLER_IDLE("modem.controller.idle"),
+
+    /**
+     * Modem controller power when receiving data.<br><br>
+     * 모뎀 컨트롤러가 데이터를 수신할 때의 전력입니다.<br>
+     */
     POWER_MODEM_CONTROLLER_RX("modem.controller.rx"),
+
+    /**
+     * Modem controller power when transmitting data.<br><br>
+     * 모뎀 컨트롤러가 데이터를 송신할 때의 전력입니다.<br>
+     */
     POWER_MODEM_CONTROLLER_TX("modem.controller.tx"),
+
+    /**
+     * Modem controller operating voltage.<br><br>
+     * 모뎀 컨트롤러 작동 전압입니다.<br>
+     */
     POWER_MODEM_CONTROLLER_OPERATING_VOLTAGE("modem.controller.voltage"),
 
     /**
@@ -170,16 +235,63 @@ public enum class PowerProfileVO(
      */
     POWER_GROUP_DISPLAY_SCREEN_FULL("screen.full.display"),
 
+    /**
+     * XML tag identifier for device element.<br><br>
+     * 디바이스 요소를 위한 XML 태그 식별자입니다.<br>
+     */
     TAG_DEVICE("device"),
+
+    /**
+     * XML tag identifier for item element.<br><br>
+     * 항목 요소를 위한 XML 태그 식별자입니다.<br>
+     */
     TAG_ITEM("item"),
+
+    /**
+     * XML tag identifier for array element.<br><br>
+     * 배열 요소를 위한 XML 태그 식별자입니다.<br>
+     */
     TAG_ARRAY("array"),
+
+    /**
+     * XML tag identifier for array item value.<br><br>
+     * 배열 항목 값을 위한 XML 태그 식별자입니다.<br>
+     */
     TAG_ARRAYITEM("value"),
+
+    /**
+     * XML attribute identifier for name.<br><br>
+     * 이름을 위한 XML 속성 식별자입니다.<br>
+     */
     ATTR_NAME("name"),
 
+    /**
+     * XML tag identifier for modem element.<br><br>
+     * 모뎀 요소를 위한 XML 태그 식별자입니다.<br>
+     */
     TAG_MODEM("modem"),
 
+    /**
+     * Number of CPU cores per cluster.<br><br>
+     * 클러스터당 CPU 코어 수입니다.<br>
+     */
     CPU_PER_CLUSTER_CORE_COUNT("cpu.clusters.cores"),
+
+    /**
+     * Power consumption for each CPU cluster.<br><br>
+     * 각 CPU 클러스터의 전력 소비입니다.<br>
+     */
     CPU_CLUSTER_POWER_COUNT("cpu.cluster_power.cluster"),
+
+    /**
+     * Prefix for CPU core speed values per cluster.<br><br>
+     * 클러스터별 CPU 코어 속도 값의 접두사입니다.<br>
+     */
     CPU_CORE_SPEED_PREFIX("cpu.core_speeds.cluster"),
+
+    /**
+     * Prefix for CPU core power values per cluster.<br><br>
+     * 클러스터별 CPU 코어 전력 값의 접두사입니다.<br>
+     */
     CPU_CORE_POWER_PREFIX("cpu.core_power.cluster"),
 }
