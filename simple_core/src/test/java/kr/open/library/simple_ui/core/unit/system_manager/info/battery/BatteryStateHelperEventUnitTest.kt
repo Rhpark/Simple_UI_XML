@@ -271,7 +271,7 @@ class BatteryStateHelperEventUnitTest {
     fun onPresent_createsCorrectlyTrue() {
         val event = BatteryStateEvent.OnPresent(true)
 
-        assertTrue(event.present)
+        assertEquals(true, event.present)
         assertTrue(event is BatteryStateEvent)
     }
 
@@ -279,7 +279,15 @@ class BatteryStateHelperEventUnitTest {
     fun onPresent_createsCorrectlyFalse() {
         val event = BatteryStateEvent.OnPresent(false)
 
-        assertFalse(event.present)
+        assertEquals(false, event.present)
+        assertTrue(event is BatteryStateEvent)
+    }
+
+    @Test
+    fun onPresent_createsCorrectlyNull() {
+        val event = BatteryStateEvent.OnPresent(null)
+
+        assertEquals(null, event.present)
         assertTrue(event is BatteryStateEvent)
     }
 
@@ -298,8 +306,8 @@ class BatteryStateHelperEventUnitTest {
         val original = BatteryStateEvent.OnPresent(true)
         val copied = original.copy(present = false)
 
-        assertTrue(original.present)
-        assertFalse(copied.present)
+        assertEquals(true, original.present)
+        assertEquals(false, copied.present)
     }
 
     // ==============================================
@@ -389,7 +397,7 @@ class BatteryStateHelperEventUnitTest {
         val event = BatteryStateEvent.OnPresent(true)
         val (present) = event
 
-        assertTrue(present)
+        assertEquals(true, present)
     }
 
     // ==============================================
