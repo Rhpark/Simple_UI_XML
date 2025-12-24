@@ -1,6 +1,6 @@
 package kr.open.library.simple_ui.core.system_manager.info.battery
 
-object BatteryStateVo {
+object BatteryStateConstants {
     /**
      * Default update cycle time in milliseconds.<br><br>
      * 기본 업데이트 주기 시간 (밀리초)입니다.<br>

@@ -1,4 +1,4 @@
-package kr.open.library.simple_ui.core.system_manager.info.battery.helper.power
+package kr.open.library.simple_ui.core.system_manager.info.battery.internal.helper.power
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -144,7 +144,7 @@ public class PowerProfile(
     }
 
     /**
-     * Gets the total battery capacity in milliampere-hours (mAh).<br>
+     * Gets the total battery capacity in milliampere-hours (mAh).<br><br>
      * 배터리의 총 용량을 밀리암페어시(mAh) 단위로 가져옵니다.<br>
      *
      * @return The battery capacity in mAh, or default value if unable to retrieve.<br><br>

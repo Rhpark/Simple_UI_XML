@@ -1,4 +1,4 @@
-package kr.open.library.simple_ui.core.system_manager.info.battery.helper
+package kr.open.library.simple_ui.core.system_manager.info.battery.internal.helper
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Build
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.DisposableHandle
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
@@ -23,10 +24,12 @@ import kr.open.library.simple_ui.core.logcat.Logx
  * 배터리 브로드캐스트 리시버와 주기적 업데이트를 관리하는 내부 헬퍼 클래스입니다.<br>
  * 실시간 브로드캐스트 이벤트와 일정 간격 확인을 결합하여 포괄적인 배터리 모니터링을 제공합니다.<br>
  */
-internal class BatteryStateReceiverHelper(
+internal class BatteryStateReceiver(
     private val context: Context,
     private val receiveBatteryInfo: () -> Unit
 ) {
+    // 추가: parentJob completion 핸들 보관
+    private var parentJobCompletionHandle: DisposableHandle? = null
     /**
      * Job handling periodic battery updates.<br><br>
      * 주기적 배터리 업데이트를 담당하는 Job입니다.<br>
@@ -79,6 +82,10 @@ internal class BatteryStateReceiverHelper(
      */
     @Volatile
     private var batteryStatus: Intent? = null
+    /**
+     * Lock object for synchronizing batteryStatus access.<br><br>
+     * batteryStatus 접근을 동기화하기 위한 락 객체입니다.<br>
+     */
     private val batteryStatusLock = Any()
 
     /**
@@ -87,6 +94,10 @@ internal class BatteryStateReceiverHelper(
      */
     @Volatile
     private var isReceiverRegistered = false
+    /**
+     * Lock object for synchronizing receiver registration/unregistration.<br><br>
+     * 리시버 등록/해제를 동기화하기 위한 락 객체입니다.<br>
+     */
     private val registerLock = Any()
 
     /**
@@ -127,6 +138,10 @@ internal class BatteryStateReceiverHelper(
     public fun unRegisterReceiver() = synchronized(registerLock) {
         safeCatch {
             if (!isReceiverRegistered) return
+
+            // 정리 시 completion 핸들도 함께 제거
+            parentJobCompletionHandle?.dispose()
+            parentJobCompletionHandle = null
 
             context.unregisterReceiver(batteryBroadcastReceiver)
             isReceiverRegistered = false
@@ -170,6 +185,10 @@ internal class BatteryStateReceiverHelper(
 
         updateStop()
 
+        // 이전 parentJob completion 핸들 제거 (재시작 안전)
+        parentJobCompletionHandle?.dispose()
+        parentJobCompletionHandle = null
+
         internalCoroutineScope?.cancel()
         internalCoroutineScope = null
         // coroutine init
@@ -181,7 +200,7 @@ internal class BatteryStateReceiverHelper(
         internalCoroutineScope = CoroutineScope(coroutineScope.coroutineContext + supervisor)
 
         // 부모 스코프 종료 시 자동 해제
-        parentJob?.invokeOnCompletion {
+        parentJobCompletionHandle = parentJob?.invokeOnCompletion {
             unRegisterReceiver()
             updateStop()
         }

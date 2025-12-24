@@ -184,12 +184,16 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // 1. Start battery monitoring with default update cycle (1000ms)
-        // (기본 업데이트 주기로 배터리 모니터링 시작 (1000ms))
-        batteryInfo.registerStart(lifecycleScope)
+        // 1. Start battery monitoring with default update cycle (2000ms)
+        // (기본 업데이트 주기로 배터리 모니터링 시작 (2000ms))
+        val success = batteryInfo.registerStart(lifecycleScope)
+        if (!success) {
+            Log.e("Battery", "Failed to start battery monitoring (배터리 모니터링 시작 실패)")
+            return
+        }
 
-        // Or use custom update cycle (500ms) (또는 커스텀 업데이트 주기 사용 (500ms))
-        // batteryInfo.registerStart(lifecycleScope, updateCycleTime = 500L)
+        // Or use custom update cycle (10000ms) (또는 커스텀 업데이트 주기 사용 (10000ms))
+        // val success = batteryInfo.registerStart(lifecycleScope, updateCycleTime = 10000L)
 
         // 2. Query initial values - Simple getters (초기 값 조회 - 간단한 getter)
         val capacity = batteryInfo.getCapacity()
@@ -197,13 +201,7 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
         val voltage = batteryInfo.getVoltage()
         val health = batteryInfo.getCurrentHealthStr()
 
-        // 3. Manual one-time update (optional) (수동 일회성 업데이트 (선택))
-        val success = batteryInfo.updateBatteryState()
-        if (success) {
-            Log.d("Battery", "Manual update triggered successfully")
-        }
-
-        // 4. SharedFlow-based real-time updates - Auto collect (SharedFlow 기반 실시간 업데이트 - 자동 collect)
+        // 3. SharedFlow-based real-time updates - Auto collect (SharedFlow 기반 실시간 업데이트 - 자동 collect)
         lifecycleScope.launch {
             batteryInfo.sfUpdate.collect { event ->
                 when (event) {
@@ -223,6 +221,22 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
     }
     // Auto cleanup in onDestroy() - internally calls unRegister()
     // (onDestroy()에서 자동 정리 - 내부적으로 unRegister() 호출)
+}
+
+private fun updateCapacity(percent: Int) {
+    // UI update logic (UI 업데이트 로직)
+}
+
+private fun updateTemperature(temperature: Double) {
+    // UI update logic (UI 업데이트 로직)
+}
+
+private fun updateVoltage(voltage: Double) {
+    // UI update logic (UI 업데이트 로직)
+}
+
+private fun updateCurrent(current: Int) {
+    // UI update logic (UI 업데이트 로직)
 }
 ```
 **Advantages:**
@@ -641,9 +655,13 @@ System Service Manager Info : [ServiceManagerInfoActivity.kt](../../app/src/main
 **System Service Manager Info**는 6가지 핵심 시스템 정보를 제공합니다:
 
 ### **Battery State Info** - Battery Status Information
-- **Real-time Updates:** `registerStart(coroutine: CoroutineScope, updateCycleTime: Long = 1000L)` - SharedFlow-based event updates
+- **Real-time Updates:** `registerStart(coroutine: CoroutineScope, updateCycleTime: Long = 2000L): Boolean` - SharedFlow-based event updates
   - `coroutineScope` - Coroutine scope (Lifecycle integrated) (코루틴 스코프 (Lifecycle과 연동))
-  - `updateCycleTime` - Update cycle in milliseconds (default: 1000ms) (밀리초 단위 업데이트 주기 (기본값: 1000ms))
+  - `updateCycleTime` - Update cycle in milliseconds (default: 2000ms) (밀리초 단위 업데이트 주기 (기본값: 2000ms))
+    - 2000ms (default): Recommended for most cases - fast updates, moderate battery usage. (대부분의 경우 권장 - 빠른 업데이트, 적당한 배터리 사용)
+    - 10000ms: Slower updates, lower battery consumption. (느린 업데이트, 낮은 배터리 소비)
+    - 60000ms: Very slow updates, minimal battery impact. (매우 느린 업데이트, 최소 배터리 영향)
+  - **Returns**: `true` if registration and update start succeeded, `false` otherwise (등록 및 업데이트 시작 성공 시 `true`, 실패 시 `false`)
   - Automatic BroadcastReceiver registration/unregistration (자동 BroadcastReceiver 등록/해제)
 - **Capacity Info:** `getCapacity()` - Battery level (0~100%) (배터리 잔량 (0~100%))
 - **Current Info:** `getCurrentAmpere()`, `getCurrentAverageAmpere()` - Instant/average current (microamperes) (순간/평균 전류 (마이크로암페어))
@@ -658,7 +676,6 @@ System Service Manager Info : [ServiceManagerInfoActivity.kt](../../app/src/main
 - **Lifecycle Management:**
   - `onDestroy()` - Automatic cleanup (internally calls unRegister()) (자동 정리 (내부적으로 unRegister() 호출))
   - `unRegister()` - Manual early unregistration if needed before destruction (파괴 전에 조기 해제가 필요한 경우 수동 호출)
-  - `updateBatteryState(): Boolean` - Trigger one-time battery state update, returns true on success (일회성 배터리 상태 업데이트 트리거, 성공 시 true 반환)
 - **Error Handling:** `BATTERY_ERROR_VALUE = Integer.MIN_VALUE` - Return value on error (오류 시 반환값)
 - **BatteryStateEvent:** 11 event types (OnCapacity, OnTemperature, OnVoltage, OnCurrentAmpere, OnCurrentAverageAmpere, OnChargeStatus, OnChargePlug, OnHealth, OnChargeCounter, OnEnergyCounter, OnPresent) (11가지 이벤트 타입)
 
@@ -866,7 +883,11 @@ Each Info requires permissions **based on features used**. Add only the permissi
 ```kotlin
 // Ready to use immediately (바로 사용 가능)
 val batteryInfo = BatteryStateInfo(context)
-batteryInfo.registerStart(lifecycleScope)
+val success = batteryInfo.registerStart(lifecycleScope)
+if (!success) {
+    Log.e("Battery", "Failed to start battery monitoring (배터리 모니터링 시작 실패)")
+    return
+}
 
 // Real-time battery status via SharedFlow (SharedFlow로 배터리 상태 실시간 수신)
 lifecycleScope.launch {
@@ -879,6 +900,7 @@ lifecycleScope.launch {
                 val isCharging = event.status == BatteryManager.BATTERY_STATUS_CHARGING
                 Log.d("Battery", "Charging (충전 중): $isCharging")
             }
+            else -> {}
         }
     }
 }

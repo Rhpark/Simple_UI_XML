@@ -3,31 +3,22 @@ package kr.open.library.simple_ui.core.system_manager.info.battery
 import android.content.Context
 import android.content.Intent
 import android.os.BatteryManager
-import android.os.BatteryManager.EXTRA_TEMPERATURE
-import android.os.BatteryManager.EXTRA_VOLTAGE
 import android.os.Build
 import androidx.annotation.RequiresApi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharedFlow
+import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.core.system_manager.base.BaseSystemService
-import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateVo.BATTERY_ERROR_VALUE
-import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateVo.BATTERY_ERROR_VALUE_BOOLEAN
-import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateVo.BATTERY_ERROR_VALUE_DOUBLE
-import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateVo.BATTERY_ERROR_VALUE_LONG
-import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateVo.DEFAULT_UPDATE_CYCLE_TIME
-import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateVo.STR_BATTERY_HEALTH_COLD
-import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateVo.STR_BATTERY_HEALTH_DEAD
-import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateVo.STR_BATTERY_HEALTH_GOOD
-import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateVo.STR_BATTERY_HEALTH_OVER_VOLTAGE
-import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateVo.STR_BATTERY_HEALTH_UNKNOWN
-import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateVo.STR_CHARGE_PLUG_AC
-import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateVo.STR_CHARGE_PLUG_DOCK
-import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateVo.STR_CHARGE_PLUG_NONE
-import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateVo.STR_CHARGE_PLUG_UNKNOWN
-import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateVo.STR_CHARGE_PLUG_USB
-import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateVo.STR_CHARGE_PLUG_WIRELESS
-import kr.open.library.simple_ui.core.system_manager.info.battery.helper.BatteryStateHelper
-import kr.open.library.simple_ui.core.system_manager.info.battery.helper.BatteryStateReceiverHelper
+import kr.open.library.simple_ui.core.system_manager.info.battery.internal.helper.BatteryPropertyReader
+import kr.open.library.simple_ui.core.system_manager.info.battery.internal.helper.BatteryStateEmitter
+import kr.open.library.simple_ui.core.system_manager.info.battery.internal.helper.BatteryStateReceiver
+import kr.open.library.simple_ui.core.system_manager.info.battery.internal.model.BatteryStateData
+import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateConstants.BATTERY_ERROR_VALUE
+import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateConstants.BATTERY_ERROR_VALUE_BOOLEAN
+import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateConstants.BATTERY_ERROR_VALUE_DOUBLE
+import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateConstants.BATTERY_ERROR_VALUE_LONG
+import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateConstants.DEFAULT_UPDATE_CYCLE_TIME
+import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateConstants.STR_CHARGE_PLUG_UNKNOWN
 
 /**
  * Provides information about the battery state of an Android device.<br><br>
@@ -79,7 +70,13 @@ public open class BatteryStateInfo(
      * BatteryManager에서 배터리 속성을 조회하고 StateFlow 캐싱을 관리하는 헬퍼입니다.<br>
      * 배터리 속성 접근 메서드를 제공하고 배터리 메트릭에 대한 반응형 플로우를 유지합니다.<br>
      */
-    private val batteryStateHelper = BatteryStateHelper(context)
+    private val batteryPropertyReader = BatteryPropertyReader(context)
+
+    /**
+     * Manages event emission to SharedFlow and caches battery metrics in StateFlows.<br><br>
+     * SharedFlow로 이벤트를 발행하고 StateFlow에 배터리 메트릭을 캐싱합니다.<br>
+     */
+    private val sender = BatteryStateEmitter()
 
     /**
      * BroadcastReceiver helper that listens to ACTION_BATTERY_CHANGED and periodically updates battery metrics.<br>
@@ -87,19 +84,21 @@ public open class BatteryStateInfo(
      * ACTION_BATTERY_CHANGED를 수신하고 주기적으로 배터리 메트릭을 업데이트하는 BroadcastReceiver 헬퍼입니다.<br>
      * 각 업데이트 시 콜백 람다를 호출하여 현재 배터리 값을 가져오고 batteryStateHelper를 업데이트합니다.<br>
      */
-    private val receiver = BatteryStateReceiverHelper(context) {
-        batteryStateHelper.updateBatteryInfo(
-            capacity = getCapacity(),
-            chargeCounter = getChargeCounter(),
-            chargeStatus = getChargeStatus(),
-            chargePlug = getChargePlug(),
-            currentAmpere = getCurrentAmpere(),
-            currentAverageAmpere = getCurrentAverageAmpere(),
-            energyCounter = getEnergyCounter(),
-            health = getHealth(),
-            present = getPresent(),
-            temperature = getTemperature(),
-            voltage = getVoltage(),
+    private val receiver = BatteryStateReceiver(context) {
+        sender.updateBatteryInfo(
+            BatteryStateData(
+                capacity = getCapacity(),
+                chargeCounter = getChargeCounter(),
+                chargeStatus = getChargeStatus(),
+                chargePlug = getChargePlug(),
+                currentAmpere = getCurrentAmpere(),
+                currentAverageAmpere = getCurrentAverageAmpere(),
+                energyCounter = getEnergyCounter(),
+                health = getHealth(),
+                present = getPresent(),
+                temperature = getTemperature(),
+                voltage = getVoltage()
+            )
         )
     }
 
@@ -119,7 +118,7 @@ public open class BatteryStateInfo(
      * Unsupported or unavailable metrics may emit no events until a valid value becomes available.<br><br>
      * 미지원/미사용 가능 값은 유효한 값이 나오기 전까지 이벤트가 발생하지 않을 수 있습니다.<br>
      */
-    public val sfUpdate: SharedFlow<BatteryStateEvent> = batteryStateHelper.getSfUpdate()
+    public val sfUpdate: SharedFlow<BatteryStateEvent> = sender.getSfUpdate()
 
     /**
      * Starts listening to battery broadcasts and periodic updates with the given scope.<br><br>
@@ -142,23 +141,25 @@ public open class BatteryStateInfo(
      * @throws Exception When receiver registration or update start fails.<br><br>
      *                   리시버 등록 또는 업데이트 시작에 실패하면 예외를 발생시킵니다.<br>
      */
-    public fun registerStart(coroutine: CoroutineScope, updateCycleTime: Long = DEFAULT_UPDATE_CYCLE_TIME) {
+    public fun registerStart(coroutine: CoroutineScope, updateCycleTime: Long = DEFAULT_UPDATE_CYCLE_TIME) :Boolean {
         val isRegister = registerReceiver()
 
         if (!isRegister) {
-            throw Exception("BatteryStateInfo: Receiver not registered!!.")
+            Logx.e("BatteryStateInfo: Receiver not registered!!.")
+            return false
         }
 
         val result = tryCatchSystemManager(false) {
             receiver.updateStart(coroutine, updateCycleTime) {
-                receiver.getCoroutineScope()?.let { batteryStateHelper.setupDataFlows(it) }
+                receiver.getCoroutineScope()?.let { sender.setupDataFlows(it) }
             }
         }
 
         if (!result) {
             unRegister()
-            throw Exception("BatteryStateInfo: updateStart() failed!!.")
+            Logx.e("BatteryStateInfo: updateStart() failed!!.")
         }
+        return result
     }
 
     /**
@@ -193,7 +194,7 @@ public open class BatteryStateInfo(
      *         순간 배터리 전류 (마이크로암페어).<br>
      */
     public fun getCurrentAmpere(): Int = tryCatchSystemManager(BATTERY_ERROR_VALUE) {
-        batteryStateHelper.bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW)
+        batteryPropertyReader.bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW)
     }
 
     /**
@@ -209,7 +210,7 @@ public open class BatteryStateInfo(
      *         평균 배터리 전류 (마이크로암페어, µA).<br>
      */
     public fun getCurrentAverageAmpere(): Int = tryCatchSystemManager(BATTERY_ERROR_VALUE) {
-        batteryStateHelper.bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_AVERAGE)
+        batteryPropertyReader.bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_AVERAGE)
     }
 
     /**
@@ -225,12 +226,7 @@ public open class BatteryStateInfo(
      * @see BatteryManager.BATTERY_STATUS_UNKNOWN
      */
     public fun getChargeStatus(): Int = tryCatchSystemManager(BATTERY_ERROR_VALUE) {
-        val res = batteryStateHelper.getIntProperty(BatteryManager.BATTERY_PROPERTY_STATUS)
-        return if (res == BATTERY_ERROR_VALUE) {
-            batteryStateHelper.getStatus(getBatteryStatus(), BatteryManager.EXTRA_STATUS, BATTERY_ERROR_VALUE)
-        } else {
-            res
-        }
+        return batteryPropertyReader.getChargeStatus(getBatteryStatus())
     }
 
     /**
@@ -277,7 +273,7 @@ public open class BatteryStateInfo(
      *         남은 배터리 용량 (백분율).<br>
      */
     public fun getCapacity(): Int = tryCatchSystemManager(BATTERY_ERROR_VALUE) {
-        batteryStateHelper.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
+        batteryPropertyReader.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
     }
 
     /**
@@ -288,7 +284,7 @@ public open class BatteryStateInfo(
      *         배터리 용량 (마이크로암페어시).<br>
      */
     public fun getChargeCounter(): Int = tryCatchSystemManager(BATTERY_ERROR_VALUE) {
-        batteryStateHelper.getIntProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER)
+        batteryPropertyReader.getIntProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER)
     }
 
     /**
@@ -305,7 +301,7 @@ public open class BatteryStateInfo(
      *         배터리 잔여 에너지 (나노와트시).<br>
      */
     public fun getEnergyCounter(): Long = tryCatchSystemManager(BATTERY_ERROR_VALUE_LONG) {
-        batteryStateHelper.getLongProperty(BatteryManager.BATTERY_PROPERTY_ENERGY_COUNTER)
+        batteryPropertyReader.getLongProperty(BatteryManager.BATTERY_PROPERTY_ENERGY_COUNTER)
     }
 
     /**
@@ -320,7 +316,7 @@ public open class BatteryStateInfo(
      * @see BatteryManager.BATTERY_PLUGGED_WIRELESS
      */
     public fun getChargePlug(): Int = tryCatchSystemManager(BATTERY_ERROR_VALUE) {
-        return batteryStateHelper.getStatus(getBatteryStatus(), BatteryManager.EXTRA_PLUGGED, BATTERY_ERROR_VALUE)
+        return batteryPropertyReader.getStatus(getBatteryStatus(), BatteryManager.EXTRA_PLUGGED, BATTERY_ERROR_VALUE)
     }
 
     /**
@@ -330,11 +326,7 @@ public open class BatteryStateInfo(
      * @return `true` if charging via USB, `false` otherwise.<br><br>
      *         USB로 충전 중이면 `true`, 아니면 `false`.<br>
      */
-    public fun isChargingUsb(): Boolean {
-        val plug = getChargePlug()
-        return plug != BATTERY_ERROR_VALUE &&
-            (plug and BatteryManager.BATTERY_PLUGGED_USB) != 0
-    }
+    public fun isChargingUsb(): Boolean = batteryPropertyReader.isChargingUsb(getChargePlug())
 
     /**
      * Checks if the device is charging via AC.<br><br>
@@ -343,11 +335,7 @@ public open class BatteryStateInfo(
      * @return `true` if charging via AC, `false` otherwise.<br><br>
      *         AC로 충전 중이면 `true`, 아니면 `false`.<br>
      */
-    public fun isChargingAc(): Boolean {
-        val plug = getChargePlug()
-        return plug != BATTERY_ERROR_VALUE &&
-            (plug and BatteryManager.BATTERY_PLUGGED_AC) != 0
-    }
+    public fun isChargingAc(): Boolean = batteryPropertyReader.isChargingAc(getChargePlug())
 
     /**
      * Checks if the device is charging wirelessly.<br><br>
@@ -356,11 +344,7 @@ public open class BatteryStateInfo(
      * @return `true` if charging wirelessly, `false` otherwise.<br><br>
      *         무선 충전 중이면 `true`, 아니면 `false`.<br>
      */
-    public fun isChargingWireless(): Boolean {
-        val plug = getChargePlug()
-        return plug != BATTERY_ERROR_VALUE &&
-            (plug and BatteryManager.BATTERY_PLUGGED_WIRELESS) != 0
-    }
+    public fun isChargingWireless(): Boolean = batteryPropertyReader.isChargingWireless(getChargePlug())
 
     /**
      * Checks if the device is charging via dock (API 33+).<br><br>
@@ -370,11 +354,7 @@ public open class BatteryStateInfo(
      *         독으로 충전 중이면 `true`, 아니면 `false`.<br>
      */
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    public fun isChargingDock(): Boolean {
-        val plug = getChargePlug()
-        return plug != BATTERY_ERROR_VALUE &&
-            (plug and BatteryManager.BATTERY_PLUGGED_DOCK) != 0
-    }
+    public fun isChargingDock(): Boolean = batteryPropertyReader.isChargingDock(getChargePlug())
 
     /**
      * Returns a list of readable labels for currently active power sources.<br>
@@ -388,27 +368,7 @@ public open class BatteryStateInfo(
      *         에러 시 ["Unknown"], 충전 중이 아니면 ["None"]을 반환합니다.<br>
      */
     public fun getChargePlugList(): List<String> = tryCatchSystemManager(listOf(STR_CHARGE_PLUG_UNKNOWN)) {
-        val plug = getChargePlug()
-
-        if (plug == BATTERY_ERROR_VALUE) return listOf(STR_CHARGE_PLUG_UNKNOWN)
-        if (plug == 0) return listOf(STR_CHARGE_PLUG_NONE)
-
-        val types = mutableListOf<String>()
-
-        if (plug and BatteryManager.BATTERY_PLUGGED_USB != 0) types.add(STR_CHARGE_PLUG_USB)
-        if (plug and BatteryManager.BATTERY_PLUGGED_AC != 0) types.add(STR_CHARGE_PLUG_AC)
-        if (plug and BatteryManager.BATTERY_PLUGGED_WIRELESS != 0) types.add(STR_CHARGE_PLUG_WIRELESS)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-            plug and BatteryManager.BATTERY_PLUGGED_DOCK != 0
-        ) {
-            types.add(STR_CHARGE_PLUG_DOCK)
-        }
-
-        return if (types.isEmpty()) {
-            listOf(STR_CHARGE_PLUG_UNKNOWN)
-        } else {
-            types
-        }
+        batteryPropertyReader.getChargePlugList(getChargePlug())
     }
 
     /**
@@ -426,14 +386,7 @@ public open class BatteryStateInfo(
      * 예시: Android가 350을 반환 → 35.0°C<br>
      */
     public fun getTemperature(): Double = tryCatchSystemManager(BATTERY_ERROR_VALUE_DOUBLE) {
-        val raw = getBatteryStatus()?.let {
-            if (it.hasExtra(EXTRA_TEMPERATURE)) it.getIntExtra(EXTRA_TEMPERATURE, BATTERY_ERROR_VALUE) else null
-        }
-
-        if (raw == null || raw == BATTERY_ERROR_VALUE) return BATTERY_ERROR_VALUE_DOUBLE
-
-        val temp = raw / 10.0
-        return if (temp in -40.0..120.0) temp else BATTERY_ERROR_VALUE_DOUBLE
+        batteryPropertyReader.getTemperature(getBatteryStatus())
     }
 
     /**
@@ -443,15 +396,8 @@ public open class BatteryStateInfo(
      * @return `true` if battery is present, `false` if not present, `null` if status is unavailable.<br><br>
      *         배터리가 장착되어 있으면 `true`, 장착되어 있지 않으면 `false`, 상태를 알 수 없으면 `null`.<br>
      */
-    public fun getPresent(): Boolean? = tryCatchSystemManager<Boolean?>(BATTERY_ERROR_VALUE_BOOLEAN) {
-        val status = getBatteryStatus()
-        status?.let {
-            if (it.hasExtra(BatteryManager.EXTRA_PRESENT)) {
-                return it.getBooleanExtra(BatteryManager.EXTRA_PRESENT, false)
-            }
-        }
-
-        return BATTERY_ERROR_VALUE_BOOLEAN
+    public fun getPresent(): Boolean? = tryCatchSystemManager(BATTERY_ERROR_VALUE_BOOLEAN) {
+        return batteryPropertyReader.getPresent(getBatteryStatus())
     }
 
     /**
@@ -467,7 +413,7 @@ public open class BatteryStateInfo(
      * @see BatteryManager.BATTERY_HEALTH_UNKNOWN
      */
     public fun getHealth(): Int = tryCatchSystemManager(BATTERY_ERROR_VALUE) {
-        return batteryStateHelper.getStatus(getBatteryStatus(), BatteryManager.EXTRA_HEALTH)
+        return batteryPropertyReader.getHealth(getBatteryStatus())
     }
 
     /**
@@ -507,30 +453,13 @@ public open class BatteryStateInfo(
     public fun isHealthOverVoltage(): Boolean = getHealth() == BatteryManager.BATTERY_HEALTH_OVER_VOLTAGE
 
     /**
-     * Converts a battery health constant to text.<br><br>
-     * 배터리 건강 상태 상수를 문자열로 변환합니다.<br>
-     *
-     * @param healthType `BATTERY_HEALTH_*` constant.<br><br>
-     *                   `BATTERY_HEALTH_*` 상수입니다.<br>
-     * @return Human-readable health string.<br><br>
-     *         사람이 읽기 쉬운 상태 문자열입니다.<br>
-     */
-    public fun getHealthStr(healthType: Int): String = when (healthType) {
-        BatteryManager.BATTERY_HEALTH_GOOD -> STR_BATTERY_HEALTH_GOOD
-        BatteryManager.BATTERY_HEALTH_COLD -> STR_BATTERY_HEALTH_COLD
-        BatteryManager.BATTERY_HEALTH_DEAD -> STR_BATTERY_HEALTH_DEAD
-        BatteryManager.BATTERY_HEALTH_OVER_VOLTAGE -> STR_BATTERY_HEALTH_OVER_VOLTAGE
-        else -> STR_BATTERY_HEALTH_UNKNOWN
-    }
-
-    /**
      * Gets current battery health as text.<br><br>
      * 현재 배터리 건강 상태를 문자열로 반환합니다.<br>
      *
      * @return Human-readable battery health string (e.g., "Good", "Cold", "Dead", "Over Voltage", "Unknown").<br><br>
      *         사람이 읽기 쉬운 배터리 건강 상태 문자열 (예: "Good", "Cold", "Dead", "Over Voltage", "Unknown").<br>
      */
-    public fun getCurrentHealthStr(): String = getHealthStr(getHealth())
+    public fun getCurrentHealthStr(): String = batteryPropertyReader.getHealthStr(getHealth())
 
     /**
      * get battery voltage.<br><br>
@@ -540,11 +469,7 @@ public open class BatteryStateInfo(
      *         볼트 단위의 배터리 전압 (예: 3.5). 오류 시 [BATTERY_ERROR_VALUE_DOUBLE] 반환.<br>
      */
     public fun getVoltage(): Double = tryCatchSystemManager(BATTERY_ERROR_VALUE_DOUBLE) {
-        val voltage = batteryStateHelper.getStatus(getBatteryStatus(), EXTRA_VOLTAGE, BATTERY_ERROR_VALUE)
-        if (voltage == BATTERY_ERROR_VALUE) {
-            return BATTERY_ERROR_VALUE_DOUBLE
-        }
-        return voltage.toDouble() / 1000
+        return batteryPropertyReader.getVoltage(getBatteryStatus())
     }
 
     /**
@@ -555,13 +480,7 @@ public open class BatteryStateInfo(
      *         배터리 기술 방식 (예: Li-ion). 오류 시 null 반환.<br>
      */
     public fun getTechnology(): String? = tryCatchSystemManager(null) {
-        getBatteryStatus()?.let {
-            val technology = it.getStringExtra(BatteryManager.EXTRA_TECHNOLOGY)
-            if (technology != null) {
-                return technology
-            }
-        }
-        return null
+        return batteryPropertyReader.getTechnology(getBatteryStatus())
     }
 
     /**
@@ -574,7 +493,7 @@ public open class BatteryStateInfo(
      *         총 배터리 용량(mAh), 사용할 수 없는 경우 기본값.<br>
      */
     public fun getTotalCapacity(): Double = tryCatchSystemManager(BATTERY_ERROR_VALUE_DOUBLE) {
-        return batteryStateHelper.getTotalCapacity(getChargeCounter(), getCapacity())
+        return batteryPropertyReader.getTotalCapacity(getChargeCounter(), getCapacity())
     }
 
     /**
@@ -584,7 +503,7 @@ public open class BatteryStateInfo(
      * @return The battery manager instance.<br><br>
      *         배터리 매니저 인스턴스.<br>
      */
-    public fun getBatteryManager() = batteryStateHelper.bm
+    public fun getBatteryManager() = batteryPropertyReader.bm
 
     /**
      * Gets the current battery status intent from the receiver.<br>
