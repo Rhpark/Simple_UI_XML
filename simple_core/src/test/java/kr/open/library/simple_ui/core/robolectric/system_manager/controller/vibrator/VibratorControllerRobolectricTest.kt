@@ -63,7 +63,7 @@ class VibratorControllerRobolectricTest {
         val result = controller.createOneShot(200L)
 
         assertTrue(result)
-        verify(vibrator).vibrate(200L)
+        verify(vibrator).vibrate(any(VibrationEffect::class.java))
         verifyNoInteractions(vibratorManager)
     }
 

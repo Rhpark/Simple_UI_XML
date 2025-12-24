@@ -5,6 +5,7 @@
 package kr.open.library.simple_ui.core.permissions.extentions
 
 import android.Manifest
+import android.app.AlarmManager
 import android.app.AppOpsManager
 import android.app.NotificationManager
 import android.content.Context
@@ -13,14 +14,13 @@ import android.content.pm.PermissionInfo
 import android.os.Build
 import android.os.Environment
 import android.os.Process
+import android.os.PowerManager
 import android.provider.Settings
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
 import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
 import kr.open.library.simple_ui.core.permissions.vo.PermissionSpecialType
-import kr.open.library.simple_ui.core.system_manager.extensions.getAlarmManager
-import kr.open.library.simple_ui.core.system_manager.extensions.getPowerManager
 
 /**
  * Evaluates whether the caller already holds [permission], including platform-specific toggles.<br>
@@ -57,11 +57,17 @@ public inline fun Context.hasPermission(permission: String): Boolean = when (per
         },
     )
 
-    Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS -> getPowerManager().isIgnoringBatteryOptimizations(packageName)
+    Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS -> {
+        val powerManager = getSystemService(Context.POWER_SERVICE) as? PowerManager
+        powerManager?.isIgnoringBatteryOptimizations(packageName) ?: false
+    }
 
     Manifest.permission.SCHEDULE_EXACT_ALARM -> checkSdkVersion(
         Build.VERSION_CODES.S,
-        positiveWork = { getAlarmManager().canScheduleExactAlarms() },
+        positiveWork = {
+            val alarmManager = getSystemService(Context.ALARM_SERVICE) as? AlarmManager
+            alarmManager?.canScheduleExactAlarms() ?: false
+        },
         negativeWork = { true },
     )
 
