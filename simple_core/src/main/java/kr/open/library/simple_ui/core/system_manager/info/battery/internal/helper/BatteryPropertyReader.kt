@@ -11,7 +11,6 @@ import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
 import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
 import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.core.system_manager.extensions.getBatteryManager
-import kr.open.library.simple_ui.core.system_manager.info.battery.internal.helper.power.PowerProfile
 import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateConstants.BATTERY_ERROR_VALUE
 import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateConstants.BATTERY_ERROR_VALUE_BOOLEAN
 import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateConstants.BATTERY_ERROR_VALUE_DOUBLE
@@ -26,6 +25,7 @@ import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateCo
 import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateConstants.STR_CHARGE_PLUG_UNKNOWN
 import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateConstants.STR_CHARGE_PLUG_USB
 import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateConstants.STR_CHARGE_PLUG_WIRELESS
+import kr.open.library.simple_ui.core.system_manager.info.battery.internal.helper.power.PowerProfile
 
 /**
  * Internal helper that queries battery properties from the system services.<br><br>

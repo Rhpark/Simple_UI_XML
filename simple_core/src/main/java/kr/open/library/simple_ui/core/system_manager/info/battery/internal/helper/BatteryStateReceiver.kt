@@ -30,6 +30,7 @@ internal class BatteryStateReceiver(
 ) {
     // 추가: parentJob completion 핸들 보관
     private var parentJobCompletionHandle: DisposableHandle? = null
+
     /**
      * Job handling periodic battery updates.<br><br>
      * 주기적 배터리 업데이트를 담당하는 Job입니다.<br>
@@ -82,6 +83,7 @@ internal class BatteryStateReceiver(
      */
     @Volatile
     private var batteryStatus: Intent? = null
+
     /**
      * Lock object for synchronizing batteryStatus access.<br><br>
      * batteryStatus 접근을 동기화하기 위한 락 객체입니다.<br>
@@ -94,6 +96,7 @@ internal class BatteryStateReceiver(
      */
     @Volatile
     private var isReceiverRegistered = false
+
     /**
      * Lock object for synchronizing receiver registration/unregistration.<br><br>
      * 리시버 등록/해제를 동기화하기 위한 락 객체입니다.<br>

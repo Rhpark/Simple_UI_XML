@@ -12,8 +12,8 @@ import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateCo
 import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateConstants.BATTERY_ERROR_VALUE_BOOLEAN
 import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateConstants.BATTERY_ERROR_VALUE_DOUBLE
 import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateConstants.BATTERY_ERROR_VALUE_LONG
-import kr.open.library.simple_ui.core.system_manager.info.battery.internal.model.BatteryStateData
 import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateEvent
+import kr.open.library.simple_ui.core.system_manager.info.battery.internal.model.BatteryStateData
 
 /**
  * Manages battery state event emission and StateFlow-based metric caching.<br><br>
@@ -25,6 +25,7 @@ internal class BatteryStateEmitter {
      * 코루틴 라이프사이클 관리를 위한 수집기 작업 목록입니다.<br>
      */
     private val collectorJobs = mutableListOf<Job>()
+
     /**
      * SharedFlow that stores battery events with buffering.<br>
      * Buffer size: 1 (replay) + 16 (extra) = 17 total.<br><br>

@@ -9,16 +9,16 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharedFlow
 import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.core.system_manager.base.BaseSystemService
-import kr.open.library.simple_ui.core.system_manager.info.battery.internal.helper.BatteryPropertyReader
-import kr.open.library.simple_ui.core.system_manager.info.battery.internal.helper.BatteryStateEmitter
-import kr.open.library.simple_ui.core.system_manager.info.battery.internal.helper.BatteryStateReceiver
-import kr.open.library.simple_ui.core.system_manager.info.battery.internal.model.BatteryStateData
 import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateConstants.BATTERY_ERROR_VALUE
 import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateConstants.BATTERY_ERROR_VALUE_BOOLEAN
 import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateConstants.BATTERY_ERROR_VALUE_DOUBLE
 import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateConstants.BATTERY_ERROR_VALUE_LONG
 import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateConstants.DEFAULT_UPDATE_CYCLE_TIME
 import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateConstants.STR_CHARGE_PLUG_UNKNOWN
+import kr.open.library.simple_ui.core.system_manager.info.battery.internal.helper.BatteryPropertyReader
+import kr.open.library.simple_ui.core.system_manager.info.battery.internal.helper.BatteryStateEmitter
+import kr.open.library.simple_ui.core.system_manager.info.battery.internal.helper.BatteryStateReceiver
+import kr.open.library.simple_ui.core.system_manager.info.battery.internal.model.BatteryStateData
 
 /**
  * Provides information about the battery state of an Android device.<br><br>
@@ -141,7 +141,7 @@ public open class BatteryStateInfo(
      * @throws Exception When receiver registration or update start fails.<br><br>
      *                   리시버 등록 또는 업데이트 시작에 실패하면 예외를 발생시킵니다.<br>
      */
-    public fun registerStart(coroutine: CoroutineScope, updateCycleTime: Long = DEFAULT_UPDATE_CYCLE_TIME) :Boolean {
+    public fun registerStart(coroutine: CoroutineScope, updateCycleTime: Long = DEFAULT_UPDATE_CYCLE_TIME): Boolean {
         val isRegister = registerReceiver()
 
         if (!isRegister) {

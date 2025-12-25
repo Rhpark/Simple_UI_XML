@@ -13,8 +13,8 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
 import kr.open.library.simple_ui.core.logcat.Logx
-import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateInfo
 import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateEvent
+import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateInfo
 import kr.open.library.simple_ui.core.system_manager.info.location.LocationStateEvent
 import kr.open.library.simple_ui.core.system_manager.info.location.LocationStateInfo
 import kr.open.library.simple_ui.core.system_manager.info.network.connectivity.NetworkConnectivityInfo
