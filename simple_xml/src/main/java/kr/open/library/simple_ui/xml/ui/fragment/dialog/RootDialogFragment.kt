@@ -199,17 +199,18 @@ public abstract class RootDialogFragment :
      * @param heightRatio The ratio of screen height (currently unused, height is WRAP_CONTENT).<br><br>
      *                    화면 높이 비율 (현재 사용되지 않음, 높이는 WRAP_CONTENT).<br>
      */
-    protected fun resizeDialog(
-        widthRatio: Float,
-        heightRatio: Float,
-    ) {
+    protected fun resizeDialog(widthRatio: Float, heightRatio: Float) {
         dialog?.window?.let {
-            val screenSize = requireContext().getDisplayInfo().getScreenSize()
-            Logx.d("Screen Size $screenSize, " + requireContext().getDisplayInfo().getFullScreenSize())
-            val x = (screenSize.x * widthRatio).toInt()
-            val y = (screenSize.y * heightRatio).toInt()
-//            it.setLayout(x, y)
-            it.setLayout(x, -2) // WARP_
+            val displayInfo = requireContext().getDisplayInfo()
+
+            Logx.d("Screen Size " + displayInfo.getAppWindowSize(requireActivity()))
+            val screenSize = displayInfo.getAppWindowSize(requireActivity())
+            screenSize?.let { size ->
+                val width = (size.width * widthRatio).toInt()
+                val height = (size.height * heightRatio).toInt()
+                it.setLayout(width, -2) // WARP_
+//            it.setLayout(width, height)
+            }
         } ?: Logx.e("Error dialog window is null!")
     }
 

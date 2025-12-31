@@ -56,8 +56,6 @@ import kr.open.library.simple_ui.core.system_manager.info.battery.internal.model
  * 1. 플로우 수집 전에 `registerStart(coroutineScope)`를 호출하여 리시버와 주기 업데이트를 시작하세요.<br>
  * 2. 완전 종료 시 `destroy()`를 호출하여 리소스를 해제하세요.<br>
  *
- * @param context The application context.<br><br>
- *                애플리케이션 컨텍스트.<br>
  */
 public open class BatteryStateInfo(
     context: Context
@@ -495,15 +493,6 @@ public open class BatteryStateInfo(
     public fun getTotalCapacity(): Double = tryCatchSystemManager(BATTERY_ERROR_VALUE_DOUBLE) {
         return batteryPropertyReader.getTotalCapacity(getChargeCounter(), getCapacity())
     }
-
-    /**
-     * Gets the battery manager instance.<br><br>
-     * 배터리 매니저 인스턴스를 가져옵니다.<br>
-     *
-     * @return The battery manager instance.<br><br>
-     *         배터리 매니저 인스턴스.<br>
-     */
-    public fun getBatteryManager() = batteryPropertyReader.bm
 
     /**
      * Gets the current battery status intent from the receiver.<br>

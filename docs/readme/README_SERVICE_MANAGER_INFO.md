@@ -563,50 +563,60 @@ class DisplayHelper(private val context: Context) {
 // Simple Display information query - Auto SDK handling (간단한 Display 정보 조회 - SDK 자동 처리)
 class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
 
-    private val displayInfo by lazy { DisplayInfo(this) }
+    private val displayInfo by lazy { getDisplayInfo(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // 1. Full screen size (auto SDK branching) (전체 화면 크기 (SDK 자동 분기))
-        val fullSize = displayInfo.getFullScreenSize()
-        Log.d("Display", "Full: ${fullSize.x} x ${fullSize.y}") // (전체)
+        // 1. Physical screen size (auto SDK branching) (물리적 화면 크기 (SDK 자동 분기))
+        val physicalSize = displayInfo.getPhysicalScreenSize()
+        Log.d("Display", "Physical: ${physicalSize.width} x ${physicalSize.height}") // (물리적)
 
-        // 2. Usable screen size (exclude bars automatically)
-        // (사용 가능 화면 크기 (상단/하단 바 자동 제외))
-        val usableSize = displayInfo.getScreenSize()
-        Log.d("Display", "Usable: ${usableSize.x} x ${usableSize.y}") // (사용 가능)
+        // 2. App window size (exclude bars automatically, supports multi-window)
+        // (앱 윈도우 크기 (상단/하단 바 자동 제외, 멀티윈도우 지원))
+        val windowSize = displayInfo.getAppWindowSize(this)
+        windowSize?.let {
+            Log.d("Display", "Window: ${it.width} x ${it.height}") // (윈도우)
+        }
 
-        // 3. Screen width/height helpers
-        // (화면 가로/세로 헬퍼)
-        val screenWidth = displayInfo.getScreenWidth()
-        val screenHeight = displayInfo.getScreenHeight()
-        Log.d("Display", "Width/Height: $screenWidth x $screenHeight")
+        // 3. Status bar size (상태바 크기)
+        val statusBarSize = displayInfo.getStatusBarSize()
+        statusBarSize?.let {
+            Log.d("Display", "Status bar: ${it.width} x ${it.height}") // (상태바)
+        }
 
-        // 4. Status bar height (상태바 높이)
-        val statusBarHeight = displayInfo.getStatusBarHeight()
-        Log.d("Display", "Status bar height: $statusBarHeight") // (상태바 높이)
+        // 4. Navigation bar size (네비게이션바 크기)
+        val navBarSize = displayInfo.getNavigationBarSize()
+        navBarSize?.let {
+            Log.d("Display", "Navigation bar: ${it.width} x ${it.height}") // (네비게이션바)
+        }
 
-        // 5. Navigation bar height (네비게이션바 높이)
-        val navBarHeight = displayInfo.getNavigationBarHeight()
-        Log.d("Display", "Navigation bar height: $navBarHeight") // (네비게이션바 높이)
+        // 5. Multi-window mode check (멀티윈도우 모드 확인)
+        val isMultiWindow = displayInfo.isInMultiWindowMode(this)
+        Log.d("Display", "Multi-window: $isMultiWindow")
     }
 }
 ```
 **Advantages:**
 - **Dramatically simplified** (Auto SDK branching)
+- Context-based architecture (no Activity required for construction)
 - Automatic Android R (API 30) branching
 - Automatic Deprecated API avoidance
 - Automatic Resources query
 - Automatic Insets calculation
-- Simple getter methods
+- DisplayInfoSize data class for structured size information
+- Multi-window mode support
+- Optional Activity parameter for methods requiring it
 > **장점:**
 > - **대폭 간소화** (SDK 분기 자동 처리)
+> - Context 기반 아키텍처 (생성 시 Activity 불필요)
 > - Android R (API 30) 자동 분기
 > - Deprecated API 자동 회피
 > - Resources 자동 조회
 > - Insets 자동 계산
-> - 간단한 getter 메서드
+> - DisplayInfoSize 데이터 클래스로 구조화된 크기 정보 제공
+> - 멀티윈도우 모드 지원
+> - 필요한 메서드에만 선택적 Activity 파라미터 사용
 </details>
 
 <br>
@@ -708,11 +718,14 @@ System Service Manager Info : [ServiceManagerInfoActivity.kt](../../app/src/main
 </br>
 
 ### **Display Info** - Display Information
-- **Full Screen Size:** `getFullScreenSize()` - Full screen size (includes status bar, navigation bar) (전체 화면 크기 (상태바, 네비게이션바 포함))
-- **Usable Screen Size:** `getScreenSize()` - Screen size excluding both bars (상태바/네비게이션바 제외한 실제 사용 영역)
-- **Screen Width/Height:** `getScreenWidth()`, `getScreenHeight()` - Usable width/height helpers (사용 가능 가로/세로 헬퍼)
-- **Status Bar Size:** `getStatusBarSize()`, `getStatusBarHeight()`, `getStatusBarWidth()` (상태바 크기 관련 메서드)
-- **Navigation Bar Size:** `getNavigationBarSize()`, `getNavigationBarHeight()`, `getNavigationBarWidth()` (네비게이션바 크기 관련 메서드)
+- **Physical Screen Size:** `getPhysicalScreenSize()` - Physical screen size (물리적 화면 크기)
+- **App Window Size:** `getAppWindowSize(activity?)` - App window size excluding bars, supports multi-window (상태바/네비게이션바 제외한 앱 윈도우 크기, 멀티윈도우 지원)
+- **Status Bar Size:** `getStatusBarSize()` - Status bar size as DisplayInfoSize (상태바 크기 (DisplayInfoSize))
+- **Navigation Bar Size:** `getNavigationBarSize()` - Navigation bar size as DisplayInfoSize (네비게이션바 크기 (DisplayInfoSize))
+- **Status Bar Insets:** `getStatusBarStableInsets(activity?)` - Status bar stable insets (상태바 고정 인셋)
+- **Navigation Bar Insets:** `getNavigationBarStableInsets(activity?)` - Navigation bar stable insets (네비게이션바 고정 인셋)
+- **Multi-window Mode:** `isInMultiWindowMode(activity)` - Check if app is in multi-window mode (멀티윈도우 모드 확인)
+- **Context-based:** Uses Context for construction, Activity only when needed (생성 시 Context 사용, 필요 시에만 Activity 사용)
 - **Auto SDK Branching:** Automatic handling for Android R (API 30) and above/below (Android R (API 30) 이상/이하 자동 처리)
 
 <br>

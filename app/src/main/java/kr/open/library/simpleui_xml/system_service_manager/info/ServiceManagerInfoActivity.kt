@@ -55,13 +55,11 @@ class ServiceManagerInfoActivity : BaseBindingActivity<ActivityServiceManagerInf
                 val res =
                     mutableListOf<String>().apply {
                         add("=== Display Info ===")
-                        add("Full Screen Size: ${displayInfo.getFullScreenSize()}")
-                        add("Screen Size: ${displayInfo.getScreenSize()}")
+                        add("Physical Screen Size: ${displayInfo.getPhysicalScreenSize()}")
+                        add("App Window Size: ${displayInfo.getAppWindowSize()}")
                         add("Status bar size: ${displayInfo.getStatusBarSize()}")
                         add("Navigation bar size: ${displayInfo.getNavigationBarSize()}")
-                        add("isFullScreen: ${displayInfo.isFullScreen()}")
-                        add("isStatusBarHided: ${displayInfo.isStatusBarHided()}")
-                        add("isNavigationBarHided: ${displayInfo.isNavigationBarHided()}")
+                        add("isFullScreen: ${displayInfo.getPhysicalScreenSize()}")
                         add("======================")
                     }
                 addItem(res)
