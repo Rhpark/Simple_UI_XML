@@ -25,24 +25,30 @@ import kr.open.library.simple_ui.xml.system_manager.controller.systembar.interna
  *                  측정 및 오버레이 부착에 사용되는 윈도우의 decor view.<br>
  */
 internal class StatusBarHelper(
-    private val decorView: View
-) : SystemBarHelperBase() {
+    decorView: View
+) : SystemBarHelperBase(decorView) {
     /**
      * Returns the window coordinates of the currently visible StatusBar area.<br>
-     * Uses WindowInsetsCompat with visibility detection. Returns empty Rect if StatusBar is hidden.<br><br>
+     * Uses WindowInsetsCompat with visibility detection.<br><br>
      * 현재 보이는 StatusBar 영역의 윈도우 좌표를 반환합니다.<br>
-     * WindowInsetsCompat과 가시성 감지를 사용합니다. StatusBar가 숨겨진 경우 빈 Rect를 반환합니다.<br>
+     * WindowInsetsCompat과 가시성 감지를 사용합니다.<br>
      *
-     * @return Rect with window coordinates relative to decorView (left=0, top=0, right=decorViewWidth, bottom=statusBarHeight),
-     *         or null if WindowInsets not ready (early initialization before view measurement).<br><br>
-     *         decorView 기준 윈도우 좌표를 가진 Rect (left=0, top=0, right=decorView너비, bottom=상태바높이),
-     *         WindowInsets 미준비 시 (뷰 측정 전 초기화 단계) null.<br>
+     * @return Rect with window coordinates relative to decorView, or Rect() if StatusBar is hidden, or null if view not ready.<br>
+     *         - Rect(0, 0, decorViewWidth, statusBarHeight) when visible<br>
+     *         - Rect() when StatusBar is hidden (top inset is 0)<br>
+     *         - null when decorView is not attached to window or has invalid dimensions (width/height <= 0)<br><br>
+     *         decorView 기준 윈도우 좌표를 가진 Rect, StatusBar가 숨겨진 경우 Rect(), 뷰가 준비되지 않은 경우 null.<br>
+     *         - Rect(0, 0, decorView너비, 상태바높이): 보이는 경우<br>
+     *         - StatusBar가 숨겨진 경우 (top inset이 0): Rect()<br>
+     *         - decorView가 window에 부착되지 않았거나 크기가 유효하지 않은 경우 (width/height <= 0): null<br>
      */
     public fun getStatusBarVisibleRect(windowInsets: WindowInsetsCompat): Rect? = safeCatch(null) {
+        if (!decorView.isSystemBarRectReady()) return null
+
         val top = windowInsets.getInsets(WindowInsetsCompat.Type.statusBars()).top
-        if (top == 0) return@safeCatch Rect() // Return empty Rect when hidden
-        val width = decorView.width.coerceAtLeast(0)
-        Rect(0, 0, width, top)
+        if (top == 0) return Rect()
+
+        Rect(0, 0, decorView.width, top)
     }
 
     /**
@@ -51,15 +57,18 @@ internal class StatusBarHelper(
      * 시스템 정의(stable) StatusBar 영역의 윈도우 좌표를 반환합니다.<br>
      * 이 값은 StatusBar가 숨겨진 경우에도 일정하게 유지됩니다.<br>
      *
-     * @return Rect with window coordinates relative to decorView (left=0, top=0, right=decorViewWidth, bottom=statusBarHeight),
-     *         or null if WindowInsets not ready (early initialization before view measurement).<br><br>
-     *         decorView 기준 윈도우 좌표를 가진 Rect (left=0, top=0, right=decorView너비, bottom=상태바높이),
-     *         WindowInsets 미준비 시 (뷰 측정 전 초기화 단계) null.<br>
+     * @return Rect with window coordinates relative to decorView, or null if view not ready.<br>
+     *         - Rect(0, 0, decorViewWidth, statusBarHeight) when StatusBar exists<br>
+     *         - null when decorView is not attached to window or has invalid dimensions (width/height <= 0)<br><br>
+     *         decorView 기준 윈도우 좌표를 가진 Rect, 뷰가 준비되지 않은 경우 null.<br>
+     *         - Rect(0, 0, decorView너비, 상태바높이): StatusBar가 존재하는 경우<br>
+     *         - decorView가 window에 부착되지 않았거나 크기가 유효하지 않은 경우 (width/height <= 0): null<br>
      */
     public fun getStatusBarStableRect(windowInsets: WindowInsetsCompat): Rect? = safeCatch(null) {
+        if (!decorView.isSystemBarRectReady()) return null
+
         val stableInsets = windowInsets.getInsetsIgnoringVisibility(WindowInsetsCompat.Type.statusBars())
-        val width = decorView.width.coerceAtLeast(0)
-        Rect(0, 0, width, stableInsets.top)
+        Rect(0, 0, decorView.width, stableInsets.top)
     }
 
     /**

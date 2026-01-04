@@ -2,7 +2,9 @@ package kr.open.library.simple_ui.xml.system_manager.controller.systembar.intern
 
 import android.view.View
 
-internal abstract class SystemBarHelperBase {
+internal abstract class SystemBarHelperBase(
+    protected val decorView: View
+) {
     /**
      * Background view for StatusBar/Navigation bar color on API 35+.<br><br>
      * API 35+에서 StatusBar/NavigationBar 색상을 위한 배경 뷰입니다.<br>
@@ -26,4 +28,15 @@ internal abstract class SystemBarHelperBase {
         isFocusable = false
         importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
     }
+
+    /**
+     * Checks if the view is ready for calculating system bar rectangle coordinates.<br>
+     * Verifies that the view is attached to window and has valid dimensions.<br><br>
+     * 뷰가 시스템 바 사각형 좌표 계산을 위해 준비되었는지 확인합니다.<br>
+     * 뷰가 window에 부착되어 있고 유효한 크기를 가지고 있는지 검증합니다.<br>
+     *
+     * @return true if view is attached to window and has positive width/height, false otherwise.<br><br>
+     *         뷰가 window에 부착되어 있고 양수 width/height를 가지면 true, 그렇지 않으면 false.<br>
+     */
+    protected fun View.isSystemBarRectReady(): Boolean = isAttachedToWindow && width > 0 && height > 0
 }
