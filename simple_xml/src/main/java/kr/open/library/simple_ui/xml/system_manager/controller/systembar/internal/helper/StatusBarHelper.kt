@@ -15,6 +15,15 @@ import androidx.core.view.WindowInsetsCompat
 import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
 import kr.open.library.simple_ui.xml.system_manager.controller.systembar.internal.helper.base.SystemBarHelperBase
 
+/**
+ * Helper class for managing StatusBar operations across different Android versions.<br>
+ * Handles color changes, size measurement, and API 35+ background overlay management.<br><br>
+ * 다양한 Android 버전에서 StatusBar 작업을 관리하는 헬퍼 클래스입니다.<br>
+ * 색상 변경, 크기 측정 및 API 35+ 배경 오버레이 관리를 처리합니다.<br>
+ *
+ * @param decorView The window's decor view used for measuring and overlay attachment.<br><br>
+ *                  측정 및 오버레이 부착에 사용되는 윈도우의 decor view.<br>
+ */
 internal class StatusBarHelper(
     private val decorView: View
 ) : SystemBarHelperBase() {
@@ -31,7 +40,7 @@ internal class StatusBarHelper(
      */
     public fun getStatusBarVisibleRect(windowInsets: WindowInsetsCompat): Rect? = safeCatch(null) {
         val top = windowInsets.getInsets(WindowInsetsCompat.Type.statusBars()).top
-        if (top == 0) return@safeCatch Rect() // ✅ 숨김 정책 통일(빈 Rect)
+        if (top == 0) return@safeCatch Rect() // Return empty Rect when hidden
         val width = decorView.width.coerceAtLeast(0)
         Rect(0, 0, width, top)
     }
@@ -98,7 +107,7 @@ internal class StatusBarHelper(
 
             overlay.attachStatusBarInsetsListener()
 
-            // ✅ “처음 붙일 때만” insets 트리거
+            // Trigger insets only when first attached
             decorView.post { ViewCompat.requestApplyInsets(decorView) }
         }
     }

@@ -15,6 +15,17 @@ import androidx.core.view.WindowInsetsCompat
 import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
 import kr.open.library.simple_ui.xml.system_manager.controller.systembar.internal.helper.base.SystemBarHelperBase
 
+/**
+ * Helper class for managing NavigationBar operations across different Android versions.<br>
+ * Handles color changes, size measurement, position detection, and API 35+ background overlay management.<br>
+ * Supports bottom, left, and right NavigationBar positions for phones, tablets, and foldables.<br><br>
+ * 다양한 Android 버전에서 NavigationBar 작업을 관리하는 헬퍼 클래스입니다.<br>
+ * 색상 변경, 크기 측정, 위치 감지 및 API 35+ 배경 오버레이 관리를 처리합니다.<br>
+ * 휴대폰, 태블릿, 폴더블용 하단, 왼쪽, 오른쪽 NavigationBar 위치를 지원합니다.<br>
+ *
+ * @param decorView The window's decor view used for measuring and overlay attachment.<br><br>
+ *                  측정 및 오버레이 부착에 사용되는 윈도우의 decor view.<br>
+ */
 internal class NavigationBarHelper(
     private val decorView: View
 ) : SystemBarHelperBase() {
@@ -142,19 +153,19 @@ internal class NavigationBarHelper(
             it.id = View.generateViewId()
         }
 
-        // 1) 오버레이는 “장식용”이므로 입력/접근성에 관여하지 않게 고정
+        // 1) Configure overlay as decorative (non-interactive, non-focusable)
         overlay.configureAsSystemBarOverlay()
 
-        // 2) 색상만 갱신 (이미 붙어있으면 재부착 없이 여기서 끝나게 만듦)
+        // 2) Update color only (if already attached, skip re-attachment)
         overlay.setBackgroundColor(color)
 
-        // 3) 제스처 내비게이션에서 오버레이가 터치를 방해할 수 있어 0 유지
+        // 3) Keep elevation = 0f to prevent blocking gesture navigation
         overlay.elevation = 0f
 
-        // ✅ 핵심: 이미 decorFrame에 붙어있으면 remove/add 금지
+        // Critical: Skip remove/add if already attached to decorFrame
         val alreadyAttached = overlay.parent === decorFrame
         if (!alreadyAttached) {
-            // 다른 parent에 붙어있던 경우만 떼기 (같은 parent면 떼지 않음)
+            // Only detach if attached to different parent
             (overlay.parent as? ViewGroup)?.removeView(overlay)
 
             // 초기 배치 결정 (Insets 미준비/0이면 일단 bottom + height=0으로 붙이고 리스너가 나중에 보정)

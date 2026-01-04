@@ -92,8 +92,20 @@ import kr.open.library.simple_ui.xml.system_manager.controller.systembar.interna
 public class SystemBarController(
     private val window: Window,
 ) : BaseSystemService(window.context, null) {
+    /**
+     * Helper instance for managing StatusBar operations.<br>
+     * Lazily initialized when first accessed.<br><br>
+     * StatusBar 작업을 관리하는 헬퍼 인스턴스입니다.<br>
+     * 최초 접근 시 지연 초기화됩니다.<br>
+     */
     private val statusBarHelper: StatusBarHelper by lazy { StatusBarHelper(window.decorView) }
 
+    /**
+     * Helper instance for managing NavigationBar operations.<br>
+     * Lazily initialized when first accessed.<br><br>
+     * NavigationBar 작업을 관리하는 헬퍼 인스턴스입니다.<br>
+     * 최초 접근 시 지연 초기화됩니다.<br>
+     */
     private val navigationBarHelper: NavigationBarHelper by lazy { NavigationBarHelper(window.decorView) }
 
     /**
