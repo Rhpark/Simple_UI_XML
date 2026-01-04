@@ -207,13 +207,13 @@ onRequestPermissions(
 >`RootActivity`는 StatusBar, NavigationBar를 제어하는 공용 API를 제공합니다.
 
 ### SystemBars Control Comparison (SystemBars 제어 비교)
-| Category            | Plain Android | Simple UI (RootActivity) |
-|:--------------------|:--|:--|
-| StatusBar Color | Manipulate Window flags + Theme | `setStatusBarColor(color, isLight)` | 
-| NavigationBar Color | Write WindowCompat logic directly |  `setNavigationBarColor(color, isLight)` | 
-| Change both Bars simultaneously | Call each separately |  `setSystemBarsColor(color, isLightBars)` |
+| Category            | Plain Android | Simple UI (RootActivity)                            |
+|:--------------------|:--|:----------------------------------------------------|
+| StatusBar Color | Manipulate Window flags + Theme | `setStatusBarColor(color, isDrakMode)`                 | 
+| NavigationBar Color | Write WindowCompat logic directly | `setNavigationBarColor(color, isDrakMode)`             | 
+| Change both Bars simultaneously | Call each separately | `setSystemBarsColor(color, isDrakMode)`             |
 | Query Insets values | Need decorView calculation | `statusBarHeight`, `navigationBarHeight` properties |
-| API 35+ support | Need to insert custom view | Already implemented inside RootActivity |
+| API 35+ support | Need to insert custom view | Already implemented inside RootActivity             |
 
 <br></br>
 

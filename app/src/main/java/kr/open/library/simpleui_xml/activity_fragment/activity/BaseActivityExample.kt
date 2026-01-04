@@ -42,7 +42,7 @@ class BaseActivityExample : BaseActivity(R.layout.activity_base_activity_example
             Triple(R.id.btnStatusBarGreen, Color.GREEN, "GREEN"),
         ).forEach { (buttonId, color, label) ->
             findViewById<Button>(buttonId).setOnClickListener {
-                statusBarVisible()
+//                statusBarVisible()
                 setStatusBarColor(color)
                 Logx.d("StatusBar color changed to $label")
             }

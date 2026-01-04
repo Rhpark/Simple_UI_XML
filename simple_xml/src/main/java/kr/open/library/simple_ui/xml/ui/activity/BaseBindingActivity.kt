@@ -54,33 +54,6 @@ import androidx.lifecycle.ViewModelProvider
  * }
  * ```
  * <br><br>
- * 사용 예제:<br>
- * ```kotlin
- * class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
- *     private val viewModel: MainViewModel by lazy { getViewModel() }
- *
- *     override fun onCreate(savedInstanceState: Bundle?) {
- *         super.onCreate(savedInstanceState)
- *         eventVmCollect()
- *     }
- *
- *     override fun onCreateView(rootView: View, savedInstanceState: Bundle?) {
- *         binding.viewModel = viewModel
- *         setupViews()
- *     }
- *
- *     override fun eventVmCollect() {
- *         lifecycleScope.launch {
- *             repeatOnLifecycle(Lifecycle.State.STARTED) {
- *                 viewModel.events.collect { event ->
- *                     handleEvent(event)
- *                 }
- *             }
- *         }
- *     }
- * }
- * ```
- * <br>
  *
  * @param BINDING The type of the DataBinding class.<br><br>
  *                DataBinding 클래스의 타입.<br>
