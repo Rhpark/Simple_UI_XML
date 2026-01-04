@@ -5,12 +5,15 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
 import kr.open.library.simple_ui.core.logcat.Logx
+import kr.open.library.simple_ui.xml.system_manager.extensions.getSystemBarController
 import kr.open.library.simple_ui.xml.ui.activity.BaseActivity
 import kr.open.library.simpleui_xml.R
 
 class BaseActivityExample : BaseActivity(R.layout.activity_base_activity_example) {
     private lateinit var tvStatusBarHeight: TextView
     private lateinit var tvNavigationBarHeight: TextView
+
+    private val systemBarController by lazy { this.window.getSystemBarController() }
 
     override fun beforeOnCreated(savedInstanceState: Bundle?) {
         super.beforeOnCreated(savedInstanceState)
@@ -24,8 +27,8 @@ class BaseActivityExample : BaseActivity(R.layout.activity_base_activity_example
         tvNavigationBarHeight = findViewById(R.id.tvNavigationBarHeight)
 
         window.decorView.post {
-            tvStatusBarHeight.text = "StatusBar Height: ${getStatusBarHeight()} px"
-            tvNavigationBarHeight.text = "NavigationBar Height: ${getNavigationBarHeight()} px"
+            tvStatusBarHeight.text = "StatusBar Height: ${systemBarController.getStatusBarVisibleRect()?.height()} px"
+            tvNavigationBarHeight.text = "NavigationBar Height: ${systemBarController.getNavigationBarStableRect()?.height()} px"
         }
 
         setupStatusBarButtons()
@@ -43,24 +46,24 @@ class BaseActivityExample : BaseActivity(R.layout.activity_base_activity_example
         ).forEach { (buttonId, color, label) ->
             findViewById<Button>(buttonId).setOnClickListener {
 //                statusBarVisible()
-                setStatusBarColor(color)
+                systemBarController.setStatusBarColor(color)
                 Logx.d("StatusBar color changed to $label")
             }
         }
 
         findViewById<Button>(R.id.btnStatusBarGone).setOnClickListener {
-            statusBarGone()
+            systemBarController.setStatusBarGone()
             Logx.d("StatusBar set to GONE")
         }
 
         findViewById<Button>(R.id.btnStatusBarVisible).setOnClickListener {
-            statusBarVisible()
+            systemBarController.setStatusBarVisible()
             Logx.d("StatusBar set to VISIBLE")
         }
 
         findViewById<Button>(R.id.btnStatusBarReset).setOnClickListener {
-            statusBarVisible()
-            statusBarReset()
+            systemBarController.setStatusBarVisible()
+            systemBarController.resetStatusBarColor()
             Logx.d("StatusBar RESET")
         }
     }
@@ -72,18 +75,21 @@ class BaseActivityExample : BaseActivity(R.layout.activity_base_activity_example
             Triple(R.id.btnSystemBarsGreen, Color.GREEN, "GREEN"),
         ).forEach { (buttonId, color, label) ->
             findViewById<Button>(buttonId).setOnClickListener {
-                setSystemBarsColor(color)
+                systemBarController.setStatusBarColor(color)
+                systemBarController.setNavigationBarColor(color)
                 Logx.d("SystemBars color changed to $label")
             }
         }
 
         findViewById<Button>(R.id.btnSystemBarsLight).setOnClickListener {
-            setSystemBarsAppearance(isDarkIcon = false)
+            systemBarController.setNavigationBarDarkIcon(false)
+            systemBarController.setStatusBarDarkIcon(false)
             Logx.d("SystemBars appearance set to LIGHT (dark icons)")
         }
 
         findViewById<Button>(R.id.btnSystemBarsDark).setOnClickListener {
-            setSystemBarsAppearance(isDarkIcon = true)
+            systemBarController.setNavigationBarDarkIcon(true)
+            systemBarController.setStatusBarDarkIcon(true)
             Logx.d("SystemBars appearance set to DARK (light icons)")
         }
     }
@@ -95,21 +101,26 @@ class BaseActivityExample : BaseActivity(R.layout.activity_base_activity_example
             Triple(R.id.btnNavigationBarGreen, Color.GREEN, "GREEN"),
         ).forEach { (buttonId, color, label) ->
             findViewById<Button>(buttonId).setOnClickListener {
-                setNavigationBarColor(color)
+                systemBarController.setNavigationBarColor(color)
                 Logx.d("NavigationBar color changed to $label")
             }
         }
 
         findViewById<Button>(R.id.btnNavigationBarGone).setOnClickListener {
-            navigationBarGone()
+            systemBarController.setNavigationBarGone()
         }
 
         findViewById<Button>(R.id.btnNavigationBarVisible).setOnClickListener {
-            navigationBarVisible()
+            systemBarController.setNavigationBarVisible()
         }
 
         findViewById<Button>(R.id.btnNavigationBarReset).setOnClickListener {
-            navigationBarReset()
+            systemBarController.resetNavigationBarColor()
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        systemBarController.onDestroy()
     }
 }

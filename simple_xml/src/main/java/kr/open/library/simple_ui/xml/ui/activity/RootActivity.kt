@@ -1,11 +1,7 @@
 package kr.open.library.simple_ui.xml.ui.activity
 
-import android.os.Build
 import android.os.Bundle
-import android.view.View
-import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatActivity
-import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
 import kr.open.library.simple_ui.xml.permissions.register.PermissionDelegate
 import kr.open.library.simple_ui.xml.permissions.register.PermissionRequester
 
@@ -43,8 +39,6 @@ abstract class RootActivity :
      */
     protected lateinit var permissionDelegate: PermissionDelegate<AppCompatActivity>
 
-    private val activityWindow: RootActivityWindow by lazy { RootActivityWindow(this.window) }
-
     /**
      * Requests runtime permissions and returns the result via callback.
      * Delegates to PermissionDelegate for actual permission handling.<br><br>
@@ -56,10 +50,7 @@ abstract class RootActivity :
      * @param onResult Callback invoked with the list of denied permissions after the request completes.<br><br>
      *                 요청 완료 후 거부된 권한 목록과 함께 호출되는 콜백.
      */
-    override fun onRequestPermissions(
-        permissions: List<String>,
-        onResult: (deniedPermissions: List<String>) -> Unit,
-    ) {
+    override fun onRequestPermissions(permissions: List<String>, onResult: (deniedPermissions: List<String>) -> Unit) {
         permissionDelegate.requestPermissions(permissions, onResult)
     }
 
@@ -104,186 +95,5 @@ abstract class RootActivity :
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         permissionDelegate.onSaveInstanceState(outState)
-    }
-
-    /**
-     * Returns the current StatusBar height in pixels.<br>
-     * 현재 StatusBar 높이를 픽셀 단위로 반환합니다.<br>
-     *
-     * @return The StatusBar height in pixels.<br><br>
-     *         StatusBar 높이 (픽셀 단위).<br>
-     */
-    public fun getStatusBarHeight(): Int = activityWindow.getStatusBarHeight()
-
-    /**
-     * Returns the current NavigationBar height in pixels.<br>
-     * 현재 NavigationBar 높이를 픽셀 단위로 반환합니다.<br>
-     *
-     * @return The NavigationBar height in pixels.<br><br>
-     *         NavigationBar 높이 (픽셀 단위).<br>
-     */
-    public fun getNavigationBarHeight(): Int = activityWindow.getNavigationBarHeight(findViewById<View>(android.R.id.content).height)
-
-    /**
-     * Configures system bars (status and navigation) with the same color.<br><br>
-     * 시스템 바(상태 및 네비게이션)를 동일한 색상으로 설정합니다.<br>
-     *
-     * @param color The color to set for both status and navigation bars.<br><br>
-     *              상태 및 네비게이션 바에 설정할 색상.<br>
-     *
-     * @param isLightSystemBars Whether to use light system bar icons (dark icons for light backgrounds).<br><br>
-     *                          라이트 시스템 바 아이콘 사용 여부 (밝은 배경에는 어두운 아이콘).<br>
-     */
-    protected fun setSystemBarsColor(@ColorInt color: Int, isLightSystemBars: Boolean = false) {
-        setStatusBarColor(color, isLightSystemBars)
-        setNavigationBarColor(color, isLightSystemBars)
-    }
-
-    /**
-     * Sets the status bar color.<br><br>
-     * 상태 표시줄 색상을 설정합니다.<br>
-     *
-     * @param color The color to set for StatusBar.<br><br>
-     *              StatusBar에 설정할 색상.<br>
-     *
-     * @param isLightStatusBar Whether to use light status bar icons. true for dark icons (light mode), false for light icons (dark mode).<br><br>
-     *                         라이트 상태 바 아이콘 사용 여부. true일 경우 어두운 아이콘(라이트 모드), false일 경우 밝은 아이콘(다크 모드).<br>
-     */
-    protected fun setStatusBarColor(@ColorInt color: Int, isLightStatusBar: Boolean = false) {
-        activityWindow.setStatusBarColor(this@RootActivity, color, isLightStatusBar)
-    }
-
-    /**
-     * Sets the navigation bar color.<br><br>
-     * 네비게이션 바 색상을 설정합니다.<br>
-     *
-     * @param color The color to set for NavigationBar.<br><br>
-     *              NavigationBar에 설정할 색상.<br>
-     *
-     * @param isLightNavigationBar Whether to use light navigation bar icons (dark icons for light backgrounds).<br><br>
-     *                             라이트 네비게이션 바 아이콘 사용 여부 (밝은 배경에는 어두운 아이콘).<br>
-     */
-    protected fun setNavigationBarColor(@ColorInt color: Int, isLightNavigationBar: Boolean = false) {
-        val contentViewHeight =
-            checkSdkVersion(
-                Build.VERSION_CODES.VANILLA_ICE_CREAM,
-                positiveWork = { findViewById<View>(android.R.id.content).height },
-                negativeWork = { 0 },
-            )
-
-        activityWindow.setNavigationBarColor(
-            this@RootActivity,
-            color,
-            contentViewHeight,
-            isLightNavigationBar,
-        )
-    }
-
-    /**
-     * Sets the system bar icons mode (StatusBar + NavigationBar).<br><br>
-     * 시스템 바 아이콘 밝기 모드를 설정합니다 (light 또는 dark).<br>
-     *
-     * @param isDarkIcon True for dark icons (light mode), false for light icons (dark mode).<br><br>
-     *                   어두운 아이콘은 true (라이트 모드), 밝은 아이콘은 false (다크 모드).<br>
-     */
-    protected fun setSystemBarsAppearance(isDarkIcon: Boolean) {
-        setStatusBarAppearance(isDarkIcon)
-        setNavigationBarAppearance(isDarkIcon)
-    }
-
-    /**
-     * Sets the StatusBar icon mode (Dark or Light).<br>
-     * It may not work on certain devices.<br><br>
-     * StatusBar 아이콘 모드를 설정합니다 (Dark 또는 Light).<br>
-     * 특정 장치에서는 작동하지 않을 수 있습니다.<br>
-     *
-     * @param isDarkIcon true for dark icons, false for light icons.<br><br>
-     *                   어두운 아이콘은 true, 밝은 아이콘은 false.<br>
-     */
-    protected fun setStatusBarAppearance(isDarkIcon: Boolean) {
-        activityWindow.setStatusBarAppearance(isDarkIcon)
-    }
-
-    /**
-     * Sets the NavigationBar icon mode (Dark or Light).<br>
-     * It may not work on certain devices.<br><br>
-     * NavigationBar 아이콘 모드를 설정합니다 (Dark 또는 Light).<br>
-     * 특정 장치에서는 작동하지 않을 수 있습니다.<br>
-     *
-     * @param isDarkIcon true for dark icons, false for light icons.<br><br>
-     *                   어두운 아이콘은 true, 밝은 아이콘은 false.<br>
-     */
-    protected fun setNavigationBarAppearance(isDarkIcon: Boolean) {
-        activityWindow.setNavigationBarAppearance(isDarkIcon)
-    }
-
-    /**
-     * Resets system bars (StatusBar and NavigationBar) to their initial state.<br>
-     * Restores default colors and visibility mode.<br><br>
-     * 시스템 바(StatusBar와 NavigationBar)를 초기 상태로 초기화합니다.<br>
-     * 기본 색상과 가시성 모드를 복원합니다.<br>
-     */
-    protected fun setSystemBarsReset() {
-        statusBarReset()
-        navigationBarReset()
-    }
-
-    /**
-     * Resets the navigation bar to its initial state.<br>
-     * 네비게이션 바를 초기 상태로 복원합니다.<br>
-     */
-    protected fun navigationBarReset() {
-        activityWindow.navigationBarReset()
-    }
-
-    /**
-     * Resets the StatusBar to its initial state.<br>
-     * Removes custom background views on API 35+ and restores theme default color on older versions.<br><br>
-     * StatusBar를 초기 상태로 초기화합니다.<br>
-     * API 35+에서는 커스텀 배경 뷰를 제거하고 이전 버전에서는 테마 기본 색상을 복원합니다.<br>
-     */
-    protected fun statusBarReset() {
-        activityWindow.statusBarReset()
-    }
-
-    /**
-     * Hides both StatusBar and NavigationBar.<br><br>
-     * StatusBar와 NavigationBar를 모두 숨깁니다.<br>
-     */
-    protected fun setSystemBarsGone() {
-        statusBarGone()
-        navigationBarGone()
-    }
-
-    /**
-     * Hides the StatusBar.<br>
-     * StatusBar를 숨깁니다.<br>
-     */
-    protected fun statusBarGone() {
-        activityWindow.statusBarGone()
-    }
-
-    /**
-     * Hides the NavigationBar.<br>
-     * NavigationBar를 숨깁니다.<br>
-     */
-    protected fun navigationBarGone() {
-        activityWindow.navigationBarGone()
-    }
-
-    /**
-     * Shows the StatusBar.<br>
-     * StatusBar를 표시합니다.<br>
-     */
-    protected fun statusBarVisible() {
-        activityWindow.statusBarVisible()
-    }
-
-    /**
-     * Shows the NavigationBar.<br>
-     * NavigationBar를 표시합니다.<br>
-     */
-    protected fun navigationBarVisible() {
-        activityWindow.navigationBarVisible()
     }
 }
