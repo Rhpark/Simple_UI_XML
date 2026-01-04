@@ -169,7 +169,7 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>() {
         super.onCreate(savedInstanceState)
 
         // binding, setContentView auto-handled
-        setStatusBarColor(Color.BLACK, isLightStatusBar = false)
+        setStatusBarColor(Color.BLACK, isDrakMode = false)
 
         // Permission with lambda callback - no override needed
         onRequestPermissions(listOf(CAMERA)) { deniedPermissions ->
@@ -516,7 +516,7 @@ class MainActivity : AppCompatActivity() {
 class MainActivity : BaseBindingActivity<ActivityMainBinding>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setStatusBarColor(Color.BLACK, isLightStatusBar = false)
+        setStatusBarColor(Color.BLACK, isDrakMode = false)
     }
 }
 // ✅ 15 lines → 3 lines (80% reduction, binding + setContentView + system bars auto-handled)
