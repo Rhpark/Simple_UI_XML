@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.ext.SdkExtensions
 import androidx.annotation.RequiresApi
 import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
+import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
 
 /**
  * Data class wrapper for NetworkCapabilities.<br><br>
@@ -16,7 +17,7 @@ import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
  * NetworkCapabilities 필드에 대한 안전한 접근자와 문자열 파싱 폴백을 제공합니다.<br>
  *
  * @property networkCapabilities The original NetworkCapabilities object.<br><br>
- *                               원본 NetworkCapabilities 객체.
+ *                               원본 NetworkCapabilities 객체.<br>
  */
 public data class NetworkCapabilitiesData(
     public val networkCapabilities: NetworkCapabilities,
@@ -28,7 +29,7 @@ public data class NetworkCapabilitiesData(
      * 업스트림 대역폭(Kbps)을 가져옵니다.<br>
      *
      * @return Upstream bandwidth.<br><br>
-     *         업스트림 대역폭.
+     *         업스트림 대역폭.<br>
      */
     public fun getLinkUpstreamBandwidthKbps(): Int = networkCapabilities.linkUpstreamBandwidthKbps
 
@@ -37,7 +38,7 @@ public data class NetworkCapabilitiesData(
      * 다운스트림 대역폭(Kbps)을 가져옵니다.<br>
      *
      * @return Downstream bandwidth.<br><br>
-     *         다운스트림 대역폭.
+     *         다운스트림 대역폭.<br>
      */
     public fun getLinkDownstreamBandwidthKbps(): Int = networkCapabilities.linkDownstreamBandwidthKbps
 
@@ -46,24 +47,26 @@ public data class NetworkCapabilitiesData(
      * 기능 목록을 정수 코드로 가져옵니다.<br>
      *
      * @return List of capability integer codes.<br><br>
-     *         기능 정수 코드 목록.
+     *         기능 정수 코드 목록.<br>
      */
-    public fun getCapabilities(): IntArray? = checkSdkVersion(
-        Build.VERSION_CODES.S,
-        positiveWork = { networkCapabilities.capabilities },
-        negativeWork = { getCapabilitiesNumber(splitStr("Capabilities: ", " LinkUpBandwidth", "&")) },
-    )
+    public fun getCapabilities(): IntArray? = safeCatch(null) {
+        checkSdkVersion(
+            Build.VERSION_CODES.S,
+            positiveWork = { networkCapabilities.capabilities },
+            negativeWork = { getCapabilitiesNumber(splitStr("Capabilities: ", " LinkUpBandwidth", "&")) },
+        )
+    }
 
     /**
      * Converts capability strings to integer codes.<br><br>
      * 기능 문자열을 정수 코드로 변환합니다.<br>
      *
      * @param capabilitiesStr List of capability strings.<br><br>
-     *                        기능 문자열 목록.
+     *                        기능 문자열 목록.<br>
      * @return List of capability integer codes.<br><br>
-     *         기능 정수 코드 목록.
+     *         기능 정수 코드 목록.<br>
      */
-    private fun getCapabilitiesNumber(capabilitiesStr: List<String>?): IntArray? {
+    private fun getCapabilitiesNumber(capabilitiesStr: List<String>?): IntArray? = safeCatch(null) {
         if (capabilitiesStr == null) return null
 
         val res = mutableListOf<Int>()
@@ -168,30 +171,32 @@ public data class NetworkCapabilitiesData(
      * 네트워크와 연관된 구독 ID들을 가져옵니다.<br>
      *
      * @return List of subscription IDs.<br><br>
-     *         구독 ID 목록.
+     *         구독 ID 목록.<br>
      */
-    public fun getSubscriptionIds(): List<Int>? = checkSdkVersion(
-        Build.VERSION_CODES.S,
-        positiveWork = {
-            if (SdkExtensions.getExtensionVersion(Build.VERSION_CODES.UPSIDE_DOWN_CAKE) >= 12) {
-                networkCapabilities.subscriptionIds.toList()
-            } else {
+    public fun getSubscriptionIds(): List<Int>? = safeCatch(null) {
+        checkSdkVersion(
+            Build.VERSION_CODES.S,
+            positiveWork = {
+                if (SdkExtensions.getExtensionVersion(Build.VERSION_CODES.UPSIDE_DOWN_CAKE) >= 12) {
+                    networkCapabilities.subscriptionIds.toList()
+                } else {
+                    val data = splitStr("SubscriptionIds: {", "}", ",")
+                    data?.map { it -> it.toInt() }?.toList()
+                }
+            },
+            negativeWork = {
                 val data = splitStr("SubscriptionIds: {", "}", ",")
                 data?.map { it -> it.toInt() }?.toList()
-            }
-        },
-        negativeWork = {
-            val data = splitStr("SubscriptionIds: {", "}", ",")
-            data?.map { it -> it.toInt() }?.toList()
-        },
-    )
+            },
+        )
+    }
 
     /**
      * Gets the network specifier (API 30+).<br><br>
      * 네트워크 지정자를 가져옵니다 (API 30+).<br>
      *
      * @return NetworkSpecifier, or null.<br><br>
-     *         NetworkSpecifier, 또는 null.
+     *         NetworkSpecifier, 또는 null.<br>
      */
     @RequiresApi(Build.VERSION_CODES.R)
     public fun getNetworkSpecifier(): NetworkSpecifier? = networkCapabilities.networkSpecifier
@@ -201,20 +206,22 @@ public data class NetworkCapabilitiesData(
      * 신호 강도를 가져옵니다.<br>
      *
      * @return Signal strength value.<br><br>
-     *         신호 강도 값.
+     *         신호 강도 값.<br>
      */
-    public fun getSignalStrength(): Int = checkSdkVersion(
-        Build.VERSION_CODES.Q,
-        positiveWork = { networkCapabilities.signalStrength },
-        negativeWork = { splitStr("SignalStrength: ", " ", "")?.get(0)?.toInt() ?: Int.MIN_VALUE },
-    )
+    public fun getSignalStrength(): Int? = safeCatch(null) {
+        checkSdkVersion(
+            Build.VERSION_CODES.Q,
+            positiveWork = { networkCapabilities.signalStrength },
+            negativeWork = { splitStr("SignalStrength: ", " ")?.toIntOrNull() },
+        )
+    }
 
     /**
      * Gets the UID of the app that owns this network (API 30+).<br><br>
      * 이 네트워크를 소유한 앱의 UID를 가져옵니다 (API 30+).<br>
      *
      * @return Owner UID.<br><br>
-     *         소유자 UID.
+     *         소유자 UID.<br>
      */
     @RequiresApi(Build.VERSION_CODES.R)
     public fun getOwnerUid(): Int = networkCapabilities.ownerUid
@@ -224,7 +231,7 @@ public data class NetworkCapabilitiesData(
      * 기업 ID들을 가져옵니다 (API 33+).<br>
      *
      * @return Array of enterprise IDs.<br><br>
-     *         기업 ID 배열.
+     *         기업 ID 배열.<br>
      */
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     public fun getEnterpriseIds(): IntArray = networkCapabilities.enterpriseIds
@@ -234,7 +241,7 @@ public data class NetworkCapabilitiesData(
      * 전송 정보를 가져옵니다 (API 29+).<br>
      *
      * @return TransportInfo, or null.<br><br>
-     *         TransportInfo, 또는 null.
+     *         TransportInfo, 또는 null.<br>
      */
     @RequiresApi(Build.VERSION_CODES.Q)
     public fun getTransportInfo(): TransportInfo? = networkCapabilities.transportInfo
@@ -243,85 +250,113 @@ public data class NetworkCapabilitiesData(
      * Gets the BSSID from TransportInfo.<br><br>
      * TransportInfo에서 BSSID를 가져옵니다.<br>
      */
-    public fun getBssidInTransportInfo(): String? = getDataInTransportInfoStr(", BSSID: ", ", ")
+    public fun getBssidInTransportInfo(): String? = safeCatch(null) {
+        getDataInTransportInfoStr(", BSSID: ", ", ")
+    }
 
     /**
      * Gets the MAC address from TransportInfo.<br><br>
      * TransportInfo에서 MAC 주소를 가져옵니다.<br>
      */
-    public fun getMacInTransportInfo(): String? = getDataInTransportInfoStr(", MAC: ", ", ")
+    public fun getMacInTransportInfo(): String? = safeCatch(null) {
+        getDataInTransportInfoStr(", MAC: ", ", ")
+    }
 
     /**
      * Gets the IP address from TransportInfo.<br><br>
      * TransportInfo에서 IP 주소를 가져옵니다.<br>
      */
-    public fun getIpTransportInfo(): String? = getDataInTransportInfoStr(", IP: ", ", ")
+    public fun getIpTransportInfo(): String? = safeCatch(null) {
+        getDataInTransportInfoStr(", IP: ", ", ")
+    }
 
     /**
      * Gets the security type from TransportInfo.<br><br>
      * TransportInfo에서 보안 타입을 가져옵니다.<br>
      */
-    public fun getSecurityTypeTransportInfo(): String? = getDataInTransportInfoStr(", Security type: ", ", ")
+    public fun getSecurityTypeTransportInfo(): String? = safeCatch(null) {
+        getDataInTransportInfoStr(", Security type: ", ", ")
+    }
 
     /**
      * Gets the supplicant state from TransportInfo.<br><br>
      * TransportInfo에서 서플리컨트 상태를 가져옵니다.<br>
      */
-    public fun getSupplicantStateTransportInfo(): String? = getDataInTransportInfoStr(", Supplicant state: ", ", ")
+    public fun getSupplicantStateTransportInfo(): String? = safeCatch(null) {
+        getDataInTransportInfoStr(", Supplicant state: ", ", ")
+    }
 
     /**
      * Gets the Wi-Fi standard from TransportInfo.<br><br>
      * TransportInfo에서 Wi-Fi 표준을 가져옵니다.<br>
      */
-    public fun getWifiStandardTransportInfo(): String? = getDataInTransportInfoStr(", Wi-Fi standard: ", ", ")
+    public fun getWifiStandardTransportInfo(): String? = safeCatch(null) {
+        getDataInTransportInfoStr(", Wi-Fi standard: ", ", ")
+    }
 
     /**
      * Gets the RSSI from TransportInfo.<br><br>
      * TransportInfo에서 RSSI를 가져옵니다.<br>
      */
-    public fun getRssiTransportInfo(): String? = getDataInTransportInfoStr(", RSSI: ", ", ")
+    public fun getRssiTransportInfo(): String? = safeCatch(null) {
+        getDataInTransportInfoStr(", RSSI: ", ", ")
+    }
 
     /**
      * Gets the link speed from TransportInfo.<br><br>
      * TransportInfo에서 링크 속도를 가져옵니다.<br>
      */
-    public fun getLinkSpeedTransportInfo(): String? = getDataInTransportInfoStr(", Link speed: ", ", ")
+    public fun getLinkSpeedTransportInfo(): String? = safeCatch(null) {
+        getDataInTransportInfoStr(", Link speed: ", ", ")
+    }
 
     /**
      * Gets the Tx link speed from TransportInfo.<br><br>
      * TransportInfo에서 Tx 링크 속도를 가져옵니다.<br>
      */
-    public fun getTxLinkSpeedTransportInfo(): String? = getDataInTransportInfoStr(", Tx Link speed: ", ", ")
+    public fun getTxLinkSpeedTransportInfo(): String? = safeCatch(null) {
+        getDataInTransportInfoStr(", Tx Link speed: ", ", ")
+    }
 
     /**
      * Gets the max supported Tx link speed from TransportInfo.<br><br>
      * TransportInfo에서 최대 지원 Tx 링크 속도를 가져옵니다.<br>
      */
-    public fun getMaxSupportedTxLinkSpeedTransportInfo(): String? = getDataInTransportInfoStr(", Max Supported Tx Link speed: ", ", ")
+    public fun getMaxSupportedTxLinkSpeedTransportInfo(): String? = safeCatch(null) {
+        getDataInTransportInfoStr(", Max Supported Tx Link speed: ", ", ")
+    }
 
     /**
      * Gets the Rx link speed from TransportInfo.<br><br>
      * TransportInfo에서 Rx 링크 속도를 가져옵니다.<br>
      */
-    public fun getRxLinkSpeedTransportInfo(): String? = getDataInTransportInfoStr(", Rx Link speed: ", ", ")
+    public fun getRxLinkSpeedTransportInfo(): String? = safeCatch(null) {
+        getDataInTransportInfoStr(", Rx Link speed: ", ", ")
+    }
 
     /**
      * Gets the max supported Rx link speed from TransportInfo.<br><br>
      * TransportInfo에서 최대 지원 Rx 링크 속도를 가져옵니다.<br>
      */
-    public fun getMaxRxSupportedLinkSpeedTransportInfo(): String? = getDataInTransportInfoStr(", Max Supported Rx Link speed: ", ", ")
+    public fun getMaxRxSupportedLinkSpeedTransportInfo(): String? = safeCatch(null) {
+        getDataInTransportInfoStr(", Max Supported Rx Link speed: ", ", ")
+    }
 
     /**
      * Gets the frequency from TransportInfo.<br><br>
      * TransportInfo에서 주파수를 가져옵니다.<br>
      */
-    public fun getFrequencyTransportInfo(): String? = getDataInTransportInfoStr(", Frequency: ", ", ")
+    public fun getFrequencyTransportInfo(): String? = safeCatch(null) {
+        getDataInTransportInfoStr(", Frequency: ", ", ")
+    }
 
     /**
      * Gets the Net ID from TransportInfo.<br><br>
      * TransportInfo에서 Net ID를 가져옵니다.<br>
      */
-    public fun getNetIdTransportInfo(): String? = getDataInTransportInfoStr(", Net ID: ", ", ")
+    public fun getNetIdTransportInfo(): String? = safeCatch(null) {
+        getDataInTransportInfoStr(", Net ID: ", ", ")
+    }
 
     /**
      * Checks if metered hint is present in TransportInfo.<br><br>
@@ -333,19 +368,25 @@ public data class NetworkCapabilitiesData(
      * Gets the score from TransportInfo.<br><br>
      * TransportInfo에서 점수를 가져옵니다.<br>
      */
-    public fun getScoreTransportInfo(): String? = getDataInTransportInfoStr(", score: ", ", ")
+    public fun getScoreTransportInfo(): String? = safeCatch(null) {
+        getDataInTransportInfoStr(", score: ", ", ")
+    }
 
     /**
      * Gets the subscription ID from TransportInfo.<br><br>
      * TransportInfo에서 구독 ID를 가져옵니다.<br>
      */
-    public fun getSubscriptionIdTransportInfo(): String? = getDataInTransportInfoStr(", SubscriptionId: ", ", ")
+    public fun getSubscriptionIdTransportInfo(): String? = safeCatch(null) {
+        getDataInTransportInfoStr(", SubscriptionId: ", ", ")
+    }
 
     /**
      * Gets the IsPrimary flag from TransportInfo.<br><br>
      * TransportInfo에서 IsPrimary 플래그를 가져옵니다.<br>
      */
-    public fun getIsPrimaryTransportInfo(): String? = getDataInTransportInfoStr(", IsPrimary: ", ", ")
+    public fun getIsPrimaryTransportInfo(): String? = safeCatch(null) {
+        getDataInTransportInfoStr(", IsPrimary: ", ", ")
+    }
 
     /**
      * Checks if usable flag is present in TransportInfo.<br><br>
@@ -399,77 +440,22 @@ public data class NetworkCapabilitiesData(
      * Helper to extract data from TransportInfo string representation.<br><br>
      * TransportInfo 문자열 표현에서 데이터를 추출하는 헬퍼 함수입니다.<br>
      */
-    private fun getDataInTransportInfoStr(start: String, end: String): String? = checkSdkVersion(
-        Build.VERSION_CODES.Q,
-        positiveWork = {
-            networkCapabilities.transportInfo?.let {
-                val str = networkCapabilities.transportInfo.toString()
-                str.split(start, end)
-            }
-        },
-        negativeWork = {
-            if (isContains(transportInfoStr)) {
-                getResStr().split(transportInfoStr)[1]?.split(start, end)
-            } else {
-                null
-            }
-        },
-    )
-
-    /**
-     * Converts all properties to a readable string.<br><br>
-     * 모든 속성을 읽기 쉬운 문자열로 변환합니다.<br>
-     *
-     * @return Formatted string representation.<br><br>
-     *         포맷된 문자열 표현.
-     */
-    public fun toResString(): String {
-        var res: String =
-            " getCapabilities : ${getCapabilities()?.toList()}\n" +
-                " getLinkUpstreamBandwidthKbps : ${getLinkUpstreamBandwidthKbps()}\n" +
-                " getLinkDownstreamBandwidthKbps : ${getLinkDownstreamBandwidthKbps()}\n" +
-                " getLinkUpstreamBandwidthKbps : ${getLinkUpstreamBandwidthKbps()}\n" +
-                " getSubscriptionIds ${getSubscriptionIds()}\n" +
-                " getSignalStrength ${getSignalStrength()}\n" +
-                " getBssidInTransportInfo ${getBssidInTransportInfo()}\n" +
-                " getMacInTransportInfo ${getMacInTransportInfo()}\n" +
-                " getIpTransportInfo ${getIpTransportInfo()}\n" +
-                " getSecurityTypeTransportInfo ${getSecurityTypeTransportInfo()}\n" +
-                " getSupplicantStateTransportInfo ${getSupplicantStateTransportInfo()}\n" +
-                " getWifiStandardTransportInfo ${getWifiStandardTransportInfo()}\n" +
-                " getRssiTransportInfo ${getRssiTransportInfo()}\n" +
-                " getLinkSpeedTransportInfo ${getLinkSpeedTransportInfo()}\n" +
-                " getTxLinkSpeedTransportInfo ${getTxLinkSpeedTransportInfo()}\n" +
-                " getMaxSupportedTxLinkSpeedTransportInfo ${getMaxSupportedTxLinkSpeedTransportInfo()}\n" +
-                " getRxLinkSpeedTransportInfo ${getRxLinkSpeedTransportInfo()}\n" +
-                " getMaxRxSupportedLinkSpeedTransportInfo ${getMaxRxSupportedLinkSpeedTransportInfo()}\n" +
-                " getFrequencyTransportInfo ${getFrequencyTransportInfo()}\n" +
-                " getNetIdTransportInfo ${getNetIdTransportInfo()}\n" +
-                " isMeteredHintTransportInfo ${isMeteredHintTransportInfo()}\n" +
-                " getScoreTransportInfo ${getScoreTransportInfo()}\n" +
-                " getSubscriptionIdTransportInfo ${getSubscriptionIdTransportInfo()}\n" +
-                " getIsPrimaryTransportInfo ${getIsPrimaryTransportInfo()}\n" +
-                " isUsableTransportInfo ${isUsableTransportInfo()}\n" +
-                " isCarrierMergedTransportInfo ${isCarrierMergedTransportInfo()}\n" +
-                " isTrustedTransportInfo ${isTrustedTransportInfo()}\n" +
-                " isRestrictedTransportInfo ${isRestrictedTransportInfo()}\n" +
-                " isEphemeralTransportInfo ${isEphemeralTransportInfo()}\n" +
-                " isOemPaidTransportInfo ${isOemPaidTransportInfo()}\n" +
-                " isOemPrivateTransportInfo ${isOemPrivateTransportInfo()}\n" +
-                " isOsuApTransportInfo ${isOsuApTransportInfo()}\n"
-
-        checkSdkVersion(Build.VERSION_CODES.Q) {
-            res += " getTransportInfo : ${getTransportInfo()}\n"
-        }
-        checkSdkVersion(Build.VERSION_CODES.R) {
-            res += " getNetworkSpecifier : ${getNetworkSpecifier()}\n" +
-                " getOwnerUid : ${getOwnerUid()}\n"
-        }
-        checkSdkVersion(Build.VERSION_CODES.TIRAMISU) {
-            res += " getEnterpriseIds : ${getEnterpriseIds().toList()}\n"
-        }
-        res += "\n\n"
-
-        return res
+    private fun getDataInTransportInfoStr(start: String, end: String): String? = safeCatch(null) {
+        checkSdkVersion(
+            Build.VERSION_CODES.Q,
+            positiveWork = {
+                networkCapabilities.transportInfo?.let {
+                    val str = networkCapabilities.transportInfo.toString()
+                    str.split(start, end)
+                }
+            },
+            negativeWork = {
+                if (isContains(transportInfoStr)) {
+                    getResStr().split(transportInfoStr)[1]?.split(start, end)
+                } else {
+                    null
+                }
+            },
+        )
     }
 }

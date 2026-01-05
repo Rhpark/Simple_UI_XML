@@ -8,6 +8,7 @@ import android.net.RouteInfo
 import android.os.Build
 import androidx.annotation.RequiresApi
 import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
+import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
 import java.net.InetAddress
 
 /**
@@ -42,7 +43,7 @@ public data class NetworkLinkPropertiesData(
     public fun getMtu(): Int = checkSdkVersion(
         Build.VERSION_CODES.Q,
         positiveWork = { linkProperties.mtu },
-        negativeWork = { splitStr("MTU: ", " ")?.let { it[0].toInt() } ?: 0 },
+        negativeWork = { splitStr("MTU: ", " ")?.toIntOrNull() ?: 0 },
     )
 
     /**
@@ -79,11 +80,24 @@ public data class NetworkLinkPropertiesData(
      * @return DHCP server address, or `null`.<br><br>
      *         DHCP 서버 주소이며, 없으면 `null`입니다.<br>
      */
-    public fun getDhcpServerAddress(): InetAddress? = checkSdkVersion(
-        Build.VERSION_CODES.R,
-        positiveWork = { linkProperties.dhcpServerAddress },
-        negativeWork = { InetAddress.getByName(splitStr("ServerAddress: ", " ")?.get(0)?.toString()) },
-    )
+    public fun getDhcpServerAddress(): InetAddress? = safeCatch(null) {
+        checkSdkVersion(
+            Build.VERSION_CODES.R,
+            positiveWork = { linkProperties.dhcpServerAddress },
+            negativeWork = {
+                val raw = splitStr("DhcpServerAddress: ", " ")
+                    ?: splitStr("ServerAddress: ", " ")
+
+                val host = raw
+                    ?.trim()
+                    ?.removePrefix("/")
+                    ?.substringBefore("/") // 혹시 "/24" 같은 prefixLen이 붙어있으면 제거
+                    ?.takeIf { it.isNotBlank() && it != "null" }
+
+                host?.let { InetAddress.getByName(it) }
+            },
+        )
+    }
 
     /**
      * Gets the HTTP proxy information.<br><br>
@@ -142,33 +156,5 @@ public data class NetworkLinkPropertiesData(
         getResStr().split(" TcpBufferSizes: ", " ")?.split(",")
     } else {
         null
-    }
-
-    /**
-     * Converts all properties to a readable string.<br><br>
-     * 주요 속성을 사람이 읽기 쉬운 문자열로 변환합니다.<br>
-     *
-     * @return Formatted string representation.<br><br>
-     *         포맷된 문자열 표현입니다.<br>
-     */
-    public fun toResString(): String {
-        var res =
-            "getLinkAddresses ${getLinkAddresses().toList()}\n" +
-                "getMtu ${getMtu()}\n" +
-                "getRoutes ${getRoutes()}\n" +
-                "getDomains ${getDomains()}\n" +
-                "getDnsServer ${getDnsServer()}\n" +
-                "getDhcpServerAddress ${getDhcpServerAddress()}\n" +
-                "getHttpProxy ${getHttpProxy()}\n" +
-                "getInterfaceName ${getInterfaceName()}\n" +
-                "isPrivateDnsActive ${isPrivateDnsActive()}\n" +
-                "getPrivateDnsServerName ${getPrivateDnsServerName()}\n" +
-                "getTcpBufferSizes ${getTcpBufferSizes()}\n"
-
-        checkSdkVersion(Build.VERSION_CODES.R) {
-            res += "getNat64Prefix ${getNat64Prefix()}\n"
-        }
-        res += "\n\n"
-        return res
     }
 }

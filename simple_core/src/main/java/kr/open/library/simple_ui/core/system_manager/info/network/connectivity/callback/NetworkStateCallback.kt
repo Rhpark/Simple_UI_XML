@@ -18,21 +18,21 @@ import kr.open.library.simple_ui.core.system_manager.info.network.telephony.data
  * 이 클래스는 ConnectivityManager.NetworkCallback을 상속받아 람다 기반의 콜백을 제공합니다.<br>
  *
  * @param onNetworkAvailable Called when network becomes available.<br><br>
- *                           네트워크를 사용할 수 있게 되었을 때 호출됩니다.
+ *                           네트워크를 사용할 수 있게 되었을 때 호출됩니다.<br>
  * @param onNetworkLosing Called when network is about to be lost.<br><br>
- *                        네트워크가 곧 끊어질 때 호출됩니다.
+ *                        네트워크가 곧 끊어질 때 호출됩니다.<br>
  * @param onNetworkLost Called when network is lost.<br><br>
- *                      네트워크가 끊어졌을 때 호출됩니다.
+ *                      네트워크가 끊어졌을 때 호출됩니다.<br>
  * @param onUnavailable Called when network is unavailable.<br><br>
- *                      네트워크를 사용할 수 없을 때 호출됩니다.
+ *                      네트워크를 사용할 수 없을 때 호출됩니다.<br>
  * @param onNetworkCapabilitiesChanged Called when network capabilities change.<br><br>
- *                                     네트워크 기능이 변경되었을 때 호출됩니다.
+ *                                     네트워크 기능이 변경되었을 때 호출됩니다.<br>
  * @param onLinkPropertiesChanged Called when link properties change.<br><br>
- *                                링크 속성이 변경되었을 때 호출됩니다.
+ *                                링크 속성이 변경되었을 때 호출됩니다.<br>
  * @param onBlockedStatusChanged Called when network blocked status changes.<br><br>
- *                               네트워크 차단 상태가 변경되었을 때 호출됩니다.
+ *                               네트워크 차단 상태가 변경되었을 때 호출됩니다.<br>
  * @param onNetworkChangedState Called when network state changes (for internal state tracking).<br><br>
- *                              네트워크 상태가 변경되었을 때 호출됩니다 (내부 상태 추적용).
+ *                              네트워크 상태가 변경되었을 때 호출됩니다 (내부 상태 추적용).<br>
  */
 internal class NetworkStateCallback(
     private var onNetworkAvailable: ((Network) -> Unit)? = null,

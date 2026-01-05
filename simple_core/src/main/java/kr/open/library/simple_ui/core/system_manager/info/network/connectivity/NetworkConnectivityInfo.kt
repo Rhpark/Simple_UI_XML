@@ -1,6 +1,5 @@
 package kr.open.library.simple_ui.core.system_manager.info.network.connectivity
 
-import android.Manifest
 import android.Manifest.permission.ACCESS_NETWORK_STATE
 import android.Manifest.permission.ACCESS_WIFI_STATE
 import android.content.Context
@@ -20,9 +19,9 @@ import kr.open.library.simple_ui.core.system_manager.controller.wifi.WifiControl
 import kr.open.library.simple_ui.core.system_manager.extensions.getConnectivityManager
 import kr.open.library.simple_ui.core.system_manager.info.network.connectivity.callback.NetworkStateCallback
 import kr.open.library.simple_ui.core.system_manager.info.network.connectivity.data.NetworkCapabilitiesData
+import kr.open.library.simple_ui.core.system_manager.info.network.connectivity.data.NetworkConnectivitySummary
 import kr.open.library.simple_ui.core.system_manager.info.network.connectivity.data.NetworkLinkPropertiesData
-import java.net.NetworkInterface
-import java.util.Collections
+import java.net.Inet4Address
 
 /**
  * Pure network connectivity management class.<br><br>
@@ -47,7 +46,11 @@ import java.util.Collections
  * - 링크 속성 조회<br>
  *
  * Required Permissions:<br>
- * - `android.permission.ACCESS_NETWORK_STATE` (Required)<br><br>
+ * - `android.permission.ACCESS_NETWORK_STATE` (Required for network connectivity checks)<br>
+ * - `android.permission.ACCESS_WIFI_STATE` (Required for WiFi status checks)<br><br>
+ * 필요한 권한:<br>
+ * - `android.permission.ACCESS_NETWORK_STATE` (네트워크 연결성 확인에 필요)<br>
+ * - `android.permission.ACCESS_WIFI_STATE` (WiFi 상태 확인에 필요)<br><br>
  *
  * Supported Transport Types:<br>
  * - WiFi, Mobile(Cellular), VPN, Bluetooth<br>
@@ -65,6 +68,9 @@ import java.util.Collections
  * val isWifiConnected = networkInfo.isConnectedWifi()
  * val isMobileConnected = networkInfo.isConnectedMobile()
  *
+ * // WiFi status check (requires ACCESS_WIFI_STATE)
+ * val wifiEnabled = networkInfo.isWifiEnabled()
+ *
  * // Network callback registration
  * networkInfo.registerNetworkCallback(
  *     onNetworkAvailable = { network -> /* Network connected */ },
@@ -73,18 +79,14 @@ import java.util.Collections
  * ```
  *
  * @param context The application context.<br><br>
- *                애플리케이션 컨텍스트.
+ *                애플리케이션 컨텍스트.<br>
  */
 public class NetworkConnectivityInfo(
     context: Context,
 ) : BaseSystemService(
         context,
-        listOf(ACCESS_NETWORK_STATE, ACCESS_WIFI_STATE),
+        listOf(ACCESS_NETWORK_STATE, ACCESS_WIFI_STATE)
     ) {
-    // =================================================
-    // Core System Services
-    // =================================================
-
     /**
      * ConnectivityManager for network operations.<br><br>
      * 네트워크 작업을 위한 ConnectivityManager입니다.<br>
@@ -97,10 +99,6 @@ public class NetworkConnectivityInfo(
      */
     public val wifiController: WifiController by lazy { WifiController(context) }
 
-    // =================================================
-    // Network Callback Management
-    // =================================================
-
     /**
      * General network state callback.<br><br>
      * 일반 네트워크 상태 콜백입니다.<br>
@@ -112,10 +110,6 @@ public class NetworkConnectivityInfo(
      * 기본 네트워크 상태 콜백입니다.<br>
      */
     private var networkDefaultCallback: NetworkStateCallback? = null
-
-    // =================================================
-    // Basic Network Connectivity / 기본 네트워크 연결성
-    // =================================================
 
     /**
      * Checks if network is connected.<br><br>
@@ -131,10 +125,6 @@ public class NetworkConnectivityInfo(
         (caps != null) && (linkProperties != null)
     }
 
-    // =================================================
-    // Network Capabilities / 네트워크 능력
-    // =================================================
-
     /**
      * Gets NetworkCapabilities of current network.<br><br>
      * 현재 네트워크의 NetworkCapabilities를 반환합니다.<br>
@@ -143,7 +133,7 @@ public class NetworkConnectivityInfo(
      *         현재 활성 네트워크의 능력, 사용할 수 없는 경우 null.<br>
      */
     @RequiresPermission(ACCESS_NETWORK_STATE)
-    public fun getNetworkCapabilities(): NetworkCapabilities? = safeCatch(defaultValue = null) {
+    public fun getNetworkCapabilities(): NetworkCapabilities? = tryCatchSystemManager(null) {
         connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
     }
 
@@ -155,13 +145,9 @@ public class NetworkConnectivityInfo(
      *         현재 활성 네트워크의 링크 속성, 사용할 수 없는 경우 null.<br>
      */
     @RequiresPermission(ACCESS_NETWORK_STATE)
-    public fun getLinkProperties(): LinkProperties? = safeCatch(defaultValue = null) {
+    public fun getLinkProperties(): LinkProperties? = tryCatchSystemManager(defaultValue = null) {
         connectivityManager.getLinkProperties(connectivityManager.activeNetwork)
     }
-
-    // =================================================
-    // Transport Type Connectivity / 전송 타입별 연결성
-    // =================================================
 
     /**
      * Checks if connected via WiFi.<br><br>
@@ -244,10 +230,6 @@ public class NetworkConnectivityInfo(
     @RequiresApi(Build.VERSION_CODES.S)
     public fun isConnectedUSB(): Boolean = getNetworkCapabilities()?.hasTransport(NetworkCapabilities.TRANSPORT_USB) ?: false
 
-    // =================================================
-    // WiFi State / WiFi 상태
-    // =================================================
-
     /**
      * Checks if WiFi is enabled.<br><br>
      * WiFi가 활성화되어 있는지 확인합니다.<br>
@@ -255,33 +237,29 @@ public class NetworkConnectivityInfo(
      * @return `true` if WiFi is enabled, `false` otherwise.<br><br>
      *         WiFi가 활성화되어 있으면 `true`, 그렇지 않으면 `false`.<br>
      */
-    @RequiresPermission(Manifest.permission.ACCESS_WIFI_STATE)
+    @RequiresPermission(ACCESS_WIFI_STATE)
     public fun isWifiEnabled(): Boolean = wifiController.isWifiEnabled()
-
-    // =================================================
-    // Network Callback Management / 네트워크 콜백 관리
-    // =================================================
 
     /**
      * Registers general network state callback.<br><br>
      * 일반 네트워크 상태 콜백을 등록합니다.<br>
      *
      * @param handler Handler for callback execution (null for main thread).<br><br>
-     *                콜백 실행을 위한 핸들러 (null이면 메인 스레드).
+     *                콜백 실행을 위한 핸들러 (null이면 메인 스레드).<br>
      * @param onNetworkAvailable Called when network is connected.<br><br>
-     *                           네트워크 연결 시 호출.
+     *                           네트워크 연결 시 호출.<br>
      * @param onNetworkLosing Called when network is about to be lost.<br><br>
-     *                        네트워크 끊어질 예정 시 호출.
+     *                        네트워크 끊어질 예정 시 호출.<br>
      * @param onNetworkLost Called when network is lost.<br><br>
-     *                      네트워크 끊어짐 시 호출.
+     *                      네트워크 끊어짐 시 호출.<br>
      * @param onUnavailable Called when network is unavailable.<br><br>
-     *                      네트워크 사용 불가 시 호출.
+     *                      네트워크 사용 불가 시 호출.<br>
      * @param onNetworkCapabilitiesChanged Called when network capabilities change.<br><br>
-     *                                     네트워크 능력 변경 시 호출.
+     *                                     네트워크 능력 변경 시 호출.<br>
      * @param onLinkPropertiesChanged Called when link properties change.<br><br>
-     *                                링크 속성 변경 시 호출.
+     *                                링크 속성 변경 시 호출.<br>
      * @param onBlockedStatusChanged Called when blocked status changes.<br><br>
-     *                               차단 상태 변경 시 호출.
+     *                               차단 상태 변경 시 호출.<br>
      */
     @RequiresPermission(ACCESS_NETWORK_STATE)
     public fun registerNetworkCallback(
@@ -319,21 +297,21 @@ public class NetworkConnectivityInfo(
      * 기본 네트워크 상태 콜백을 등록합니다.<br>
      *
      * @param handler Handler for callback execution (null for main thread).<br><br>
-     *                콜백 실행을 위한 핸들러 (null이면 메인 스레드).
+     *                콜백 실행을 위한 핸들러 (null이면 메인 스레드).<br>
      * @param onNetworkAvailable Called when network is connected.<br><br>
-     *                           네트워크 연결 시 호출.
+     *                           네트워크 연결 시 호출.<br>
      * @param onNetworkLosing Called when network is about to be lost.<br><br>
-     *                        네트워크 끊어질 예정 시 호출.
+     *                        네트워크 끊어질 예정 시 호출.<br>
      * @param onNetworkLost Called when network is lost.<br><br>
-     *                      네트워크 끊어짐 시 호출.
+     *                      네트워크 끊어짐 시 호출.<br>
      * @param onUnavailable Called when network is unavailable.<br><br>
-     *                      네트워크 사용 불가 시 호출.
+     *                      네트워크 사용 불가 시 호출.<br>
      * @param onNetworkCapabilitiesChanged Called when network capabilities change.<br><br>
-     *                                     네트워크 능력 변경 시 호출.
+     *                                     네트워크 능력 변경 시 호출.<br>
      * @param onLinkPropertiesChanged Called when link properties change.<br><br>
-     *                                링크 속성 변경 시 호출.
+     *                                링크 속성 변경 시 호출.<br>
      * @param onBlockedStatusChanged Called when blocked status changes.<br><br>
-     *                               차단 상태 변경 시 호출.
+     *                               차단 상태 변경 시 호출.<br>
      */
     @RequiresPermission(ACCESS_NETWORK_STATE)
     public fun registerDefaultNetworkCallback(
@@ -348,16 +326,15 @@ public class NetworkConnectivityInfo(
     ) {
         unregisterDefaultNetworkCallback()
 
-        networkDefaultCallback =
-            NetworkStateCallback(
-                onNetworkAvailable,
-                onNetworkLosing,
-                onNetworkLost,
-                onUnavailable,
-                onNetworkCapabilitiesChanged,
-                onLinkPropertiesChanged,
-                onBlockedStatusChanged,
-            )
+        networkDefaultCallback = NetworkStateCallback(
+            onNetworkAvailable,
+            onNetworkLosing,
+            onNetworkLost,
+            onUnavailable,
+            onNetworkCapabilitiesChanged,
+            onLinkPropertiesChanged,
+            onBlockedStatusChanged,
+        )
 
         networkDefaultCallback?.let { callback ->
             handler?.let {
@@ -371,7 +348,9 @@ public class NetworkConnectivityInfo(
      * 일반 네트워크 콜백을 해제합니다.<br>
      */
     public fun unregisterNetworkCallback() {
-        networkCallBack?.let { connectivityManager.unregisterNetworkCallback(it) }
+        safeCatch {
+            networkCallBack?.let { connectivityManager.unregisterNetworkCallback(it) }
+        }
         networkCallBack = null
     }
 
@@ -380,13 +359,11 @@ public class NetworkConnectivityInfo(
      * 기본 네트워크 콜백을 해제합니다.<br>
      */
     public fun unregisterDefaultNetworkCallback() {
-        networkDefaultCallback?.let { connectivityManager.unregisterNetworkCallback(it) }
+        safeCatch {
+            networkDefaultCallback?.let { connectivityManager.unregisterNetworkCallback(it) }
+        }
         networkDefaultCallback = null
     }
-
-    // =================================================
-    // Cross-Reference Helper Methods / 상호참조 헬퍼 메서드
-    // =================================================
 
     /**
      * Gets network connectivity summary.<br><br>
@@ -396,54 +373,25 @@ public class NetworkConnectivityInfo(
      *         연결 상태를 포함하는 NetworkConnectivitySummary.
      */
     @RequiresPermission(allOf = [ACCESS_NETWORK_STATE, ACCESS_WIFI_STATE])
-    public fun getNetworkConnectivitySummary(): NetworkConnectivitySummary =
-        NetworkConnectivitySummary(
-            isNetworkConnected = isNetworkConnected(),
-            isWifiConnected = isConnectedWifi(),
-            isMobileConnected = isConnectedMobile(),
-            isVpnConnected = isConnectedVPN(),
-            isWifiEnabled = isWifiEnabled(),
-            networkCapabilities = getNetworkCapabilities(),
-            linkProperties = getLinkProperties(),
-        )
-
-    // =================================================
-    // Data Classes / 데이터 클래스
-    // =================================================
-
-    /**
-     * Network connectivity summary information.<br><br>
-     * 네트워크 연결성 요약 정보입니다.<br>
-     */
-    public data class NetworkConnectivitySummary(
-        val isNetworkConnected: Boolean,
-        val isWifiConnected: Boolean,
-        val isMobileConnected: Boolean,
-        val isVpnConnected: Boolean,
-        val isWifiEnabled: Boolean,
-        val networkCapabilities: NetworkCapabilities?,
-        val linkProperties: LinkProperties?,
+    public fun getNetworkConnectivitySummary(): NetworkConnectivitySummary = NetworkConnectivitySummary(
+        isNetworkConnected = isNetworkConnected(),
+        isWifiConnected = isConnectedWifi(),
+        isMobileConnected = isConnectedMobile(),
+        isVpnConnected = isConnectedVPN(),
+        isWifiEnabled = isWifiEnabled(),
+        networkCapabilities = getNetworkCapabilities(),
+        linkProperties = getLinkProperties(),
     )
-
-    // =================================================
-    // Cleanup / 정리
-    // =================================================
 
     /**
      * Cleans up resources and unregisters callbacks.<br><br>
      * 리소스를 정리하고 콜백을 해제합니다.<br>
      */
     override fun onDestroy() {
-        try {
-            unregisterNetworkCallback()
-            unregisterDefaultNetworkCallback()
-            wifiController.onDestroy()
-            Logx.d("NetworkConnectivityInfo destroyed")
-        } catch (e: Exception) {
-            Logx.e("Error during NetworkConnectivityInfo cleanup: ${e.message}")
-        } finally {
-            super.onDestroy()
-        }
+        unregisterNetworkCallback()
+        unregisterDefaultNetworkCallback()
+        wifiController.onDestroy()
+        super.onDestroy()
     }
 
     /**
@@ -456,39 +404,37 @@ public class NetworkConnectivityInfo(
      * `getIPAddressByNetworkType(NetworkCapabilities.TRANSPORT_CELLULAR)`<br>
      *
      * @param type Network transport type (e.g., TRANSPORT_WIFI).<br><br>
-     *             네트워크 전송 타입 (예: TRANSPORT_WIFI).
+     *             네트워크 전송 타입 (예: TRANSPORT_WIFI).<br>
      * @return IP address string (IPv4), or null if unavailable.<br><br>
-     *         IP 주소 문자열 (IPv4), 사용할 수 없는 경우 null.
+     *         IP 주소 문자열 (IPv4), 사용할 수 없는 경우 null.<br>
      */
     @RequiresPermission(ACCESS_NETWORK_STATE)
-    fun getIPAddressByNetworkType(type: Int): String? {
-        val network = connectivityManager.activeNetwork
-        val capabilities = connectivityManager.getNetworkCapabilities(network)
+    fun getIPAddressByNetworkType(type: Int): String? = tryCatchSystemManager(null) {
+        // 모든 네트워크를 순회하여 해당 타입 찾기
+        val allNetworks = connectivityManager.allNetworks
 
-        if (capabilities == null) return null
+        for (network in allNetworks) {
+            val capabilities = connectivityManager.getNetworkCapabilities(network) ?: continue
 
-        val transport = capabilities.hasTransport(type)
+            // 요청한 transport type을 가진 네트워크인지 확인
+            if (!capabilities.hasTransport(type)) {
+                continue
+            }
 
-        if (transport == null) return null
+            // 해당 네트워크의 LinkProperties에서 IPv4 주소 찾기
+            val linkProperties = connectivityManager.getLinkProperties(network) ?: continue
 
-        try {
-            val interfaces = Collections.list(NetworkInterface.getNetworkInterfaces())
-            for (intf in interfaces) {
-                val addrs = Collections.list(intf.inetAddresses)
-                for (addr in addrs) {
-                    if (!addr.isLoopbackAddress) {
-                        val hostAddress = addr.hostAddress
-                        // IPv4 주소만 반환
-                        val isIPv4 = hostAddress?.indexOf(':') ?: -1 < 0
-                        if (isIPv4) {
-                            return hostAddress
-                        }
-                    }
+            linkProperties.linkAddresses.forEach { linkAddress ->
+                val address = linkAddress.address
+                // IPv4이고 loopback이 아닌 주소 반환
+                if (address is Inet4Address && !address.isLoopbackAddress) {
+                    return address.hostAddress
                 }
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
         }
-        return null
+
+        // 해당 타입의 네트워크를 찾지 못함
+        Logx.d("No network found with transport type: $type")
+        null
     }
 }

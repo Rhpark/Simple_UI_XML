@@ -13,7 +13,6 @@ import android.telephony.euicc.EuiccManager
 import android.util.SparseArray
 import androidx.annotation.RequiresPermission
 import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
-import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
 import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.core.permissions.extentions.hasPermissions
 import kr.open.library.simple_ui.core.system_manager.base.BaseSystemService
@@ -198,7 +197,7 @@ public class SimInfo(
      *         활성화된 SIM 카드 수.
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun getActiveSimCount(): Int = safeCatch(defaultValue = 0) { return subscriptionManager.activeSubscriptionInfoCount }
+    public fun getActiveSimCount(): Int = tryCatchSystemManager(0) { return subscriptionManager.activeSubscriptionInfoCount }
 
     /**
      * Gets active SIM slot index list.<br><br>
@@ -208,7 +207,9 @@ public class SimInfo(
      *         활성화된 SIM 슬롯 인덱스 목록.
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun getActiveSimSlotIndexList(): List<Int> = getActiveSubscriptionInfoList().map { it.simSlotIndex }
+    public fun getActiveSimSlotIndexList(): List<Int> = tryCatchSystemManager(emptyList()) {
+        getActiveSubscriptionInfoList().map { it.simSlotIndex }
+    }
 
     /**
      * Updates TelephonyManager list per SIM slot.<br><br>
@@ -256,7 +257,7 @@ public class SimInfo(
      *         기본 subscription ID, 사용할 수 없는 경우 null.
      */
     @RequiresPermission(READ_PHONE_STATE)
-    private fun getSubIdFromDefaultUSimInternal(): Int? = safeCatch(null) {
+    private fun getSubIdFromDefaultUSimInternal(): Int? = tryCatchSystemManager(null) {
         isReadSimInfoFromDefaultUSim = false
 
         val id = checkSdkVersion(
@@ -306,7 +307,7 @@ public class SimInfo(
      *         SubscriptionInfo 목록.
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun getActiveSubscriptionInfoList(): List<SubscriptionInfo> = safeCatch(defaultValue = emptyList()) {
+    public fun getActiveSubscriptionInfoList(): List<SubscriptionInfo> = tryCatchSystemManager(emptyList()) {
         return subscriptionManager.activeSubscriptionInfoList ?: emptyList()
     }
 
@@ -545,11 +546,7 @@ public class SimInfo(
      * Detailed SIM status check (internal method).<br><br>
      * SIM 상태 상세 확인 (내부 메서드)입니다.<br>
      */
-    private fun getActiveSimStatus(
-        isAbleEsim: Boolean,
-        isRegisterESim: Boolean,
-        slotIndex: Int,
-    ): Int {
+    private fun getActiveSimStatus(isAbleEsim: Boolean, isRegisterESim: Boolean, slotIndex: Int): Int {
         val status = telephonyManager.getSimState(slotIndex)
 
         return if (isAbleEsim && slotIndex == 0 && status == TelephonyManager.SIM_STATE_UNKNOWN) {
