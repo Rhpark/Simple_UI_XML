@@ -2,6 +2,7 @@ package kr.open.library.simpleui_xml.extenstions_style
 
 import android.Manifest
 import android.os.Bundle
+import android.view.View
 import androidx.core.widget.addTextChangedListener
 import kr.open.library.simple_ui.core.extensions.date.toDateString
 import kr.open.library.simple_ui.core.extensions.display.dpToPx
@@ -31,9 +32,8 @@ import kr.open.library.simpleui_xml.databinding.ActivityExtensionsStyleBinding
 import java.util.Locale
 
 class ExtensionsStyleActivity : BaseBindingActivity<ActivityExtensionsStyleBinding>(R.layout.activity_extensions_style) {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
+    override fun onCreateView(rootView: View, savedInstanceState: Bundle?) {
+        super.onCreateView(rootView, savedInstanceState)
         setupViewExtensions()
         setupDisplayExtensions()
         setupResourceExtensions()
@@ -42,7 +42,6 @@ class ExtensionsStyleActivity : BaseBindingActivity<ActivityExtensionsStyleBindi
         setupTryCatchExtensions()
         setupPermissionExtensions()
     }
-
     /**
      * 섹션 1: View Extensions (Toast/SnackBar/TextView)
      */

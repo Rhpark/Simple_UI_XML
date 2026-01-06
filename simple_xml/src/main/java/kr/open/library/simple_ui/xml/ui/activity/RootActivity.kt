@@ -6,22 +6,15 @@ import kr.open.library.simple_ui.xml.permissions.register.PermissionDelegate
 import kr.open.library.simple_ui.xml.permissions.register.PermissionRequester
 
 /**
- * Root Activity class providing comprehensive system bar control and permission management.<br>
- * Serves as the foundation for all Activity classes in the library with API version-aware implementations.<br><br>
- * 시스템 바 제어와 권한 관리를 종합적으로 제공하는 루트 Activity 클래스입니다.<br>
+ * Root Activity class providing comprehensive permission management.<br>
+ * 권한 관리를 종합적으로 제공하는 루트 Activity 클래스입니다.<br>
  * API 버전을 인식하는 구현으로 라이브러리의 모든 Activity 클래스의 기반이 됩니다.<br>
  *
  * Features:<br>
- * - StatusBar and NavigationBar color customization<br>
- * - System bar visibility control (show/hide/transparent)<br>
  * - Runtime permission management via PermissionDelegate<br>
- * - API 35+ Edge-to-edge support with custom background views<br>
  * - Lifecycle-aware permission state preservation<br><br>
  * 기능:<br>
- * - StatusBar와 NavigationBar 색상 커스터마이징<br>
- * - 시스템 바 가시성 제어 (표시/숨김/투명)<br>
  * - PermissionDelegate를 통한 런타임 권한 관리<br>
- * - 커스텀 배경 뷰를 사용한 API 35+ Edge-to-edge 지원<br>
  * - 생명주기 인식 권한 상태 보존<br>
  *
  * @see BaseActivity For simple layout-based Activity.<br><br>

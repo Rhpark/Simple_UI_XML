@@ -1,6 +1,7 @@
 package kr.open.library.simpleui_xml.logx
 
 import android.os.Bundle
+import android.view.View
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
@@ -16,21 +17,14 @@ import kr.open.library.simpleui_xml.databinding.ActivityLogxBinding
 class LogxActivity : BaseBindingActivity<ActivityLogxBinding>(R.layout.activity_logx) {
     private val vm: LogxActivityVm by viewModels()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onCreateView(rootView: View, savedInstanceState: Bundle?) {
+        super.onCreateView(rootView, savedInstanceState)
+        Logx.setSaveToFile(true)
         binding.vm = vm
         lifecycle.addObserver(vm)
-
-        // Logx 초기화
-        // Logx.init(this) or in MyApplication
-        Logx.setSaveToFile(true)
-
-        // ViewModel 이벤트 수집 시작 (필요 시 직접 호출)
-        // BaseBindingActivity는 eventVmCollect()를 자동 호출하지 않습니다.
-        eventVmCollect()
     }
 
-    override fun eventVmCollect() {
+    override fun onEventVmCollect() {
         lifecycleScope.launch {
             vm.mEventVm.collect { event ->
                 when (event) {

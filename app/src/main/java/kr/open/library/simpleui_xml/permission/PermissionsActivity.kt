@@ -2,6 +2,7 @@ package kr.open.library.simpleui_xml.permission
 
 import android.Manifest
 import android.os.Bundle
+import android.view.View
 import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
@@ -17,25 +18,20 @@ import kr.open.library.simpleui_xml.databinding.ActivityPermissionsBinding
 class PermissionsActivity : BaseBindingActivity<ActivityPermissionsBinding>(R.layout.activity_permissions) {
     private val vm: PermissionsActivityVm by lazy { getViewModel<PermissionsActivityVm>() }
 
-    private val adapter =
-        SimpleRcvAdapter<String>(R.layout.item_rcv_textview) { holder, item, position ->
-            holder.findViewById<TextView>(R.id.tvTitle).text = item
-        }.apply {
-            setOnItemClickListener { i, s, view -> view.snackBarShowShort("OnClick $s") }
-        }
+    private val adapter = SimpleRcvAdapter<String>(R.layout.item_rcv_textview) { holder, item, position ->
+        holder.findViewById<TextView>(R.id.tvTitle).text = item
+    }.apply {
+        setOnItemClickListener { i, s, view -> view.snackBarShowShort("OnClick $s") }
+    }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onCreateView(rootView: View, savedInstanceState: Bundle?) {
+        super.onCreateView(rootView, savedInstanceState)
         binding.vm = vm
         lifecycle.addObserver(vm)
         binding.rcvPermission.adapter = adapter
-
-        // ViewModel 이벤트 수집 시작 (필요 시 직접 호출)
-        // BaseBindingActivity는 eventVmCollect()를 자동 호출하지 않습니다.
-        eventVmCollect()
     }
 
-    override fun eventVmCollect() {
+    override fun onEventVmCollect() {
         lifecycleScope.launch {
             vm.mEventVm.collect {
                 when (it) {

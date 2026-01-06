@@ -10,6 +10,7 @@ import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import kr.open.library.simple_ui.core.logcat.Logx
 
 /**
  * A base DialogFragment class that uses DataBinding and provides common functionality for data-bound dialogs.<br>
@@ -21,8 +22,8 @@ import androidx.lifecycle.ViewModelProvider
  * - Inflates the layout and sets up DataBinding<br>
  * - Sets the lifecycle owner for the binding (viewLifecycleOwner)<br>
  * - Provides a convenient method to obtain a ViewModel<br>
- * - Provides hook methods for view creation and optional event collection (`eventVmCollect()`)<br>
- * - `eventVmCollect()` is not invoked automatically; call it manually when needed<br>
+ * - Provides hook methods for view creation and event collection (`eventVmCollect()`)<br>
+ * - `eventVmCollect()` is automatically invoked in `onViewCreated()` after `afterOnCreateView()` completes<br>
  * - Background color and drawable customization<br>
  * - Proper binding cleanup in onDestroyView<br>
  * - All RootDialogFragment features (animation, gravity, permissions)<br><br>
@@ -30,8 +31,8 @@ import androidx.lifecycle.ViewModelProvider
  * - 레이아웃을 인플레이션하고 DataBinding을 설정합니다<br>
  * - 바인딩에 대한 생명주기 소유자를 설정합니다 (viewLifecycleOwner)<br>
  * - ViewModel을 얻는 편리한 메서드를 제공합니다<br>
- * - 뷰 생성 훅과 선택적 이벤트 수집 훅(`eventVmCollect()`)을 제공합니다<br>
- * - `eventVmCollect()`는 베이스에서 자동 호출되지 않으므로 필요 시 직접 호출하세요<br>
+ * - 뷰 생성 훅과 이벤트 수집 훅(`eventVmCollect()`)을 제공합니다<br>
+ * - `eventVmCollect()`는 `afterOnCreateView()` 완료 후 `onViewCreated()`에서 자동으로 호출됩니다<br>
  * - 배경색 및 drawable 커스터마이징<br>
  * - onDestroyView에서 적절한 바인딩 정리<br>
  * - 모든 RootDialogFragment 기능 (애니메이션, gravity, 권한)<br>
@@ -46,12 +47,8 @@ import androidx.lifecycle.ViewModelProvider
  *         binding.btnOk.setOnClickListener { safeDismiss() }
  *     }
  *
- *     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
- *         super.onViewCreated(view, savedInstanceState)
- *         eventVmCollect()
- *     }
- *
  *     override fun eventVmCollect() {
+ *         // Automatically called by BaseBindingDialogFragment in onViewCreated()
  *         viewLifecycleOwner.lifecycleScope.launch {
  *             viewModel.result.collect { handleResult(it) }
  *         }
@@ -123,20 +120,46 @@ public abstract class BaseBindingDialogFragment<BINDING : ViewDataBinding>(
         binding.lifecycleOwner = viewLifecycleOwner
         getBackgroundColor()?.let { setBackgroundColor(it) }
         getBackgroundResId()?.let { setBackgroundDrawable(it) }
+        startEventVmCollect()
     }
 
     /**
+     * Tracks whether ViewModel event collection has already started for this Activity instance.<br><br>
+     * 현재 Activity 인스턴스에서 ViewModel 이벤트 수집이 이미 시작되었는지 여부를 추적합니다.<br>
+     */
+    private var eventCollectStarted = false
+
+    /**
+     * Starts ViewModel event collection only once per Activity instance.<br>
+     * Called from `onCreate()` after `onCreateView()` to prevent duplicate collectors.<br>
+     * Subsequent calls are ignored and logged as warnings.<br><br>
+     * Activity 인스턴스당 ViewModel 이벤트 수집을 1회만 시작합니다.<br>
+     * `onCreateView()` 이후 `onCreate()`에서 호출되어 중복 수집을 방지합니다.<br>
+     * 이후 호출은 무시되며 경고 로그를 남깁니다.<br>
+     */
+    private fun startEventVmCollect() {
+        if (eventCollectStarted) {
+            Logx.w("Already started event collection.")
+            return
+        }
+        eventCollectStarted = true
+        onEventVmCollect()
+    }
+    /**
      * Override this method to set up ViewModel event collection.<br>
-     * Typically used to collect Flow events from ViewModel using viewLifecycleOwner.lifecycleScope.<br><br>
-     * Note: This method is not called automatically. Call `eventVmCollect()` from `onViewCreated()` (after `super.onViewCreated`) when needed.<br><br>
+     * Typically used to collect Flow events from ViewModel using viewLifecycleOwner.lifecycleScope.<br>
+     * This method is automatically called in `onViewCreated()` after `afterOnCreateView()` completes,
+     * ensuring all child class initialization is finished.<br><br>
      * ViewModel 이벤트 수집을 설정하려면 이 메서드를 오버라이드하세요.<br>
      * 일반적으로 viewLifecycleOwner.lifecycleScope를 사용하여 ViewModel의 Flow 이벤트를 수집하는 데 사용됩니다.<br>
-     * 주의: 이 메서드는 자동 호출되지 않습니다. 필요 시 `onViewCreated()`(super 이후) 등에서 `eventVmCollect()`를 직접 호출하세요.<br>
+     * 이 메서드는 `afterOnCreateView()` 완료 후 `onViewCreated()`에서 자동으로 호출되어,
+     * 모든 자식 클래스 초기화가 완료되도록 보장합니다.<br>
      */
-    protected open fun eventVmCollect() {}
+    protected open fun onEventVmCollect() {}
 
     override fun onDestroyView() {
         super.onDestroyView()
+        eventCollectStarted = false
         binding.lifecycleOwner = null
         binding.unbind()
         _binding = null
@@ -146,10 +169,27 @@ public abstract class BaseBindingDialogFragment<BINDING : ViewDataBinding>(
      * Obtains a ViewModel of the specified type using ViewModelProvider.<br><br>
      * ViewModelProvider를 사용하여 지정된 타입의 ViewModel을 가져옵니다.<br>
      *
+     * @param T The type of the ViewModel to obtain.<br><br>
+     *          가져올 ViewModel의 타입.
      * @return The ViewModel instance of type T.<br><br>
      *         타입 T의 ViewModel 인스턴스.<br>
      */
     protected inline fun <reified T : ViewModel> DialogFragment.getViewModel(): T = ViewModelProvider(this)[T::class.java]
+
+    /**
+     * Obtains a ViewModel of the specified type using ViewModelProvider with a custom factory.<br><br>
+     * 커스텀 팩토리를 사용하여 ViewModelProvider로 지정된 타입의 ViewModel을 가져옵니다.<br>
+     *
+     * @param T The type of the ViewModel to obtain.<br><br>
+     *          가져올 ViewModel의 타입.
+     * @param factory The Factory to use for creating the ViewModel instance.<br><br>
+     *                ViewModel 인스턴스 생성에 사용할 Factory.
+     * @return The ViewModel instance of type T.<br><br>
+     *         타입 T의 ViewModel 인스턴스.<br>
+     */
+    protected inline fun <reified T : ViewModel> DialogFragment.getViewModel(
+        factory: ViewModelProvider.Factory,
+    ): T = ViewModelProvider(this, factory)[T::class.java]
 
     override fun setBackgroundColor(color: Int) {
         super.setBackgroundColor(color)
@@ -160,4 +200,5 @@ public abstract class BaseBindingDialogFragment<BINDING : ViewDataBinding>(
         super.setBackgroundDrawable(resId)
         _binding?.root?.setBackgroundResource(resId)
     }
+
 }

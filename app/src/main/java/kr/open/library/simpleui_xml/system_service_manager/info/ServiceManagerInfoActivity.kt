@@ -8,6 +8,7 @@ import android.annotation.SuppressLint
 import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
+import android.view.View
 import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
@@ -41,12 +42,11 @@ class ServiceManagerInfoActivity : BaseBindingActivity<ActivityServiceManagerInf
     private val telephonyInfo: TelephonyInfo by lazy { TelephonyInfo(this) }
     private val networkInfo: NetworkConnectivityInfo by lazy { NetworkConnectivityInfo(this) }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onCreateView(rootView: View, savedInstanceState: Bundle?) {
+        super.onCreateView(rootView, savedInstanceState)
         binding.rcvResult.adapter = adapter
         initListener()
     }
-
     @SuppressLint("MissingPermission")
     private fun initListener() {
         binding.run {

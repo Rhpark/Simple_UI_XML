@@ -1,6 +1,7 @@
 package kr.open.library.simpleui_xml.recyclerview.new_
 
 import android.os.Bundle
+import android.view.View
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import kr.open.library.simple_ui.xml.ui.activity.BaseBindingActivity
@@ -16,46 +17,42 @@ import kr.open.library.simpleui_xml.recyclerview.model.SampleItem
 import kr.open.library.simpleui_xml.recyclerview.new_.adapter.CustomListAdapter
 
 class RecyclerViewActivity : BaseBindingActivity<ActivityRecyclerviewBinding>(R.layout.activity_recyclerview) {
-    private val simpleListAdapter =
-        SimpleBindingRcvListAdapter<SampleItem, ItemRcvTextviewBinding>(
-            R.layout.item_rcv_textview,
-            listDiffUtil =
-                RcvListDiffUtilCallBack(
-                    itemsTheSame = { oldItem, newItem -> oldItem.id == newItem.id },
-                    contentsTheSame = { oldItem, newItem -> oldItem == newItem },
-                ),
-        ) { holder, item, position ->
-            holder.binding.apply {
-                tvTitle.text = item.title
-                tvDescription.text = item.description
-                tvPosition.text = "Position: $position"
+    private val simpleListAdapter = SimpleBindingRcvListAdapter<SampleItem, ItemRcvTextviewBinding>(
+        R.layout.item_rcv_textview,
+        listDiffUtil =
+        RcvListDiffUtilCallBack(
+            itemsTheSame = { oldItem, newItem -> oldItem.id == newItem.id },
+            contentsTheSame = { oldItem, newItem -> oldItem == newItem },
+        ),
+    ) { holder, item, position ->
+        holder.binding.apply {
+            tvTitle.text = item.title
+            tvDescription.text = item.description
+            tvPosition.text = "Position: $position"
 
-                root.setOnClickListener { currentRemoveAtAdapter(position) }
-            }
+            root.setOnClickListener { currentRemoveAtAdapter(position) }
+        }
+    }.apply { setItems(SampleItem.createSampleData()) }
+
+    private val simpleAdapter = SimpleBindingRcvAdapter<SampleItem, ItemRcvTextviewBinding>(
+        R.layout.item_rcv_textview,
+    ) { holder, item, position ->
+        holder.binding.apply {
+            tvTitle.text = item.title
+            tvDescription.text = item.description
+            tvPosition.text = "Position: $position"
+
+            root.setOnClickListener { currentRemoveAtAdapter(position) }
+        }
+    }.apply { setItems(SampleItem.createSampleData()) }
+
+    private val customListAdapter = CustomListAdapter()
+        .apply {
+            setOnItemClickListener { i, sampleItem, view -> currentRemoveAtAdapter(i) }
         }.apply { setItems(SampleItem.createSampleData()) }
 
-    private val simpleAdapter =
-        SimpleBindingRcvAdapter<SampleItem, ItemRcvTextviewBinding>(
-            R.layout.item_rcv_textview,
-        ) { holder, item, position ->
-            holder.binding.apply {
-                tvTitle.text = item.title
-                tvDescription.text = item.description
-                tvPosition.text = "Position: $position"
-
-                root.setOnClickListener { currentRemoveAtAdapter(position) }
-            }
-        }.apply { setItems(SampleItem.createSampleData()) }
-
-    private val customListAdapter =
-        CustomListAdapter()
-            .apply {
-                setOnItemClickListener { i, sampleItem, view -> currentRemoveAtAdapter(i) }
-            }.apply { setItems(SampleItem.createSampleData()) }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
+    override fun onCreateView(rootView: View, savedInstanceState: Bundle?) {
+        super.onCreateView(rootView, savedInstanceState)
         setupRecyclerView()
         setupScrollStateDetection()
     }

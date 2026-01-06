@@ -15,17 +15,9 @@ class BaseBindingActivityExample :
     BaseBindingActivity<ActivityBaseBindingActivityExampleBinding>(R.layout.activity_base_binding_activity_example) {
     private val vm: BaseBindingActivityExampleVm by viewModels()
 
-    override fun onCreateView(
-        rootView: View,
-        savedInstanceState: Bundle?,
-    ) {
+
+    override fun onCreateView(rootView: View, savedInstanceState: Bundle?) {
         super.onCreateView(rootView, savedInstanceState)
-        Logx.d("BaseBindingActivityExample - onCreateView() called")
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
         binding.vm = vm
         lifecycle.addObserver(vm)
 
@@ -35,15 +27,9 @@ class BaseBindingActivityExample :
                 binding.tvCounter.text = "Count: $count"
             }
         }
-
-        // ViewModel 이벤트 수집 시작 (필요 시 직접 호출)
-        // BaseBindingActivity는 eventVmCollect()를 자동 호출하지 않습니다.
-        eventVmCollect()
-
-        Logx.d("BaseBindingActivityExample - onCreate() completed")
     }
 
-    override fun eventVmCollect() {
+    override fun onEventVmCollect() {
         lifecycleScope.launch {
             vm.mEventVm.collect { event ->
                 when (event) {

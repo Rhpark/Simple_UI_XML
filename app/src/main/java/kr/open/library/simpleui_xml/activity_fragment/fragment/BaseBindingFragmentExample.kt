@@ -39,13 +39,9 @@ class BaseBindingFragmentExample : BaseBindingFragment<FragmentBaseBindingExampl
                 binding.tvCounter.text = "Count: $count"
             }
         }
-
-        // ViewModel 이벤트 수집 시작 (필요 시 직접 호출)
-        // BaseBindingFragment는 eventVmCollect()를 자동 호출하지 않습니다.
-        eventVmCollect()
     }
 
-    override fun eventVmCollect() {
+    override fun onEventVmCollect() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 vm.mEventVm.collect { event ->

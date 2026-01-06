@@ -2,6 +2,7 @@ package kr.open.library.simpleui_xml
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import kr.open.library.simple_ui.xml.extensions.view.bold
@@ -18,8 +19,8 @@ import kr.open.library.simpleui_xml.system_service_manager.controller.ServiceMan
 import kr.open.library.simpleui_xml.system_service_manager.info.ServiceManagerInfoActivity
 
 class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onCreateView(rootView: View, savedInstanceState: Bundle?) {
+        super.onCreateView(rootView, savedInstanceState)
         setupPermissionButtons()
 
         lifecycleScope.launch {

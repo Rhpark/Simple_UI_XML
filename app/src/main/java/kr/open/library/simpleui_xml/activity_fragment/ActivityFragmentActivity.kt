@@ -3,6 +3,7 @@ package kr.open.library.simpleui_xml.activity_fragment
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.view.View
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
@@ -23,17 +24,13 @@ class ActivityFragmentActivity : BaseBindingActivity<ActivityActivityFragmentBin
         const val BASE_BINDING_FRAGMENT = 2
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onCreateView(rootView: View, savedInstanceState: Bundle?) {
+        super.onCreateView(rootView, savedInstanceState)
         binding.vm = vm
         lifecycle.addObserver(vm)
-
-        // ViewModel 이벤트 수집 시작 (필요 시 직접 호출)
-        // BaseBindingActivity는 eventVmCollect()를 자동 호출하지 않습니다.
-        eventVmCollect()
     }
 
-    override fun eventVmCollect() {
+    override fun onEventVmCollect() {
         lifecycleScope.launch {
             vm.mEventVm.collect { event ->
                 when (event) {

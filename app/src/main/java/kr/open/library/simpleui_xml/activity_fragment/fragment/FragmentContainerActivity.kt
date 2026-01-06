@@ -1,6 +1,7 @@
 package kr.open.library.simpleui_xml.activity_fragment.fragment
 
 import android.os.Bundle
+import android.view.View
 import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.xml.ui.activity.BaseBindingActivity
 import kr.open.library.simpleui_xml.R
@@ -9,8 +10,9 @@ import kr.open.library.simpleui_xml.activity_fragment.ActivityFragmentActivity.C
 import kr.open.library.simpleui_xml.databinding.ActivityFragmentContainerBinding
 
 class FragmentContainerActivity : BaseBindingActivity<ActivityFragmentContainerBinding>(R.layout.activity_fragment_container) {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+
+    override fun onCreateView(rootView: View, savedInstanceState: Bundle?) {
+        super.onCreateView(rootView, savedInstanceState)
 
         val fragmentType = intent.getIntExtra("FRAGMENT_TYPE", 1)
         Logx.d("FragmentContainerActivity - fragmentType: $fragmentType")

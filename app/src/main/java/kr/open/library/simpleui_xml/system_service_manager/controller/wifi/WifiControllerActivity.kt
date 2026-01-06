@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
+import android.view.View
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
@@ -17,15 +18,11 @@ import kr.open.library.simpleui_xml.databinding.ActivityWifiControllerBinding
 class WifiControllerActivity : BaseBindingActivity<ActivityWifiControllerBinding>(R.layout.activity_wifi_controller) {
     private val vm: WifiControllerActivityVm by viewModels()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onCreateView(rootView: View, savedInstanceState: Bundle?) {
+        super.onCreateView(rootView, savedInstanceState)
         binding.vm = vm
-
+        lifecycle.addObserver(vm)
         requestWifiPermissions()
-
-        // ViewModel 이벤트 수집 시작 (필요 시 직접 호출)
-        // BaseBindingActivity는 eventVmCollect()를 자동 호출하지 않습니다.
-        eventVmCollect()
     }
 
     private fun requestWifiPermissions() {
@@ -44,7 +41,7 @@ class WifiControllerActivity : BaseBindingActivity<ActivityWifiControllerBinding
         }
     }
 
-    override fun eventVmCollect() {
+    override fun onEventVmCollect() {
         lifecycleScope.launch {
             vm.mEventVm.collect { event ->
                 when (event) {

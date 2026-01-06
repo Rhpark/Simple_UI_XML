@@ -43,23 +43,21 @@ public class PermissionDelegate<T : Any>(
 
     private val normalPermissionLauncher: ActivityResultLauncher<Array<String>> =
         when (contextProvider) {
-            is ComponentActivity ->
-                contextProvider.registerForActivityResult(
-                    ActivityResultContracts.RequestMultiplePermissions(),
-                ) { permissions ->
-                    delegateScope.launch {
-                        permissionManager.result(getContext(), permissions, currentRequestId)
-                    }
+            is ComponentActivity -> contextProvider.registerForActivityResult(
+                ActivityResultContracts.RequestMultiplePermissions(),
+            ) { permissions ->
+                delegateScope.launch {
+                    permissionManager.result(getContext(), permissions, currentRequestId)
                 }
+            }
 
-            is Fragment ->
-                contextProvider.registerForActivityResult(
-                    ActivityResultContracts.RequestMultiplePermissions(),
-                ) { permissions ->
-                    delegateScope.launch {
-                        permissionManager.result(getContext(), permissions, currentRequestId)
-                    }
+            is Fragment -> contextProvider.registerForActivityResult(
+                ActivityResultContracts.RequestMultiplePermissions(),
+            ) { permissions ->
+                delegateScope.launch {
+                    permissionManager.result(getContext(), permissions, currentRequestId)
                 }
+            }
 
             else -> throw IllegalArgumentException("Unsupported context provider type")
         }
@@ -77,26 +75,23 @@ public class PermissionDelegate<T : Any>(
             }
         lifecycleOwner.addObserver(
             object : LifecycleEventObserver {
-                override fun onStateChanged(
-                    source: LifecycleOwner,
-                    event: Lifecycle.Event,
-                ) {
+                override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
                     when (event) {
                         Lifecycle.Event.ON_START -> {
-                        /*
-                         * onRestoreInstanceState() runs between onCreate() and onStart().<br><br>
-                         * onRestoreInstanceState()는 onCreate()와 onStart() 사이에 실행됩니다.<br>
-                         */
+                            /*
+                             * onRestoreInstanceState() runs between onCreate() and onStart().<br><br>
+                             * onRestoreInstanceState()는 onCreate()와 onStart() 사이에 실행됩니다.<br>
+                             */
                             if (hasRestoredState) {
                                 attemptAutoReregistration()
                                 hasRestoredState = false
                             }
                         }
                         Lifecycle.Event.ON_DESTROY -> {
-                        /*
-                         * Ensures pending requests are disposed when the owner is destroyed.<br><br>
-                         * 소유자가 파괴될 때 진행 중인 요청을 정리합니다.<br>
-                         */
+                            /*
+                             * Ensures pending requests are disposed when the owner is destroyed.<br><br>
+                             * 소유자가 파괴될 때 진행 중인 요청을 정리합니다.<br>
+                             */
                             cleanup()
                             delegateScope.cancel()
                         }
@@ -187,9 +182,7 @@ public class PermissionDelegate<T : Any>(
                     permissionManager.registerDelegate(requestId, this@PermissionDelegate)
                     Logx.d("Auto-reregistered delegate for request: $requestId")
                 } else {
-                    Logx.w(
-                        "Attempted to reregister for inactive request: $requestId. Request may have been completed or cancelled.",
-                    )
+                    Logx.w("Attempted to reregister for inactive request: $requestId. Request may have been completed or cancelled.")
                     currentRequestId = null
                 }
             }
@@ -225,10 +218,7 @@ public class PermissionDelegate<T : Any>(
      * @param onResult Callback invoked with denied permissions once finished.<br><br>
      *                 완료 후 거부된 권한 목록을 전달받는 콜백입니다.<br>
      */
-    public fun requestPermissions(
-        permissions: List<String>,
-        onResult: (deniedPermissions: List<String>) -> Unit,
-    ) {
+    public fun requestPermissions(permissions: List<String>, onResult: (deniedPermissions: List<String>) -> Unit) {
         delegateScope.launch {
             /*
              * Avoids duplicating requests by attaching callbacks to the in-flight one.<br><br>
@@ -239,12 +229,11 @@ public class PermissionDelegate<T : Any>(
                  * Verifies whether the new request matches the existing permission set.<br><br>
                  * 새 요청이 기존 권한 집합과 동일한지 재검증합니다.<br>
                  */
-                val result =
-                    permissionManager.addCallbackToRequest(
-                        requestId = currentRequestId!!,
-                        callback = onResult,
-                        requestedPermissions = permissions,
-                    )
+                val result = permissionManager.addCallbackToRequest(
+                    requestId = currentRequestId!!,
+                    callback = onResult,
+                    requestedPermissions = permissions,
+                )
 
                 when (result) {
                     PermissionCallbackAddResult.SUCCESS -> {
@@ -270,9 +259,7 @@ public class PermissionDelegate<T : Any>(
                          * Handles the race where the previous request finished between checks.<br><br>
                          * 직전 요청이 막 끝난 레이스 컨디션을 감지해 새 요청을 준비합니다.<br>
                          */
-                        Logx.d(
-                            "Race condition detected: request $currentRequestId just completed. Starting new request.",
-                        )
+                        Logx.d("Race condition detected: request $currentRequestId just completed. Starting new request.")
                         currentRequestId = null
                         /*
                          * Continues below to start a brand-new permission request.<br><br>
@@ -286,10 +273,9 @@ public class PermissionDelegate<T : Any>(
              * Pre-registers a delegate so PermissionManager can look it up immediately.<br><br>
              * PermissionManager 가 바로 찾을 수 있도록 먼저 Delegate를 등록합니다.<br>
              */
-            val tempRequestId =
-                java.util.UUID
-                    .randomUUID()
-                    .toString()
+            val tempRequestId = java.util.UUID
+                .randomUUID()
+                .toString()
             permissionManager.registerDelegate(tempRequestId, this@PermissionDelegate)
 
             currentRequestId =
@@ -298,10 +284,10 @@ public class PermissionDelegate<T : Any>(
                     requestPermissionLauncher = normalPermissionLauncher,
                     permissions = permissions,
                     callback = onResult,
-                /*
-                 * Supplies the pre-generated ID so PermissionManager can reuse it.<br><br>
-                 * PermissionManager 가 재사용할 수 있도록 선 생성한 ID를 전달합니다.<br>
-                 */
+                    /*
+                     * Supplies the pre-generated ID so PermissionManager can reuse it.<br><br>
+                     * PermissionManager 가 재사용할 수 있도록 선 생성한 ID를 전달합니다.<br>
+                     */
                     preGeneratedRequestId = tempRequestId,
                 )
 
@@ -345,12 +331,11 @@ public class PermissionDelegate<T : Any>(
      * @return Host context used for permission APIs.<br><br>
      *         권한 API 호출에 사용할 호스트 Context 입니다.<br>
      */
-    private fun getContext() =
-        when (contextProvider) {
-            is ComponentActivity -> contextProvider
-            is Fragment -> contextProvider.requireContext()
-            else -> throw IllegalArgumentException("Unsupported context provider type")
-        }
+    private fun getContext() = when (contextProvider) {
+        is ComponentActivity -> contextProvider
+        is Fragment -> contextProvider.requireContext()
+        else -> throw IllegalArgumentException("Unsupported context provider type")
+    }
 
     /**
      * Checks whether a single permission has already been granted.<br><br>
@@ -372,21 +357,18 @@ public class PermissionDelegate<T : Any>(
      * @return ActivityResultLauncher instance scoped to the host.<br><br>
      *         호스트 범위에 묶인 ActivityResultLauncher 를 반환합니다.<br>
      */
-    protected fun createSpecialLauncher(permission: String) =
-        when (contextProvider) {
-            is ComponentActivity ->
-                contextProvider.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-                    delegateScope.launch {
-                        permissionManager.resultSpecialPermission(getContext(), permission, currentRequestId)
-                    }
-                }
-
-            is Fragment ->
-                contextProvider.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-                    delegateScope.launch {
-                        permissionManager.resultSpecialPermission(getContext(), permission, currentRequestId)
-                    }
-                }
-            else -> throw IllegalArgumentException("Unsupported context provider type")
+    protected fun createSpecialLauncher(permission: String) = when (contextProvider) {
+        is ComponentActivity -> contextProvider.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            delegateScope.launch {
+                permissionManager.resultSpecialPermission(getContext(), permission, currentRequestId)
+            }
         }
+
+        is Fragment -> contextProvider.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            delegateScope.launch {
+                permissionManager.resultSpecialPermission(getContext(), permission, currentRequestId)
+            }
+        }
+        else -> throw IllegalArgumentException("Unsupported context provider type")
+    }
 }

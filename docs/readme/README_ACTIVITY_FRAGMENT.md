@@ -9,8 +9,8 @@
   - `fragment/` - RootFragment, BaseFragment, BaseBindingFragment, DialogFragment
 
 <br></br>
-Simple UI's Activity/Fragment base classes are productivity tools that eliminate repetitive initialization code and centralize permission handling, system bar management, and MVVM interactions in one place. This document provides the philosophy behind each base class, usage scenarios, and practical examples.
- > Simple UI의 Activity/Fragment 베이스 클래스는 반복되는 초기화 코드를 걷어내고, 권한/시스템바 처리, MVVM 상호 작용까지 한 곳에 모아둔 생산성 도구입니다. 이 문서는 각 베이스 클래스의 철학과 사용 시나리오, 실제 예제까지 상세히 정리했습니다.
+Simple UI's Activity/Fragment base classes are productivity tools that eliminate repetitive initialization code and centralize permission handling and MVVM interactions in one place. This document provides the philosophy behind each base class, usage scenarios, and practical examples.
+ > Simple UI의 Activity/Fragment 베이스 클래스는 반복되는 초기화 코드를 걷어내고, 권한 처리, MVVM 상호 작용까지 한 곳에 모아둔 생산성 도구입니다. 이 문서는 각 베이스 클래스의 철학과 사용 시나리오, 실제 예제까지 상세히 정리했습니다.
 
 ### BaseBindingActivity Quick Setup (BaseBindingActivity 빠른 설정)
 ![mvvm_activity_init.gif](../../example_gif/mvvm_activity_init.gif)
@@ -45,28 +45,17 @@ Complete Activity/Fragment initialization in just 3 lines!" – See how much fas
 | Result  | Need to implement callback interface | Just handle the  `deniedPermissions` list          |
 | State preservation | Manually implement `onSaveInstanceState` | Base class preserves internally                 |
 
-### SystemBars Control (시스템바 제어)
-| Category            | Plain Android | Simple UI |
-|:--------------------|:--|:--|
-| StatusBar height  | SDK branching + complex WindowInset calculation | `statusBarHeight` property instantly available | 
-| NavigationBar height  | Need root view calculation logic | `navigationBarHeight` property instantly available | 
-| Bar color/transparency control | 10+ lines of `WindowCompat` code | One-liner: `setStatusBarColor()`, `setSystemBarsColor()`  |
-| API 35+ support | Manually add custom view | RootActivity already handles it |
-
-**API 35+ note:** By default, Android 15+ keeps status/navigation bars transparent. Simple UI overlays custom views and forces `WindowCompat.setDecorFitsSystemWindows(false)`. Use inset padding because your content extends under the bars. `statusBarHeight` / `navigationBarHeight` update live from WindowInsets on rotation or gesture-nav changes.<br><br>
-> **API 35+ 주의:** 기본적으로 Android 15+에서는 상태·내비게이션 바가 항상 투명합니다. 색상을 입히기 위해 decorView 상단에 오버레이 뷰를 추가하고 `WindowCompat.setDecorFitsSystemWindows(false)`를 자동 적용합니다. 바 영역까지 레이아웃이 확장되므로 인셋 기반 패딩을 사용하세요. 회전·제스처 내비 변경 시 `statusBarHeight` / `navigationBarHeight`가 WindowInsets로 자동 갱신됩니다.
-
 <br></br>
 
 ## 💡 Why It Matters (왜 중요한가)
 - **Faster Development:** Minimize Activity·Fragment initialization code to focus on core logic.
-- **Fewer Mistakes:** Replace error-prone parts like binding null handling, permission flow, and system bar calculations with proven code.
+- **Fewer Mistakes:** Replace error-prone parts like binding null handling and permission flow with proven code.
 - **Team Consistency:** All screens use the same base classes, making code reviews and onboarding easier.
 - **Better Maintainability:** Manage common features in one place for faster OS upgrade responses.
 - **Rapid Prototyping:** Turn new ideas into screens in minutes.
 
 > - **Shorter development time / 개발 시간 단축:** Activity·Fragment 초기화 코드를 최소화하여 핵심 로직에 집중합니다.
-> - **Fewer mistakes / 실수 감소:** Binding null 처리, 권한 흐름, 시스템바 계산 등 오류가 잦은 부분을 검증된 코드로 대체합니다.
+> - **Fewer mistakes / 실수 감소:** Binding null 처리, 권한 흐름 등 오류가 잦은 부분을 검증된 코드로 대체합니다.
 > - **Consistent patterns / 팀 내 일관성:** 모든 화면이 동일한 베이스 클래스를 사용하므로 코드 리뷰와 온보딩이 쉬워집니다.
 > - **Better maintainability / 유지보수성 향상:** 공통 기능을 한 곳에서 관리해 OS 업그레이드 대응이 빨라집니다.
 > - **Rapid prototyping / 빠른 프로토타이핑:** 새로운 아이디어를 수분 만에 화면으로 옮길 수 있습니다.
@@ -112,7 +101,7 @@ android {
 ## 🧱 Tier 1: BaseActivity / BaseFragment
 ### Key traits(핵심 특징)
 - Keeps layout inflation minimal – only write  `setContentView(layoutRes)` or override `onCreateView`.
-- Permission requests and system bar control are inherited directly from RootActivity/RootFragment.
+- Permission requests are inherited directly from RootActivity/RootFragment.
 - Lifecycle safe: You can use the beforeOnCreated() preprocessing hook.
 
 ### When to use(언제 사용?)
@@ -126,8 +115,7 @@ android {
 | Category            | Plain Android | BaseActivity |
 |:--------------------|:--|:--|
 | Bind Layout | Call `setContentView` + manually create permission delegate | Pass layoutRes as constructor argument |
-| Permission delegate | Manual field declaration | RootActivity automatically creates it | 
-| System bar | Write utility for each screen | Use `setStatusBarColor()` immediately |
+| Permission delegate | Manual field declaration | RootActivity automatically creates it |
 
 ### Fragment initialization comparison (Fragment 초기화 비교)
 | Category | Plain Android | BaseFragment |
@@ -167,13 +155,14 @@ android {
 | ViewModel 범위 | `by viewModels()`/`activityViewModels()` 분기 | `getViewModel()` 선택 사용 |
 | SavedState | 별도 Bundle 처리 | ViewModelProvider가 자동 처리 |
 
-### MVVM Pattern Tip 
-BaseBinding classes call `binding.setVariable()` and `binding.executePendingBindings()` inside `onCreateView()`, so you can use @{} expressions in XML right away. Also, override `eventVmCollect()` and call it manually when needed to safely receive one-time events flowing from the ViewModel.
-> BaseBinding 계열은 `binding.setVariable()`과 `binding.executePendingBindings()`를 `onCreateView()` 내부에서 호출해주므로 XML의 `@{}` 표현식을 바로 사용할 수 있습니다. 또한 필요 시 `eventVmCollect()`를 override한 뒤 직접 호출하여 ViewModel에서 흘러오는 단발성 이벤트를 안전하게 수신하세요.
+### MVVM Pattern Tip
+BaseBinding classes call `binding.setVariable()` and `binding.executePendingBindings()` inside `onCreateView()`, so you can use @{} expressions in XML right away. Also, `eventVmCollect()` is automatically called after binding initialization (Activity: `onCreate()`, Fragment: `onViewCreated()`), allowing you to safely receive one-time events flowing from the ViewModel.
+> BaseBinding 계열은 `binding.setVariable()`과 `binding.executePendingBindings()`를 `onCreateView()` 내부에서 호출해주므로 XML의 `@{}` 표현식을 바로 사용할 수 있습니다. 또한 `eventVmCollect()`가 바인딩 초기화 후 자동으로 호출되어(Activity: `onCreate()`, Fragment: `onViewCreated()`) ViewModel에서 흘러오는 단발성 이벤트를 안전하게 수신할 수 있습니다.
 
 <br></br>
 
-## 🔁 Third: Permission Request System (공통 권한 요청)
+## 🔁 Permission Request System (공통 권한 요청)
+
 RootActivity/RootFragment have built-in `PermissionDelegate` to automatically handle permission requests and restoration.
 > RootActivity/RootFragment는 `PermissionDelegate`를 내장하고 있어 권한 요청/복원을 자동으로 처리합니다.
 
@@ -202,29 +191,10 @@ onRequestPermissions(
 
 <br></br>
 
-## 🎨 Fourth: SystemBars Control - RootActivity
-`RootActivity` provides common APIs to control StatusBar and NavigationBar.
->`RootActivity`는 StatusBar, NavigationBar를 제어하는 공용 API를 제공합니다.
-
-### SystemBars Control Comparison (SystemBars 제어 비교)
-| Category            | Plain Android | Simple UI (RootActivity)                            |
-|:--------------------|:--|:----------------------------------------------------|
-| StatusBar Color | Manipulate Window flags + Theme | `setStatusBarColor(color, isDrakMode)`                 | 
-| NavigationBar Color | Write WindowCompat logic directly | `setNavigationBarColor(color, isDrakMode)`             | 
-| Change both Bars simultaneously | Call each separately | `setSystemBarsColor(color, isDrakMode)`             |
-| Query Insets values | Need decorView calculation | `statusBarHeight`, `navigationBarHeight` properties |
-| API 35+ support | Need to insert custom view | Already implemented inside RootActivity             |
-
-<br></br>
-
 ## 🧩 Base Class Features Summary (베이스 클래스 기능 정리)
+
 #### Common RootActivity / RootFragment
 - Automatic PermissionDelegate configuration
-
-#### Only RootActivity
-- get statusBar, navigationBar, size
-- change statusBar, navigationBar color
-- `attachRootContentView()` Util
 - `beforeOnCreated()` Hook
 
 #### BaseActivity / BaseFragment
@@ -244,7 +214,6 @@ onRequestPermissions(
 
 ```kotlin
 override fun beforeOnCreated(savedInstanceState: Bundle?) {
-    setStatusBarTransparent()
     Logx.d("Before onCreate executed")
 }
 ```
@@ -278,38 +247,37 @@ DialogFragment also overrides `onCreateView()`, `eventVmCollect()`, etc. in the 
 
 ## 🔄 Initialization Flow Summary (초기화 흐름 요약)
 ### Activity
-1. `beforeOnCreated()` – Ready to Window/Theme   
-2. `onCreate()` – Ready to RootActivity Permission delegate  
-3. (BaseBindingActivity) `onCreateView()` – Binding inflate & viewModel bind  
-4. `eventVmCollect()` – manually start ViewModel event collection (call it when needed) / ViewModel 이벤트 수집 수동 시작(필요 시 직접 호출)  
+1. `beforeOnCreated()` – Ready to Window/Theme
+2. `onCreate()` – Ready to RootActivity Permission delegate
+3. (BaseBindingActivity) `onCreateView()` – Binding inflate & viewModel bind, child class initialization
+4. `eventVmCollect()` – Automatically called in `onCreate()` after `onCreateView()` completes / `onCreateView()` 완료 후 `onCreate()`에서 자동 호출
 5. `onDestroy()` – Binding unBind
 
 ### Fragment
-1. `onCreate()` – RootFragment 권한 delegate 준비  
-2. `onCreateView()` – Layout inflate (BaseBinding이면 Binding 생성)  
-3. `afterOnCreateView()` – UI initialization 
-4. `eventVmCollect()` – manually start ViewModel event collection (call it when needed) / ViewModel 이벤트 수집 수동 시작(필요 시 직접 호출)
+1. `onCreate()` – RootFragment 권한 delegate 준비
+2. `onCreateView()` – Layout inflate (BaseBinding이면 Binding 생성)
+3. `afterOnCreateView()` – UI initialization, child class initialization
+4. `eventVmCollect()` – Automatically called in `onViewCreated()` after `afterOnCreateView()` completes / `afterOnCreateView()` 완료 후 `onViewCreated()`에서 자동 호출
 5. `onDestroyView()` – Binding/리소스 자동 정리
 
 <br></br>
 
 ## ⭐ Core Advantages of Simple UI Activity/Fragment (핵심 장점)
-1. **Overwhelming code simplification / 압도적인 코드 단순화**  
-2. **Automated boilerplate handling / 반복 코드 자동화**  
-3. **Unified permission management / 일원화된 권한 관리**  
-4. **Easy SystemBars control / 쉬운 시스템바 제어**  
-5. **Optimized developer experience / 개발자 경험 최적화**  
-6. **Mistake prevention / 휴먼 에러 방지**
+1. **Overwhelming code simplification / 압도적인 코드 단순화**
+2. **Automated boilerplate handling / 반복 코드 자동화**
+3. **Unified permission management / 일원화된 권한 관리**
+4. **Optimized developer experience / 개발자 경험 최적화**
+5. **Mistake prevention / 휴먼 에러 방지**
 
 <br></br>
 
 ## 🗣️ Developer Reviews (사용자 후기)
 - "Every time I create a new screen, I just copy-paste the BaseBindingActivity template and I'm done—it's more than twice as fast."
-- "Permission requests and system bar code are the same across the entire team, making reviews much easier."
+- "Permission requests are the same across the entire team, making reviews much easier."
 - "Being able to manage even DialogFragments with the same pattern has made maintenance easier than I ever imagined."
-> - “새 화면을 만들 때마다 BaseBindingActivity 템플릿을 복붙하면 끝이라 작업 속도가 2배 이상 빨라졌습니다.”
-> - “권한 요청/시스템바 코드가 팀 전체에서 동일하니 리뷰가 쉬워졌어요.”
-> - “DialogFragment까지 동일한 패턴으로 관리할 수 있어 유지보수가 상상 이상으로 편해졌습니다.”
+> - "새 화면을 만들 때마다 BaseBindingActivity 템플릿을 복붙하면 끝이라 작업 속도가 2배 이상 빨라졌습니다."
+> - "권한 요청 코드가 팀 전체에서 동일하니 리뷰가 쉬워졌어요."
+> - "DialogFragment까지 동일한 패턴으로 관리할 수 있어 유지보수가 상상 이상으로 편해졌습니다."
 
 <br></br>
 
@@ -327,7 +295,6 @@ Simple UI Activity/Fragment base classes set a new standard for Android UI devel
 |Lightest Activity/Fragment, no ViewBinding	|  `BaseActivity`, `BaseFragment` |
 |DataBinding + MVVM	|  `BaseBindingActivity`, `BaseBindingFragment`|
 |DialogFragment + Binding|	`BaseBindingDialogFragment`|
-|system bar control|	`RootActivity`|
 |permission requests|	 `RootActivity`, `RootFragment`|
 
 
@@ -386,18 +353,13 @@ class SampleActivity :
 - SavedStateHandle까지 자동 연결되어 Configuration 변화에도 안전합니다.
 
 ### `eventVmCollect()` - ViewModel Event Subscription (ViewModel 이벤트 수집)
-- Note: BaseBindingActivity/Fragment does not invoke `eventVmCollect()` automatically. Call it manually when needed (Activity: `onCreate()` after `super.onCreate`, Fragment: `onViewCreated()` after `super.onViewCreated`).  
-> - 주의: BaseBindingActivity/Fragment는 `eventVmCollect()`를 자동 호출하지 않습니다. 필요 시 직접 호출하세요 (Activity: `onCreate()`에서 `super.onCreate` 이후, Fragment: `onViewCreated()`에서 `super.onViewCreated` 이후).  
+- Note: Both **BaseBindingActivity** and **BaseBindingFragment** automatically call `eventVmCollect()` after binding initialization (Activity: `onCreate()`, Fragment: `onViewCreated()`). Simply override this method to collect ViewModel events.
+> - 주의: **BaseBindingActivity**와 **BaseBindingFragment** 모두 바인딩 초기화 후 `eventVmCollect()`를 자동으로 호출합니다(Activity: `onCreate()`, Fragment: `onViewCreated()`). 이 메서드를 오버라이드하여 ViewModel 이벤트를 수집하세요.  
 
 #### Activity example (Activity 예제)
 ```kotlin
-override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-
-    // ViewModel 이벤트 수집 시작 (필요 시 직접 호출)
-    // BaseBindingActivity는 eventVmCollect()를 자동 호출하지 않습니다.
-    eventVmCollect()
-}
+// BaseBindingActivity automatically calls eventVmCollect() in onCreate()
+// BaseBindingActivity는 onCreate()에서 eventVmCollect()를 자동으로 호출합니다
 
 override fun eventVmCollect() {
     lifecycleScope.launch {
@@ -412,13 +374,8 @@ override fun eventVmCollect() {
 
 #### Fragment example (Fragment 예제)
 ```kotlin
-override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-    super.onViewCreated(view, savedInstanceState)
-
-    // ViewModel 이벤트 수집 시작 (필요 시 직접 호출)
-    // BaseBindingFragment는 eventVmCollect()를 자동 호출하지 않습니다.
-    eventVmCollect()
-}
+// BaseBindingFragment automatically calls eventVmCollect() in onViewCreated()
+// BaseBindingFragment는 onViewCreated()에서 eventVmCollect()를 자동으로 호출합니다
 
 override fun eventVmCollect() {
     viewLifecycleOwner.lifecycleScope.launch {
