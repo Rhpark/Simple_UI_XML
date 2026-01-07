@@ -33,7 +33,7 @@ class NetworkLinkPropertiesDataRobolectricTest {
 
         val data = NetworkLinkPropertiesData(mocked)
 
-        assertEquals('5'.code, data.getMtu())
+        assertEquals(5, data.getMtu())
     }
 
     @Test

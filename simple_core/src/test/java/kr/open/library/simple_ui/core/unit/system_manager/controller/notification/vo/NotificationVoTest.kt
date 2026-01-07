@@ -67,7 +67,7 @@ class NotificationVoTest {
 
     @Test
     fun bigPictureNotificationOption_storesValues() {
-        val bitmap = Bitmap.createBitmap(10, 10, Bitmap.Config.ARGB_8888)
+        val bitmap = mock(Bitmap::class.java)
         val option =
             BigPictureNotificationOption(
                 notificationId = 3,
