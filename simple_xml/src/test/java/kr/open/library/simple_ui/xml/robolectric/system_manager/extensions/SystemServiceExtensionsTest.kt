@@ -17,7 +17,7 @@ import android.telephony.SubscriptionManager
 import android.telephony.TelephonyManager
 import android.telephony.euicc.EuiccManager
 import androidx.test.core.app.ApplicationProvider
-import kr.open.library.simple_ui.core.system_manager.controller.notification.option.SimpleNotificationType
+import kr.open.library.simple_ui.core.system_manager.controller.notification.SimpleNotificationType
 import kr.open.library.simple_ui.core.system_manager.controller.wifi.WifiController
 import kr.open.library.simple_ui.core.system_manager.extensions.getAlarmController
 import kr.open.library.simple_ui.core.system_manager.extensions.getAlarmManager
@@ -81,7 +81,7 @@ class SystemServiceExtensionsTest {
         val floatingViewController = application.getFloatingViewController()
         val batteryStateInfo = application.getBatteryStateInfo()
         val locationStateInfo = application.getLocationStateInfo()
-        val notificationController = application.getNotificationController(SimpleNotificationType.ACTIVITY)
+        val notificationController = application.getNotificationController(SimpleNotificationType.ACTIVITY, null)
         val displayInfo = application.getDisplayInfo()
         val vibratorController = application.getVibratorController()
         val alarmController = application.getAlarmController()
