@@ -11,8 +11,8 @@ import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.core.system_manager.controller.alarm.receiver.BaseAlarmReceiver
 import kr.open.library.simple_ui.core.system_manager.controller.alarm.vo.AlarmConstants
 import kr.open.library.simple_ui.core.system_manager.controller.alarm.vo.AlarmVo
-import kr.open.library.simple_ui.core.system_manager.controller.notification.vo.SimpleNotificationOptionVo
-import kr.open.library.simple_ui.core.system_manager.controller.notification.vo.SimpleNotificationType
+import kr.open.library.simple_ui.core.system_manager.controller.notification.SimpleNotificationType
+import kr.open.library.simple_ui.core.system_manager.controller.notification.option.DefaultNotificationOption
 import kr.open.library.simple_ui.core.system_manager.extensions.getNotificationController
 import kr.open.library.simpleui_xml.R
 
@@ -72,7 +72,10 @@ public class AlarmReceiver : BaseAlarmReceiver() {
     ) {
         Logx.d()
         notificationController =
-            context.getNotificationController(SimpleNotificationType.BROADCAST).apply {
+            context.getNotificationController(
+                showType = SimpleNotificationType.BROADCAST,
+                notificationChannel = null,
+            ).apply {
                 createChannel(
                     NotificationChannel("Alarm_ID", "Alarm_Name", NotificationManager.IMPORTANCE_HIGH).apply {
 //            setShowBadge(true)
@@ -102,13 +105,14 @@ public class AlarmReceiver : BaseAlarmReceiver() {
     ) {
         Logx.d()
         notificationController.showNotification(
-            SimpleNotificationOptionVo(
-                alarmVo.key,
-                alarmVo.title,
-                alarmVo.message,
-                false,
-                R.drawable.ic_launcher_foreground,
+            DefaultNotificationOption(
+                notificationId = alarmVo.key,
+                smallIcon = R.drawable.ic_launcher_foreground,
+                title = alarmVo.title,
+                content = alarmVo.message,
+                isAutoCancel = false,
             ),
+            showType = SimpleNotificationType.BROADCAST,
         )
     }
 }
