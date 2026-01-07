@@ -47,6 +47,7 @@ class ServiceManagerInfoActivity : BaseBindingActivity<ActivityServiceManagerInf
         binding.rcvResult.adapter = adapter
         initListener()
     }
+
     @SuppressLint("MissingPermission")
     private fun initListener() {
         binding.run {
@@ -378,7 +379,7 @@ class ServiceManagerInfoActivity : BaseBindingActivity<ActivityServiceManagerInf
                 }
             }
 
-            btnLocationUnregister.setOnClickListener { locationInfo.unregister() }
+            btnLocationUnregister.setOnClickListener { locationInfo.onDestroy() }
 
             btnLocationGetLocation.setOnClickListener {
                 onRequestPermissions(listOf(ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION)) { deniedPermissions ->

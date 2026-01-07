@@ -74,32 +74,6 @@ import kr.open.library.simple_ui.core.system_manager.extensions.getInputMethodMa
  *     controller.startStylusHandwriting(view)
  * }
  * ```<br><br>
- * ```kotlin
- * // 컨트롤러 인스턴스 가져오기
- * val controller = context.getSoftKeyboardController()
- *
- * // 기본 표시/숨김
- * controller.show(editText)
- * controller.hide(editText)
- *
- * // 지연 작업 - Runnable 버전 (Boolean 반환)
- * controller.showDelay(editText, 300)
- * controller.hideDelay(editText, 300)
- *
- * // 지연 작업 - 취소 가능한 Coroutine 버전 (Job? 반환)
- * val showJob = controller.showDelay(editText, 300, coroutineScope = lifecycleScope)
- * val hideJob = controller.hideDelay(editText, 300, coroutineScope = lifecycleScope)
- * hideJob?.cancel() // 필요시 취소
- *
- * // 윈도우 설정
- * controller.setAdjustPan(window)
- * controller.setAdjustResize(window)
- *
- * // 스타일러스 필기 (API 33+)
- * if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
- *     controller.startStylusHandwriting(view)
- * }
- * ```<br>
  */
 public open class SoftKeyboardController(
     context: Context,

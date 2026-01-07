@@ -1,9 +1,7 @@
-package kr.open.library.simple_ui.core.robolectric.system_manager.controller.notification
+﻿package kr.open.library.simple_ui.core.robolectric.system_manager.controller.notification
 
 import android.Manifest
 import android.app.Application
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Build
@@ -11,11 +9,11 @@ import androidx.core.app.NotificationCompat
 import androidx.test.core.app.ApplicationProvider
 import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.core.system_manager.controller.notification.SimpleNotificationController
-import kr.open.library.simple_ui.core.system_manager.controller.notification.vo.NotificationStyle
-import kr.open.library.simple_ui.core.system_manager.controller.notification.vo.SimpleNotificationOptionVo
-import kr.open.library.simple_ui.core.system_manager.controller.notification.vo.SimpleNotificationType
-import kr.open.library.simple_ui.core.system_manager.controller.notification.vo.SimplePendingIntentOptionVo
-import kr.open.library.simple_ui.core.system_manager.controller.notification.vo.SimpleProgressNotificationOptionVo
+import kr.open.library.simple_ui.core.system_manager.controller.notification.SimpleNotificationType
+import kr.open.library.simple_ui.core.system_manager.controller.notification.option.BigPictureNotificationOption
+import kr.open.library.simple_ui.core.system_manager.controller.notification.option.BigTextNotificationOption
+import kr.open.library.simple_ui.core.system_manager.controller.notification.option.DefaultNotificationOption
+import kr.open.library.simple_ui.core.system_manager.controller.notification.option.ProgressNotificationOption
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -47,7 +45,7 @@ class SimpleNotificationControllerRobolectricTest {
     @Before
     fun setUp() {
         application = ApplicationProvider.getApplicationContext()
-        controller = SimpleNotificationController(application, SimpleNotificationType.ACTIVITY)
+        controller = SimpleNotificationController(application)
         shadowNotificationManager = Shadows.shadowOf(controller.notificationManager)
     }
 
@@ -58,83 +56,16 @@ class SimpleNotificationControllerRobolectricTest {
 
     @Test
     @Config(sdk = [Build.VERSION_CODES.P])
-    fun createChannel_createsAndRegistersChannel() {
-        val channelId = "test_channel"
-        val channelName = "Test Channel"
-        val importance = NotificationManager.IMPORTANCE_HIGH
-
-        controller.createChannel(channelId, channelName, importance, "Test Description")
-
-        val channel = controller.notificationManager.getNotificationChannel(channelId)
-        assertNotNull(channel)
-        assertEquals(channelId, channel.id)
-        assertEquals(channelName, channel.name.toString())
-        assertEquals(importance, channel.importance)
-        assertEquals("Test Description", channel.description)
-    }
-
-    @Test
-    @Config(sdk = [Build.VERSION_CODES.P])
-    fun createChannel_withChannelObject_registersChannel() {
-        val channel =
-            NotificationChannel(
-                "custom_channel",
-                "Custom Channel",
-                NotificationManager.IMPORTANCE_DEFAULT,
-            )
-
-        controller.createChannel(channel)
-
-        val registeredChannel = controller.notificationManager.getNotificationChannel("custom_channel")
-        assertNotNull(registeredChannel)
-        assertEquals("custom_channel", registeredChannel.id)
-    }
-
-    @Test
-    @Config(sdk = [Build.VERSION_CODES.P])
-    fun createChannel_withParams_registersChannelWithDescription() {
-        val channelId = "param_channel"
-        val channelName = "Param Channel"
-        val importance = NotificationManager.IMPORTANCE_LOW
-        val description = "Channel created via params"
-
-        controller.createChannel(channelId, channelName, importance, description)
-
-        val registeredChannel = controller.notificationManager.getNotificationChannel(channelId)
-        assertNotNull(registeredChannel)
-        assertEquals(channelId, registeredChannel.id)
-        assertEquals(channelName, registeredChannel.name.toString())
-        assertEquals(importance, registeredChannel.importance)
-        assertEquals(description, registeredChannel.description)
-    }
-
-    @Test
-    @Config(sdk = [Build.VERSION_CODES.P])
-    fun createChannel_withoutDescription_leavesDescriptionNull() {
-        val channelId = "no_desc_channel"
-        controller.createChannel(channelId, "No Desc", NotificationManager.IMPORTANCE_DEFAULT, null)
-
-        val registeredChannel = controller.notificationManager.getNotificationChannel(channelId)
-        assertNotNull(registeredChannel)
-        assertEquals(channelId, registeredChannel.id)
-        assertEquals("No Desc", registeredChannel.name.toString())
-        assertEquals(NotificationManager.IMPORTANCE_DEFAULT, registeredChannel.importance)
-        assertEquals(null, registeredChannel.description)
-    }
-
-    @Test
-    @Config(sdk = [Build.VERSION_CODES.P])
     fun showNotification_createsNotification() {
         val option =
-            SimpleNotificationOptionVo(
+            DefaultNotificationOption(
                 notificationId = 1,
+                smallIcon = android.R.drawable.ic_dialog_info,
                 title = "Test Title",
                 content = "Test Content",
-                smallIcon = android.R.drawable.ic_dialog_info,
-                style = NotificationStyle.DEFAULT,
             )
 
-        val result = controller.showNotification(option)
+        val result = controller.showNotification(option, SimpleNotificationType.ACTIVITY)
 
         assertTrue(result)
         assertEquals(1, shadowNotificationManager.size())
@@ -147,16 +78,15 @@ class SimpleNotificationControllerRobolectricTest {
     fun showNotification_bigPictureStyle_createsNotificationWithBigPicture() {
         val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
         val option =
-            SimpleNotificationOptionVo(
+            BigPictureNotificationOption(
                 notificationId = 4,
+                smallIcon = android.R.drawable.ic_dialog_info,
                 title = "Big Picture",
                 content = "Content",
-                smallIcon = android.R.drawable.ic_dialog_info,
-                largeIcon = bitmap,
-                style = NotificationStyle.BIG_PICTURE,
+                bigPicture = bitmap,
             )
 
-        val result = controller.showNotification(option)
+        val result = controller.showNotification(option, SimpleNotificationType.ACTIVITY)
 
         assertTrue(result)
         assertEquals(1, shadowNotificationManager.size())
@@ -166,16 +96,15 @@ class SimpleNotificationControllerRobolectricTest {
     @Config(sdk = [Build.VERSION_CODES.P])
     fun showNotification_bigTextStyle_createsNotificationWithBigText() {
         val option =
-            SimpleNotificationOptionVo(
+            BigTextNotificationOption(
                 notificationId = 5,
+                smallIcon = android.R.drawable.ic_dialog_info,
                 title = "Big Text",
                 content = "Short content",
-                smallIcon = android.R.drawable.ic_dialog_info,
                 snippet = "This is a very long text that should be displayed in expanded view",
-                style = NotificationStyle.BIG_TEXT,
             )
 
-        val result = controller.showNotification(option)
+        val result = controller.showNotification(option, SimpleNotificationType.ACTIVITY)
 
         assertTrue(result)
         assertEquals(1, shadowNotificationManager.size())
@@ -183,17 +112,17 @@ class SimpleNotificationControllerRobolectricTest {
 
     @Test
     @Config(sdk = [Build.VERSION_CODES.P])
-    fun showProgressNotification_createsProgressNotification() {
+    fun showNotification_progress_createsNotificationProgress() {
         val option =
-            SimpleProgressNotificationOptionVo(
+            ProgressNotificationOption(
                 notificationId = 6,
+                smallIcon = android.R.drawable.ic_dialog_info,
                 title = "Download",
                 content = "Downloading...",
-                smallIcon = android.R.drawable.ic_dialog_info,
                 progressPercent = 50,
             )
 
-        val result = controller.showProgressNotification(option)
+        val result = controller.showNotification(option, SimpleNotificationType.ACTIVITY)
 
         assertTrue(result)
         assertEquals(1, shadowNotificationManager.size())
@@ -203,13 +132,15 @@ class SimpleNotificationControllerRobolectricTest {
     @Config(sdk = [Build.VERSION_CODES.P])
     fun updateProgress_validRange_updatesProgress() {
         val option =
-            SimpleProgressNotificationOptionVo(
+            ProgressNotificationOption(
                 notificationId = 7,
+                smallIcon = android.R.drawable.ic_dialog_info,
                 title = "Download",
+                content = null,
                 progressPercent = 0,
             )
 
-        controller.showProgressNotification(option)
+        controller.showNotification(option, SimpleNotificationType.ACTIVITY)
         val result = controller.updateProgress(7, 75)
 
         assertTrue(result)
@@ -219,12 +150,15 @@ class SimpleNotificationControllerRobolectricTest {
     @Config(sdk = [Build.VERSION_CODES.P])
     fun updateProgress_invalidRangeTooHigh_returnsFalse() {
         val option =
-            SimpleProgressNotificationOptionVo(
+            ProgressNotificationOption(
                 notificationId = 8,
+                smallIcon = android.R.drawable.ic_dialog_info,
+                title = "Download",
+                content = null,
                 progressPercent = 0,
             )
 
-        controller.showProgressNotification(option)
+        controller.showNotification(option, SimpleNotificationType.ACTIVITY)
         val result = controller.updateProgress(8, 101)
 
         assertFalse(result)
@@ -234,12 +168,15 @@ class SimpleNotificationControllerRobolectricTest {
     @Config(sdk = [Build.VERSION_CODES.P])
     fun updateProgress_invalidRangeNegative_returnsFalse() {
         val option =
-            SimpleProgressNotificationOptionVo(
+            ProgressNotificationOption(
                 notificationId = 9,
+                smallIcon = android.R.drawable.ic_dialog_info,
+                title = "Download",
+                content = null,
                 progressPercent = 0,
             )
 
-        controller.showProgressNotification(option)
+        controller.showNotification(option, SimpleNotificationType.ACTIVITY)
         val result = controller.updateProgress(9, -1)
 
         assertFalse(result)
@@ -257,13 +194,15 @@ class SimpleNotificationControllerRobolectricTest {
     @Config(sdk = [Build.VERSION_CODES.P])
     fun completeProgress_completesProgressNotification() {
         val option =
-            SimpleProgressNotificationOptionVo(
+            ProgressNotificationOption(
                 notificationId = 10,
+                smallIcon = android.R.drawable.ic_dialog_info,
                 title = "Download",
+                content = null,
                 progressPercent = 50,
             )
 
-        controller.showProgressNotification(option)
+        controller.showNotification(option, SimpleNotificationType.ACTIVITY)
         val result = controller.completeProgress(10, "Download Complete!")
 
         assertTrue(result)
@@ -281,13 +220,14 @@ class SimpleNotificationControllerRobolectricTest {
     @Config(sdk = [Build.VERSION_CODES.P])
     fun cancelNotification_cancelsSpecificNotification() {
         val option =
-            SimpleNotificationOptionVo(
+            DefaultNotificationOption(
                 notificationId = 11,
-                title = "Test",
                 smallIcon = android.R.drawable.ic_dialog_info,
+                title = "Test",
+                content = "Content",
             )
 
-        controller.showNotification(option)
+        controller.showNotification(option, SimpleNotificationType.ACTIVITY)
         assertEquals(1, shadowNotificationManager.size())
 
         val result = controller.cancelNotification(notificationId = 11)
@@ -299,11 +239,23 @@ class SimpleNotificationControllerRobolectricTest {
     @Test
     @Config(sdk = [Build.VERSION_CODES.P])
     fun cancelAll_cancelsAllNotifications() {
-        val option1 = SimpleNotificationOptionVo(notificationId = 12, smallIcon = android.R.drawable.ic_dialog_info)
-        val option2 = SimpleNotificationOptionVo(notificationId = 13, smallIcon = android.R.drawable.ic_dialog_info)
+        val option1 =
+            DefaultNotificationOption(
+                notificationId = 12,
+                smallIcon = android.R.drawable.ic_dialog_info,
+                title = "Title 1",
+                content = "Content 1",
+            )
+        val option2 =
+            DefaultNotificationOption(
+                notificationId = 13,
+                smallIcon = android.R.drawable.ic_dialog_info,
+                title = "Title 2",
+                content = "Content 2",
+            )
 
-        controller.showNotification(option1)
-        controller.showNotification(option2)
+        controller.showNotification(option1, SimpleNotificationType.ACTIVITY)
+        controller.showNotification(option2, SimpleNotificationType.ACTIVITY)
         assertEquals(2, shadowNotificationManager.size())
 
         controller.cancelAll()
@@ -313,72 +265,30 @@ class SimpleNotificationControllerRobolectricTest {
 
     @Test
     @Config(sdk = [Build.VERSION_CODES.P])
-    fun getClickShowActivityPendingIntent_createsActivityPendingIntent() {
-        val intent = Intent(application, Application::class.java)
-        val pendingIntentOption =
-            SimplePendingIntentOptionVo(
-                actionId = 1,
-                clickIntent = intent,
-            )
-
-        val pendingIntent = controller.getClickShowActivityPendingIntent(pendingIntentOption)
-
-        assertNotNull(pendingIntent)
-    }
-
-    @Test
-    @Config(sdk = [Build.VERSION_CODES.P])
-    fun getClickShowServicePendingIntent_createsServicePendingIntent() {
-        val intent = Intent(application, Application::class.java)
-        val pendingIntentOption =
-            SimplePendingIntentOptionVo(
-                actionId = 2,
-                clickIntent = intent,
-            )
-
-        val pendingIntent = controller.getClickShowServicePendingIntent(pendingIntentOption)
-
-        assertNotNull(pendingIntent)
-    }
-
-    @Test
-    @Config(sdk = [Build.VERSION_CODES.P])
-    fun getClickShowBroadcastPendingIntent_createsBroadcastPendingIntent() {
-        val intent = Intent(application, Application::class.java)
-        val pendingIntentOption =
-            SimplePendingIntentOptionVo(
-                actionId = 3,
-                clickIntent = intent,
-            )
-
-        val pendingIntent = controller.getClickShowBroadcastPendingIntent(pendingIntentOption)
-
-        assertNotNull(pendingIntent)
-    }
-
-    @Test
-    @Config(sdk = [Build.VERSION_CODES.P])
     fun init_createsDefaultChannel() {
-        // Controller 생성 시 기본 채널이 자동으로 생성됨
-        val testController = SimpleNotificationController(application, SimpleNotificationType.ACTIVITY)
+        val testController = SimpleNotificationController(application)
 
         val channels = shadowNotificationManager.notificationChannels
         assertTrue(channels.isNotEmpty())
+
+        testController.cleanup()
     }
 
     @Test
     @Config(sdk = [Build.VERSION_CODES.P])
     fun cleanup_clearsProgressBuilders() {
         val option =
-            SimpleProgressNotificationOptionVo(
+            ProgressNotificationOption(
                 notificationId = 14,
+                smallIcon = android.R.drawable.ic_dialog_info,
+                title = "Download",
+                content = null,
                 progressPercent = 50,
             )
 
-        controller.showProgressNotification(option)
+        controller.showNotification(option, SimpleNotificationType.ACTIVITY)
         controller.cleanup()
 
-        // cleanup 후 업데이트 시도는 실패해야 함
         val result = controller.updateProgress(14, 75)
         assertFalse(result)
     }
@@ -386,65 +296,61 @@ class SimpleNotificationControllerRobolectricTest {
     @Test
     @Config(sdk = [Build.VERSION_CODES.P])
     fun showNotification_withServiceType_setsServicePendingIntent() {
-        val serviceController = SimpleNotificationController(application, SimpleNotificationType.SERVICE)
-        val serviceShadow = Shadows.shadowOf(serviceController.notificationManager)
-
         val option =
-            SimpleNotificationOptionVo(
+            DefaultNotificationOption(
                 notificationId = 20,
                 smallIcon = android.R.drawable.ic_dialog_info,
+                title = "Service",
+                content = "Content",
                 clickIntent = Intent(application, Application::class.java),
             )
 
-        val result = serviceController.showNotification(option)
+        val result = controller.showNotification(option, SimpleNotificationType.SERVICE)
 
         assertTrue(result)
-        val notification = serviceShadow.getNotification(20)
+        val notification = shadowNotificationManager.getNotification(20)
         val pendingIntent = notification?.contentIntent
         assertNotNull(pendingIntent)
         val shadowPendingIntent: ShadowPendingIntent = Shadows.shadowOf(requireNotNull(pendingIntent))
         assertTrue(shadowPendingIntent.isServiceIntent)
-
-        serviceController.cleanup()
     }
 
     @Test
     @Config(sdk = [Build.VERSION_CODES.P])
     fun showNotification_withBroadcastType_setsBroadcastPendingIntent() {
-        val broadcastController = SimpleNotificationController(application, SimpleNotificationType.BROADCAST)
-        val broadcastShadow = Shadows.shadowOf(broadcastController.notificationManager)
-
         val option =
-            SimpleNotificationOptionVo(
+            DefaultNotificationOption(
                 notificationId = 21,
                 smallIcon = android.R.drawable.ic_dialog_info,
+                title = "Broadcast",
+                content = "Content",
                 clickIntent = Intent(application, Application::class.java),
             )
 
-        val result = broadcastController.showNotification(option)
+        val result = controller.showNotification(option, SimpleNotificationType.BROADCAST)
 
         assertTrue(result)
-        val notification = broadcastShadow.getNotification(21)
+        val notification = shadowNotificationManager.getNotification(21)
         val pendingIntent = notification?.contentIntent
         assertNotNull(pendingIntent)
         val shadowPendingIntent: ShadowPendingIntent = Shadows.shadowOf(requireNotNull(pendingIntent))
         assertTrue(shadowPendingIntent.isBroadcastIntent)
-
-        broadcastController.cleanup()
     }
 
     @Test
     @Config(sdk = [Build.VERSION_CODES.P])
-    fun showProgressNotification_setsContentIntentWhenProvided() {
+    fun showNotification_progress_setsContentIntentWhenProvided() {
         val option =
-            SimpleProgressNotificationOptionVo(
+            ProgressNotificationOption(
                 notificationId = 22,
                 smallIcon = android.R.drawable.ic_dialog_info,
+                title = "Progress",
+                content = null,
                 progressPercent = 10,
                 clickIntent = Intent(application, Application::class.java),
             )
 
-        val result = controller.showProgressNotification(option)
+        val result = controller.showNotification(option, SimpleNotificationType.ACTIVITY)
 
         assertTrue(result)
         val notification = shadowNotificationManager.getNotification(22)
@@ -480,8 +386,11 @@ class SimpleNotificationControllerRobolectricTest {
     @Config(sdk = [Build.VERSION_CODES.P])
     fun progressCleanupScheduler_removesStaleEntries() {
         val option =
-            SimpleProgressNotificationOptionVo(
+            ProgressNotificationOption(
                 notificationId = 30,
+                smallIcon = android.R.drawable.ic_dialog_info,
+                title = "Progress",
+                content = null,
                 progressPercent = 5,
             )
 
@@ -491,26 +400,21 @@ class SimpleNotificationControllerRobolectricTest {
                 .`when`<ScheduledExecutorService> { Executors.newSingleThreadScheduledExecutor() }
                 .thenReturn(recordingExecutor)
 
-            controller.showProgressNotification(option)
+            controller.showNotification(option, SimpleNotificationType.ACTIVITY)
 
-            val progressMapField =
-                SimpleNotificationController::class.java.getDeclaredField("progressBuilders").apply {
-                    isAccessible = true
-                }
-
-            @Suppress("UNCHECKED_CAST")
-            val progressBuilders = progressMapField.get(controller) as MutableMap<Int, Any>
+            val progressBuilders = controller.getProgressBuildersForTest()
             val info = requireNotNull(progressBuilders[30])
             val infoClass = info::class.java
             val builderField = infoClass.getDeclaredField("builder").apply { isAccessible = true }
             val builder = builderField.get(info) as NotificationCompat.Builder
-            val constructor = infoClass
-                .getDeclaredConstructor(
-                    NotificationCompat.Builder::class.java,
-                    Long::class.javaPrimitiveType,
-                ).apply {
-                    isAccessible = true
-                }
+            val constructor =
+                infoClass
+                    .getDeclaredConstructor(
+                        NotificationCompat.Builder::class.java,
+                        Long::class.javaPrimitiveType,
+                    ).apply {
+                        isAccessible = true
+                    }
             val staleTime = System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(31)
             progressBuilders[30] = constructor.newInstance(builder, staleTime)
 
@@ -524,8 +428,11 @@ class SimpleNotificationControllerRobolectricTest {
     @Config(sdk = [Build.VERSION_CODES.P])
     fun progressCleanupScheduler_handlesExceptionsInsideTask() {
         val option =
-            SimpleProgressNotificationOptionVo(
+            ProgressNotificationOption(
                 notificationId = 31,
+                smallIcon = android.R.drawable.ic_dialog_info,
+                title = "Progress",
+                content = null,
                 progressPercent = 10,
             )
 
@@ -535,26 +442,21 @@ class SimpleNotificationControllerRobolectricTest {
                 .`when`<ScheduledExecutorService> { Executors.newSingleThreadScheduledExecutor() }
                 .thenReturn(recordingExecutor)
 
-            controller.showProgressNotification(option)
+            controller.showNotification(option, SimpleNotificationType.ACTIVITY)
 
-            val progressMapField =
-                SimpleNotificationController::class.java.getDeclaredField("progressBuilders").apply {
-                    isAccessible = true
-                }
-
-            @Suppress("UNCHECKED_CAST")
-            val progressBuilders = progressMapField.get(controller) as MutableMap<Int, Any>
+            val progressBuilders = controller.getProgressBuildersForTest()
             val info = requireNotNull(progressBuilders[31])
             val infoClass = info::class.java
             val builderField = infoClass.getDeclaredField("builder").apply { isAccessible = true }
             val builder = builderField.get(info) as NotificationCompat.Builder
-            val constructor = infoClass
-                .getDeclaredConstructor(
-                    NotificationCompat.Builder::class.java,
-                    Long::class.javaPrimitiveType,
-                ).apply {
-                    isAccessible = true
-                }
+            val constructor =
+                infoClass
+                    .getDeclaredConstructor(
+                        NotificationCompat.Builder::class.java,
+                        Long::class.javaPrimitiveType,
+                    ).apply {
+                        isAccessible = true
+                    }
             val staleTime = System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(31)
             progressBuilders[31] = constructor.newInstance(builder, staleTime)
 
@@ -573,8 +475,11 @@ class SimpleNotificationControllerRobolectricTest {
     @Config(sdk = [Build.VERSION_CODES.P])
     fun progressCleanupScheduler_whenExecutorCreationFails_doesNotStart() {
         val option =
-            SimpleProgressNotificationOptionVo(
+            ProgressNotificationOption(
                 notificationId = 32,
+                smallIcon = android.R.drawable.ic_dialog_info,
+                title = "Progress",
+                content = null,
                 progressPercent = 5,
             )
 
@@ -583,92 +488,11 @@ class SimpleNotificationControllerRobolectricTest {
                 .`when`<ScheduledExecutorService> { Executors.newSingleThreadScheduledExecutor() }
                 .thenThrow(RuntimeException("boom"))
 
-            val result = controller.showProgressNotification(option)
+            val result = controller.showNotification(option, SimpleNotificationType.ACTIVITY)
 
             assertTrue(result)
             assertEquals(null, controller.getCleanupSchedulerForTest())
         }
-    }
-
-    @Test
-    @Config(sdk = [Build.VERSION_CODES.P])
-    fun showNotification_withProgressStyle_fallsBackToDefaultBuilder() {
-        val option =
-            SimpleNotificationOptionVo(
-                notificationId = 23,
-                smallIcon = android.R.drawable.ic_dialog_info,
-                style = NotificationStyle.PROGRESS,
-            )
-
-        val result = controller.showNotification(option)
-
-        assertTrue(result)
-        assertNotNull(shadowNotificationManager.getNotification(23))
-    }
-
-    @Test
-    @Config(sdk = [Build.VERSION_CODES.P])
-    fun showNotification_bigPictureWithoutLargeIcon_stillCreatesNotification() {
-        val option =
-            SimpleNotificationOptionVo(
-                notificationId = 24,
-                smallIcon = android.R.drawable.ic_dialog_info,
-                style = NotificationStyle.BIG_PICTURE,
-            )
-
-        val result = controller.showNotification(option)
-
-        assertTrue(result)
-        assertNotNull(shadowNotificationManager.getNotification(24))
-    }
-
-    @Test
-    @Config(sdk = [Build.VERSION_CODES.P])
-    fun showNotification_bigTextWithoutSnippet_stillCreatesNotification() {
-        val option =
-            SimpleNotificationOptionVo(
-                notificationId = 25,
-                smallIcon = android.R.drawable.ic_dialog_info,
-                style = NotificationStyle.BIG_TEXT,
-            )
-
-        val result = controller.showNotification(option)
-
-        assertTrue(result)
-        assertNotNull(shadowNotificationManager.getNotification(25))
-    }
-
-    @Test
-    @Config(sdk = [Build.VERSION_CODES.P])
-    fun showNotificationBigImage_delegatesToShowNotification() {
-        val bitmap = Bitmap.createBitmap(50, 50, Bitmap.Config.ARGB_8888)
-        val option =
-            SimpleNotificationOptionVo(
-                notificationId = 26,
-                smallIcon = android.R.drawable.ic_dialog_info,
-                largeIcon = bitmap,
-            )
-
-        val result = controller.showNotificationBigImage(option)
-
-        assertTrue(result)
-        assertNotNull(shadowNotificationManager.getNotification(26))
-    }
-
-    @Test
-    @Config(sdk = [Build.VERSION_CODES.P])
-    fun showNotificationBigText_delegatesToShowNotification() {
-        val option =
-            SimpleNotificationOptionVo(
-                notificationId = 27,
-                smallIcon = android.R.drawable.ic_dialog_info,
-                snippet = "Long description",
-            )
-
-        val result = controller.showNotificationBigText(option)
-
-        assertTrue(result)
-        assertNotNull(shadowNotificationManager.getNotification(27))
     }
 
     @Test
@@ -706,7 +530,7 @@ class SimpleNotificationControllerRobolectricTest {
     @Test
     @Config(sdk = [Build.VERSION_CODES.TIRAMISU])
     fun init_onTiramisu_requiresPostNotificationPermission() {
-        val tiramisuController = SimpleNotificationController(application, SimpleNotificationType.ACTIVITY)
+        val tiramisuController = SimpleNotificationController(application)
 
         val permissionInfo = tiramisuController.getPermissionInfo()
 
@@ -820,21 +644,37 @@ private object ImmediateScheduledFuture : ScheduledFuture<Unit> {
     ): Unit = Unit
 }
 
+private fun SimpleNotificationController.getBuilderForTest(): Any {
+    val field = SimpleNotificationController::class.java.getDeclaredField("builder").apply {
+        isAccessible = true
+    }
+    return field.get(this)
+}
+
+private fun SimpleNotificationController.getProgressBuildersForTest(): MutableMap<Int, Any> {
+    val builder = getBuilderForTest()
+    val field = builder.javaClass.getDeclaredField("progressBuilders").apply {
+        isAccessible = true
+    }
+    @Suppress("UNCHECKED_CAST")
+    return field.get(builder) as MutableMap<Int, Any>
+}
+
 private fun SimpleNotificationController.setCleanupSchedulerForTest(executor: ScheduledExecutorService?) {
-    val field =
-        SimpleNotificationController::class.java.getDeclaredField("cleanupScheduler").apply {
-            isAccessible = true
-        }
-    field.set(this, executor)
+    val builder = getBuilderForTest()
+    val field = builder.javaClass.getDeclaredField("cleanupScheduler").apply {
+        isAccessible = true
+    }
+    field.set(builder, executor)
 }
 
 private fun SimpleNotificationController.getCleanupSchedulerForTest(): ScheduledExecutorService? {
-    val field =
-        SimpleNotificationController::class.java.getDeclaredField("cleanupScheduler").apply {
-            isAccessible = true
-        }
+    val builder = getBuilderForTest()
+    val field = builder.javaClass.getDeclaredField("cleanupScheduler").apply {
+        isAccessible = true
+    }
     @Suppress("UNCHECKED_CAST")
-    return field.get(this) as? ScheduledExecutorService
+    return field.get(builder) as? ScheduledExecutorService
 }
 
 private open class AwaitFalseScheduler : ScheduledExecutorService {

@@ -20,10 +20,10 @@ class RecyclerViewActivity : BaseBindingActivity<ActivityRecyclerviewBinding>(R.
     private val simpleListAdapter = SimpleBindingRcvListAdapter<SampleItem, ItemRcvTextviewBinding>(
         R.layout.item_rcv_textview,
         listDiffUtil =
-        RcvListDiffUtilCallBack(
-            itemsTheSame = { oldItem, newItem -> oldItem.id == newItem.id },
-            contentsTheSame = { oldItem, newItem -> oldItem == newItem },
-        ),
+            RcvListDiffUtilCallBack(
+                itemsTheSame = { oldItem, newItem -> oldItem.id == newItem.id },
+                contentsTheSame = { oldItem, newItem -> oldItem == newItem },
+            ),
     ) { holder, item, position ->
         holder.binding.apply {
             tvTitle.text = item.title

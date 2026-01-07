@@ -13,10 +13,10 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
 import kr.open.library.simple_ui.core.logcat.Logx
-import kr.open.library.simple_ui.core.system_manager.controller.notification.vo.NotificationStyle
-import kr.open.library.simple_ui.core.system_manager.controller.notification.vo.SimpleNotificationOptionVo
-import kr.open.library.simple_ui.core.system_manager.controller.notification.vo.SimpleNotificationType
-import kr.open.library.simple_ui.core.system_manager.controller.notification.vo.SimpleProgressNotificationOptionVo
+import kr.open.library.simple_ui.core.system_manager.controller.notification.SimpleNotificationType
+import kr.open.library.simple_ui.core.system_manager.controller.notification.option.BigTextNotificationOption
+import kr.open.library.simple_ui.core.system_manager.controller.notification.option.DefaultNotificationOption
+import kr.open.library.simple_ui.core.system_manager.controller.notification.option.ProgressNotificationOption
 import kr.open.library.simple_ui.core.system_manager.extensions.getNotificationController
 import kr.open.library.simple_ui.xml.extensions.view.toastShowShort
 import kr.open.library.simple_ui.xml.ui.activity.BaseBindingActivity
@@ -28,27 +28,24 @@ class NotificationControllerActivity :
     BaseBindingActivity<ActivityNotificationControllerBinding>(R.layout.activity_notification_controller) {
     private val vm: NotificationControllerActivityVm by viewModels()
 
-    private val notificationController by lazy { getNotificationController(SimpleNotificationType.ACTIVITY) }
-
-    override fun onCreateView(rootView: View, savedInstanceState: Bundle?) {
-        super.onCreateView(rootView, savedInstanceState)
-        binding.vm = vm
-        lifecycle.addObserver(vm)
-        createNotificationChannels()
-        requestNotificationPermission()
-    }
-
-    private fun createNotificationChannels() {
-        val channel =
-            NotificationChannel(
+    private val notificationController by lazy {
+        getNotificationController(
+            showType = SimpleNotificationType.ACTIVITY,
+            notificationChannel = NotificationChannel(
                 "default_channel",
                 "Default Notifications",
                 NotificationManager.IMPORTANCE_DEFAULT,
             ).apply {
                 description = "Default notification channel for examples"
             }
+        )
+    }
 
-        notificationController.createChannel(channel)
+    override fun onCreateView(rootView: View, savedInstanceState: Bundle?) {
+        super.onCreateView(rootView, savedInstanceState)
+        binding.vm = vm
+        lifecycle.addObserver(vm)
+        requestNotificationPermission()
     }
 
     private fun requestNotificationPermission() {
@@ -94,53 +91,49 @@ class NotificationControllerActivity :
     @SuppressLint("MissingPermission")
     private fun showBasicNotification() {
         Logx.d()
-        val option =
-            SimpleNotificationOptionVo(
-                notificationId = 1,
-                title = "Basic Notification",
-                content = "This is a basic notification example",
-                smallIcon = R.drawable.ic_launcher_foreground,
-                isAutoCancel = true,
-                clickIntent = Intent(this, MainActivity::class.java),
-            )
+        val option = DefaultNotificationOption(
+            notificationId = 1,
+            title = "Basic Notification",
+            content = "This is a basic notification example",
+            smallIcon = R.drawable.ic_launcher_foreground,
+            isAutoCancel = true,
+            clickIntent = Intent(this, MainActivity::class.java),
+        )
 
-        notificationController.showNotification(option)
+        notificationController.showNotification(option, showType = SimpleNotificationType.ACTIVITY)
         toastShowShort("Basic notification shown")
     }
 
     @SuppressLint("MissingPermission")
     private fun showBigTextNotification() {
-        val option =
-            SimpleNotificationOptionVo(
-                notificationId = 2,
-                title = "BigText Notification",
-                content = "Short summary",
-                snippet =
-                    "This is a very long text that will be displayed when the notification is expanded. " +
-                        "You can include multiple lines of text here. " +
-                        "The BigText style allows you to show much more content than a basic notification.",
-                smallIcon = R.drawable.ic_launcher_foreground,
-                isAutoCancel = true,
-                style = NotificationStyle.BIG_TEXT,
-            )
+        val option = BigTextNotificationOption(
+            notificationId = 2,
+            title = "BigText Notification",
+            content = "Short summary",
+            snippet =
+                "This is a very long text that will be displayed when the notification is expanded. " +
+                    "You can include multiple lines of text here. " +
+                    "The BigText style allows you to show much more content than a basic notification.",
+            smallIcon = R.drawable.ic_launcher_foreground,
+            isAutoCancel = true,
+        )
 
-        notificationController.showNotification(option)
+        notificationController.showNotification(option, showType = SimpleNotificationType.ACTIVITY)
         toastShowShort("BigText notification shown")
     }
 
     @SuppressLint("MissingPermission")
     private fun showProgressNotification() {
-        val option =
-            SimpleProgressNotificationOptionVo(
-                notificationId = 3,
-                title = "Download in Progress",
-                content = "Downloading file...",
-                smallIcon = R.drawable.ic_launcher_foreground,
-                progressPercent = 0,
-                onGoing = true,
-            )
+        val option = ProgressNotificationOption(
+            notificationId = 3,
+            title = "Download in Progress",
+            content = "Downloading file...",
+            smallIcon = R.drawable.ic_launcher_foreground,
+            progressPercent = 0,
+            onGoing = true,
+        )
 
-        notificationController.showProgressNotification(option)
+        notificationController.showNotification(option = option, showType = SimpleNotificationType.ACTIVITY)
         toastShowShort("Progress notification shown")
     }
 

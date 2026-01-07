@@ -6,6 +6,13 @@ object BatteryStateConstants {
      * 기본 업데이트 주기 시간 (밀리초)입니다.<br>
      */
     public const val DEFAULT_UPDATE_CYCLE_TIME = 2000L
+    public const val DISABLE_UPDATE_CYCLE_TIME = 9999000L
+
+    /**
+     * Minimum update cycle time in milliseconds.<br><br>
+     * 최소 업데이트 주기 시간 (밀리초)입니다.<br>
+     */
+    public const val MIN_UPDATE_CYCLE_TIME = 1000L
 
     /**
      * Error value (Integer.MIN_VALUE) used when integer battery information cannot be retrieved.<br><br>

@@ -145,6 +145,7 @@ public abstract class BaseBindingDialogFragment<BINDING : ViewDataBinding>(
         eventCollectStarted = true
         onEventVmCollect()
     }
+
     /**
      * Override this method to set up ViewModel event collection.<br>
      * Typically used to collect Flow events from ViewModel using viewLifecycleOwner.lifecycleScope.<br>
@@ -200,5 +201,4 @@ public abstract class BaseBindingDialogFragment<BINDING : ViewDataBinding>(
         super.setBackgroundDrawable(resId)
         _binding?.root?.setBackgroundResource(resId)
     }
-
 }

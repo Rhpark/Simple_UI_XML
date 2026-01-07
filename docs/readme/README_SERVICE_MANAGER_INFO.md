@@ -399,7 +399,7 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
         locationInfo.registerStart(
             coroutineScope = lifecycleScope,
             locationProvider = LocationManager.GPS_PROVIDER,
-            minTimeMs = 1000L,
+            updateCycleTime = 1000L,
             minDistanceM = 10f
         )
 
@@ -434,7 +434,13 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
         val distance = locationInfo.calculateDistance(fromLocation, toLocation)
         val bearing = locationInfo.calculateBearing(fromLocation, toLocation)
     }
-    // Auto cleanup in onDestroy() (onDestroy()에서 자동 정리)
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // Manual cleanup required - Call onDestroy() to release resources
+        // 수동 정리 필요 - 리소스 해제를 위해 onDestroy() 호출
+        locationInfo.onDestroy()
+    }
 }
 ```
 **Advantages:**
@@ -640,9 +646,9 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 <br>
 </br>
 
-### 3. **Automatic Lifecycle Management (Lifecycle 자동 관리)**
-- Automatic onDestroy() invocation (onDestroy() 자동 호출)
-- Automatic resource cleanup (리소스 자동 정리)
+### 3. **Lifecycle Management (Lifecycle 관리)**
+- Manual onDestroy() invocation required (onDestroy() 수동 호출 필요)
+- Resource cleanup through onDestroy() (onDestroy()를 통한 리소스 정리)
 - Memory leak prevention (메모리 누수 방지)
 
 <br>
@@ -693,11 +699,14 @@ System Service Manager Info : [ServiceManagerInfoActivity.kt](../../app/src/main
 </br>
 
 ### **Location State Info** - Location Status Information
-- **Real-time Updates:** `registerStart(coroutineScope, locationProvider, minTimeMs, minDistanceM)` - StateFlow-based location tracking
+- **Real-time Updates:** `registerStart(coroutineScope, locationProvider, updateCycleTime, minDistanceM)` - StateFlow-based location tracking
   - `coroutineScope` - Coroutine scope (Lifecycle integrated) (코루틴 스코프 (Lifecycle과 연동))
   - `locationProvider` - Location provider (GPS_PROVIDER, NETWORK_PROVIDER, PASSIVE_PROVIDER, FUSED_PROVIDER, etc.) (위치 제공자)
-  - `minTimeMs` - Minimum update time interval (milliseconds) (최소 업데이트 시간 간격 (밀리초))
-  - `minDistanceM` - Minimum movement distance (meters) (최소 이동 거리 (미터))
+  - `updateCycleTime` - Update cycle time in milliseconds (default: 2000ms) (밀리초 단위 업데이트 주기 시간 (기본값: 2000ms))
+    - 2000ms (default): Recommended for most cases - fast updates, moderate battery usage. (대부분의 경우 권장 - 빠른 업데이트, 적당한 배터리 사용)
+    - 10000ms: Slower updates, lower battery consumption. (느린 업데이트, 낮은 배터리 소비)
+    - 60000ms: Very slow updates, minimal battery impact. (매우 느린 업데이트, 최소 배터리 영향)
+  - `minDistanceM` - Minimum movement distance (meters) (default: 2.0m) (최소 이동 거리 (미터) (기본값: 2.0m))
   - Automatic LocationListener and BroadcastReceiver registration/unregistration (자동 LocationListener 및 BroadcastReceiver 등록/해제)
 - **Provider Status:** `isGpsEnabled()`, `isNetworkEnabled()`, `isPassiveEnabled()`, `isFusedEnabled()` (API 31+)
 - **Extended Provider Status:**
@@ -711,7 +720,12 @@ System Service Manager Info : [ServiceManagerInfoActivity.kt](../../app/src/main
   - `saveApplyLocation(location)` - Save location to SharedPreferences (immediate apply) (SharedPreferences에 위치 저장 (즉시 적용))
   - `loadLocation()` - Load saved location (저장된 위치 로드)
   - `removeLocation()` - Delete saved location (저장된 위치 삭제)
-- **Manual Control:** `unregister()` - Stop location updates and release all resources (위치 업데이트 중지 및 모든 리소스 해제)
+- **Lifecycle Management:**
+  - `onDestroy()` - Manual cleanup required to release resources (리소스 해제를 위해 수동 정리 필요)
+- **Smart Location Filtering:** Intelligent algorithm filters out inaccurate or stale coordinates. Prefers latest data within **10 seconds** and compares accuracy (AccuracyDelta) to ensure best location.
+  - **스마트 위치 필터링:** 부정확하거나 오래된 좌표를 걸러내는 지능형 알고리즘 탑재. **10초** 이내의 최신 데이터를 우선하며, 정확도(AccuracyDelta)를 비교하여 최적의 위치를 보장합니다.
+- **Stable Polling Mechanism:** Double-checks system status via periodic polling (default 2000ms) alongside Event Listeners, ensuring no missed provider changes.
+  - **안정적 폴링 메커니즘:** 이벤트 리스너와 함께 주기적 폴링(기본 2000ms)으로 시스템 상태를 이중 감시하여, Provider 상태 변경 누락을 원천 차단합니다.
 - **LocationStateEvent:** 5 event types (OnLocationChanged, OnGpsEnabled, OnNetworkEnabled, OnPassiveEnabled, OnFusedEnabled) (5가지 이벤트 타입)
 
 <br>
@@ -974,7 +988,7 @@ onRequestPermissions(listOf(
         locationInfo.registerStart(
             coroutineScope = lifecycleScope,
             locationProvider = LocationManager.GPS_PROVIDER,
-            minTimeMs = 1000L,
+            updateCycleTime = 1000L,
             minDistanceM = 10f
         )
 
@@ -1215,7 +1229,7 @@ onRequestPermissions(listOf(
         locationInfo.registerStart(
             coroutineScope = lifecycleScope,
             locationProvider = LocationManager.NETWORK_PROVIDER,
-            minTimeMs = 0L,
+            updateCycleTime = 2000L,
             minDistanceM = 0f
         )
     }
@@ -1233,7 +1247,7 @@ onRequestPermissions(listOf(
         locationInfo.registerStart(
             coroutineScope = lifecycleScope,
             locationProvider = LocationManager.GPS_PROVIDER,
-            minTimeMs = 0L,
+            updateCycleTime = 2000L,
             minDistanceM = 0f
         )
     }

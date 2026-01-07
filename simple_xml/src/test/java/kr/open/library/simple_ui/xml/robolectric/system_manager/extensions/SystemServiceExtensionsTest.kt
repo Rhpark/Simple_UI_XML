@@ -17,7 +17,7 @@ import android.telephony.SubscriptionManager
 import android.telephony.TelephonyManager
 import android.telephony.euicc.EuiccManager
 import androidx.test.core.app.ApplicationProvider
-import kr.open.library.simple_ui.core.system_manager.controller.notification.vo.SimpleNotificationType
+import kr.open.library.simple_ui.core.system_manager.controller.notification.option.SimpleNotificationType
 import kr.open.library.simple_ui.core.system_manager.controller.wifi.WifiController
 import kr.open.library.simple_ui.core.system_manager.extensions.getAlarmController
 import kr.open.library.simple_ui.core.system_manager.extensions.getAlarmManager

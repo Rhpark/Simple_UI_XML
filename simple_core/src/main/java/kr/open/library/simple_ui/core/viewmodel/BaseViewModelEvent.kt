@@ -81,8 +81,12 @@ public abstract class BaseViewModelEvent<EVENT_TYPE> : BaseViewModel() {
 
     /**
      * Public Flow for observing events in View layer.<br>
+     * single-consumer; multiple collectors may miss events. Use a single collector or switch to SharedFlow if you need multicast.<br>
+     * This event channel is intended for UI one-off events (e.g., navigation, toast). Avoid using it for high-frequency streams (timer/sensor/state), as it may cause backpressure or UI delay.<br>
      * Collect this flow in Activity, Fragment, or CustomView to receive events from ViewModel.<br><br>
      * View 레이어에서 이벤트를 관찰하기 위한 public Flow입니다.<br>
+     * 단일 소비자 기반이라 다중 수집 시 이벤트가 누락될 수 있습니다. 단일 수집을 권장하며, 멀티캐스트가 필요하면 SharedFlow로 전환하세요.<br>
+     * 이 이벤트 채널은 내비게이션·토스트 같은 단발 UI 이벤트 용도입니다. 타이머/센서/상태 갱신처럼 고빈도 스트림에는 부적합하며, 백프레셔나 UI 지연이 발생할 수 있습니다.<br>
      * ViewModel로부터 이벤트를 받으려면 Activity, Fragment 또는 CustomView에서 이 flow를 수집하세요.<br>
      */
     public val mEventVm: Flow<EVENT_TYPE> = eventVm.receiveAsFlow()

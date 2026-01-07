@@ -128,9 +128,11 @@ internal class BatteryStateEmitter {
 
     /**
      * Sets up reactive flows for all battery data updates.<br>
-     * This method should be called after setting the coroutineScope.<br><br>
+     * This method should be called after setting the coroutineScope.<br>
+     * Note: dropWhile filters only the initial sentinel value; subsequent sentinel values may be emitted as events by design.<br><br>
      * 모든 배터리 데이터 업데이트를 위한 반응형 플로우를 설정합니다.<br>
      * 이 메서드는 coroutineScope를 설정한 후에 호출해야 합니다.<br>
+     * 참고: dropWhile는 초기 센티널 값만 필터링하며, 이후 센티널 값은 의도적으로 이벤트로 발행될 수 있습니다.<br>
      *
      * @param coroutineScope The coroutine scope to use for collecting flows.<br><br>
      *                       플로우 수집에 사용할 코루틴 스코프입니다.<br>

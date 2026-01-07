@@ -10,7 +10,6 @@ import kr.open.library.simpleui_xml.activity_fragment.ActivityFragmentActivity.C
 import kr.open.library.simpleui_xml.databinding.ActivityFragmentContainerBinding
 
 class FragmentContainerActivity : BaseBindingActivity<ActivityFragmentContainerBinding>(R.layout.activity_fragment_container) {
-
     override fun onCreateView(rootView: View, savedInstanceState: Bundle?) {
         super.onCreateView(rootView, savedInstanceState)
 

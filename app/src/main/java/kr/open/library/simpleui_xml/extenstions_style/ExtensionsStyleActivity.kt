@@ -42,6 +42,7 @@ class ExtensionsStyleActivity : BaseBindingActivity<ActivityExtensionsStyleBindi
         setupTryCatchExtensions()
         setupPermissionExtensions()
     }
+
     /**
      * 섹션 1: View Extensions (Toast/SnackBar/TextView)
      */

@@ -14,6 +14,7 @@ import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateCo
 import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateConstants.BATTERY_ERROR_VALUE_DOUBLE
 import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateConstants.BATTERY_ERROR_VALUE_LONG
 import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateConstants.DEFAULT_UPDATE_CYCLE_TIME
+import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateConstants.MIN_UPDATE_CYCLE_TIME
 import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateConstants.STR_CHARGE_PLUG_UNKNOWN
 import kr.open.library.simple_ui.core.system_manager.info.battery.internal.helper.BatteryPropertyReader
 import kr.open.library.simple_ui.core.system_manager.info.battery.internal.helper.BatteryStateEmitter
@@ -52,10 +53,12 @@ import kr.open.library.simple_ui.core.system_manager.info.battery.internal.model
  *
  * **Usage / 사용법:**<br>
  * 1. Call `registerStart(coroutineScope)` before collecting flows to start receiver and periodic updates.<br>
- * 2. Call `destroy()` upon complete shutdown to release resources.<br><br>
+ * 2. Call `onDestroy()` upon complete shutdown to release resources.<br><br>
  * 1. 플로우 수집 전에 `registerStart(coroutineScope)`를 호출하여 리시버와 주기 업데이트를 시작하세요.<br>
- * 2. 완전 종료 시 `destroy()`를 호출하여 리소스를 해제하세요.<br>
+ * 2. 완전 종료 시 `onDestroy()`를 호출하여 리소스를 해제하세요.<br>
  *
+ * @param context context.<br><br>
+ *                컨텍스트.<br>
  */
 public open class BatteryStateInfo(
     context: Context
@@ -125,21 +128,26 @@ public open class BatteryStateInfo(
      * @param coroutine Coroutine scope used for collecting and emitting updates.<br><br>
      *                  업데이트 수집·발행에 사용할 코루틴 스코프입니다.<br>
      * @param updateCycleTime Interval (in milliseconds) to periodically check battery values and emit updates when changes are detected.<br>
+     *                        Must be greater than or equal to `MIN_UPDATE_CYCLE_TIME`; otherwise IllegalArgumentException is thrown.<br>
      *                        BroadcastReceiver provides real-time updates for most battery events,<br>
      *                        but some values (e.g., Current Ampere, Current Average Ampere) continuously change without triggering broadcasts.<br>
      *                        - 2000ms (default): Recommended for most cases - fast updates, moderate battery usage.<br>
      *                        - 10000ms: Slower updates, lower battery consumption.<br>
      *                        - 60000ms: Very slow updates, minimal battery impact.<br><br>
      *                        일정 간격(밀리초)으로 배터리 값을 확인하고 변경 시 업데이트를 발행하는 주기입니다.<br>
+     *                        `MIN_UPDATE_CYCLE_TIME` 이상이어야 하며, 미만이면 IllegalArgumentException이 발생합니다.<br>
      *                        BroadcastReceiver가 대부분의 배터리 이벤트를 실시간으로 제공하지만,<br>
      *                        일부 값(예: Current Ampere, Current Average Ampere)은 브로드캐스트 없이 지속적으로 변합니다.<br>
      *                        - 2000ms (기본값): 대부분의 경우 권장 - 빠른 업데이트, 적당한 배터리 사용.<br>
      *                        - 10000ms: 느린 업데이트, 낮은 배터리 소비.<br>
      *                        - 60000ms: 매우 느린 업데이트, 최소 배터리 영향.<br>
-     * @throws Exception When receiver registration or update start fails.<br><br>
-     *                   리시버 등록 또는 업데이트 시작에 실패하면 예외를 발생시킵니다.<br>
+     *
+     * @throws IllegalArgumentException if updateCycleTime is less than `MIN_UPDATE_CYCLE_TIME`.<br><br>
+     *                                  updateCycleTime이 `MIN_UPDATE_CYCLE_TIME`보다 작으면 IllegalArgumentException이 발생합니다.<br>
      */
     public fun registerStart(coroutine: CoroutineScope, updateCycleTime: Long = DEFAULT_UPDATE_CYCLE_TIME): Boolean {
+        require(updateCycleTime >= MIN_UPDATE_CYCLE_TIME) { "updateCycleTime must be greater than or equal to $MIN_UPDATE_CYCLE_TIME" }
+
         val isRegister = registerReceiver()
 
         if (!isRegister) {

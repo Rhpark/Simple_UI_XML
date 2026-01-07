@@ -1,6 +1,7 @@
 package kr.open.library.simple_ui.core.system_manager.extensions
 
 import android.app.AlarmManager
+import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.bluetooth.BluetoothManager
 import android.content.Context
@@ -20,7 +21,7 @@ import android.view.inputmethod.InputMethodManager
 import androidx.annotation.RequiresApi
 import kr.open.library.simple_ui.core.system_manager.controller.alarm.AlarmController
 import kr.open.library.simple_ui.core.system_manager.controller.notification.SimpleNotificationController
-import kr.open.library.simple_ui.core.system_manager.controller.notification.vo.SimpleNotificationType
+import kr.open.library.simple_ui.core.system_manager.controller.notification.SimpleNotificationType
 import kr.open.library.simple_ui.core.system_manager.controller.vibrator.VibratorController
 import kr.open.library.simple_ui.core.system_manager.controller.wifi.WifiController
 import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateInfo
@@ -75,8 +76,14 @@ public fun Context.getVibratorManager(): VibratorManager = getSystemService(Vibr
 
 public fun Context.getAlarmController(): AlarmController = AlarmController(this)
 
-public fun Context.getNotificationController(showType: SimpleNotificationType): SimpleNotificationController =
-    SimpleNotificationController(this, showType)
+public fun Context.getNotificationController(
+    showType: SimpleNotificationType,
+    notificationChannel: NotificationChannel?
+): SimpleNotificationController = if (notificationChannel == null) {
+    SimpleNotificationController(this)
+} else {
+    SimpleNotificationController(this, notificationChannel)
+}
 
 public fun Context.getVibratorController(): VibratorController = VibratorController(this)
 

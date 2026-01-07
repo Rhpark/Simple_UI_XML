@@ -1,7 +1,6 @@
 package kr.open.library.simple_ui.core.system_manager.info.location
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.location.Location
 import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
 import kr.open.library.simple_ui.core.local.base.BaseSharedPreference
@@ -48,12 +47,6 @@ public class LocationSharedPreference(
 
     private companion object {
         /**
-         * Name of the SharedPreferences file.<br><br>
-         * SharedPreferences 파일 이름입니다.<br>
-         */
-        private const val PREF_NAME = "location_preferences"
-
-        /**
          * Key suffix for latitude.<br><br>
          * 위도 키 접미사입니다.<br>
          */
@@ -82,14 +75,6 @@ public class LocationSharedPreference(
          * 제공자 키 접미사입니다.<br>
          */
         private const val PROVIDER_SUFFIX = "_provider"
-    }
-
-    /**
-     * Lazy-initialized SharedPreferences instance.<br><br>
-     * 지연 초기화된 SharedPreferences 인스턴스입니다.<br>
-     */
-    private val prefs: SharedPreferences by lazy {
-        context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
     }
 
     /**

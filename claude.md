@@ -21,7 +21,7 @@
 
 
 
-# 모듈별 상세 가이드
+# 모듈별 상세 가이드c l
  - **simple_core 모듈**: simple_core/claude.md 참조
  - **simple_xml 모듈**: simple_xml/claude.md 참조
  - 각 모듈별 특화 규칙 및 주의사항은 해당 모듈 claude.md 확인

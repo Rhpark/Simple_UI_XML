@@ -11,11 +11,9 @@ import androidx.lifecycle.ViewModel
  *
  * Features:<br>
  * - Lifecycle-aware ViewModel base class<br>
- * - Direct lifecycle event handling without separate observer registration<br>
  * - Integration with Android Architecture Components<br><br>
  * 기능:<br>
  * - 생명주기 인식 ViewModel 기본 클래스<br>
- * - 별도의 옵저버 등록 없이 직접 생명주기 이벤트 처리<br>
  * - Android Architecture Components와의 통합<br>
  *
  * Usage example:<br>

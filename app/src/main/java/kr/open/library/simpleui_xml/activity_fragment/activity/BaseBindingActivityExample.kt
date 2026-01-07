@@ -15,7 +15,6 @@ class BaseBindingActivityExample :
     BaseBindingActivity<ActivityBaseBindingActivityExampleBinding>(R.layout.activity_base_binding_activity_example) {
     private val vm: BaseBindingActivityExampleVm by viewModels()
 
-
     override fun onCreateView(rootView: View, savedInstanceState: Bundle?) {
         super.onCreateView(rootView, savedInstanceState)
         binding.vm = vm
