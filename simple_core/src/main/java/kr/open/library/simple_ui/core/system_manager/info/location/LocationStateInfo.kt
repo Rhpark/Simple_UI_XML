@@ -2,6 +2,7 @@ package kr.open.library.simple_ui.core.system_manager.info.location
 
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
+import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Location
 import android.location.LocationManager
@@ -102,6 +103,7 @@ public open class LocationStateInfo(
      * Manages location updates via LocationListener, BroadcastReceiver, and periodic polling.<br><br>
      * LocationListener, BroadcastReceiver, 주기적 폴링을 통한 위치 업데이트를 관리합니다.<br>
      */
+    @SuppressLint("MissingPermission")
     private val receiver = LocationStateReceiver(context, locationManager) {
         sender.updateLocationInfo(
             LocationStateData(
