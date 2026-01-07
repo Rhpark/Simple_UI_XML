@@ -1,7 +1,7 @@
 # 프로젝트 개요 및 목적
  - **Kotlin 기반 Android XML 개발 향상 라이브러리**
  - 샘플 앱으로 활용법을 검증함 (settings.gradle.kts, app/build.gradle.kts).
- - 배포는 JitPack 0.3.45 기준, minSdk 28/compileSdk 35, Kotlin 2.0.21/AGP 8.8.2 설정 (gradle/libs.versions.toml).
+ - 배포는 JitPack 0.3.46 기준, minSdk 28/compileSdk 35, Kotlin 2.0.21/AGP 8.8.2 설정 (gradle/libs.versions.toml).
 - 반복되는 Activity/Fragment/권한/로깅/시스템 서비스 보일러플레이트를 제거하고 생산성을 높이는 것이 1차 목표 (docs/readme/README_START.md, docs/readme/README_ACTIVITY_FRAGMENT.md 등).
  
 
