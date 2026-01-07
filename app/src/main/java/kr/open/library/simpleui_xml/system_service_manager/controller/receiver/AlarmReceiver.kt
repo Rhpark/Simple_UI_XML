@@ -72,30 +72,31 @@ public class AlarmReceiver : BaseAlarmReceiver() {
     ) {
         Logx.d()
         notificationController =
-            context.getNotificationController(
-                showType = SimpleNotificationType.BROADCAST,
-                notificationChannel = null,
-            ).apply {
-                createChannel(
-                    NotificationChannel("Alarm_ID", "Alarm_Name", NotificationManager.IMPORTANCE_HIGH).apply {
+            context
+                .getNotificationController(
+                    showType = SimpleNotificationType.BROADCAST,
+                    notificationChannel = null,
+                ).apply {
+                    createChannel(
+                        NotificationChannel("Alarm_ID", "Alarm_Name", NotificationManager.IMPORTANCE_HIGH).apply {
 //            setShowBadge(true)
-                        alarmVo.vibrationPattern?.let {
-                            enableVibration(true)
-                            vibrationPattern = it.toLongArray()
-                        }
-                        alarmVo.soundUri?.let {
-                            setSound(
-                                it,
-                                AudioAttributes
-                                    .Builder()
-                                    .setUsage(AudioAttributes.USAGE_ALARM)
-                                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                                    .build(),
-                            )
-                        }
-                    },
-                )
-            }
+                            alarmVo.vibrationPattern?.let {
+                                enableVibration(true)
+                                vibrationPattern = it.toLongArray()
+                            }
+                            alarmVo.soundUri?.let {
+                                setSound(
+                                    it,
+                                    AudioAttributes
+                                        .Builder()
+                                        .setUsage(AudioAttributes.USAGE_ALARM)
+                                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                                        .build(),
+                                )
+                            }
+                        },
+                    )
+                }
     }
 
     @SuppressLint("MissingPermission")
