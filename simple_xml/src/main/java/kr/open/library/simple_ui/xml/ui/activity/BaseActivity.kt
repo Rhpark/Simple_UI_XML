@@ -49,6 +49,7 @@ public abstract class BaseActivity(
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(layoutRes)
+        val rootView = layoutInflater.inflate(layoutRes, null)
+        setContentView(rootView)
     }
 }

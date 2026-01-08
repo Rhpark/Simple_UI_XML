@@ -363,9 +363,11 @@ class SampleActivity :
 
 override fun eventVmCollect() {
     lifecycleScope.launch {
-        vm.eventFlow.collect { event ->
-            when (event) {
-                is SampleEvent.ShowToast -> toastShowShort(event.message)
+        repeatOnLifecycle(Lifecycle.State.STARTED) {  // ✅ Best Practice
+            vm.eventFlow.collect { event ->
+                when (event) {
+                    is SampleEvent.ShowToast -> toastShowShort(event.message)
+                }
             }
         }
     }
@@ -379,14 +381,151 @@ override fun eventVmCollect() {
 
 override fun eventVmCollect() {
     viewLifecycleOwner.lifecycleScope.launch {
-        vm.eventFlow.collect { event ->
-            when (event) {
-                is SampleEvent.ShowToast -> toastShowShort(event.message)
+        repeatOnLifecycle(Lifecycle.State.STARTED) {  // ✅ Best Practice
+            vm.eventFlow.collect { event ->
+                when (event) {
+                    is SampleEvent.ShowToast -> toastShowShort(event.message)
+                }
             }
         }
     }
 }
 ```
+
+---
+
+### ⚠️ Important: Event Collection Best Practices (중요: 이벤트 수집 모범 사례)
+
+#### ❌ Wrong Way (Causes Duplicate Collectors) / 잘못된 방법 (중복 수집 발생)
+
+```kotlin
+override fun eventVmCollect() {
+    lifecycleScope.launch {
+        vm.events.collect { event ->  // ❌ May cause duplicate collectors
+            handleEvent(event)
+        }
+    }
+}
+```
+
+**Problem / 문제점:**
+During configuration changes (e.g., screen rotation), a new Activity instance is created, but the **ViewModel survives**. This causes multiple collectors to listen to the same Flow, leading to **duplicate event handling**.
+
+구성 변경(예: 화면 회전) 시 새로운 Activity 인스턴스가 생성되지만 **ViewModel은 유지**됩니다. 이로 인해 여러 개의 수집기가 동일한 Flow를 수신하게 되어 **이벤트가 중복으로 처리**됩니다.
+
+**Example Scenario / 문제 시나리오:**
+```kotlin
+// 1. Initial Activity created → eventVmCollect() → collect starts (Collector #1)
+// 2. Screen rotation occurs
+// 3. Old Activity destroyed (but Collector #1 still active!)
+// 4. New Activity created → eventVmCollect() → collect starts (Collector #2)
+// 5. Result: Same event triggers TWICE! 💥
+
+// 1. 초기 Activity 생성 → eventVmCollect() → 수집 시작 (Collector #1)
+// 2. 화면 회전 발생
+// 3. 기존 Activity 파괴 (하지만 Collector #1은 여전히 활성!)
+// 4. 새 Activity 생성 → eventVmCollect() → 수집 시작 (Collector #2)
+// 5. 결과: 동일한 이벤트가 2번 실행! 💥
+```
+
+---
+
+#### ✅ Correct Way (Safe for Configuration Changes) / 올바른 방법 (구성 변경에 안전)
+
+```kotlin
+override fun eventVmCollect() {
+    lifecycleScope.launch {
+        repeatOnLifecycle(Lifecycle.State.STARTED) {  // ✅ Recommended
+            vm.events.collect { event ->
+                handleEvent(event)
+            }
+        }
+    }
+}
+```
+
+**Why It Works / 작동 원리:**
+`repeatOnLifecycle(Lifecycle.State.STARTED)` automatically:
+1. **Starts** collection when the lifecycle reaches `STARTED` state
+2. **Cancels** collection when the lifecycle goes below `STARTED` (e.g., `STOPPED`)
+3. **Restarts** collection when the lifecycle returns to `STARTED`
+
+`repeatOnLifecycle(Lifecycle.State.STARTED)`는 자동으로:
+1. 생명주기가 `STARTED` 상태에 도달하면 수집을 **시작**
+2. 생명주기가 `STARTED` 이하로 내려가면 (예: `STOPPED`) 수집을 **취소**
+3. 생명주기가 다시 `STARTED`로 돌아오면 수집을 **재시작**
+
+This ensures **only one active collector** exists at any time, even during configuration changes.
+
+이를 통해 구성 변경 중에도 **항상 하나의 활성 수집기만** 존재하도록 보장합니다.
+
+---
+
+#### 📚 Complete Example / 완전한 예제
+
+**Activity:**
+```kotlin
+class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
+    private val vm: MainViewModel by lazy { getViewModel() }
+
+    override fun onCreateView(rootView: View, savedInstanceState: Bundle?) {
+        binding.vm = vm
+        lifecycle.addObserver(vm)
+    }
+
+    override fun eventVmCollect() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {  // ✅ Best Practice
+                vm.eventFlow.collect { event ->
+                    when (event) {
+                        is MainEvent.ShowToast -> toastShowShort(event.message)
+                        is MainEvent.NavigateToDetail -> navigateToDetail(event.id)
+                    }
+                }
+            }
+        }
+    }
+}
+```
+
+**Fragment:**
+```kotlin
+class HomeFragment : BaseBindingFragment<FragmentHomeBinding>(R.layout.fragment_home) {
+    private val vm: HomeViewModel by lazy { getViewModel() }
+
+    override fun afterOnCreateView(rootView: View, savedInstanceState: Bundle?) {
+        binding.vm = vm
+        lifecycle.addObserver(vm)
+    }
+
+    override fun eventVmCollect() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {  // ✅ Best Practice
+                vm.eventFlow.collect { event ->
+                    when (event) {
+                        is HomeEvent.ShowSnackbar -> showSnackbar(event.message)
+                        is HomeEvent.RefreshData -> refreshData()
+                    }
+                }
+            }
+        }
+    }
+}
+```
+
+---
+
+#### 🎯 Key Takeaways / 핵심 요약
+
+- ✅ **Always** use `repeatOnLifecycle(Lifecycle.State.STARTED)` when collecting Flow in `eventVmCollect()`
+- ❌ **Never** collect Flow directly in `lifecycleScope.launch` without `repeatOnLifecycle`
+- 📱 This prevents duplicate event handling during **screen rotation** and other configuration changes
+- 🔄 The pattern works for both **Activity** (`lifecycleScope`) and **Fragment** (`viewLifecycleOwner.lifecycleScope`)
+
+- ✅ `eventVmCollect()`에서 Flow를 수집할 때 **항상** `repeatOnLifecycle(Lifecycle.State.STARTED)`를 사용하세요
+- ❌ `repeatOnLifecycle` 없이 `lifecycleScope.launch`에서 직접 Flow를 수집하지 **마세요**
+- 📱 이를 통해 **화면 회전** 및 기타 구성 변경 시 중복 이벤트 처리를 방지합니다
+- 🔄 이 패턴은 **Activity** (`lifecycleScope`)와 **Fragment** (`viewLifecycleOwner.lifecycleScope`) 모두에서 작동합니다
 - Use `lifecycleScope` in Activity and `viewLifecycleOwner.lifecycleScope` in Fragment to safely handle one-time events.
 > - Activity는 `lifecycleScope`, Fragment는 `viewLifecycleOwner.lifecycleScope`를 사용해 단발성 이벤트를 안전하게 처리할 수 있습니다.
 

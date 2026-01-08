@@ -250,13 +250,15 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
     override fun eventVmCollect() {
         // 이벤트 수집
         lifecycleScope.launch {
-            vm.mEventVm.collect { event ->
-                when (event) {
-                    is MainEvent.ShowMessage -> {
-                        binding.root.snackBarShowShort(event.message)
-                    }
-                    is MainEvent.UpdateCounter -> {
-                        binding.tvCounter.text = event.count.toString()
+            repeatOnLifecycle(Lifecycle.State.STARTED) {  // ✅ Best Practice
+                vm.mEventVm.collect { event ->
+                    when (event) {
+                        is MainEvent.ShowMessage -> {
+                            binding.root.snackBarShowShort(event.message)
+                        }
+                        is MainEvent.UpdateCounter -> {
+                            binding.tvCounter.text = event.count.toString()
+                        }
                     }
                 }
             }
@@ -274,6 +276,54 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 **Result:** Automatic DataBinding, automatic LifecycleOwner wiring, streamlined event collection, and a standardized `eventVmCollect()`!
 > **결과:** DataBinding 자동, LifecycleOwner 자동, 이벤트 수집 간소화, 표준화된 eventVmCollect()!
 </details>
+
+---
+
+### ⚠️ Important: Event Collection Best Practices (중요: 이벤트 수집 모범 사례)
+
+When using `eventVmCollect()` in your Activities, Fragments, or DialogFragments, **always** use `repeatOnLifecycle(Lifecycle.State.STARTED)` to prevent duplicate event collectors during configuration changes.
+
+Activity, Fragment, DialogFragment에서 `eventVmCollect()`를 사용할 때는 구성 변경 시 중복 이벤트 수집을 방지하기 위해 **반드시** `repeatOnLifecycle(Lifecycle.State.STARTED)`를 사용하세요.
+
+#### ❌ Wrong Way (Causes Duplicate Collectors) / 잘못된 방법 (중복 수집 발생)
+
+```kotlin
+override fun eventVmCollect() {
+    lifecycleScope.launch {
+        vm.events.collect { event ->  // ❌ May cause duplicate collectors
+            handleEvent(event)
+        }
+    }
+}
+```
+
+**Problem:** During screen rotation, the old collector keeps running while a new one starts, causing events to trigger twice.
+
+**문제점:** 화면 회전 시 기존 수집기가 계속 실행되면서 새 수집기도 시작되어 이벤트가 두 번 실행됩니다.
+
+#### ✅ Correct Way (Safe for Configuration Changes) / 올바른 방법 (구성 변경에 안전)
+
+```kotlin
+override fun eventVmCollect() {
+    lifecycleScope.launch {
+        repeatOnLifecycle(Lifecycle.State.STARTED) {  // ✅ Recommended
+            vm.events.collect { event ->
+                handleEvent(event)
+            }
+        }
+    }
+}
+```
+
+**Why It Works:** `repeatOnLifecycle` automatically cancels collection when the lifecycle goes below `STARTED` and restarts it when returning to `STARTED`, ensuring only one active collector.
+
+**작동 원리:** `repeatOnLifecycle`은 생명주기가 `STARTED` 이하로 내려가면 자동으로 수집을 취소하고, 다시 `STARTED`로 돌아오면 재시작하여 항상 하나의 활성 수집기만 유지합니다.
+
+📖 **For more details, see:** [README_ACTIVITY_FRAGMENT.md - Event Collection Best Practices](./README_ACTIVITY_FRAGMENT.md#⚠️-important-event-collection-best-practices-중요-이벤트-수집-모범-사례)
+
+📖 **자세한 내용은 다음을 참조하세요:** [README_ACTIVITY_FRAGMENT.md - 이벤트 수집 모범 사례](./README_ACTIVITY_FRAGMENT.md#⚠️-important-event-collection-best-practices-중요-이벤트-수집-모범-사례)
+
+---
 
 <br>
 </br>
@@ -400,13 +450,14 @@ class MainFragment : BaseBindingFragment<FragmentMainBinding>(R.layout.fragment_
     override fun eventVmCollect() {
         // 이벤트 수집만 간단하게
         viewLifecycleOwner.lifecycleScope.launch {
-            vm.mEventVm.collect { event ->
-                when (event) {
-                    is MainEvent.ShowMessage -> {
-                        binding.root.snackBarShowShort(event.message)
-                    }
-                    is MainEvent.UpdateData -> {
-                        binding.tvData.text = event.data
+            repeatOnLifecycle(Lifecycle.State.STARTED) {  // ✅ Best Practice
+                vm.mEventVm.collect { event ->
+                    when (event) {
+                        is MainEvent.ShowMessage -> {
+                            binding.root.snackBarShowShort(event.message)
+                        }
+                        is MainEvent.UpdateData -> {
+                            binding.tvData.text = event.data
                     }
                 }
             }
@@ -503,11 +554,13 @@ class InfoDialog : BaseBindingDialogFragment<DialogInfoBinding>(R.layout.dialog_
     // 이벤트 수집 규격화 (BaseBindingDialogFragment가 자동으로 호출)
     override fun eventVmCollect() {
         viewLifecycleOwner.lifecycleScope.launch {
-            vm.mEventVm.collect { event ->
-                when (event) {
-                    InfoDialogEvent.Dismiss -> safeDismiss()
-                    is InfoDialogEvent.ShowToast ->
-                        binding.root.snackBarShowShort(event.message)
+            repeatOnLifecycle(Lifecycle.State.STARTED) {  // ✅ Best Practice
+                vm.mEventVm.collect { event ->
+                    when (event) {
+                        InfoDialogEvent.Dismiss -> safeDismiss()
+                        is InfoDialogEvent.ShowToast ->
+                            binding.root.snackBarShowShort(event.message)
+                    }
                 }
             }
         }

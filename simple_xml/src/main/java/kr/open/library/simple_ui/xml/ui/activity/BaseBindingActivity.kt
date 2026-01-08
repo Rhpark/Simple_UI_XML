@@ -132,9 +132,40 @@ public abstract class BaseBindingActivity<BINDING : ViewDataBinding>(
 
     /**
      * Override this method to collect ViewModel events.<br>
-     * This hook is invoked once via `startEventVmCollect()` after `onCreateView()` completes.<br><br>
+     * This hook is invoked once via `startEventVmCollect()` after `onCreateView()` completes.<br>
+     *
+     * **Important**: To avoid duplicate collectors during configuration changes (e.g., screen rotation),
+     * use `repeatOnLifecycle(Lifecycle.State.STARTED)` to automatically cancel and restart collection.<br><br>
+     *
      * ViewModel 이벤트를 수집하려면 이 메서드를 오버라이드하세요.<br>
      * 이 훅은 `onCreateView()` 완료 후 `startEventVmCollect()`를 통해 1회 호출됩니다.<br>
+     *
+     * **중요**: 구성 변경(예: 화면 회전) 시 중복 수집을 방지하려면
+     * `repeatOnLifecycle(Lifecycle.State.STARTED)`를 사용하여 자동으로 수집을 취소하고 재시작하세요.<br>
+     *
+     * **Best Practice Example:**<br>
+     * ```kotlin
+     * override fun onEventVmCollect() {
+     *     lifecycleScope.launch {
+     *         repeatOnLifecycle(Lifecycle.State.STARTED) {  // ✅ Recommended
+     *             viewModel.events.collect { event ->
+     *                 when (event) {
+     *                     is MyEvent.ShowToast -> showToast(event.message)
+     *                 }
+     *             }
+     *         }
+     *     }
+     * }
+     * ```
+     *
+     * **Anti-Pattern (avoid this):**<br>
+     * ```kotlin
+     * override fun onEventVmCollect() {
+     *     lifecycleScope.launch {
+     *         viewModel.events.collect { event -> ... }  // ❌ May cause duplicate collectors
+     *     }
+     * }
+     * ```
      */
     protected open fun onEventVmCollect() {}
 
