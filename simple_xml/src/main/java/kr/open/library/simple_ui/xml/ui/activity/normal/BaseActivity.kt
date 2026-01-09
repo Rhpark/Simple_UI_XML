@@ -1,7 +1,10 @@
-package kr.open.library.simple_ui.xml.ui.activity
+package kr.open.library.simple_ui.xml.ui.activity.normal
 
 import android.os.Bundle
+import android.os.PersistableBundle
+import androidx.annotation.CallSuper
 import androidx.annotation.LayoutRes
+import kr.open.library.simple_ui.xml.ui.activity.root.RootActivity
 
 /**
  * A basic Activity that handles layout inflation automatically.<br>
@@ -30,7 +33,7 @@ import androidx.annotation.LayoutRes
  * @param layoutRes The layout resource ID to be inflated.<br><br>
  *                  인플레이션할 레이아웃 리소스 ID.<br>
  *
- * @see BaseBindingActivity For DataBinding-enabled Activity.<br><br>
+ * @see BaseDataBindingActivity For DataBinding-enabled Activity.<br><br>
  *      DataBinding을 사용하는 Activity는 BaseBindingActivity를 참조하세요.<br>
  */
 public abstract class BaseActivity(
@@ -47,9 +50,16 @@ public abstract class BaseActivity(
      *                           액티비티가 이전에 종료된 후 다시 초기화되는 경우,
      *                           이 Bundle에는 onSaveInstanceState에서 가장 최근에 제공된 데이터가 포함됩니다.
      */
+    @CallSuper
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val rootView = layoutInflater.inflate(layoutRes, null)
-        setContentView(rootView)
+        setContentView(layoutRes)
+    }
+
+    @CallSuper
+    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
+        beforeOnCreated(savedInstanceState)
+        super.onCreate(savedInstanceState)
+        setContentView(layoutRes)
     }
 }

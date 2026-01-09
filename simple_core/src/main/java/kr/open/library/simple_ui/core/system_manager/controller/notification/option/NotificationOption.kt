@@ -38,25 +38,25 @@ sealed class SimpleNotificationOptionBase(
 )
 
 /**
- * Data class containing all options for displaying a notification.<br><br>
- * 알림 표시를 위한 모든 옵션을 포함하는 데이터 클래스입니다.<br>
+ * Data class containing options for displaying a standard notification with title and content.<br><br>
+ * 제목과 내용이 있는 표준 알림을 표시하기 위한 옵션을 포함하는 데이터 클래스입니다.<br>
  *
  * @param notificationId Unique identifier for the notification.<br><br>
- *                       알림의 고유 식별자.
+ *                       알림의 고유 식별자.<br>
  * @param smallIcon Resource ID for the small icon.<br><br>
- *                  작은 아이콘의 리소스 ID.
+ *                  작은 아이콘의 리소스 ID.<br>
  * @param title Notification title text.<br><br>
- *              알림 제목 텍스트.
+ *              알림 제목 텍스트.<br>
  * @param content Notification content text.<br><br>
- *                알림 내용 텍스트.
+ *                알림 내용 텍스트.<br>
  * @param isAutoCancel Whether to automatically dismiss when clicked.<br><br>
- *                     클릭 시 자동으로 닫힐지 여부.
+ *                     클릭 시 자동으로 닫힐지 여부.<br>
  * @param onGoing Whether this is an ongoing notification.<br><br>
- *                진행 중인 알림인지 여부.
+ *                진행 중인 알림인지 여부.<br>
  * @param clickIntent Intent to execute when notification is clicked.<br><br>
- *                    알림 클릭 시 실행할 인텐트.
+ *                    알림 클릭 시 실행할 인텐트.<br>
  * @param actions List of action buttons to display.<br><br>
- *                표시할 액션 버튼 목록.
+ *                표시할 액션 버튼 목록.<br>
  */
 public data class DefaultNotificationOption(
     override val notificationId: Int,
@@ -79,27 +79,29 @@ public data class DefaultNotificationOption(
     )
 
 /**
- * Data class containing all options for displaying a notification.<br><br>
- * 알림 표시를 위한 모든 옵션을 포함하는 데이터 클래스입니다.<br>
+ * Data class containing options for displaying an expandable notification with long text content.<br>
+ * Uses NotificationCompat.BigTextStyle to show extended text when expanded.<br><br>
+ * 긴 텍스트 내용이 있는 확장 가능한 알림을 표시하기 위한 옵션을 포함하는 데이터 클래스입니다.<br>
+ * NotificationCompat.BigTextStyle을 사용하여 확장 시 긴 텍스트를 표시합니다.<br>
  *
  * @param notificationId Unique identifier for the notification.<br><br>
- *                       알림의 고유 식별자.
+ *                       알림의 고유 식별자.<br>
  * @param smallIcon Resource ID for the small icon.<br><br>
- *                  작은 아이콘의 리소스 ID.
+ *                  작은 아이콘의 리소스 ID.<br>
  * @param title Notification title text.<br><br>
- *              알림 제목 텍스트.
+ *              알림 제목 텍스트.<br>
  * @param content Notification content text.<br><br>
- *                알림 내용 텍스트.
+ *                알림 내용 텍스트.<br>
  * @param isAutoCancel Whether to automatically dismiss when clicked.<br><br>
- *                     클릭 시 자동으로 닫힐지 여부.
+ *                     클릭 시 자동으로 닫힐지 여부.<br>
  * @param onGoing Whether this is an ongoing notification.<br><br>
- *                진행 중인 알림인지 여부.
+ *                진행 중인 알림인지 여부.<br>
  * @param clickIntent Intent to execute when notification is clicked.<br><br>
- *                    알림 클릭 시 실행할 인텐트.
+ *                    알림 클릭 시 실행할 인텐트.<br>
  * @param actions List of action buttons to display.<br><br>
- *                표시할 액션 버튼 목록.
+ *                표시할 액션 버튼 목록.<br>
  * @param snippet Extended text for BIG_TEXT style.<br><br>
- *                BIG_TEXT 스타일을 위한 확장 텍스트.
+ *                BIG_TEXT 스타일을 위한 확장 텍스트.<br>
  */
 public data class BigTextNotificationOption(
     override val notificationId: Int,
@@ -123,27 +125,29 @@ public data class BigTextNotificationOption(
     )
 
 /**
- * Data class containing all options for displaying a notification.<br><br>
- * 알림 표시를 위한 모든 옵션을 포함하는 데이터 클래스입니다.<br>
+ * Data class containing options for displaying an expandable notification with a large image.<br>
+ * Uses NotificationCompat.BigPictureStyle to show a full-width bitmap when expanded.<br><br>
+ * 큰 이미지가 있는 확장 가능한 알림을 표시하기 위한 옵션을 포함하는 데이터 클래스입니다.<br>
+ * NotificationCompat.BigPictureStyle을 사용하여 확장 시 전체 너비 비트맵을 표시합니다.<br>
  *
  * @param notificationId Unique identifier for the notification.<br><br>
- *                       알림의 고유 식별자.
+ *                       알림의 고유 식별자.<br>
  * @param smallIcon Resource ID for the small icon.<br><br>
- *                  작은 아이콘의 리소스 ID.
+ *                  작은 아이콘의 리소스 ID.<br>
  * @param title Notification title text.<br><br>
- *              알림 제목 텍스트.
+ *              알림 제목 텍스트.<br>
  * @param content Notification content text.<br><br>
- *                알림 내용 텍스트.
+ *                알림 내용 텍스트.<br>
  * @param isAutoCancel Whether to automatically dismiss when clicked.<br><br>
- *                     클릭 시 자동으로 닫힐지 여부.
+ *                     클릭 시 자동으로 닫힐지 여부.<br>
  * @param onGoing Whether this is an ongoing notification.<br><br>
- *                진행 중인 알림인지 여부.
+ *                진행 중인 알림인지 여부.<br>
  * @param clickIntent Intent to execute when notification is clicked.<br><br>
- *                    알림 클릭 시 실행할 인텐트.
+ *                    알림 클릭 시 실행할 인텐트.<br>
  * @param actions List of action buttons to display.<br><br>
- *                표시할 액션 버튼 목록.
+ *                표시할 액션 버튼 목록.<br>
  * @param bigPicture Bitmap for the large bitmap.<br><br>
- *                  큰 비트맵 이미지.
+ *                  큰 비트맵 이미지.<br>
  */
 public data class BigPictureNotificationOption(
     override val notificationId: Int,
@@ -167,27 +171,29 @@ public data class BigPictureNotificationOption(
     )
 
 /**
- * Data class containing all options for displaying a notification.<br><br>
- * 알림 표시를 위한 모든 옵션을 포함하는 데이터 클래스입니다.<br>
+ * Data class containing options for displaying a notification with a progress bar.<br>
+ * Validates that progressPercent is between 0 and 100, suitable for tracking long-running operations.<br><br>
+ * 진행률 표시줄이 있는 알림을 표시하기 위한 옵션을 포함하는 데이터 클래스입니다.<br>
+ * progressPercent가 0에서 100 사이인지 검증하며, 장시간 실행되는 작업 추적에 적합합니다.<br>
  *
  * @param notificationId Unique identifier for the notification.<br><br>
- *                       알림의 고유 식별자.
+ *                       알림의 고유 식별자.<br>
  * @param smallIcon Resource ID for the small icon.<br><br>
- *                  작은 아이콘의 리소스 ID.
+ *                  작은 아이콘의 리소스 ID.<br>
  * @param title Notification title text.<br><br>
- *              알림 제목 텍스트.
+ *              알림 제목 텍스트.<br>
  * @param content Notification content text.<br><br>
- *                알림 내용 텍스트.
+ *                알림 내용 텍스트.<br>
  * @param isAutoCancel Whether to automatically dismiss when clicked.<br><br>
- *                     클릭 시 자동으로 닫힐지 여부.
+ *                     클릭 시 자동으로 닫힐지 여부.<br>
  * @param onGoing Whether this is an ongoing notification.<br><br>
- *                진행 중인 알림인지 여부.
+ *                진행 중인 알림인지 여부.<br>
  * @param clickIntent Intent to execute when notification is clicked.<br><br>
- *                    알림 클릭 시 실행할 인텐트.
+ *                    알림 클릭 시 실행할 인텐트.<br>
  * @param actions List of action buttons to display.<br><br>
- *                표시할 액션 버튼 목록.
+ *                표시할 액션 버튼 목록.<br>
  * @param progressPercent Current progress percentage (0-100).<br><br>
- *                        현재 진행률 (0-100).
+ *                        현재 진행률 (0-100).<br>
  */
 public data class ProgressNotificationOption(
     override val notificationId: Int,
@@ -219,11 +225,11 @@ public data class ProgressNotificationOption(
  * PendingIntent 생성을 위한 옵션을 포함하는 데이터 클래스입니다.<br>
  *
  * @param actionId Unique action identifier for the PendingIntent.<br><br>
- *                 PendingIntent의 고유 액션 식별자.
+ *                 PendingIntent의 고유 액션 식별자.<br>
  * @param clickIntent Intent to wrap in the PendingIntent.<br><br>
- *                    PendingIntent에 래핑할 인텐트.
+ *                    PendingIntent에 래핑할 인텐트.<br>
  * @param flags PendingIntent flags.<br><br>
- *              PendingIntent 플래그.
+ *              PendingIntent 플래그.<br>
  */
 public data class SimplePendingIntentOption(
     public val actionId: Int,

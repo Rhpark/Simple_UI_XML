@@ -3,11 +3,11 @@ package kr.open.library.simpleui_xml.activity_fragment
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.view.View
+import android.os.PersistableBundle
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
-import kr.open.library.simple_ui.xml.ui.activity.BaseBindingActivity
+import kr.open.library.simple_ui.xml.ui.activity.binding.BaseDataBindingActivity
 import kr.open.library.simpleui_xml.R
 import kr.open.library.simpleui_xml.activity_fragment.activity.BaseActivityExample
 import kr.open.library.simpleui_xml.activity_fragment.activity.BaseBindingActivityExample
@@ -16,7 +16,7 @@ import kr.open.library.simpleui_xml.activity_fragment.dialog.BaseDialogFragmentE
 import kr.open.library.simpleui_xml.activity_fragment.fragment.FragmentContainerActivity
 import kr.open.library.simpleui_xml.databinding.ActivityActivityFragmentBinding
 
-class ActivityFragmentActivity : BaseBindingActivity<ActivityActivityFragmentBinding>(R.layout.activity_activity_fragment) {
+class ActivityFragmentActivity : BaseDataBindingActivity<ActivityActivityFragmentBinding>(R.layout.activity_activity_fragment) {
     private val vm: ActivityFragmentActivityVm by viewModels()
 
     companion object {
@@ -24,9 +24,10 @@ class ActivityFragmentActivity : BaseBindingActivity<ActivityActivityFragmentBin
         const val BASE_BINDING_FRAGMENT = 2
     }
 
-    override fun onCreateView(rootView: View, savedInstanceState: Bundle?) {
-        super.onCreateView(rootView, savedInstanceState)
-        binding.vm = vm
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        getBinding().vm = vm
         lifecycle.addObserver(vm)
     }
 

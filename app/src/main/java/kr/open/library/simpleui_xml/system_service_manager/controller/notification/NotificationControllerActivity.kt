@@ -7,7 +7,7 @@ import android.app.NotificationManager
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.view.View
+import android.os.PersistableBundle
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
@@ -19,13 +19,13 @@ import kr.open.library.simple_ui.core.system_manager.controller.notification.opt
 import kr.open.library.simple_ui.core.system_manager.controller.notification.option.ProgressNotificationOption
 import kr.open.library.simple_ui.core.system_manager.extensions.getNotificationController
 import kr.open.library.simple_ui.xml.extensions.view.toastShowShort
-import kr.open.library.simple_ui.xml.ui.activity.BaseBindingActivity
+import kr.open.library.simple_ui.xml.ui.activity.binding.BaseDataBindingActivity
 import kr.open.library.simpleui_xml.MainActivity
 import kr.open.library.simpleui_xml.R
 import kr.open.library.simpleui_xml.databinding.ActivityNotificationControllerBinding
 
 class NotificationControllerActivity :
-    BaseBindingActivity<ActivityNotificationControllerBinding>(R.layout.activity_notification_controller) {
+    BaseDataBindingActivity<ActivityNotificationControllerBinding>(R.layout.activity_notification_controller) {
     private val vm: NotificationControllerActivityVm by viewModels()
 
     private val notificationController by lazy {
@@ -41,9 +41,10 @@ class NotificationControllerActivity :
         )
     }
 
-    override fun onCreateView(rootView: View, savedInstanceState: Bundle?) {
-        super.onCreateView(rootView, savedInstanceState)
-        binding.vm = vm
+    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
+        super.onCreate(savedInstanceState, persistentState)
+
+        getBinding().vm = vm
         lifecycle.addObserver(vm)
         requestNotificationPermission()
     }

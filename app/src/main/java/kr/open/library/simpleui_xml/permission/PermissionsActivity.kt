@@ -2,7 +2,7 @@ package kr.open.library.simpleui_xml.permission
 
 import android.Manifest
 import android.os.Bundle
-import android.view.View
+import android.os.PersistableBundle
 import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
@@ -10,12 +10,12 @@ import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.xml.extensions.view.SnackBarOption
 import kr.open.library.simple_ui.xml.extensions.view.snackBarMakeShort
 import kr.open.library.simple_ui.xml.extensions.view.snackBarShowShort
-import kr.open.library.simple_ui.xml.ui.activity.BaseBindingActivity
+import kr.open.library.simple_ui.xml.ui.activity.binding.BaseDataBindingActivity
 import kr.open.library.simple_ui.xml.ui.adapter.normal.simple.SimpleRcvAdapter
 import kr.open.library.simpleui_xml.R
 import kr.open.library.simpleui_xml.databinding.ActivityPermissionsBinding
 
-class PermissionsActivity : BaseBindingActivity<ActivityPermissionsBinding>(R.layout.activity_permissions) {
+class PermissionsActivity : BaseDataBindingActivity<ActivityPermissionsBinding>(R.layout.activity_permissions) {
     private val vm: PermissionsActivityVm by lazy { getViewModel<PermissionsActivityVm>() }
 
     private val adapter = SimpleRcvAdapter<String>(R.layout.item_rcv_textview) { holder, item, position ->
@@ -24,11 +24,12 @@ class PermissionsActivity : BaseBindingActivity<ActivityPermissionsBinding>(R.la
         setOnItemClickListener { i, s, view -> view.snackBarShowShort("OnClick $s") }
     }
 
-    override fun onCreateView(rootView: View, savedInstanceState: Bundle?) {
-        super.onCreateView(rootView, savedInstanceState)
-        binding.vm = vm
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        getBinding().vm = vm
         lifecycle.addObserver(vm)
-        binding.rcvPermission.adapter = adapter
+        getBinding().rcvPermission.adapter = adapter
     }
 
     override fun onEventVmCollect() {
@@ -65,7 +66,7 @@ class PermissionsActivity : BaseBindingActivity<ActivityPermissionsBinding>(R.la
                         "Permission denied $deniedPermissions"
                     }
 
-            binding.btnCameraPermission.snackBarMakeShort(msg, SnackBarOption(actionText = "Ok", action = {})).show()
+            getBinding().btnCameraPermission.snackBarMakeShort(msg, SnackBarOption(actionText = "Ok", action = {})).show()
             adapter.addItem(msg)
         }
     }

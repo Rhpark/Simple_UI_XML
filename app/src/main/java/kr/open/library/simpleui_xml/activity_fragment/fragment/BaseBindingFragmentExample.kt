@@ -8,20 +8,12 @@ import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.launch
 import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.xml.extensions.view.snackBarShowShort
-import kr.open.library.simple_ui.xml.ui.fragment.BaseBindingFragment
+import kr.open.library.simple_ui.xml.ui.fragment.binding.BaseDataBindingFragment
 import kr.open.library.simpleui_xml.R
 import kr.open.library.simpleui_xml.databinding.FragmentBaseBindingExampleBinding
 
-class BaseBindingFragmentExample : BaseBindingFragment<FragmentBaseBindingExampleBinding>(R.layout.fragment_base_binding_example) {
+class BaseBindingFragmentExample : BaseDataBindingFragment<FragmentBaseBindingExampleBinding>(R.layout.fragment_base_binding_example) {
     private val vm: BaseBindingFragmentExampleVm by lazy { getViewModel() }
-
-    override fun afterOnCreateView(
-        rootView: View,
-        savedInstanceState: Bundle?,
-    ) {
-        super.afterOnCreateView(rootView, savedInstanceState)
-        Logx.d("BaseBindingFragmentExample - afterOnCreateView() called (typo: Crate not Create)")
-    }
 
     override fun onViewCreated(
         view: View,

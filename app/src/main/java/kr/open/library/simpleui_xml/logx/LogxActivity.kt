@@ -1,7 +1,7 @@
 package kr.open.library.simpleui_xml.logx
 
 import android.os.Bundle
-import android.view.View
+import android.os.PersistableBundle
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
@@ -10,17 +10,18 @@ import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.core.logcat.config.LogxStorageType
 import kr.open.library.simple_ui.core.logcat.extensions.logxD
 import kr.open.library.simple_ui.core.logcat.model.LogxType
-import kr.open.library.simple_ui.xml.ui.activity.BaseBindingActivity
+import kr.open.library.simple_ui.xml.ui.activity.binding.BaseDataBindingActivity
 import kr.open.library.simpleui_xml.R
 import kr.open.library.simpleui_xml.databinding.ActivityLogxBinding
 
-class LogxActivity : BaseBindingActivity<ActivityLogxBinding>(R.layout.activity_logx) {
+class LogxActivity : BaseDataBindingActivity<ActivityLogxBinding>(R.layout.activity_logx) {
     private val vm: LogxActivityVm by viewModels()
 
-    override fun onCreateView(rootView: View, savedInstanceState: Bundle?) {
-        super.onCreateView(rootView, savedInstanceState)
+    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
+        super.onCreate(savedInstanceState, persistentState)
+
         Logx.setSaveToFile(true)
-        binding.vm = vm
+        getBinding().vm = vm
         lifecycle.addObserver(vm)
     }
 

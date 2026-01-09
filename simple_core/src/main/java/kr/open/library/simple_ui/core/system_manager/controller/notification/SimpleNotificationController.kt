@@ -28,21 +28,49 @@ import kr.open.library.simple_ui.core.system_manager.extensions.getNotificationM
  * 다양한 스타일과 기능을 지원하는 Android 알림 관리 컨트롤러입니다.<br>
  * 채널 생성, 알림 표시, 진행률 알림 관리를 위한 메서드를 제공합니다.<br>
  *
- * Required permission:<br>
- * `<uses-permission android:name="android.permission.POST_NOTIFICATIONS" />`<br><br>
- * 필수 권한:<br>
- * `<uses-permission android:name="android.permission.POST_NOTIFICATIONS" />`<br>
+ * **Why this class exists / 이 클래스가 필요한 이유:**<br>
+ * - Android's NotificationManager requires complex setup with channels, builders, and PendingIntents for each notification.<br>
+ * - This class simplifies notification creation by providing a unified API with type-safe options and automatic channel management.<br>
+ * - Eliminates boilerplate code for common notification patterns (default, big text, big picture, progress).<br><br>
+ * - Android의 NotificationManager는 각 알림마다 채널, 빌더, PendingIntent 설정이 필요한 복잡한 구조입니다.<br>
+ * - 이 클래스는 타입 안전한 옵션과 자동 채널 관리를 제공하는 통합 API로 알림 생성을 단순화합니다.<br>
+ * - 일반적인 알림 패턴(기본, 긴 텍스트, 큰 이미지, 진행률)에 대한 보일러플레이트 코드를 제거합니다.<br>
  *
- * Notification Importance Levels:<br>
+ * **Design decisions / 설계 결정 이유:**<br>
+ * - Uses sealed class hierarchy (SimpleNotificationOptionBase) for type-safe notification configuration.<br>
+ * - Delegates builder logic to SimpleNotificationBuilder for separation of concerns and testability.<br>
+ * - Provides automatic progress notification cleanup (30-minute idle timer) to prevent memory leaks.<br>
+ * - Supports dynamic channel switching to enable multi-channel notification scenarios.<br><br>
+ * - 타입 안전한 알림 구성을 위해 sealed class 계층 구조(SimpleNotificationOptionBase)를 사용합니다.<br>
+ * - 관심사 분리와 테스트 가능성을 위해 빌더 로직을 SimpleNotificationBuilder로 위임합니다.<br>
+ * - 메모리 누수를 방지하기 위해 자동 진행률 알림 정리(30분 유휴 타이머)를 제공합니다.<br>
+ * - 멀티 채널 알림 시나리오를 위해 동적 채널 전환을 지원합니다.<br>
+ *
+ * **Permission notice / 권한 안내:**<br>
+ * - Android 13+ (TIRAMISU) requires POST_NOTIFICATIONS permission at runtime.<br>
+ * - Required permission: `<uses-permission android:name="android.permission.POST_NOTIFICATIONS" />`<br><br>
+ * - Android 13+ (TIRAMISU)는 런타임에 POST_NOTIFICATIONS 권한이 필요합니다.<br>
+ * - 필수 권한: `<uses-permission android:name="android.permission.POST_NOTIFICATIONS" />`<br>
+ *
+ * **Notification Importance Levels / 알림 중요도 레벨:**<br>
  * - `IMPORTANCE_HIGH`: Urgent, makes sound and appears as heads-up<br>
  * - `IMPORTANCE_DEFAULT`: High priority, makes sound<br>
  * - `IMPORTANCE_LOW`: Medium priority, no sound<br>
  * - `IMPORTANCE_MIN`: Low priority, no sound and not shown in status bar<br><br>
- * 알림 중요도 레벨:<br>
  * - `IMPORTANCE_HIGH`: 긴급, 알림음이 울리며 헤즈업으로 표시<br>
  * - `IMPORTANCE_DEFAULT`: 높은 중요도, 알림음이 울림<br>
  * - `IMPORTANCE_LOW`: 중간 중요도, 알림음이 울리지 않음<br>
  * - `IMPORTANCE_MIN`: 낮은 중요도, 알림음이 없고 상태표시줄에 표시되지 않음<br>
+ *
+ * **Usage / 사용법:**<br>
+ * 1. Create a notification channel using `createChannel()` or use the default channel.<br>
+ * 2. Create notification options (DefaultNotificationOption, BigTextNotificationOption, etc.).<br>
+ * 3. Call `showNotification()` with the options and show type (Activity, Service, Broadcast).<br>
+ * 4. For progress notifications, use `updateProgressNotification()` and `finishProgressNotification()`.<br><br>
+ * 1. `createChannel()`로 알림 채널을 생성하거나 기본 채널을 사용하세요.<br>
+ * 2. 알림 옵션을 생성하세요 (DefaultNotificationOption, BigTextNotificationOption 등).<br>
+ * 3. 옵션과 표시 타입(Activity, Service, Broadcast)으로 `showNotification()`을 호출하세요.<br>
+ * 4. 진행률 알림의 경우 `updateProgressNotification()`과 `finishProgressNotification()`을 사용하세요.<br>
  *
  * @param context The application context.<br><br>
  *                애플리케이션 컨텍스트.<br>

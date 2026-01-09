@@ -1,4 +1,4 @@
-package kr.open.library.simple_ui.xml.ui.fragment.dialog
+package kr.open.library.simple_ui.xml.ui.dialog.root
 
 import android.app.Dialog
 import android.graphics.Color
@@ -6,11 +6,13 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.Gravity
 import android.view.View
+import androidx.annotation.CallSuper
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import androidx.annotation.StyleRes
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
+import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
 import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.xml.permissions.register.PermissionDelegate
 import kr.open.library.simple_ui.xml.permissions.register.PermissionRequester
@@ -22,7 +24,37 @@ import kr.open.library.simple_ui.xml.system_manager.extensions.getDisplayInfo
  * 공통 다이얼로그 기능과 권한 관리를 제공하는 루트 DialogFragment 클래스입니다.<br>
  * 라이브러리의 모든 DialogFragment 클래스의 기반이 됩니다.<br>
  *
- * Features:<br>
+ * **Why this class exists / 이 클래스가 필요한 이유:**<br>
+ * - Android's DialogFragment requires repetitive setup for common dialog features like positioning, animation, and background customization.<br>
+ * - Permission management needs careful lifecycle handling to survive configuration changes.<br>
+ * - Dialog show/dismiss operations can throw exceptions in edge cases (fragment detached, state loss), requiring safe wrappers.<br>
+ * - Provides a centralized foundation for all dialog variants (normal, ViewBinding, DataBinding) to inherit common functionality.<br><br>
+ * - Android의 DialogFragment는 위치, 애니메이션, 배경 커스터마이징과 같은 공통 다이얼로그 기능에 대해 반복적인 설정이 필요합니다.<br>
+ * - 권한 관리는 구성 변경에서 살아남기 위해 신중한 생명주기 처리가 필요합니다.<br>
+ * - 다이얼로그 show/dismiss 작업은 엣지 케이스(프래그먼트 분리, 상태 손실)에서 예외를 던질 수 있어 안전한 래퍼가 필요합니다.<br>
+ * - 모든 다이얼로그 변형(normal, ViewBinding, DataBinding)이 공통 기능을 상속받을 수 있는 중앙화된 기반을 제공합니다.<br>
+ *
+ * **Design decisions / 설계 결정 이유:**<br>
+ * - Extends DialogFragment to provide dialog-specific lifecycle and features.<br>
+ * - Uses PermissionDelegate pattern for reusable permission handling across DialogFragment/Fragment/Activity.<br>
+ * - Provides abstract setBackgroundColor/setBackgroundResource methods for subclasses to implement based on their view access pattern.<br>
+ * - Uses safeCatch wrapper for show/dismiss operations to prevent crashes from state loss exceptions.<br>
+ * - Stores dialog configuration (gravity, animation, cancelable) as properties to allow dynamic updates after creation.<br><br>
+ * - DialogFragment를 확장하여 다이얼로그 전용 생명주기 및 기능을 제공합니다.<br>
+ * - DialogFragment/Fragment/Activity에서 재사용 가능한 권한 처리를 위해 PermissionDelegate 패턴을 사용합니다.<br>
+ * - 하위 클래스가 뷰 접근 패턴에 따라 구현할 수 있도록 추상 setBackgroundColor/setBackgroundResource 메서드를 제공합니다.<br>
+ * - 상태 손실 예외로 인한 크래시를 방지하기 위해 show/dismiss 작업에 safeCatch 래퍼를 사용합니다.<br>
+ * - 생성 후 동적 업데이트를 허용하기 위해 다이얼로그 구성(gravity, animation, cancelable)을 프로퍼티로 저장합니다.<br>
+ *
+ * **Important notes / 주의사항:**<br>
+ * - Permission requests must be made only after the DialogFragment is attached (isAdded == true).<br>
+ * - Calling onRequestPermissions() before attachment may throw because PermissionDelegate uses requireContext().<br>
+ * - Use safeShow/safeDismiss instead of show/dismiss to prevent crashes from IllegalStateException.<br><br>
+ * - 권한 요청은 DialogFragment가 attach된 이후(isAdded == true)에만 수행해야 합니다.<br>
+ * - attach 이전에 onRequestPermissions()를 호출하면 PermissionDelegate가 requireContext()를 사용해 크래시가 발생할 수 있습니다.<br>
+ * - IllegalStateException으로 인한 크래시를 방지하기 위해 show/dismiss 대신 safeShow/safeDismiss를 사용하세요.<br>
+ *
+ * **Features / 기능:**<br>
  * - Custom animation styles for dialog appearance/disappearance<br>
  * - Dialog position control via gravity settings<br>
  * - Cancelable behavior configuration<br>
@@ -31,7 +63,6 @@ import kr.open.library.simple_ui.xml.system_manager.extensions.getDisplayInfo
  * - Safe show/dismiss methods with exception handling<br>
  * - Runtime permission management via PermissionDelegate<br>
  * - Dialog size resizing based on screen ratio<br><br>
- * 기능:<br>
  * - 다이얼로그 나타남/사라짐에 대한 커스텀 애니메이션 스타일<br>
  * - gravity 설정을 통한 다이얼로그 위치 제어<br>
  * - 취소 가능 동작 구성<br>
@@ -44,8 +75,14 @@ import kr.open.library.simple_ui.xml.system_manager.extensions.getDisplayInfo
  * @see BaseDialogFragment For simple layout-based DialogFragment.<br><br>
  *      간단한 레이아웃 기반 DialogFragment는 BaseDialogFragment를 참조하세요.<br>
  *
- * @see BaseBindingDialogFragment For DataBinding-enabled DialogFragment.<br><br>
- *      DataBinding을 사용하는 DialogFragment는 BaseBindingDialogFragment를 참조하세요.<br>
+ * @see ParentBindingViewDialogFragment For the abstract parent class of all binding-enabled dialog fragments.<br><br>
+ *      모든 바인딩 지원 DialogFragment의 추상 부모 클래스는 ParentBindingViewDialogFragment를 참조하세요.<br>
+ *
+ * @see BaseViewBindingDialogFragment For ViewBinding-enabled DialogFragment.<br><br>
+ *      ViewBinding을 사용하는 DialogFragment는 BaseViewBindingDialogFragment를 참조하세요.<br>
+ *
+ * @see BaseDataBindingDialogFragment For DataBinding-enabled DialogFragment.<br><br>
+ *      DataBinding을 사용하는 DialogFragment는 BaseDataBindingDialogFragment를 참조하세요.<br>
  */
 public abstract class RootDialogFragment :
     DialogFragment(),
@@ -111,6 +148,10 @@ public abstract class RootDialogFragment :
      */
     protected lateinit var permissionDelegate: PermissionDelegate<DialogFragment>
 
+    public abstract fun setBackgroundColor(@ColorInt color: Int)
+
+    public abstract fun setBackgroundResource(@DrawableRes resId: Int)
+
     /**
      * Sets the background color of the dialog.<br>
      * Clears any previously set background drawable.<br><br>
@@ -120,11 +161,10 @@ public abstract class RootDialogFragment :
      * @param color The color value to set as background.<br><br>
      *              배경으로 설정할 색상 값.<br>
      */
-    public open fun setBackgroundColor(
-        @ColorInt color: Int,
-    ) {
+    protected fun setBackgroundColor(rootView: View, color: Int) {
         this.backgroundColor = color
         this.backgroundResId = null
+        rootView.setBackgroundColor(color)
     }
 
     /**
@@ -136,11 +176,10 @@ public abstract class RootDialogFragment :
      * @param resId The drawable resource ID to set as background.<br><br>
      *              배경으로 설정할 drawable 리소스 ID.<br>
      */
-    public open fun setBackgroundDrawable(
-        @DrawableRes resId: Int,
-    ) {
+    protected fun setBackgroundResource(rootView: View, resId: Int) {
         this.backgroundColor = null
         this.backgroundResId = resId
+        rootView.setBackgroundResource(resId)
     }
 
     /**
@@ -158,28 +197,30 @@ public abstract class RootDialogFragment :
         public fun onItemClickListener(v: View)
     }
 
+    @CallSuper
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         permissionDelegate = PermissionDelegate(this)
         permissionDelegate.onRestoreInstanceState(savedInstanceState)
     }
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog =
-        super.onCreateDialog(savedInstanceState).apply {
-            window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-            setCancelable(dialogCancelable)
+    @CallSuper
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = super.onCreateDialog(savedInstanceState).apply {
+        window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        setCancelable(dialogCancelable)
 
-            // Apply animation if set
-            animationStyle?.let { style ->
-                window?.attributes?.windowAnimations = style
-            }
-
-            // Apply gravity if not center
-            if (dialogGravity != Gravity.CENTER) {
-                window?.setGravity(dialogGravity)
-            }
+        // Apply animation if set
+        animationStyle?.let { style ->
+            window?.attributes?.windowAnimations = style
         }
 
+        // Apply gravity if not center
+        if (dialogGravity != Gravity.CENTER) {
+            window?.setGravity(dialogGravity)
+        }
+    }
+
+    @CallSuper
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         permissionDelegate.onSaveInstanceState(outState)
@@ -223,9 +264,7 @@ public abstract class RootDialogFragment :
      * @param style The animation style resource ID.<br><br>
      *              애니메이션 스타일 리소스 ID.<br>
      */
-    public fun setAnimationStyle(
-        @StyleRes style: Int,
-    ) {
+    public fun setAnimationStyle(@StyleRes style: Int) {
         this.animationStyle = style
         dialog?.window?.attributes?.windowAnimations = style
     }
@@ -297,12 +336,8 @@ public abstract class RootDialogFragment :
      * 예외 처리와 함께 다이얼로그를 안전하게 닫습니다.<br>
      * 닫는 동안 발생할 수 있는 모든 예외를 잡습니다.<br>
      */
-    public fun safeDismiss() {
-        try {
-            dismiss()
-        } catch (e: Exception) {
-            Logx.e("Error $e")
-        }
+    public fun safeDismiss() = safeCatch {
+        dismiss()
     }
 
     /**
@@ -317,21 +352,27 @@ public abstract class RootDialogFragment :
      * @param tag The tag for this fragment, as per FragmentTransaction.add.<br><br>
      *            FragmentTransaction.add에 따른 이 프래그먼트의 태그.<br>
      */
-    public fun safeShow(
-        fragmentManager: FragmentManager,
-        tag: String,
-    ) {
-        try {
-            show(fragmentManager, tag)
-        } catch (e: Exception) {
-            Logx.e("Error $e")
-        }
+    public fun safeShow(fragmentManager: FragmentManager, tag: String) = safeCatch {
+        show(fragmentManager, tag)
     }
 
-    override fun onRequestPermissions(
-        permissions: List<String>,
-        onResult: (deniedPermissions: List<String>) -> Unit,
-    ) {
+    /**
+     * Requests permissions using the delegate.<br><br>
+     * 델리게이트를 사용하여 권한을 요청합니다.<br>
+     *
+     * **Important / 주의사항:**<br>
+     * - Call only after the Fragment is attached (isAdded == true).<br>
+     * - Calling before attachment or after detachment may throw because PermissionDelegate uses requireContext().<br><br>
+     * - Fragment가 attach된 이후(isAdded == true)에만 호출하세요.<br>
+     * - attach 이전/분리 이후 호출 시 PermissionDelegate가 requireContext()를 호출해 크래시가 발생할 수 있습니다.<br>
+     *
+     * @param permissions List of permissions to request.<br><br>
+     *                    요청할 권한 목록.<br>
+     * @param onResult Callback for permission results.<br><br>
+     *                 권한 결과에 대한 콜백.<br>
+     */
+    @CallSuper
+    final override fun onRequestPermissions(permissions: List<String>, onResult: (deniedPermissions: List<String>) -> Unit) {
         permissionDelegate.requestPermissions(permissions, onResult)
     }
 

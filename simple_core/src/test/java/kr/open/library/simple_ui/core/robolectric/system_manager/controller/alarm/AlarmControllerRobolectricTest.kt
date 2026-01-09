@@ -8,7 +8,7 @@ import android.content.Intent
 import android.os.Build
 import androidx.test.core.app.ApplicationProvider
 import kr.open.library.simple_ui.core.system_manager.controller.alarm.AlarmController
-import kr.open.library.simple_ui.core.system_manager.controller.alarm.vo.AlarmVo
+import kr.open.library.simple_ui.core.system_manager.controller.alarm.vo.AlarmVO
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -36,7 +36,7 @@ class AlarmControllerRobolectricTest {
     @Test
     fun registerAlarmClock_setsNextAlarmClockAndPendingIntent() {
         val alarmVo =
-            AlarmVo.createSimple(
+            AlarmVO.createSimple(
                 key = 1,
                 title = "Morning alarm",
                 message = "Wake up",
@@ -54,7 +54,7 @@ class AlarmControllerRobolectricTest {
     @Test
     fun registerAlarmExactAndAllowWhileIdle_schedulesExactWakeup() {
         val alarmVo =
-            AlarmVo.createSimple(
+            AlarmVO.createSimple(
                 key = 2,
                 title = "Exact alarm",
                 message = "Do work",
@@ -73,7 +73,7 @@ class AlarmControllerRobolectricTest {
     @Test
     fun registerAlarmClock_whenTimePassed_schedulesNextDay() {
         val alarmVo =
-            AlarmVo.createSimple(
+            AlarmVO.createSimple(
                 key = 3,
                 title = "Next day alarm",
                 message = "Run tomorrow",
@@ -90,7 +90,7 @@ class AlarmControllerRobolectricTest {
     @Test
     fun remove_cancelsRegisteredAlarm() {
         val alarmVo =
-            AlarmVo.createSimple(
+            AlarmVO.createSimple(
                 key = 4,
                 title = "Remove alarm",
                 message = "Cancel me",

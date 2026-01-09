@@ -8,7 +8,7 @@ import android.annotation.SuppressLint
 import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
-import android.view.View
+import android.os.PersistableBundle
 import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
@@ -23,12 +23,12 @@ import kr.open.library.simple_ui.core.system_manager.info.network.sim.SimInfo
 import kr.open.library.simple_ui.core.system_manager.info.network.telephony.TelephonyInfo
 import kr.open.library.simple_ui.xml.extensions.view.toastShowShort
 import kr.open.library.simple_ui.xml.system_manager.extensions.getDisplayInfo
-import kr.open.library.simple_ui.xml.ui.activity.BaseBindingActivity
+import kr.open.library.simple_ui.xml.ui.activity.binding.BaseDataBindingActivity
 import kr.open.library.simple_ui.xml.ui.adapter.normal.simple.SimpleRcvAdapter
 import kr.open.library.simpleui_xml.R
 import kr.open.library.simpleui_xml.databinding.ActivityServiceManagerInfoBinding
 
-class ServiceManagerInfoActivity : BaseBindingActivity<ActivityServiceManagerInfoBinding>(R.layout.activity_service_manager_info) {
+class ServiceManagerInfoActivity : BaseDataBindingActivity<ActivityServiceManagerInfoBinding>(R.layout.activity_service_manager_info) {
     private val adapter = SimpleRcvAdapter<String>(android.R.layout.test_list_item) { holder, item, position ->
         holder.findViewById<TextView>(android.R.id.text1).text = item
     }.apply {
@@ -42,15 +42,16 @@ class ServiceManagerInfoActivity : BaseBindingActivity<ActivityServiceManagerInf
     private val telephonyInfo: TelephonyInfo by lazy { TelephonyInfo(this) }
     private val networkInfo: NetworkConnectivityInfo by lazy { NetworkConnectivityInfo(this) }
 
-    override fun onCreateView(rootView: View, savedInstanceState: Bundle?) {
-        super.onCreateView(rootView, savedInstanceState)
-        binding.rcvResult.adapter = adapter
-        initListener()
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        getBinding().rcvResult.adapter = adapter
     }
 
     @SuppressLint("MissingPermission")
-    private fun initListener() {
-        binding.run {
+    override fun onInitBind(binding: ActivityServiceManagerInfoBinding) {
+        super.onInitBind(binding)
+        getBinding().run {
             btnDisplay.setOnClickListener {
                 val displayInfo = getDisplayInfo()
                 val res =
@@ -266,14 +267,18 @@ class ServiceManagerInfoActivity : BaseBindingActivity<ActivityServiceManagerInf
                     "WiFi IP: ${networkInfo.getIPAddressByNetworkType(android.net.NetworkCapabilities.TRANSPORT_WIFI)}",
                 )
                 addItem(
-                    "Mobile IP: ${networkInfo.getIPAddressByNetworkType(
-                        android.net.NetworkCapabilities.TRANSPORT_CELLULAR,
-                    )}",
+                    "Mobile IP: ${
+                        networkInfo.getIPAddressByNetworkType(
+                            android.net.NetworkCapabilities.TRANSPORT_CELLULAR,
+                        )
+                    }",
                 )
                 addItem(
-                    "Ethernet IP: ${networkInfo.getIPAddressByNetworkType(
-                        android.net.NetworkCapabilities.TRANSPORT_ETHERNET,
-                    )}",
+                    "Ethernet IP: ${
+                        networkInfo.getIPAddressByNetworkType(
+                            android.net.NetworkCapabilities.TRANSPORT_ETHERNET,
+                        )
+                    }",
                 )
 
                 // 네트워크 요약

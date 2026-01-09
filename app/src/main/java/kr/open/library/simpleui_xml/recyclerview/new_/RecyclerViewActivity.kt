@@ -1,10 +1,10 @@
 package kr.open.library.simpleui_xml.recyclerview.new_
 
 import android.os.Bundle
-import android.view.View
+import android.os.PersistableBundle
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
-import kr.open.library.simple_ui.xml.ui.activity.BaseBindingActivity
+import kr.open.library.simple_ui.xml.ui.activity.binding.BaseDataBindingActivity
 import kr.open.library.simple_ui.xml.ui.adapter.list.diffutil.RcvListDiffUtilCallBack
 import kr.open.library.simple_ui.xml.ui.adapter.list.simple.SimpleBindingRcvListAdapter
 import kr.open.library.simple_ui.xml.ui.adapter.normal.simple.SimpleBindingRcvAdapter
@@ -16,7 +16,7 @@ import kr.open.library.simpleui_xml.databinding.ItemRcvTextviewBinding
 import kr.open.library.simpleui_xml.recyclerview.model.SampleItem
 import kr.open.library.simpleui_xml.recyclerview.new_.adapter.CustomListAdapter
 
-class RecyclerViewActivity : BaseBindingActivity<ActivityRecyclerviewBinding>(R.layout.activity_recyclerview) {
+class RecyclerViewActivity : BaseDataBindingActivity<ActivityRecyclerviewBinding>(R.layout.activity_recyclerview) {
     private val simpleListAdapter = SimpleBindingRcvListAdapter<SampleItem, ItemRcvTextviewBinding>(
         R.layout.item_rcv_textview,
         listDiffUtil =
@@ -51,14 +51,14 @@ class RecyclerViewActivity : BaseBindingActivity<ActivityRecyclerviewBinding>(R.
             setOnItemClickListener { i, sampleItem, view -> currentRemoveAtAdapter(i) }
         }.apply { setItems(SampleItem.createSampleData()) }
 
-    override fun onCreateView(rootView: View, savedInstanceState: Bundle?) {
-        super.onCreateView(rootView, savedInstanceState)
+    override fun onInitBind(binding: ActivityRecyclerviewBinding) {
+        super.onInitBind(binding)
         setupRecyclerView()
         setupScrollStateDetection()
     }
 
     private fun setupRecyclerView() {
-        binding.apply {
+        getBinding().apply {
             rcvItems.adapter = simpleListAdapter
             rBtnChangeSimpleAdapter.setOnClickListener { rcvItems.adapter = simpleAdapter }
             rBtnChangeSimpleListAdapter.setOnClickListener { rcvItems.adapter = simpleListAdapter }
@@ -70,7 +70,7 @@ class RecyclerViewActivity : BaseBindingActivity<ActivityRecyclerviewBinding>(R.
     }
 
     private fun setupScrollStateDetection() {
-        binding.rcvItems.apply {
+        getBinding().rcvItems.apply {
             lifecycleScope.launch {
                 sfScrollDirectionFlow.collect { direction ->
                     val directionText =
@@ -81,7 +81,7 @@ class RecyclerViewActivity : BaseBindingActivity<ActivityRecyclerviewBinding>(R.
                             ScrollDirection.RIGHT -> "오른쪽으로 스크롤"
                             ScrollDirection.IDLE -> "스크롤 정지"
                         }
-                    binding.tvScrollInfo.text = "방향: $directionText"
+                    getBinding().tvScrollInfo.text = "방향: $directionText"
                 }
             }
 
@@ -95,18 +95,18 @@ class RecyclerViewActivity : BaseBindingActivity<ActivityRecyclerviewBinding>(R.
                             ScrollEdge.RIGHT -> "우측"
                         }
                     val statusText = if (isReached) "도달" else "벗어남"
-                    binding.tvScrollInfo.text = "$edgeText $statusText"
+                    getBinding().tvScrollInfo.text = "$edgeText $statusText"
                 }
             }
         }
     }
 
     private fun currentSelectAdapter() {
-        if (binding.rBtnChangeSimpleAdapter.isChecked) {
+        if (getBinding().rBtnChangeSimpleAdapter.isChecked) {
             simpleAdapter.addItem(getItem(simpleAdapter.itemCount))
-        } else if (binding.rBtnChangeSimpleListAdapter.isChecked) {
+        } else if (getBinding().rBtnChangeSimpleListAdapter.isChecked) {
             simpleListAdapter.addItem(getItem(simpleListAdapter.itemCount))
-        } else if (binding.rBtnChangeCustomLIstAdapter.isChecked) {
+        } else if (getBinding().rBtnChangeCustomLIstAdapter.isChecked) {
             customListAdapter.addItem(getItem(customListAdapter.itemCount))
         }
     }
@@ -119,31 +119,31 @@ class RecyclerViewActivity : BaseBindingActivity<ActivityRecyclerviewBinding>(R.
         )
 
     private fun currentRemoveAtAdapter(position: Int) {
-        if (binding.rBtnChangeSimpleAdapter.isChecked) {
+        if (getBinding().rBtnChangeSimpleAdapter.isChecked) {
             simpleAdapter.removeAt(position)
-        } else if (binding.rBtnChangeSimpleListAdapter.isChecked) {
+        } else if (getBinding().rBtnChangeSimpleListAdapter.isChecked) {
             simpleListAdapter.removeAt(position)
-        } else if (binding.rBtnChangeCustomLIstAdapter.isChecked) {
+        } else if (getBinding().rBtnChangeCustomLIstAdapter.isChecked) {
             customListAdapter.removeAt(position)
         }
     }
 
     private fun currentRemoveAllAdapter() {
-        if (binding.rBtnChangeSimpleAdapter.isChecked) {
+        if (getBinding().rBtnChangeSimpleAdapter.isChecked) {
             simpleAdapter.removeAll()
-        } else if (binding.rBtnChangeSimpleListAdapter.isChecked) {
+        } else if (getBinding().rBtnChangeSimpleListAdapter.isChecked) {
             simpleListAdapter.removeAll()
-        } else if (binding.rBtnChangeCustomLIstAdapter.isChecked) {
+        } else if (getBinding().rBtnChangeCustomLIstAdapter.isChecked) {
             customListAdapter.removeAll()
         }
     }
 
     private fun currentShuffleAdapter() {
-        if (binding.rBtnChangeSimpleAdapter.isChecked) {
+        if (getBinding().rBtnChangeSimpleAdapter.isChecked) {
             simpleAdapter.setItems(simpleAdapter.getItems().shuffled())
-        } else if (binding.rBtnChangeSimpleListAdapter.isChecked) {
+        } else if (getBinding().rBtnChangeSimpleListAdapter.isChecked) {
             simpleListAdapter.setItems(simpleListAdapter.getItems().shuffled())
-        } else if (binding.rBtnChangeCustomLIstAdapter.isChecked) {
+        } else if (getBinding().rBtnChangeCustomLIstAdapter.isChecked) {
             customListAdapter.setItems(customListAdapter.getItems().shuffled())
         }
     }

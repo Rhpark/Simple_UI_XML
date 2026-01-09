@@ -4,23 +4,24 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
-import android.view.View
+import android.os.PersistableBundle
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
 import kr.open.library.simple_ui.core.system_manager.extensions.getWifiController
 import kr.open.library.simple_ui.xml.extensions.view.toastShowShort
-import kr.open.library.simple_ui.xml.ui.activity.BaseBindingActivity
+import kr.open.library.simple_ui.xml.ui.activity.binding.BaseDataBindingActivity
 import kr.open.library.simpleui_xml.R
 import kr.open.library.simpleui_xml.databinding.ActivityWifiControllerBinding
 
-class WifiControllerActivity : BaseBindingActivity<ActivityWifiControllerBinding>(R.layout.activity_wifi_controller) {
+class WifiControllerActivity : BaseDataBindingActivity<ActivityWifiControllerBinding>(R.layout.activity_wifi_controller) {
     private val vm: WifiControllerActivityVm by viewModels()
 
-    override fun onCreateView(rootView: View, savedInstanceState: Bundle?) {
-        super.onCreateView(rootView, savedInstanceState)
-        binding.vm = vm
+    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
+        super.onCreate(savedInstanceState, persistentState)
+
+        getBinding().vm = vm
         lifecycle.addObserver(vm)
         requestWifiPermissions()
     }
@@ -77,10 +78,10 @@ class WifiControllerActivity : BaseBindingActivity<ActivityWifiControllerBinding
             result.append("Link Speed: $linkSpeed Mbps\n")
             result.append("BSSID: ${wifiInfo.bssid}\n")
 
-            binding.tvResult.text = result.toString()
+            getBinding().tvResult.text = result.toString()
             toastShowShort("WiFi info retrieved")
         } else {
-            binding.tvResult.text = "No WiFi connection available"
+            getBinding().tvResult.text = "No WiFi connection available"
             toastShowShort("No WiFi connection")
         }
     }
@@ -98,7 +99,7 @@ class WifiControllerActivity : BaseBindingActivity<ActivityWifiControllerBinding
         result.append("RSSI: $rssi dBm\n")
         result.append("Signal Level: $signalLevel / 5\n")
 
-        binding.tvResult.text = result.toString()
+        getBinding().tvResult.text = result.toString()
         toastShowShort("WiFi status checked")
     }
 
@@ -129,18 +130,18 @@ class WifiControllerActivity : BaseBindingActivity<ActivityWifiControllerBinding
                             result.append("\n")
                         }
 
-                        binding.tvResult.text = result.toString()
+                        getBinding().tvResult.text = result.toString()
                         toastShowShort("Found ${results.size} networks")
                     } else {
-                        binding.tvResult.text = "No WiFi networks found"
+                        getBinding().tvResult.text = "No WiFi networks found"
                         toastShowShort("No networks found")
                     }
                 } else {
-                    binding.tvResult.text = "Failed to start WiFi scan"
+                    getBinding().tvResult.text = "Failed to start WiFi scan"
                     toastShowShort("Scan failed")
                 }
             } else {
-                binding.tvResult.text = "Permissions required:\n${deniedPermissions.joinToString("\n")}"
+                getBinding().tvResult.text = "Permissions required:\n${deniedPermissions.joinToString("\n")}"
                 toastShowShort("Permissions denied")
             }
         }
@@ -169,7 +170,7 @@ class WifiControllerActivity : BaseBindingActivity<ActivityWifiControllerBinding
             }}\n",
         )
 
-        binding.tvResult.text = result.toString()
+        getBinding().tvResult.text = result.toString()
         toastShowShort("Band support checked")
     }
 }

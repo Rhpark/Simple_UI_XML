@@ -5,12 +5,12 @@ import android.content.Context
 import android.content.Intent
 import android.os.PowerManager
 import kr.open.library.simple_ui.core.logcat.Logx
+import kr.open.library.simple_ui.core.system_manager.controller.alarm.AlarmConstants.ALARM_KEY
+import kr.open.library.simple_ui.core.system_manager.controller.alarm.AlarmConstants.ALARM_KEY_DEFAULT_VALUE
+import kr.open.library.simple_ui.core.system_manager.controller.alarm.AlarmConstants.WAKELOCK_TAG
+import kr.open.library.simple_ui.core.system_manager.controller.alarm.AlarmConstants.WAKELOCK_TIMEOUT_MS
 import kr.open.library.simple_ui.core.system_manager.controller.alarm.AlarmController
-import kr.open.library.simple_ui.core.system_manager.controller.alarm.vo.AlarmConstants.ALARM_KEY
-import kr.open.library.simple_ui.core.system_manager.controller.alarm.vo.AlarmConstants.ALARM_KEY_DEFAULT_VALUE
-import kr.open.library.simple_ui.core.system_manager.controller.alarm.vo.AlarmConstants.WAKELOCK_TAG
-import kr.open.library.simple_ui.core.system_manager.controller.alarm.vo.AlarmConstants.WAKELOCK_TIMEOUT_MS
-import kr.open.library.simple_ui.core.system_manager.controller.alarm.vo.AlarmVo
+import kr.open.library.simple_ui.core.system_manager.controller.alarm.vo.AlarmVO
 import kr.open.library.simple_ui.core.system_manager.controller.notification.SimpleNotificationController
 import kr.open.library.simple_ui.core.system_manager.extensions.getAlarmController
 import kr.open.library.simple_ui.core.system_manager.extensions.getPowerManager
@@ -56,7 +56,7 @@ public abstract class BaseAlarmReceiver : BroadcastReceiver() {
      * @param alarmVo The alarm data.<br><br>
      *                알람 데이터.
      */
-    protected abstract fun createNotificationChannel(context: Context, alarmVo: AlarmVo)
+    protected abstract fun createNotificationChannel(context: Context, alarmVo: AlarmVO)
 
     /**
      * Displays a notification for the triggered alarm.<br><br>
@@ -67,7 +67,7 @@ public abstract class BaseAlarmReceiver : BroadcastReceiver() {
      * @param alarmVo The alarm data containing notification details.<br><br>
      *                알림 세부정보를 포함하는 알람 데이터.
      */
-    protected abstract fun showNotification(context: Context, alarmVo: AlarmVo)
+    protected abstract fun showNotification(context: Context, alarmVo: AlarmVO)
 
     /**
      * Loads all stored alarms from persistent storage.<br>
@@ -80,7 +80,7 @@ public abstract class BaseAlarmReceiver : BroadcastReceiver() {
      * @return List of all stored alarms.<br><br>
      *         저장된 모든 알람의 목록.<br>
      */
-    protected abstract fun loadAllalarmVoList(context: Context): List<AlarmVo>
+    protected abstract fun loadAllalarmVoList(context: Context): List<AlarmVO>
 
     /**
      * Loads a specific alarm by its key from the intent extras.<br><br>
@@ -99,7 +99,7 @@ public abstract class BaseAlarmReceiver : BroadcastReceiver() {
         context: Context,
         intent: Intent,
         key: Int,
-    ): AlarmVo?
+    ): AlarmVO?
 
     /**
      * The maximum time to hold the WakeLock (in milliseconds).<br>
@@ -269,7 +269,7 @@ public abstract class BaseAlarmReceiver : BroadcastReceiver() {
      * @return `true` if registration succeeded, `false` otherwise.<br><br>
      *         등록 성공 시 `true`, 그렇지 않으면 `false`.<br>
      */
-    private fun registerAlarm(alarmController: AlarmController, alarmVo: AlarmVo): Boolean = when (registerType) {
+    private fun registerAlarm(alarmController: AlarmController, alarmVo: AlarmVO): Boolean = when (registerType) {
         RegisterType.ALARM_AND_ALLOW_WHILE_IDLE -> alarmController.registerAlarmAndAllowWhileIdle(classType, alarmVo)
 
         RegisterType.ALARM_CLOCK -> alarmController.registerAlarmClock(classType, alarmVo)

@@ -2,7 +2,7 @@ package kr.open.library.simpleui_xml.extenstions_style
 
 import android.Manifest
 import android.os.Bundle
-import android.view.View
+import android.os.PersistableBundle
 import androidx.core.widget.addTextChangedListener
 import kr.open.library.simple_ui.core.extensions.date.toDateString
 import kr.open.library.simple_ui.core.extensions.display.dpToPx
@@ -26,14 +26,15 @@ import kr.open.library.simple_ui.xml.extensions.view.strikeThrough
 import kr.open.library.simple_ui.xml.extensions.view.toastShowLong
 import kr.open.library.simple_ui.xml.extensions.view.toastShowShort
 import kr.open.library.simple_ui.xml.extensions.view.underline
-import kr.open.library.simple_ui.xml.ui.activity.BaseBindingActivity
+import kr.open.library.simple_ui.xml.ui.activity.binding.BaseDataBindingActivity
 import kr.open.library.simpleui_xml.R
 import kr.open.library.simpleui_xml.databinding.ActivityExtensionsStyleBinding
 import java.util.Locale
 
-class ExtensionsStyleActivity : BaseBindingActivity<ActivityExtensionsStyleBinding>(R.layout.activity_extensions_style) {
-    override fun onCreateView(rootView: View, savedInstanceState: Bundle?) {
-        super.onCreateView(rootView, savedInstanceState)
+class ExtensionsStyleActivity : BaseDataBindingActivity<ActivityExtensionsStyleBinding>(R.layout.activity_extensions_style) {
+
+    override fun onInitBind(binding: ActivityExtensionsStyleBinding) {
+        super.onInitBind(binding)
         setupViewExtensions()
         setupDisplayExtensions()
         setupResourceExtensions()
@@ -42,27 +43,26 @@ class ExtensionsStyleActivity : BaseBindingActivity<ActivityExtensionsStyleBindi
         setupTryCatchExtensions()
         setupPermissionExtensions()
     }
-
     /**
      * 섹션 1: View Extensions (Toast/SnackBar/TextView)
      */
     private fun setupViewExtensions() {
         // Toast
-        binding.btnToastShort.setOnClickListener {
+        getBinding().btnToastShort.setOnClickListener {
             toastShowShort("Toast Short 예제")
         }
 
-        binding.btnToastLong.setOnClickListener {
+        getBinding().btnToastLong.setOnClickListener {
             toastShowLong("Toast Long 예제 - 조금 더 길게 표시됩니다")
         }
 
         // SnackBar
-        binding.btnSnackBarShort.setOnClickListener {
-            binding.root.snackBarShowShort("SnackBar 예제입니다!")
+        getBinding().btnSnackBarShort.setOnClickListener {
+            getBinding().root.snackBarShowShort("SnackBar 예제입니다!")
         }
 
-        binding.btnSnackBarAction.setOnClickListener {
-            binding.root.snackBarShowShort(
+        getBinding().btnSnackBarAction.setOnClickListener {
+            getBinding().root.snackBarShowShort(
                 "액션 버튼이 있는 SnackBar",
                 SnackBarOption(
                     actionText = "확인",
@@ -72,26 +72,26 @@ class ExtensionsStyleActivity : BaseBindingActivity<ActivityExtensionsStyleBindi
         }
 
         // TextView 스타일링
-        binding.btnBold.setOnClickListener {
-            binding.tvSampleText.bold()
+        getBinding().btnBold.setOnClickListener {
+            getBinding().tvSampleText.bold()
         }
 
-        binding.btnItalic.setOnClickListener {
-            binding.tvSampleText.italic()
+        getBinding().btnItalic.setOnClickListener {
+            getBinding().tvSampleText.italic()
         }
 
-        binding.btnUnderline.setOnClickListener {
-            binding.tvSampleText.underline()
+        getBinding().btnUnderline.setOnClickListener {
+            getBinding().tvSampleText.underline()
         }
 
-        binding.btnStrikeThrough.setOnClickListener {
-            binding.tvSampleText.strikeThrough()
+        getBinding().btnStrikeThrough.setOnClickListener {
+            getBinding().tvSampleText.strikeThrough()
         }
 
-        binding.btnResetStyle.setOnClickListener {
-            binding.tvSampleText.normal()
-            binding.tvSampleText.removeUnderline()
-            binding.tvSampleText.removeStrikeThrough()
+        getBinding().btnResetStyle.setOnClickListener {
+            getBinding().tvSampleText.normal()
+            getBinding().tvSampleText.removeUnderline()
+            getBinding().tvSampleText.removeStrikeThrough()
         }
     }
 
@@ -99,31 +99,34 @@ class ExtensionsStyleActivity : BaseBindingActivity<ActivityExtensionsStyleBindi
      * 섹션 2: Display Extensions (단위 변환)
      */
     private fun setupDisplayExtensions() {
-        binding.btnDpToPx.setOnClickListener {
+        getBinding().btnDpToPx.setOnClickListener {
             val value =
-                binding.edtDisplayValue.text
+                getBinding()
+                    .edtDisplayValue.text
                     .toString()
                     .toFloatOrNull() ?: 0f
             val result = value.dpToPx(this)
-            binding.tvDisplayResult.text = "결과: ${value}dp = ${result}px"
+            getBinding().tvDisplayResult.text = "결과: ${value}dp = ${result}px"
         }
 
-        binding.btnPxToDp.setOnClickListener {
+        getBinding().btnPxToDp.setOnClickListener {
             val value =
-                binding.edtDisplayValue.text
+                getBinding()
+                    .edtDisplayValue.text
                     .toString()
                     .toFloatOrNull() ?: 0f
             val result = value.pxToDp(this)
-            binding.tvDisplayResult.text = "결과: ${value}px = ${result}dp"
+            getBinding().tvDisplayResult.text = "결과: ${value}px = ${result}dp"
         }
 
-        binding.btnSpToPx.setOnClickListener {
+        getBinding().btnSpToPx.setOnClickListener {
             val value =
-                binding.edtDisplayValue.text
+                getBinding()
+                    .edtDisplayValue.text
                     .toString()
                     .toFloatOrNull() ?: 0f
             val result = value.spToPx(this)
-            binding.tvDisplayResult.text = "결과: ${value}sp = ${result}px"
+            getBinding().tvDisplayResult.text = "결과: ${value}sp = ${result}px"
         }
     }
 
@@ -131,19 +134,19 @@ class ExtensionsStyleActivity : BaseBindingActivity<ActivityExtensionsStyleBindi
      * 섹션 3: Resource Extensions
      */
     private fun setupResourceExtensions() {
-        binding.btnGetDrawable.setOnClickListener {
+        getBinding().btnGetDrawable.setOnClickListener {
             val drawable = getDrawableCompat(R.drawable.ic_launcher_foreground)
             if (drawable != null) {
-                binding.tvResourceResult.text = "결과: Drawable 가져오기 성공 ✅"
+                getBinding().tvResourceResult.text = "결과: Drawable 가져오기 성공 ✅"
             } else {
-                binding.tvResourceResult.text = "결과: Drawable 가져오기 실패 ❌"
+                getBinding().tvResourceResult.text = "결과: Drawable 가져오기 실패 ❌"
             }
         }
 
-        binding.btnGetColor.setOnClickListener {
+        getBinding().btnGetColor.setOnClickListener {
             val color = getColorCompat(android.R.color.holo_blue_dark)
-            binding.tvResourceResult.text = "결과: Color = $color (0x${Integer.toHexString(color)})"
-            binding.tvResourceResult.setTextColor(color)
+            getBinding().tvResourceResult.text = "결과: Color = $color (0x${Integer.toHexString(color)})"
+            getBinding().tvResourceResult.setTextColor(color)
         }
     }
 
@@ -152,38 +155,38 @@ class ExtensionsStyleActivity : BaseBindingActivity<ActivityExtensionsStyleBindi
      */
     private fun setupStringExtensions() {
         // 이메일 실시간 검증
-        binding.edtEmail.addTextChangedListener {
+        getBinding().edtEmail.addTextChangedListener {
             val email = it.toString()
             if (email.isEmpty()) {
-                binding.tvEmailResult.text = "이메일을 입력하세요"
+                getBinding().tvEmailResult.text = "이메일을 입력하세요"
             } else if (email.isEmailValid()) {
-                binding.tvEmailResult.text = "✅ 유효한 이메일입니다"
-                binding.tvEmailResult.setTextColor(getColorCompat(android.R.color.holo_green_dark))
+                getBinding().tvEmailResult.text = "✅ 유효한 이메일입니다"
+                getBinding().tvEmailResult.setTextColor(getColorCompat(android.R.color.holo_green_dark))
             } else {
-                binding.tvEmailResult.text = "❌ 유효하지 않은 이메일입니다"
-                binding.tvEmailResult.setTextColor(getColorCompat(android.R.color.holo_red_dark))
+                getBinding().tvEmailResult.text = "❌ 유효하지 않은 이메일입니다"
+                getBinding().tvEmailResult.setTextColor(getColorCompat(android.R.color.holo_red_dark))
             }
         }
 
         // 숫자 실시간 검증
-        binding.edtNumber.addTextChangedListener {
+        getBinding().edtNumber.addTextChangedListener {
             val number = it.toString()
             if (number.isEmpty()) {
-                binding.tvNumberResult.text = "숫자를 입력하세요"
+                getBinding().tvNumberResult.text = "숫자를 입력하세요"
             } else if (number.isNumeric()) {
-                binding.tvNumberResult.text = "✅ 숫자입니다"
-                binding.tvNumberResult.setTextColor(getColorCompat(android.R.color.holo_green_dark))
+                getBinding().tvNumberResult.text = "✅ 숫자입니다"
+                getBinding().tvNumberResult.setTextColor(getColorCompat(android.R.color.holo_green_dark))
             } else {
-                binding.tvNumberResult.text = "❌ 숫자가 아닙니다"
-                binding.tvNumberResult.setTextColor(getColorCompat(android.R.color.holo_red_dark))
+                getBinding().tvNumberResult.text = "❌ 숫자가 아닙니다"
+                getBinding().tvNumberResult.setTextColor(getColorCompat(android.R.color.holo_red_dark))
             }
         }
 
         // 공백 제거
-        binding.btnRemoveWhitespace.setOnClickListener {
-            val original = binding.edtWhitespace.text.toString()
+        getBinding().btnRemoveWhitespace.setOnClickListener {
+            val original = getBinding().edtWhitespace.text.toString()
             val removed = original.removeWhitespace()
-            binding.tvWhitespaceResult.text = "원본: \"$original\"\n결과: \"$removed\""
+            getBinding().tvWhitespaceResult.text = "원본: \"$original\"\n결과: \"$removed\""
         }
     }
 
@@ -191,12 +194,12 @@ class ExtensionsStyleActivity : BaseBindingActivity<ActivityExtensionsStyleBindi
      * 섹션 5: Date Extensions
      */
     private fun setupDateExtensions() {
-        binding.btnFormatDate.setOnClickListener {
+        getBinding().btnFormatDate.setOnClickListener {
             val currentTime = System.currentTimeMillis()
             val formatted1 = currentTime.toDateString("yyyy-MM-dd HH:mm:ss", Locale.KOREA)
             val formatted2 = currentTime.toDateString("yyyy년 MM월 dd일 HH시 mm분", Locale.KOREA)
 
-            binding.tvDateResult.text =
+            getBinding().tvDateResult.text =
                 """
                 결과:
                  - $formatted1
@@ -209,15 +212,15 @@ class ExtensionsStyleActivity : BaseBindingActivity<ActivityExtensionsStyleBindi
      * 섹션 6: TryCatch Extensions
      */
     private fun setupTryCatchExtensions() {
-        binding.btnSafeCatch.setOnClickListener {
+        getBinding().btnSafeCatch.setOnClickListener {
             // 에러 발생 가능한 코드
             val result = safeCatch(defaultValue = "에러 발생!") {
-                val text = binding.edtDisplayValue.text.toString()
+                val text = getBinding().edtDisplayValue.text.toString()
                 require(text.isNotEmpty()) { "text isEmpty" }
                 "성공: $text"
             }
 
-            binding.tvSafeCatchResult.text = "결과: $result"
+            getBinding().tvSafeCatchResult.text = "결과: $result"
         }
     }
 
@@ -225,15 +228,15 @@ class ExtensionsStyleActivity : BaseBindingActivity<ActivityExtensionsStyleBindi
      * 섹션 7: Permission Extensions
      */
     private fun setupPermissionExtensions() {
-        binding.btnCheckPermission.setOnClickListener {
+        getBinding().btnCheckPermission.setOnClickListener {
             val hasCamera = hasPermission(Manifest.permission.CAMERA)
 
             if (hasCamera) {
-                binding.tvPermissionResult.text = "결과: CAMERA 권한 있음 ✅"
-                binding.tvPermissionResult.setTextColor(getColorCompat(android.R.color.holo_green_dark))
+                getBinding().tvPermissionResult.text = "결과: CAMERA 권한 있음 ✅"
+                getBinding().tvPermissionResult.setTextColor(getColorCompat(android.R.color.holo_green_dark))
             } else {
-                binding.tvPermissionResult.text = "결과: CAMERA 권한 없음 ❌\n(권한을 요청하지 않았거나 거부됨)"
-                binding.tvPermissionResult.setTextColor(getColorCompat(android.R.color.holo_red_dark))
+                getBinding().tvPermissionResult.text = "결과: CAMERA 권한 없음 ❌\n(권한을 요청하지 않았거나 거부됨)"
+                getBinding().tvPermissionResult.setTextColor(getColorCompat(android.R.color.holo_red_dark))
             }
         }
     }

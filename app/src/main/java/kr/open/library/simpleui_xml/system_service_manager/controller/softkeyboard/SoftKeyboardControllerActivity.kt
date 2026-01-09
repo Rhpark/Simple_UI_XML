@@ -5,7 +5,7 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Job
 import kr.open.library.simple_ui.xml.extensions.view.toastShowShort
 import kr.open.library.simple_ui.xml.system_manager.extensions.getSoftKeyboardController
-import kr.open.library.simple_ui.xml.ui.activity.BaseActivity
+import kr.open.library.simple_ui.xml.ui.activity.normal.BaseActivity
 import kr.open.library.simpleui_xml.R
 import kr.open.library.simpleui_xml.databinding.ActivitySoftkeyboardControllerBinding
 

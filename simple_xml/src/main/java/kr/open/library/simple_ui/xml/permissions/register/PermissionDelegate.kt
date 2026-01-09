@@ -328,6 +328,10 @@ public class PermissionDelegate<T : Any>(
      * Resolves the Android Context from the backing provider.<br><br>
      * 전달받은 provider 에서 Android Context 를 추출합니다.<br>
      *
+     * **Important / 주의사항:**<br>
+     * - When used with Fragment, this calls requireContext() and requires the Fragment to be attached.<br><br>
+     * - Fragment에서 사용 시 requireContext()를 호출하므로 반드시 attach 상태여야 합니다.<br>
+     *
      * @return Host context used for permission APIs.<br><br>
      *         권한 API 호출에 사용할 호스트 Context 입니다.<br>
      */

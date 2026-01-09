@@ -19,7 +19,7 @@ import kr.open.library.simple_ui.xml.system_manager.controller.window.drag.Float
 import kr.open.library.simple_ui.xml.system_manager.controller.window.fixed.FloatingFixedView
 import kr.open.library.simple_ui.xml.system_manager.controller.window.vo.FloatingViewCollisionsType
 import kr.open.library.simple_ui.xml.system_manager.controller.window.vo.FloatingViewTouchType
-import kr.open.library.simple_ui.xml.ui.activity.BaseActivity
+import kr.open.library.simple_ui.xml.ui.activity.normal.BaseActivity
 import kr.open.library.simpleui_xml.R
 import kr.open.library.simpleui_xml.databinding.ActivityFloatingControllerBinding
 

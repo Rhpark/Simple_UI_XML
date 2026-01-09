@@ -10,8 +10,7 @@ import android.os.Build
 import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
 import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.core.system_manager.base.BaseSystemService
-import kr.open.library.simple_ui.core.system_manager.controller.alarm.vo.AlarmConstants
-import kr.open.library.simple_ui.core.system_manager.controller.alarm.vo.AlarmVo
+import kr.open.library.simple_ui.core.system_manager.controller.alarm.vo.AlarmVO
 import kr.open.library.simple_ui.core.system_manager.extensions.getAlarmManager
 
 /**
@@ -27,11 +26,9 @@ public open class AlarmController(
     context: Context,
 ) : BaseSystemService(
         context,
-        checkSdkVersion(
-            Build.VERSION_CODES.S,
-            positiveWork = { listOf(SCHEDULE_EXACT_ALARM) },
-            negativeWork = { emptyList() },
-        ),
+        checkSdkVersion<List<String>?>(Build.VERSION_CODES.S) {
+            listOf(SCHEDULE_EXACT_ALARM)
+        },
     ) {
     /**
      * Lazy-initialized AlarmManager instance for scheduling and managing alarms.<br><br>
@@ -52,7 +49,7 @@ public open class AlarmController(
      * @return Boolean true if alarm was registered successfully, false otherwise.<br><br>
      *         알람이 성공적으로 등록되면 true, 그렇지 않으면 false.<br>
      */
-    public fun registerAlarmClock(receiver: Class<*>, alarmVo: AlarmVo): Boolean = tryCatchSystemManager(false) {
+    public fun registerAlarmClock(receiver: Class<*>, alarmVo: AlarmVO): Boolean = tryCatchSystemManager(false) {
         val calendar = getCalendar(alarmVo)
         val pendingIntent = getAlarmPendingIntent(receiver, alarmVo.key) ?: return@tryCatchSystemManager false
 
@@ -75,7 +72,7 @@ public open class AlarmController(
      * @return Boolean true if alarm was registered successfully, false otherwise.<br><br>
      *         알람이 성공적으로 등록되면 true, 그렇지 않으면 false.<br>
      */
-    public fun registerAlarmExactAndAllowWhileIdle(receiver: Class<*>, alarmVo: AlarmVo): Boolean = tryCatchSystemManager(false) {
+    public fun registerAlarmExactAndAllowWhileIdle(receiver: Class<*>, alarmVo: AlarmVO): Boolean = tryCatchSystemManager(false) {
         val calendar = getCalendar(alarmVo)
         val pendingIntent = getAlarmPendingIntent(receiver, alarmVo.key) ?: return@tryCatchSystemManager false
 
@@ -97,7 +94,7 @@ public open class AlarmController(
      * @return Boolean true if alarm was registered successfully, false otherwise.<br><br>
      *         알람이 성공적으로 등록되면 true, 그렇지 않으면 false.<br>
      */
-    public fun registerAlarmAndAllowWhileIdle(receiver: Class<*>, alarmVo: AlarmVo): Boolean = tryCatchSystemManager(false) {
+    public fun registerAlarmAndAllowWhileIdle(receiver: Class<*>, alarmVo: AlarmVO): Boolean = tryCatchSystemManager(false) {
         val calendar = getCalendar(alarmVo)
         val pendingIntent = getAlarmPendingIntent(receiver, alarmVo.key) ?: return@tryCatchSystemManager false
 
@@ -138,7 +135,7 @@ public open class AlarmController(
      * @return Calendar instance set to the appropriate alarm time.<br><br>
      *         적절한 알람 시간으로 설정된 Calendar 인스턴스.<br>
      */
-    private fun getCalendar(alarmVo: AlarmVo): Calendar {
+    private fun getCalendar(alarmVo: AlarmVO): Calendar {
         val now = Calendar.getInstance()
         val alarmTime =
             Calendar.getInstance().apply {

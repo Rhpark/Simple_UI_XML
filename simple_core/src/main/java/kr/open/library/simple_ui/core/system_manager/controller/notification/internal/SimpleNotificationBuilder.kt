@@ -19,6 +19,31 @@ import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 
+/**
+ * Internal builder for creating and managing Android notifications with various styles.<br>
+ * Handles NotificationCompat.Builder creation, PendingIntent generation, and progress notification state management.<br><br>
+ * 다양한 스타일의 Android 알림을 생성하고 관리하는 내부 빌더입니다.<br>
+ * NotificationCompat.Builder 생성, PendingIntent 생성, 진행률 알림 상태 관리를 처리합니다.<br>
+ *
+ * **Why this class exists / 이 클래스가 필요한 이유:**<br>
+ * - Separates notification building logic from controller logic for better testability and maintainability.<br>
+ * - Manages progress notification state to enable efficient updates without recreating builders.<br>
+ * - Provides automatic cleanup of stale progress notifications to prevent memory leaks.<br><br>
+ * - 테스트 가능성과 유지보수성을 위해 알림 빌드 로직을 컨트롤러 로직에서 분리합니다.<br>
+ * - 빌더를 재생성하지 않고 효율적인 업데이트를 위해 진행률 알림 상태를 관리합니다.<br>
+ * - 메모리 누수를 방지하기 위해 오래된 진행률 알림의 자동 정리를 제공합니다.<br>
+ *
+ * **Design decisions / 설계 결정 이유:**<br>
+ * - Uses ConcurrentHashMap to store progress builders for thread-safe updates from any thread.<br>
+ * - Implements lazy cleanup scheduler (30-minute idle timer) to minimize resource usage.<br>
+ * - Supports Activity, Service, and Broadcast PendingIntent types for flexible notification actions.<br><br>
+ * - 모든 스레드에서 스레드 안전한 업데이트를 위해 ConcurrentHashMap으로 진행률 빌더를 저장합니다.<br>
+ * - 리소스 사용을 최소화하기 위해 지연 정리 스케줄러(30분 유휴 타이머)를 구현합니다.<br>
+ * - 유연한 알림 동작을 위해 Activity, Service, Broadcast PendingIntent 타입을 지원합니다.<br>
+ *
+ * @param context The application context.<br><br>
+ *                애플리케이션 컨텍스트.<br>
+ */
 internal class SimpleNotificationBuilder(
     private val context: Context
 ) {
@@ -153,6 +178,12 @@ internal class SimpleNotificationBuilder(
         }
     }
 
+    /**
+     * Stops the cleanup scheduler if there are no active progress notifications.<br>
+     * Called after removing progress notifications to release scheduler resources when idle.<br><br>
+     * 활성 진행률 알림이 없으면 정리 스케줄러를 중지합니다.<br>
+     * 진행률 알림 제거 후 호출되며 유휴 상태일 때 스케줄러 리소스를 해제합니다.<br>
+     */
     private fun stopProgressCleanupSchedulerIfIdle() {
         if (progressBuilders.isNotEmpty()) return
 

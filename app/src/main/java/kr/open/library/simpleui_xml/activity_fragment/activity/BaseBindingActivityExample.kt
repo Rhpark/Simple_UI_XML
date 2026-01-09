@@ -1,31 +1,25 @@
 package kr.open.library.simpleui_xml.activity_fragment.activity
 
 import android.os.Bundle
-import android.view.View
+import android.os.PersistableBundle
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.xml.extensions.view.snackBarShowShort
-import kr.open.library.simple_ui.xml.ui.activity.BaseBindingActivity
+import kr.open.library.simple_ui.xml.ui.activity.binding.BaseDataBindingActivity
 import kr.open.library.simpleui_xml.R
 import kr.open.library.simpleui_xml.databinding.ActivityBaseBindingActivityExampleBinding
 
 class BaseBindingActivityExample :
-    BaseBindingActivity<ActivityBaseBindingActivityExampleBinding>(R.layout.activity_base_binding_activity_example) {
+    BaseDataBindingActivity<ActivityBaseBindingActivityExampleBinding>(R.layout.activity_base_binding_activity_example) {
     private val vm: BaseBindingActivityExampleVm by viewModels()
 
-    override fun onCreateView(rootView: View, savedInstanceState: Bundle?) {
-        super.onCreateView(rootView, savedInstanceState)
-        binding.vm = vm
-        lifecycle.addObserver(vm)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
-        // Counter 값을 UI에 업데이트
-        lifecycleScope.launch {
-            vm.counter.collect { count ->
-                binding.tvCounter.text = "Count: $count"
-            }
-        }
+        getBinding().vm = vm
+        lifecycle.addObserver(vm)
     }
 
     override fun onEventVmCollect() {
@@ -33,10 +27,17 @@ class BaseBindingActivityExample :
             vm.mEventVm.collect { event ->
                 when (event) {
                     is BaseBindingActivityExampleVmEvent.ShowMessage -> {
-                        binding.root.snackBarShowShort(event.message)
+                        getBinding().root.snackBarShowShort(event.message)
                         Logx.d("Event: ${event.message}")
                     }
                 }
+            }
+        }
+
+        // Counter 값을 UI에 업데이트
+        lifecycleScope.launch {
+            vm.counter.collect { count ->
+                getBinding().tvCounter.text = "Count: $count"
             }
         }
     }

@@ -6,7 +6,7 @@ import android.widget.Button
 import android.widget.TextView
 import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.xml.system_manager.extensions.getSystemBarController
-import kr.open.library.simple_ui.xml.ui.activity.BaseActivity
+import kr.open.library.simple_ui.xml.ui.activity.normal.BaseActivity
 import kr.open.library.simpleui_xml.R
 
 class BaseActivityExample : BaseActivity(R.layout.activity_base_activity_example) {

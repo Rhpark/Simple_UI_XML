@@ -2,11 +2,10 @@ package kr.open.library.simpleui_xml
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
-import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.launch
+import android.os.PersistableBundle
+import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.xml.extensions.view.bold
-import kr.open.library.simple_ui.xml.ui.activity.BaseBindingActivity
+import kr.open.library.simple_ui.xml.ui.activity.binding.BaseDataBindingActivity
 import kr.open.library.simpleui_xml.activity_fragment.ActivityFragmentActivity
 import kr.open.library.simpleui_xml.databinding.ActivityMainBinding
 import kr.open.library.simpleui_xml.extenstions_style.ExtensionsStyleActivity
@@ -18,21 +17,10 @@ import kr.open.library.simpleui_xml.recyclerview.origin.RecyclerViewActivityOrig
 import kr.open.library.simpleui_xml.system_service_manager.controller.ServiceManagerControllerActivity
 import kr.open.library.simpleui_xml.system_service_manager.info.ServiceManagerInfoActivity
 
-class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
-    override fun onCreateView(rootView: View, savedInstanceState: Bundle?) {
-        super.onCreateView(rootView, savedInstanceState)
-        setupPermissionButtons()
+class MainActivity : BaseDataBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
 
-        lifecycleScope.launch {
-//            delay(5000)
+    override fun onInitBind(binding: ActivityMainBinding) {
 
-//            throw Exception(":FSEF")
-//            Firebase.crashlytics.recordException(Exception("test"))
-//            "rfeafefe".toInt()
-        }
-    }
-
-    private fun setupPermissionButtons() {
         binding.btnNewPermissionActivity.setOnClickListener {
             startActivity(Intent(this, PermissionsActivity::class.java))
         }

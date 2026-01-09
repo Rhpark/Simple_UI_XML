@@ -8,9 +8,9 @@ import android.content.Intent
 import android.media.AudioAttributes
 import kr.open.library.simple_ui.core.extensions.date.toLocalDateTime
 import kr.open.library.simple_ui.core.logcat.Logx
+import kr.open.library.simple_ui.core.system_manager.controller.alarm.AlarmConstants
 import kr.open.library.simple_ui.core.system_manager.controller.alarm.receiver.BaseAlarmReceiver
-import kr.open.library.simple_ui.core.system_manager.controller.alarm.vo.AlarmConstants
-import kr.open.library.simple_ui.core.system_manager.controller.alarm.vo.AlarmVo
+import kr.open.library.simple_ui.core.system_manager.controller.alarm.vo.AlarmVO
 import kr.open.library.simple_ui.core.system_manager.controller.notification.SimpleNotificationType
 import kr.open.library.simple_ui.core.system_manager.controller.notification.option.DefaultNotificationOption
 import kr.open.library.simple_ui.core.system_manager.extensions.getNotificationController
@@ -35,16 +35,16 @@ public class AlarmReceiver : BaseAlarmReceiver() {
 
     override val powerManagerAcquireTime: Long get() = 5000L
 
-    override fun loadAllalarmVoList(context: Context): List<AlarmVo> {
+    override fun loadAllalarmVoList(context: Context): List<AlarmVO> {
         // data load from realm or room or sharedpreference or other
-        return emptyList<AlarmVo>()
+        return emptyList<AlarmVO>()
     }
 
     override fun loadalarmVoList(
         context: Context,
         intent: Intent,
         key: Int,
-    ): AlarmVo? {
+    ): AlarmVO? {
         Logx.d("alarmKey is " + key)
         if (key == AlarmConstants.ALARM_KEY_DEFAULT_VALUE) {
             Logx.e("Error Alarm Key $key")
@@ -53,7 +53,7 @@ public class AlarmReceiver : BaseAlarmReceiver() {
 
         val date = (System.currentTimeMillis() + 30000).toLocalDateTime()
 
-        return AlarmVo(
+        return AlarmVO(
             key = 1,
             title = "Dump Title",
             message = "Dump Message",
@@ -68,52 +68,45 @@ public class AlarmReceiver : BaseAlarmReceiver() {
 
     override fun createNotificationChannel(
         context: Context,
-        alarmVo: AlarmVo,
+        alarmVo: AlarmVO,
     ) {
         Logx.d()
-        notificationController =
-            context
-                .getNotificationController(
-                    showType = SimpleNotificationType.BROADCAST,
-                    notificationChannel = null,
-                ).apply {
-                    createChannel(
-                        NotificationChannel("Alarm_ID", "Alarm_Name", NotificationManager.IMPORTANCE_HIGH).apply {
+        notificationController = context.getNotificationController(
+            showType = SimpleNotificationType.BROADCAST,
+            notificationChannel = NotificationChannel("Alarm_ID", "Alarm_Name", NotificationManager.IMPORTANCE_HIGH).apply {
 //            setShowBadge(true)
-                            alarmVo.vibrationPattern?.let {
-                                enableVibration(true)
-                                vibrationPattern = it.toLongArray()
-                            }
-                            alarmVo.soundUri?.let {
-                                setSound(
-                                    it,
-                                    AudioAttributes
-                                        .Builder()
-                                        .setUsage(AudioAttributes.USAGE_ALARM)
-                                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                                        .build(),
-                                )
-                            }
-                        },
+                alarmVo.vibrationPattern?.let {
+                    enableVibration(true)
+                    vibrationPattern = it.toLongArray()
+                }
+                alarmVo.soundUri?.let {
+                    setSound(
+                        it,
+                        AudioAttributes
+                            .Builder()
+                            .setUsage(AudioAttributes.USAGE_ALARM)
+                            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                            .build(),
                     )
                 }
+            }
+        )
     }
 
     @SuppressLint("MissingPermission")
     override fun showNotification(
         context: Context,
-        alarmVo: AlarmVo,
+        alarmVo: AlarmVO,
     ) {
         Logx.d()
         notificationController.showNotification(
             DefaultNotificationOption(
                 notificationId = alarmVo.key,
-                smallIcon = R.drawable.ic_launcher_foreground,
                 title = alarmVo.title,
                 content = alarmVo.message,
                 isAutoCancel = false,
-            ),
-            showType = SimpleNotificationType.BROADCAST,
+                smallIcon = R.drawable.ic_launcher_foreground,
+            ), showType = SimpleNotificationType.BROADCAST
         )
     }
 }
