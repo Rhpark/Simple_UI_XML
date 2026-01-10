@@ -3,7 +3,7 @@ package kr.open.library.simpleui_xml.activity_fragment.dialog
 import android.os.Bundle
 import android.view.View
 import kr.open.library.simple_ui.core.logcat.Logx
-import kr.open.library.simple_ui.xml.ui.dialog.binding.BaseDataBindingDialogFragment
+import kr.open.library.simple_ui.xml.ui.components.dialog.binding.BaseDataBindingDialogFragment
 import kr.open.library.simpleui_xml.R
 import kr.open.library.simpleui_xml.databinding.DialogBaseBindingDialogFragmentBinding
 

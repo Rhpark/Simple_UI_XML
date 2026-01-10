@@ -1,4 +1,4 @@
-package kr.open.library.simple_ui.xml.ui.dialog.binding
+package kr.open.library.simple_ui.xml.ui.components.dialog.binding
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -6,9 +6,9 @@ import androidx.viewbinding.ViewBinding
 
 /**
  * A base DialogFragment class for DialogFragments that use ViewBinding.<br>
- * Extends ParentsBindingFragment to provide common binding functionality.<br><br>
+ * Extends ParentBindingViewDialogFragment to provide common binding functionality.<br><br>
  * ViewBinding을 사용하는 DialogFragment를 위한 기본 DialogFragment 클래스입니다.<br>
- * ParentsBindingFragment를 상속받아 공통 바인딩 기능을 제공합니다.<br>
+ * ParentBindingViewDialogFragment를 상속받아 공통 바인딩 기능을 제공합니다.<br>
  *
  * **Why this class exists / 이 클래스가 필요한 이유:**<br>
  * - Android's ViewBinding requires manual inflate() calls for each DialogFragment.<br>
@@ -28,10 +28,10 @@ import androidx.viewbinding.ViewBinding
  *
  * **Usage / 사용법:**<br>
  * 1. Extend this class with your DialogFragment and pass the ViewBinding inflate function reference.<br>
- * 2. Access views through the `binding` property in onViewCreated() or later lifecycle methods.<br>
+ * 2. Access views through the getBinding() method in onViewCreated() or later lifecycle methods.<br>
  * 3. Override onInitBind() to perform initial view setup after binding is ready.<br><br>
  * 1. DialogFragment에서 이 클래스를 상속받고 ViewBinding inflate 함수 참조를 전달하세요.<br>
- * 2. onViewCreated() 또는 이후 생명주기 메서드에서 `binding` 프로퍼티를 통해 뷰에 접근하세요.<br>
+ * 2. onViewCreated() 또는 이후 생명주기 메서드에서 getBinding() 메서드를 통해 뷰에 접근하세요.<br>
  * 3. 바인딩이 준비된 후 초기 뷰 설정을 수행하려면 onInitBind()를 오버라이드하세요.<br>
  *
  * **Usage example:**<br>
@@ -42,7 +42,7 @@ import androidx.viewbinding.ViewBinding
  *     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
  *         super.onViewCreated(view, savedInstanceState)
  *         // Binding is already initialized and views are ready
- *         binding.textView.text = "Hello"
+ *         getBinding().textView.text = "Hello"
  *     }
  * }
  * ```

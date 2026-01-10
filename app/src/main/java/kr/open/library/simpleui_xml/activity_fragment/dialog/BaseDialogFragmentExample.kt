@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import kr.open.library.simple_ui.core.logcat.Logx
-import kr.open.library.simple_ui.xml.ui.dialog.normal.BaseDialogFragment
+import kr.open.library.simple_ui.xml.ui.components.dialog.normal.BaseDialogFragment
 import kr.open.library.simpleui_xml.R
 
 class BaseDialogFragmentExample : BaseDialogFragment(R.layout.dialog_base_dialog_fragment) {

@@ -1,4 +1,4 @@
-package kr.open.library.simple_ui.xml.ui.dialog.normal
+package kr.open.library.simple_ui.xml.ui.components.dialog.normal
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.CallSuper
 import androidx.annotation.LayoutRes
-import kr.open.library.simple_ui.xml.ui.dialog.root.RootDialogFragment
+import kr.open.library.simple_ui.xml.ui.components.dialog.root.RootDialogFragment
 
 /**
  * A basic DialogFragment that handles layout inflation automatically without ViewBinding or DataBinding.<br>
@@ -89,7 +89,7 @@ public abstract class BaseDialogFragment(
      * Internal backing field for rootView.<br><br>
      * rootView의 내부 백킹 필드입니다.<br>
      */
-    private var _rootView: View? = null
+    private var rootView: View? = null
 
     /**
      * The root view of the dialog's layout.<br>
@@ -114,36 +114,40 @@ public abstract class BaseDialogFragment(
      * @throws IllegalStateException if accessed after onDestroyView().<br><br>
      *                               onDestroyView() 이후에 접근하는 경우.<br>
      */
-    public val rootView: View
-        get() = _rootView
-            ?: throw IllegalStateException("View accessed after onDestroyView()")
+    protected fun getRootView(): View {
+        if (rootView == null) {
+            throw IllegalStateException("rootView is not initialized.")
+        }
+        return rootView!!
+    }
+
 
     @CallSuper
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        _rootView = inflater.inflate(layoutRes, container, isAttachToParent)
-        return rootView
+        rootView = inflater.inflate(layoutRes, container, isAttachToParent)
+        return getRootView()
     }
 
     @CallSuper
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        _rootView?.let { rootView ->
+        getRootView().let { rootView ->
             getBackgroundColor()?.let { setBackgroundColor(rootView, it) }
             getBackgroundResId()?.let { setBackgroundResource(rootView, it) }
         }
     }
 
     override fun setBackgroundColor(color: Int) {
-        _rootView?.let { setBackgroundColor(it, color) }
+        setBackgroundColor(getRootView(), color)
     }
 
     override fun setBackgroundResource(resId: Int) {
-        _rootView?.let { setBackgroundResource(it, resId) }
+        setBackgroundResource(getRootView(), resId)
     }
 
     @CallSuper
     override fun onDestroyView() {
         super.onDestroyView()
-        _rootView = null
+        rootView = null
     }
 }

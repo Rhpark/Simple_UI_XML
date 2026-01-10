@@ -1,4 +1,4 @@
-package kr.open.library.simple_ui.xml.ui.dialog.root
+package kr.open.library.simple_ui.xml.ui.components.dialog.root
 
 import android.app.Dialog
 import android.graphics.Color
@@ -6,6 +6,7 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.Gravity
 import android.view.View
+import android.view.ViewGroup.LayoutParams
 import androidx.annotation.CallSuper
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
@@ -130,15 +131,17 @@ public abstract class RootDialogFragment :
 
     /**
      * Background color for the dialog.<br>
-     * Defaults to Color.TRANSPARENT.<br><br>
+     * Defaults to null (no background color set).<br><br>
      * 다이얼로그의 배경색입니다.<br>
-     * 기본값은 Color.TRANSPARENT입니다.<br>
+     * 기본값은 null (배경색 미설정)입니다.<br>
      */
-    private var backgroundColor: Int? = Color.TRANSPARENT
+    private var backgroundColor: Int? = null
 
     /**
-     * Background drawable resource ID for the dialog.<br><br>
+     * Background drawable resource ID for the dialog.<br>
+     * Defaults to null (no background resource set).<br><br>
      * 다이얼로그의 배경 drawable 리소스 ID입니다.<br>
+     * 기본값은 null (배경 리소스 미설정)입니다.<br>
      */
     private var backgroundResId: Int? = null
 
@@ -154,32 +157,40 @@ public abstract class RootDialogFragment :
 
     /**
      * Sets the background color of the dialog.<br>
-     * Clears any previously set background drawable.<br><br>
+     * Clears any previously set background drawable.<br>
+     * If rootView is null, only stores the color to be applied when view is created.<br><br>
      * 다이얼로그의 배경색을 설정합니다.<br>
      * 이전에 설정된 배경 drawable을 지웁니다.<br>
+     * rootView가 null인 경우, 뷰 생성 시 적용될 색상만 저장합니다.<br>
      *
+     * @param rootView The root view to apply the background color to, or null to only store the color.<br><br>
+     *                 배경색을 적용할 루트 뷰, 또는 색상만 저장하려면 null.<br>
      * @param color The color value to set as background.<br><br>
      *              배경으로 설정할 색상 값.<br>
      */
-    protected fun setBackgroundColor(rootView: View, color: Int) {
+    protected fun setBackgroundColor(rootView: View?, color: Int) {
         this.backgroundColor = color
         this.backgroundResId = null
-        rootView.setBackgroundColor(color)
+        rootView?.setBackgroundColor(color)
     }
 
     /**
      * Sets the background drawable of the dialog.<br>
-     * Clears any previously set background color.<br><br>
+     * Clears any previously set background color.<br>
+     * If rootView is null, only stores the resource ID to be applied when view is created.<br><br>
      * 다이얼로그의 배경 drawable을 설정합니다.<br>
      * 이전에 설정된 배경색을 지웁니다.<br>
+     * rootView가 null인 경우, 뷰 생성 시 적용될 리소스 ID만 저장합니다.<br>
      *
+     * @param rootView The root view to apply the background resource to, or null to only store the resource ID.<br><br>
+     *                 배경 리소스를 적용할 루트 뷰, 또는 리소스 ID만 저장하려면 null.<br>
      * @param resId The drawable resource ID to set as background.<br><br>
      *              배경으로 설정할 drawable 리소스 ID.<br>
      */
-    protected fun setBackgroundResource(rootView: View, resId: Int) {
+    protected fun setBackgroundResource(rootView: View?, resId: Int) {
         this.backgroundColor = null
         this.backgroundResId = resId
-        rootView.setBackgroundResource(resId)
+        rootView?.setBackgroundResource(resId)
     }
 
     /**
@@ -248,8 +259,8 @@ public abstract class RootDialogFragment :
             val screenSize = displayInfo.getAppWindowSize(requireActivity())
             screenSize?.let { size ->
                 val width = (size.width * widthRatio).toInt()
-                val height = (size.height * heightRatio).toInt()
-                it.setLayout(width, -2) // WARP_
+                it.setLayout(width, LayoutParams.WRAP_CONTENT) // WRAP_
+//                val height = (size.height * heightRatio).toInt()
 //            it.setLayout(width, height)
             }
         } ?: Logx.e("Error dialog window is null!")
@@ -373,6 +384,9 @@ public abstract class RootDialogFragment :
      */
     @CallSuper
     final override fun onRequestPermissions(permissions: List<String>, onResult: (deniedPermissions: List<String>) -> Unit) {
+        check(::permissionDelegate.isInitialized) {
+            "PermissionDelegate is not initialized. Please call super.onCreate() first."
+        }
         permissionDelegate.requestPermissions(permissions, onResult)
     }
 

@@ -123,7 +123,7 @@ public abstract class BaseDataBindingFragment<BINDING : ViewDataBinding>(
     @CallSuper
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         // viewLifecycleOwner가 준비된 시점에 설정
-        binding.lifecycleOwner = viewLifecycleOwner
+        getBinding().lifecycleOwner = viewLifecycleOwner
         super.onViewCreated(view, savedInstanceState)
     }
 
@@ -135,8 +135,8 @@ public abstract class BaseDataBindingFragment<BINDING : ViewDataBinding>(
      */
     @CallSuper
     override fun onDestroyView() {
-        binding.lifecycleOwner = null
-        binding.unbind()
+        getBinding().lifecycleOwner = null
+        getBinding().unbind()
         super.onDestroyView()
     }
 }

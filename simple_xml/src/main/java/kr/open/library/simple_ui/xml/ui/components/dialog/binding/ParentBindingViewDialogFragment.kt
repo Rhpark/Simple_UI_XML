@@ -1,4 +1,4 @@
-package kr.open.library.simple_ui.xml.ui.dialog.binding
+package kr.open.library.simple_ui.xml.ui.components.dialog.binding
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,9 +9,9 @@ import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewbinding.ViewBinding
-import kr.open.library.simple_ui.xml.ui.base.ParentBindingInterface
-import kr.open.library.simple_ui.xml.ui.base.helper.ParentBindingFragmentHelper
-import kr.open.library.simple_ui.xml.ui.dialog.root.RootDialogFragment
+import kr.open.library.simple_ui.xml.ui.components.base.ParentBindingInterface
+import kr.open.library.simple_ui.xml.ui.components.base.helper.ParentBindingFragmentHelper
+import kr.open.library.simple_ui.xml.ui.components.dialog.root.RootDialogFragment
 
 /**
  * Abstract parent class for DialogFragment that supports ViewBinding and ViewModel event collection.<br>
@@ -30,11 +30,11 @@ import kr.open.library.simple_ui.xml.ui.dialog.root.RootDialogFragment
  * **Design decisions / 설계 결정 이유:**<br>
  * - Uses ParentBindingFragmentHelper to ensure onEventVmCollect() is called only once, preventing duplicate Flow collectors.<br>
  * - Extends RootDialogFragment to inherit dialog functionality and permission management.<br>
- * - Uses private lateinit binding with protected getBinding() accessor to maintain encapsulation while enabling subclass access.<br>
+ * - Uses private nullable binding field with protected getBinding() method to maintain encapsulation while enabling safe subclass access.<br>
  * - Offers both default and factory-based ViewModel retrieval methods for flexibility.<br><br>
  * - ParentBindingFragmentHelper를 사용하여 onEventVmCollect()가 1회만 호출되도록 하여 중복 Flow 수집을 방지합니다.<br>
  * - RootDialogFragment를 상속하여 다이얼로그 기능과 권한 관리를 상속받습니다.<br>
- * - 캡슐화를 유지하면서 하위 클래스 접근을 가능하게 하기 위해 private lateinit binding과 protected getBinding() 접근자를 사용합니다.<br>
+ * - 캡슐화를 유지하면서 안전한 하위 클래스 접근을 가능하게 하기 위해 private nullable binding 필드와 protected getBinding() 메서드를 사용합니다.<br>
  * - 유연성을 위해 기본 및 팩토리 기반 ViewModel 검색 메서드를 모두 제공합니다.<br>
  *
  * **Important notes / 주의사항:**<br>
@@ -67,43 +67,37 @@ abstract class ParentBindingViewDialogFragment<BINDING : ViewBinding>(
      * Internal backing field for binding.<br><br>
      * binding의 내부 백킹 필드입니다.<br>
      */
-    private var _binding: BINDING? = null
+    private var binding: BINDING? = null
 
     /**
-     * Returns the binding instance for this DialogFragment.<br>
-     * Only accessible from subclasses (protected visibility).<br><br>
-     * 이 DialogFragment의 바인딩 인스턴스를 반환합니다.<br>
-     * 하위 클래스에서만 접근 가능합니다 (protected 가시성).<br>
+     * Returns the ViewBinding object for the DialogFragment.<br>
+     * Throws IllegalStateException if accessed after onDestroyView().<br><br>
+     * DialogFragment의 ViewBinding 객체를 반환합니다.<br>
+     * onDestroyView() 이후에 접근하면 IllegalStateException이 발생합니다.<br>
      *
      * **Usage / 사용법:**<br>
-     * Access views in lifecycle methods (onViewCreated, onResume, etc.) or helper methods within the DialogFragment subclass.<br><br>
-     * DialogFragment 하위 클래스 내부의 생명주기 메서드(onViewCreated, onResume 등) 또는 헬퍼 메서드에서 뷰에 접근할 때 사용합니다.<br>
-     *
-     * **Important / 주의사항:**<br>
-     * - Only available after super.onViewCreated() completes - accessing before will throw UninitializedPropertyAccessException<br>
-     * - Must be called from UI thread only (View access restriction)<br><br>
-     * - super.onViewCreated() 완료 후에만 사용 가능 - 이전 접근 시 UninitializedPropertyAccessException 발생<br>
-     * - UI 스레드에서만 호출 필요 (View 접근 제약)<br>
+     * Access views in lifecycle methods between onViewCreated() and onDestroyView().<br><br>
+     * onViewCreated()와 onDestroyView() 사이의 생명주기 메서드에서 뷰에 접근할 때 사용합니다.<br>
      *
      * **Example / 예시:**<br>
      * ```kotlin
-     * class HomeDialogFragment : BaseViewBindingDialogFragment<DialogHomeBinding>(DialogHomeBinding::inflate) {
-     *     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-     *         super.onViewCreated(view, savedInstanceState)
-     *         getBinding().textView.text = "Hello"
-     *     }
-     *
-     *     private fun setupViews() {
-     *         getBinding().button.setOnClickListener { /* ... */ }
-     *     }
+     * override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+     *     super.onViewCreated(view, savedInstanceState)
+     *     getBinding().textView.text = "Hello"
      * }
      * ```
      *
-     * @return The initialized ViewBinding instance.<br><br>
-     *         초기화된 ViewBinding 인스턴스.<br>
+     * @return The ViewBinding object for the DialogFragment.<br><br>
+     *         DialogFragment의 ViewBinding 객체.<br>
+     * @throws IllegalStateException if accessed after onDestroyView().<br><br>
+     *                               onDestroyView() 이후에 접근하는 경우.<br>
      */
-    protected fun getBinding(): BINDING = _binding
-        ?: throw IllegalStateException("Binding accessed after onDestroyView()")
+    protected fun getBinding(): BINDING {
+        check(binding != null) {
+            "Binding accessed after onDestroyView()"
+        }
+        return binding!!
+    }
 
     /**
      * Helper that ensures onEventVmCollect() is invoked only once to prevent duplicate Flow collectors.<br><br>
@@ -145,7 +139,7 @@ abstract class ParentBindingViewDialogFragment<BINDING : ViewBinding>(
      */
     @CallSuper
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        _binding = createBinding(inflater, container, isAttachToParent)
+        binding = createBinding(inflater, container, isAttachToParent)
         return getBinding().root
     }
 
@@ -164,19 +158,19 @@ abstract class ParentBindingViewDialogFragment<BINDING : ViewBinding>(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         onInitBind(getBinding())
-        getBackgroundColor()?.let { setBackgroundColor(it) }
-        getBackgroundResId()?.let { setBackgroundResource(it) }
+        getBackgroundColor()?.let { setBackgroundColor(getBinding().root, it) }
+        getBackgroundResId()?.let { setBackgroundResource(getBinding().root, it) }
         // Starts ViewModel event collection only once after binding initialization, preventing duplicate collectors.<br><br>
         // 바인딩 초기화 후 ViewModel 이벤트 수집을 1회만 시작하여 중복 수집을 방지합니다.<br>
         helper.startEventVmCollect { onEventVmCollect() }
     }
 
     override fun setBackgroundColor(color: Int) {
-        _binding?.root?.let { setBackgroundColor(it, color) }
+        setBackgroundColor(binding?.root, color)
     }
 
     override fun setBackgroundResource(resId: Int) {
-        _binding?.root?.let { setBackgroundResource(it, resId) }
+        setBackgroundResource(binding?.root, resId)
     }
 
     /**
@@ -264,6 +258,6 @@ abstract class ParentBindingViewDialogFragment<BINDING : ViewBinding>(
     override fun onDestroyView() {
         super.onDestroyView()
         helper.reset()
-        _binding = null
+        binding = null
     }
 }
