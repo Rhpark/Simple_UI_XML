@@ -19,7 +19,7 @@ import kr.open.library.simple_ui.core.system_manager.controller.notification.opt
 import kr.open.library.simple_ui.core.system_manager.controller.notification.option.ProgressNotificationOption
 import kr.open.library.simple_ui.core.system_manager.extensions.getNotificationController
 import kr.open.library.simple_ui.xml.extensions.view.toastShowShort
-import kr.open.library.simple_ui.xml.ui.activity.binding.BaseDataBindingActivity
+import kr.open.library.simple_ui.xml.ui.components.activity.binding.BaseDataBindingActivity
 import kr.open.library.simpleui_xml.MainActivity
 import kr.open.library.simpleui_xml.R
 import kr.open.library.simpleui_xml.databinding.ActivityNotificationControllerBinding

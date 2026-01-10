@@ -10,7 +10,7 @@ import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.core.logcat.config.LogxStorageType
 import kr.open.library.simple_ui.core.logcat.extensions.logxD
 import kr.open.library.simple_ui.core.logcat.model.LogxType
-import kr.open.library.simple_ui.xml.ui.activity.binding.BaseDataBindingActivity
+import kr.open.library.simple_ui.xml.ui.components.activity.binding.BaseDataBindingActivity
 import kr.open.library.simpleui_xml.R
 import kr.open.library.simpleui_xml.databinding.ActivityLogxBinding
 

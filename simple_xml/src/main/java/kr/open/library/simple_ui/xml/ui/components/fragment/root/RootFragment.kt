@@ -1,7 +1,6 @@
-package kr.open.library.simple_ui.xml.ui.fragment.root
+package kr.open.library.simple_ui.xml.ui.components.fragment.root
 
 import android.os.Bundle
-import android.os.PersistableBundle
 import androidx.annotation.CallSuper
 import androidx.fragment.app.Fragment
 import kr.open.library.simple_ui.xml.permissions.register.PermissionDelegate
@@ -78,6 +77,9 @@ abstract class RootFragment :
      */
     @CallSuper
     final override fun onRequestPermissions(permissions: List<String>, onResult: (deniedPermissions: List<String>) -> Unit) {
+        check(::permissionDelegate.isInitialized) {
+            "PermissionDelegate is not initialized. Please call super.onCreate() first."
+        }
         permissionDelegate.requestPermissions(permissions, onResult)
     }
 }

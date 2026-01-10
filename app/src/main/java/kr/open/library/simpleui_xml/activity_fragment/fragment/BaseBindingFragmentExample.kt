@@ -8,7 +8,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.launch
 import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.xml.extensions.view.snackBarShowShort
-import kr.open.library.simple_ui.xml.ui.fragment.binding.BaseDataBindingFragment
+import kr.open.library.simple_ui.xml.ui.components.fragment.binding.BaseDataBindingFragment
 import kr.open.library.simpleui_xml.R
 import kr.open.library.simpleui_xml.databinding.FragmentBaseBindingExampleBinding
 

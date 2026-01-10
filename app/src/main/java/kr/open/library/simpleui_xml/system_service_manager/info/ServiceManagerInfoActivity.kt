@@ -8,7 +8,6 @@ import android.annotation.SuppressLint
 import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
@@ -23,8 +22,8 @@ import kr.open.library.simple_ui.core.system_manager.info.network.sim.SimInfo
 import kr.open.library.simple_ui.core.system_manager.info.network.telephony.TelephonyInfo
 import kr.open.library.simple_ui.xml.extensions.view.toastShowShort
 import kr.open.library.simple_ui.xml.system_manager.extensions.getDisplayInfo
-import kr.open.library.simple_ui.xml.ui.activity.binding.BaseDataBindingActivity
 import kr.open.library.simple_ui.xml.ui.adapter.normal.simple.SimpleRcvAdapter
+import kr.open.library.simple_ui.xml.ui.components.activity.binding.BaseDataBindingActivity
 import kr.open.library.simpleui_xml.R
 import kr.open.library.simpleui_xml.databinding.ActivityServiceManagerInfoBinding
 

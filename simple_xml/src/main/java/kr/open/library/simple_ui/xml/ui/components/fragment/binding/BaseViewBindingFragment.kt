@@ -1,4 +1,4 @@
-package kr.open.library.simple_ui.xml.ui.fragment.binding
+package kr.open.library.simple_ui.xml.ui.components.fragment.binding
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

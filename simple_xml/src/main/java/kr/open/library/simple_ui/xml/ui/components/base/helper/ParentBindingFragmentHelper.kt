@@ -1,4 +1,4 @@
-package kr.open.library.simple_ui.xml.ui.base.helper
+package kr.open.library.simple_ui.xml.ui.components.base.helper
 
 internal class ParentBindingFragmentHelper : ParentBaseBindingHelper() {
     /**

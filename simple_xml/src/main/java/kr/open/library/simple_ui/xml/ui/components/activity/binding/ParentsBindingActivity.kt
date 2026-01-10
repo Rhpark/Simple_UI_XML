@@ -1,4 +1,4 @@
-package kr.open.library.simple_ui.xml.ui.activity.binding
+package kr.open.library.simple_ui.xml.ui.components.activity.binding
 
 import android.os.Bundle
 import android.os.PersistableBundle
@@ -6,9 +6,9 @@ import androidx.annotation.CallSuper
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewbinding.ViewBinding
-import kr.open.library.simple_ui.xml.ui.activity.root.RootActivity
-import kr.open.library.simple_ui.xml.ui.base.ParentBindingInterface
-import kr.open.library.simple_ui.xml.ui.base.helper.ParentBindingActivityHelper
+import kr.open.library.simple_ui.xml.ui.components.activity.root.RootActivity
+import kr.open.library.simple_ui.xml.ui.components.base.ParentBindingInterface
+import kr.open.library.simple_ui.xml.ui.components.base.helper.ParentBindingActivityHelper
 
 /**
  * Abstract parent class for Activity that supports ViewBinding and ViewModel event collection.<br>
@@ -91,7 +91,12 @@ abstract class ParentsBindingActivity<BINDING : ViewBinding> :
      * @return The initialized ViewBinding instance.<br><br>
      *         초기화된 ViewBinding 인스턴스.<br>
      */
-    protected fun getBinding(): BINDING = binding
+    protected fun getBinding(): BINDING {
+        check(::binding.isInitialized) {
+            "Binding is not initialized. Please call super.onCreate() first."
+        }
+        return binding
+    }
 
     /**
      * Helper that ensures onEventVmCollect() is invoked only once to prevent duplicate Flow collectors.<br><br>
@@ -113,26 +118,21 @@ abstract class ParentsBindingActivity<BINDING : ViewBinding> :
     @CallSuper
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = createBinding()
-        onInitBind(binding)
-        // Starts ViewModel event collection only once after binding initialization, preventing duplicate collectors.<br><br>
-        // 바인딩 초기화 후 ViewModel 이벤트 수집을 1회만 시작하여 중복 수집을 방지합니다.<br>
-        helper.startEventVmCollect {
-            onEventVmCollect()
-        }
+        createInitData()
     }
 
     @CallSuper
     override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-        beforeOnCreated(savedInstanceState)
-        super.onCreate(savedInstanceState)
+        super.onCreate(savedInstanceState, persistentState)
+        createInitData()
+    }
+
+    private fun createInitData() {
         binding = createBinding()
         onInitBind(binding)
         // Starts ViewModel event collection only once after binding initialization, preventing duplicate collectors.<br><br>
         // 바인딩 초기화 후 ViewModel 이벤트 수집을 1회만 시작하여 중복 수집을 방지합니다.<br>
-        helper.startEventVmCollect {
-            onEventVmCollect()
-        }
+        helper.startEventVmCollect { onEventVmCollect() }
     }
 
     /**
@@ -189,6 +189,24 @@ abstract class ParentsBindingActivity<BINDING : ViewBinding> :
      * Obtains a ViewModel of the specified type using ViewModelProvider.<br><br>
      * ViewModelProvider를 사용하여 지정된 타입의 ViewModel을 가져옵니다.<br>
      *
+     * **Note / 참고:**<br>
+     * - This method is provided for users who cannot use Jetpack's `by viewModels()` delegate.<br>
+     * - If you have `androidx.activity:activity-ktx` dependency, prefer using `by viewModels()` for lazy initialization.<br>
+     * - This method creates the ViewModel immediately when called (not lazy).<br><br>
+     * - 이 메서드는 Jetpack의 `by viewModels()` delegate를 사용할 수 없는 사용자를 위해 제공됩니다.<br>
+     * - `androidx.activity:activity-ktx` 의존성이 있다면 lazy 초기화를 위해 `by viewModels()` 사용을 권장합니다.<br>
+     * - 이 메서드는 호출 시 즉시 ViewModel을 생성합니다 (lazy 아님).<br>
+     *
+     * **Recommended (권장):**<br>
+     * ```kotlin
+     * private val viewModel: MainViewModel by viewModels()  // ✅ Lazy initialization
+     * ```
+     *
+     * **Alternative (대안):**<br>
+     * ```kotlin
+     * private val viewModel: MainViewModel by lazy { getViewModel() }  // ✅ Manual lazy
+     * ```
+     *
      * @param T The type of the ViewModel to obtain.<br><br>
      *          가져올 ViewModel의 타입.<br>
      * @return The ViewModel instance of type T.<br><br>
@@ -199,6 +217,17 @@ abstract class ParentsBindingActivity<BINDING : ViewBinding> :
     /**
      * Obtains a ViewModel of the specified type using ViewModelProvider with a custom factory.<br><br>
      * 커스텀 팩토리를 사용하여 ViewModelProvider로 지정된 타입의 ViewModel을 가져옵니다.<br>
+     *
+     * **Note / 참고:**<br>
+     * - This method is provided for users who cannot use Jetpack's `by viewModels { factory }` delegate.<br>
+     * - If you have `androidx.activity:activity-ktx` dependency, prefer using `by viewModels()` with factory lambda.<br><br>
+     * - 이 메서드는 Jetpack의 `by viewModels { factory }` delegate를 사용할 수 없는 사용자를 위해 제공됩니다.<br>
+     * - `androidx.activity:activity-ktx` 의존성이 있다면 팩토리 람다와 함께 `by viewModels()` 사용을 권장합니다.<br>
+     *
+     * **Recommended (권장):**<br>
+     * ```kotlin
+     * private val viewModel: MainViewModel by viewModels { myFactory }  // ✅ Lazy with factory
+     * ```
      *
      * @param T The type of the ViewModel to obtain.<br><br>
      *          가져올 ViewModel의 타입.<br>

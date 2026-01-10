@@ -1,8 +1,6 @@
 package kr.open.library.simpleui_xml.extenstions_style
 
 import android.Manifest
-import android.os.Bundle
-import android.os.PersistableBundle
 import androidx.core.widget.addTextChangedListener
 import kr.open.library.simple_ui.core.extensions.date.toDateString
 import kr.open.library.simple_ui.core.extensions.display.dpToPx
@@ -26,13 +24,12 @@ import kr.open.library.simple_ui.xml.extensions.view.strikeThrough
 import kr.open.library.simple_ui.xml.extensions.view.toastShowLong
 import kr.open.library.simple_ui.xml.extensions.view.toastShowShort
 import kr.open.library.simple_ui.xml.extensions.view.underline
-import kr.open.library.simple_ui.xml.ui.activity.binding.BaseDataBindingActivity
+import kr.open.library.simple_ui.xml.ui.components.activity.binding.BaseDataBindingActivity
 import kr.open.library.simpleui_xml.R
 import kr.open.library.simpleui_xml.databinding.ActivityExtensionsStyleBinding
 import java.util.Locale
 
 class ExtensionsStyleActivity : BaseDataBindingActivity<ActivityExtensionsStyleBinding>(R.layout.activity_extensions_style) {
-
     override fun onInitBind(binding: ActivityExtensionsStyleBinding) {
         super.onInitBind(binding)
         setupViewExtensions()
@@ -43,6 +40,7 @@ class ExtensionsStyleActivity : BaseDataBindingActivity<ActivityExtensionsStyleB
         setupTryCatchExtensions()
         setupPermissionExtensions()
     }
+
     /**
      * 섹션 1: View Extensions (Toast/SnackBar/TextView)
      */

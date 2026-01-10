@@ -8,7 +8,7 @@ import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
 import kr.open.library.simple_ui.core.system_manager.controller.alarm.vo.AlarmVO
 import kr.open.library.simple_ui.core.system_manager.extensions.getAlarmController
 import kr.open.library.simple_ui.xml.extensions.view.toastShowShort
-import kr.open.library.simple_ui.xml.ui.activity.normal.BaseActivity
+import kr.open.library.simple_ui.xml.ui.components.activity.normal.BaseActivity
 import kr.open.library.simpleui_xml.R
 import kr.open.library.simpleui_xml.databinding.ActivityAlarmControllerBinding
 import kr.open.library.simpleui_xml.system_service_manager.controller.receiver.AlarmReceiver

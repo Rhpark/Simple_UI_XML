@@ -1,13 +1,11 @@
 package kr.open.library.simpleui_xml.recyclerview.new_
 
-import android.os.Bundle
-import android.os.PersistableBundle
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
-import kr.open.library.simple_ui.xml.ui.activity.binding.BaseDataBindingActivity
 import kr.open.library.simple_ui.xml.ui.adapter.list.diffutil.RcvListDiffUtilCallBack
 import kr.open.library.simple_ui.xml.ui.adapter.list.simple.SimpleBindingRcvListAdapter
 import kr.open.library.simple_ui.xml.ui.adapter.normal.simple.SimpleBindingRcvAdapter
+import kr.open.library.simple_ui.xml.ui.components.activity.binding.BaseDataBindingActivity
 import kr.open.library.simple_ui.xml.ui.view.recyclerview.ScrollDirection
 import kr.open.library.simple_ui.xml.ui.view.recyclerview.ScrollEdge
 import kr.open.library.simpleui_xml.R

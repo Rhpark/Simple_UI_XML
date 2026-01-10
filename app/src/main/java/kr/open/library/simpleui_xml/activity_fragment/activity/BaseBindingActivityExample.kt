@@ -1,13 +1,12 @@
 package kr.open.library.simpleui_xml.activity_fragment.activity
 
 import android.os.Bundle
-import android.os.PersistableBundle
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.xml.extensions.view.snackBarShowShort
-import kr.open.library.simple_ui.xml.ui.activity.binding.BaseDataBindingActivity
+import kr.open.library.simple_ui.xml.ui.components.activity.binding.BaseDataBindingActivity
 import kr.open.library.simpleui_xml.R
 import kr.open.library.simpleui_xml.databinding.ActivityBaseBindingActivityExampleBinding
 

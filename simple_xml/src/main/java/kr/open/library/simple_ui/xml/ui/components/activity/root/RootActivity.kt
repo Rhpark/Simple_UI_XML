@@ -1,4 +1,4 @@
-package kr.open.library.simple_ui.xml.ui.activity.root
+package kr.open.library.simple_ui.xml.ui.components.activity.root
 
 import android.os.Bundle
 import android.os.PersistableBundle
@@ -46,10 +46,20 @@ abstract class RootActivity :
     private lateinit var permissionDelegate: PermissionDelegate<AppCompatActivity>
 
     /**
-     * Requests runtime permissions and returns the result via callback.
+     * Requests runtime permissions and returns the result via callback.<br>
      * Delegates to PermissionDelegate for actual permission handling.<br><br>
      * 런타임 권한을 요청하고 콜백을 통해 결과를 반환합니다.<br>
      * 실제 권한 처리는 PermissionDelegate에 위임합니다.<br>
+     *
+     * **Important / 주의사항:**<br>
+     * - This method MUST be called AFTER super.onCreate() is called.<br>
+     * - Calling this before super.onCreate() will throw IllegalStateException with message:
+     *   "PermissionDelegate is not initialized. Please call super.onCreate() first."<br>
+     * - DO NOT call this method inside beforeOnCreated() hook.<br><br>
+     * - 이 메서드는 반드시 super.onCreate() 호출 이후에 호출해야 합니다.<br>
+     * - super.onCreate() 호출 전에 호출하면 IllegalStateException이 발생하며 다음 메시지가 표시됩니다:
+     *   "PermissionDelegate is not initialized. Please call super.onCreate() first."<br>
+     * - beforeOnCreated() 훅 내부에서는 절대 호출하지 마세요.<br>
      *
      * @param permissions The list of permissions to request.<br><br>
      *                    요청할 권한 목록.<br>
@@ -58,6 +68,9 @@ abstract class RootActivity :
      */
     @CallSuper
     final override fun onRequestPermissions(permissions: List<String>, onResult: (deniedPermissions: List<String>) -> Unit) {
+        check(::permissionDelegate.isInitialized) {
+            "PermissionDelegate is not initialized. Please call super.onCreate() first."
+        }
         permissionDelegate.requestPermissions(permissions, onResult)
     }
 
@@ -76,14 +89,17 @@ abstract class RootActivity :
     override fun onCreate(savedInstanceState: Bundle?) {
         beforeOnCreated(savedInstanceState)
         super.onCreate(savedInstanceState)
-        permissionDelegate = PermissionDelegate(this)
-        permissionDelegate.onRestoreInstanceState(savedInstanceState)
+        initPermission(savedInstanceState)
     }
 
     @CallSuper
     override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
         beforeOnCreated(savedInstanceState)
-        super.onCreate(savedInstanceState)
+        super.onCreate(savedInstanceState, persistentState)
+        initPermission(savedInstanceState)
+    }
+
+    private fun initPermission(savedInstanceState: Bundle?) {
         permissionDelegate = PermissionDelegate(this)
         permissionDelegate.onRestoreInstanceState(savedInstanceState)
     }

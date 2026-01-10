@@ -2,7 +2,6 @@ package kr.open.library.simpleui_xml.permission
 
 import android.Manifest
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
@@ -10,8 +9,8 @@ import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.xml.extensions.view.SnackBarOption
 import kr.open.library.simple_ui.xml.extensions.view.snackBarMakeShort
 import kr.open.library.simple_ui.xml.extensions.view.snackBarShowShort
-import kr.open.library.simple_ui.xml.ui.activity.binding.BaseDataBindingActivity
 import kr.open.library.simple_ui.xml.ui.adapter.normal.simple.SimpleRcvAdapter
+import kr.open.library.simple_ui.xml.ui.components.activity.binding.BaseDataBindingActivity
 import kr.open.library.simpleui_xml.R
 import kr.open.library.simpleui_xml.databinding.ActivityPermissionsBinding
 

@@ -1,4 +1,4 @@
-package kr.open.library.simple_ui.xml.ui.fragment.normal
+package kr.open.library.simple_ui.xml.ui.components.fragment.normal
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.CallSuper
 import androidx.annotation.LayoutRes
-import kr.open.library.simple_ui.xml.ui.fragment.root.RootFragment
+import kr.open.library.simple_ui.xml.ui.components.fragment.root.RootFragment
 
 /**
  * A basic Fragment that handles layout inflation automatically without ViewBinding or DataBinding.<br>

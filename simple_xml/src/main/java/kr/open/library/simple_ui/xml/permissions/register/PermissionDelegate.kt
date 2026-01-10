@@ -67,12 +67,11 @@ public class PermissionDelegate<T : Any>(
          * Observes lifecycle transitions to automatically re-register or clean up delegates.<br><br>
          * 라이프사이클 변화를 감시해 Delegate를 자동으로 재등록하거나 정리합니다.<br>
          */
-        val lifecycleOwner =
-            when (contextProvider) {
-                is ComponentActivity -> contextProvider.lifecycle
-                is Fragment -> contextProvider.lifecycle
-                else -> throw IllegalArgumentException("Unsupported context provider type")
-            }
+        val lifecycleOwner = when (contextProvider) {
+            is ComponentActivity -> contextProvider.lifecycle
+            is Fragment -> contextProvider.lifecycle
+            else -> throw IllegalArgumentException("Unsupported context provider type")
+        }
         lifecycleOwner.addObserver(
             object : LifecycleEventObserver {
                 override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
@@ -278,18 +277,17 @@ public class PermissionDelegate<T : Any>(
                 .toString()
             permissionManager.registerDelegate(tempRequestId, this@PermissionDelegate)
 
-            currentRequestId =
-                permissionManager.request(
-                    context = getContext(),
-                    requestPermissionLauncher = normalPermissionLauncher,
-                    permissions = permissions,
-                    callback = onResult,
-                    /*
-                     * Supplies the pre-generated ID so PermissionManager can reuse it.<br><br>
-                     * PermissionManager 가 재사용할 수 있도록 선 생성한 ID를 전달합니다.<br>
-                     */
-                    preGeneratedRequestId = tempRequestId,
-                )
+            currentRequestId = permissionManager.request(
+                context = getContext(),
+                requestPermissionLauncher = normalPermissionLauncher,
+                permissions = permissions,
+                callback = onResult,
+                /*
+                 * Supplies the pre-generated ID so PermissionManager can reuse it.<br><br>
+                 * PermissionManager 가 재사용할 수 있도록 선 생성한 ID를 전달합니다.<br>
+                 */
+                preGeneratedRequestId = tempRequestId,
+            )
 
             /*
              * Clean up the delegate if the request failed to launch and returned empty.<br><br>

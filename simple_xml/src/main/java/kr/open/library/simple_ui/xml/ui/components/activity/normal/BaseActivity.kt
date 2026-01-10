@@ -1,10 +1,10 @@
-package kr.open.library.simple_ui.xml.ui.activity.normal
+package kr.open.library.simple_ui.xml.ui.components.activity.normal
 
 import android.os.Bundle
 import android.os.PersistableBundle
 import androidx.annotation.CallSuper
 import androidx.annotation.LayoutRes
-import kr.open.library.simple_ui.xml.ui.activity.root.RootActivity
+import kr.open.library.simple_ui.xml.ui.components.activity.root.RootActivity
 
 /**
  * A basic Activity that handles layout inflation automatically.<br>
@@ -58,8 +58,7 @@ public abstract class BaseActivity(
 
     @CallSuper
     override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-        beforeOnCreated(savedInstanceState)
-        super.onCreate(savedInstanceState)
+        super.onCreate(savedInstanceState, persistentState)
         setContentView(layoutRes)
     }
 }

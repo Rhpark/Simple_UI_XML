@@ -1,17 +1,16 @@
-package kr.open.library.simple_ui.xml.ui.fragment.binding
+package kr.open.library.simple_ui.xml.ui.components.fragment.binding
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.CallSuper
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewbinding.ViewBinding
-import kr.open.library.simple_ui.xml.ui.base.ParentBindingInterface
-import kr.open.library.simple_ui.xml.ui.base.helper.ParentBindingFragmentHelper
-import kr.open.library.simple_ui.xml.ui.fragment.root.RootFragment
+import kr.open.library.simple_ui.xml.ui.components.base.ParentBindingInterface
+import kr.open.library.simple_ui.xml.ui.components.base.helper.ParentBindingFragmentHelper
+import kr.open.library.simple_ui.xml.ui.components.fragment.root.RootFragment
 
 /**
  * Abstract parent class for Fragment that supports ViewBinding and ViewModel event collection.<br>
@@ -91,9 +90,13 @@ abstract class ParentsBindingFragment<BINDING : ViewBinding>(
      * @throws IllegalStateException if accessed after onDestroyView().<br><br>
      *                               onDestroyView() 이후에 접근하는 경우.<br>
      */
-    public val binding: BINDING
-        get() = _binding
-            ?: throw IllegalStateException("Binding accessed after onDestroyView()")
+    protected val binding: BINDING
+        get() {
+            check(_binding != null) {
+                "Binding accessed after onDestroyView()"
+            }
+            return _binding!!
+        }
 
     /**
      * Helper that ensures onEventVmCollect() is invoked only once to prevent duplicate Flow collectors.<br><br>
@@ -226,16 +229,46 @@ abstract class ParentsBindingFragment<BINDING : ViewBinding>(
      * Obtains a ViewModel of the specified type using ViewModelProvider.<br><br>
      * ViewModelProvider를 사용하여 지정된 타입의 ViewModel을 가져옵니다.<br>
      *
+     * **Note / 참고:**<br>
+     * - This method is provided for users who cannot use Jetpack's `by viewModels()` delegate.<br>
+     * - If you have `androidx.fragment:fragment-ktx` dependency, prefer using `by viewModels()` delegate for automatic lifecycle management and lazy initialization.<br><br>
+     * - 이 메서드는 Jetpack의 `by viewModels()` 델리게이트를 사용할 수 없는 사용자를 위해 제공됩니다.<br>
+     * - `androidx.fragment:fragment-ktx` 의존성이 있다면, 자동 생명주기 관리와 지연 초기화를 위해 `by viewModels()` 델리게이트를 사용하는 것이 좋습니다.<br>
+     *
+     * **Best Practice / 권장 사항:**<br>
+     * ```kotlin
+     * // ✅ Recommended (requires fragment-ktx)
+     * private val viewModel: MyViewModel by viewModels()
+     *
+     * // ⚠️ Alternative (if fragment-ktx not available)
+     * private val viewModel: MyViewModel by lazy { getViewModel() }
+     * ```
+     *
      * @param T The type of the ViewModel to obtain.<br><br>
      *          가져올 ViewModel의 타입.
      * @return The ViewModel instance of type T.<br><br>
      *         타입 T의 ViewModel 인스턴스.<br>
      */
-    protected inline fun <reified T : ViewModel> Fragment.getViewModel(): T = ViewModelProvider(this)[T::class.java]
+    protected inline fun <reified T : ViewModel> getViewModel(): T = ViewModelProvider(this)[T::class.java]
 
     /**
      * Obtains a ViewModel of the specified type using ViewModelProvider with a custom factory.<br><br>
      * 커스텀 팩토리를 사용하여 ViewModelProvider로 지정된 타입의 ViewModel을 가져옵니다.<br>
+     *
+     * **Note / 참고:**<br>
+     * - This method is provided for users who cannot use Jetpack's `by viewModels()` delegate.<br>
+     * - If you have `androidx.fragment:fragment-ktx` dependency, prefer using `by viewModels { factory }` delegate for automatic lifecycle management.<br><br>
+     * - 이 메서드는 Jetpack의 `by viewModels()` 델리게이트를 사용할 수 없는 사용자를 위해 제공됩니다.<br>
+     * - `androidx.fragment:fragment-ktx` 의존성이 있다면, 자동 생명주기 관리를 위해 `by viewModels { factory }` 델리게이트를 사용하는 것이 좋습니다.<br>
+     *
+     * **Best Practice / 권장 사항:**<br>
+     * ```kotlin
+     * // ✅ Recommended (requires fragment-ktx)
+     * private val viewModel: MyViewModel by viewModels { MyViewModelFactory(arg1, arg2) }
+     *
+     * // ⚠️ Alternative (if fragment-ktx not available)
+     * private val viewModel: MyViewModel by lazy { getViewModel(MyViewModelFactory(arg1, arg2)) }
+     * ```
      *
      * @param T The type of the ViewModel to obtain.<br><br>
      *          가져올 ViewModel의 타입.
@@ -244,6 +277,6 @@ abstract class ParentsBindingFragment<BINDING : ViewBinding>(
      * @return The ViewModel instance of type T.<br><br>
      *         타입 T의 ViewModel 인스턴스.<br>
      */
-    protected inline fun <reified T : ViewModel> Fragment.getViewModel(factory: ViewModelProvider.Factory): T =
+    protected inline fun <reified T : ViewModel> getViewModel(factory: ViewModelProvider.Factory): T =
         ViewModelProvider(this, factory)[T::class.java]
 }

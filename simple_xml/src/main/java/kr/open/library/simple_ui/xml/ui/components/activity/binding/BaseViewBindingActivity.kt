@@ -1,4 +1,4 @@
-package kr.open.library.simple_ui.xml.ui.activity.binding
+package kr.open.library.simple_ui.xml.ui.components.activity.binding
 
 import android.view.LayoutInflater
 import androidx.viewbinding.ViewBinding
