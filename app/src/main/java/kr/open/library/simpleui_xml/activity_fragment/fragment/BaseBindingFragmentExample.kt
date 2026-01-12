@@ -1,7 +1,6 @@
 package kr.open.library.simpleui_xml.activity_fragment.fragment
 
 import android.os.Bundle
-import android.view.View
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -15,11 +14,8 @@ import kr.open.library.simpleui_xml.databinding.FragmentBaseBindingExampleBindin
 class BaseBindingFragmentExample : BaseDataBindingFragment<FragmentBaseBindingExampleBinding>(R.layout.fragment_base_binding_example) {
     private val vm: BaseBindingFragmentExampleVm by lazy { getViewModel() }
 
-    override fun onViewCreated(
-        view: View,
-        savedInstanceState: Bundle?,
-    ) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onViewCreate(binding: FragmentBaseBindingExampleBinding, savedInstanceState: Bundle?) {
+        super.onViewCreate(binding, savedInstanceState)
         Logx.d("BaseBindingFragmentExample - onViewCreated() called")
 
         binding.vm = vm
@@ -39,7 +35,7 @@ class BaseBindingFragmentExample : BaseDataBindingFragment<FragmentBaseBindingEx
                 vm.mEventVm.collect { event ->
                     when (event) {
                         is BaseBindingFragmentExampleVmEvent.ShowMessage -> {
-                            binding.root.snackBarShowShort(event.message)
+                            getBinding().root.snackBarShowShort(event.message)
                             Logx.d("Fragment Event: ${event.message}")
                         }
                     }

@@ -118,18 +118,18 @@ abstract class ParentsBindingActivity<BINDING : ViewBinding> :
     @CallSuper
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        createInitData()
+        createInitData(savedInstanceState)
     }
 
     @CallSuper
     override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
         super.onCreate(savedInstanceState, persistentState)
-        createInitData()
+        createInitData(savedInstanceState)
     }
 
-    private fun createInitData() {
+    private fun createInitData(savedInstanceState: Bundle?) {
         binding = createBinding()
-        onInitBind(binding)
+        onViewCreate(binding, savedInstanceState)
         // Starts ViewModel event collection only once after binding initialization, preventing duplicate collectors.<br><br>
         // 바인딩 초기화 후 ViewModel 이벤트 수집을 1회만 시작하여 중복 수집을 방지합니다.<br>
         helper.startEventVmCollect { onEventVmCollect() }
@@ -144,7 +144,7 @@ abstract class ParentsBindingActivity<BINDING : ViewBinding> :
      * @param binding The initialized ViewBinding instance.<br><br>
      *                초기화된 ViewBinding 인스턴스.<br>
      */
-    override fun onInitBind(binding: BINDING) {}
+    override fun onCreateView(binding: BINDING, savedInstanceState: Bundle?) {}
 
     /**
      * Override this method to collect ViewModel events.<br>

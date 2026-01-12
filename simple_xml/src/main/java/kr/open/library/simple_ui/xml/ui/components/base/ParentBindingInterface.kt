@@ -1,5 +1,6 @@
 package kr.open.library.simple_ui.xml.ui.components.base
 
+import android.os.Bundle
 import androidx.viewbinding.ViewBinding
 
 /**
@@ -23,7 +24,16 @@ interface ParentBindingInterface<BINDING : ViewBinding> {
      * @param binding The initialized ViewBinding instance.<br><br>
      *                초기화된 ViewBinding 인스턴스.<br>
      */
-    fun onInitBind(binding: BINDING) {}
+    fun onViewCreate(binding: BINDING, savedInstanceState: Bundle?) {}
+
+    /**
+     * Called immediately after binding creation in onCreateView().<br><br>
+     * onCreateView()에서 바인딩 생성 직후 호출됩니다.<br>
+     *
+     * @param binding The initialized ViewBinding instance.<br><br>
+     *                초기화된 ViewBinding 인스턴스.<br>
+     */
+    fun onCreateView(binding: BINDING, savedInstanceState: Bundle?) {}
 
     /**
      * Called to start collecting ViewModel events.<br>

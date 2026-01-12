@@ -157,7 +157,7 @@ abstract class ParentBindingViewDialogFragment<BINDING : ViewBinding>(
     @CallSuper
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        onInitBind(getBinding())
+        onViewCreate(getBinding(), savedInstanceState)
         getBackgroundColor()?.let { setBackgroundColor(getBinding().root, it) }
         getBackgroundResId()?.let { setBackgroundResource(getBinding().root, it) }
         // Starts ViewModel event collection only once after binding initialization, preventing duplicate collectors.<br><br>
@@ -182,7 +182,7 @@ abstract class ParentBindingViewDialogFragment<BINDING : ViewBinding>(
      * @param binding The initialized ViewBinding instance.<br><br>
      *                초기화된 ViewBinding 인스턴스.<br>
      */
-    override fun onInitBind(binding: BINDING) {}
+    override fun onCreateView(binding: BINDING, savedInstanceState: Bundle?) { }
 
     /**
      * Override this method to collect ViewModel events.<br>

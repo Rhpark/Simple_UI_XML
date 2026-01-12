@@ -121,7 +121,6 @@ public abstract class BaseDialogFragment(
         return rootView!!
     }
 
-
     @CallSuper
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         rootView = inflater.inflate(layoutRes, container, isAttachToParent)

@@ -2,7 +2,6 @@ package kr.open.library.simple_ui.xml.ui.components.fragment.binding
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.CallSuper
 import androidx.annotation.LayoutRes
@@ -104,9 +103,9 @@ public abstract class BaseDataBindingFragment<BINDING : ViewDataBinding>(
         DataBindingUtil.inflate<BINDING>(inflater, layoutRes, container, isAttachToParent)
 
     /**
-     * Called immediately after onCreateView() has returned.<br>
+     * Called immediately after onViewCreate() has returned.<br>
      * Sets the binding's lifecycleOwner to viewLifecycleOwner for proper LiveData observation tied to the view lifecycle.<br><br>
-     * onCreateView()가 반환된 직후 호출됩니다.<br>
+     * onViewCreate()가 반환된 직후 호출됩니다.<br>
      * 뷰 생명주기에 연결된 적절한 LiveData 관찰을 위해 바인딩의 lifecycleOwner를 viewLifecycleOwner로 설정합니다.<br>
      *
      * **Important / 중요:**<br>
@@ -114,17 +113,10 @@ public abstract class BaseDataBindingFragment<BINDING : ViewDataBinding>(
      * - This prevents memory leaks and stale observations when Fragment's view is destroyed but Fragment instance persists (e.g., in back stack).<br><br>
      * - Fragment의 생명주기 대신 viewLifecycleOwner를 사용하면 onDestroyView()에서 LiveData 구독이 자동으로 정리됩니다.<br>
      * - 이는 Fragment의 뷰가 파괴되었지만 Fragment 인스턴스가 유지될 때(예: 백 스택) 메모리 누수와 오래된 관찰을 방지합니다.<br>
-     *
-     * @param view The View returned by onCreateView().<br><br>
-     *             onCreateView()가 반환한 View.<br>
-     * @param savedInstanceState If non-null, this fragment is being re-constructed from a previous saved state.<br><br>
-     *                           null이 아닌 경우, 이 Fragment는 이전에 저장된 상태에서 다시 구성되고 있습니다.<br>
      */
     @CallSuper
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        // viewLifecycleOwner가 준비된 시점에 설정
-        getBinding().lifecycleOwner = viewLifecycleOwner
-        super.onViewCreated(view, savedInstanceState)
+    override fun onViewCreate(binding: BINDING, savedInstanceState: Bundle?) {
+        binding.lifecycleOwner = viewLifecycleOwner
     }
 
     /**

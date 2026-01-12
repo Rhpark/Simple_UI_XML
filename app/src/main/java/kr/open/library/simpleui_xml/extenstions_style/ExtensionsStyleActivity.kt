@@ -1,6 +1,7 @@
 package kr.open.library.simpleui_xml.extenstions_style
 
 import android.Manifest
+import android.os.Bundle
 import androidx.core.widget.addTextChangedListener
 import kr.open.library.simple_ui.core.extensions.date.toDateString
 import kr.open.library.simple_ui.core.extensions.display.dpToPx
@@ -30,8 +31,8 @@ import kr.open.library.simpleui_xml.databinding.ActivityExtensionsStyleBinding
 import java.util.Locale
 
 class ExtensionsStyleActivity : BaseDataBindingActivity<ActivityExtensionsStyleBinding>(R.layout.activity_extensions_style) {
-    override fun onInitBind(binding: ActivityExtensionsStyleBinding) {
-        super.onInitBind(binding)
+    override fun onViewCreate(binding: ActivityExtensionsStyleBinding, savedInstanceState: Bundle?) {
+        super.onViewCreate(binding, savedInstanceState)
         setupViewExtensions()
         setupDisplayExtensions()
         setupResourceExtensions()

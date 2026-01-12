@@ -1,5 +1,6 @@
 package kr.open.library.simpleui_xml.recyclerview.new_
 
+import android.os.Bundle
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import kr.open.library.simple_ui.xml.ui.adapter.list.diffutil.RcvListDiffUtilCallBack
@@ -49,8 +50,8 @@ class RecyclerViewActivity : BaseDataBindingActivity<ActivityRecyclerviewBinding
             setOnItemClickListener { i, sampleItem, view -> currentRemoveAtAdapter(i) }
         }.apply { setItems(SampleItem.createSampleData()) }
 
-    override fun onInitBind(binding: ActivityRecyclerviewBinding) {
-        super.onInitBind(binding)
+    override fun onViewCreate(binding: ActivityRecyclerviewBinding, savedInstanceState: Bundle?) {
+        super.onViewCreate(binding, savedInstanceState)
         setupRecyclerView()
         setupScrollStateDetection()
     }

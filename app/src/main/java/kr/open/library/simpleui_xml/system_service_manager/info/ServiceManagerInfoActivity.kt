@@ -48,8 +48,8 @@ class ServiceManagerInfoActivity : BaseDataBindingActivity<ActivityServiceManage
     }
 
     @SuppressLint("MissingPermission")
-    override fun onInitBind(binding: ActivityServiceManagerInfoBinding) {
-        super.onInitBind(binding)
+    override fun onViewCreate(binding: ActivityServiceManagerInfoBinding, savedInstanceState: Bundle?) {
+        super.onViewCreate(binding, savedInstanceState)
         getBinding().run {
             btnDisplay.setOnClickListener {
                 val displayInfo = getDisplayInfo()

@@ -1,6 +1,7 @@
 package kr.open.library.simpleui_xml
 
 import android.content.Intent
+import android.os.Bundle
 import kr.open.library.simple_ui.xml.extensions.view.bold
 import kr.open.library.simple_ui.xml.ui.components.activity.binding.BaseDataBindingActivity
 import kr.open.library.simpleui_xml.activity_fragment.ActivityFragmentActivity
@@ -15,7 +16,8 @@ import kr.open.library.simpleui_xml.system_service_manager.controller.ServiceMan
 import kr.open.library.simpleui_xml.system_service_manager.info.ServiceManagerInfoActivity
 
 class MainActivity : BaseDataBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
-    override fun onInitBind(binding: ActivityMainBinding) {
+    override fun onViewCreate(binding: ActivityMainBinding, savedInstanceState: Bundle?) {
+        super.onViewCreate(binding, savedInstanceState)
         binding.btnNewPermissionActivity.setOnClickListener {
             startActivity(Intent(this, PermissionsActivity::class.java))
         }
