@@ -131,17 +131,8 @@ public abstract class BaseDialogFragment(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         getRootView().let { rootView ->
-            getBackgroundColor()?.let { setBackgroundColor(rootView, it) }
-            getBackgroundResId()?.let { setBackgroundResource(rootView, it) }
+            config.updateBackgroundColor(rootView)
         }
-    }
-
-    override fun setBackgroundColor(color: Int) {
-        setBackgroundColor(getRootView(), color)
-    }
-
-    override fun setBackgroundResource(resId: Int) {
-        setBackgroundResource(getRootView(), resId)
     }
 
     @CallSuper

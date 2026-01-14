@@ -69,10 +69,10 @@ class ServiceManagerInfoActivity : BaseDataBindingActivity<ActivityServiceManage
             btnSim.setOnClickListener {
 //                READ_PHONE_NUMBERS
 //                onRequestPermissions(listOf(READ_PHONE_STATE)) { deniedPermissions ->
-                onRequestPermissions(listOf(READ_PHONE_STATE)) { deniedPermissions ->
+                requestPermissions(listOf(READ_PHONE_STATE)) { deniedPermissions ->
                     if (!deniedPermissions.isEmpty()) {
                         toastShowShort("Permission Denied $deniedPermissions")
-                        return@onRequestPermissions
+                        return@requestPermissions
                     }
                     val res =
                         mutableListOf<String>().apply {
@@ -135,10 +135,10 @@ class ServiceManagerInfoActivity : BaseDataBindingActivity<ActivityServiceManage
             }
 
             btnTelephonyInfo.setOnClickListener {
-                onRequestPermissions(listOf(READ_PHONE_STATE)) { deniedPermissions ->
+                requestPermissions(listOf(READ_PHONE_STATE)) { deniedPermissions ->
                     if (!deniedPermissions.isEmpty()) {
                         toastShowShort("Permission Denied $deniedPermissions")
-                        return@onRequestPermissions
+                        return@requestPermissions
                     }
                     val res =
                         mutableListOf<String>().apply {
@@ -189,7 +189,7 @@ class ServiceManagerInfoActivity : BaseDataBindingActivity<ActivityServiceManage
             }
 
             btnTelephonyRegister.setOnClickListener {
-                onRequestPermissions(listOf(READ_PHONE_STATE)) { deniedPermissions ->
+                requestPermissions(listOf(READ_PHONE_STATE)) { deniedPermissions ->
                     if (deniedPermissions.isEmpty()) {
                         addItem("=== Telephony Register ===")
 
@@ -326,7 +326,7 @@ class ServiceManagerInfoActivity : BaseDataBindingActivity<ActivityServiceManage
             }
 
             btnBatteryRegister.setOnClickListener {
-                onRequestPermissions(listOf(BATTERY_STATS)) { deniedPermissions ->
+                requestPermissions(listOf(BATTERY_STATS)) { deniedPermissions ->
                     Logx.d("deniedPermissions $deniedPermissions")
                     if (deniedPermissions.isEmpty()) {
                         batteryInfo.registerStart(lifecycleScope)
@@ -362,7 +362,7 @@ class ServiceManagerInfoActivity : BaseDataBindingActivity<ActivityServiceManage
             btnBatteryUnregister.setOnClickListener { batteryInfo.unRegister() }
 
             btnLocationRegister.setOnClickListener {
-                onRequestPermissions(listOf(ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION)) { deniedPermissions ->
+                requestPermissions(listOf(ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION)) { deniedPermissions ->
                     Logx.d("deniedPermissions $deniedPermissions")
                     if (deniedPermissions.isEmpty()) {
                         locationInfo.registerStart(lifecycleScope, LocationManager.GPS_PROVIDER, 1000L, 10f)
@@ -386,7 +386,7 @@ class ServiceManagerInfoActivity : BaseDataBindingActivity<ActivityServiceManage
             btnLocationUnregister.setOnClickListener { locationInfo.onDestroy() }
 
             btnLocationGetLocation.setOnClickListener {
-                onRequestPermissions(listOf(ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION)) { deniedPermissions ->
+                requestPermissions(listOf(ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION)) { deniedPermissions ->
                     if (deniedPermissions.isEmpty()) {
                         val location = locationInfo.getLocation()
                         if (location != null) {
@@ -401,7 +401,7 @@ class ServiceManagerInfoActivity : BaseDataBindingActivity<ActivityServiceManage
             }
 
             btnLocationCalculateDistance.setOnClickListener {
-                onRequestPermissions(listOf(ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION)) { deniedPermissions ->
+                requestPermissions(listOf(ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION)) { deniedPermissions ->
                     if (deniedPermissions.isEmpty()) {
                         val currentLocation = locationInfo.getLocation()
                         if (currentLocation != null) {
@@ -423,7 +423,7 @@ class ServiceManagerInfoActivity : BaseDataBindingActivity<ActivityServiceManage
             }
 
             btnLocationCalculateBearing.setOnClickListener {
-                onRequestPermissions(listOf(ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION)) { deniedPermissions ->
+                requestPermissions(listOf(ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION)) { deniedPermissions ->
                     if (deniedPermissions.isEmpty()) {
                         val currentLocation = locationInfo.getLocation()
                         if (currentLocation != null) {
@@ -445,7 +445,7 @@ class ServiceManagerInfoActivity : BaseDataBindingActivity<ActivityServiceManage
             }
 
             btnLocationCheckRadius.setOnClickListener {
-                onRequestPermissions(listOf(ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION)) { deniedPermissions ->
+                requestPermissions(listOf(ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION)) { deniedPermissions ->
                     if (deniedPermissions.isEmpty()) {
                         val currentLocation = locationInfo.getLocation()
                         if (currentLocation != null) {

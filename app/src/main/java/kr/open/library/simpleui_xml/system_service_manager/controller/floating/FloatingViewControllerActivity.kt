@@ -39,7 +39,7 @@ class FloatingViewControllerActivity : BaseActivity(R.layout.activity_floating_c
     private fun initListener() {
         binding.run {
             btnFloatingViewDrag.setOnClickListener {
-                onRequestPermissions(listOf(SYSTEM_ALERT_WINDOW)) { deniedPermissions ->
+                requestPermissions(listOf(SYSTEM_ALERT_WINDOW)) { deniedPermissions ->
                     if (deniedPermissions.isEmpty()) {
                         val icon =
                             getImageView(R.drawable.ic_launcher_foreground).apply {
@@ -73,7 +73,7 @@ class FloatingViewControllerActivity : BaseActivity(R.layout.activity_floating_c
             }
 
             btnFloatingViewFix.setOnClickListener {
-                onRequestPermissions(listOf(SYSTEM_ALERT_WINDOW)) { deniedPermissions ->
+                requestPermissions(listOf(SYSTEM_ALERT_WINDOW)) { deniedPermissions ->
                     if (deniedPermissions.isEmpty()) {
                         val icon =
                             getImageView(R.drawable.ic_launcher_foreground).apply {

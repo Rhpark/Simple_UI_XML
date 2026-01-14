@@ -453,7 +453,7 @@ public class SimInfo(
     @SuppressLint("HardwareIds")
     @RequiresPermission(anyOf = [READ_PHONE_STATE, READ_PHONE_NUMBERS])
     public fun getPhoneNumberFromDefaultUSim(): String? =
-        telephonyManager?.line1Number // Required SDK Version 1 ~ 33
+        telephonyManager.line1Number // Required SDK Version 1 ~ 33
             ?: getSubscriptionInfoSubIdFromDefaultUSim()?.number // number Required SDK Version 30+
 
     /**

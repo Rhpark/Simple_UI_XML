@@ -30,7 +30,7 @@ class ActivityFragmentActivity : BaseDataBindingActivity<ActivityActivityFragmen
         lifecycle.addObserver(vm)
     }
 
-    override fun onEventVmCollect() {
+    override fun onEventVmCollect(binding: ActivityActivityFragmentBinding) {
         lifecycleScope.launch {
             vm.mEventVm.collect { event ->
                 when (event) {
@@ -53,17 +53,13 @@ class ActivityFragmentActivity : BaseDataBindingActivity<ActivityActivityFragmen
                     is ActivityFragmentActivityVmEvent.OnClickBaseDialogFragment -> {
                         BaseDialogFragmentExample()
                             .apply {
-                                setBackgroundColor(
-                                    Color.WHITE,
-                                )
+                                setBackgroundColor(Color.WHITE)
                             }.safeShow(supportFragmentManager, "BaseDialogFragment")
                     }
                     is ActivityFragmentActivityVmEvent.OnClickBaseBindingDialogFragment -> {
                         BaseBindingDialogFragmentExample()
                             .apply {
-                                setBackgroundColor(
-                                    Color.WHITE,
-                                )
+                                setBackgroundColor(Color.WHITE,)
                             }.safeShow(supportFragmentManager, "BaseBindingDialogFragment")
                     }
                 }

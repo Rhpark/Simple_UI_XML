@@ -21,7 +21,7 @@ class BaseBindingActivityExample :
         lifecycle.addObserver(vm)
     }
 
-    override fun onEventVmCollect() {
+    override fun onEventVmCollect(binding: ActivityBaseBindingActivityExampleBinding) {
         lifecycleScope.launch {
             vm.mEventVm.collect { event ->
                 when (event) {

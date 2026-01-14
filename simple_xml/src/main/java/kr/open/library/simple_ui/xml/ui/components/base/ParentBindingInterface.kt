@@ -42,5 +42,5 @@ interface ParentBindingInterface<BINDING : ViewBinding> {
      * ViewModel 이벤트 수집을 시작하기 위해 호출됩니다.<br>
      * 이는 일반적으로 생명주기당 한 번(예: onCreate 또는 onViewCreated) 호출됩니다.<br>
      */
-    fun onEventVmCollect() {}
+    fun onEventVmCollect(binding: BINDING) {}
 }

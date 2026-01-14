@@ -34,7 +34,7 @@ class WifiControllerActivity : BaseDataBindingActivity<ActivityWifiControllerBin
         }
 
         if (permissions.isNotEmpty()) {
-            onRequestPermissions(permissions) { deniedPermissions ->
+            requestPermissions(permissions) { deniedPermissions ->
                 if (deniedPermissions.isNotEmpty()) {
                     toastShowShort("Location permission required for WiFi scan")
                 }
@@ -42,7 +42,7 @@ class WifiControllerActivity : BaseDataBindingActivity<ActivityWifiControllerBin
         }
     }
 
-    override fun onEventVmCollect() {
+    override fun onEventVmCollect(binding: ActivityWifiControllerBinding) {
         lifecycleScope.launch {
             vm.mEventVm.collect { event ->
                 when (event) {
@@ -105,7 +105,7 @@ class WifiControllerActivity : BaseDataBindingActivity<ActivityWifiControllerBin
 
     @SuppressLint("MissingPermission")
     private fun scanWifi() {
-        onRequestPermissions(
+        requestPermissions(
             listOf(
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.CHANGE_WIFI_STATE,

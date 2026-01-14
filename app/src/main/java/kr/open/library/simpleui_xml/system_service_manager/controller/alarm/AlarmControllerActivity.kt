@@ -30,7 +30,7 @@ class AlarmControllerActivity : BaseActivity(R.layout.activity_alarm_controller)
             btnRegisterAlarmClock.setOnClickListener {
                 checkSdkVersion(Build.VERSION_CODES.S,
                     positiveWork = {
-                        onRequestPermissions(listOf(SCHEDULE_EXACT_ALARM)) {
+                        requestPermissions(listOf(SCHEDULE_EXACT_ALARM)) {
                             if (it.isEmpty()) registerAlarmClock()
                             else toastShowShort("denied permissions $it")
                         }
@@ -42,7 +42,7 @@ class AlarmControllerActivity : BaseActivity(R.layout.activity_alarm_controller)
             btnRegisterExactAlarm.setOnClickListener {
                 checkSdkVersion(Build.VERSION_CODES.S,
                     positiveWork = {
-                        onRequestPermissions(listOf(SCHEDULE_EXACT_ALARM)) {
+                        requestPermissions(listOf(SCHEDULE_EXACT_ALARM)) {
                             if (it.isEmpty()) registerAlarmExactAndAllowWhileIdle()
                             else toastShowShort("denied permissions $it")
                         }
@@ -54,7 +54,7 @@ class AlarmControllerActivity : BaseActivity(R.layout.activity_alarm_controller)
             btnRegisterAllowWhileIdle.setOnClickListener {
                 checkSdkVersion(Build.VERSION_CODES.S,
                     positiveWork = {
-                        onRequestPermissions(listOf(SCHEDULE_EXACT_ALARM)) {
+                        requestPermissions(listOf(SCHEDULE_EXACT_ALARM)) {
                             if (it.isEmpty()) registerAlarmAndAllowWhileIdle()
                             else toastShowShort("denied permissions $it")
                         }
@@ -66,7 +66,7 @@ class AlarmControllerActivity : BaseActivity(R.layout.activity_alarm_controller)
             btnRemoveAlarm.setOnClickListener {
                 checkSdkVersion(Build.VERSION_CODES.S,
                     positiveWork = {
-                        onRequestPermissions(listOf(SCHEDULE_EXACT_ALARM)) {
+                        requestPermissions(listOf(SCHEDULE_EXACT_ALARM)) {
                             if (it.isEmpty()) remove()
                             else toastShowShort("denied permissions $it")
                         }
@@ -78,7 +78,7 @@ class AlarmControllerActivity : BaseActivity(R.layout.activity_alarm_controller)
             btnCheckExists.setOnClickListener {
                 checkSdkVersion(Build.VERSION_CODES.S,
                     positiveWork = {
-                        onRequestPermissions(listOf(SCHEDULE_EXACT_ALARM)) {
+                        requestPermissions(listOf(SCHEDULE_EXACT_ALARM)) {
                             if (it.isEmpty()) exists()
                             else toastShowShort("denied permissions $it")
                         }

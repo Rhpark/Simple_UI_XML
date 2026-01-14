@@ -36,7 +36,19 @@
             android:id="@+id/btnMultiplePermissions"
             android:onClick="@{v -> vm.onClickPermissionMulti()}"
             style="@style/Button.MatchWrap.Bold"
-            android:text="Multi" />
+            android:text="Runtime + Special" />
+
+        <Button
+            android:id="@+id/btnSpecialOnlyPermission"
+            style="@style/Button.MatchWrap.Bold"
+            android:onClick="@{v -> vm.onClickPermissionSpecialOnly()}"
+            android:text="Special Only" />
+
+        <Button
+            android:id="@+id/btnSpecialMultiPermissions"
+            style="@style/Button.MatchWrap.Bold"
+            android:onClick="@{v -> vm.onClickPermissionSpecialMulti()}"
+            android:text="Special + Special" />
 
         <kr.open.library.simple_ui.xml.ui.view.recyclerview.RecyclerScrollStateView
             android:id="@+id/rcvPermission"

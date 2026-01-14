@@ -28,7 +28,7 @@ class BaseDialogFragmentExample : BaseDialogFragment(R.layout.dialog_base_dialog
         Logx.d("BaseDialogFragmentExample - onViewCreated() called")
 
         // resizeDialog 호출 - 화면의 80% 너비, 50% 높이
-        resizeDialog(0.8f, 0.5f)
+        resizeDialog(0.8f, null)
         Logx.d("BaseDialogFragmentExample - resizeDialog(0.8f, 0.5f) called")
 
         // UI 초기화

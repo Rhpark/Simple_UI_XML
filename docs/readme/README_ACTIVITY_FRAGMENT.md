@@ -40,9 +40,9 @@ Complete Activity/Fragment initialization in just 3 lines!" – See how much fas
 ### Permission Management (권한 관리)
 | Category | Plain Android | Simple UI                                       |
 |:-------------|:--|:------------------------------------------------|
-| Request flow setup | Need to register/unregister `ActivityResultContract` | Single line call to `onRequestPermissions()`   |
-| Special permission branching | Branch/exception handling for each permission |  `PermissionDelegate` automatically distinguishes  |
-| Result  | Need to implement callback interface | Just handle the  `deniedPermissions` list          |
+| Request flow setup | Need to register/unregister `ActivityResultContract` | Single line call to `requestPermissions()`   |
+| Special permission branching | Branch/exception handling for each permission |  `PermissionRequester` automatically distinguishes  |
+| Result  | Need to implement callback interface | Handle the `PermissionDeniedItem` list          |
 | State preservation | Manually implement `onSaveInstanceState` | Base class preserves internally                 |
 
 <br></br>
@@ -115,13 +115,13 @@ android {
 | Category            | Plain Android | BaseActivity |
 |:--------------------|:--|:--|
 | Bind Layout | Call `setContentView` + manually create permission delegate | Pass layoutRes as constructor argument |
-| Permission delegate | Manual field declaration | RootActivity automatically creates it |
+| Permission requester | Manual field declaration | RootActivity automatically creates it |
 
 ### Fragment initialization comparison (Fragment 초기화 비교)
 | Category | Plain Android | BaseFragment |
 |:--|:--|:--|
 | `onCreateView` | 수동 inflate + container attach 여부 판단 | `return inflater.inflate(layoutRes, container, false)`만 작성 |
-| Permission request | `registerForActivityResult` 필요 | `onRequestPermissions()` 상속 |
+| Permission request | `registerForActivityResult` 필요 | `requestPermissions()` 상속 |
 | Insets 처리 | ViewCompat 로직 | RootFragment가 이미 로직 보유 |
 
 <br></br>
@@ -163,30 +163,31 @@ BaseBinding classes call `binding.setVariable()` and `binding.executePendingBind
 
 ## 🔁 Permission Request System (공통 권한 요청)
 
-RootActivity/RootFragment have built-in `PermissionDelegate` to automatically handle permission requests and restoration.
-> RootActivity/RootFragment는 `PermissionDelegate`를 내장하고 있어 권한 요청/복원을 자동으로 처리합니다.
+RootActivity/RootFragment have built-in `PermissionRequester` to automatically handle permission requests and restoration.
+> RootActivity/RootFragment는 `PermissionRequester`를 내장하고 있어 권한 요청/복원을 자동으로 처리합니다.
 
 ### Permission Request Method Comparison (권한 요청 방식 비교)
 | Category           | Plain Android | Simple UI |
 |:-------------------|:--|:--|
-| Request API        | `registerForActivityResult(RequestMultiplePermissions())` | `onRequestPermissions(listOf(...))` |
-| State preservation | Manual Bundle storage | Delegate saves/restores | 
-| Special permission | Write branching code directly | Delegate branches with predefined rules |
+| Request API        | `registerForActivityResult(RequestMultiplePermissions())` | `requestPermissions(listOf(...))` |
+| State preservation | Manual Bundle storage | Requester saves/restores | 
+| Special permission | Write branching code directly | Requester branches with predefined rules |
 
 **Usage example / 사용 예시**
 ```kotlin
-onRequestPermissions(
+requestPermissions(
     permissions = listOf(
         Manifest.permission.ACCESS_FINE_LOCATION,
         Manifest.permission.READ_PHONE_STATE
-    )
-) { denied ->
-    if (denied.isEmpty()) {
-        startLocationTracking()
-    } else {
-        toastShowShort("승인 되지 않은 권한: $denied")
+    ),
+    onDeniedResult = { deniedResults ->
+        if (deniedResults.isEmpty()) {
+            startLocationTracking()
+        } else {
+            toastShowShort("승인되지 않은 권한: ${deniedResults.map { it.permission }}")
+        }
     }
-}
+)
 ```
 
 <br></br>
@@ -194,7 +195,7 @@ onRequestPermissions(
 ## 🧩 Base Class Features Summary (베이스 클래스 기능 정리)
 
 #### Common RootActivity / RootFragment
-- Automatic PermissionDelegate configuration
+- Automatic PermissionRequester configuration
 - `beforeOnCreated()` Hook
 
 #### BaseActivity / BaseFragment
@@ -248,7 +249,7 @@ DialogFragment also overrides `onCreateView()`, `eventVmCollect()`, etc. in the 
 ## 🔄 Initialization Flow Summary (초기화 흐름 요약)
 ### Activity
 1. `beforeOnCreated()` – Ready to Window/Theme
-2. `onCreate()` – Ready to RootActivity Permission delegate
+2. `onCreate()` – Ready to RootActivity permission requester
 3. (BaseBindingActivity) `onCreateView()` – Binding inflate & viewModel bind, child class initialization
 4. `eventVmCollect()` – Automatically called in `onCreate()` after `onCreateView()` completes / `onCreateView()` 완료 후 `onCreate()`에서 자동 호출
 5. `onDestroy()` – Binding unBind

@@ -51,7 +51,7 @@ class NotificationControllerActivity :
 
     private fun requestNotificationPermission() {
         checkSdkVersion(Build.VERSION_CODES.TIRAMISU) {
-            onRequestPermissions(listOf(Manifest.permission.POST_NOTIFICATIONS)) { deniedPermissions ->
+            requestPermissions(listOf(Manifest.permission.POST_NOTIFICATIONS)) { deniedPermissions ->
                 if (deniedPermissions.isNotEmpty()) {
                     toastShowShort("Notification permission denied")
                 }
@@ -59,7 +59,7 @@ class NotificationControllerActivity :
         }
     }
 
-    override fun onEventVmCollect() {
+    override fun onEventVmCollect(binding: ActivityNotificationControllerBinding) {
         lifecycleScope.launch {
             vm.mEventVm.collect { event ->
                 when (event) {

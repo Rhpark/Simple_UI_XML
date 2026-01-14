@@ -29,12 +29,12 @@ import kr.open.library.simple_ui.xml.ui.components.fragment.root.RootFragment
  * - 메모리 누수를 방지하기 위해 onDestroyView에서 적절한 바인딩 정리를 처리합니다.<br>
  *
  * **Design decisions / 설계 결정 이유:**<br>
- * - Uses ParentBindingFragmentHelper to ensure onEventVmCollect() is called only once, preventing duplicate Flow collectors.<br>
+ * - Uses ParentBindingFragmentHelper to ensure onEventVmCollect(binding:BINDING) is called only once, preventing duplicate Flow collectors.<br>
  * - Extends RootFragment to inherit permission management features.<br>
  * - Uses nullable binding field with protected getBinding() method that throws exception after onDestroyView() for safe access.<br>
  * - Offers both default and factory-based ViewModel retrieval methods for flexibility.<br>
  * - Automatically resets helper in onDestroyView() to prevent memory leaks and stale collectors.<br><br>
- * - ParentBindingFragmentHelper를 사용하여 onEventVmCollect()가 1회만 호출되도록 하여 중복 Flow 수집을 방지합니다.<br>
+ * - ParentBindingFragmentHelper를 사용하여 onEventVmCollect(binding:BINDING)가 1회만 호출되도록 하여 중복 Flow 수집을 방지합니다.<br>
  * - RootFragment를 상속하여 권한 관리 기능을 상속받습니다.<br>
  * - onDestroyView() 이후 안전한 접근을 위해 nullable binding 필드와 예외를 던지는 protected getBinding() 메서드를 사용합니다.<br>
  * - 유연성을 위해 기본 및 팩토리 기반 ViewModel 검색 메서드를 모두 제공합니다.<br>
@@ -42,13 +42,13 @@ import kr.open.library.simple_ui.xml.ui.components.fragment.root.RootFragment
  *
  * **Important notes / 주의사항:**<br>
  * - ⚠️ CRITICAL: Always call super.onCreateView() and super.onViewCreated() when overriding. Skipping will cause binding initialization to fail.<br>
- * - onEventVmCollect() is called only once in onViewCreated() after binding initialization.<br>
- * - Always use viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) inside onEventVmCollect() to properly handle configuration changes.<br>
+ * - onEventVmCollect(binding:BINDING) is called only once in onViewCreated() after binding initialization.<br>
+ * - Always use viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) inside onEventVmCollect(binding:BINDING) to properly handle configuration changes.<br>
  * - Access binding via getBinding() method only between onViewCreated() and onDestroyView() - accessing after onDestroyView() throws IllegalStateException.<br>
  * - The binding is automatically set to null in onDestroyView() to prevent memory leaks.<br><br>
  * - ⚠️ 중요: 오버라이드할 때 반드시 super.onCreateView()와 super.onViewCreated()를 호출하세요. 누락하면 바인딩 초기화가 실패합니다.<br>
- * - onEventVmCollect()는 onViewCreated()에서 바인딩 초기화 후 1회만 호출됩니다.<br>
- * - 구성 변경을 올바르게 처리하려면 onEventVmCollect() 내부에서 항상 viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED)를 사용하세요.<br>
+ * - onEventVmCollect(binding:BINDING)는 onViewCreated()에서 바인딩 초기화 후 1회만 호출됩니다.<br>
+ * - 구성 변경을 올바르게 처리하려면 onEventVmCollect(binding:BINDING) 내부에서 항상 viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED)를 사용하세요.<br>
  * - getBinding() 메서드를 통한 바인딩 접근은 onViewCreated()와 onDestroyView() 사이에서만 가능 - onDestroyView() 이후 접근 시 IllegalStateException 발생.<br>
  * - 메모리 누수를 방지하기 위해 onDestroyView()에서 바인딩이 자동으로 null로 설정됩니다.<br>
  *
@@ -94,7 +94,7 @@ abstract class ParentsBindingFragment<BINDING : ViewBinding>(
     final override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         onViewCreate(getBinding(), savedInstanceState)
-        helper.startEventVmCollect { onEventVmCollect() }
+        helper.startEventVmCollect { onEventVmCollect(getBinding()) }
     }
 
     /**
@@ -111,7 +111,7 @@ abstract class ParentsBindingFragment<BINDING : ViewBinding>(
         binding = null
     }
 
-    override fun onEventVmCollect() {}
+    override fun onEventVmCollect(binding: BINDING) {}
 
     protected inline fun <reified T : ViewModel> getViewModel(): T = ViewModelProvider(this)[T::class.java]
 

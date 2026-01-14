@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
 import kr.open.library.simple_ui.core.system_manager.base.BaseSystemService
 import kr.open.library.simple_ui.core.system_manager.extensions.getTelephonyManager
+import kr.open.library.simple_ui.core.system_manager.info.network.sim.SimInfo
 import kr.open.library.simple_ui.core.system_manager.info.network.telephony.callback.TelephonyCallbackManager
 import kr.open.library.simple_ui.core.system_manager.info.network.telephony.data.current.CurrentCellInfo
 import kr.open.library.simple_ui.core.system_manager.info.network.telephony.data.current.CurrentServiceState
@@ -125,6 +126,8 @@ public class TelephonyInfo(
      * 콜백 관리 컴포넌트입니다.<br>
      */
     private val callbackManager = TelephonyCallbackManager(context)
+
+    public val simInfo = SimInfo(context)
 
     // =================================================
     // Carrier Information / 통신사 정보

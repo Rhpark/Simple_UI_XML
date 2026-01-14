@@ -384,14 +384,17 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
         super.onCreate(savedInstanceState)
 
         // Permission request (Simple UI auto handling) (권한 요청 (Simple UI 자동 처리))
-        onRequestPermissions(listOf(
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION
-        )) { deniedPermissions ->
-            if (deniedPermissions.isEmpty()) {
-                startLocationTracking()
-            }
-        }
+        requestPermissions(
+            permissions = listOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ),
+            onDeniedResult = { deniedResults ->
+                if (deniedResults.isEmpty()) {
+                    startLocationTracking()
+                }
+            },
+        )
     }
 
     private fun startLocationTracking() {
@@ -886,12 +889,12 @@ Each Info requires permissions **based on features used**. Add only the permissi
 ### ⚠️ Permission Troubleshooting Checklist (권한 점검 체크리스트)
 - **Runtime/Special only** – BaseSystemService validates runtime/special permissions only; non-dangerous permissions are treated as granted by design.
 - **Check Manifest declaration** – Verify all required permissions are added to AndroidManifest.xml.
-- **Runtime request** – Request dangerous permissions with onRequestPermissions() or your own ActivityResult logic.
+- **Runtime request** – Request dangerous permissions with requestPermissions() or your own ActivityResult logic.
 - **Call refreshPermissions()** – After granting permission, call BaseSystemService.refreshPermissions() and Simple UI will immediately reflect the new state.
 - **Check Logx** – If runtime/special permission is missing, tryCatchSystemManager() returns a default value and logs a warning to Logx.
 > - **런타임/특수 권한만 검증** – BaseSystemService는 런타임/특수 권한만 검증하며, non-dangerous 권한은 설계상 허용된 것으로 간주합니다.
 > - **Manifest 선언 확인** – 필요한 모든 권한을 `AndroidManifest.xml`에 추가했는지 확인하세요.
-> - **런타임 요청** – 위험 권한은 `onRequestPermissions()` 또는 자체 ActivityResult 로직으로 요청합니다.
+> - **런타임 요청** – 위험 권한은 `requestPermissions()` 또는 자체 ActivityResult 로직으로 요청합니다.
 > - **refreshPermissions() 호출** – 권한 허용 후 `BaseSystemService.refreshPermissions()`를 호출하면 Simple UI가 즉시 새 상태를 반영합니다.
 > - **Logx 확인** – 런타임/특수 권한이 없으면 `tryCatchSystemManager()`가 기본값을 반환하며 Logx에 경고를 남깁니다.
 
@@ -978,39 +981,42 @@ Log.d("Display", "Status Bar Height (상태바 높이): $statusBarHeight")
 **Runtime Permission Request (런타임 권한 요청)**:
 ```kotlin
 // Request location permissions (required) (위치 권한 요청 (필수))
-onRequestPermissions(listOf(
-    Manifest.permission.ACCESS_FINE_LOCATION,
-    Manifest.permission.ACCESS_COARSE_LOCATION
-)) { deniedPermissions ->
-    if (deniedPermissions.isEmpty()) {
-        // Permissions granted - Start location tracking (권한 허용됨 - 위치 추적 시작)
-        val locationInfo = LocationStateInfo(context)
-        locationInfo.registerStart(
-            coroutineScope = lifecycleScope,
-            locationProvider = LocationManager.GPS_PROVIDER,
-            updateCycleTime = 1000L,
-            minDistanceM = 10f
-        )
+requestPermissions(
+    permissions = listOf(
+        Manifest.permission.ACCESS_FINE_LOCATION,
+        Manifest.permission.ACCESS_COARSE_LOCATION
+    ),
+    onDeniedResult = { deniedResults ->
+        if (deniedResults.isEmpty()) {
+            // Permissions granted - Start location tracking (권한 허용됨 - 위치 추적 시작)
+            val locationInfo = LocationStateInfo(context)
+            locationInfo.registerStart(
+                coroutineScope = lifecycleScope,
+                locationProvider = LocationManager.GPS_PROVIDER,
+                updateCycleTime = 1000L,
+                minDistanceM = 10f
+            )
 
-        // Real-time location updates via StateFlow (StateFlow로 위치 변경 실시간 수신)
-        lifecycleScope.launch {
-            locationInfo.sfUpdate.collect { event ->
-                when (event) {
-                    is LocationStateEvent.OnLocationChanged -> {
-                        val location = event.location
-                        Log.d("Location", "Lat (위도): ${location?.latitude}, Lng (경도): ${location?.longitude}")
-                    }
-                    is LocationStateEvent.OnGpsEnabled -> {
-                        Log.d("Location", "GPS Enabled (GPS 활성화): ${event.isEnabled}")
+            // Real-time location updates via StateFlow (StateFlow로 위치 변경 실시간 수신)
+            lifecycleScope.launch {
+                locationInfo.sfUpdate.collect { event ->
+                    when (event) {
+                        is LocationStateEvent.OnLocationChanged -> {
+                            val location = event.location
+                            Log.d("Location", "Lat (위도): ${location?.latitude}, Lng (경도): ${location?.longitude}")
+                        }
+                        is LocationStateEvent.OnGpsEnabled -> {
+                            Log.d("Location", "GPS Enabled (GPS 활성화): ${event.isEnabled}")
+                        }
                     }
                 }
             }
+        } else {
+            // Permissions denied (권한 거부됨)
+            toastShowShort("Location permission required (위치 권한이 필요합니다)")
         }
-    } else {
-        // Permissions denied (권한 거부됨)
-        toastShowShort("Location permission required (위치 권한이 필요합니다)")
-    }
-}
+    },
+)
 ```
 
 **Note**:
@@ -1038,31 +1044,34 @@ onRequestPermissions(listOf(
 **Runtime Permission Request (런타임 권한 요청)**:
 ```kotlin
 // Request phone state permission (required) (전화 상태 권한 요청 (필수))
-onRequestPermissions(listOf(
-    Manifest.permission.READ_PHONE_STATE,
-    Manifest.permission.READ_PHONE_NUMBERS,
-    Manifest.permission.ACCESS_FINE_LOCATION
-)) { deniedPermissions ->
-    if (deniedPermissions.isEmpty()) {
-        // Permissions granted - Query SIM info (권한 허용됨 - SIM 정보 조회)
-        val simInfo = SimInfo(context)
+requestPermissions(
+    permissions = listOf(
+        Manifest.permission.READ_PHONE_STATE,
+        Manifest.permission.READ_PHONE_NUMBERS,
+        Manifest.permission.ACCESS_FINE_LOCATION
+    ),
+    onDeniedResult = { deniedResults ->
+        if (deniedResults.isEmpty()) {
+            // Permissions granted - Query SIM info (권한 허용됨 - SIM 정보 조회)
+            val simInfo = SimInfo(context)
 
-        // Check dual SIM (듀얼 SIM 확인)
-        val isDualSim = simInfo.isDualSim()
-        Log.d("SIM", "Dual SIM (듀얼 SIM): $isDualSim")
+            // Check dual SIM (듀얼 SIM 확인)
+            val isDualSim = simInfo.isDualSim()
+            Log.d("SIM", "Dual SIM (듀얼 SIM): $isDualSim")
 
-        // Active SIM count (활성 SIM 개수)
-        val activeCount = simInfo.getActiveSimCount()
-        Log.d("SIM", "Active SIM Count (활성 SIM 개수): $activeCount")
+            // Active SIM count (활성 SIM 개수)
+            val activeCount = simInfo.getActiveSimCount()
+            Log.d("SIM", "Active SIM Count (활성 SIM 개수): $activeCount")
 
-        // Query phone number (전화번호 조회)
-        val phoneNumber = simInfo.getPhoneNumberFromDefaultUSim()
-        Log.d("SIM", "Phone Number (전화번호): $phoneNumber")
-    } else {
-        // Permissions denied (권한 거부됨)
-        toastShowShort("Phone state permission required (전화 상태 권한이 필요합니다)")
-    }
-}
+            // Query phone number (전화번호 조회)
+            val phoneNumber = simInfo.getPhoneNumberFromDefaultUSim()
+            Log.d("SIM", "Phone Number (전화번호): $phoneNumber")
+        } else {
+            // Permissions denied (권한 거부됨)
+            toastShowShort("Phone state permission required (전화 상태 권한이 필요합니다)")
+        }
+    },
+)
 ```
 
 **Note (참고)**:
@@ -1089,64 +1098,70 @@ onRequestPermissions(listOf(
 **Runtime Permission Request (Basic) (런타임 권한 요청 (기본))**:
 ```kotlin
 // Request required permissions together (필수 권한 일괄 요청)
-onRequestPermissions(listOf(
-    Manifest.permission.READ_PHONE_STATE,
-    Manifest.permission.READ_PHONE_NUMBERS,
-    Manifest.permission.ACCESS_FINE_LOCATION
-)) { deniedPermissions ->
-    if (deniedPermissions.isEmpty()) {
-        // Permissions granted - Query network info (권한 허용됨 - 통신망 정보 조회)
-        val telephonyInfo = TelephonyInfo(context)
+requestPermissions(
+    permissions = listOf(
+        Manifest.permission.READ_PHONE_STATE,
+        Manifest.permission.READ_PHONE_NUMBERS,
+        Manifest.permission.ACCESS_FINE_LOCATION
+    ),
+    onDeniedResult = { deniedResults ->
+        if (deniedResults.isEmpty()) {
+            // Permissions granted - Query network info (권한 허용됨 - 통신망 정보 조회)
+            val telephonyInfo = TelephonyInfo(context)
 
-        // Carrier info (통신사 정보)
-        val carrierName = telephonyInfo.getCarrierName()
-        Log.d("Telephony", "Carrier (통신사): $carrierName")
+            // Carrier info (통신사 정보)
+            val carrierName = telephonyInfo.getCarrierName()
+            Log.d("Telephony", "Carrier (통신사): $carrierName")
 
-        // Network type (네트워크 타입)
-        val networkType = telephonyInfo.getNetworkTypeString()
-        Log.d("Telephony", "Network (네트워크): $networkType")
+            // Network type (네트워크 타입)
+            val networkType = telephonyInfo.getNetworkTypeString()
+            Log.d("Telephony", "Network (네트워크): $networkType")
 
-        // SIM status (SIM 상태)
-        val isSimReady = telephonyInfo.isSimReady()
-        Log.d("Telephony", "SIM Ready (SIM 준비): $isSimReady")
+            // SIM status (SIM 상태)
+            val isSimReady = telephonyInfo.isSimReady()
+            Log.d("Telephony", "SIM Ready (SIM 준비): $isSimReady")
 
-        // Real-time signal strength via StateFlow (StateFlow로 신호 강도 실시간 수신)
-        telephonyInfo.registerCallback()
-        lifecycleScope.launch {
-            telephonyInfo.currentSignalStrength.collect { signalStrength ->
-                Log.d("Telephony", "Signal Strength (신호 강도): ${signalStrength?.level}")
+            // Real-time signal strength via StateFlow (StateFlow로 신호 강도 실시간 수신)
+            telephonyInfo.registerCallback()
+            lifecycleScope.launch {
+                telephonyInfo.currentSignalStrength.collect { signalStrength ->
+                    Log.d("Telephony", "Signal Strength (신호 강도): ${signalStrength?.level}")
+                }
             }
         }
-    }
-}
+    },
+)
 ```
 
 **Runtime Permission Request (Detailed Rationale) (런타임 권한 요청 (자세한 사유))**:
 ```kotlin
 // Same permission set with explicit rationale (필요 권한을 이유와 함께 요청)
-onRequestPermissions(listOf(
-    Manifest.permission.READ_PHONE_STATE,
-    Manifest.permission.READ_PHONE_NUMBERS,
-    Manifest.permission.ACCESS_FINE_LOCATION
-)) { deniedPermissions ->
-    if (deniedPermissions.isEmpty()) {
-        // All permissions granted - Full info access (모든 권한 허용됨 - 전체 정보 접근)
-        val telephonyInfo = TelephonyInfo(context)
+requestPermissions(
+    permissions = listOf(
+        Manifest.permission.READ_PHONE_STATE,
+        Manifest.permission.READ_PHONE_NUMBERS,
+        Manifest.permission.ACCESS_FINE_LOCATION
+    ),
+    onDeniedResult = { deniedResults ->
+        if (deniedResults.isEmpty()) {
+            // All permissions granted - Full info access (모든 권한 허용됨 - 전체 정보 접근)
+            val telephonyInfo = TelephonyInfo(context)
 
-        // Query phone number (requires READ_PHONE_NUMBERS)
-        // (전화번호 조회 (READ_PHONE_NUMBERS 필요))
-        val phoneNumber = telephonyInfo.getPhoneNumber()
-        Log.d("Telephony", "Phone Number (전화번호): $phoneNumber")
+            // Query phone number (requires READ_PHONE_NUMBERS)
+            // (전화번호 조회 (READ_PHONE_NUMBERS 필요))
+            val phoneNumber = telephonyInfo.getPhoneNumber()
+            Log.d("Telephony", "Phone Number (전화번호): $phoneNumber")
 
-        // Cell tower location info (requires ACCESS_FINE_LOCATION)
-        // (셀 타워 위치 정보 (ACCESS_FINE_LOCATION 필요))
-        // ... Detailed cell info can be queried (상세 셀 정보 조회 가능)
-    } else {
-        // Partial permissions granted - Only safe APIs return data
-        // (일부 권한만 허용됨 - 허용된 범위의 API만 사용 가능)
-        Log.d("Telephony", "Denied Permissions (거부된 권한): $deniedPermissions")
-    }
-}
+            // Cell tower location info (requires ACCESS_FINE_LOCATION)
+            // (셀 타워 위치 정보 (ACCESS_FINE_LOCATION 필요))
+            // ... Detailed cell info can be queried (상세 셀 정보 조회 가능)
+        } else {
+            // Partial permissions granted - Only safe APIs return data
+            // (일부 권한만 허용됨 - 허용된 범위의 API만 사용 가능)
+            Log.d("Telephony", "Denied Permissions (거부된 권한): ${deniedResults.map { it.permission }}")
+        }
+    },
+)
 ```
 
 **Note (참고)**:
@@ -1221,55 +1236,64 @@ lifecycleScope.launch {
 ```kotlin
 // LocationStateInfo usage example - Minimum permissions
 // (LocationStateInfo 사용 예시 - 최소 권한)
-onRequestPermissions(listOf(
-    Manifest.permission.ACCESS_COARSE_LOCATION  // Approximate location only (대략적 위치만)
-)) { deniedPermissions ->
-    if (deniedPermissions.isEmpty()) {
-        // Use network-based location only (네트워크 기반 위치만 사용)
-        locationInfo.registerStart(
-            coroutineScope = lifecycleScope,
-            locationProvider = LocationManager.NETWORK_PROVIDER,
-            updateCycleTime = 2000L,
-            minDistanceM = 0f
-        )
-    }
-}
+requestPermissions(
+    permissions = listOf(
+        Manifest.permission.ACCESS_COARSE_LOCATION  // Approximate location only (대략적 위치만)
+    ),
+    onDeniedResult = { deniedResults ->
+        if (deniedResults.isEmpty()) {
+            // Use network-based location only (네트워크 기반 위치만 사용)
+            locationInfo.registerStart(
+                coroutineScope = lifecycleScope,
+                locationProvider = LocationManager.NETWORK_PROVIDER,
+                updateCycleTime = 2000L,
+                minDistanceM = 0f
+            )
+        }
+    },
+)
 ```
 
 #### **Request Additional Permissions When Needed (필요 시 추가 권한 요청)**
 ```kotlin
 // When more precise location is needed (더 정확한 위치가 필요할 때)
-onRequestPermissions(listOf(
-    Manifest.permission.ACCESS_FINE_LOCATION  // Precise location (정확한 위치)
-)) { deniedPermissions ->
-    if (deniedPermissions.isEmpty()) {
-        // Use GPS-based location (GPS 기반 위치 사용)
-        locationInfo.registerStart(
-            coroutineScope = lifecycleScope,
-            locationProvider = LocationManager.GPS_PROVIDER,
-            updateCycleTime = 2000L,
-            minDistanceM = 0f
-        )
-    }
-}
+requestPermissions(
+    permissions = listOf(
+        Manifest.permission.ACCESS_FINE_LOCATION  // Precise location (정확한 위치)
+    ),
+    onDeniedResult = { deniedResults ->
+        if (deniedResults.isEmpty()) {
+            // Use GPS-based location (GPS 기반 위치 사용)
+            locationInfo.registerStart(
+                coroutineScope = lifecycleScope,
+                locationProvider = LocationManager.GPS_PROVIDER,
+                updateCycleTime = 2000L,
+                minDistanceM = 0f
+            )
+        }
+    },
+)
 ```
 
 #### **Simple UI's Automatic Permission Handling (Simple UI의 자동 권한 처리)**
 ```kotlin
 // Request multiple permissions at once (여러 권한을 한 번에 요청)
-onRequestPermissions(listOf(
-    Manifest.permission.ACCESS_FINE_LOCATION,
-    Manifest.permission.READ_PHONE_STATE
-)) { deniedPermissions ->
-    if (deniedPermissions.isEmpty()) {
-        // All permissions granted (모든 권한 허용됨)
-        startLocationTracking()
-        loadSimInfo()
-    } else {
-        // Handle partial permission grant (일부만 허용된 경우 처리)
-        Log.d("Permission", "Denied Permissions (거부된 권한): $deniedPermissions")
-    }
-}
+requestPermissions(
+    permissions = listOf(
+        Manifest.permission.ACCESS_FINE_LOCATION,
+        Manifest.permission.READ_PHONE_STATE
+    ),
+    onDeniedResult = { deniedResults ->
+        if (deniedResults.isEmpty()) {
+            // All permissions granted (모든 권한 허용됨)
+            startLocationTracking()
+            loadSimInfo()
+        } else {
+            // Handle partial permission grant (일부만 허용된 경우 처리)
+            Log.d("Permission", "Denied Permissions (거부된 권한): ${deniedResults.map { it.permission }}")
+        }
+    },
+)
 ```
 
 <br>

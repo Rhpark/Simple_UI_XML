@@ -8,4 +8,8 @@ class PermissionsActivityVm : BaseViewModelEvent<PermissionsActivityVmEvent>() {
     fun onClickPermissionLocation() = sendEventVm(PermissionsActivityVmEvent.OnClickPermissionsLocation)
 
     fun onClickPermissionMulti() = sendEventVm(PermissionsActivityVmEvent.OnClickPermissionsMulti)
+
+    fun onClickPermissionSpecialOnly() = sendEventVm(PermissionsActivityVmEvent.OnClickPermissionsSpecialOnly)
+
+    fun onClickPermissionSpecialMulti() = sendEventVm(PermissionsActivityVmEvent.OnClickPermissionsSpecialMulti)
 }

@@ -39,21 +39,21 @@ import kr.open.library.simple_ui.xml.ui.components.dialog.root.RootDialogFragmen
  * **Important notes / 주의사항:**<br>
  * - ⚠️ CRITICAL: lifecycleOwner is automatically set to viewLifecycleOwner in onViewCreated(). Unlike Activity's BaseDataBindingActivity, you don't need to set it manually.<br>
  * - DataBinding automatically updates UI when LiveData values change - no need for manual observe() calls in XML-bound properties (StateFlow requires manual collection).<br>
- * - Always use repeatOnLifecycle(Lifecycle.State.STARTED) inside onEventVmCollect() to properly handle configuration changes.<br>
+ * - Always use repeatOnLifecycle(Lifecycle.State.STARTED) inside onEventVmCollect(binding:BINDING) to properly handle configuration changes.<br>
  * - Access the binding object via getBinding() method after super.onViewCreated() completes.<br><br>
  * - ⚠️ 중요: lifecycleOwner는 onViewCreated()에서 viewLifecycleOwner로 자동 설정됩니다. Activity의 BaseDataBindingActivity와 달리 수동으로 설정할 필요가 없습니다.<br>
  * - DataBinding은 LiveData 값이 변경될 때 자동으로 UI를 업데이트합니다 - XML에 바인딩된 프로퍼티에 대해 수동 observe() 호출이 필요하지 않습니다 (StateFlow는 수동 수집 필요).<br>
- * - 구성 변경을 올바르게 처리하려면 onEventVmCollect() 내부에서 항상 repeatOnLifecycle(Lifecycle.State.STARTED)를 사용하세요.<br>
+ * - 구성 변경을 올바르게 처리하려면 onEventVmCollect(binding:BINDING) 내부에서 항상 repeatOnLifecycle(Lifecycle.State.STARTED)를 사용하세요.<br>
  * - super.onViewCreated() 완료 후 getBinding() 메서드를 통해 바인딩 객체에 접근하세요.<br>
  *
  * **Usage / 사용법:**<br>
  * 1. Extend this class with your DialogFragment and pass the layout resource ID.<br>
  * 2. Access views through getBinding() in onViewCreated() or override onInitBind() for initialization.<br>
- * 3. Override onEventVmCollect() to collect ViewModel events with repeatOnLifecycle.<br>
+ * 3. Override onEventVmCollect(binding:BINDING) to collect ViewModel events with repeatOnLifecycle.<br>
  * 4. LiveData properties bound in XML will automatically update - no manual observation needed.<br><br>
  * 1. DialogFragment에서 이 클래스를 상속받고 레이아웃 리소스 ID를 전달하세요.<br>
  * 2. onViewCreated()에서 getBinding()을 통해 뷰에 접근하거나 초기화를 위해 onInitBind()를 오버라이드하세요.<br>
- * 3. repeatOnLifecycle과 함께 ViewModel 이벤트를 수집하려면 onEventVmCollect()를 오버라이드하세요.<br>
+ * 3. repeatOnLifecycle과 함께 ViewModel 이벤트를 수집하려면 onEventVmCollect(binding:BINDING)를 오버라이드하세요.<br>
  * 4. XML에 바인딩된 LiveData 프로퍼티는 자동으로 업데이트됩니다 - 수동 관찰이 필요하지 않습니다.<br>
  *
  * **Usage example:**<br>
@@ -66,7 +66,7 @@ import kr.open.library.simple_ui.xml.ui.components.dialog.root.RootDialogFragmen
  *         // lifecycleOwner is already set automatically - no need to set it manually
  *     }
  *
- *     override fun onEventVmCollect() {
+ *     override fun onEventVmCollect(binding:BINDING) {
  *         viewLifecycleOwner.lifecycleScope.launch {
  *             repeatOnLifecycle(Lifecycle.State.STARTED) {
  *                 viewModel.dismissEvent.collect { safeDismiss() }

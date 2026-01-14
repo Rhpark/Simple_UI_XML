@@ -25,23 +25,23 @@ import kr.open.library.simple_ui.xml.ui.components.base.helper.ParentBindingActi
  * - 반복적인 ViewModelProvider 보일러플레이트 없이 편리한 ViewModel 검색 메서드를 제공합니다.<br>
  *
  * **Design decisions / 설계 결정 이유:**<br>
- * - Uses ParentBindingActivityHelper to ensure onEventVmCollect() is called only once, preventing duplicate Flow collectors.<br>
+ * - Uses ParentBindingActivityHelper to ensure onEventVmCollect(binding:BINDING) is called only once, preventing duplicate Flow collectors.<br>
  * - Extends RootActivity to inherit permission management and early initialization hooks (beforeOnCreated).<br>
  * - Uses private lateinit binding with protected getBinding() accessor to maintain encapsulation while enabling subclass access.<br>
  * - Offers both default and factory-based ViewModel retrieval methods for flexibility.<br><br>
- * - ParentBindingActivityHelper를 사용하여 onEventVmCollect()가 1회만 호출되도록 하여 중복 Flow 수집을 방지합니다.<br>
+ * - ParentBindingActivityHelper를 사용하여 onEventVmCollect(binding:BINDING)가 1회만 호출되도록 하여 중복 Flow 수집을 방지합니다.<br>
  * - RootActivity를 상속하여 권한 관리 및 조기 초기화 훅(beforeOnCreated)을 상속받습니다.<br>
  * - 캡슐화를 유지하면서 하위 클래스 접근을 가능하게 하기 위해 private lateinit binding과 protected getBinding() 접근자를 사용합니다.<br>
  * - 유연성을 위해 기본 및 팩토리 기반 ViewModel 검색 메서드를 모두 제공합니다.<br>
  *
  * **Important notes / 주의사항:**<br>
  * - ⚠️ CRITICAL: Always call super.onCreate() first when overriding onCreate(). Skipping it will cause binding initialization to fail and crash at runtime.<br>
- * - onEventVmCollect() is called only once in onCreate() after binding initialization.<br>
- * - Always use repeatOnLifecycle(Lifecycle.State.STARTED) inside onEventVmCollect() to properly handle configuration changes.<br>
+ * - onEventVmCollect(binding:BINDING) is called only once in onCreate() after binding initialization.<br>
+ * - Always use repeatOnLifecycle(Lifecycle.State.STARTED) inside onEventVmCollect(binding:BINDING) to properly handle configuration changes.<br>
  * - Access the binding object via getBinding() method after super.onCreate() completes.<br><br>
  * - ⚠️ 중요: onCreate()를 오버라이드할 때 반드시 먼저 super.onCreate()를 호출하세요. 누락하면 바인딩 초기화가 실패하고 런타임에 크래시가 발생합니다.<br>
- * - onEventVmCollect()는 onCreate()에서 바인딩 초기화 후 1회만 호출됩니다.<br>
- * - 구성 변경을 올바르게 처리하려면 onEventVmCollect() 내부에서 항상 repeatOnLifecycle(Lifecycle.State.STARTED)를 사용하세요.<br>
+ * - onEventVmCollect(binding:BINDING)는 onCreate()에서 바인딩 초기화 후 1회만 호출됩니다.<br>
+ * - 구성 변경을 올바르게 처리하려면 onEventVmCollect(binding:BINDING) 내부에서 항상 repeatOnLifecycle(Lifecycle.State.STARTED)를 사용하세요.<br>
  * - super.onCreate() 완료 후 getBinding() 메서드를 통해 바인딩 객체에 접근하세요.<br>
  *
  * @param BINDING The type of ViewBinding to be used.<br><br>
@@ -99,8 +99,8 @@ abstract class ParentsBindingActivity<BINDING : ViewBinding> :
     }
 
     /**
-     * Helper that ensures onEventVmCollect() is invoked only once to prevent duplicate Flow collectors.<br><br>
-     * onEventVmCollect()가 1회만 호출되도록 보장하여 중복 Flow 수집을 방지하는 헬퍼입니다.<br>
+     * Helper that ensures onEventVmCollect(binding:BINDING) is invoked only once to prevent duplicate Flow collectors.<br><br>
+     * onEventVmCollect(binding:BINDING)가 1회만 호출되도록 보장하여 중복 Flow 수집을 방지하는 헬퍼입니다.<br>
      */
     private val helper = ParentBindingActivityHelper()
 
@@ -132,7 +132,7 @@ abstract class ParentsBindingActivity<BINDING : ViewBinding> :
         onViewCreate(binding, savedInstanceState)
         // Starts ViewModel event collection only once after binding initialization, preventing duplicate collectors.<br><br>
         // 바인딩 초기화 후 ViewModel 이벤트 수집을 1회만 시작하여 중복 수집을 방지합니다.<br>
-        helper.startEventVmCollect { onEventVmCollect() }
+        helper.startEventVmCollect { onEventVmCollect(binding) }
     }
 
     /**
@@ -161,7 +161,7 @@ abstract class ParentsBindingActivity<BINDING : ViewBinding> :
      *
      * **Best Practice Example:**<br>
      * ```kotlin
-     * override fun onEventVmCollect() {
+     * override fun onEventVmCollect(binding:BINDING) {
      *     lifecycleScope.launch {
      *         repeatOnLifecycle(Lifecycle.State.STARTED) {  // ✅ Recommended
      *             viewModel.events.collect { event ->
@@ -176,14 +176,14 @@ abstract class ParentsBindingActivity<BINDING : ViewBinding> :
      *
      * **Anti-Pattern (avoid this):**<br>
      * ```kotlin
-     * override fun onEventVmCollect() {
+     * override fun onEventVmCollect(binding:BINDING) {
      *     lifecycleScope.launch {
      *         viewModel.events.collect { event -> ... }  // ❌ May cause duplicate collectors
      *     }
      * }
      * ```
      */
-    override fun onEventVmCollect() {}
+    override fun onEventVmCollect(binding: BINDING) {}
 
     /**
      * Obtains a ViewModel of the specified type using ViewModelProvider.<br><br>

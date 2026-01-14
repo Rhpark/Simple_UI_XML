@@ -6,4 +6,8 @@ sealed interface PermissionsActivityVmEvent {
     data object OnClickPermissionsLocation : PermissionsActivityVmEvent
 
     data object OnClickPermissionsMulti : PermissionsActivityVmEvent
+
+    data object OnClickPermissionsSpecialOnly : PermissionsActivityVmEvent
+
+    data object OnClickPermissionsSpecialMulti : PermissionsActivityVmEvent
 }

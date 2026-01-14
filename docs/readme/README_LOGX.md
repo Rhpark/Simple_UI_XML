@@ -270,17 +270,20 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 
         // PUBLIC_EXTERNAL 사용 시 권한 확인 (Android 9 이하만)
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
-            onRequestPermissions(listOf(
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            )) { deniedPermissions ->
-                if (deniedPermissions.isEmpty()) {
-                    // Permission Request Success
-                    setupLogxWithPublicStorage()
-                } else {
-                    // 권한 거부됨 - APP_EXTERNAL로 대체
-                    setupLogxWithAppExternalStorage()
-                }
-            }
+            requestPermissions(
+                permissions = listOf(
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ),
+                onDeniedResult = { deniedResults ->
+                    if (deniedResults.isEmpty()) {
+                        // Permission Request Success
+                        setupLogxWithPublicStorage()
+                    } else {
+                        // 권한 거부됨 - APP_EXTERNAL로 대체
+                        setupLogxWithAppExternalStorage()
+                    }
+                },
+            )
         } else {
             // Android 10+ 권한 불필요
             setupLogxWithPublicStorage()
@@ -815,15 +818,18 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
                 setupLogxWithPublicStorage()
             },
             negativeWork = {
-                onRequestPermissions(listOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)) { deniedPermissions ->
-                    if (deniedPermissions.isEmpty()) {
-                        // 권한 허용됨
-                        setupLogxWithPublicStorage()
-                    } else {
-                        // 권한 거부됨 - APP_EXTERNAL로 대체
-                        setupLogxWithAppExternalStorage()
-                    }
-                }
+                requestPermissions(
+                    permissions = listOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                    onDeniedResult = { deniedResults ->
+                        if (deniedResults.isEmpty()) {
+                            // 권한 허용됨
+                            setupLogxWithPublicStorage()
+                        } else {
+                            // 권한 거부됨 - APP_EXTERNAL로 대체
+                            setupLogxWithAppExternalStorage()
+                        }
+                    },
+                )
             }
         )
     }

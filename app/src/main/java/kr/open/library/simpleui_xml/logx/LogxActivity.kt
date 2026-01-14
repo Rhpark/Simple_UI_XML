@@ -25,7 +25,7 @@ class LogxActivity : BaseDataBindingActivity<ActivityLogxBinding>(R.layout.activ
         lifecycle.addObserver(vm)
     }
 
-    override fun onEventVmCollect() {
+    override fun onEventVmCollect(binding: ActivityLogxBinding) {
         lifecycleScope.launch {
             vm.mEventVm.collect { event ->
                 when (event) {

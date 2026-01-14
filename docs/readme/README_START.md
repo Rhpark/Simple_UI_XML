@@ -36,11 +36,11 @@ We built **Simple UI XML** to give you that time back.
 - Ensure code consistency: Every teammate uses the same base classes and extensions → maximizes efficiency for bug tracking and maintenance.
 - Accelerate onboarding for new members: No need to master complex Android APIs → shortens the ramp-up period.
 - Cut code review time by 70%: Standardized patterns clarify review points → lets reviewers focus on the core logic.
-- Minimize collaboration conflicts: Integrated systems like PermissionManager and Logx prevent duplicate implementations.
+- Minimize collaboration conflicts: Integrated systems like PermissionRequester and Logx prevent duplicate implementations.
 > - 코드 일관성 보장: 모든 팀원이 동일한 Base 클래스 & Extension 사용 → 버그 추적·유지보수 효율성 극대화
 > - 신규 멤버 온보딩 가속화: 복잡한 Android API 학습 불필요 → 적응 기간 단축
 > - 코드리뷰 시간 70% 단축: 표준화된 패턴으로 리뷰 포인트 명확화 → 핵심 로직에만 집중
-> - 협업 충돌 최소화: PermissionManager, Logx 등 통합 시스템으로 중복 구현 방지
+> - 협업 충돌 최소화: PermissionRequester, Logx 등 통합 시스템으로 중복 구현 방지
 
 <br>
 </br>
@@ -86,12 +86,12 @@ We built **Simple UI XML** to give you that time back.
 
 - **Extension functions**: Practical add-ons for Bundle, String, Date, Time, TryCatch, and more
 - **Safe coding**: Simplified exception handling with safeCatch
-- **Permission management**: Unified support through PermissionManager
+- **Permission management**: Unified support through PermissionRequester
 - **Advanced logging**: Logx with file storage, filtering, and custom formatting
 - **Local storage**: Delegate-based preferences with safe commits (BaseSharedPreference)
 > - **확장 함수**: Bundle, String, Date, Time, TryCatch 등 실용적인 Extensions
 > - **안전한 코딩**: safeCatch를 통한 예외 처리 간소화
-> - **권한 관리**: PermissionManager 통합 지원
+> - **권한 관리**: PermissionRequester 통합 지원
 > - **고급 로깅**: Logx - 파일 저장, 필터링, 커스텀 포매팅 지원
 > - **로컬 저장**: 위임자 기반 설정 관리 + 안전 커밋 (BaseSharedPreference)
   

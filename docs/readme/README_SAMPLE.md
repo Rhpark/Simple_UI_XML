@@ -9,11 +9,11 @@
 
 ## 🔎 At a glance (한눈 비교)
 
-### Permission Manager
+### Permission Requester
 > ### 권한 관리
 | Category                    |               Plain Android               |             Simple UI              |
 |:----------------------------|:-----------------------------------------:|:----------------------------------:|
-| Permission request method   | Manually register ActivityResultContract  | ✅ One line onRequestPermissions()  | 
+| Permission request method   | Manually register ActivityResultContract  | ✅ One line requestPermissions()  | 
 | Special permission handling |        Separate logic (50+ lines)         |      ✅ Automatic distinction       | 
 | Permission result handling  |      Manual callback implementation       |   ✅ Automatic callback provided    |
 | Developer experience        |            Complex boilerplate            |      ✅ Concise library calls       |
@@ -122,22 +122,26 @@ class PermissionsActivityOrigin : AppCompatActivity() {
 </details>
 
 <details>
-<summary><strong>Simple UI - onRequestPermissions() 한 줄</strong></summary>
+<summary><strong>Simple UI - requestPermissions() 한 줄</strong></summary>
 
 ```kotlin
 class PermissionsActivity : BaseBindingActivity<ActivityPermissionsBinding>(R.layout.activity_permissions) {
 
     // 권한 요청이 단 한 줄!
     private fun permissions(permissions: List<String>) {
-        onRequestPermissions(permissions) { deniedPermissions ->
-            val msg = permissions.toString() + if (deniedPermissions.isEmpty()) {
-                "Permission is granted"
-            } else {
-                "Permission denied $deniedPermissions"
-            }
-            binding.btnCameraPermission.snackBarMakeShort(msg, SnackBarOption(actionText = "Ok")).show()
-            adapter.addItem(msg)
-        }
+        requestPermissions(
+            permissions = permissions,
+            onDeniedResult = { deniedResults ->
+                val denied = deniedResults.map { it.permission }
+                val msg = permissions.toString() + if (deniedResults.isEmpty()) {
+                    "Permission is granted"
+                } else {
+                    "Permission denied $denied"
+                }
+                binding.btnCameraPermission.snackBarMakeShort(msg, SnackBarOption(actionText = "Ok")).show()
+                adapter.addItem(msg)
+            },
+        )
     }
 
     // 사용법: 일반권한과 특수권한을 동일하게 처리
@@ -397,12 +401,12 @@ binding.root.snackBarShowShort("권한이 허용되었습니다!")
 ## 🚀 Key Point Simple UI XML
 
 ### 1. 📉 Full permission management automation
-- Complex launcher registration: ActivityResultContract registration → one line onRequestPermissions()
+- Complex launcher registration: ActivityResultContract registration → one line requestPermissions()
 - Normal/special permission separation: 50+ lines separation logic → automatic distinction
 - Permission result handling: Individual callback implementation → unified callback provided
 
 > ### 1. **📉 권한 관리 완전 자동화**
-> - **복잡한 launcher 등록**: ActivityResultContract 등록 → onRequestPermissions() 한 줄
+> - **복잡한 launcher 등록**: ActivityResultContract 등록 → requestPermissions() 한 줄
 > - **일반/특수 권한 분리**: 50줄+ 분리 로직 → 자동 구분 처리
 > - **권한 결과 처리**: 개별 콜백 구현 → 통합 콜백 제공
 
@@ -494,14 +498,14 @@ binding.root.snackBarShowShort("권한이 허용되었습니다!")
 - Result display using SimpleRcvAdapter
 - Extension function-based SnackBar display
 - BaseBindingActivity automatic initialization
-- onRequestPermissions() unified permission request
+- requestPermissions() unified permission request
 > **테스트 가능한 기능:**
 > - 일반 권한 vs 특수 권한 동일 처리 방식
 > - BaseViewModelEvent 이벤트 시스템
 > - SimpleRcvAdapter를 활용한 결과 표시
 > - 확장함수 기반 SnackBar 표시
 > - BaseBindingActivity 자동 초기화
-> - onRequestPermissions() 통합 권한 요청
+> - requestPermissions() 통합 권한 요청
 
 <br>
 </br>
