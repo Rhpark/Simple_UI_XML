@@ -14,8 +14,8 @@ import kr.open.library.simpleui_xml.databinding.FragmentBaseBindingExampleBindin
 class BaseBindingFragmentExample : BaseDataBindingFragment<FragmentBaseBindingExampleBinding>(R.layout.fragment_base_binding_example) {
     private val vm: BaseBindingFragmentExampleVm by lazy { getViewModel() }
 
-    override fun onViewCreate(binding: FragmentBaseBindingExampleBinding, savedInstanceState: Bundle?) {
-        super.onViewCreate(binding, savedInstanceState)
+    override fun onCreateView(binding: FragmentBaseBindingExampleBinding, savedInstanceState: Bundle?) {
+        super.onCreateView(binding, savedInstanceState)
         Logx.d("BaseBindingFragmentExample - onViewCreated() called")
 
         binding.vm = vm

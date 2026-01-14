@@ -14,8 +14,8 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
 import kr.open.library.simple_ui.core.logcat.Logx
-import kr.open.library.simple_ui.core.permissions.model.PermissionRationaleRequest
 import kr.open.library.simple_ui.core.permissions.model.PermissionDeniedItem
+import kr.open.library.simple_ui.core.permissions.model.PermissionRationaleRequest
 import kr.open.library.simple_ui.core.permissions.model.PermissionSettingsRequest
 import kr.open.library.simple_ui.xml.permissions.api.PermissionRequester
 import kr.open.library.simple_ui.xml.permissions.register.PermissionRequestInterface

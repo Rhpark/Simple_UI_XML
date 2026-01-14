@@ -115,7 +115,7 @@ public abstract class BaseDataBindingFragment<BINDING : ViewDataBinding>(
      * - 이는 Fragment의 뷰가 파괴되었지만 Fragment 인스턴스가 유지될 때(예: 백 스택) 메모리 누수와 오래된 관찰을 방지합니다.<br>
      */
     @CallSuper
-    override fun onViewCreate(binding: BINDING, savedInstanceState: Bundle?) {
+    override fun onCreateView(binding: BINDING, savedInstanceState: Bundle?) {
         binding.lifecycleOwner = viewLifecycleOwner
     }
 

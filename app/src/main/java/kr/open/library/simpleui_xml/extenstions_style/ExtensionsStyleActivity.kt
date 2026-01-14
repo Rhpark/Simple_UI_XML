@@ -31,8 +31,8 @@ import kr.open.library.simpleui_xml.databinding.ActivityExtensionsStyleBinding
 import java.util.Locale
 
 class ExtensionsStyleActivity : BaseDataBindingActivity<ActivityExtensionsStyleBinding>(R.layout.activity_extensions_style) {
-    override fun onViewCreate(binding: ActivityExtensionsStyleBinding, savedInstanceState: Bundle?) {
-        super.onViewCreate(binding, savedInstanceState)
+    override fun onCreate(binding: ActivityExtensionsStyleBinding, savedInstanceState: Bundle?) {
+        super.onCreate(binding, savedInstanceState)
         setupViewExtensions()
         setupDisplayExtensions()
         setupResourceExtensions()

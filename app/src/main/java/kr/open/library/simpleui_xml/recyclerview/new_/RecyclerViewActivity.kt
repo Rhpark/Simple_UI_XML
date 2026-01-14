@@ -50,8 +50,8 @@ class RecyclerViewActivity : BaseDataBindingActivity<ActivityRecyclerviewBinding
             setOnItemClickListener { i, sampleItem, view -> currentRemoveAtAdapter(i) }
         }.apply { setItems(SampleItem.createSampleData()) }
 
-    override fun onViewCreate(binding: ActivityRecyclerviewBinding, savedInstanceState: Bundle?) {
-        super.onViewCreate(binding, savedInstanceState)
+    override fun onCreate(binding: ActivityRecyclerviewBinding, savedInstanceState: Bundle?) {
+        super.onCreate(binding, savedInstanceState)
         setupRecyclerView()
         setupScrollStateDetection()
     }

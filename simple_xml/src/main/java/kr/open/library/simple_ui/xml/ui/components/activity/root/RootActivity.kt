@@ -4,8 +4,8 @@ import android.os.Bundle
 import android.os.PersistableBundle
 import androidx.annotation.CallSuper
 import androidx.appcompat.app.AppCompatActivity
-import kr.open.library.simple_ui.core.permissions.model.PermissionRationaleRequest
 import kr.open.library.simple_ui.core.permissions.model.PermissionDeniedItem
+import kr.open.library.simple_ui.core.permissions.model.PermissionRationaleRequest
 import kr.open.library.simple_ui.core.permissions.model.PermissionSettingsRequest
 import kr.open.library.simple_ui.xml.permissions.api.PermissionRequester
 import kr.open.library.simple_ui.xml.permissions.register.PermissionRequestInterface

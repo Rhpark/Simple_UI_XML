@@ -16,8 +16,8 @@ import kr.open.library.simpleui_xml.system_service_manager.controller.ServiceMan
 import kr.open.library.simpleui_xml.system_service_manager.info.ServiceManagerInfoActivity
 
 class MainActivity : BaseDataBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
-    override fun onViewCreate(binding: ActivityMainBinding, savedInstanceState: Bundle?) {
-        super.onViewCreate(binding, savedInstanceState)
+    override fun onCreate(binding: ActivityMainBinding, savedInstanceState: Bundle?) {
+        super.onCreate(binding, savedInstanceState)
         binding.btnNewPermissionActivity.setOnClickListener {
             startActivity(Intent(this, PermissionsActivity::class.java))
         }

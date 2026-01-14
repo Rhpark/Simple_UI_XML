@@ -3,8 +3,8 @@
 import android.os.Bundle
 import androidx.annotation.CallSuper
 import androidx.fragment.app.Fragment
-import kr.open.library.simple_ui.core.permissions.model.PermissionRationaleRequest
 import kr.open.library.simple_ui.core.permissions.model.PermissionDeniedItem
+import kr.open.library.simple_ui.core.permissions.model.PermissionRationaleRequest
 import kr.open.library.simple_ui.core.permissions.model.PermissionSettingsRequest
 import kr.open.library.simple_ui.xml.permissions.api.PermissionRequester
 import kr.open.library.simple_ui.xml.permissions.register.PermissionRequestInterface
