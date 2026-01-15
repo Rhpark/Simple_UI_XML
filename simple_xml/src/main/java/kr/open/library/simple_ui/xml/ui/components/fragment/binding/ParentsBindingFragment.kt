@@ -8,8 +8,8 @@ import androidx.annotation.CallSuper
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewbinding.ViewBinding
-import kr.open.library.simple_ui.xml.ui.components.base.helper.ParentBindingFragmentHelper
-import kr.open.library.simple_ui.xml.ui.components.base.lifecycle.ParentBindingFragmentInterface
+import kr.open.library.simple_ui.xml.ui.base.helper.ParentBindingHelperForFragment
+import kr.open.library.simple_ui.xml.ui.base.lifecycle.ParentBindingInterfaceForFragment
 import kr.open.library.simple_ui.xml.ui.components.fragment.root.RootFragment
 
 /**
@@ -33,7 +33,7 @@ import kr.open.library.simple_ui.xml.ui.components.fragment.root.RootFragment
 abstract class ParentsBindingFragment<BINDING : ViewBinding>(
     private val isAttachToParent: Boolean = false,
 ) : RootFragment(),
-    ParentBindingFragmentInterface<BINDING> {
+    ParentBindingInterfaceForFragment<BINDING> {
     /**
      * Holds the ViewBinding instance for this Fragment.<br><br>
      * 이 Fragment의 ViewBinding 인스턴스를 보관합니다.<br>
@@ -63,7 +63,7 @@ abstract class ParentsBindingFragment<BINDING : ViewBinding>(
      * Helper to ensure one-time event collection for this Fragment instance.<br><br>
      * 이 Fragment 인스턴스에서 이벤트 수집을 1회만 보장하는 헬퍼입니다.<br>
      */
-    private val helper = ParentBindingFragmentHelper()
+    private val helper = ParentBindingHelperForFragment()
 
     /**
      * Creates the ViewBinding instance.<br><br>
@@ -78,11 +78,7 @@ abstract class ParentsBindingFragment<BINDING : ViewBinding>(
      * @return The initialized ViewBinding instance.<br><br>
      *         초기화된 ViewBinding 인스턴스.<br>
      */
-    protected abstract fun createBinding(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        isAttachToParent: Boolean,
-    ): BINDING
+    protected abstract fun createBinding(inflater: LayoutInflater, container: ViewGroup?, isAttachToParent: Boolean): BINDING
 
     @CallSuper
     final override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {

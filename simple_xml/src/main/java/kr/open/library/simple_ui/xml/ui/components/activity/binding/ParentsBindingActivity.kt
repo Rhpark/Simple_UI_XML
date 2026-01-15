@@ -6,9 +6,9 @@ import androidx.annotation.CallSuper
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewbinding.ViewBinding
+import kr.open.library.simple_ui.xml.ui.base.helper.ParentBindingHelperForActivity
+import kr.open.library.simple_ui.xml.ui.base.lifecycle.ParentBindingInterfaceForActivity
 import kr.open.library.simple_ui.xml.ui.components.activity.root.RootActivity
-import kr.open.library.simple_ui.xml.ui.components.base.helper.ParentBindingActivityHelper
-import kr.open.library.simple_ui.xml.ui.components.base.lifecycle.ParentBindingActivityInterface
 
 /**
  * Base Activity with ViewBinding support and single-shot ViewModel event collection.<br>
@@ -28,7 +28,7 @@ import kr.open.library.simple_ui.xml.ui.components.base.lifecycle.ParentBindingA
  */
 abstract class ParentsBindingActivity<BINDING : ViewBinding> :
     RootActivity(),
-    ParentBindingActivityInterface<BINDING> {
+    ParentBindingInterfaceForActivity<BINDING> {
     /**
      * Holds the ViewBinding instance for this Activity.<br><br>
      * 이 Activity의 ViewBinding 인스턴스를 보관합니다.<br>
@@ -58,7 +58,7 @@ abstract class ParentsBindingActivity<BINDING : ViewBinding> :
      * Helper to ensure one-time event collection for this Activity instance.<br><br>
      * 이 Activity 인스턴스에서 이벤트 수집을 1회만 보장하는 헬퍼입니다.<br>
      */
-    private val helper = ParentBindingActivityHelper()
+    private val helper = ParentBindingHelperForActivity()
 
     /**
      * Creates the ViewBinding instance.<br><br>

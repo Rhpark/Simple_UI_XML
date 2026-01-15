@@ -30,12 +30,12 @@ import androidx.databinding.ViewDataBinding
  *
  * **Usage / 사용법:**<br>
  * 1. Extend this class with your Activity and pass the layout resource ID.<br>
- * 2. Bind your ViewModel to the binding object in onInitBind() (binding is passed as parameter).<br>
+ * 2. Bind your ViewModel to the binding object in onCreate(binding, savedInstanceState) (binding is passed as parameter).<br>
  * 3. Use XML data binding expressions to bind views to ViewModel properties.<br>
  * 4. Override onEventVmCollect(binding:BINDING) to collect ViewModel events with repeatOnLifecycle().<br>
  * 5. Access binding in other methods via getBinding() if needed.<br><br>
  * 1. Activity에서 이 클래스를 상속받고 레이아웃 리소스 ID를 전달하세요.<br>
- * 2. onInitBind()에서 ViewModel을 binding 객체에 바인딩하세요 (binding은 파라미터로 전달됩니다).<br>
+ * 2. onCreate(binding, savedInstanceState)에서 ViewModel을 binding 객체에 바인딩하세요 (binding은 파라미터로 전달됩니다).<br>
  * 3. XML 데이터 바인딩 표현식을 사용하여 뷰를 ViewModel 프로퍼티에 바인딩하세요.<br>
  * 4. repeatOnLifecycle()로 ViewModel 이벤트를 수집하려면 onEventVmCollect(binding:BINDING)를 오버라이드하세요.<br>
  * 5. 필요한 경우 다른 메서드에서 getBinding()을 통해 바인딩에 접근하세요.<br>
@@ -45,7 +45,7 @@ import androidx.databinding.ViewDataBinding
  * class MainActivity : BaseDataBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
  *     private val viewModel: MainViewModel by lazy { getViewModel() }
  *
- *     override fun onInitBind(binding: ActivityMainBinding) {
+ *     override fun onCreate(binding: ActivityMainBinding, savedInstanceState: Bundle?) {
  *         binding.viewModel = viewModel
  *         setupViews()
  *     }

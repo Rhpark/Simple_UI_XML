@@ -48,11 +48,11 @@ import kr.open.library.simple_ui.xml.ui.components.dialog.root.RootDialogFragmen
  *
  * **Usage / 사용법:**<br>
  * 1. Extend this class with your DialogFragment and pass the layout resource ID.<br>
- * 2. Access views through getBinding() in onViewCreated() or override onInitBind() for initialization.<br>
+ * 2. Access views through getBinding() in onViewCreated() or override onViewCreated(binding, savedInstanceState) for initialization.<br>
  * 3. Override onEventVmCollect(binding:BINDING) to collect ViewModel events with repeatOnLifecycle.<br>
  * 4. LiveData properties bound in XML will automatically update - no manual observation needed.<br><br>
  * 1. DialogFragment에서 이 클래스를 상속받고 레이아웃 리소스 ID를 전달하세요.<br>
- * 2. onViewCreated()에서 getBinding()을 통해 뷰에 접근하거나 초기화를 위해 onInitBind()를 오버라이드하세요.<br>
+ * 2. onViewCreated()에서 getBinding()을 통해 뷰에 접근하거나 초기화를 위해 onViewCreated(binding, savedInstanceState)를 오버라이드하세요.<br>
  * 3. repeatOnLifecycle과 함께 ViewModel 이벤트를 수집하려면 onEventVmCollect(binding:BINDING)를 오버라이드하세요.<br>
  * 4. XML에 바인딩된 LiveData 프로퍼티는 자동으로 업데이트됩니다 - 수동 관찰이 필요하지 않습니다.<br>
  *
@@ -61,7 +61,7 @@ import kr.open.library.simple_ui.xml.ui.components.dialog.root.RootDialogFragmen
  * class ConfirmDialog : BaseDataBindingDialogFragment<DialogConfirmBinding>(R.layout.dialog_confirm) {
  *     private val viewModel: ConfirmViewModel by lazy { getViewModel() }
  *
- *     override fun onInitBind(binding: DialogConfirmBinding) {
+ *     override fun onViewCreated(binding: DialogConfirmBinding, savedInstanceState: Bundle?) {
  *         binding.viewModel = viewModel
  *         // lifecycleOwner is already set automatically - no need to set it manually
  *     }

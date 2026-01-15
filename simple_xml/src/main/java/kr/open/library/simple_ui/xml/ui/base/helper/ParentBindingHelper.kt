@@ -1,4 +1,4 @@
-package kr.open.library.simple_ui.xml.ui.components.base.helper
+package kr.open.library.simple_ui.xml.ui.base.helper
 
 import kr.open.library.simple_ui.core.logcat.Logx
 
@@ -8,7 +8,7 @@ import kr.open.library.simple_ui.core.logcat.Logx
  * ViewModel 이벤트 수집을 1회로 관리하는 헬퍼입니다.<br>
  * 시작 상태를 추적하여 중복 수집을 방지합니다.<br>
  */
-internal abstract class ParentBaseBindingHelper {
+internal abstract class ParentBindingHelper {
     /**
      * Tracks whether event collection has started for this instance.<br><br>
      * 이 인스턴스에서 이벤트 수집이 시작되었는지 여부를 저장합니다.<br>
@@ -32,4 +32,10 @@ internal abstract class ParentBaseBindingHelper {
         eventCollectStarted = true
         onEventVmCollect()
     }
+
+    /**
+     * Returns whether event collection can start for this instance.<br><br>
+     * 이 인스턴스에서 이벤트 수집을 시작할 수 있는지 반환합니다.<br>
+     */
+    public fun canStartEventCollect(): Boolean = !eventCollectStarted
 }

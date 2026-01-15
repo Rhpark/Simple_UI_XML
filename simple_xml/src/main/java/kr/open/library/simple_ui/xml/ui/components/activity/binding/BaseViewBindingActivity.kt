@@ -28,10 +28,10 @@ import androidx.viewbinding.ViewBinding
  * **Usage / 사용법:**<br>
  * 1. Extend this class with your Activity and pass the ViewBinding inflate function reference.<br>
  * 2. Access views through the `getBinding()` method in onCreate() or later lifecycle methods.<br>
- * 3. Override onInitBind() to perform initial view setup after binding is ready.<br><br>
+ * 3. Override onCreate(binding, savedInstanceState) to perform initial view setup after binding is ready.<br><br>
  * 1. Activity에서 이 클래스를 상속받고 ViewBinding inflate 함수 참조를 전달하세요.<br>
  * 2. onCreate() 또는 이후 생명주기 메서드에서 `getBinding()` 메서드를 통해 뷰에 접근하세요.<br>
- * 3. 바인딩이 준비된 후 초기 뷰 설정을 수행하려면 onInitBind()를 오버라이드하세요.<br>
+ * 3. 바인딩이 준비된 후 초기 뷰 설정을 수행하려면 onCreate(binding, savedInstanceState)를 오버라이드하세요.<br>
  *
  * **Usage example:**<br>
  * ```kotlin

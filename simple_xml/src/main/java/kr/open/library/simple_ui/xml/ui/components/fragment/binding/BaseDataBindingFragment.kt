@@ -36,13 +36,13 @@ import androidx.databinding.ViewDataBinding
  *
  * **Usage / 사용법:**<br>
  * 1. Extend this class with your Fragment and pass the layout resource ID.<br>
- * 2. The lifecycleOwner is automatically set to viewLifecycleOwner in onViewCreated() - no manual setup required for LiveData observation.<br>
- * 3. Bind your ViewModel to the binding object in onInitBind() (binding is accessible via binding property).<br>
+ * 2. The lifecycleOwner is automatically set to viewLifecycleOwner in onCreateView() - no manual setup required for LiveData observation.<br>
+ * 3. Bind your ViewModel to the binding object in onViewCreated(binding, savedInstanceState) (binding is accessible via getBinding()).<br>
  * 4. Use XML data binding expressions to bind views to ViewModel properties.<br>
  * 5. Override onEventVmCollect(binding:BINDING) to collect ViewModel events with repeatOnLifecycle().<br><br>
  * 1. Fragment에서 이 클래스를 상속받고 레이아웃 리소스 ID를 전달하세요.<br>
- * 2. lifecycleOwner는 onViewCreated()에서 viewLifecycleOwner로 자동 설정됨 - LiveData 관찰을 위한 수동 설정이 필요하지 않습니다.<br>
- * 3. onInitBind()에서 ViewModel을 binding 객체에 바인딩하세요 (binding은 binding 프로퍼티를 통해 접근 가능).<br>
+ * 2. lifecycleOwner는 onCreateView()에서 viewLifecycleOwner로 자동 설정됨 - LiveData 관찰을 위한 수동 설정이 필요하지 않습니다.<br>
+ * 3. onViewCreated(binding, savedInstanceState)에서 ViewModel을 binding 객체에 바인딩하세요 (binding은 getBinding()을 통해 접근 가능).<br>
  * 4. XML 데이터 바인딩 표현식을 사용하여 뷰를 ViewModel 프로퍼티에 바인딩하세요.<br>
  * 5. repeatOnLifecycle()로 ViewModel 이벤트를 수집하려면 onEventVmCollect(binding:BINDING)를 오버라이드하세요.<br>
  *
@@ -51,7 +51,7 @@ import androidx.databinding.ViewDataBinding
  * class HomeFragment : BaseDataBindingFragment<FragmentHomeBinding>(R.layout.fragment_home) {
  *     private val viewModel: HomeViewModel by lazy { getViewModel() }
  *
- *     override fun onInitBind(binding: FragmentHomeBinding) {
+ *     override fun onViewCreated(binding: FragmentHomeBinding, savedInstanceState: Bundle?) {
  *         binding.viewModel = viewModel
  *         // lifecycleOwner is already set automatically - no manual setup needed
  *         setupViews()

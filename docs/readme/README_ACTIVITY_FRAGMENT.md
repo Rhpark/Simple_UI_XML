@@ -5,8 +5,8 @@
 - **Module**: `simple_xml` (UI-dependent module / UI 의존 모듈)
 - **Package**: `kr.open.library.simple_ui.xml.ui.*`
 - **Provides**: Base classes for Activity and Fragment
-  - `activity/` - RootActivity, BaseActivity, BaseBindingActivity
-  - `fragment/` - RootFragment, BaseFragment, BaseBindingFragment, DialogFragment
+  - `components/activity/` - RootActivity, BaseActivity, BaseBindingActivity
+  - `components/fragment/` - RootFragment, BaseFragment, BaseBindingFragment, DialogFragment
 
 <br></br>
 Simple UI's Activity/Fragment base classes are productivity tools that eliminate repetitive initialization code and centralize permission handling and MVVM interactions in one place. This document provides the philosophy behind each base class, usage scenarios, and practical examples.

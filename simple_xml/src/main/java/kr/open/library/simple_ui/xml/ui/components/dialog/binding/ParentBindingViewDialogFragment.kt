@@ -9,8 +9,8 @@ import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewbinding.ViewBinding
-import kr.open.library.simple_ui.xml.ui.components.base.helper.ParentBindingFragmentHelper
-import kr.open.library.simple_ui.xml.ui.components.base.lifecycle.ParentBindingFragmentInterface
+import kr.open.library.simple_ui.xml.ui.base.helper.ParentBindingHelperForFragment
+import kr.open.library.simple_ui.xml.ui.base.lifecycle.ParentBindingInterfaceForFragment
 import kr.open.library.simple_ui.xml.ui.components.dialog.root.RootDialogFragment
 
 /**
@@ -32,7 +32,7 @@ import kr.open.library.simple_ui.xml.ui.components.dialog.root.RootDialogFragmen
 abstract class ParentBindingViewDialogFragment<BINDING : ViewBinding>(
     private val isAttachToParent: Boolean,
 ) : RootDialogFragment(),
-    ParentBindingFragmentInterface<BINDING> {
+    ParentBindingInterfaceForFragment<BINDING> {
     /**
      * Holds the ViewBinding instance for this DialogFragment.<br><br>
      * 이 DialogFragment의 ViewBinding 인스턴스를 보관합니다.<br>
@@ -62,7 +62,7 @@ abstract class ParentBindingViewDialogFragment<BINDING : ViewBinding>(
      * Helper to ensure one-time event collection for this DialogFragment instance.<br><br>
      * 이 DialogFragment 인스턴스에서 이벤트 수집을 1회만 보장하는 헬퍼입니다.<br>
      */
-    private val helper = ParentBindingFragmentHelper()
+    private val helper = ParentBindingHelperForFragment()
 
     /**
      * Creates the ViewBinding instance.<br><br>

@@ -1,4 +1,4 @@
-package kr.open.library.simple_ui.xml.ui.components.base.helper
+package kr.open.library.simple_ui.xml.ui.base.helper
 
 /**
  * Helper for Fragment binding lifecycle management.<br>
@@ -6,7 +6,7 @@ package kr.open.library.simple_ui.xml.ui.components.base.helper
  * Fragment 바인딩 생명주기 관리를 위한 헬퍼입니다.<br>
  * 공통 단일 이벤트 수집 로직을 상속하고, 뷰 종료 시 리셋을 제공합니다.<br>
  */
-internal class ParentBindingFragmentHelper : ParentBaseBindingHelper() {
+internal open class ParentBindingHelperForFragment : ParentBindingHelper() {
     /**
      * Resets the event collection state.<br>
      * Call this when the view is destroyed to allow re-collection when recreated.<br><br>

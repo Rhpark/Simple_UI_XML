@@ -1,4 +1,4 @@
-package kr.open.library.simple_ui.xml.ui.components.base.lifecycle
+package kr.open.library.simple_ui.xml.ui.base.lifecycle
 
 import androidx.viewbinding.ViewBinding
 

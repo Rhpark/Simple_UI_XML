@@ -1,4 +1,4 @@
-package kr.open.library.simple_ui.xml.ui.components.base.lifecycle
+package kr.open.library.simple_ui.xml.ui.base.lifecycle
 
 import android.os.Bundle
 import androidx.viewbinding.ViewBinding
@@ -12,7 +12,7 @@ import androidx.viewbinding.ViewBinding
  * @param BINDING The type of ViewBinding class.<br><br>
  *                ViewBinding 클래스 타입.<br>
  */
-interface ParentBindingActivityInterface<BINDING : ViewBinding> : ParentBindingInterface<BINDING> {
+interface ParentBindingInterfaceForActivity<BINDING : ViewBinding> : ParentBindingInterface<BINDING> {
     /**
      * Called when the binding is initialized in onCreate().<br>
      * Implement setup logic that requires binding here.<br><br>
