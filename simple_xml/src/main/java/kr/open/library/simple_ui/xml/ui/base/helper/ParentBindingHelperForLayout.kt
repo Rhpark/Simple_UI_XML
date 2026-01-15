@@ -11,7 +11,6 @@ import androidx.viewbinding.ViewBinding
  * 시작 상태를 추적하여 중복 이벤트 수집을 방지합니다.
  */
 internal class ParentBindingHelperForLayout<BINDING : ViewBinding> : ParentBindingHelper() {
-
     /**
      * Holds the ViewBinding instance for this layout.<br><br>
      * 이 레이아웃의 ViewBinding 인스턴스를 보관합니다.<br>

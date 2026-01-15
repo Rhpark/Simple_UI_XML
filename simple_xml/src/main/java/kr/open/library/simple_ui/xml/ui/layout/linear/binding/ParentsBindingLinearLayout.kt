@@ -17,10 +17,11 @@ import kr.open.library.simple_ui.xml.ui.layout.linear.root.RootLinearLayout
 abstract class ParentsBindingLinearLayout<BINDING : ViewBinding> :
     RootLinearLayout,
     ParentBindingInterfaceForLayout<BINDING> {
-
     private val bindingCallbacks = object : LayoutBindingCallbacks<BINDING> {
         override fun createBinding(): BINDING = this@ParentsBindingLinearLayout.createBinding()
+
         override fun onInitBind(binding: BINDING) = this@ParentsBindingLinearLayout.onInitBind(binding)
+
         override fun onEventVmCollect(binding: BINDING) = this@ParentsBindingLinearLayout.onEventVmCollect(binding)
     }
 

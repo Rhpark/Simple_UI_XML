@@ -130,7 +130,6 @@ kover {
                 classes("kr.open.library.simple_ui.xml.ui.fragment.dialog.BaseBindingDialogFragment*")
                 classes("kr.open.library.simple_ui.xml.system_manager.controller.window.*")
                 // 3. Lifecycle 커스텀 Layout
-                classes("kr.open.library.simple_ui.xml.ui.layout.BaseLifeCycle*Layout")
                 classes("kr.open.library.simple_ui.core.logcat.extensions.LogxExtensions*")
                 classes("kr.open.library.simple_ui.core.extensions.display.DisplayUnitExtensions*")
                 classes("kr.open.library.simple_ui.core.system_manager.controller.alarm.*")

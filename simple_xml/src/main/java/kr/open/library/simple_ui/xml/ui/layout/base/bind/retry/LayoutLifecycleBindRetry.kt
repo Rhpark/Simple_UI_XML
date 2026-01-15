@@ -1,7 +1,6 @@
 ﻿package kr.open.library.simple_ui.xml.ui.layout.base.bind.retry
 
 import android.view.View
-import androidx.lifecycle.LifecycleOwner
 import kr.open.library.simple_ui.xml.extensions.view.doOnLayout
 
 /**
@@ -62,7 +61,6 @@ internal class LayoutLifecycleBindRetry(
         started = true
 
         view.doOnLayout {
-
             if (!view.isAttachedToWindow) return@doOnLayout
             val retryOwner = callbacks.bind()
             if (retryOwner != null) return@doOnLayout
@@ -82,4 +80,3 @@ internal class LayoutLifecycleBindRetry(
         started = false
     }
 }
-

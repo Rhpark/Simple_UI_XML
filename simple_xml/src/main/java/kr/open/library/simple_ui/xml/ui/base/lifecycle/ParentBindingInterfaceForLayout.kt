@@ -27,5 +27,4 @@ interface ParentBindingInterfaceForLayout<BINDING : ViewBinding> :
      *                           저장된 상태가 있다면 해당 Bundle.<br>
      */
     fun onInitBind(binding: BINDING) {}
-
 }

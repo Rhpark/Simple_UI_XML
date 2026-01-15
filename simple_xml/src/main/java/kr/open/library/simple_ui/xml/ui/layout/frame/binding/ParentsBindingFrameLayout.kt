@@ -17,10 +17,11 @@ import kr.open.library.simple_ui.xml.ui.layout.frame.root.RootFrameLayout
 abstract class ParentsBindingFrameLayout<BINDING : ViewBinding> :
     RootFrameLayout,
     ParentBindingInterfaceForLayout<BINDING> {
-
     private val bindingCallbacks = object : LayoutBindingCallbacks<BINDING> {
         override fun createBinding(): BINDING = this@ParentsBindingFrameLayout.createBinding()
+
         override fun onInitBind(binding: BINDING) = this@ParentsBindingFrameLayout.onInitBind(binding)
+
         override fun onEventVmCollect(binding: BINDING) = this@ParentsBindingFrameLayout.onEventVmCollect(binding)
     }
 

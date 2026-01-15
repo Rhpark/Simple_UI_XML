@@ -31,6 +31,7 @@ abstract class RootConstraintLayout :
         view = this,
         callbacks = object : LayoutLifecycleCallbacks {
             override fun bindLifecycle(): LifecycleOwner? = bindLifecycleObserver(this@RootConstraintLayout)
+
             override fun unbindLifecycle() = unbindLifecycleObserver(this@RootConstraintLayout)
         },
     )

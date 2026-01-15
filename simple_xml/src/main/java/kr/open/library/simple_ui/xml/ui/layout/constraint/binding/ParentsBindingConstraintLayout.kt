@@ -17,10 +17,11 @@ import kr.open.library.simple_ui.xml.ui.layout.constraint.root.RootConstraintLay
 abstract class ParentsBindingConstraintLayout<BINDING : ViewBinding> :
     RootConstraintLayout,
     ParentBindingInterfaceForLayout<BINDING> {
-
     private val bindingCallbacks = object : LayoutBindingCallbacks<BINDING> {
         override fun createBinding(): BINDING = this@ParentsBindingConstraintLayout.createBinding()
+
         override fun onInitBind(binding: BINDING) = this@ParentsBindingConstraintLayout.onInitBind(binding)
+
         override fun onEventVmCollect(binding: BINDING) =
             this@ParentsBindingConstraintLayout.onEventVmCollect(binding)
     }

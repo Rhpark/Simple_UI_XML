@@ -69,8 +69,7 @@ import androidx.viewbinding.ViewBinding
  * @see BaseDataBindingFrameLayout For DataBinding variant with LiveData support.<br><br>
  *      LiveData 지원이 있는 DataBinding 버전은 BaseDataBindingFrameLayout을 참조하세요.<br>
  */
-abstract class BaseViewBindingFrameLayout<BINDING : ViewBinding> :
-    ParentsBindingFrameLayout<BINDING> {
+abstract class BaseViewBindingFrameLayout<BINDING : ViewBinding> : ParentsBindingFrameLayout<BINDING> {
     /**
      * Inflate function used to create the binding instance.<br><br>
      * 바인딩 인스턴스를 생성하는 inflate 함수입니다.<br>

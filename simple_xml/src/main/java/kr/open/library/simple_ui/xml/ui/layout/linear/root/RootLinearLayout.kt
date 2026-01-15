@@ -31,6 +31,7 @@ abstract class RootLinearLayout :
         view = this,
         callbacks = object : LayoutLifecycleCallbacks {
             override fun bindLifecycle(): LifecycleOwner? = bindLifecycleObserver(this@RootLinearLayout)
+
             override fun unbindLifecycle() = unbindLifecycleObserver(this@RootLinearLayout)
         },
     )

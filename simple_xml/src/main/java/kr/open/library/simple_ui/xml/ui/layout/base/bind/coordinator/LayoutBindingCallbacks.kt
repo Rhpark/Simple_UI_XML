@@ -2,7 +2,6 @@ package kr.open.library.simple_ui.xml.ui.layout.base.bind.coordinator
 
 import androidx.viewbinding.ViewBinding
 
-
 /**
  * Callback interface for binding lifecycle hooks.<br><br>
  * 바인딩 생명주기 훅을 위한 콜백 인터페이스입니다.<br>

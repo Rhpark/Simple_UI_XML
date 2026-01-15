@@ -31,6 +31,7 @@ abstract class RootFrameLayout :
         view = this,
         callbacks = object : LayoutLifecycleCallbacks {
             override fun bindLifecycle(): LifecycleOwner? = bindLifecycleObserver(this@RootFrameLayout)
+
             override fun unbindLifecycle() = unbindLifecycleObserver(this@RootFrameLayout)
         },
     )
