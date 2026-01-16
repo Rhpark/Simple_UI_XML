@@ -227,27 +227,26 @@
                 style="@style/TextView.MatchWrap"
                 android:layout_marginBottom="8dp"
                 android:padding="8dp"
-                android:text="✅ / ❌" />
+                android:text="Status: ✅ / ❌" />
 
             <EditText
                 android:id="@+id/edtNumber"
                 style="@style/EditText.MatchWrap.Text"
                 android:layout_marginBottom="4dp"
-                android:hint="숫자 입력" />
+                android:hint="Enter number" />
 
             <TextView
                 android:id="@+id/tvNumberResult"
                 style="@style/TextView.MatchWrap"
                 android:layout_marginBottom="8dp"
                 android:padding="8dp"
-                android:text="✅ / ❌" />
+                android:text="Status: ✅ / ❌" />
 
             <EditText
                 android:id="@+id/edtWhitespace"
                 style="@style/EditText.MatchWrap.Text"
                 android:layout_marginBottom="4dp"
-                android:hint="공백 제거 테스트" />
-
+                android:hint="Trim whitespace" />
             <Button
                 android:id="@+id/btnRemoveWhitespace"
                 style="@style/Button.MatchWrap"

@@ -90,7 +90,7 @@ android {
     buildFeatures {
         //noinspection DataBindingWithoutKapt
         dataBinding = true
-//        viewBinding = true
+        viewBinding = true
         buildConfig = true // BuildConfig 활성화
     }
 }
