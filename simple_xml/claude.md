@@ -36,9 +36,9 @@
  ## 주요 패키지 구조 (총 47개 파일)
 
   ### ui/activity
-   - **RootActivity**: 시스템 바 제어, 권한 관리 기본 클래스 (simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/activity/RootActivity.kt)
-   - **BaseActivity**: 자동 레이아웃 바인딩 (simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/activity/BaseActivity.kt)
-   - **BaseBindingActivity**: DataBinding 자동 바인딩 (simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/activity/BaseBindingActivity.kt)
+   - **RootActivity**: 시스템 바 제어, 권한 관리 기본 클래스 (simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/components/activity/root/RootActivity.kt)
+   - **BaseActivity**: 자동 레이아웃 바인딩 (simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/components/activity/normal/BaseActivity.kt)
+   - **BaseBindingActivity**: DataBinding 자동 바인딩 (simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/components/activity/binding/BaseDataBindingActivity.kt)
    - StatusBar/NavigationBar 색상 제어, Edge-to-edge 대응
 
 
@@ -136,12 +136,7 @@
  ## 개발 시 주의사항
 
   ### XML ID 규칙 (필수 준수)
-   - Button: `+id/btn*` 으로 시작 (예: btnSubmit, btnCancel)
-   - EditText: `+id/edt*` 으로 시작 (예: edtEmail, edtPassword)
-   - TextView: `+id/tv*` 으로 시작 (예: tvTitle, tvDescription)
-   - RecyclerScrollStateView: `+id/rcv*` 으로 시작 (예: rcvList, rcvItems)
-   - Checkbox: `+id/cb*` 으로 시작 (예: cbAgree, cbRemember)
-   - 기타 View: 위와 비슷한 형식으로 일관성 유지
+   - **docs/rules/CODING_RULE.md의 "XML Id 규칙" 참조**
    - **camelCase 사용** (snake_case 금지)
 
 
@@ -184,24 +179,8 @@
 
 
  ## 테스트 작성 규칙
-
-  ### 테스트 파일 디렉터리 구조
-   - 테스트 파일은 반드시 테스트 유형별 패키지에 위치해야 함
-   - **단위 테스트**: `src/test/java/kr/open/library/simple_ui/xml/unit/{원본_패키지_경로}/`
-   - **Robolectric 테스트**: `src/test/java/kr/open/library/simple_ui/xml/robolectric/{원본_패키지_경로}/`
-   - 파일명: 단위 테스트는 `*Test.kt`, Robolectric은 `*RobolectricTest.kt`
-
-
-  ### testUnit
-   - UI 의존성 없는 순수 로직 테스트
-
-
-  ### testRobolectric
-   - Activity/Fragment/View 등 UI 컴포넌트 테스트
-
-
-  ### 테스트 실행
-   - ./gradlew :simple_xml:koverHtmlReport
+  - **docs/rules/TEST_RULE.md 참조**
+  - 테스트 실행: `./gradlew :simple_xml:koverHtmlReport`
 
 
 
@@ -212,11 +191,6 @@
    - Android SDK (android.*, androidx.*)
    - DataBinding, ViewBinding
    - Activity, Fragment, View 등 UI 컴포넌트
-
-
-  ### 금지되는 의존성
-   - Compose 관련 라이브러리 (향후 simple_compose 모듈에서 처리)
-   - 다른 UI 프레임워크
 
 
 
@@ -282,8 +256,8 @@
  ## 개발 예제 참고
 
   ### Activity 작성
-   - RootActivity 상속 예제: (simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/activity/RootActivity.kt)
-   - BaseActivity 사용법: (simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/activity/BaseActivity.kt)
+   - RootActivity 상속 예제: (simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/components/activity/root/RootActivity.kt)
+   - BaseActivity 사용법: (simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/components/activity/normal/BaseActivity.kt)
 
 
   ### Adapter 작성

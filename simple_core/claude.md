@@ -172,26 +172,8 @@
 
 
  ## 테스트 작성 규칙
-
-  ### 테스트 파일 디렉터리 구조
-   - 테스트 파일은 반드시 테스트 유형별 패키지에 위치해야 함
-   - **단위 테스트**: `src/test/java/kr/open/library/simple_ui/core/unit/{원본_패키지_경로}/`
-   - **Robolectric 테스트**: `src/test/java/kr/open/library/simple_ui/core/robolectric/{원본_패키지_경로}/`
-   - 파일명: 단위 테스트는 `*Test.kt`, Robolectric은 `*RobolectricTest.kt`
-
-
-  ### testUnit: UI 의존성 없는 순수 로직 테스트
-   - extensions, logcat, permissions, system_manager 등
-
-
-  ### testRobolectric: Android 컴포넌트 의존성 테스트
-   - Context, SharedPreferences 등
-
-
-  ### 테스트 실행
-   - ./gradlew :simple_core:koverHtmlReport
-   - ./gradlew :simple_xml:koverHtmlReport
-   - 또는 ./gradlew :simple_core:koverHtmlReport :simple_xml:koverHtmlReport
+  - **docs/rules/TEST_RULE.md 참조**
+  - 테스트 실행: `./gradlew :simple_core:koverHtmlReport`
 
 
 
