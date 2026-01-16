@@ -80,8 +80,7 @@ public open class VibratorController(
      */
 
     private val vibratorManager: VibratorManager by lazy {
-        checkSdkVersion(
-            Build.VERSION_CODES.S,
+        checkSdkVersion(Build.VERSION_CODES.S,
             positiveWork = { context.getVibratorManager() },
             negativeWork = { throwMinSdkVersion(it) }
         )
@@ -121,8 +120,7 @@ public open class VibratorController(
         }
 
         val oneShot = VibrationEffect.createOneShot(timer, effect)
-        checkSdkVersion(
-            Build.VERSION_CODES.S,
+        checkSdkVersion(Build.VERSION_CODES.S,
             positiveWork = { vibratorManager.vibrate(CombinedVibration.createParallel(oneShot)) },
             negativeWork = { vibrator.vibrate(oneShot) },
         )
@@ -164,12 +162,10 @@ public open class VibratorController(
     @RequiresPermission(VIBRATE)
     @RequiresApi(Build.VERSION_CODES.Q)
     public fun createPredefined(vibrationEffectClick: Int): Boolean = tryCatchSystemManager(false) {
-        checkSdkVersion(
-            Build.VERSION_CODES.Q,
+        checkSdkVersion(Build.VERSION_CODES.Q,
             positiveWork = {
                 val predefinedEffect = VibrationEffect.createPredefined(vibrationEffectClick)
-                checkSdkVersion(
-                    Build.VERSION_CODES.S,
+                checkSdkVersion(Build.VERSION_CODES.S,
                     positiveWork = { vibratorManager.vibrate(CombinedVibration.createParallel(predefinedEffect)) },
                     negativeWork = { vibrator.vibrate(predefinedEffect) },
                 )
@@ -237,8 +233,7 @@ public open class VibratorController(
         }
 
         val waveformEffect = VibrationEffect.createWaveform(times, amplitudes, repeat)
-        checkSdkVersion(
-            Build.VERSION_CODES.S,
+        checkSdkVersion(Build.VERSION_CODES.S,
             positiveWork = { vibratorManager.vibrate(CombinedVibration.createParallel(waveformEffect)) },
             negativeWork = { vibrator.vibrate(waveformEffect) },
         )
@@ -275,8 +270,7 @@ public open class VibratorController(
         }
 
         val waveformEffect = VibrationEffect.createWaveform(pattern, repeat)
-        checkSdkVersion(
-            Build.VERSION_CODES.S,
+        checkSdkVersion(Build.VERSION_CODES.S,
             positiveWork = { vibratorManager.vibrate(CombinedVibration.createParallel(waveformEffect)) },
             negativeWork = { vibrator.vibrate(waveformEffect) },
         )
@@ -294,8 +288,7 @@ public open class VibratorController(
      */
     @RequiresPermission(VIBRATE)
     public fun cancel(): Boolean = tryCatchSystemManager(false) {
-        checkSdkVersion(
-            Build.VERSION_CODES.S,
+        checkSdkVersion(Build.VERSION_CODES.S,
             positiveWork = { vibratorManager.cancel() },
             negativeWork = { vibrator.cancel() },
         )
@@ -310,8 +303,7 @@ public open class VibratorController(
      *         기기가 진동을 지원하면 `true`, 그렇지 않으면 `false`.<br>
      */
     public fun hasVibrator(): Boolean = safeCatch(false) {
-        return checkSdkVersion(
-            Build.VERSION_CODES.S,
+        return checkSdkVersion(Build.VERSION_CODES.S,
             positiveWork = { vibratorManager.defaultVibrator.hasVibrator() },
             negativeWork = { vibrator.hasVibrator() },
         )

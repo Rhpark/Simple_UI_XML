@@ -29,20 +29,13 @@ public open class SimpleRcvAdapter<ITEM : Any>(
      * @return A new BaseRcvViewHolder instance.<br><br>
      *         새로운 BaseRcvViewHolder 인스턴스.<br>
      */
-    override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int,
-    ): BaseRcvViewHolder = BaseRcvViewHolder(layoutRes, parent)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseRcvViewHolder = BaseRcvViewHolder(layoutRes, parent)
 
     /**
      * Binds data to the ViewHolder.<br><br>
      * ViewHolder에 데이터를 바인딩합니다.<br>
      */
-    override fun onBindViewHolder(
-        holder: BaseRcvViewHolder,
-        position: Int,
-        item: ITEM,
-    ) {
+    override fun onBindViewHolder(holder: BaseRcvViewHolder, position: Int, item: ITEM) {
         onBind(holder, item, position)
     }
 }

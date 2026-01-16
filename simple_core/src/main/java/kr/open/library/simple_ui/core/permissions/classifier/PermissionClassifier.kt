@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
+import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
 import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
 import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.core.permissions.vo.PermissionConstants
@@ -166,18 +167,21 @@ class PermissionClassifier(
      */
     private fun loadDeclaredPermissions(): Set<String> = safeCatch(defaultValue = emptySet()) {
         val packageManager = context.packageManager
-        val packageInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            packageManager.getPackageInfo(
-                context.packageName,
-                PackageManager.PackageInfoFlags.of(PackageManager.GET_PERMISSIONS.toLong()),
-            )
-        } else {
-            @Suppress("DEPRECATION")
-            packageManager.getPackageInfo(
-                context.packageName,
-                PackageManager.GET_PERMISSIONS,
-            )
-        }
+        val packageInfo = checkSdkVersion(Build.VERSION_CODES.TIRAMISU,
+            positiveWork = {
+                packageManager.getPackageInfo(
+                    context.packageName,
+                    PackageManager.PackageInfoFlags.of(PackageManager.GET_PERMISSIONS.toLong()),
+                )
+            },
+            negativeWork = {
+                @Suppress("DEPRECATION")
+                packageManager.getPackageInfo(
+                    context.packageName,
+                    PackageManager.GET_PERMISSIONS,
+                )
+            }
+        )
         packageInfo.requestedPermissions?.toSet() ?: emptySet()
     }.also { permissions ->
         if (permissions.isEmpty()) {

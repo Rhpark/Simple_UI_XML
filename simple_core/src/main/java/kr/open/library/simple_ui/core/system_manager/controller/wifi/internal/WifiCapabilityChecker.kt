@@ -71,8 +71,7 @@ internal class WifiCapabilityChecker(
      */
     @RequiresApi(Build.VERSION_CODES.R)
     fun is6GHzBandSupported(): Boolean = guard.run(false) {
-        checkSdkVersion(
-            Build.VERSION_CODES.R,
+        checkSdkVersion(Build.VERSION_CODES.R,
             positiveWork = { invokeBooleanCapability("is6GHzBandSupported") },
             negativeWork = { false },
         )
@@ -89,8 +88,7 @@ internal class WifiCapabilityChecker(
      */
     @RequiresApi(Build.VERSION_CODES.Q)
     fun isWpa3SaeSupported(): Boolean = guard.run(false) {
-        checkSdkVersion(
-            Build.VERSION_CODES.R,
+        checkSdkVersion(Build.VERSION_CODES.R,
             positiveWork = { invokeBooleanCapability("isWpa3SaeSupported") },
             negativeWork = { false },
         )
@@ -107,8 +105,7 @@ internal class WifiCapabilityChecker(
      */
     @RequiresApi(Build.VERSION_CODES.Q)
     fun isEnhancedOpenSupported(): Boolean = guard.run(false) {
-        checkSdkVersion(
-            Build.VERSION_CODES.Q,
+        checkSdkVersion(Build.VERSION_CODES.Q,
             positiveWork = { invokeBooleanCapability("isEnhancedOpenSupported") },
             negativeWork = { false },
         )

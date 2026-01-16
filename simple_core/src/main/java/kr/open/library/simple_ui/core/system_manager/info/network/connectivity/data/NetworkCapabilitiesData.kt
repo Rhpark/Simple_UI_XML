@@ -50,8 +50,7 @@ public data class NetworkCapabilitiesData(
      *         기능 정수 코드 목록.<br>
      */
     public fun getCapabilities(): IntArray? = safeCatch(null) {
-        checkSdkVersion(
-            Build.VERSION_CODES.S,
+        checkSdkVersion(Build.VERSION_CODES.S,
             positiveWork = { networkCapabilities.capabilities },
             negativeWork = { getCapabilitiesNumber(splitStr("Capabilities: ", " LinkUpBandwidth", "&")) },
         )
@@ -96,16 +95,14 @@ public data class NetworkCapabilitiesData(
                 "NOT_SUSPENDED" -> NetworkCapabilities.NET_CAPABILITY_NOT_SUSPENDED
                 "OEM_PAID" -> 22 // NetworkCapabilities.NET_CAPABILITY_OEM_PAID
                 "MCX" -> {
-                    checkSdkVersion(
-                        Build.VERSION_CODES.S,
+                    checkSdkVersion(Build.VERSION_CODES.S,
                         positiveWork = { NetworkCapabilities.NET_CAPABILITY_MCX },
                         negativeWork = { 23 },
                     )
                 }
                 "PARTIAL_CONNECTIVITY" -> 24 // NetworkCapabilities.NET_CAPABILITY_PARTIAL_CONNECTIVITY
                 "TEMPORARILY_NOT_METERED" -> {
-                    checkSdkVersion(
-                        Build.VERSION_CODES.R,
+                    checkSdkVersion(Build.VERSION_CODES.R,
                         positiveWork = { NetworkCapabilities.NET_CAPABILITY_TEMPORARILY_NOT_METERED },
                         negativeWork = { 25 },
                     )
@@ -114,8 +111,7 @@ public data class NetworkCapabilitiesData(
                 "VEHICLE_INTERNAL" -> 27 // NetworkCapabilities.NET_CAPABILITY_VEHICLE_INTERNAL
                 "NOT_VCN_MANAGED" -> 28 // NetworkCapabilities.NET_CAPABILITY_NOT_VCN_MANAGED
                 "ENTERPRISE" -> {
-                    checkSdkVersion(
-                        Build.VERSION_CODES.S,
+                    checkSdkVersion(Build.VERSION_CODES.S,
                         positiveWork = { NetworkCapabilities.NET_CAPABILITY_ENTERPRISE },
                         negativeWork = { 29 },
                     )
@@ -123,36 +119,31 @@ public data class NetworkCapabilitiesData(
                 "VSIM" -> 30 // NetworkCapabilities.NET_CAPABILITY_VSIM
                 "BIP" -> 31 // NetworkCapabilities.NET_CAPABILITY_BIP
                 "HEAD_UNIT" -> {
-                    checkSdkVersion(
-                        Build.VERSION_CODES.S,
+                    checkSdkVersion(Build.VERSION_CODES.S,
                         positiveWork = { NetworkCapabilities.NET_CAPABILITY_HEAD_UNIT },
                         negativeWork = { 32 },
                     )
                 }
                 "MMTEL" -> {
-                    checkSdkVersion(
-                        Build.VERSION_CODES.TIRAMISU,
+                    checkSdkVersion(Build.VERSION_CODES.TIRAMISU,
                         positiveWork = { NetworkCapabilities.NET_CAPABILITY_MMTEL },
                         negativeWork = { 33 },
                     )
                 }
                 "PRIORITIZE_LATENCY" -> {
-                    checkSdkVersion(
-                        Build.VERSION_CODES.TIRAMISU,
+                    checkSdkVersion(Build.VERSION_CODES.TIRAMISU,
                         positiveWork = { NetworkCapabilities.NET_CAPABILITY_PRIORITIZE_LATENCY },
                         negativeWork = { 34 },
                     )
                 }
                 "PRIORITIZE_BANDWIDTH" -> {
-                    checkSdkVersion(
-                        Build.VERSION_CODES.TIRAMISU,
+                    checkSdkVersion(Build.VERSION_CODES.TIRAMISU,
                         positiveWork = { NetworkCapabilities.NET_CAPABILITY_PRIORITIZE_BANDWIDTH },
                         negativeWork = { 35 },
                     )
                 }
                 "LOCAL_NETWORK" -> {
-                    checkSdkVersion(
-                        Build.VERSION_CODES.UPSIDE_DOWN_CAKE,
+                    checkSdkVersion(Build.VERSION_CODES.UPSIDE_DOWN_CAKE,
                         positiveWork = { NetworkCapabilities.NET_CAPABILITY_LOCAL_NETWORK },
                         negativeWork = { 36 },
                     )
@@ -174,8 +165,7 @@ public data class NetworkCapabilitiesData(
      *         구독 ID 목록.<br>
      */
     public fun getSubscriptionIds(): List<Int>? = safeCatch(null) {
-        checkSdkVersion(
-            Build.VERSION_CODES.S,
+        checkSdkVersion(Build.VERSION_CODES.S,
             positiveWork = {
                 if (SdkExtensions.getExtensionVersion(Build.VERSION_CODES.UPSIDE_DOWN_CAKE) >= 12) {
                     networkCapabilities.subscriptionIds.toList()
@@ -209,8 +199,7 @@ public data class NetworkCapabilitiesData(
      *         신호 강도 값.<br>
      */
     public fun getSignalStrength(): Int? = safeCatch(null) {
-        checkSdkVersion(
-            Build.VERSION_CODES.Q,
+        checkSdkVersion(Build.VERSION_CODES.Q,
             positiveWork = { networkCapabilities.signalStrength },
             negativeWork = { splitStr("SignalStrength: ", " ")?.toIntOrNull() },
         )

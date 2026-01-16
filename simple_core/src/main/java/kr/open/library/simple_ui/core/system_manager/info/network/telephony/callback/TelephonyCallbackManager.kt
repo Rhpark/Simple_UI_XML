@@ -249,8 +249,7 @@ public class TelephonyCallbackManager(
         onServiceStateChanged: ((ServiceState) -> Unit)? = null,
         onNetworkStateChanged: ((TelephonyNetworkState) -> Unit)? = null,
     ): Boolean = tryCatchSystemManager(false) {
-        checkSdkVersion(
-            Build.VERSION_CODES.S,
+        checkSdkVersion(Build.VERSION_CODES.S,
             positiveWork = {
                 registerModernCallback(
                     handler,
@@ -373,8 +372,7 @@ public class TelephonyCallbackManager(
                 return false
             }
 
-            checkSdkVersion(
-                Build.VERSION_CODES.S,
+            checkSdkVersion(Build.VERSION_CODES.S,
                 positiveWork = { telephonyManager.unregisterTelephonyCallback(telephonyCallback.baseTelephonyCallback) },
                 negativeWork = {
                     @Suppress("DEPRECATION")

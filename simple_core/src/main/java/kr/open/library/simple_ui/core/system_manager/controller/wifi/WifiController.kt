@@ -123,8 +123,7 @@ public open class WifiController(
      */
     @RequiresPermission(CHANGE_WIFI_STATE)
     public fun setWifiEnabled(enabled: Boolean): Boolean = tryCatchSystemManager(false) {
-        return checkSdkVersion(
-            Build.VERSION_CODES.Q,
+        return checkSdkVersion(Build.VERSION_CODES.Q,
             positiveWork = {
                 Logx.w("WiFi control deprecated on API 29+, user must enable manually")
                 false
@@ -194,8 +193,7 @@ public open class WifiController(
      */
     @RequiresPermission(allOf = [ACCESS_WIFI_STATE, ACCESS_FINE_LOCATION])
     public fun getConfiguredNetworks(): List<WifiConfiguration> = tryCatchSystemManager(emptyList()) {
-        return checkSdkVersion(
-            Build.VERSION_CODES.Q,
+        return checkSdkVersion(Build.VERSION_CODES.Q,
             positiveWork = {
                 Logx.w("getConfiguredNetworks deprecated on API 29+, use WiFi suggestion API")
                 emptyList()

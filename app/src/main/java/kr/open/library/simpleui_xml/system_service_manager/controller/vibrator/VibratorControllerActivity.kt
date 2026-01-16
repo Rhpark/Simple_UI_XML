@@ -56,8 +56,7 @@ class VibratorControllerActivity : BaseActivity(R.layout.activity_vibrator_contr
             }
 
             btnClickEffect.setOnClickListener {
-                checkSdkVersion(
-                    Build.VERSION_CODES.Q,
+                checkSdkVersion(Build.VERSION_CODES.Q,
                     positiveWork = {
                         vibratorController.createPredefined(VibrationEffect.EFFECT_CLICK)
                         toastShowShort("Click Effect")
@@ -67,8 +66,7 @@ class VibratorControllerActivity : BaseActivity(R.layout.activity_vibrator_contr
             }
 
             btnDoubleClickEffect.setOnClickListener {
-                checkSdkVersion(
-                    Build.VERSION_CODES.Q,
+                checkSdkVersion(Build.VERSION_CODES.Q,
                     positiveWork = {
                         vibratorController.createPredefined(VibrationEffect.EFFECT_DOUBLE_CLICK)
                         toastShowShort("Double Click Effect")
@@ -78,8 +76,7 @@ class VibratorControllerActivity : BaseActivity(R.layout.activity_vibrator_contr
             }
 
             btnHeavyClickEffect.setOnClickListener {
-                checkSdkVersion(
-                    Build.VERSION_CODES.Q,
+                checkSdkVersion(Build.VERSION_CODES.Q,
                     positiveWork = {
                         vibratorController.createPredefined(VibrationEffect.EFFECT_HEAVY_CLICK)
                         toastShowShort("Heavy Click Effect")

@@ -46,8 +46,7 @@ public inline fun Context.hasPermission(permission: String): Boolean = when (per
 
     Manifest.permission.BIND_NOTIFICATION_LISTENER_SERVICE -> hasNotificationListenerPermission()
 
-    Manifest.permission.MANAGE_EXTERNAL_STORAGE -> checkSdkVersion(
-        Build.VERSION_CODES.R,
+    Manifest.permission.MANAGE_EXTERNAL_STORAGE -> checkSdkVersion(Build.VERSION_CODES.R,
         positiveWork = { Environment.isExternalStorageManager() },
         negativeWork = {
             ContextCompat.checkSelfPermission(
@@ -62,8 +61,7 @@ public inline fun Context.hasPermission(permission: String): Boolean = when (per
         powerManager?.isIgnoringBatteryOptimizations(packageName) ?: false
     }
 
-    Manifest.permission.SCHEDULE_EXACT_ALARM -> checkSdkVersion(
-        Build.VERSION_CODES.S,
+    Manifest.permission.SCHEDULE_EXACT_ALARM -> checkSdkVersion(Build.VERSION_CODES.S,
         positiveWork = {
             val alarmManager = getSystemService(Context.ALARM_SERVICE) as? AlarmManager
             alarmManager?.canScheduleExactAlarms() ?: false
@@ -71,14 +69,12 @@ public inline fun Context.hasPermission(permission: String): Boolean = when (per
         negativeWork = { true },
     )
 
-    Manifest.permission.POST_NOTIFICATIONS -> checkSdkVersion(
-        Build.VERSION_CODES.TIRAMISU,
+    Manifest.permission.POST_NOTIFICATIONS -> checkSdkVersion(Build.VERSION_CODES.TIRAMISU,
         positiveWork = { NotificationManagerCompat.from(this).areNotificationsEnabled() },
         negativeWork = { true },
     )
 
-    Manifest.permission.REQUEST_INSTALL_PACKAGES -> checkSdkVersion(
-        Build.VERSION_CODES.O,
+    Manifest.permission.REQUEST_INSTALL_PACKAGES -> checkSdkVersion(Build.VERSION_CODES.O,
         positiveWork = { packageManager.canRequestPackageInstalls() },
         negativeWork = { true },
     )

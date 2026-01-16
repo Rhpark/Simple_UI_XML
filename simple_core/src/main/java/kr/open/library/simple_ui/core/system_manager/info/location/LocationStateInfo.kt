@@ -111,8 +111,7 @@ public open class LocationStateInfo(
                 isGpsEnabled = isGpsEnabled(),
                 isNetworkEnabled = isNetworkEnabled(),
                 isPassiveEnabled = isPassiveEnabled(),
-                isFusedEnabled = checkSdkVersion(
-                    Build.VERSION_CODES.S,
+                isFusedEnabled = checkSdkVersion(Build.VERSION_CODES.S,
                     positiveWork = { isFusedEnabled() },
                     negativeWork = { null }
                 )
@@ -277,8 +276,7 @@ public open class LocationStateInfo(
      * @return `true` if any provider is enabled; `false` otherwise.<br><br>
      *         하나라도 제공자가 활성화되어 있으면 `true`, 아니면 `false`입니다.<br>
      */
-    public fun isAnyEnabled(): Boolean = checkSdkVersion(
-        Build.VERSION_CODES.S,
+    public fun isAnyEnabled(): Boolean = checkSdkVersion(Build.VERSION_CODES.S,
         positiveWork = { (isLocationEnabled() || isGpsEnabled() || isNetworkEnabled() || isPassiveEnabled() || isFusedEnabled()) },
         negativeWork = { (isLocationEnabled() || isGpsEnabled() || isNetworkEnabled() || isPassiveEnabled()) },
     )

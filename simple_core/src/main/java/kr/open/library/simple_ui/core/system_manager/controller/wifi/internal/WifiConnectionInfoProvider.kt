@@ -38,13 +38,11 @@ internal class WifiConnectionInfoProvider(
      */
     @RequiresPermission(ACCESS_NETWORK_STATE)
     fun getConnectionInfo(): WifiInfo? = guard.run(null) {
-        checkSdkVersion(
-            Build.VERSION_CODES.Q,
+        checkSdkVersion(Build.VERSION_CODES.Q,
             positiveWork = {
                 getConnectionInfoFromNetworkCapabilities()
                     ?: run {
-                        checkSdkVersion(
-                            Build.VERSION_CODES.S,
+                        checkSdkVersion(Build.VERSION_CODES.S,
                             positiveWork = { null },
                             negativeWork = {
                                 @Suppress("DEPRECATION")
@@ -75,8 +73,7 @@ internal class WifiConnectionInfoProvider(
         val caps = connectivityManager.getNetworkCapabilities(network) ?: return@run null
         if (!caps.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) return@run null
 
-        checkSdkVersion(
-            Build.VERSION_CODES.S,
+        checkSdkVersion(Build.VERSION_CODES.S,
             positiveWork = {
                 val info = caps.transportInfo as? WifiInfo ?: return@run null
                 info.takeUnless { it.ssid == WifiManager.UNKNOWN_SSID }
@@ -99,8 +96,7 @@ internal class WifiConnectionInfoProvider(
      */
     @RequiresPermission(ACCESS_NETWORK_STATE)
     fun getModernNetworkDetails(): WifiNetworkDetails? = guard.run(null) {
-        checkSdkVersion(
-            Build.VERSION_CODES.Q,
+        checkSdkVersion(Build.VERSION_CODES.Q,
             positiveWork = {
                 val activeNetwork: Network = connectivityManager.activeNetwork ?: return@run null
                 val networkCapabilities: NetworkCapabilities =

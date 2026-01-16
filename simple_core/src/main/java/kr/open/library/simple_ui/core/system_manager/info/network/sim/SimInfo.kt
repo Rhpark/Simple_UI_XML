@@ -260,8 +260,7 @@ public class SimInfo(
     private fun getSubIdFromDefaultUSimInternal(): Int? = tryCatchSystemManager(null) {
         isReadSimInfoFromDefaultUSim = false
 
-        val id = checkSdkVersion(
-            Build.VERSION_CODES.R,
+        val id = checkSdkVersion(Build.VERSION_CODES.R,
             positiveWork = { telephonyManager.subscriptionId },
             negativeWork = { getActiveSubscriptionInfoList().firstOrNull()?.subscriptionId },
         )
@@ -280,8 +279,7 @@ public class SimInfo(
      */
     @RequiresPermission(READ_PHONE_STATE)
     public fun getSubId(simSlotIndex: Int): Int? = tryCatchSystemManager(null) {
-        checkSdkVersion(
-            Build.VERSION_CODES.R,
+        checkSdkVersion(Build.VERSION_CODES.R,
             positiveWork = { uSimTelephonyManagerList[simSlotIndex]?.subscriptionId },
             negativeWork = { getActiveSubscriptionInfoSimSlot(simSlotIndex)?.subscriptionId },
         )
@@ -380,8 +378,7 @@ public class SimInfo(
      */
     @RequiresPermission(READ_PHONE_STATE)
     public fun getMccFromDefaultUSimString(): String? = getSubscriptionInfoSubIdFromDefaultUSim()?.let { info ->
-        checkSdkVersion(
-            Build.VERSION_CODES.Q,
+        checkSdkVersion(Build.VERSION_CODES.Q,
             positiveWork = { info.mccString },
             negativeWork = { info.mcc.toString() },
         )
@@ -396,8 +393,7 @@ public class SimInfo(
      */
     @RequiresPermission(READ_PHONE_STATE)
     public fun getMncFromDefaultUSimString(): String? = getSubscriptionInfoSubIdFromDefaultUSim()?.let { info ->
-        checkSdkVersion(
-            Build.VERSION_CODES.Q,
+        checkSdkVersion(Build.VERSION_CODES.Q,
             positiveWork = { info.mncString },
             negativeWork = { info.mnc.toString() },
         )
@@ -414,8 +410,7 @@ public class SimInfo(
      */
     @RequiresPermission(READ_PHONE_STATE)
     public fun getMcc(slotIndex: Int): String? = getActiveSubscriptionInfoSimSlot(slotIndex)?.let { info ->
-        checkSdkVersion(
-            Build.VERSION_CODES.Q,
+        checkSdkVersion(Build.VERSION_CODES.Q,
             positiveWork = { info.mccString },
             negativeWork = { info.mcc.toString() },
         )
@@ -432,8 +427,7 @@ public class SimInfo(
      */
     @RequiresPermission(READ_PHONE_STATE)
     public fun getMnc(slotIndex: Int): String? = getActiveSubscriptionInfoSimSlot(slotIndex)?.let { info ->
-        checkSdkVersion(
-            Build.VERSION_CODES.Q,
+        checkSdkVersion(Build.VERSION_CODES.Q,
             positiveWork = { info.mncString },
             negativeWork = { info.mnc.toString() },
         )

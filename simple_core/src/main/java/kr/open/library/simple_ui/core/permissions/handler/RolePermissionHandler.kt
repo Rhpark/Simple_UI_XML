@@ -4,6 +4,7 @@ import android.app.role.RoleManager
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
 import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
 
 /**
@@ -26,9 +27,12 @@ class RolePermissionHandler(
      *         반환값: 사용 가능하면 true, 아니면 false. 로그 동작: 없음.<br>
      */
     fun isRoleAvailable(role: String): Boolean = safeCatch(defaultValue = false) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) return@safeCatch false
-        val roleManager = context.getSystemService(RoleManager::class.java) ?: return@safeCatch false
-        roleManager.isRoleAvailable(role)
+        val res = checkSdkVersion<Boolean>(Build.VERSION_CODES.Q) {
+            val roleManager = context.getSystemService(RoleManager::class.java) ?: return@safeCatch false
+            return@safeCatch roleManager.isRoleAvailable(role) ?: false
+        }
+        if (res == null) return@safeCatch false
+        res
     }
 
     /**
@@ -41,9 +45,12 @@ class RolePermissionHandler(
      *         반환값: 보유 중이면 true, 아니면 false. 로그 동작: 없음.<br>
      */
     fun isRoleHeld(role: String): Boolean = safeCatch(defaultValue = false) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) return@safeCatch false
-        val roleManager = context.getSystemService(RoleManager::class.java) ?: return@safeCatch false
-        roleManager.isRoleHeld(role)
+        val res = checkSdkVersion<Boolean?>(Build.VERSION_CODES.Q) {
+            val roleManager = context.getSystemService(RoleManager::class.java) ?: return@safeCatch false
+            roleManager.isRoleHeld(role)
+        }
+        if (res == null) return@safeCatch false
+        res
     }
 
     /**
@@ -56,8 +63,9 @@ class RolePermissionHandler(
      *         반환값: Role 요청 인텐트 또는 미지원 시 null. 로그 동작: 없음.<br>
      */
     fun createRequestIntent(role: String): Intent? = safeCatch(defaultValue = null) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) return@safeCatch null
-        val roleManager = context.getSystemService(RoleManager::class.java) ?: return@safeCatch null
-        roleManager.createRequestRoleIntent(role)
+        return@safeCatch checkSdkVersion<Intent>(Build.VERSION_CODES.Q) {
+            val roleManager = context.getSystemService(RoleManager::class.java) ?: return@safeCatch null
+            roleManager.createRequestRoleIntent(role)
+        }
     }
 }

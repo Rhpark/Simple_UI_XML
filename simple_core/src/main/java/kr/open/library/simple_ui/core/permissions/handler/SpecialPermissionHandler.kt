@@ -4,7 +4,9 @@ import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.provider.Settings
+import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
 import kr.open.library.simple_ui.core.permissions.extentions.hasPermission
 import kr.open.library.simple_ui.core.permissions.vo.PermissionConstants
 
@@ -43,11 +45,10 @@ class SpecialPermissionHandler(
      */
     fun buildSettingsIntent(permission: String): Intent? {
         if (permission == Manifest.permission.MANAGE_MEDIA) {
-            return if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
-                Intent(Settings.ACTION_REQUEST_MANAGE_MEDIA)
-            } else {
-                null
-            }
+            return checkSdkVersion(Build.VERSION_CODES.S,
+                positiveWork = { Intent(Settings.ACTION_REQUEST_MANAGE_MEDIA) },
+                negativeWork = { null }
+            )
         }
         val action = PermissionConstants.SPECIAL_PERMISSION_ACTIONS[permission] ?: return null
         return Intent(action).apply {

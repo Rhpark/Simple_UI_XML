@@ -92,8 +92,7 @@ public open class SimpleNotificationController(
     }
 ) : BaseSystemService(
         context,
-        checkSdkVersion(
-            Build.VERSION_CODES.TIRAMISU,
+        checkSdkVersion(Build.VERSION_CODES.TIRAMISU,
             positiveWork = { listOf(POST_NOTIFICATIONS) },
             negativeWork = { null }
         )

@@ -269,8 +269,7 @@ public class TelephonyInfo(
      */
     @RequiresPermission(READ_PHONE_STATE)
     public fun getNetworkType(): Int = tryCatchSystemManager(TelephonyManager.NETWORK_TYPE_UNKNOWN) {
-        return checkSdkVersion(
-            Build.VERSION_CODES.R,
+        return checkSdkVersion(Build.VERSION_CODES.R,
             positiveWork = { telephonyManager.dataNetworkType },
             negativeWork = {
                 @Suppress("DEPRECATION")
@@ -340,8 +339,7 @@ public class TelephonyInfo(
      */
     @RequiresPermission(READ_PHONE_STATE)
     public fun getDefaultDataSubscriptionInfo(): SubscriptionInfo? = tryCatchSystemManager(null) {
-        return checkSdkVersion(
-            Build.VERSION_CODES.R,
+        return checkSdkVersion(Build.VERSION_CODES.R,
             positiveWork = { telephonyManager.subscriptionId },
             negativeWork = { getActiveSubscriptionInfoList().firstOrNull()?.subscriptionId },
         )?.let { subscriptionManager.getActiveSubscriptionInfo(it) }

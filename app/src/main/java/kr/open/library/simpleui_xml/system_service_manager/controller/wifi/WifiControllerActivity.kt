@@ -150,8 +150,7 @@ class WifiControllerActivity : BaseDataBindingActivity<ActivityWifiControllerBin
     private fun checkWifiBands() {
         val is5GHz = getWifiController().is5GHzBandSupported()
         val is6GHz =
-            checkSdkVersion(
-                Build.VERSION_CODES.R,
+            checkSdkVersion(Build.VERSION_CODES.R,
                 positiveWork = { getWifiController().is6GHzBandSupported() },
                 negativeWork = { false },
             )
@@ -162,8 +161,7 @@ class WifiControllerActivity : BaseDataBindingActivity<ActivityWifiControllerBin
             "6GHz Band: ${if (is6GHz) {
                 "Supported"
             } else {
-                checkSdkVersion(
-                    Build.VERSION_CODES.R,
+                checkSdkVersion(Build.VERSION_CODES.R,
                     positiveWork = {"Not Supported"},
                     negativeWork = {"Requires Android 11" },
                 )
