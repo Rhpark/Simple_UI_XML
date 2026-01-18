@@ -52,6 +52,7 @@ android {
     buildFeatures {
         //noinspection DataBindingWithoutKapt
         dataBinding = true
+        buildConfig = true
     }
 
     testOptions {
@@ -79,6 +80,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    api(libs.androidx.recyclerview)
 
     // Lifecycle (XML에서 필요한 추가 라이프사이클)
     implementation(libs.androidx.lifecycle.process)

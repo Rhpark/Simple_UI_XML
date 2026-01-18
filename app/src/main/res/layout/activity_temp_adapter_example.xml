@@ -9,15 +9,23 @@
         android:id="@+id/tvExampleTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:text="Adapter Example"
         android:textSize="18sp"
-        android:textStyle="bold"
-        android:text="Adapter Example" />
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tvExampleStatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:text="Status: Ready"
+        android:textSize="13sp" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="12dp">
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
 
         <Button
             android:id="@+id/btnPrevExample"
@@ -30,15 +38,136 @@
             android:id="@+id/btnNextExample"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_marginStart="12dp"
+            android:layout_weight="1"
             android:text="Next" />
     </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/swUseDiffExecutor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Use diffExecutor (Async)" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/swEnableDiffUtil"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Enable DiffUtil (Normal)" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/swUseCustomDiffCallback"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Use Custom DiffCallback (List)" />
+    </LinearLayout>
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:fillViewport="true"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnResetItems"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Reset" />
+
+            <Button
+                android:id="@+id/btnSetLargeItems"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="Large 200" />
+
+            <Button
+                android:id="@+id/btnAddItem"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="Add End" />
+
+            <Button
+                android:id="@+id/btnAddItemAt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="Add Top" />
+
+            <Button
+                android:id="@+id/btnAddItems"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="Add 3" />
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:fillViewport="true"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnRemoveItem"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Remove Item" />
+
+            <Button
+                android:id="@+id/btnRemoveAt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="Remove Pos" />
+
+            <Button
+                android:id="@+id/btnMoveItem"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="Move" />
+
+            <Button
+                android:id="@+id/btnReplaceItem"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="Replace" />
+
+            <Button
+                android:id="@+id/btnRemoveAll"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="Clear" />
+        </LinearLayout>
+    </HorizontalScrollView>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rcvTempExample"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_marginTop="12dp" />
+        android:layout_marginTop="12dp"
+        android:layout_weight="1" />
 </LinearLayout>

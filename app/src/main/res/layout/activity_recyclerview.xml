@@ -47,6 +47,12 @@
 
         </RadioGroup>
 
+        <Button
+            android:id="@+id/btnTempAdapterExample"
+            style="@style/Button.MatchWrap"
+            android:layout_marginBottom="8dp"
+            android:text="Go to Temp Adapter Examples" />
+
         <TextView
             android:id="@+id/tvScrollInfo"
             style="@style/TextView.MatchWrap.Normal.Center"

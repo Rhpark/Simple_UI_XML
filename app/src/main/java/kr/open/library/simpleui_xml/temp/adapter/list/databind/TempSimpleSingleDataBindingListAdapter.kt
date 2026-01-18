@@ -1,16 +1,35 @@
 ﻿package kr.open.library.simpleui_xml.temp.adapter.list.databind
 
+import androidx.recyclerview.widget.DiffUtil
+import kr.open.library.simple_ui.xml.ui.temp.base.list.diffcallback.DefaultDiffCallback
 import kr.open.library.simple_ui.xml.ui.temp.list.binding.databind.SimpleSingleDataBindingListAdapter
 import kr.open.library.simple_ui.xml.ui.temp.viewholder.binding.BaseBindingViewHolder
 import kr.open.library.simpleui_xml.R
 import kr.open.library.simpleui_xml.databinding.ItemTempSingleDatabindingBinding
 import kr.open.library.simpleui_xml.temp.data.TempItem
 import kr.open.library.simpleui_xml.temp.util.TempItemDataBindingBinder
+import java.util.concurrent.Executor
 
-class TempSimpleSingleDataBindingListAdapter :
-    SimpleSingleDataBindingListAdapter<TempItem, ItemTempSingleDatabindingBinding>(
+/**
+ * ListAdapter DataBinding simple single-type adapter example.<br><br>
+ * ListAdapter DataBinding 단일 타입(Simple) 어댑터 예제입니다.<br>
+ */
+class TempSimpleSingleDataBindingListAdapter(
+    /**
+     * DiffUtil callback for item comparison.<br><br>
+     * 아이템 비교를 위한 DiffUtil 콜백입니다.<br>
+     */
+    diffCallback: DiffUtil.ItemCallback<TempItem> = DefaultDiffCallback(),
+    /**
+     * Executor used for background diff computation.<br><br>
+     * 백그라운드 diff 계산에 사용하는 Executor입니다.<br>
+     */
+    diffExecutor: Executor? = null,
+) : SimpleSingleDataBindingListAdapter<TempItem, ItemTempSingleDatabindingBinding>(
         layoutRes = R.layout.item_temp_single_databinding,
-        onBindItem = { holder: BaseBindingViewHolder<ItemTempSingleDatabindingBinding>, item, _ ->
-            TempItemDataBindingBinder.bind(holder.binding, item)
+        diffCallback = diffCallback,
+        diffExecutor = diffExecutor,
+        onBindItem = { holder: BaseBindingViewHolder<ItemTempSingleDatabindingBinding>, item: TempItem, position: Int ->
+            TempItemDataBindingBinder.bind(holder.binding, item, position)
         },
     )

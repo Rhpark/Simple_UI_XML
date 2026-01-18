@@ -1,5 +1,6 @@
 package kr.open.library.simpleui_xml.recyclerview.new_
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
@@ -14,6 +15,7 @@ import kr.open.library.simpleui_xml.databinding.ActivityRecyclerviewBinding
 import kr.open.library.simpleui_xml.databinding.ItemRcvTextviewBinding
 import kr.open.library.simpleui_xml.recyclerview.model.SampleItem
 import kr.open.library.simpleui_xml.recyclerview.new_.adapter.CustomListAdapter
+import kr.open.library.simpleui_xml.temp.ui.TempAdapterExampleActivity
 
 class RecyclerViewActivity : BaseDataBindingActivity<ActivityRecyclerviewBinding>(R.layout.activity_recyclerview) {
     private val simpleListAdapter = SimpleBindingRcvListAdapter<SampleItem, ItemRcvTextviewBinding>(
@@ -65,6 +67,9 @@ class RecyclerViewActivity : BaseDataBindingActivity<ActivityRecyclerviewBinding
             btnAddItem.setOnClickListener { currentSelectAdapter() }
             btnClearItems.setOnClickListener { currentRemoveAllAdapter() }
             btnShuffleItems.setOnClickListener { currentShuffleAdapter() }
+            btnTempAdapterExample.setOnClickListener {
+                startActivity(Intent(this@RecyclerViewActivity, TempAdapterExampleActivity::class.java))
+            }
         }
     }
 

@@ -1,13 +1,19 @@
-# 📱 Simple UI RecyclerView vs Plain Android – Complete Comparison Guide
+﻿# 📱 Simple UI RecyclerView vs Plain Android – Complete Comparison Guide
 > **Simple UI RecyclerView vs 기본 Android - 완벽 비교 가이드**
 
 ## 📦 Module Information (모듈 정보)
 - **Module**: `simple_xml` (UI-dependent module / UI 의존 모듈)
-- **Package**: `kr.open.library.simple_ui.xml.ui.recyclerview.*`
-- **Provides**: Base classes for RecyclerView
-  - Adapters with built-in DiffUtil support
-  - BaseViewHolder for simplified ViewHolder implementation
+- **Package**: `kr.open.library.simple_ui.xml.ui.temp.*`, `kr.open.library.simple_ui.xml.ui.view.recyclerview.*`
+- **Provides**: RecyclerView adapters (temp) + scroll helpers
+  - Queue-based adapter cores (RootRcvAdapterCore / RootListAdapterCore)
+  - Single/Multi ViewType adapter variants (BaseSingle/BaseMulti, SimpleSingle)
+  - ViewHolder helpers (BaseBindingViewHolder / BaseRcvViewHolder)
   - RecyclerScrollStateView for scroll state management
+> - **제공 범위**: RecyclerView 어댑터(temp) + 스크롤 헬퍼
+>   - 큐 기반 코어 (RootRcvAdapterCore / RootListAdapterCore)
+>   - 단일/다중 ViewType 어댑터 (BaseSingle/BaseMulti, SimpleSingle)
+>   - ViewHolder 헬퍼 (BaseBindingViewHolder / BaseRcvViewHolder)
+>   - RecyclerScrollStateView 스크롤 상태 관리
 
 ### RecyclerView Example (RecyclerView 예시)
 ![recyclerview.gif](../../example_gif/recyclerview.gif)
@@ -65,32 +71,35 @@
 <br>
 </br>
 
-## 📚 Four Adapter Options Provided by Simple UI (Simple UI가 제공하는 4가지 Adapter)
+## 📚 Four Adapter Options Provided by Simple UI (temp 기준)
 
-Simple UI ships with **four RecyclerView adapters** tailored to different scenarios:
+Simple UI ships with **four temp adapters** tailored to different scenarios:
 
-| Adapter type                  |    DiffUtil     | DataBinding | Ideal use case                           | Boilerplate reduction |
-|:------------------------------|:---------------:|:-----------:|:-----------------------------------------|:---------------------:|
-| SimpleBindingRcvListAdapter   |   ✅ Built-in    | ✅ Supported | Most cases (recommended)                 |         ~90%          | 
-| SimpleRcvListAdapter          |   ✅ Built-in    |   ❌ None    | When DiffUtil needed without DataBinding |         ~85%          | 
-| SimpleBindingRcvAdapter       | ⚠️ Manual setup | ✅ Supported | When DiffUtil not needed                 |         ~80%          | 
-| SimpleRcvAdapter              | ⚠️ Manual setup |   ❌ None    | When minimal dependencies needed         |         ~75%          |
+| Adapter type                        |    DiffUtil     | DataBinding | Ideal use case                                  | Boilerplate reduction |
+|:------------------------------------|:---------------:|:-----------:|:------------------------------------------------|:---------------------:|
+| SimpleSingleDataBindingListAdapter  |   ✅ Built-in    | ✅ Supported | ListAdapter + DataBinding (recommended)         |         ~90%          |
+| SimpleSingleListAdapter             |   ✅ Built-in    |   ❌ None    | ListAdapter without DataBinding                 |         ~85%          |
+| SimpleSingleDataBindingAdapter      | ⚠️ Optional     | ✅ Supported | RecyclerView.Adapter + DataBinding              |         ~80%          |
+| SimpleSingleAdapter                 | ⚠️ Optional     |   ❌ None    | RecyclerView.Adapter with minimal dependencies  |         ~75%          |
+
+> - ViewBinding variants: SimpleSingleViewBindingListAdapter / SimpleSingleViewBindingAdapter
+> - ViewBinding 버전: SimpleSingleViewBindingListAdapter / SimpleSingleViewBindingAdapter
 
 <br>
 </br>
 
 ## 🤔 Which Adapter Should You Choose? (어떤 Adapter를 선택해야 할까?)
 
-**#1: SimpleBindingRcvListAdapter**
+**#1: SimpleSingleDataBindingListAdapter**
 - ✅ DiffUtil built-in → automatic performance optimization
 - ✅ DataBinding support → concise code
-- ✅ `commitCallback` support → run logic after DiffUtil completes
-- 📌 **Best fit for most RecyclerView needs**
+- ✅ `commitCallback` support → run logic after queue completes
+- 📌 **Best fit for most DataBinding ListAdapter cases**
 
 <br>
 </br>
 
-**#2: SimpleRcvListAdapter**
+**#2: SimpleSingleListAdapter**
 - ✅ DiffUtil built-in
 - ❌ No DataBinding (use `findViewById`)
 - 📌 Perfect for projects without DataBinding
@@ -98,19 +107,19 @@ Simple UI ships with **four RecyclerView adapters** tailored to different scenar
 <br>
 </br>
 
-**#3: SimpleBindingRcvAdapter**
-- ⚠️ Set DiffUtil manually (`setDiffUtilItemSame`, etc.)
+**#3: SimpleSingleDataBindingAdapter**
+- ?? DiffUtil optional (`setDiffUtilEnabled(true)` when needed)
 - ✅ Supports DataBinding
-- 🚀 Powered by `AsyncListDiffer`, so Diff calculations run **off the main thread**—smooth even for large lists
-- 📌 Ideal for **static lists where DiffUtil is optional**
+- ?? Queue-based operations keep updates consistent even under rapid changes
+- 📌 Ideal for **large replacements or Diff-off flows**
 
 <br>
 </br>
 
-**#4 SimpleRcvAdapter**
-- ⚠️ DiffUtil must be configured manually
+**#4 SimpleSingleAdapter**
+- ⚠️ DiffUtil optional (`setDiffUtilEnabled(true)` when needed)
 - ❌ No DataBinding
-- 🚀 Backed by `AsyncListDiffer` → Diff calculations without blocking the main thread
+- ?? Queue-based operations reduce race conditions
 - 📌 Choose when you need **minimal dependencies**
 
 <br>
@@ -192,13 +201,16 @@ class OriginCustomListAdapter(private val onItemClick: (SampleItem, Int) -> Unit
 <summary><strong>Simple UI — leverage library-provided adapter (Simple UI - 라이브러리 Adapter 활용)</strong></summary>
 
 ```kotlin
-// SimpleBindingRcvListAdapter - DiffUtil 내장, 한 번에 완성!
-private val simpleListAdapter = SimpleBindingRcvListAdapter<SampleItem, ItemRcvTextviewBinding>(
+// SimpleSingleDataBindingListAdapter - DiffUtil 내장, 큐 기반 업데이트!
+private val diffCallback = object : DiffUtil.ItemCallback<SampleItem>() {
+    override fun areItemsTheSame(oldItem: SampleItem, newItem: SampleItem): Boolean = oldItem.id == newItem.id
+
+    override fun areContentsTheSame(oldItem: SampleItem, newItem: SampleItem): Boolean = oldItem == newItem
+}
+
+private val simpleListAdapter = SimpleSingleDataBindingListAdapter<SampleItem, ItemRcvTextviewBinding>(
     R.layout.item_rcv_textview,
-    listDiffUtil = RcvListDiffUtilCallBack(
-        itemsTheSame = { oldItem, newItem -> oldItem.id == newItem.id },
-        contentsTheSame = { oldItem, newItem -> oldItem == newItem }
-    )
+    diffCallback = diffCallback
 ) { holder, item, position ->
     holder.binding.apply {
         tvTitle.text = item.title
@@ -208,15 +220,16 @@ private val simpleListAdapter = SimpleBindingRcvListAdapter<SampleItem, ItemRcvT
     }
 }
 
-// SimpleBindingRcvAdapter - DiffUtil 없이 더 간단!
-private val simpleAdapter = SimpleBindingRcvAdapter<SampleItem, ItemRcvTextviewBinding>(
-    R.layout.item_rcv_textview
+// SimpleSingleDataBindingAdapter - DiffUtil 옵션 + 큐 기반
+private val simpleAdapter = SimpleSingleDataBindingAdapter<SampleItem, ItemRcvTextviewBinding>(
+    R.layout.item_rcv_textview,
+    diffUtilEnabled = false
 ) { holder, item, position ->
     // 동일한 간단한 바인딩 로직
 }
 ```
-**Result:** ViewHolders and DiffCallbacks are handled automatically—just write your binding logic!
-> **결과:** ViewHolder, DiffCallback 자동 처리, 바인딩 로직만 작성!
+**Result:** ViewHolders and DiffCallbacks are handled automatically; just write your binding logic!
+> **결과:** 별도 보일러플레이트 없이 DiffUtil.ItemCallback을 어댑터에 전달합니다.
 </details>
 
 <br>
@@ -314,7 +327,7 @@ private fun setupScrollStateDetection() {
 }
 ```
 **Result:** Flow detects everything automatically, manages state, and delivers direction/edge info in real time!
-> **결과:** Flow로 자동 감지, 상태 관리 자동, 방향/Edge 정보 실시간 제공!
+> **결과:** 별도 보일러플레이트 없이 DiffUtil.ItemCallback을 어댑터에 전달합니다.
 </details>
 
 <br>
@@ -352,14 +365,22 @@ class OriginCustomListAdapter : ListAdapter<SampleItem, ViewHolder>(SampleItemDi
 <summary><strong>Simple UI — built-in DiffUtil support (Simple UI - DiffUtil 자동 내장)</strong></summary>
 
 ```kotlin
-// 인라인으로 DiffUtil 자동 처리
-listDiffUtil = RcvListDiffUtilCallBack(
-    itemsTheSame = { oldItem, newItem -> oldItem.id == newItem.id },
-    contentsTheSame = { oldItem, newItem -> oldItem == newItem }
-)
+// DiffUtil.ItemCallback을 생성자에 전달
+val diffCallback = object : DiffUtil.ItemCallback<SampleItem>() {
+    override fun areItemsTheSame(oldItem: SampleItem, newItem: SampleItem): Boolean = oldItem.id == newItem.id
+
+    override fun areContentsTheSame(oldItem: SampleItem, newItem: SampleItem): Boolean = oldItem == newItem
+}
+
+val adapter = SimpleSingleListAdapter<SampleItem>(
+    R.layout.item_rcv_textview,
+    diffCallback = diffCallback
+) { view, item, position ->
+    // bind
+}
 ```
-**Result:** No extra classes needed—use inline lambdas for concise logic and keep DiffUtil management within the adapter!
-> **결과:** 별도 클래스 불필요, 인라인 람다로 간결, Adapter와 통합 관리!
+**Result:** No extra boilerplate; pass DiffUtil.ItemCallback directly to the adapter.
+> **결과:** 별도 보일러플레이트 없이 DiffUtil.ItemCallback을 어댑터에 전달합니다.
 </details>
 
 <br>
@@ -439,46 +460,55 @@ Leave the traditional complexity behind.
 
 ### Adapter Method
 
-
 - `setItems(list, commitCallback?)` — set the entire list
+- `setItemsLatest(list, commitCallback?)` — clear queue and keep the latest list
+- `updateItems(commitCallback?, updater)` — batch update in a single queue operation
 - `addItem(item, commitCallback?)` — append an item to the end
 - `addItemAt(position, item, commitCallback?)` — insert at a specific index
 - `addItems(list, commitCallback?)` — append a batch of items
+- `addItemsAt(position, items, commitCallback?)` — insert multiple items at a position
 - `removeAt(position, commitCallback?)` — remove by index
 - `removeItem(item, commitCallback?)` — remove a matching item
 - `removeAll(commitCallback?)` — remove all items
-- `addItems(position, itemList, commitCallback?)` — **insert multiple items at a position**
-- `moveItem(fromPosition, toPosition, commitCallback?)` — **move an item between positions**  
-- `replaceItemAt(position, item, commitCallback?)` — **replace the item at an index**
-- `getItems()` — **inspect the current list**
+- `moveItem(fromPosition, toPosition, commitCallback?)` — move an item between positions
+- `replaceItemAt(position, item, commitCallback?)` — replace the item at an index
+- `getItems()` — inspect the current list
+- `clearQueue()` — drop pending operations
 
-- All mutation methods support an optional `commitCallback`.  
-- The callback runs after DiffUtil finishes calculating and applying updates.
->- 모든 변경 메서드는 선택적 `commitCallback` 파라미터를 지원합니다.  
->- 이 콜백은 DiffUtil 계산 및 업데이트가 완료된 후 실행됩니다.
+- All mutation methods support an optional `commitCallback`.
+- The callback runs on the main thread after the queue operation completes.
+>- 모든 변경 메서드는 선택적 `commitCallback` 파라미터를 지원합니다.
+>- 이 콜백은 큐 연산 완료 후 메인 스레드에서 실행됩니다.
 
 <br></br>
 
 **Payload를 활용한 부분 업데이트:**
 ```kotlin
 // DiffUtil에서 payload 설정
-RcvListDiffUtilCallBack<Item>(
-    itemsTheSame = { old, new -> old.id == new.id },
-    contentsTheSame = { old, new -> old == new },
-    changePayload = { old, new ->
-        if (old.title != new.title) "title_changed" else null
-    }
-)
+val diffCallback = object : DiffUtil.ItemCallback<Item>() {
+    override fun areItemsTheSame(oldItem: Item, newItem: Item): Boolean = oldItem.id == newItem.id
+
+    override fun areContentsTheSame(oldItem: Item, newItem: Item): Boolean = oldItem == newItem
+
+    override fun getChangePayload(oldItem: Item, newItem: Item): Any? =
+        if (oldItem.title != newItem.title) "title_changed" else null
+}
 
 // Adapter 서브클래스에서 payload 처리
-class MyAdapter : BaseRcvListAdapter<Item, VH>(diffUtil) {
-    override fun onBindViewHolder(holder: VH, position: Int, item: Item, payloads: List<Any>) {
+class MyAdapter : RootListAdapterCore<Item, VH>(diffCallback = diffCallback) {
+    override fun createViewHolderInternal(parent: ViewGroup, viewType: Int): VH {
+        TODO("create ViewHolder")
+    }
+
+    override fun onBindItem(holder: VH, position: Int, item: Item) {
+        // 전체 업데이트
+    }
+
+    override fun onBindItem(holder: VH, position: Int, item: Item, payloads: List<Any>) {
         if (payloads.contains("title_changed")) {
             // 제목만 업데이트 (성능 향상!)
-            holder.binding.tvTitle.text = item.title
         } else {
-            // 전체 업데이트
-            super.onBindViewHolder(holder, position, item, payloads)
+            onBindItem(holder, position, item)
         }
     }
 }
@@ -487,16 +517,19 @@ class MyAdapter : BaseRcvListAdapter<Item, VH>(diffUtil) {
 <br>
 </br>
 
-**DiffUtil 미설정 시 기본 동작:**
-- `itemsTheSame`: `oldItem === newItem`
-- `contentsTheSame`: `oldItem == newItem`
-- `changePayload`: null (전체 업데이트)
+**DiffUtil 미설정 시 기본 동작(DefaultDiffCallback):**
+- `areItemsTheSame`: `oldItem == newItem`
+- `areContentsTheSame`: `oldItem == newItem`
+- `getChangePayload`: null (전체 업데이트)
 
 **setItems() 사용 시 자동 DiffUtil 적용:**
 ```kotlin
 // setItems() 호출 시 설정된 DiffUtil 로직으로 자동 비교
 adapter.setItems(newList)  // DiffUtil 자동 실행!
 ```
+
+**Diff 설정은 생성 시점에 결정하세요.**
+> **diffCallback/diffExecutor/diffUtilEnabled는 생성 시점에만 설정하는 것을 권장합니다.**
 
 **When is DiffUtil setup needed?**
 - ✅ Non-data class: No equals override
@@ -629,23 +662,23 @@ RecyclerScrollStateView uses **WeakReference** to manage listeners.
 
 Simple UI provides **two ViewHolder implementations** (Simple UI는 **2가지 ViewHolder**를 제공합니다):
 
-### BaseBindingRcvViewHolder (for DataBinding, DataBinding용)
+### BaseDataBindingViewHolder / BaseViewBindingViewHolder (for Binding, 바인딩용)
 
 **Key features (주요 기능):**
-- `binding` property — accesses the generated DataBinding object
-- `executePendingBindings()` — flush pending bindings immediately
-- `isValidPosition()` — validate the adapter position safely
-- `getAdapterPositionSafe()` — retrieve a safe adapter position
-> - `binding` 프로퍼티 - 자동 DataBinding 객체
-> - `executePendingBindings()` - DataBinding 즉시 실행
+- `binding` property ? access the generated binding object
+- `executePendingBindings()` ? flush pending bindings immediately (DataBinding only)
+- `isValidPosition()` ? validate the adapter position safely
+- `getAdapterPositionSafe()` ? retrieve a safe adapter position
+> - `binding` 프로퍼티 - 바인딩 객체 접근
+> - `executePendingBindings()` - DataBinding 즉시 실행 (DataBinding 전용)
 > - `isValidPosition()` - 안전한 position 검증
 > - `getAdapterPositionSafe()` - 안전한 position 조회
 
 **Usage example (사용 예제):**
 ```kotlin
-SimpleBindingRcvListAdapter<Item, ItemBinding>(
+SimpleSingleDataBindingListAdapter<Item, ItemBinding>(
     R.layout.item,
-    diffUtil
+    diffCallback
 ) { holder, item, position ->
     holder.binding.apply {
         tvTitle.text = item.title
@@ -654,7 +687,6 @@ SimpleBindingRcvListAdapter<Item, ItemBinding>(
     }
 }
 ```
-
 ### BaseRcvViewHolder (for traditional Views, 일반 View용)
 
 **Key features (주요 기능):**
@@ -674,8 +706,7 @@ SimpleBindingRcvListAdapter<Item, ItemBinding>(
 BaseRcvViewHolder caches `findViewById()` results **automatically**!
 
 ```kotlin
-class CustomViewHolder(layout: Int, parent: ViewGroup)
-    : BaseRcvViewHolder(layout, parent) {
+class CustomViewHolder(itemView: View) : BaseRcvViewHolder(itemView) {
 
     // 첫 호출: findViewById 실행 + 캐시 저장
     // 이후 호출: 캐시에서 즉시 반환 (성능 향상!)
@@ -691,35 +722,39 @@ class CustomViewHolder(layout: Int, parent: ViewGroup)
 }
 ```
 
-**SimpleRcvListAdapter와 함께 사용:**
+**RootRcvAdapterCore와 함께 사용:**
 ```kotlin
-val adapter = SimpleRcvListAdapter<Item>(R.layout.item, diffUtil) { holder, item, pos ->
-    // findViewById는 자동 캐싱됨!
-    val titleView = holder.findViewById<TextView>(R.id.tvTitle)
-    val descView = holder.findViewByIdOrNull<TextView>(R.id.tvDescription)
+class MyAdapter : RootRcvAdapterCore<Item, BaseRcvViewHolder>() {
+    override fun createViewHolderInternal(parent: ViewGroup, viewType: Int): BaseRcvViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item, parent, false)
+        return BaseRcvViewHolder(view)
+    }
 
-    titleView.text = item.title
-    descView?.text = item.description
+    override fun onBindItem(holder: BaseRcvViewHolder, position: Int, item: Item) {
+        val titleView = holder.findViewById<TextView>(R.id.tvTitle)
+        val descView = holder.findViewByIdOrNull<TextView>(R.id.tvDescription)
+
+        titleView.text = item.title
+        descView?.text = item.description
+    }
 }
 ```
 
 **Caching benefits (캐싱의 장점):**
-- ✅ **Performance gains:** avoid repeated `findViewById` calls
-- ✅ **Automatic management:** no extra member variables needed
-- ✅ **Memory efficiency:** cache is cleared automatically in `onViewRecycled()`
-- ✅ **Type safety:** generics handle casting for you
-> - ✅ **성능 향상**: findViewById 반복 호출 방지
-> - ✅ **자동 관리**: 별도 변수 선언 불필요
-> - ✅ **메모리 효율**: onViewRecycled() 시 자동 정리
-> - ✅ **타입 안전**: 제네릭으로 타입 캐스팅 자동
+- ? **Performance gains:** avoid repeated `findViewById` calls
+- ? **Manual cleanup:** call `clearViewCache()` in `onViewRecycled()` when needed
+- ? **Type safety:** generics handle casting for you
+> - ? **성능 향상**: findViewById 반복 호출 방지
+> - ? **수동 정리**: 필요 시 onViewRecycled()에서 clearViewCache() 호출
+> - ? **타입 안전**: 제네릭으로 타입 캐스팅 자동
 
-**onViewRecycled 시 자동 캐시 정리:**
+**onViewRecycled에서 캐시 정리 예시:**
 ```kotlin
-// BaseRcvAdapter/BaseRcvListAdapter에서 자동 호출
+// Adapter에서 직접 호출
 override fun onViewRecycled(holder: VH) {
     super.onViewRecycled(holder)
-    if(holder is BaseRcvViewHolder) {
-        holder.clearViewCache()  // 캐시 자동 정리!
+    if (holder is BaseRcvViewHolder) {
+        holder.clearViewCache()  // 캐시 수동 정리
     }
 }
 ```

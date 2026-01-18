@@ -30,6 +30,8 @@
  - 전부 분석요청 했으나, 일부만 분석 하지 않기.
  - 거짓말이 제일 나쁜 것.
 
+# 반드시 확인 할 것.
+
 ## RULE 문서 목록
  - PROJECT RULES: docs/rules/PROJECT_RULE.md
  - DEV ENV RULES: docs/rules/DEV_ENV_RULE.md

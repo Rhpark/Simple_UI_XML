@@ -5,6 +5,9 @@
         <variable
             name="item"
             type="kr.open.library.simpleui_xml.temp.data.TempItem" />
+        <variable
+            name="position"
+            type="int" />
     </data>
 
     <LinearLayout
@@ -17,9 +20,9 @@
             android:id="@+id/tvTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textStyle="bold"
+            android:text="@{item.title}"
             android:textSize="16sp"
-            android:text="@{item.title}" />
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tvDescription"
@@ -33,6 +36,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="@{`Type: ` + item.type}" />
+            android:text="@{`Id: ` + item.id + ` | Type: ` + item.type + ` | Pos: ` + position}" />
     </LinearLayout>
 </layout>
