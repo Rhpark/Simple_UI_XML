@@ -1,4 +1,4 @@
-package kr.open.library.simple_ui.xml.ui.adapter.list.simple
+﻿package kr.open.library.simple_ui.xml.ui.adapter.list.simple
 
 import android.view.ViewGroup
 import androidx.annotation.LayoutRes
@@ -74,7 +74,7 @@ public open class SimpleRcvListAdapter<ITEM : Any>(
      * @return A new BaseRcvViewHolder that holds a view.<br><br>
      *         뷰를 보유하는 새로운 BaseRcvViewHolder.<br>
      */
-    override fun onCreateViewHolder(
+    override fun createViewHolderInternal(
         parent: ViewGroup,
         viewType: Int,
     ): BaseRcvViewHolder = BaseRcvViewHolder(layoutRes, parent)

@@ -1,6 +1,7 @@
-package kr.open.library.simple_ui.xml.ui.adapter.normal.base
+﻿package kr.open.library.simple_ui.xml.ui.adapter.normal.base
 
 import android.view.View
+import android.view.ViewGroup
 import androidx.recyclerview.widget.AdapterListUpdateCallback
 import androidx.recyclerview.widget.AsyncDifferConfig
 import androidx.recyclerview.widget.AsyncListDiffer
@@ -169,6 +170,22 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder>(
         oldItem: ITEM,
         newItem: ITEM,
     ): Any? = diffUtilChangePayload?.invoke(oldItem, newItem)
+
+    /**
+     * Creates a ViewHolder and attaches click listeners once.<br><br>
+     * ViewHolder를 생성하고 클릭 리스너를 1회 바인딩합니다.<br>
+     */
+    public final override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
+        val holder = createViewHolderInternal(parent, viewType)
+        attachClickListeners(holder)
+        return holder
+    }
+
+    /**
+     * Creates a ViewHolder for the given parent and view type.<br><br>
+     * 부모 뷰와 뷰 타입에 맞는 ViewHolder를 생성합니다.<br>
+     */
+    protected abstract fun createViewHolderInternal(parent: ViewGroup, viewType: Int): VH
 
     /**
      * Binds data to the ViewHolder (must be implemented by subclasses).<br><br>
@@ -397,8 +414,8 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder>(
     }
 
     /**
-     * Binds holder without payloads and wires click listeners.<br><br>
-     * payload 없이 바인딩하며 클릭 리스너를 설정합니다.<br>
+     * Binds holder without payloads.<br><br>
+     * payload 없이 ViewHolder를 바인딩합니다.<br>
      *
      * @param holder The ViewHolder to bind.<br><br>
      *               바인딩할 ViewHolder.
@@ -415,24 +432,6 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder>(
         }
 
         val item = getItem(position)
-
-        holder.itemView.apply {
-            setOnClickListener { view ->
-                val adapterPosition = holder.adapterPosition
-                if (adapterPosition != RecyclerView.NO_POSITION) {
-                    onItemClickListener?.invoke(adapterPosition, item, view)
-                }
-            }
-
-            setOnLongClickListener { view ->
-                val adapterPosition = holder.adapterPosition
-                if (adapterPosition != RecyclerView.NO_POSITION) {
-                    onItemLongClickListener?.invoke(adapterPosition, item, view)
-                }
-                true
-            }
-        }
-
         onBindViewHolder(holder, position, item)
     }
 
@@ -592,6 +591,39 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder>(
         differ = AsyncListDiffer(AdapterListUpdateCallback(this), buildDifferConfig())
         differ.submitList(snapshot) { commitCallback?.invoke() }
     }
+
+    /**
+     * Attaches click listeners once per ViewHolder creation.<br><br>
+     * ViewHolder 생성 시점에 클릭 리스너를 1회 바인딩합니다.<br>
+     */
+    private fun attachClickListeners(holder: VH) {
+        holder.itemView.setOnClickListener { view ->
+            // Current binding adapter position at click time.<br><br>클릭 시점의 바인딩 어댑터 포지션입니다.<br>
+            val adapterPosition = holder.bindingAdapterPosition
+            if (adapterPosition == RecyclerView.NO_POSITION) return@setOnClickListener
+            // Item resolved from current position at click time.<br><br>클릭 시점 위치로 조회된 아이템입니다.<br>
+            val item = getItemOrNull(adapterPosition) ?: return@setOnClickListener
+            onItemClickListener?.invoke(adapterPosition, item, view)
+        }
+
+        holder.itemView.setOnLongClickListener { view ->
+            // Optional long-click listener; return false when absent.<br><br>롱클릭 리스너가 없으면 false를 반환합니다.<br>
+            val listener = onItemLongClickListener ?: return@setOnLongClickListener false
+            // Current binding adapter position at long-click time.<br><br>롱클릭 시점의 바인딩 어댑터 포지션입니다.<br>
+            val adapterPosition = holder.bindingAdapterPosition
+            if (adapterPosition == RecyclerView.NO_POSITION) return@setOnLongClickListener false
+            // Item resolved from current position at long-click time.<br><br>롱클릭 시점 위치로 조회된 아이템입니다.<br>
+            val item = getItemOrNull(adapterPosition) ?: return@setOnLongClickListener false
+            listener.invoke(adapterPosition, item, view)
+            true
+        }
+    }
+
+    /**
+     * Safely returns the item at the position or null.<br><br>
+     * 포지션의 아이템을 안전하게 반환하거나 null을 반환합니다.<br>
+     */
+    private fun getItemOrNull(position: Int): ITEM? = differ.currentList.getOrNull(position)
 
     /**
      * Sets click listener for items.<br><br>

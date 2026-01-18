@@ -28,7 +28,7 @@ class CustomListAdapter :
         }
     }
 
-    override fun onCreateViewHolder(
+    override fun createViewHolderInternal(
         parent: ViewGroup,
         viewType: Int,
     ): BaseBindingRcvViewHolder<ItemRcvTextviewBinding> = BaseBindingRcvViewHolder(R.layout.item_rcv_textview, parent)

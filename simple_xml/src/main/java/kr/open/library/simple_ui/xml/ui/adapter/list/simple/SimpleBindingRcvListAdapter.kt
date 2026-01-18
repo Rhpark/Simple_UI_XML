@@ -1,4 +1,4 @@
-package kr.open.library.simple_ui.xml.ui.adapter.list.simple
+﻿package kr.open.library.simple_ui.xml.ui.adapter.list.simple
 
 import android.view.ViewGroup
 import androidx.annotation.LayoutRes
@@ -80,7 +80,7 @@ public open class SimpleBindingRcvListAdapter<ITEM : Any, BINDING : ViewDataBind
      * @return A new BaseBindingRcvViewHolder that holds a view with DataBinding.<br><br>
      *         DataBinding이 있는 뷰를 보유하는 새로운 BaseBindingRcvViewHolder.<br>
      */
-    override fun onCreateViewHolder(
+    override fun createViewHolderInternal(
         parent: ViewGroup,
         viewType: Int,
     ): BaseBindingRcvViewHolder<BINDING> = BaseBindingRcvViewHolder(layoutRes, parent)

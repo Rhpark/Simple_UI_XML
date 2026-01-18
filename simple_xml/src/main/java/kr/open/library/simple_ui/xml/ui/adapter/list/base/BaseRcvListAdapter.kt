@@ -1,6 +1,7 @@
-package kr.open.library.simple_ui.xml.ui.adapter.list.base
+﻿package kr.open.library.simple_ui.xml.ui.adapter.list.base
 
 import android.view.View
+import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import kr.open.library.simple_ui.core.logcat.Logx
@@ -32,7 +33,7 @@ import kr.open.library.simple_ui.xml.ui.adapter.viewholder.BaseRcvViewHolder
  * Usage example:<br>
  * ```kotlin
  * class MyAdapter : BaseRcvListAdapter<MyItem, MyViewHolder>(MyDiffUtil()) {
- *     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
+ *     override fun createViewHolderInternal(parent: ViewGroup, viewType: Int): MyViewHolder {
  *         return MyViewHolder(LayoutInflater.from(parent.context)
  *             .inflate(R.layout.item_layout, parent, false))
  *     }
@@ -89,6 +90,22 @@ public abstract class BaseRcvListAdapter<ITEM, VH : RecyclerView.ViewHolder>(
             getCurrentList = { currentList },
             submitList = { list, callback -> submitList(list, callback) },
         )
+
+    /**
+     * Creates a ViewHolder and attaches click listeners once.<br><br>
+     * ViewHolder를 생성하고 클릭 리스너를 1회 바인딩합니다.<br>
+     */
+    public final override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
+        val holder = createViewHolderInternal(parent, viewType)
+        attachClickListeners(holder)
+        return holder
+    }
+
+    /**
+     * Creates a ViewHolder for the given parent and view type.<br><br>
+     * 부모 뷰와 뷰 타입에 맞는 ViewHolder를 생성합니다.<br>
+     */
+    protected abstract fun createViewHolderInternal(parent: ViewGroup, viewType: Int): VH
 
     /**
      * Abstract method to bind data to each ViewHolder.<br><br>
@@ -409,6 +426,39 @@ public abstract class BaseRcvListAdapter<ITEM, VH : RecyclerView.ViewHolder>(
     }
 
     /**
+     * Attaches click listeners once per ViewHolder creation.<br><br>
+     * ViewHolder 생성 시점에 클릭 리스너를 1회 바인딩합니다.<br>
+     */
+    private fun attachClickListeners(holder: VH) {
+        holder.itemView.setOnClickListener { view ->
+            // Current binding adapter position at click time.<br><br>클릭 시점의 바인딩 어댑터 포지션입니다.<br>
+            val adapterPosition = holder.bindingAdapterPosition
+            if (adapterPosition == RecyclerView.NO_POSITION) return@setOnClickListener
+            // Item resolved from current position at click time.<br><br>클릭 시점 위치로 조회된 아이템입니다.<br>
+            val item = getItemOrNull(adapterPosition) ?: return@setOnClickListener
+            onItemClickListener?.invoke(adapterPosition, item, view)
+        }
+
+        holder.itemView.setOnLongClickListener { view ->
+            // Optional long-click listener; return false when absent.<br><br>롱클릭 리스너가 없으면 false를 반환합니다.<br>
+            val listener = onItemLongClickListener ?: return@setOnLongClickListener false
+            // Current binding adapter position at long-click time.<br><br>롱클릭 시점의 바인딩 어댑터 포지션입니다.<br>
+            val adapterPosition = holder.bindingAdapterPosition
+            if (adapterPosition == RecyclerView.NO_POSITION) return@setOnLongClickListener false
+            // Item resolved from current position at long-click time.<br><br>롱클릭 시점 위치로 조회된 아이템입니다.<br>
+            val item = getItemOrNull(adapterPosition) ?: return@setOnLongClickListener false
+            listener.invoke(adapterPosition, item, view)
+            true
+        }
+    }
+
+    /**
+     * Safely returns the item at the position or null.<br><br>
+     * 포지션의 아이템을 안전하게 반환하거나 null을 반환합니다.<br>
+     */
+    private fun getItemOrNull(position: Int): ITEM? = currentList.getOrNull(position)
+
+    /**
      * Sets the item click listener.<br><br>
      * 아이템 클릭 리스너를 설정합니다.<br>
      *
@@ -431,10 +481,8 @@ public abstract class BaseRcvListAdapter<ITEM, VH : RecyclerView.ViewHolder>(
     }
 
     /**
-     * Binds data to the ViewHolder at the specified position.<br>
-     * Sets up click listeners and delegates to abstract onBindViewHolder.<br><br>
+     * Binds data to the ViewHolder at the specified position.<br><br>
      * 지정된 위치의 ViewHolder에 데이터를 바인딩합니다.<br>
-     * 클릭 리스너를 설정하고 추상 onBindViewHolder에 위임합니다.<br>
      *
      * @param holder The ViewHolder to bind.<br><br>
      *               바인딩할 ViewHolder.<br>
@@ -452,17 +500,6 @@ public abstract class BaseRcvListAdapter<ITEM, VH : RecyclerView.ViewHolder>(
         }
 
         val item = getItem(position)
-
-        holder.itemView.apply {
-            setOnClickListener { view -> onItemClickListener?.invoke(position, item, view) }
-            setOnLongClickListener { view ->
-                onItemLongClickListener?.let {
-                    it.invoke(position, item, view)
-                    true
-                } ?: false
-            }
-        }
-
         onBindViewHolder(holder, position, item)
     }
 

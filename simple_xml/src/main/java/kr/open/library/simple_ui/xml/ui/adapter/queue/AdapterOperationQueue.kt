@@ -1,31 +1,68 @@
-package kr.open.library.simple_ui.xml.ui.adapter.queue
+﻿package kr.open.library.simple_ui.xml.ui.adapter.queue
 
+import android.os.Handler
+import android.os.Looper
 import androidx.recyclerview.widget.RecyclerView
 import kr.open.library.simple_ui.core.extensions.trycatch.requireInBounds
 import kr.open.library.simple_ui.core.logcat.Logx
 
 /**
- * Operation Queue Manager for RecyclerView Adapters
- * RecyclerView Adapter의 작업 큐 관리자
+ * Operation queue manager for RecyclerView adapters.<br><br>
+ * RecyclerView 어댑터 연산 큐 관리 클래스입니다.<br>
  *
- * Handles sequential execution of list modification operations to prevent race conditions
- * 리스트 수정 작업의 순차 실행을 처리하여 Race Condition 방지
+ * Handles sequential execution of list modification operations to prevent race conditions.<br><br>
+ * 리스트 변경 연산을 순차 실행하여 레이스 컨디션을 방지합니다.<br>
  *
- * @param ITEM Type of items in the adapter
- * @param getCurrentList Function to get current list from adapter
- * @param submitList Function to submit updated list (e.g., ListAdapter.submitList or AsyncListDiffer.submitList)
+ * @param ITEM Type of items in the adapter.<br><br>
+ *             어댑터 아이템 타입입니다.<br>
+ * @param getCurrentList Function to get current list from adapter.<br><br>
+ *                       어댑터의 현재 리스트를 가져오는 함수입니다.<br>
+ * @param submitList Function to submit updated list (e.g., ListAdapter.submitList or AsyncListDiffer.submitList).<br><br>
+ *                   업데이트된 리스트를 제출하는 함수입니다.<br>
  */
 internal class AdapterOperationQueue<ITEM>(
     private val getCurrentList: () -> List<ITEM>,
     private val submitList: (List<ITEM>, (() -> Unit)?) -> Unit,
 ) {
-    private val operationQueue = ArrayDeque<Operation<ITEM>>()
-    private var isProcessingOperation = false
-    private val queueLock = Any()
+    /**
+     * Main thread handler for queued operations.<br><br>
+     * 큐 연산 실행을 위한 메인 스레드 핸들러입니다.<br>
+     */
+    private val mainHandler = Handler(Looper.getMainLooper())
 
     /**
-     * Sealed class representing list operations
-     * 리스트 작업을 나타내는 Sealed 클래스
+     * Shared processor for queued adapter operations.<br><br>
+     * 어댑터 연산을 공통 엔진으로 처리하는 프로세서입니다.<br>
+     */
+    private val operationProcessor =
+        OperationQueueProcessor<Operation<ITEM>>(
+            schedule = { action -> runOnMainThread(action) },
+            getName = { operation -> operation::class.simpleName ?: "Operation" },
+            execute = { operation, complete ->
+                val currentList = getCurrentList()
+                val updatedList = operation.execute(currentList)
+                submitList(updatedList) { complete(true) }
+            },
+            onComplete = { operation, success ->
+                if (!success) return@OperationQueueProcessor
+                try {
+                    operation.callback?.invoke()
+                } catch (e: Exception) {
+                    Logx.e("Error in operation callback", e)
+                }
+            },
+            onError = { message, error ->
+                if (error != null) {
+                    Logx.e(message, error)
+                } else {
+                    Logx.e(message)
+                }
+            },
+        )
+
+    /**
+     * Sealed class representing list operations.<br><br>
+     * 리스트 연산을 표현하는 Sealed 클래스입니다.<br>
      */
     sealed class Operation<ITEM> {
         abstract val callback: (() -> Unit)?
@@ -144,59 +181,54 @@ internal class AdapterOperationQueue<ITEM>(
     }
 
     /**
-     * Enqueues an operation and processes it
-     * 작업을 큐에 추가하고 처리
+     * Enqueues an operation and processes it.<br><br>
+     * 연산을 큐에 추가하고 처리합니다.<br>
      */
     fun enqueueOperation(operation: Operation<ITEM>) {
-        synchronized(queueLock) {
-            operationQueue.add(operation)
-            if (!isProcessingOperation) processNextOperation()
-        }
+        operationProcessor.enqueue(operation)
     }
 
     /**
-     * Clears the operation queue and processes the given operation immediately
-     * 작업 큐를 비우고 주어진 작업을 즉시 처리 (setItems 전용)
+     * Clears the operation queue and processes the given operation immediately.<br><br>
+     * 큐를 비우고 전달된 연산을 즉시 처리합니다.<br>
      */
     fun clearQueueAndExecute(operation: Operation<ITEM>) {
-        synchronized(queueLock) {
-            operationQueue.clear()
-            operationQueue.add(operation)
-            if (!isProcessingOperation) processNextOperation()
-        }
+        operationProcessor.clearAndEnqueue(operation)
     }
 
     /**
-     * Processes the next operation in the queue
-     * 큐의 다음 작업 처리
+     * Updates queue overflow policy and max pending size.<br><br>
+     * 큐 오버플로 정책과 최대 대기 크기를 설정합니다.<br>
      */
-    private fun processNextOperation() {
-        synchronized(queueLock) {
-            if (operationQueue.isEmpty()) {
-                isProcessingOperation = false
-                return
-            }
+    fun setQueuePolicy(maxPending: Int, overflowPolicy: QueueOverflowPolicy) {
+        operationProcessor.setQueuePolicy(maxPending, overflowPolicy)
+    }
 
-            isProcessingOperation = true
-            val operation = operationQueue.removeFirst()
+    /**
+     * Sets debug listener for queue events.<br><br>
+     * 큐 이벤트 디버그 리스너를 설정합니다.<br>
+     */
+    fun setQueueDebugListener(listener: ((QueueDebugEvent) -> Unit)?) {
+        operationProcessor.setDebugListener(listener)
+    }
 
-            try {
-                val currentList = getCurrentList()
-                val updatedList = operation.execute(currentList)
+    /**
+     * Sets merge keys to coalesce consecutive operations with the same name.<br><br>
+     * 동일 이름의 연속 연산을 병합하기 위한 머지 키를 설정합니다.<br>
+     */
+    fun setQueueMergeKeys(mergeKeys: Set<String>) {
+        operationProcessor.setQueueMergeKeys(mergeKeys)
+    }
 
-                submitList(updatedList) {
-                    try {
-                        operation.callback?.invoke()
-                    } catch (e: Exception) {
-                        Logx.e("Error in operation callback", e)
-                    }
-                    processNextOperation()
-                }
-            } catch (e: Exception) {
-                Logx.e("Error executing operation: ${operation::class.simpleName}", e)
-                // Continue processing next operation even if current one fails
-                processNextOperation()
-            }
+    /**
+     * Executes the action on the main thread, posting if necessary.<br><br>
+     * 메인 스레드에서 실행하며 필요 시 메인으로 포스트합니다.<br>
+     */
+    private fun runOnMainThread(action: () -> Unit) {
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            action()
+        } else {
+            mainHandler.post(action)
         }
     }
 }

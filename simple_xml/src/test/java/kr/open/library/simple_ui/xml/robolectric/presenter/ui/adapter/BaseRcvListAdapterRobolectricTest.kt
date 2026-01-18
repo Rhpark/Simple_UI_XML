@@ -5,7 +5,6 @@ import android.os.Build
 import android.os.Looper
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ApplicationProvider
@@ -58,7 +57,7 @@ class BaseRcvListAdapterRobolectricTest {
                 contentsTheSame = { oldItem, newItem -> oldItem == newItem },
             ),
         ) {
-        override fun onCreateViewHolder(
+        override fun createViewHolderInternal(
             parent: ViewGroup,
             viewType: Int,
         ): TestViewHolder {
@@ -832,6 +831,22 @@ class BaseRcvListAdapterRobolectricTest {
         shadowOf(Looper.getMainLooper()).idle()
     }
 
+    private fun createBoundViewHolder(position: Int): RecyclerView.ViewHolder {
+        val recyclerView =
+            RecyclerView(context).apply {
+                layoutManager = LinearLayoutManager(context)
+                adapter = this@BaseRcvListAdapterRobolectricTest.adapter
+            }
+        val widthSpec = View.MeasureSpec.makeMeasureSpec(1000, View.MeasureSpec.EXACTLY)
+        val heightSpec = View.MeasureSpec.makeMeasureSpec(1000, View.MeasureSpec.EXACTLY)
+        recyclerView.measure(widthSpec, heightSpec)
+        recyclerView.layout(0, 0, 1000, 1000)
+        shadowOf(Looper.getMainLooper()).idle()
+        val holder = recyclerView.findViewHolderForAdapterPosition(position)
+        assertNotNull(holder)
+        return holder!!
+    }
+
     // ==============================================
     // ViewHolder Binding Tests
     // ==============================================
@@ -847,7 +862,7 @@ class BaseRcvListAdapterRobolectricTest {
                     contentsTheSame = { oldItem, newItem -> oldItem == newItem },
                 ),
             ) {
-                override fun onCreateViewHolder(
+                override fun createViewHolderInternal(
                     parent: ViewGroup,
                     viewType: Int,
                 ): TestViewHolder {
@@ -886,7 +901,7 @@ class BaseRcvListAdapterRobolectricTest {
                     contentsTheSame = { oldItem, newItem -> oldItem == newItem },
                 ),
             ) {
-                override fun onCreateViewHolder(
+                override fun createViewHolderInternal(
                     parent: ViewGroup,
                     viewType: Int,
                 ): TestViewHolder {
@@ -934,7 +949,7 @@ class BaseRcvListAdapterRobolectricTest {
                 contentsTheSame = { oldItem, newItem -> oldItem == newItem },
             ),
         ) {
-            override fun onCreateViewHolder(
+            override fun createViewHolderInternal(
                 parent: ViewGroup,
                 viewType: Int
             ): TestViewHolder {
@@ -1000,7 +1015,7 @@ class BaseRcvListAdapterRobolectricTest {
                     contentsTheSame = { oldItem, newItem -> oldItem == newItem },
                 ),
             ) {
-                override fun onCreateViewHolder(
+                override fun createViewHolderInternal(
                     parent: ViewGroup,
                     viewType: Int,
                 ): BaseRcvViewHolder = BaseRcvViewHolder(android.R.layout.simple_list_item_1, parent)
@@ -1050,7 +1065,7 @@ class BaseRcvListAdapterRobolectricTest {
                     contentsTheSame = { oldItem, newItem -> oldItem == newItem },
                 ),
             ) {
-                override fun onCreateViewHolder(
+                override fun createViewHolderInternal(
                     parent: ViewGroup,
                     viewType: Int,
                 ): TestViewHolder = TestViewHolder(View(parent.context))
@@ -1126,9 +1141,7 @@ class BaseRcvListAdapterRobolectricTest {
         setItemsAwait(listOf(TestItem(1, "Item 1")))
 
         // When
-        val holder =
-            adapter.onCreateViewHolder(RecyclerView(context).apply { layoutManager = LinearLayoutManager(context) }, 0)
-        adapter.onBindViewHolder(holder, 0)
+        val holder = createBoundViewHolder(0)
         holder.itemView.performClick()
 
         // Then
@@ -1148,9 +1161,7 @@ class BaseRcvListAdapterRobolectricTest {
         setItemsAwait(listOf(TestItem(1, "Item 1")))
 
         // When
-        val holder =
-            adapter.onCreateViewHolder(RecyclerView(context).apply { layoutManager = LinearLayoutManager(context) }, 0)
-        adapter.onBindViewHolder(holder, 0)
+        val holder = createBoundViewHolder(0)
         holder.itemView.performLongClick()
 
         // Then
@@ -1165,10 +1176,7 @@ class BaseRcvListAdapterRobolectricTest {
         setItemsAwait(listOf(TestItem(1, "Item 1")))
 
         // When
-        val holder =
-            adapter.onCreateViewHolder(RecyclerView(context).apply { layoutManager = LinearLayoutManager(context) }, 0)
-        adapter.onBindViewHolder(holder, 0)
-        FrameLayout(context).apply { addView(holder.itemView) }
+        val holder = createBoundViewHolder(0)
         val consumed = holder.itemView.performLongClick()
 
         // Then
@@ -1181,10 +1189,7 @@ class BaseRcvListAdapterRobolectricTest {
         setItemsAwait(listOf(TestItem(1, "Item 1")))
 
         // When
-        val holder =
-            adapter.onCreateViewHolder(RecyclerView(context).apply { layoutManager = LinearLayoutManager(context) }, 0)
-        adapter.onBindViewHolder(holder, 0)
-        FrameLayout(context).apply { addView(holder.itemView) }
+        val holder = createBoundViewHolder(0)
         val consumed = holder.itemView.performLongClick()
 
         // Then

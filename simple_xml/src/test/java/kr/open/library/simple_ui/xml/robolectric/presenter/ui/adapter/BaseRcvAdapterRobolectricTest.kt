@@ -50,10 +50,7 @@ class BaseRcvAdapterRobolectricTest {
     private class TestAdapter(
         testExecutor: Executor = Executor { it.run() },
     ) : BaseRcvAdapter<TestItem, TestViewHolder>(testExecutor) {
-        override fun onCreateViewHolder(
-            parent: ViewGroup,
-            viewType: Int,
-        ): TestViewHolder {
+        override fun createViewHolderInternal(parent: ViewGroup, viewType: Int): TestViewHolder {
             val view = View(parent.context)
             return TestViewHolder(view)
         }
@@ -71,10 +68,7 @@ class BaseRcvAdapterRobolectricTest {
     private class PayloadTrackingAdapter : BaseRcvAdapter<TestItem, TestViewHolder>() {
         var lastPayloads: List<Any>? = null
 
-        override fun onCreateViewHolder(
-            parent: ViewGroup,
-            viewType: Int,
-        ): TestViewHolder = TestViewHolder(View(parent.context))
+        override fun createViewHolderInternal(parent: ViewGroup, viewType: Int): TestViewHolder = TestViewHolder(View(parent.context))
 
         override fun onBindViewHolder(
             holder: TestViewHolder,
