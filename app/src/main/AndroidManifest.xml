@@ -101,6 +101,18 @@
             android:name=".temp.ui.TempAdapterExampleActivity"
             android:exported="false" />
         <activity
+            android:name=".temp.ui.TempAdapterListSingleActivity"
+            android:exported="false" />
+        <activity
+            android:name=".temp.ui.TempAdapterListMultiActivity"
+            android:exported="false" />
+        <activity
+            android:name=".temp.ui.TempAdapterRcvSingleActivity"
+            android:exported="false" />
+        <activity
+            android:name=".temp.ui.TempAdapterRcvMultiActivity"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:persistableMode="persistAcrossReboots"
             android:exported="true">

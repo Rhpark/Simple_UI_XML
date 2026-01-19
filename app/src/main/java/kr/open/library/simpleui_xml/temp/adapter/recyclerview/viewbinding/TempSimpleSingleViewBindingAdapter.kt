@@ -1,4 +1,4 @@
-﻿package kr.open.library.simpleui_xml.temp.adapter.rcv.viewbind
+package kr.open.library.simpleui_xml.temp.adapter.recyclerview.viewbinding
 
 import kr.open.library.simple_ui.xml.ui.temp.normal.binding.viewbind.SimpleSingleViewBindingAdapter
 import kr.open.library.simple_ui.xml.ui.temp.viewholder.binding.BaseViewBindingViewHolder

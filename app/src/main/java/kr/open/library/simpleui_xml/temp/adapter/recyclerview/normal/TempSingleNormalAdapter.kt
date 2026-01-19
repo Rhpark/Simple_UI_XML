@@ -1,4 +1,4 @@
-﻿package kr.open.library.simpleui_xml.temp.adapter.rcv.normal
+package kr.open.library.simpleui_xml.temp.adapter.recyclerview.normal
 
 import android.view.View
 import kr.open.library.simple_ui.xml.ui.temp.normal.normal.BaseSingleAdapter

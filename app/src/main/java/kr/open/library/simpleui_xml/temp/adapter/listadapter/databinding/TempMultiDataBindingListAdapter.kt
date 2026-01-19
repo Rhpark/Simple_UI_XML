@@ -1,7 +1,9 @@
-﻿package kr.open.library.simpleui_xml.temp.adapter.rcv.databind
+package kr.open.library.simpleui_xml.temp.adapter.listadapter.databinding
 
 import androidx.databinding.ViewDataBinding
-import kr.open.library.simple_ui.xml.ui.temp.normal.binding.databind.BaseMultiDataBindingAdapter
+import androidx.recyclerview.widget.DiffUtil
+import kr.open.library.simple_ui.xml.ui.temp.base.list.diffcallback.DefaultDiffCallback
+import kr.open.library.simple_ui.xml.ui.temp.list.binding.databind.BaseMultiDataBindingListAdapter
 import kr.open.library.simple_ui.xml.ui.temp.viewholder.binding.BaseDataBindingViewHolder
 import kr.open.library.simpleui_xml.R
 import kr.open.library.simpleui_xml.temp.data.TempItem
@@ -10,21 +12,21 @@ import kr.open.library.simpleui_xml.temp.util.TempItemDataBindingBinder
 import java.util.concurrent.Executor
 
 /**
- * RecyclerView DataBinding multi-type adapter example.<br><br>
- * RecyclerView DataBinding 다중 타입 어댑터 예제입니다.<br>
+ * ListAdapter DataBinding multi-type adapter example.<br><br>
+ * ListAdapter DataBinding 다중 타입 어댑터 예제입니다.<br>
  */
-class TempMultiDataBindingAdapter(
+class TempMultiDataBindingListAdapter(
     /**
-     * Enables DiffUtil for normal adapter updates.<br><br>
-     * 일반 어댑터 업데이트에서 DiffUtil 사용 여부입니다.<br>
+     * DiffUtil callback for item comparison.<br><br>
+     * 아이템 비교를 위한 DiffUtil 콜백입니다.<br>
      */
-    diffUtilEnabled: Boolean = false,
+    diffCallback: DiffUtil.ItemCallback<TempItem> = DefaultDiffCallback(),
     /**
      * Executor used for background diff computation.<br><br>
      * 백그라운드 diff 계산에 사용하는 Executor입니다.<br>
      */
     diffExecutor: Executor? = null,
-) : BaseMultiDataBindingAdapter<TempItem, ViewDataBinding>(
+) : BaseMultiDataBindingListAdapter<TempItem, ViewDataBinding>(
         layoutResProvider = { item: TempItem, _: Int ->
             // Layout resolved by item type.<br><br>아이템 타입 기준으로 결정된 레이아웃입니다.<br>
             when (item.type) {
@@ -32,7 +34,7 @@ class TempMultiDataBindingAdapter(
                 TempItemType.SECONDARY -> R.layout.item_temp_multi_secondary_databinding
             }
         },
-        diffUtilEnabled = diffUtilEnabled,
+        diffCallback = diffCallback,
         diffExecutor = diffExecutor,
     ) {
     /**

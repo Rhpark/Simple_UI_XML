@@ -25,28 +25,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/btnPrevExample"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Prev" />
-
-        <Button
-            android:id="@+id/btnNextExample"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:layout_weight="1"
-            android:text="Next" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
         android:orientation="vertical">
 
         <androidx.appcompat.widget.SwitchCompat
@@ -59,14 +37,56 @@
             android:id="@+id/swEnableDiffUtil"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Enable DiffUtil (Normal)" />
+            android:text="Enable DiffUtil (Adapter only)" />
 
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/swUseCustomDiffCallback"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Use Custom DiffCallback (List)" />
+            android:text="Use Custom DiffCallback (List only)" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/swUseSimpleAdapter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Use Simple Adapter (Single only)" />
     </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Binding Type"
+        android:textSize="13sp"
+        android:textStyle="bold" />
+
+    <RadioGroup
+        android:id="@+id/rgBindingType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/rBtnBindingNormal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="Normal" />
+
+        <RadioButton
+            android:id="@+id/rBtnBindingDataBinding"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:text="DataBinding" />
+
+        <RadioButton
+            android:id="@+id/rBtnBindingViewBinding"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:text="ViewBinding" />
+    </RadioGroup>
 
     <HorizontalScrollView
         android:layout_width="match_parent"

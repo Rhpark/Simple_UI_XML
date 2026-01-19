@@ -1,4 +1,4 @@
-﻿package kr.open.library.simpleui_xml.temp.adapter.list.viewbind
+package kr.open.library.simpleui_xml.temp.adapter.listadapter.viewbinding
 
 import androidx.recyclerview.widget.DiffUtil
 import kr.open.library.simple_ui.xml.ui.temp.base.list.diffcallback.DefaultDiffCallback

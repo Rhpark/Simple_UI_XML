@@ -1,7 +1,6 @@
 ﻿package kr.open.library.simpleui_xml.temp.ui
 
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.RecyclerView
 import kr.open.library.simpleui_xml.temp.data.TempItem
 import java.util.concurrent.Executor
 
@@ -42,6 +41,30 @@ enum class TempItemMode {
 }
 
 /**
+ * Binding mode used to select normal, DataBinding, or ViewBinding adapters.<br><br>
+ * 일반/DataBinding/ViewBinding 어댑터를 선택하는 바인딩 모드입니다.<br>
+ */
+enum class TempBindingMode {
+    /**
+     * Normal view holder binding mode.<br><br>
+     * 일반 뷰홀더 바인딩 모드입니다.<br>
+     */
+    NORMAL,
+
+    /**
+     * DataBinding binding mode.<br><br>
+     * DataBinding 바인딩 모드입니다.<br>
+     */
+    DATABINDING,
+
+    /**
+     * ViewBinding binding mode.<br><br>
+     * ViewBinding 바인딩 모드입니다.<br>
+     */
+    VIEWBINDING,
+}
+
+/**
  * Dependencies used to create adapters for examples.<br><br>
  * 예제 어댑터 생성을 위한 의존성 묶음입니다.<br>
  */
@@ -61,31 +84,4 @@ data class TempAdapterDependencies(
      * RecyclerView.Adapter 예제에서 사용하는 DiffUtil 토글입니다.<br>
      */
     val diffUtilEnabled: Boolean,
-)
-
-/**
- * Descriptor for a single adapter example entry.<br><br>
- * 단일 어댑터 예제 항목을 설명하는 모델입니다.<br>
- */
-data class TempAdapterExample(
-    /**
-     * Title shown in the UI.<br><br>
-     * UI에 표시되는 제목입니다.<br>
-     */
-    val title: String,
-    /**
-     * Adapter kind used for option availability.<br><br>
-     * 옵션 사용 여부 판단을 위한 어댑터 종류입니다.<br>
-     */
-    val kind: TempAdapterKind,
-    /**
-     * Item mode used to create sample items.<br><br>
-     * 샘플 아이템 생성에 사용하는 아이템 모드입니다.<br>
-     */
-    val itemMode: TempItemMode,
-    /**
-     * Factory that builds an adapter with provided dependencies.<br><br>
-     * 제공된 의존성으로 어댑터를 생성하는 팩토리입니다.<br>
-     */
-    val createAdapter: (TempAdapterDependencies) -> RecyclerView.Adapter<*>,
 )

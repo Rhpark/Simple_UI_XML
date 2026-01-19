@@ -1,4 +1,4 @@
-﻿package kr.open.library.simpleui_xml.temp.adapter.list.normal
+package kr.open.library.simpleui_xml.temp.adapter.listadapter.normal
 
 import android.view.View
 import androidx.recyclerview.widget.DiffUtil
