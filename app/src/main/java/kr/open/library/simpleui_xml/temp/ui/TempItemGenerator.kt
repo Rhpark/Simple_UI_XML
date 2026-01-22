@@ -65,4 +65,10 @@ object TempItemGenerator {
         (0 until count).map { offset ->
             generateSingleItem(itemMode, startIndex + offset)
         }
+
+    /**
+     * Creates an updated item with the provided label.<br><br>
+     * 제공된 라벨로 갱신된 아이템을 생성합니다.<br>
+     */
+    fun updateItem(item: TempItem, label: String): TempItem = TempItemFactory.createUpdatedItem(item, label)
 }

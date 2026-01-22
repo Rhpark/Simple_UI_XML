@@ -1,5 +1,7 @@
 package kr.open.library.simpleui_xml.temp.ui
 
+import androidx.recyclerview.widget.RecyclerView
+
 /**
  * RecyclerView.Adapter multi-type example screen.<br><br>
  * RecyclerView.Adapter 다중 타입 예제 화면입니다.<br>
@@ -22,4 +24,11 @@ class TempAdapterRcvMultiActivity : TempAdapterExampleBaseActivity() {
      * 화면 상단에 표시되는 제목입니다.<br>
      */
     override val screenTitle: String = "Adapter - Multi"
+
+    /**
+     * Creates an adapter for this screen.<br><br>
+     * 이 화면에서 사용할 어댑터를 생성합니다.<br>
+     */
+    override fun createAdapter(config: TempAdapterConfig): RecyclerView.Adapter<*> =
+        TempAdapterFactory.createAdapter(config)
 }

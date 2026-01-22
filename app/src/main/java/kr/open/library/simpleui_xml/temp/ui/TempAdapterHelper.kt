@@ -56,6 +56,184 @@ object TempAdapterHelper {
     )
 
     /**
+     * Adds a single item to the adapter.<br><br>
+     * 단일 아이템을 어댑터에 추가합니다.<br>
+     */
+    fun addItem(
+        adapter: RecyclerView.Adapter<*>,
+        item: TempItem,
+        onStatus: (String) -> Unit,
+    ): Boolean = withRootAdapter(
+        adapter = adapter,
+        onRcv = { rcvAdapter ->
+            rcvAdapter.addItem(item) { success ->
+                onStatus("addItem(id=${item.id}) -> $success")
+            }
+        },
+        onList = { listAdapter ->
+            listAdapter.addItem(item) { success ->
+                onStatus("addItem(id=${item.id}) -> $success")
+            }
+        },
+    )
+
+    /**
+     * Adds a single item at the specified position.<br><br>
+     * 지정한 위치에 단일 아이템을 추가합니다.<br>
+     */
+    fun addItemAt(
+        adapter: RecyclerView.Adapter<*>,
+        position: Int,
+        item: TempItem,
+        onStatus: (String) -> Unit,
+    ): Boolean = withRootAdapter(
+        adapter = adapter,
+        onRcv = { rcvAdapter ->
+            rcvAdapter.addItemAt(position, item) { success ->
+                onStatus("addItemAt($position, id=${item.id}) -> $success")
+            }
+        },
+        onList = { listAdapter ->
+            listAdapter.addItemAt(position, item) { success ->
+                onStatus("addItemAt($position, id=${item.id}) -> $success")
+            }
+        },
+    )
+
+    /**
+     * Adds multiple items to the adapter.<br><br>
+     * 여러 아이템을 어댑터에 추가합니다.<br>
+     */
+    fun addItems(
+        adapter: RecyclerView.Adapter<*>,
+        items: List<TempItem>,
+        onStatus: (String) -> Unit,
+    ): Boolean = withRootAdapter(
+        adapter = adapter,
+        onRcv = { rcvAdapter ->
+            rcvAdapter.addItems(items) { success ->
+                onStatus("addItems(${items.size}) -> $success")
+            }
+        },
+        onList = { listAdapter ->
+            listAdapter.addItems(items) { success ->
+                onStatus("addItems(${items.size}) -> $success")
+            }
+        },
+    )
+
+    /**
+     * Removes a single item from the adapter.<br><br>
+     * 단일 아이템을 어댑터에서 제거합니다.<br>
+     */
+    fun removeItem(
+        adapter: RecyclerView.Adapter<*>,
+        item: TempItem,
+        onStatus: (String) -> Unit,
+    ): Boolean = withRootAdapter(
+        adapter = adapter,
+        onRcv = { rcvAdapter ->
+            rcvAdapter.removeItem(item) { success ->
+                onStatus("removeItem(id=${item.id}) -> $success")
+            }
+        },
+        onList = { listAdapter ->
+            listAdapter.removeItem(item) { success ->
+                onStatus("removeItem(id=${item.id}) -> $success")
+            }
+        },
+    )
+
+    /**
+     * Removes an item at the specified position.<br><br>
+     * 지정한 위치의 아이템을 제거합니다.<br>
+     */
+    fun removeAt(
+        adapter: RecyclerView.Adapter<*>,
+        position: Int,
+        onStatus: (String) -> Unit,
+    ): Boolean = withRootAdapter(
+        adapter = adapter,
+        onRcv = { rcvAdapter ->
+            rcvAdapter.removeAt(position) { success ->
+                onStatus("removeAt($position) -> $success")
+            }
+        },
+        onList = { listAdapter ->
+            listAdapter.removeAt(position) { success ->
+                onStatus("removeAt($position) -> $success")
+            }
+        },
+    )
+
+    /**
+     * Moves an item within the adapter.<br><br>
+     * 어댑터 내 아이템을 이동합니다.<br>
+     */
+    fun moveItem(
+        adapter: RecyclerView.Adapter<*>,
+        from: Int,
+        to: Int,
+        onStatus: (String) -> Unit,
+    ): Boolean = withRootAdapter(
+        adapter = adapter,
+        onRcv = { rcvAdapter ->
+            rcvAdapter.moveItem(from, to) { success ->
+                onStatus("moveItem($from -> $to) -> $success")
+            }
+        },
+        onList = { listAdapter ->
+            listAdapter.moveItem(from, to) { success ->
+                onStatus("moveItem($from -> $to) -> $success")
+            }
+        },
+    )
+
+    /**
+     * Replaces an item at the specified position.<br><br>
+     * 지정한 위치의 아이템을 교체합니다.<br>
+     */
+    fun replaceItemAt(
+        adapter: RecyclerView.Adapter<*>,
+        position: Int,
+        item: TempItem,
+        onStatus: (String) -> Unit,
+    ): Boolean = withRootAdapter(
+        adapter = adapter,
+        onRcv = { rcvAdapter ->
+            rcvAdapter.replaceItemAt(position, item) { success ->
+                onStatus("replaceItemAt($position, id=${item.id}) -> $success")
+            }
+        },
+        onList = { listAdapter ->
+            listAdapter.replaceItemAt(position, item) { success ->
+                onStatus("replaceItemAt($position, id=${item.id}) -> $success")
+            }
+        },
+    )
+
+    /**
+     * Removes all items from the adapter.<br><br>
+     * 어댑터의 모든 아이템을 제거합니다.<br>
+     */
+    fun removeAll(
+        adapter: RecyclerView.Adapter<*>,
+        onStatus: (String) -> Unit,
+    ): Boolean = withRootAdapter(
+        adapter = adapter,
+        onRcv = { rcvAdapter ->
+            rcvAdapter.removeAll { success ->
+                onStatus("removeAll -> $success")
+            }
+        },
+        onList = { listAdapter ->
+            listAdapter.removeAll { success ->
+                onStatus("removeAll -> $success")
+            }
+        },
+    )
+
+    /**
      * Binds click listeners to the adapter.<br><br>
      * 어댑터에 클릭 리스너를 바인딩합니다.<br>
      */

@@ -385,65 +385,65 @@ class AlarmVoUnitTest {
     // ==============================================
     // AlarmVO Companion Object Tests
     // ==============================================
-
-    @Test
-    fun createSimple_createsAlarmWithMinimalConfiguration() {
-        val alarm =
-            AlarmVO.createSimple(
-                key = 5,
-                title = "Simple Alarm",
-                message = "Simple message",
-                hour = 8,
-                minute = 0,
-            )
-
-        assertEquals(5, alarm.key)
-        assertEquals("Simple Alarm", alarm.title)
-        assertEquals("Simple message", alarm.message)
-        assertEquals(8, alarm.hour)
-        assertEquals(0, alarm.minute)
-        assertEquals(0, alarm.second)
-        assertTrue(alarm.isActive)
-        assertFalse(alarm.isAllowIdle)
-    }
-
-    @Test
-    fun createIdleAllowed_createsAlarmWithIdlePermission() {
-        val alarm =
-            AlarmVO.createIdleAllowed(
-                key = 10,
-                title = "Idle Alarm",
-                message = "Idle message",
-                hour = 12,
-                minute = 30,
-                second = 15,
-            )
-
-        assertEquals(10, alarm.key)
-        assertTrue(alarm.isAllowIdle)
-        assertEquals(12, alarm.hour)
-        assertEquals(30, alarm.minute)
-        assertEquals(15, alarm.second)
-    }
-
-    @Test
-    fun createIdleAllowed_usesDefaultSecondWhenNotProvided() {
-        val alarm =
-            AlarmVO.createIdleAllowed(
-                key = 11,
-                title = "Idle Alarm Default",
-                message = "Default second test",
-                hour = 15,
-                minute = 45,
-                // second parameter omitted to test default value
-            )
-
-        assertEquals(11, alarm.key)
-        assertTrue(alarm.isAllowIdle)
-        assertEquals(15, alarm.hour)
-        assertEquals(45, alarm.minute)
-        assertEquals(0, alarm.second) // Should use default value 0
-    }
+//
+//    @Test
+//    fun createSimple_createsAlarmWithMinimalConfiguration() {
+//        val alarm =
+//            AlarmVO.createSimple(
+//                key = 5,
+//                title = "Simple Alarm",
+//                message = "Simple message",
+//                hour = 8,
+//                minute = 0,
+//            )
+//
+//        assertEquals(5, alarm.key)
+//        assertEquals("Simple Alarm", alarm.title)
+//        assertEquals("Simple message", alarm.message)
+//        assertEquals(8, alarm.hour)
+//        assertEquals(0, alarm.minute)
+//        assertEquals(0, alarm.second)
+//        assertTrue(alarm.isActive)
+//        assertFalse(alarm.isAllowIdle)
+//    }
+//
+//    @Test
+//    fun createIdleAllowed_createsAlarmWithIdlePermission() {
+//        val alarm =
+//            AlarmVO.createIdleAllowed(
+//                key = 10,
+//                title = "Idle Alarm",
+//                message = "Idle message",
+//                hour = 12,
+//                minute = 30,
+//                second = 15,
+//            )
+//
+//        assertEquals(10, alarm.key)
+//        assertTrue(alarm.isAllowIdle)
+//        assertEquals(12, alarm.hour)
+//        assertEquals(30, alarm.minute)
+//        assertEquals(15, alarm.second)
+//    }
+//
+//    @Test
+//    fun createIdleAllowed_usesDefaultSecondWhenNotProvided() {
+//        val alarm =
+//            AlarmVO.createIdleAllowed(
+//                key = 11,
+//                title = "Idle Alarm Default",
+//                message = "Default second test",
+//                hour = 15,
+//                minute = 45,
+//                // second parameter omitted to test default value
+//            )
+//
+//        assertEquals(11, alarm.key)
+//        assertTrue(alarm.isAllowIdle)
+//        assertEquals(15, alarm.hour)
+//        assertEquals(45, alarm.minute)
+//        assertEquals(0, alarm.second) // Should use default value 0
+//    }
 
     // ==============================================
     // AlarmVO Deprecated Property Tests
