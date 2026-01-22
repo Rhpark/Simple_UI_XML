@@ -1,7 +1,7 @@
 package kr.open.library.simple_ui.core.unit.system_manager.controller.alarm.vo
 
-import kr.open.library.simple_ui.core.system_manager.controller.alarm.vo.AlarmConstants
-import kr.open.library.simple_ui.core.system_manager.controller.alarm.vo.AlarmVo
+import kr.open.library.simple_ui.core.system_manager.controller.alarm.AlarmConstants
+import kr.open.library.simple_ui.core.system_manager.controller.alarm.vo.AlarmVO
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -10,9 +10,9 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /**
- * Unit tests for AlarmVo and AlarmConstants
+ * Unit tests for AlarmVO and AlarmConstants
  */
-class AlarmVoUnitTest {
+class AlarmVOUnitTest {
     // ==============================================
     // AlarmConstants Tests
     // ==============================================
@@ -52,13 +52,13 @@ class AlarmVoUnitTest {
     }
 
     // ==============================================
-    // AlarmVo Creation Tests
+    // AlarmVO Creation Tests
     // ==============================================
 
     @Test
-    fun alarmVo_createsSuccessfullyWithValidData() {
+    fun AlarmVO_createsSuccessfullyWithValidData() {
         val alarm =
-            AlarmVo(
+            AlarmVO(
                 key = 1,
                 title = "Wake Up",
                 message = "Time to wake up!",
@@ -80,10 +80,10 @@ class AlarmVoUnitTest {
     }
 
     @Test
-    fun alarmVo_createsWithAllParameters() {
+    fun AlarmVO_createsWithAllParameters() {
         val vibrationPattern = listOf(0L, 100L, 200L, 100L)
         val alarm =
-            AlarmVo(
+            AlarmVO(
                 key = 2,
                 title = "Meeting",
                 message = "Team meeting in 5 minutes",
@@ -108,12 +108,12 @@ class AlarmVoUnitTest {
     }
 
     // ==============================================
-    // AlarmVo Validation Tests
+    // AlarmVO Validation Tests
     // ==============================================
 
     @Test(expected = IllegalArgumentException::class)
-    fun alarmVo_throwsExceptionWhenKeyIsZero() {
-        AlarmVo(
+    fun AlarmVO_throwsExceptionWhenKeyIsZero() {
+        AlarmVO(
             key = 0,
             title = "Test",
             message = "Test message",
@@ -123,8 +123,8 @@ class AlarmVoUnitTest {
     }
 
     @Test(expected = IllegalArgumentException::class)
-    fun alarmVo_throwsExceptionWhenKeyIsNegative() {
-        AlarmVo(
+    fun AlarmVO_throwsExceptionWhenKeyIsNegative() {
+        AlarmVO(
             key = -1,
             title = "Test",
             message = "Test message",
@@ -134,8 +134,8 @@ class AlarmVoUnitTest {
     }
 
     @Test(expected = IllegalArgumentException::class)
-    fun alarmVo_throwsExceptionWhenTitleIsBlank() {
-        AlarmVo(
+    fun AlarmVO_throwsExceptionWhenTitleIsBlank() {
+        AlarmVO(
             key = 1,
             title = "   ",
             message = "Test message",
@@ -145,8 +145,8 @@ class AlarmVoUnitTest {
     }
 
     @Test(expected = IllegalArgumentException::class)
-    fun alarmVo_throwsExceptionWhenMessageIsBlank() {
-        AlarmVo(
+    fun AlarmVO_throwsExceptionWhenMessageIsBlank() {
+        AlarmVO(
             key = 1,
             title = "Test",
             message = "",
@@ -156,8 +156,8 @@ class AlarmVoUnitTest {
     }
 
     @Test(expected = IllegalArgumentException::class)
-    fun alarmVo_throwsExceptionWhenHourIsNegative() {
-        AlarmVo(
+    fun AlarmVO_throwsExceptionWhenHourIsNegative() {
+        AlarmVO(
             key = 1,
             title = "Test",
             message = "Test message",
@@ -167,8 +167,8 @@ class AlarmVoUnitTest {
     }
 
     @Test(expected = IllegalArgumentException::class)
-    fun alarmVo_throwsExceptionWhenHourIsGreaterThan23() {
-        AlarmVo(
+    fun AlarmVO_throwsExceptionWhenHourIsGreaterThan23() {
+        AlarmVO(
             key = 1,
             title = "Test",
             message = "Test message",
@@ -178,8 +178,8 @@ class AlarmVoUnitTest {
     }
 
     @Test(expected = IllegalArgumentException::class)
-    fun alarmVo_throwsExceptionWhenMinuteIsNegative() {
-        AlarmVo(
+    fun AlarmVO_throwsExceptionWhenMinuteIsNegative() {
+        AlarmVO(
             key = 1,
             title = "Test",
             message = "Test message",
@@ -189,8 +189,8 @@ class AlarmVoUnitTest {
     }
 
     @Test(expected = IllegalArgumentException::class)
-    fun alarmVo_throwsExceptionWhenMinuteIsGreaterThan59() {
-        AlarmVo(
+    fun AlarmVO_throwsExceptionWhenMinuteIsGreaterThan59() {
+        AlarmVO(
             key = 1,
             title = "Test",
             message = "Test message",
@@ -200,8 +200,8 @@ class AlarmVoUnitTest {
     }
 
     @Test(expected = IllegalArgumentException::class)
-    fun alarmVo_throwsExceptionWhenSecondIsNegative() {
-        AlarmVo(
+    fun AlarmVO_throwsExceptionWhenSecondIsNegative() {
+        AlarmVO(
             key = 1,
             title = "Test",
             message = "Test message",
@@ -212,8 +212,8 @@ class AlarmVoUnitTest {
     }
 
     @Test(expected = IllegalArgumentException::class)
-    fun alarmVo_throwsExceptionWhenSecondIsGreaterThan59() {
-        AlarmVo(
+    fun AlarmVO_throwsExceptionWhenSecondIsGreaterThan59() {
+        AlarmVO(
             key = 1,
             title = "Test",
             message = "Test message",
@@ -224,8 +224,8 @@ class AlarmVoUnitTest {
     }
 
     @Test(expected = IllegalArgumentException::class)
-    fun alarmVo_throwsExceptionWhenAcquireTimeIsZero() {
-        AlarmVo(
+    fun AlarmVO_throwsExceptionWhenAcquireTimeIsZero() {
+        AlarmVO(
             key = 1,
             title = "Test",
             message = "Test message",
@@ -236,8 +236,8 @@ class AlarmVoUnitTest {
     }
 
     @Test(expected = IllegalArgumentException::class)
-    fun alarmVo_throwsExceptionWhenAcquireTimeIsNegative() {
-        AlarmVo(
+    fun AlarmVO_throwsExceptionWhenAcquireTimeIsNegative() {
+        AlarmVO(
             key = 1,
             title = "Test",
             message = "Test message",
@@ -248,8 +248,8 @@ class AlarmVoUnitTest {
     }
 
     @Test(expected = IllegalArgumentException::class)
-    fun alarmVo_throwsExceptionWhenVibrationPatternIsEmpty() {
-        AlarmVo(
+    fun AlarmVO_throwsExceptionWhenVibrationPatternIsEmpty() {
+        AlarmVO(
             key = 1,
             title = "Test",
             message = "Test message",
@@ -260,8 +260,8 @@ class AlarmVoUnitTest {
     }
 
     @Test(expected = IllegalArgumentException::class)
-    fun alarmVo_throwsExceptionWhenVibrationPatternHasNegativeValue() {
-        AlarmVo(
+    fun AlarmVO_throwsExceptionWhenVibrationPatternHasNegativeValue() {
+        AlarmVO(
             key = 1,
             title = "Test",
             message = "Test message",
@@ -272,13 +272,13 @@ class AlarmVoUnitTest {
     }
 
     // ==============================================
-    // AlarmVo Method Tests
+    // AlarmVO Method Tests
     // ==============================================
 
     @Test
     fun withActiveState_createsNewAlarmWithModifiedState() {
         val original =
-            AlarmVo(
+            AlarmVO(
                 key = 1,
                 title = "Test",
                 message = "Test message",
@@ -297,7 +297,7 @@ class AlarmVoUnitTest {
     @Test
     fun withTime_createsNewAlarmWithModifiedTime() {
         val original =
-            AlarmVo(
+            AlarmVO(
                 key = 1,
                 title = "Test",
                 message = "Test message",
@@ -316,7 +316,7 @@ class AlarmVoUnitTest {
     @Test
     fun withTime_canModifySeconds() {
         val original =
-            AlarmVo(
+            AlarmVO(
                 key = 1,
                 title = "Test",
                 message = "Test message",
@@ -334,7 +334,7 @@ class AlarmVoUnitTest {
     @Test
     fun getFormattedTime_returnsCorrectFormat() {
         val alarm =
-            AlarmVo(
+            AlarmVO(
                 key = 1,
                 title = "Test",
                 message = "Test message",
@@ -349,7 +349,7 @@ class AlarmVoUnitTest {
     @Test
     fun getTotalSeconds_calculatesCorrectly() {
         val alarm =
-            AlarmVo(
+            AlarmVO(
                 key = 1,
                 title = "Test",
                 message = "Test message",
@@ -365,7 +365,7 @@ class AlarmVoUnitTest {
     @Test
     fun getDescription_returnsCorrectFormat() {
         val alarm =
-            AlarmVo(
+            AlarmVO(
                 key = 123,
                 title = "Morning Alarm",
                 message = "Test message",
@@ -383,13 +383,13 @@ class AlarmVoUnitTest {
     }
 
     // ==============================================
-    // AlarmVo Companion Object Tests
+    // AlarmVO Companion Object Tests
     // ==============================================
 
     @Test
     fun createSimple_createsAlarmWithMinimalConfiguration() {
         val alarm =
-            AlarmVo.createSimple(
+            AlarmVO.createSimple(
                 key = 5,
                 title = "Simple Alarm",
                 message = "Simple message",
@@ -410,7 +410,7 @@ class AlarmVoUnitTest {
     @Test
     fun createIdleAllowed_createsAlarmWithIdlePermission() {
         val alarm =
-            AlarmVo.createIdleAllowed(
+            AlarmVO.createIdleAllowed(
                 key = 10,
                 title = "Idle Alarm",
                 message = "Idle message",
@@ -429,7 +429,7 @@ class AlarmVoUnitTest {
     @Test
     fun createIdleAllowed_usesDefaultSecondWhenNotProvided() {
         val alarm =
-            AlarmVo.createIdleAllowed(
+            AlarmVO.createIdleAllowed(
                 key = 11,
                 title = "Idle Alarm Default",
                 message = "Default second test",
@@ -446,14 +446,14 @@ class AlarmVoUnitTest {
     }
 
     // ==============================================
-    // AlarmVo Deprecated Property Tests
+    // AlarmVO Deprecated Property Tests
     // ==============================================
 
     @Test
     fun vibrationEffect_returnsLongArrayFromPattern() {
         val pattern = listOf(0L, 100L, 200L, 100L)
         val alarm =
-            AlarmVo(
+            AlarmVO(
                 key = 1,
                 title = "Test",
                 message = "Test message",
@@ -474,7 +474,7 @@ class AlarmVoUnitTest {
     @Test
     fun vibrationEffect_returnsNullWhenPatternIsNull() {
         val alarm =
-            AlarmVo(
+            AlarmVO(
                 key = 1,
                 title = "Test",
                 message = "Test message",
@@ -492,7 +492,7 @@ class AlarmVoUnitTest {
     @Test
     fun msg_returnsMessageValue() {
         val alarm =
-            AlarmVo(
+            AlarmVO(
                 key = 1,
                 title = "Test",
                 message = "Original message",

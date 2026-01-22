@@ -10,38 +10,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import kr.open.library.simple_ui.xml.ui.adapter.queue.QueueDebugEvent
-import kr.open.library.simple_ui.xml.ui.adapter.queue.QueueEventType
-import kr.open.library.simple_ui.xml.ui.adapter.queue.QueueOverflowPolicy
-import kr.open.library.simple_ui.xml.ui.temp.base.OperationFailure
-import kr.open.library.simple_ui.xml.ui.temp.base.OperationFailureInfo
 import kr.open.library.simple_ui.xml.ui.temp.base.list.RootListAdapterCore
-import kr.open.library.simple_ui.xml.ui.temp.base.list.diffcallback.DefaultDiffCallback
 import kr.open.library.simple_ui.xml.ui.temp.base.normal.RootRcvAdapterCore
 import kr.open.library.simpleui_xml.R
-import kr.open.library.simpleui_xml.temp.adapter.listadapter.databinding.TempMultiDataBindingListAdapter
-import kr.open.library.simpleui_xml.temp.adapter.listadapter.databinding.TempSimpleSingleDataBindingListAdapter
-import kr.open.library.simpleui_xml.temp.adapter.listadapter.databinding.TempSingleDataBindingListAdapter
-import kr.open.library.simpleui_xml.temp.adapter.listadapter.normal.TempMultiNormalListAdapter
-import kr.open.library.simpleui_xml.temp.adapter.listadapter.normal.TempSimpleSingleNormalListAdapter
-import kr.open.library.simpleui_xml.temp.adapter.listadapter.normal.TempSingleNormalListAdapter
-import kr.open.library.simpleui_xml.temp.adapter.listadapter.viewbinding.TempMultiViewBindingListAdapter
-import kr.open.library.simpleui_xml.temp.adapter.listadapter.viewbinding.TempSimpleSingleViewBindingListAdapter
-import kr.open.library.simpleui_xml.temp.adapter.listadapter.viewbinding.TempSingleViewBindingListAdapter
-import kr.open.library.simpleui_xml.temp.adapter.recyclerview.databinding.TempMultiDataBindingAdapter
-import kr.open.library.simpleui_xml.temp.adapter.recyclerview.databinding.TempSimpleSingleDataBindingAdapter
-import kr.open.library.simpleui_xml.temp.adapter.recyclerview.databinding.TempSingleDataBindingAdapter
-import kr.open.library.simpleui_xml.temp.adapter.recyclerview.normal.TempMultiNormalAdapter
-import kr.open.library.simpleui_xml.temp.adapter.recyclerview.normal.TempSimpleSingleNormalAdapter
-import kr.open.library.simpleui_xml.temp.adapter.recyclerview.normal.TempSingleNormalAdapter
-import kr.open.library.simpleui_xml.temp.adapter.recyclerview.viewbinding.TempMultiViewBindingAdapter
-import kr.open.library.simpleui_xml.temp.adapter.recyclerview.viewbinding.TempSimpleSingleViewBindingAdapter
-import kr.open.library.simpleui_xml.temp.adapter.recyclerview.viewbinding.TempSingleViewBindingAdapter
 import kr.open.library.simpleui_xml.temp.data.TempItem
 import kr.open.library.simpleui_xml.temp.data.TempItemFactory
-import kr.open.library.simpleui_xml.temp.data.TempItemType
-import kr.open.library.simpleui_xml.temp.util.TempItemDiffCallback
-import java.util.concurrent.Executor
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -74,6 +47,7 @@ abstract class TempAdapterExampleBaseActivity : AppCompatActivity() {
      */
     protected open val allowSimpleAdapter: Boolean
         get() = (itemMode == TempItemMode.SINGLE)
+
     /**
      * Title text view for the current example.<br><br>
      * 현재 예제 제목을 표시하는 텍스트 뷰입니다.<br>
@@ -300,17 +274,13 @@ abstract class TempAdapterExampleBaseActivity : AppCompatActivity() {
         swEnableDiffUtil.isEnabled = (adapterKind == TempAdapterKind.RV)
         swUseCustomDiffCallback.isEnabled = (adapterKind == TempAdapterKind.LIST)
 
-        kr.open.library.simple_ui.core.logcat.Logx.d("configureOptionAvailability: allowSimpleAdapter=$allowSimpleAdapter, itemMode=$itemMode, adapterKind=$adapterKind")
-
         if (allowSimpleAdapter) {
             swUseSimpleAdapter.visibility = View.VISIBLE
             swUseSimpleAdapter.isEnabled = true
-            kr.open.library.simple_ui.core.logcat.Logx.d("Simple switch set to VISIBLE")
         } else {
             swUseSimpleAdapter.visibility = View.GONE
             swUseSimpleAdapter.isEnabled = false
             swUseSimpleAdapter.isChecked = false
-            kr.open.library.simple_ui.core.logcat.Logx.d("Simple switch set to GONE")
         }
     }
 
@@ -319,203 +289,42 @@ abstract class TempAdapterExampleBaseActivity : AppCompatActivity() {
      * 현재 선택과 옵션 기준으로 어댑터를 갱신합니다.<br>
      */
     private fun refreshAdapter() {
-        val bindingMode = resolveBindingMode()
-        val useSimpleAdapter = allowSimpleAdapter && swUseSimpleAdapter.isChecked
-        val dependencies = buildDependencies()
-        val adapter = createAdapter(bindingMode, useSimpleAdapter, dependencies)
+        // Build adapter configuration from UI state.<br><br>UI 상태로부터 어댑터 설정을 생성합니다.<br>
+        val config = buildAdapterConfig()
+
+        // Create adapter using Factory.<br><br>Factory로 어댑터를 생성합니다.<br>
+        val adapter = TempAdapterFactory.createAdapter(config)
 
         rcvTempExample.adapter = adapter
-        applyQueuePolicy(adapter)
-        bindAdapterListeners(adapter)
+        TempAdapterHelper.applyQueuePolicy(adapter) { status -> updateStatus(status) }
+        TempAdapterHelper.bindClickListeners(adapter) { status -> updateStatus(status) }
 
-        val items = createItemsForMode(itemMode, DEFAULT_ITEM_COUNT)
+        // Generate initial items using Generator.<br><br>Generator로 초기 아이템을 생성합니다.<br>
+        val items = TempItemGenerator.generateDefaultItems(itemMode)
         updateNextItemId(items)
-        submitItems(adapter, items, "setItems")
+        TempAdapterHelper.submitItems(adapter, items, "setItems") { status -> updateStatus(status) }
     }
 
     /**
-     * Resolves current binding mode selection.<br><br>
-     * 현재 바인딩 모드 선택 값을 해석합니다.<br>
+     * Builds TempAdapterConfig from current UI state.<br><br>
+     * 현재 UI 상태로부터 TempAdapterConfig를 생성합니다.<br>
      */
-    private fun resolveBindingMode(): TempBindingMode =
-        when {
+    private fun buildAdapterConfig(): TempAdapterConfig {
+        val bindingMode = when {
             rBtnBindingDataBinding.isChecked -> TempBindingMode.DATABINDING
             rBtnBindingViewBinding.isChecked -> TempBindingMode.VIEWBINDING
-            rBtnBindingNormal.isChecked -> TempBindingMode.NORMAL
             else -> TempBindingMode.NORMAL
         }
 
-    /**
-     * Builds adapter dependencies from current UI options.<br><br>
-     * 현재 UI 옵션을 기반으로 어댑터 의존성을 생성합니다.<br>
-     */
-    private fun buildDependencies(): TempAdapterDependencies {
-        val diffExecutor = if (swUseDiffExecutor.isChecked) diffExecutorService else null
-        val diffCallback =
-            if (adapterKind == TempAdapterKind.LIST && swUseCustomDiffCallback.isChecked) {
-                TempItemDiffCallback()
-            } else {
-                null
-            }
-        val diffUtilEnabled = (adapterKind == TempAdapterKind.RV && swEnableDiffUtil.isChecked)
-        return TempAdapterDependencies(
-            diffExecutor = diffExecutor,
-            diffCallback = diffCallback,
-            diffUtilEnabled = diffUtilEnabled,
+        return TempAdapterConfig(
+            adapterKind = adapterKind,
+            itemMode = itemMode,
+            bindingType = bindingMode.toBindingType(),
+            useSimpleAdapter = allowSimpleAdapter && swUseSimpleAdapter.isChecked,
+            enableDiffUtil = (adapterKind == TempAdapterKind.RV && swEnableDiffUtil.isChecked),
+            useCustomDiffCallback = (adapterKind == TempAdapterKind.LIST && swUseCustomDiffCallback.isChecked),
+            diffExecutor = if (swUseDiffExecutor.isChecked) diffExecutorService else null,
         )
-    }
-
-    /**
-     * Creates an adapter based on current options.<br><br>
-     * 현재 옵션에 맞는 어댑터를 생성합니다.<br>
-     */
-    private fun createAdapter(
-        bindingMode: TempBindingMode,
-        useSimpleAdapter: Boolean,
-        deps: TempAdapterDependencies,
-    ): RecyclerView.Adapter<*> = when (adapterKind) {
-        TempAdapterKind.RV -> createRcvAdapter(bindingMode, useSimpleAdapter, deps)
-        TempAdapterKind.LIST -> createListAdapter(bindingMode, useSimpleAdapter, deps)
-    }
-
-    /**
-     * Creates a RecyclerView.Adapter example adapter.<br><br>
-     * RecyclerView.Adapter 예제 어댑터를 생성합니다.<br>
-     */
-    private fun createRcvAdapter(
-        bindingMode: TempBindingMode,
-        useSimpleAdapter: Boolean,
-        deps: TempAdapterDependencies,
-    ): RecyclerView.Adapter<*> =
-        when (itemMode) {
-            TempItemMode.SINGLE -> createRcvSingleAdapter(bindingMode, useSimpleAdapter, deps.diffUtilEnabled, deps.diffExecutor)
-            TempItemMode.MULTI -> createRcvMultiAdapter(bindingMode, deps.diffUtilEnabled, deps.diffExecutor)
-        }
-
-    /**
-     * Creates a RecyclerView.Adapter single-type adapter.<br><br>
-     * RecyclerView.Adapter 단일 타입 어댑터를 생성합니다.<br>
-     */
-    private fun createRcvSingleAdapter(
-        bindingMode: TempBindingMode,
-        useSimpleAdapter: Boolean,
-        diffUtilEnabled: Boolean,
-        diffExecutor: Executor?,
-    ): RecyclerView.Adapter<*> = when (bindingMode) {
-        TempBindingMode.NORMAL ->
-            if (useSimpleAdapter) {
-                TempSimpleSingleNormalAdapter(diffUtilEnabled = diffUtilEnabled, diffExecutor = diffExecutor)
-            } else {
-                TempSingleNormalAdapter(diffUtilEnabled = diffUtilEnabled, diffExecutor = diffExecutor)
-            }
-        TempBindingMode.DATABINDING ->
-            if (useSimpleAdapter) {
-                TempSimpleSingleDataBindingAdapter(diffUtilEnabled = diffUtilEnabled, diffExecutor = diffExecutor)
-            } else {
-                TempSingleDataBindingAdapter(diffUtilEnabled = diffUtilEnabled, diffExecutor = diffExecutor)
-            }
-        TempBindingMode.VIEWBINDING ->
-            if (useSimpleAdapter) {
-                TempSimpleSingleViewBindingAdapter(diffUtilEnabled = diffUtilEnabled, diffExecutor = diffExecutor)
-            } else {
-                TempSingleViewBindingAdapter(diffUtilEnabled = diffUtilEnabled, diffExecutor = diffExecutor)
-            }
-    }
-
-    /**
-     * Creates a RecyclerView.Adapter multi-type adapter.<br><br>
-     * RecyclerView.Adapter 다중 타입 어댑터를 생성합니다.<br>
-     */
-    private fun createRcvMultiAdapter(
-        bindingMode: TempBindingMode,
-        diffUtilEnabled: Boolean,
-        diffExecutor: Executor?,
-    ): RecyclerView.Adapter<*> = when (bindingMode) {
-        TempBindingMode.NORMAL ->
-            TempMultiNormalAdapter(diffUtilEnabled = diffUtilEnabled, diffExecutor = diffExecutor)
-        TempBindingMode.DATABINDING ->
-            TempMultiDataBindingAdapter(diffUtilEnabled = diffUtilEnabled, diffExecutor = diffExecutor)
-        TempBindingMode.VIEWBINDING ->
-            TempMultiViewBindingAdapter(diffUtilEnabled = diffUtilEnabled, diffExecutor = diffExecutor)
-    }
-
-    /**
-     * Creates a ListAdapter example adapter.<br><br>
-     * ListAdapter 예제 어댑터를 생성합니다.<br>
-     */
-    private fun createListAdapter(
-        bindingMode: TempBindingMode,
-        useSimpleAdapter: Boolean,
-        deps: TempAdapterDependencies,
-    ): RecyclerView.Adapter<*> {
-        val diffCallback = resolveDiffCallback(deps)
-        return when (itemMode) {
-            TempItemMode.SINGLE -> createListSingleAdapter(bindingMode, useSimpleAdapter, diffCallback, deps.diffExecutor)
-            TempItemMode.MULTI -> createListMultiAdapter(bindingMode, diffCallback, deps.diffExecutor)
-        }
-    }
-
-    /**
-     * Creates a ListAdapter single-type adapter.<br><br>
-     * ListAdapter 단일 타입 어댑터를 생성합니다.<br>
-     */
-    private fun createListSingleAdapter(
-        bindingMode: TempBindingMode,
-        useSimpleAdapter: Boolean,
-        diffCallback: androidx.recyclerview.widget.DiffUtil.ItemCallback<TempItem>,
-        diffExecutor: Executor?,
-    ): RecyclerView.Adapter<*> = when (bindingMode) {
-        TempBindingMode.NORMAL ->
-            if (useSimpleAdapter) {
-                TempSimpleSingleNormalListAdapter(diffCallback = diffCallback, diffExecutor = diffExecutor)
-            } else {
-                TempSingleNormalListAdapter(diffCallback = diffCallback, diffExecutor = diffExecutor)
-            }
-        TempBindingMode.DATABINDING ->
-            if (useSimpleAdapter) {
-                TempSimpleSingleDataBindingListAdapter(diffCallback = diffCallback, diffExecutor = diffExecutor)
-            } else {
-                TempSingleDataBindingListAdapter(diffCallback = diffCallback, diffExecutor = diffExecutor)
-            }
-        TempBindingMode.VIEWBINDING ->
-            if (useSimpleAdapter) {
-                TempSimpleSingleViewBindingListAdapter(diffCallback = diffCallback, diffExecutor = diffExecutor)
-            } else {
-                TempSingleViewBindingListAdapter(diffCallback = diffCallback, diffExecutor = diffExecutor)
-            }
-    }
-
-    /**
-     * Creates a ListAdapter multi-type adapter.<br><br>
-     * ListAdapter 다중 타입 어댑터를 생성합니다.<br>
-     */
-    private fun createListMultiAdapter(
-        bindingMode: TempBindingMode,
-        diffCallback: androidx.recyclerview.widget.DiffUtil.ItemCallback<TempItem>,
-        diffExecutor: Executor?,
-    ): RecyclerView.Adapter<*> = when (bindingMode) {
-        TempBindingMode.NORMAL ->
-            TempMultiNormalListAdapter(diffCallback = diffCallback, diffExecutor = diffExecutor)
-        TempBindingMode.DATABINDING ->
-            TempMultiDataBindingListAdapter(diffCallback = diffCallback, diffExecutor = diffExecutor)
-        TempBindingMode.VIEWBINDING ->
-            TempMultiViewBindingListAdapter(diffCallback = diffCallback, diffExecutor = diffExecutor)
-    }
-
-    /**
-     * Resolves DiffUtil callback for ListAdapter examples.<br><br>
-     * ListAdapter 예제용 DiffUtil 콜백을 해석합니다.<br>
-     */
-    private fun resolveDiffCallback(deps: TempAdapterDependencies): androidx.recyclerview.widget.DiffUtil.ItemCallback<TempItem> =
-        deps.diffCallback ?: DefaultDiffCallback()
-
-    /**
-     * Creates initial items for the given mode and size.<br><br>
-     * 지정 모드와 크기에 맞는 초기 아이템을 생성합니다.<br>
-     */
-    private fun createItemsForMode(mode: TempItemMode, size: Int): List<TempItem> = when (mode) {
-        TempItemMode.SINGLE -> TempItemFactory.createSingleItems(size)
-        TempItemMode.MULTI -> TempItemFactory.createMultiItems(size)
     }
 
     /**
@@ -532,152 +341,28 @@ abstract class TempAdapterExampleBaseActivity : AppCompatActivity() {
      * Creates a new item using current mode and next id.<br><br>
      * 현재 모드와 다음 ID로 새 아이템을 생성합니다.<br>
      */
-    private fun createNewItem(mode: TempItemMode, label: String): TempItem {
-        // Snapshot of the next id.<br><br>다음 ID 스냅샷입니다.<br>
-        val itemId = nextItemId
-        // Type resolved by mode and id.<br><br>모드와 ID 기준으로 결정된 타입입니다.<br>
-        val type = resolveTypeForMode(mode, itemId)
-        val item = TempItemFactory.createItem(itemId, type, label)
+    private fun createNewItem(label: String): TempItem {
+        // Use Generator to create item with current index.<br><br>Generator를 사용해 현재 인덱스로 아이템을 생성합니다.<br>
+        val item = TempItemGenerator.generateSingleItem(itemMode, nextItemId.toInt())
         nextItemId += 1
-        return item
+        return item.copy(title = label, description = "Created item")
     }
 
     /**
-     * Resolves item type based on mode and id.<br><br>
-     * 모드와 ID 기준으로 아이템 타입을 결정합니다.<br>
+     * Returns the current adapter or null if missing.<br><br>
+     * 현재 어댑터를 반환하며 없으면 null을 반환합니다.<br>
      */
-    private fun resolveTypeForMode(mode: TempItemMode, id: Long): TempItemType = if (mode == TempItemMode.SINGLE) {
-        TempItemType.PRIMARY
-    } else {
-        if (id % 2L == 0L) TempItemType.PRIMARY else TempItemType.SECONDARY
-    }
-
-    /**
-     * Submits items to the adapter using queue APIs with callback.<br><br>
-     * 큐 API를 사용해 아이템을 제출하고 콜백을 처리합니다.<br>
-     */
-    private fun submitItems(adapter: RecyclerView.Adapter<*>, items: List<TempItem>, actionLabel: String) {
-        val handled = withRootAdapter(
-            adapter = adapter,
-            onRcv = { rcvAdapter ->
-                rcvAdapter.setItems(items) { success ->
-                    updateStatus("$actionLabel(${items.size}) -> $success")
-                }
-            },
-            onList = { listAdapter ->
-                listAdapter.setItems(items) { success ->
-                    updateStatus("$actionLabel(${items.size}) -> $success")
-                }
-            },
-        )
-        if (!handled) {
-            updateStatus("Unsupported adapter for $actionLabel")
+    private fun requireAdapter(): RecyclerView.Adapter<*>? {
+        val adapter = rcvTempExample.adapter
+        if (adapter == null) {
+            updateStatus("Adapter is not ready")
         }
+        return adapter
     }
 
     /**
-     * Binds click and long-click listeners to the adapter.<br><br>
-     * 어댑터에 클릭/롱클릭 리스너를 바인딩합니다.<br>
-     */
-    private fun bindAdapterListeners(adapter: RecyclerView.Adapter<*>) {
-        val handled = withRootAdapter(
-            adapter = adapter,
-            onRcv = { rcvAdapter ->
-                rcvAdapter.setOnItemClickListener { position, item, _ ->
-                    updateStatus("click(pos=$position, id=${item.id})")
-                }
-                rcvAdapter.setOnItemLongClickListener { position, item, _ ->
-                    updateStatus("longClick(pos=$position, id=${item.id})")
-                }
-            },
-            onList = { listAdapter ->
-                listAdapter.setOnItemClickListener { position, item, _ ->
-                    updateStatus("click(pos=$position, id=${item.id})")
-                }
-                listAdapter.setOnItemLongClickListener { position, item, _ ->
-                    updateStatus("longClick(pos=$position, id=${item.id})")
-                }
-            },
-        )
-        if (!handled) {
-            updateStatus("Unsupported adapter for listeners")
-        }
-    }
-
-    /**
-     * Applies queue policy and failure listener to the adapter.<br><br>
-     * 어댑터에 큐 정책과 실패 리스너를 적용합니다.<br>
-     */
-    private fun applyQueuePolicy(adapter: RecyclerView.Adapter<*>) {
-        val handled = withRootAdapter(
-            adapter = adapter,
-            onRcv = { rcvAdapter ->
-                rcvAdapter.setQueuePolicy(DEFAULT_QUEUE_MAX_PENDING, QueueOverflowPolicy.DROP_NEW)
-                rcvAdapter.setOnOperationFailureListener { info ->
-                    updateStatus("queueFail(${formatFailure(info)})")
-                }
-                rcvAdapter.setQueueDebugListener { event ->
-                    if (event.type == QueueEventType.ERROR || event.type == QueueEventType.DROPPED) {
-                        updateStatus(formatQueueEvent(event))
-                    }
-                }
-            },
-            onList = { listAdapter ->
-                listAdapter.setQueuePolicy(DEFAULT_QUEUE_MAX_PENDING, QueueOverflowPolicy.DROP_NEW)
-                listAdapter.setOnOperationFailureListener { info ->
-                    updateStatus("queueFail(${formatFailure(info)})")
-                }
-                listAdapter.setQueueDebugListener { event ->
-                    if (event.type == QueueEventType.ERROR || event.type == QueueEventType.DROPPED) {
-                        updateStatus(formatQueueEvent(event))
-                    }
-                }
-            },
-        )
-        if (!handled) {
-            updateStatus("Unsupported adapter for queue policy")
-        }
-    }
-
-    /**
-     * Formats failure details for UI display.<br><br>
-     * 실패 상세 정보를 표시용 문자열로 변환합니다.<br>
-     */
-    private fun formatFailure(info: OperationFailureInfo): String {
-        val detail =
-            when (val failure = info.failure) {
-                is OperationFailure.Validation -> "validation=${failure.message}"
-                is OperationFailure.Exception -> "exception=${failure.error.message ?: "unknown"}"
-                is OperationFailure.Dropped -> "dropped=${failure.reason}"
-            }
-        return "op=${info.operationName}, $detail"
-    }
-
-    /**
-     * Formats queue debug events for UI display.<br><br>
-     * 큐 디버그 이벤트를 표시용 문자열로 변환합니다.<br>
-     */
-    private fun formatQueueEvent(event: QueueDebugEvent): String {
-        val name = event.operationName ?: "unknown"
-        val drop = event.dropReason?.let { ", drop=$it" } ?: ""
-        val message = event.message?.let { ", msg=$it" } ?: ""
-        return "queue:${event.type} op=$name, pending=${event.pendingSize}$drop$message"
-    }
-
-    /**
-     * Retrieves items from the current adapter.<br><br>
-     * 현재 어댑터의 아이템을 조회합니다.<br>
-     */
-    @Suppress("UNCHECKED_CAST")
-    private fun getItems(adapter: RecyclerView.Adapter<*>): List<TempItem> = when (adapter) {
-        is RootRcvAdapterCore<*, *> -> (adapter as RootRcvAdapterCore<TempItem, *>).getItems()
-        is RootListAdapterCore<*, *> -> (adapter as RootListAdapterCore<TempItem, *>).getItems()
-        else -> emptyList()
-    }
-
-    /**
-     * Executes the action for RootRcv or RootList adapter types.<br><br>
-     * RootRcv 또는 RootList 어댑터 타입에 맞춰 동작을 실행합니다.<br>
+     * Executes action with RootRcvAdapterCore or RootListAdapterCore.<br><br>
+     * RootRcvAdapterCore 또는 RootListAdapterCore로 동작을 실행합니다.<br>
      */
     @Suppress("UNCHECKED_CAST")
     private fun withRootAdapter(
@@ -697,18 +382,6 @@ abstract class TempAdapterExampleBaseActivity : AppCompatActivity() {
     }
 
     /**
-     * Returns the current adapter or null if missing.<br><br>
-     * 현재 어댑터를 반환하며 없으면 null을 반환합니다.<br>
-     */
-    private fun requireAdapter(): RecyclerView.Adapter<*>? {
-        val adapter = rcvTempExample.adapter
-        if (adapter == null) {
-            updateStatus("Adapter is not ready")
-        }
-        return adapter
-    }
-
-    /**
      * Updates status text with the provided message.<br><br>
      * 제공된 메시지로 상태 텍스트를 업데이트합니다.<br>
      */
@@ -722,9 +395,10 @@ abstract class TempAdapterExampleBaseActivity : AppCompatActivity() {
      */
     private fun handleResetItems() {
         val adapter = requireAdapter() ?: return
-        val items = createItemsForMode(itemMode, DEFAULT_ITEM_COUNT)
+        // Use Generator to create default items.<br><br>Generator를 사용해 기본 아이템을 생성합니다.<br>
+        val items = TempItemGenerator.generateDefaultItems(itemMode)
         updateNextItemId(items)
-        submitItems(adapter, items, "setItems")
+        TempAdapterHelper.submitItems(adapter, items, "setItems") { status -> updateStatus(status) }
     }
 
     /**
@@ -733,9 +407,10 @@ abstract class TempAdapterExampleBaseActivity : AppCompatActivity() {
      */
     private fun handleSetLargeItems() {
         val adapter = requireAdapter() ?: return
-        val items = createItemsForMode(itemMode, LARGE_ITEM_COUNT)
+        // Use Generator to create large items.<br><br>Generator를 사용해 대량 아이템을 생성합니다.<br>
+        val items = TempItemGenerator.generateLargeItems(itemMode)
         updateNextItemId(items)
-        submitItems(adapter, items, "setLargeItems")
+        TempAdapterHelper.submitItems(adapter, items, "setLargeItems") { status -> updateStatus(status) }
     }
 
     /**
@@ -744,7 +419,7 @@ abstract class TempAdapterExampleBaseActivity : AppCompatActivity() {
      */
     private fun handleAddItem() {
         val adapter = requireAdapter() ?: return
-        val newItem = createNewItem(itemMode, "Add")
+        val newItem = createNewItem("Add")
         val handled = withRootAdapter(
             adapter = adapter,
             onRcv = { rcvAdapter ->
@@ -769,7 +444,7 @@ abstract class TempAdapterExampleBaseActivity : AppCompatActivity() {
      */
     private fun handleAddItemAt() {
         val adapter = requireAdapter() ?: return
-        val newItem = createNewItem(itemMode, "AddAt")
+        val newItem = createNewItem("AddAt")
         val handled = withRootAdapter(
             adapter = adapter,
             onRcv = { rcvAdapter ->
@@ -797,7 +472,7 @@ abstract class TempAdapterExampleBaseActivity : AppCompatActivity() {
         val newItems = List(ADD_ITEMS_COUNT) { index ->
             // Batch label for each item.<br><br>배치 아이템 라벨입니다.<br>
             val label = "Batch${index + 1}"
-            createNewItem(itemMode, label)
+            createNewItem(label)
         }
         val handled = withRootAdapter(
             adapter = adapter,
@@ -823,7 +498,7 @@ abstract class TempAdapterExampleBaseActivity : AppCompatActivity() {
      */
     private fun handleRemoveItem() {
         val adapter = requireAdapter() ?: return
-        val items = getItems(adapter)
+        val items = TempAdapterHelper.getItems(adapter)
         if (items.isEmpty()) {
             updateStatus("removeItem -> empty list")
             return
@@ -853,7 +528,7 @@ abstract class TempAdapterExampleBaseActivity : AppCompatActivity() {
      */
     private fun handleRemoveAt() {
         val adapter = requireAdapter() ?: return
-        val items = getItems(adapter)
+        val items = TempAdapterHelper.getItems(adapter)
         if (items.isEmpty()) {
             updateStatus("removeAt -> empty list")
             return
@@ -883,7 +558,7 @@ abstract class TempAdapterExampleBaseActivity : AppCompatActivity() {
      */
     private fun handleMoveItem() {
         val adapter = requireAdapter() ?: return
-        val items = getItems(adapter)
+        val items = TempAdapterHelper.getItems(adapter)
         if (items.size < 2) {
             updateStatus("moveItem -> not enough items")
             return
@@ -914,7 +589,7 @@ abstract class TempAdapterExampleBaseActivity : AppCompatActivity() {
      */
     private fun handleReplaceItem() {
         val adapter = requireAdapter() ?: return
-        val items = getItems(adapter)
+        val items = TempAdapterHelper.getItems(adapter)
         if (items.isEmpty()) {
             updateStatus("replaceItemAt -> empty list")
             return

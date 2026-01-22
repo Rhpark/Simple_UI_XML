@@ -61,7 +61,17 @@ enum class TempBindingMode {
      * ViewBinding binding mode.<br><br>
      * ViewBinding 바인딩 모드입니다.<br>
      */
-    VIEWBINDING,
+    VIEWBINDING;
+
+    /**
+     * Converts to TempBindingType for factory usage.<br><br>
+     * Factory 사용을 위해 TempBindingType으로 변환합니다.<br>
+     */
+    fun toBindingType(): TempBindingType = when (this) {
+        NORMAL -> TempBindingType.NORMAL
+        DATABINDING -> TempBindingType.DATA_BINDING
+        VIEWBINDING -> TempBindingType.VIEW_BINDING
+    }
 }
 
 /**
