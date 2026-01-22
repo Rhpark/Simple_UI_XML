@@ -12,7 +12,7 @@ import org.junit.Test
 /**
  * Unit tests for AlarmVO and AlarmConstants
  */
-class AlarmVOUnitTest {
+class AlarmVoUnitTest {
     // ==============================================
     // AlarmConstants Tests
     // ==============================================
