@@ -103,6 +103,6 @@ requester.requestPermissions(
 - 프로세스 복원 후 자동 재진입은 하지 않는다.
 
 ## 문서 연계
-- PRD: `simple_core/src/main/java/kr/open/library/simple_ui/core/permissions/PRD.md`
-- SPEC: `simple_core/src/main/java/kr/open/library/simple_ui/core/permissions/SPEC.md`
-- Implementation Plan: `simple_core/src/main/java/kr/open/library/simple_ui/core/permissions/IMPLEMENTATION_PLAN.md`
+- PRD: `simple_core/docs/feature/permissions/PRD.md`
+- SPEC: `simple_core/docs/feature/permissions/SPEC.md`
+- Implementation Plan: `simple_core/docs/feature/permissions/IMPLEMENTATION_PLAN.md`

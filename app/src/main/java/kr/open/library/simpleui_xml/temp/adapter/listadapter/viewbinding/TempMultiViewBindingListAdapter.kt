@@ -54,12 +54,7 @@ class TempMultiViewBindingListAdapter(
      * Binds item data to the provided ViewBinding holder with view type info.<br><br>
      * 뷰 타입 정보를 포함해 제공된 ViewBinding 홀더에 아이템 데이터를 바인딩합니다.<br>
      */
-    override fun onBind(
-        holder: BaseViewBindingViewHolder<ViewBinding>,
-        item: TempItem,
-        position: Int,
-        viewType: Int,
-    ) {
+    override fun onBind(holder: BaseViewBindingViewHolder<ViewBinding>, item: TempItem, position: Int, viewType: Int) {
         when (val binding = holder.binding) {
             is ItemTempMultiPrimaryBinding -> TempItemViewBindingBinder.bind(binding, item, position)
             is ItemTempMultiSecondaryBinding -> TempItemViewBindingBinder.bind(binding, item, position)

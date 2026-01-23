@@ -40,11 +40,7 @@ class TempSingleDataBindingAdapter(
      * Binds item data to the provided DataBinding holder.<br><br>
      * 제공된 DataBinding 홀더에 아이템 데이터를 바인딩합니다.<br>
      */
-    override fun onBind(
-        holder: BaseDataBindingViewHolder<ItemTempSingleDatabindingBinding>,
-        item: TempItem,
-        position: Int,
-    ) {
+    override fun onBind(holder: BaseDataBindingViewHolder<ItemTempSingleDatabindingBinding>, item: TempItem, position: Int) {
         TempItemDataBindingBinder.bind(holder.binding, item, position)
     }
 }
