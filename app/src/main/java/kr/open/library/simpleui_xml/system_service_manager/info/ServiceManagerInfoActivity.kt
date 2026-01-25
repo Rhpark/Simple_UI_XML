@@ -79,7 +79,7 @@ class ServiceManagerInfoActivity : BaseDataBindingActivity<ActivityServiceManage
                             add("=== SIM Info ===")
 
                             try {
-// 기본 정보
+// 湲곕낯 ?뺣낫
                                 add("--- Basic Info ---")
                                 add("Can Read SIM Info: ${simInfo.isCanReadSimInfo()}")
                                 add("Is Dual SIM: ${simInfo.isDualSim()}")
@@ -88,7 +88,7 @@ class ServiceManagerInfoActivity : BaseDataBindingActivity<ActivityServiceManage
                                 add("Active SIM Count: ${simInfo.getActiveSimCount()}")
                                 add("Active SIM Slot Index List: ${simInfo.getActiveSimSlotIndexList()}")
 
-                                // 기본 SIM 정보
+                                // 湲곕낯 SIM ?뺣낫
                                 add("--- Default SIM Info ---")
                                 add("Default SIM SubId: ${simInfo.getSubIdFromDefaultUSim()}")
                                 add("Display Name: ${simInfo.getDisplayNameFromDefaultUSim()}")
@@ -99,11 +99,11 @@ class ServiceManagerInfoActivity : BaseDataBindingActivity<ActivityServiceManage
                                 add("SIM Status: ${simInfo.getStatusFromDefaultUSim()}")
                                 add("Is Network Roaming: ${simInfo.isNetworkRoamingFromDefaultUSim()}")
 
-                                // 고급 정보
+                                // 怨좉툒 ?뺣낫
                                 add("--- Advanced Info ---")
                                 add("eSIM Supported: ${simInfo.isESimSupported()}")
 
-                                // 멀티 SIM 슬롯별 정보
+                                // 硫??SIM ?щ’蹂??뺣낫
                                 val activeSlots = simInfo.getActiveSimSlotIndexList()
                                 if (activeSlots.isNotEmpty()) {
                                     activeSlots.forEach { slotIndex ->
@@ -117,7 +117,7 @@ class ServiceManagerInfoActivity : BaseDataBindingActivity<ActivityServiceManage
                                     }
                                 }
 
-                                // 구독 정보 리스트
+                                // 援щ룆 ?뺣낫 由ъ뒪??
                                 add("--- Subscription Info List ---")
                                 val subInfoList = simInfo.getActiveSubscriptionInfoList()
                                 add("Total Subscriptions: ${subInfoList.size}")
@@ -144,27 +144,27 @@ class ServiceManagerInfoActivity : BaseDataBindingActivity<ActivityServiceManage
                         mutableListOf<String>().apply {
                             add("=== Telephony Basic Info ===")
                             try {
-                                // 네트워크 타입
+                                // ?ㅽ듃?뚰겕 ???
                                 add("--- Network Type ---")
                                 add("Network Type: ${telephonyInfo.getNetworkType()}")
                                 add("Network Type String: ${telephonyInfo.getNetworkTypeString()}")
                                 add("Data Network Type: ${telephonyInfo.getDataNetworkType()}")
 
-                                // 로밍
+                                // 濡쒕컢
                                 add("--- Roaming ---")
                                 add("Is Network Roaming: ${telephonyInfo.isNetworkRoaming()}")
 
-                                // 멀티 SIM
+                                // 硫??SIM
                                 add("--- Multi SIM ---")
                                 add("Active SIM Count: ${telephonyInfo.getActiveSimCount()}")
 
-                                // 통신사 정보
+                                // ?듭떊???뺣낫
                                 add("--- Carrier Info ---")
                                 add("Carrier Name: ${telephonyInfo.getCarrierName()}")
                                 add("MCC: ${telephonyInfo.getMobileCountryCode()}")
                                 add("MNC: ${telephonyInfo.getMobileNetworkCode()}")
 
-                                // SIM 상태
+                                // SIM ?곹깭
                                 add("--- SIM State ---")
                                 add("SIM State: ${telephonyInfo.getSimState()}")
                                 add("SIM State String: ${telephonyInfo.getSimStateString()}")
@@ -172,11 +172,11 @@ class ServiceManagerInfoActivity : BaseDataBindingActivity<ActivityServiceManage
                                 add("SIM Operator Name: ${telephonyInfo.getSimOperatorName()}")
                                 add("SIM Country ISO: ${telephonyInfo.getSimCountryIso()}")
 
-                                // 전화번호
+                                // ?꾪솕踰덊샇
                                 add("--- Phone Number ---")
                                 add("Phone Number: ${telephonyInfo.getPhoneNumber()}")
 
-                                // 통화 상태
+                                // ?듯솕 ?곹깭
                                 add("--- Call State ---")
                                 add("Call State: ${telephonyInfo.getCallState()}")
                             } catch (e: Exception) {
@@ -193,7 +193,7 @@ class ServiceManagerInfoActivity : BaseDataBindingActivity<ActivityServiceManage
                     if (deniedPermissions.isEmpty()) {
                         addItem("=== Telephony Register ===")
 
-                        // StateFlow 기반 콜백 등록
+                        // StateFlow 湲곕컲 肄쒕갚 ?깅줉
                         telephonyInfo.registerCallback(
                             handler = null,
                             onSignalStrengthChanged = { signalStrength ->
@@ -207,7 +207,7 @@ class ServiceManagerInfoActivity : BaseDataBindingActivity<ActivityServiceManage
                             },
                         )
 
-                        // StateFlow로도 수집 가능
+                        // StateFlow濡쒕룄 ?섏쭛 媛??
                         lifecycleScope.launch {
                             telephonyInfo.currentSignalStrength.collect { signalStrength ->
                                 if (signalStrength != null) {
@@ -241,12 +241,12 @@ class ServiceManagerInfoActivity : BaseDataBindingActivity<ActivityServiceManage
             btnNetworkInfo.setOnClickListener {
                 addItem("=== Network Connectivity Info ===")
 
-                // 기본 연결성
+                // 湲곕낯 ?곌껐??
                 addItem("--- Basic Connectivity ---")
                 addItem("Is Network Connected: ${networkInfo.isNetworkConnected()}")
                 addItem("Is WiFi Enabled: ${networkInfo.isWifiEnabled()}")
 
-                // Transport 타입별 연결
+                // Transport ??낅퀎 ?곌껐
                 addItem("--- Transport Types ---")
                 addItem("Is WiFi Connected: ${networkInfo.isConnectedWifi()}")
                 addItem("Is Mobile Connected: ${networkInfo.isConnectedMobile()}")
@@ -260,7 +260,7 @@ class ServiceManagerInfoActivity : BaseDataBindingActivity<ActivityServiceManage
                 addItem("Is WiFi Aware Connected: ${networkInfo.isConnectedWifiAware()}")
                 addItem("Is LowPan Connected: ${networkInfo.isConnectedLowPan()}")
 
-                // IP 주소
+                // IP 二쇱냼
                 addItem("--- IP Addresses ---")
                 addItem(
                     "WiFi IP: ${networkInfo.getIPAddressByNetworkType(android.net.NetworkCapabilities.TRANSPORT_WIFI)}",
@@ -280,7 +280,7 @@ class ServiceManagerInfoActivity : BaseDataBindingActivity<ActivityServiceManage
                     }",
                 )
 
-                // 네트워크 요약
+                // ?ㅽ듃?뚰겕 ?붿빟
                 addItem("--- Network Summary ---")
                 val summary = networkInfo.getNetworkConnectivitySummary()
                 addItem("Summary: $summary")
@@ -289,7 +289,7 @@ class ServiceManagerInfoActivity : BaseDataBindingActivity<ActivityServiceManage
             btnNetworkRegister.setOnClickListener {
                 addItem("=== Network Callback Register ===")
 
-                // 기본 네트워크 콜백 등록
+                // 湲곕낯 ?ㅽ듃?뚰겕 肄쒕갚 ?깅줉
                 networkInfo.registerDefaultNetworkCallback(
                     handler = null,
                     onNetworkAvailable = { network ->
@@ -392,7 +392,7 @@ class ServiceManagerInfoActivity : BaseDataBindingActivity<ActivityServiceManage
                         if (location != null) {
                             addItem("Last Location: Lat=${location.latitude}, Lng=${location.longitude}")
                         } else {
-                            addItem("Last Location: null (위치를 아직 받지 못했습니다)")
+                            addItem("Last Location: null (?꾩튂瑜??꾩쭅 諛쏆? 紐삵뻽?듬땲??")
                         }
                     } else {
                         toastShowShort("Permission Denied $deniedPermissions")
@@ -405,7 +405,7 @@ class ServiceManagerInfoActivity : BaseDataBindingActivity<ActivityServiceManage
                     if (deniedPermissions.isEmpty()) {
                         val currentLocation = locationInfo.getLocation()
                         if (currentLocation != null) {
-                            // 예시: 서울시청 좌표 (37.5665, 126.9780)
+                            // ?덉떆: ?쒖슱?쒖껌 醫뚰몴 (37.5665, 126.9780)
                             val seoulCityHall =
                                 android.location.Location("").apply {
                                     latitude = 37.5665
@@ -427,14 +427,14 @@ class ServiceManagerInfoActivity : BaseDataBindingActivity<ActivityServiceManage
                     if (deniedPermissions.isEmpty()) {
                         val currentLocation = locationInfo.getLocation()
                         if (currentLocation != null) {
-                            // 예시: 부산시청 좌표 (35.1796, 129.0756)
+                            // ?덉떆: 遺?곗떆泥?醫뚰몴 (35.1796, 129.0756)
                             val busanCityHall =
                                 android.location.Location("").apply {
                                     latitude = 35.1796
                                     longitude = 129.0756
                                 }
                             val bearing = locationInfo.calculateBearing(currentLocation, busanCityHall)
-                            addItem("Bearing to Busan City Hall: $bearing° (${getBearingDirection(bearing)})")
+                            addItem("Bearing to Busan City Hall: $bearing째 (${getBearingDirection(bearing)})")
                         } else {
                             addItem("Current Location is null")
                         }
@@ -449,7 +449,7 @@ class ServiceManagerInfoActivity : BaseDataBindingActivity<ActivityServiceManage
                     if (deniedPermissions.isEmpty()) {
                         val currentLocation = locationInfo.getLocation()
                         if (currentLocation != null) {
-                            // 예시: 서울시청 반경 10km 이내 확인
+                            // ?덉떆: ?쒖슱?쒖껌 諛섍꼍 10km ?대궡 ?뺤씤
                             val seoulCityHall =
                                 android.location.Location("").apply {
                                     latitude = 37.5665
@@ -479,14 +479,14 @@ class ServiceManagerInfoActivity : BaseDataBindingActivity<ActivityServiceManage
 
     private fun getBearingDirection(bearing: Float): String =
         when {
-            bearing >= 337.5 || bearing < 22.5 -> "북(N)"
-            bearing >= 22.5 && bearing < 67.5 -> "북동(NE)"
-            bearing >= 67.5 && bearing < 112.5 -> "동(E)"
-            bearing >= 112.5 && bearing < 157.5 -> "남동(SE)"
-            bearing >= 157.5 && bearing < 202.5 -> "남(S)"
-            bearing >= 202.5 && bearing < 247.5 -> "남서(SW)"
-            bearing >= 247.5 && bearing < 292.5 -> "서(W)"
-            bearing >= 292.5 && bearing < 337.5 -> "북서(NW)"
+            bearing >= 337.5 || bearing < 22.5 -> "遺?N)"
+            bearing >= 22.5 && bearing < 67.5 -> "遺곷룞(NE)"
+            bearing >= 67.5 && bearing < 112.5 -> "??E)"
+            bearing >= 112.5 && bearing < 157.5 -> "?⑤룞(SE)"
+            bearing >= 157.5 && bearing < 202.5 -> "??S)"
+            bearing >= 202.5 && bearing < 247.5 -> "?⑥꽌(SW)"
+            bearing >= 247.5 && bearing < 292.5 -> "??W)"
+            bearing >= 292.5 && bearing < 337.5 -> "遺곸꽌(NW)"
             else -> "Unknown"
         }
 }

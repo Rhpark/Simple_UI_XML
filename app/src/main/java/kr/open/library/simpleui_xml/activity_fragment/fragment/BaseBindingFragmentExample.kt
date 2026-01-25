@@ -21,7 +21,7 @@ class BaseBindingFragmentExample : BaseDataBindingFragment<FragmentBaseBindingEx
         binding.vm = vm
         lifecycle.addObserver(vm)
 
-        // Counter 값을 UI에 업데이트
+        // Counter 媛믪쓣 UI???낅뜲?댄듃
         viewLifecycleOwner.lifecycleScope.launch {
             vm.counter.collect { count ->
                 binding.tvCounter.text = "Count: $count"

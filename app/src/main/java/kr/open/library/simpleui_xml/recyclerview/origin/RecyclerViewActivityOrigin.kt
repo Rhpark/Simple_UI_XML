@@ -28,7 +28,7 @@ class RecyclerViewActivityOrigin : AppCompatActivity() {
 
     private var isScrolling = false
     private var accumulatedDy = 0
-    private var lastScrollDirection = "정지"
+    private var lastScrollDirection = "?뺤?"
     private val scrollDirectionThreshold = 20
 
     private var isAtTop = false
@@ -70,9 +70,9 @@ class RecyclerViewActivityOrigin : AppCompatActivity() {
                         RecyclerView.SCROLL_STATE_IDLE -> {
                             isScrolling = false
                             accumulatedDy = 0
-                            lastScrollDirection = "정지"
-                            binding.tvScrollInfo.text = "🔄 방향: 스크롤 정지"
-                            Log.d("SCROLL_ORIGIN", "Scroll Direction: 스크롤 정지")
+                            lastScrollDirection = "?뺤?"
+                            binding.tvScrollInfo.text = "?봽 諛⑺뼢: ?ㅽ겕濡??뺤?"
+                            Log.d("SCROLL_ORIGIN", "Scroll Direction: ?ㅽ겕濡??뺤?")
                         }
                         RecyclerView.SCROLL_STATE_DRAGGING -> {
                             isScrolling = true
@@ -92,11 +92,11 @@ class RecyclerViewActivityOrigin : AppCompatActivity() {
 
                     accumulatedDy += dy
                     if (abs(accumulatedDy) >= scrollDirectionThreshold) {
-                        val currentDirection = if (accumulatedDy > 0) "아래로 스크롤" else "위로 스크롤"
+                        val currentDirection = if (accumulatedDy > 0) "?꾨옒濡??ㅽ겕濡? else "?꾨줈 ?ㅽ겕濡?
 
                         if (currentDirection != lastScrollDirection) {
                             lastScrollDirection = currentDirection
-                            binding.tvScrollInfo.text = "🔄 방향: $currentDirection"
+                            binding.tvScrollInfo.text = "?봽 諛⑺뼢: $currentDirection"
                             Log.d("SCROLL_ORIGIN", "Scroll Direction: $currentDirection")
                         }
                         accumulatedDy = 0
@@ -111,17 +111,17 @@ class RecyclerViewActivityOrigin : AppCompatActivity() {
         val newIsAtTop = !recyclerView.canScrollVertically(-1)
         if (newIsAtTop != isAtTop) {
             isAtTop = newIsAtTop
-            val statusText = if (isAtTop) "도달" else "벗어남"
-            binding.tvScrollInfo.text = "📍 상단 $statusText"
-            Log.d("EDGE_ORIGIN", "Edge Detection: 상단 $statusText")
+            val statusText = if (isAtTop) "?꾨떖" else "踰쀬뼱??
+            binding.tvScrollInfo.text = "?뱧 ?곷떒 $statusText"
+            Log.d("EDGE_ORIGIN", "Edge Detection: ?곷떒 $statusText")
         }
 
         val newIsAtBottom = !recyclerView.canScrollVertically(1)
         if (newIsAtBottom != isAtBottom) {
             isAtBottom = newIsAtBottom
-            val statusText = if (isAtBottom) "도달" else "벗어남"
-            binding.tvScrollInfo.text = "📍 하단 $statusText"
-            Log.d("EDGE_ORIGIN", "Edge Detection: 하단 $statusText")
+            val statusText = if (isAtBottom) "?꾨떖" else "踰쀬뼱??
+            binding.tvScrollInfo.text = "?뱧 ?섎떒 $statusText"
+            Log.d("EDGE_ORIGIN", "Edge Detection: ?섎떒 $statusText")
         }
     }
 
@@ -141,8 +141,8 @@ class RecyclerViewActivityOrigin : AppCompatActivity() {
     private fun getItem(position: Int) =
         SampleItem(
             id = System.currentTimeMillis(),
-            title = "새 아이템 $position",
-            description = "동적으로 추가된 아이템입니다",
+            title = "???꾩씠??$position",
+            description = "?숈쟻?쇰줈 異붽????꾩씠?쒖엯?덈떎",
         )
 
     private fun currentRemoveAtAdapter(position: Int) {

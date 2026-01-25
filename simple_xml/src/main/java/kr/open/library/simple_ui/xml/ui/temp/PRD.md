@@ -25,6 +25,14 @@
 - 단일 ViewType을 기본으로 사용하고 필요 시 다중 ViewType으로 확장합니다.
 - 아이템 조작은 큐 API로 처리하고 완료 콜백으로 결과를 받습니다.
 
+## 예제 제공 범위(앱)
+- 예제 코드는 app 모듈의 simpleui_xml.temp 패키지에서 제공합니다.
+- 바인딩 선택 메뉴 1개 + 바인딩별 예제 메뉴 3개로 구성합니다(총 4개 메뉴).
+- 각 예제 메뉴는 예제 화면 4개로 구성합니다.
+- 예제 화면은 ListAdapter 단일/다중, RecyclerView.Adapter 단일/다중 흐름을 제공합니다.
+- 다중 타입 예제 코드는 temp/multi 하위로 분리합니다.
+- diff 옵션(diffExecutor/DiffUtil/커스텀 DiffCallback)을 기본 노출합니다.
+
 ## 구조(실제 구현 기준)
 - base: 공통 정책/헬퍼/추상 계층(OperationQueueCoordinator 포함)
   - base.list: ListAdapter 공통 코어

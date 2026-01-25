@@ -1,8 +1,10 @@
-﻿package kr.open.library.simpleui_xml.temp.data
+package kr.open.library.simpleui_xml.temp.data
+
+import kr.open.library.simpleui_xml.temp.multi.data.TempItemType
 
 /**
  * Example item model used by temp adapter samples.<br><br>
- * 임시 어댑터 샘플에서 사용하는 아이템 모델입니다.<br>
+ * temp 어댑터 샘플에서 사용하는 아이템 모델입니다.<br>
  */
 data class TempItem(
     /**

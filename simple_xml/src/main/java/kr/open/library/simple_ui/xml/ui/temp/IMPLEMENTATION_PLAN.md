@@ -8,7 +8,7 @@
 - 큐 기반 연산과 commitCallback을 기본 정책으로 적용합니다.
 - ListAdapter의 submitList 직접 호출은 경고하고 큐 API 사용을 권장합니다.
 - DiffUtil 정책과 Executor 주입을 제공하여 성능/테스트성을 확보합니다.
- - 아이템 변환은 기본적으로 백그라운드에서 처리하며 필요 시 메인 스레드로 전환합니다.
+- 아이템 변환은 기본적으로 백그라운드에서 처리하며 필요 시 메인 스레드로 전환합니다.
 - Diff 설정(diffCallback/diffExecutor/diffUtilEnabled)은 생성 시점에 결정합니다.
 - Simple은 단일 ViewType 전용, Normal은 단일/다중 ViewType을 모두 지원합니다.
 
@@ -38,14 +38,20 @@
    - `DefaultDiffCallback` 및 대량 변경 대응 전략 문서화
 6) 사용 흐름/예제 점검 (상태: 부분 완료)
    - 단일/다중 ViewType 흐름 확인
-   - 예제 화면 4개 분리(메뉴 포함) 반영
+   - 바인딩 선택 메뉴 + 바인딩별 예제 메뉴 + 예제 화면 4개 구성 반영
    - 큐 API 사용 흐름 확인
    - 큐 정책/디버그 리스너 적용 예제 확인
+   - diff 옵션(diffExecutor/DiffUtil/커스텀 DiffCallback) 노출 확인
 7) 테스트 추가 (상태: 부분 완료)
    - Robolectric 테스트: 큐 드롭 정책/검증 실패 시나리오
    - Robolectric 테스트: 클릭/롱클릭 동작 검증 보강
    - Robolectric 테스트: 큐 병합 동작 검증
    - 큐 순서/commitCallback/클릭 이벤트 검증
+8) 예제 패키지 구조 정리 (상태: 부분 완료)
+   - databinding/viewbinding/normal 기준으로 분리 완료
+   - adapter/activity 하위 패키지로 역할 분리 완료
+   - 다중 타입 예제는 temp/multi 하위로 분리 완료
+   - 공통 UI/옵션 로직의 base 이동은 보류(화면 인라인 유지)
 
 ## 구현 체크리스트
 - RecyclerView.Adapter / ListAdapter 모두 제공

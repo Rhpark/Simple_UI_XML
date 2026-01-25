@@ -17,12 +17,12 @@ import java.util.Locale
 /**
  * Crash Reporter for Verification Build
  * <br><br>
- * Verification 빌드용 크래시 리포터
+ * Verification 鍮뚮뱶???щ옒??由ы룷??
  * <br>
  *
- * @param cloudFunctionUrl Cloud Functions URL for crash reporting<br><br>크래시 보고용 Cloud Functions URL<br>
- * @param apiKey API Key for authentication<br><br>인증용 API 키<br>
- * @param appVersion App version name<br><br>앱 버전 이름<br>
+ * @param cloudFunctionUrl Cloud Functions URL for crash reporting<br><br>?щ옒??蹂닿퀬??Cloud Functions URL<br>
+ * @param apiKey API Key for authentication<br><br>?몄쬆??API ??br>
+ * @param appVersion App version name<br><br>??踰꾩쟾 ?대쫫<br>
  */
 class CrashReporter(
     private val cloudFunctionUrl: String,
@@ -37,18 +37,18 @@ class CrashReporter(
     ) {
         try {
             // Collect crash information
-            // 크래시 정보 수집
+            // ?щ옒???뺣낫 ?섏쭛
             Log.e(TAG, "Failed to report crash + $throwable")
             val crashData = collectCrashData(throwable)
 
             // Send crash report to Cloud Functions
-            // Cloud Functions로 크래시 보고 전송
+            // Cloud Functions濡??щ옒??蹂닿퀬 ?꾩넚
             sendCrashReport(crashData)
         } catch (e: Exception) {
             Log.e(TAG, "Failed to report crash", e)
         } finally {
             // Call default handler to terminate the app
-            // 기본 핸들러 호출하여 앱 종료
+            // 湲곕낯 ?몃뱾???몄텧?섏뿬 ??醫낅즺
             defaultHandler?.uncaughtException(thread, throwable)
         }
     }
@@ -56,11 +56,11 @@ class CrashReporter(
     /**
      * Collect crash data from throwable
      * <br><br>
-     * Throwable로부터 크래시 데이터 수집
+     * Throwable濡쒕????щ옒???곗씠???섏쭛
      * <br>
      *
-     * @param throwable Exception that caused the crash<br><br>크래시를 발생시킨 Exception<br>
-     * @return JSON object containing crash information<br><br>크래시 정보를 담은 JSON 객체<br>
+     * @param throwable Exception that caused the crash<br><br>?щ옒?쒕? 諛쒖깮?쒗궓 Exception<br>
+     * @return JSON object containing crash information<br><br>?щ옒???뺣낫瑜??댁? JSON 媛앹껜<br>
      */
     private fun collectCrashData(throwable: Throwable): JSONObject {
         val stackTrace =
@@ -83,14 +83,14 @@ class CrashReporter(
     /**
      * Send crash report to Cloud Functions
      * <br><br>
-     * Cloud Functions로 크래시 보고 전송
+     * Cloud Functions濡??щ옒??蹂닿퀬 ?꾩넚
      * <br>
      *
-     * @param crashData JSON object containing crash information<br><br>크래시 정보를 담은 JSON 객체<br>
+     * @param crashData JSON object containing crash information<br><br>?щ옒???뺣낫瑜??댁? JSON 媛앹껜<br>
      */
     private fun sendCrashReport(crashData: JSONObject) {
         // Send in background thread (quick execution before app dies)
-        // 백그라운드 스레드에서 전송 (앱이 죽기 전 빠른 실행)
+        // 諛깃렇?쇱슫???ㅻ젅?쒖뿉???꾩넚 (?깆씠 二쎄린 ??鍮좊Ⅸ ?ㅽ뻾)
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val url = URL(cloudFunctionUrl)
@@ -106,7 +106,7 @@ class CrashReporter(
                 }
 
                 // Send JSON data
-                // JSON 데이터 전송
+                // JSON ?곗씠???꾩넚
                 connection.outputStream.use { outputStream ->
                     outputStream.write(crashData.toString().toByteArray())
                 }
@@ -119,7 +119,7 @@ class CrashReporter(
         }
 
         // Wait briefly for transmission to complete
-        // 전송 완료를 위해 잠시 대기
+        // ?꾩넚 ?꾨즺瑜??꾪빐 ?좎떆 ?湲?
         Thread.sleep(500)
     }
 

@@ -35,7 +35,7 @@ class FragmentContainerActivity : BaseDataBindingActivity<ActivityFragmentContai
             .replace(R.id.fragmentContainer, fragment)
             .commit()
 
-        // Title 설정
+        // Title ?ㅼ젙
         val title = when (fragmentType) {
             BASE_FRAGMENT -> "BaseFragment Example"
             BASE_BINDING_FRAGMENT -> "BaseBindingFragment Example"

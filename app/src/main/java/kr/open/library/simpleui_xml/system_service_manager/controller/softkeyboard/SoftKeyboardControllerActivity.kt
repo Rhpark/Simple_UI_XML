@@ -11,7 +11,7 @@ import kr.open.library.simpleui_xml.databinding.ActivitySoftkeyboardControllerBi
 
 /**
  * Sample activity demonstrating SoftKeyboardController usage.<br><br>
- * SoftKeyboardController 사용법을 보여주는 샘플 액티비티입니다.<br>
+ * SoftKeyboardController ?ъ슜踰뺤쓣 蹂댁뿬二쇰뒗 ?섑뵆 ?≫떚鍮꾪떚?낅땲??<br>
  */
 class SoftKeyboardControllerActivity : BaseActivity(R.layout.activity_softkeyboard_controller) {
     private lateinit var binding: ActivitySoftkeyboardControllerBinding
@@ -19,7 +19,7 @@ class SoftKeyboardControllerActivity : BaseActivity(R.layout.activity_softkeyboa
     private val softKeyboardController by lazy { getSoftKeyboardController() }
 
     // Store Job references for potential cancellation
-    // 취소 가능성을 위한 Job 참조 저장
+    // 痍⑥냼 媛?μ꽦???꾪븳 Job 李몄“ ???
     private var showDelayJob: Job? = null
     private var hideDelayJob: Job? = null
 
@@ -33,45 +33,45 @@ class SoftKeyboardControllerActivity : BaseActivity(R.layout.activity_softkeyboa
 
     private fun initListener() {
         binding.run {
-            // Basic show - 기본 표시
+            // Basic show - 湲곕낯 ?쒖떆
             btnShow.setOnClickListener {
                 edtTest.isFocusable = true
                 softKeyboardController.show(edtTest)
                 toastShowShort("Show keyboard")
             }
 
-            // Basic hide - 기본 숨김
+            // Basic hide - 湲곕낯 ?④?
             btnHide.setOnClickListener {
                 softKeyboardController.hide(edtTest)
                 toastShowShort("Hide keyboard")
             }
 
-            // Delayed show with Job (cancellable) - Job으로 지연 표시 (취소 가능)
+            // Delayed show with Job (cancellable) - Job?쇰줈 吏???쒖떆 (痍⑥냼 媛??
             btnShowDelay.setOnClickListener {
                 edtTest.isFocusable = true
-                // Cancel previous job if exists - 이전 작업이 있으면 취소
+                // Cancel previous job if exists - ?댁쟾 ?묒뾽???덉쑝硫?痍⑥냼
                 showDelayJob?.cancel()
-                // Launch new delayed show - 새로운 지연 표시 실행
+                // Launch new delayed show - ?덈줈??吏???쒖떆 ?ㅽ뻾
                 showDelayJob = softKeyboardController.showDelay(edtTest, 300, coroutineScope = lifecycleScope)
                 toastShowShort("Show keyboard with 300ms delay")
             }
 
-            // Delayed hide with Job (cancellable) - Job으로 지연 숨김 (취소 가능)
+            // Delayed hide with Job (cancellable) - Job?쇰줈 吏???④? (痍⑥냼 媛??
             btnHideDelay.setOnClickListener {
-                // Cancel previous job if exists - 이전 작업이 있으면 취소
+                // Cancel previous job if exists - ?댁쟾 ?묒뾽???덉쑝硫?痍⑥냼
                 hideDelayJob?.cancel()
-                // Launch new delayed hide - 새로운 지연 숨김 실행
+                // Launch new delayed hide - ?덈줈??吏???④? ?ㅽ뻾
                 hideDelayJob = softKeyboardController.hideDelay(edtTest, 300, coroutineScope = lifecycleScope)
                 toastShowShort("Hide keyboard with 300ms delay")
             }
 
-            // Window mode: Adjust Pan - 윈도우 모드: Adjust Pan
+            // Window mode: Adjust Pan - ?덈룄??紐⑤뱶: Adjust Pan
             btnSetAdjustPan.setOnClickListener {
                 softKeyboardController.setAdjustPan(window)
                 toastShowShort("Set Adjust Pan Mode")
             }
 
-            // Window mode: Adjust Resize - 윈도우 모드: Adjust Resize
+            // Window mode: Adjust Resize - ?덈룄??紐⑤뱶: Adjust Resize
             btnSetAdjustResize.setOnClickListener {
                 softKeyboardController.setAdjustResize(window)
                 toastShowShort("Set Adjust Resize Mode")
@@ -80,7 +80,7 @@ class SoftKeyboardControllerActivity : BaseActivity(R.layout.activity_softkeyboa
     }
 
     override fun onDestroy() {
-        // Cancel pending jobs on destroy - 종료 시 대기 중인 작업 취소
+        // Cancel pending jobs on destroy - 醫낅즺 ???湲?以묒씤 ?묒뾽 痍⑥냼
         showDelayJob?.cancel()
         hideDelayJob?.cancel()
         super.onDestroy()

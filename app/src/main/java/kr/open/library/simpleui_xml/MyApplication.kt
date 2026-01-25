@@ -9,7 +9,7 @@ class MyApplication : Application() {
         super.onCreate()
         Logx.init(this)
         // Setup crash reporter for verification build only
-        // Verification 빌드에서만 크래시 리포터 설정
+        // Verification 鍮뚮뱶?먯꽌留??щ옒??由ы룷???ㅼ젙
         Logx.d("BuildConfig.BUILD_TYPE_NAME ${BuildConfig.BUILD_TYPE_NAME}")
         if (BuildConfig.BUILD_TYPE_NAME == "verification") {
             setupCrashReporter()
@@ -19,7 +19,7 @@ class MyApplication : Application() {
     /**
      * Setup crash reporter for verification build
      * <br><br>
-     * Verification 빌드용 크래시 리포터 설정
+     * Verification 鍮뚮뱶???щ옒??由ы룷???ㅼ젙
      * <br>
      */
     private fun setupCrashReporter() {

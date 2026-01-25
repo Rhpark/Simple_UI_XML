@@ -27,24 +27,24 @@ class BaseDialogFragmentExample : BaseDialogFragment(R.layout.dialog_base_dialog
         super.onViewCreated(view, savedInstanceState)
         Logx.d("BaseDialogFragmentExample - onViewCreated() called")
 
-        // resizeDialog 호출 - 화면의 80% 너비, 50% 높이
+        // resizeDialog ?몄텧 - ?붾㈃??80% ?덈퉬, 50% ?믪씠
         resizeDialog(0.8f, null)
         Logx.d("BaseDialogFragmentExample - resizeDialog(0.8f, 0.5f) called")
 
-        // UI 초기화
+        // UI 珥덇린??
         view.findViewById<TextView>(R.id.tvDialogTitle).text = "BaseDialogFragment Example"
         view.findViewById<TextView>(R.id.tvDialogContent).text =
             "This dialog uses resizeDialog(0.8f, 0.5f)\n\n" +
             "Width: 80% of screen\n" +
             "Height: 50% of screen"
 
-        // OK 버튼
+        // OK 踰꾪듉
         view.findViewById<Button>(R.id.btnOk).setOnClickListener {
             Logx.d("BaseDialogFragmentExample - OK button clicked")
             safeDismiss()
         }
 
-        // Cancel 버튼
+        // Cancel 踰꾪듉
         view.findViewById<Button>(R.id.btnCancel).setOnClickListener {
             Logx.d("BaseDialogFragmentExample - Cancel button clicked")
             safeDismiss()

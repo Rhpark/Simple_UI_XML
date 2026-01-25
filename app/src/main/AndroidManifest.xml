@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-    <!-- 권한 선언 -->
+    <!-- 沅뚰븳 ?좎뼵 -->
     <uses-feature
         android:name="android.hardware.camera"
         android:required="false" />
@@ -39,7 +39,7 @@
         android:theme="@style/Theme.SimpleUI_XML"
         tools:targetApi="31">
 
-        <!-- Firebase Crashlytics 데이터 수집 제어 -->
+        <!-- Firebase Crashlytics ?곗씠???섏쭛 ?쒖뼱 -->
         <meta-data
             android:name="firebase_crashlytics_collection_enabled"
             android:value="${crashlytics_collection_enabled}" />
@@ -98,19 +98,52 @@
             android:name=".permission.PermissionsActivity"
             android:exported="false" />
         <activity
-            android:name=".temp.ui.TempAdapterExampleActivity"
+            android:name=".temp.base.TempAdapterBindingMenuActivity"
             android:exported="false" />
         <activity
-            android:name=".temp.ui.TempAdapterListSingleActivity"
+            android:name=".temp.databinding.activity.TempAdapterExampleActivity"
             android:exported="false" />
         <activity
-            android:name=".temp.ui.TempAdapterListMultiActivity"
+            android:name=".temp.databinding.activity.TempAdapterListSingleActivity"
             android:exported="false" />
         <activity
-            android:name=".temp.ui.TempAdapterRcvSingleActivity"
+            android:name=".temp.multi.databinding.activity.TempAdapterListMultiActivity"
             android:exported="false" />
         <activity
-            android:name=".temp.ui.TempAdapterRcvMultiActivity"
+            android:name=".temp.databinding.activity.TempAdapterRcvSingleActivity"
+            android:exported="false" />
+        <activity
+            android:name=".temp.multi.databinding.activity.TempAdapterRcvMultiActivity"
+            android:exported="false" />
+        <activity
+            android:name=".temp.viewbinding.activity.TempAdapterExampleActivity"
+            android:exported="false" />
+        <activity
+            android:name=".temp.viewbinding.activity.TempAdapterListSingleActivity"
+            android:exported="false" />
+        <activity
+            android:name=".temp.multi.viewbinding.activity.TempAdapterListMultiActivity"
+            android:exported="false" />
+        <activity
+            android:name=".temp.viewbinding.activity.TempAdapterRcvSingleActivity"
+            android:exported="false" />
+        <activity
+            android:name=".temp.multi.viewbinding.activity.TempAdapterRcvMultiActivity"
+            android:exported="false" />
+        <activity
+            android:name=".temp.normal.activity.TempAdapterExampleActivity"
+            android:exported="false" />
+        <activity
+            android:name=".temp.normal.activity.TempAdapterListSingleActivity"
+            android:exported="false" />
+        <activity
+            android:name=".temp.multi.normal.activity.TempAdapterListMultiActivity"
+            android:exported="false" />
+        <activity
+            android:name=".temp.normal.activity.TempAdapterRcvSingleActivity"
+            android:exported="false" />
+        <activity
+            android:name=".temp.multi.normal.activity.TempAdapterRcvMultiActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"

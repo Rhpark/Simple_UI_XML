@@ -21,8 +21,7 @@ class BaseFragmentExample : BaseFragment(R.layout.fragment_base_example) {
         super.onViewCreated(view, savedInstanceState)
         Logx.d("BaseFragmentExample - onViewCreated() called")
 
-        // rootView 클릭 리스너 - 배경색 랜덤 변경
-        getRootView().setOnClickListener {
+        // rootView ?대┃ 由ъ뒪??- 諛곌꼍???쒕뜡 蹂寃?        getRootView().setOnClickListener {
             val randomColor =
                 Color.rgb(
                     Random.nextInt(256),

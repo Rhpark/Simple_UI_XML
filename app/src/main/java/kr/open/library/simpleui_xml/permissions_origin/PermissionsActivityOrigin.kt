@@ -38,7 +38,7 @@ class PermissionsActivityOrigin : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // DataBinding 설정
+        // DataBinding ?ㅼ젙
         binding = DataBindingUtil.setContentView(this, R.layout.activity_permissions_origin)
         binding.vm = viewModel
         binding.lifecycleOwner = this
@@ -56,7 +56,7 @@ class PermissionsActivityOrigin : AppCompatActivity() {
     }
 
     private fun observeViewModel() {
-        // Event 처리
+        // Event 泥섎━
         lifecycleScope.launch {
             viewModel.events.collect { event ->
                 when (event) {
@@ -78,25 +78,25 @@ class PermissionsActivityOrigin : AppCompatActivity() {
             }
         }
 
-        // Permission Results 관찰
+        // Permission Results 愿李?
         lifecycleScope.launch { viewModel.permissionResults.collect { results -> adapter.submitList(results) } }
     }
 
     private fun requestPermissions(permissions: List<String>) {
-        // 일반 권한과 특수 권한 분리
+        // ?쇰컲 沅뚰븳怨??뱀닔 沅뚰븳 遺꾨━
         val normalPermissions = permissions.filter { it != Manifest.permission.SYSTEM_ALERT_WINDOW }
         val hasOverlayPermission = permissions.contains(Manifest.permission.SYSTEM_ALERT_WINDOW)
 
-        // 일반 권한 처리
+        // ?쇰컲 沅뚰븳 泥섎━
         val normalPermissionsToRequest =
             normalPermissions.filter { permission ->
                 ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED
             }
 
-        // 오버레이 권한 상태 확인
+        // ?ㅻ쾭?덉씠 沅뚰븳 ?곹깭 ?뺤씤
         val overlayPermissionGranted = Settings.canDrawOverlays(this)
 
-        // 요청할 권한들 상태 체크
+        // ?붿껌??沅뚰븳???곹깭 泥댄겕
         val allNormalGranted = normalPermissionsToRequest.isEmpty()
         val allOverlayGranted = !hasOverlayPermission || overlayPermissionGranted
 
@@ -107,12 +107,12 @@ class PermissionsActivityOrigin : AppCompatActivity() {
             return
         }
 
-        // 일반 권한 요청
+        // ?쇰컲 沅뚰븳 ?붿껌
         if (normalPermissionsToRequest.isNotEmpty()) {
             requestMultiplePermissionsLauncher.launch(normalPermissionsToRequest.toTypedArray())
         }
 
-        // 오버레이 권한 요청
+        // ?ㅻ쾭?덉씠 沅뚰븳 ?붿껌
         if (hasOverlayPermission && !overlayPermissionGranted) {
             requestOverlayPermission()
         }
@@ -131,10 +131,10 @@ class PermissionsActivityOrigin : AppCompatActivity() {
             buildString {
                 append("Requested: ${permissions.keys.joinToString(", ")}\n")
                 if (grantedPermissions.isNotEmpty()) {
-                    append("✅ Granted: ${grantedPermissions.joinToString(", ")}\n")
+                    append("??Granted: ${grantedPermissions.joinToString(", ")}\n")
                 }
                 if (deniedPermissions.isNotEmpty()) {
-                    append("❌ Denied: ${deniedPermissions.joinToString(", ")}")
+                    append("??Denied: ${deniedPermissions.joinToString(", ")}")
                 }
             }
 
@@ -148,7 +148,7 @@ class PermissionsActivityOrigin : AppCompatActivity() {
             }
         Snackbar
             .make(binding.root, snackbarMessage, Snackbar.LENGTH_SHORT)
-            .setAction("OK") { /* 확인 */ }
+            .setAction("OK") { /* ?뺤씤 */ }
             .show()
     }
 
@@ -158,9 +158,9 @@ class PermissionsActivityOrigin : AppCompatActivity() {
             buildString {
                 append("Special Permission Request Result:\n")
                 if (isGranted) {
-                    append("✅ SYSTEM_ALERT_WINDOW: Granted")
+                    append("??SYSTEM_ALERT_WINDOW: Granted")
                 } else {
-                    append("❌ SYSTEM_ALERT_WINDOW: Denied")
+                    append("??SYSTEM_ALERT_WINDOW: Denied")
                 }
             }
 
@@ -172,6 +172,6 @@ class PermissionsActivityOrigin : AppCompatActivity() {
             } else {
                 "Overlay permission denied"
             }
-        Snackbar.make(binding.root, snackbarMessage, Snackbar.LENGTH_SHORT).setAction("OK") { /* 확인 */ }.show()
+        Snackbar.make(binding.root, snackbarMessage, Snackbar.LENGTH_SHORT).setAction("OK") { /* ?뺤씤 */ }.show()
     }
 }
