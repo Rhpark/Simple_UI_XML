@@ -1,4 +1,4 @@
-package kr.open.library.simpleui_xml.permissions_origin
+﻿package kr.open.library.simpleui_xml.permissions_origin
 
 import android.Manifest
 import android.content.Intent
@@ -38,7 +38,7 @@ class PermissionsActivityOrigin : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // DataBinding ?ㅼ젙
+        // DataBinding setup - DataBinding 설정
         binding = DataBindingUtil.setContentView(this, R.layout.activity_permissions_origin)
         binding.vm = viewModel
         binding.lifecycleOwner = this
@@ -56,7 +56,7 @@ class PermissionsActivityOrigin : AppCompatActivity() {
     }
 
     private fun observeViewModel() {
-        // Event 泥섎━
+        // Event handling - 이벤트 처리
         lifecycleScope.launch {
             viewModel.events.collect { event ->
                 when (event) {
@@ -78,25 +78,25 @@ class PermissionsActivityOrigin : AppCompatActivity() {
             }
         }
 
-        // Permission Results 愿李?
+        // Permission results observe - 권한 결과 관찰
         lifecycleScope.launch { viewModel.permissionResults.collect { results -> adapter.submitList(results) } }
     }
 
     private fun requestPermissions(permissions: List<String>) {
-        // ?쇰컲 沅뚰븳怨??뱀닔 沅뚰븳 遺꾨━
+        // Split normal/special permissions - 일반/특수 권한 분리
         val normalPermissions = permissions.filter { it != Manifest.permission.SYSTEM_ALERT_WINDOW }
         val hasOverlayPermission = permissions.contains(Manifest.permission.SYSTEM_ALERT_WINDOW)
 
-        // ?쇰컲 沅뚰븳 泥섎━
+        // Handle normal permissions - 일반 권한 처리
         val normalPermissionsToRequest =
             normalPermissions.filter { permission ->
                 ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED
             }
 
-        // ?ㅻ쾭?덉씠 沅뚰븳 ?곹깭 ?뺤씤
+        // Check overlay permission status - 오버레이 권한 상태 확인
         val overlayPermissionGranted = Settings.canDrawOverlays(this)
 
-        // ?붿껌??沅뚰븳???곹깭 泥댄겕
+        // Check request status - 요청 상태 확인
         val allNormalGranted = normalPermissionsToRequest.isEmpty()
         val allOverlayGranted = !hasOverlayPermission || overlayPermissionGranted
 
@@ -107,12 +107,12 @@ class PermissionsActivityOrigin : AppCompatActivity() {
             return
         }
 
-        // ?쇰컲 沅뚰븳 ?붿껌
+        // Request normal permissions - 일반 권한 요청
         if (normalPermissionsToRequest.isNotEmpty()) {
             requestMultiplePermissionsLauncher.launch(normalPermissionsToRequest.toTypedArray())
         }
 
-        // ?ㅻ쾭?덉씠 沅뚰븳 ?붿껌
+        // Request overlay permission - 오버레이 권한 요청
         if (hasOverlayPermission && !overlayPermissionGranted) {
             requestOverlayPermission()
         }
@@ -131,10 +131,10 @@ class PermissionsActivityOrigin : AppCompatActivity() {
             buildString {
                 append("Requested: ${permissions.keys.joinToString(", ")}\n")
                 if (grantedPermissions.isNotEmpty()) {
-                    append("??Granted: ${grantedPermissions.joinToString(", ")}\n")
+                    append("Granted: ${grantedPermissions.joinToString(", ")}\n")
                 }
                 if (deniedPermissions.isNotEmpty()) {
-                    append("??Denied: ${deniedPermissions.joinToString(", ")}")
+                    append("Denied: ${deniedPermissions.joinToString(", ")}")
                 }
             }
 
@@ -148,7 +148,7 @@ class PermissionsActivityOrigin : AppCompatActivity() {
             }
         Snackbar
             .make(binding.root, snackbarMessage, Snackbar.LENGTH_SHORT)
-            .setAction("OK") { /* ?뺤씤 */ }
+            .setAction("OK") { /* OK / 확인 */ }
             .show()
     }
 
@@ -158,9 +158,9 @@ class PermissionsActivityOrigin : AppCompatActivity() {
             buildString {
                 append("Special Permission Request Result:\n")
                 if (isGranted) {
-                    append("??SYSTEM_ALERT_WINDOW: Granted")
+                    append("SYSTEM_ALERT_WINDOW: Granted")
                 } else {
-                    append("??SYSTEM_ALERT_WINDOW: Denied")
+                    append("SYSTEM_ALERT_WINDOW: Denied")
                 }
             }
 
@@ -172,6 +172,6 @@ class PermissionsActivityOrigin : AppCompatActivity() {
             } else {
                 "Overlay permission denied"
             }
-        Snackbar.make(binding.root, snackbarMessage, Snackbar.LENGTH_SHORT).setAction("OK") { /* ?뺤씤 */ }.show()
+        Snackbar.make(binding.root, snackbarMessage, Snackbar.LENGTH_SHORT).setAction("OK") { /* OK / 확인 */ }.show()
     }
 }

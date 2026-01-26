@@ -1,4 +1,4 @@
-package kr.open.library.simpleui_xml.activity_fragment.fragment
+﻿package kr.open.library.simpleui_xml.activity_fragment.fragment
 
 import android.os.Bundle
 import androidx.lifecycle.Lifecycle
@@ -21,7 +21,7 @@ class BaseBindingFragmentExample : BaseDataBindingFragment<FragmentBaseBindingEx
         binding.vm = vm
         lifecycle.addObserver(vm)
 
-        // Counter 媛믪쓣 UI???낅뜲?댄듃
+        // Update counter on UI - 카운터 값을 UI에 업데이트
         viewLifecycleOwner.lifecycleScope.launch {
             vm.counter.collect { count ->
                 binding.tvCounter.text = "Count: $count"

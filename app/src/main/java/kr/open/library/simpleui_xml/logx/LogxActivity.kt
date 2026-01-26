@@ -43,7 +43,7 @@ class LogxActivity : BaseDataBindingActivity<ActivityLogxBinding>(R.layout.activ
     }
 
     /**
-     * 湲곕낯 濡쒓퉭 湲곕뒫 ?쒖뿰
+     * 기본 로깅 기능 시연
      */
     private fun demonstrateBasicLogging() {
         Logx.v("VERBOSE LEVEL")
@@ -54,12 +54,12 @@ class LogxActivity : BaseDataBindingActivity<ActivityLogxBinding>(R.layout.activ
     }
 
     /**
-     * JSON ?щ㎎??湲곕뒫 ?쒖뿰
+     * JSON 포맷팅 기능 시연
      */
     private fun demonstrateJsonLogging() {
         val jsonData =
             """
-            {"user": {"name": "?띻만??,"age": 30,"skills": ["Kotlin", "Android", "Java"]},"timestamp": "${System.currentTimeMillis()}"}
+            {"user": {"name": "홍길동","age": 30,"skills": ["Kotlin", "Android", "Java"]},"timestamp": "${System.currentTimeMillis()}"}
             """.trimIndent()
 
         Logx.j("JSON_DEMO", jsonData)
@@ -67,67 +67,67 @@ class LogxActivity : BaseDataBindingActivity<ActivityLogxBinding>(R.layout.activ
     }
 
     /**
-     * Parent Method 異붿쟻 湲곕뒫 ?쒖뿰
+     * Parent Method 추적 기능 시연
      */
     private fun parentMethodExample() {
         nestedMethodLevel1()
     }
 
     private fun nestedMethodLevel1() {
-        Logx.p("Parent Method 異붿쟻: ?대뼡 ?⑥닔?먯꽌 ?몄텧?섏뿀?붿? ?뺤씤")
-        Logx.d("?쇰컲 濡쒓렇: ?몄텧 ?꾩튂媛 ?쒖떆?섏? ?딆쓬")
+        Logx.p("Parent Method 추적: 어떤 함수에서 호출되었는지 확인")
+        Logx.d("일반 로그: 호출 위치가 표시되지 않음")
     }
 
     /**
-     * Thread ID 異붿쟻 湲곕뒫 ?쒖뿰
+     * Thread ID 추적 기능 시연
      */
     private fun demonstrateThreadTracking() {
         // Main Thread
-        Logx.t("Main Thread?먯꽌??濡쒓퉭")
+        Logx.t("Main Thread에서의 로깅")
 
         // Background Thread
-        lifecycleScope.launch(Dispatchers.IO) { Logx.t("Background Thread?먯꽌??濡쒓퉭") }
+        lifecycleScope.launch(Dispatchers.IO) { Logx.t("Background Thread에서의 로깅") }
     }
 
     /**
-     * ?뚯씪 ???湲곕뒫 ?쒖뿰
+     * 파일 저장 기능 시연
      */
     private fun demonstrateFileLogging() {
         Logx.setSaveToFile(true)
 
-        Logx.d("FILE_SAVE", "??濡쒓렇???뚯씪?먮룄 ??λ맗?덈떎")
-        Logx.i("FILE_SAVE", "?뚯씪 寃쎈줈: ${Logx.getFilePath()}")
-        Logx.w("FILE_SAVE", "??μ냼 ?뺣낫: ${Logx.getStorageInfo()}")
+        Logx.d("FILE_SAVE", "이 로그는 파일에도 저장됩니다")
+        Logx.i("FILE_SAVE", "파일 경로: ${Logx.getFilePath()}")
+        Logx.w("FILE_SAVE", "저장소 정보: ${Logx.getStorageInfo()}")
 
         val storageInfo = Logx.getStorageInfo()
         val currentPath = storageInfo[LogxStorageType.APP_EXTERNAL] ?: "Unknown"
-        Logx.i("FILE_SAVE", "?뚯씪 ????꾨즺!\n寃쎈줈: $currentPath")
+        Logx.i("FILE_SAVE", "파일 저장 완료!\n경로: $currentPath")
     }
 
     /**
-     * ??μ냼 ???蹂寃??쒖뿰
+     * 저장소 타입 변경 시연
      */
     private fun demonstrateStorageConfig() {
-        // ?대? ??μ냼濡?蹂寃?
+        // 내부 저장소로 변경
         Logx.setInternalStorage()
-        Logx.d("STORAGE", "?대? ??μ냼濡?蹂寃쎈맖")
+        Logx.d("STORAGE", "내부 저장소로 변경됨")
 
-        // ???꾩슜 ?몃? ??μ냼濡?蹂寃?
+        // 앱 전용 외부 저장소로 변경
         Logx.setAppExternalStorage()
-        Logx.d("STORAGE", "???꾩슜 ?몃? ??μ냼濡?蹂寃쎈맖")
+        Logx.d("STORAGE", "앱 전용 외부 저장소로 변경됨")
 
         val storageInfo = Logx.getStorageInfo()
-        Logx.i("STORAGE", "?ъ슜 媛?ν븳 ??μ냼?? $storageInfo")
+        Logx.i("STORAGE", "사용 가능한 저장소들: $storageInfo")
     }
 
     /**
-     * DSL 怨좉툒 ?ㅼ젙 ?쒖뿰
+     * DSL 고급 설정 시연
      */
     private fun demonstrateAdvancedConfig() {
-        // 癒쇱? ??μ냼 ????ㅼ젙
+        // 먼저 저장소 타입 설정
         Logx.setAppExternalStorage()
 
-        // DSL???ъ슜??怨좉툒 ?ㅼ젙
+        // DSL을 사용한 고급 설정
         Logx.configure {
             appName = "RhParkLogx"
             debugMode = true
@@ -139,7 +139,7 @@ class LogxActivity : BaseDataBindingActivity<ActivityLogxBinding>(R.layout.activ
             }
 
             logTypes {
-                all() // 紐⑤뱺 濡쒓렇 ????덉슜
+                all() // 모든 로그 타입 허용
             }
 
             filters {
@@ -147,17 +147,17 @@ class LogxActivity : BaseDataBindingActivity<ActivityLogxBinding>(R.layout.activ
             }
         }
 
-        Logx.d("DSL_CONFIG", "DSL濡??ㅼ젙 ?꾨즺!")
-        Logx.i("DSL_CONFIG", "???대쫫: ${Logx.getAppName()}")
-        Logx.i("DSL_CONFIG", "?붾쾭洹?紐⑤뱶: ${Logx.getDebugMode()}")
-        Logx.p("DSL_CONFIG", "Parent 異붿쟻???쒖꽦?붾맖")
+        Logx.d("DSL_CONFIG", "DSL로 설정 완료!")
+        Logx.i("DSL_CONFIG", "앱 이름: ${Logx.getAppName()}")
+        Logx.i("DSL_CONFIG", "디버그 모드: ${Logx.getDebugMode()}")
+        Logx.p("DSL_CONFIG", "Parent 추적도 활성화됨")
     }
 
     /**
-     * 濡쒓렇 ?꾪꽣留?湲곕뒫 ?쒖뿰
+     * 로그 필터링 기능 시연
      */
     private fun demonstrateLogFiltering() {
-        // DSL濡??꾪꽣留??ㅼ젙
+        // DSL로 필터링 설정
         Logx.configure {
             debugMode = true
             debugFilter = true
@@ -166,7 +166,7 @@ class LogxActivity : BaseDataBindingActivity<ActivityLogxBinding>(R.layout.activ
                 +LogxType.ERROR
                 +LogxType.WARN
                 +LogxType.INFO
-                // VERBOSE? DEBUG???쒖쇅
+                // VERBOSE와 DEBUG는 제외
             }
 
             filters {
@@ -174,31 +174,31 @@ class LogxActivity : BaseDataBindingActivity<ActivityLogxBinding>(R.layout.activ
             }
         }
 
-        // ?꾪꽣留??뚯뒪??
-        Logx.v("FILTER_TEST", "??VERBOSE 濡쒓렇???쒖떆?섏? ?딆뒿?덈떎")
-        Logx.d("FILTER_TEST", "??DEBUG 濡쒓렇???쒖떆?섏? ?딆뒿?덈떎")
-        Logx.i("FILTER_TEST", "??INFO 濡쒓렇???쒖떆?⑸땲??)
-        Logx.w("FILTER_TEST", "??WARNING 濡쒓렇???쒖떆?⑸땲??)
-        Logx.e("FILTER_TEST", "??ERROR 濡쒓렇???쒖떆?⑸땲??)
+        // 필터링 테스트
+        Logx.v("FILTER_TEST", "이 VERBOSE 로그는 표시되지 않습니다")
+        Logx.d("FILTER_TEST", "이 DEBUG 로그는 표시되지 않습니다")
+        Logx.i("FILTER_TEST", "이 INFO 로그는 표시됩니다")
+        Logx.w("FILTER_TEST", "이 WARNING 로그는 표시됩니다")
+        Logx.e("FILTER_TEST", "이 ERROR 로그는 표시됩니다")
 
-        // ?쒓렇 ?꾪꽣留??뚯뒪??
-        Logx.i("ALLOWED_TAG", "??濡쒓렇???덉슜???쒓렇?낅땲??)
-        Logx.i("BLOCKED_TAG", "??濡쒓렇??李⑤떒???쒓렇?낅땲??)
+        // 태그 필터링 테스트
+        Logx.i("ALLOWED_TAG", "이 로그는 허용된 태그입니다")
+        Logx.i("BLOCKED_TAG", "이 로그는 차단된 태그입니다")
 
-        // ?꾪꽣 珥덇린??
+        // 필터 초기화
         lifecycleScope.launch {
             kotlinx.coroutines.delay(3000)
             Logx.configure {
                 debugFilter = false
                 logTypes {
-                    all() // 紐⑤뱺 ????덉슜
+                    all() // 모든 타입 허용
                 }
                 filters {
-                    clear() // ?꾪꽣 ?쒓굅
+                    clear() // 필터 제거
                 }
             }
-            Logx.i("?꾪꽣留??댁젣??)
+            Logx.i("필터링 해제됨")
         }
-        Logx.i("濡쒓렇 ?꾪꽣留??쒖뿰 ?꾨즺!\n3珥????꾪꽣 ?댁젣")
+        Logx.i("로그 필터링 시연 완료!\n3초 후 필터 해제")
     }
 }

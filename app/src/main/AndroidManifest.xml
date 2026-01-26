@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-    <!-- 沅뚰븳 ?좎뼵 -->
+    <!-- Permissions declaration / 권한 선언 -->
     <uses-feature
         android:name="android.hardware.camera"
         android:required="false" />
@@ -39,7 +39,7 @@
         android:theme="@style/Theme.SimpleUI_XML"
         tools:targetApi="31">
 
-        <!-- Firebase Crashlytics ?곗씠???섏쭛 ?쒖뼱 -->
+        <!-- Firebase Crashlytics configuration / Firebase Crashlytics 설정 -->
         <meta-data
             android:name="firebase_crashlytics_collection_enabled"
             android:value="${crashlytics_collection_enabled}" />

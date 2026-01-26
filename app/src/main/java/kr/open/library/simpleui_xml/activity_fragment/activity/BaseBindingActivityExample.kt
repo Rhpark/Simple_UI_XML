@@ -1,4 +1,4 @@
-package kr.open.library.simpleui_xml.activity_fragment.activity
+﻿package kr.open.library.simpleui_xml.activity_fragment.activity
 
 import android.os.Bundle
 import androidx.activity.viewModels
@@ -33,7 +33,7 @@ class BaseBindingActivityExample :
             }
         }
 
-        // Counter 媛믪쓣 UI???낅뜲?댄듃
+        // Update counter on UI - 카운터 값을 UI에 업데이트
         lifecycleScope.launch {
             vm.counter.collect { count ->
                 getBinding().tvCounter.text = "Count: $count"

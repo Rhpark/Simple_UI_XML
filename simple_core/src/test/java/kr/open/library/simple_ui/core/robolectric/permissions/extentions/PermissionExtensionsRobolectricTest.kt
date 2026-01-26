@@ -208,7 +208,7 @@ class PermissionExtensionsRobolectricTest {
 
     @Test
     fun hasPermissions_emptyList_returnsTrue() {
-        // When & Then (�?권한 목록?� 모두 granted�?간주)
+        // When & Then - Treat empty permission list as granted / 빈 권한 목록은 granted로 간주
         assertTrue(context.hasPermissions())
     }
 
@@ -367,7 +367,7 @@ class PermissionExtensionsRobolectricTest {
 
     @Test
     fun hasPermission_unknownPermission_doesNotCrash() {
-        // When & Then - ?????�는 권한???�래???�이 처리
+        // When & Then - Unknown permission handled gracefully / 알 수 없는 권한도 예외 없이 처리
         val result = context.hasPermission("com.unknown.PERMISSION")
         assertNotNull(result)
     }

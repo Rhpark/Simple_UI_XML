@@ -21,10 +21,10 @@ class RecyclerViewActivity : BaseDataBindingActivity<ActivityRecyclerviewBinding
     private val simpleListAdapter = SimpleBindingRcvListAdapter<SampleItem, ItemRcvTextviewBinding>(
         R.layout.item_rcv_textview,
         listDiffUtil =
-            RcvListDiffUtilCallBack(
-                itemsTheSame = { oldItem, newItem -> oldItem.id == newItem.id },
-                contentsTheSame = { oldItem, newItem -> oldItem == newItem },
-            ),
+        RcvListDiffUtilCallBack(
+            itemsTheSame = { oldItem, newItem -> oldItem.id == newItem.id },
+            contentsTheSame = { oldItem, newItem -> oldItem == newItem },
+        ),
     ) { holder, item, position ->
         holder.binding.apply {
             tvTitle.text = item.title
@@ -79,13 +79,13 @@ class RecyclerViewActivity : BaseDataBindingActivity<ActivityRecyclerviewBinding
                 sfScrollDirectionFlow.collect { direction ->
                     val directionText =
                         when (direction) {
-                            ScrollDirection.UP -> "?꾨줈 ?ㅽ겕濡?
-                            ScrollDirection.DOWN -> "?꾨옒濡??ㅽ겕濡?
-                            ScrollDirection.LEFT -> "?쇱そ?쇰줈 ?ㅽ겕濡?
-                            ScrollDirection.RIGHT -> "?ㅻⅨ履쎌쑝濡??ㅽ겕濡?
-                            ScrollDirection.IDLE -> "?ㅽ겕濡??뺤?"
+                            ScrollDirection.UP -> "위로 스크롤"
+                            ScrollDirection.DOWN -> "아래로 스크롤"
+                            ScrollDirection.LEFT -> "왼쪽으로 스크롤"
+                            ScrollDirection.RIGHT -> "오른쪽으로 스크롤"
+                            ScrollDirection.IDLE -> "스크롤 정지"
                         }
-                    getBinding().tvScrollInfo.text = "諛⑺뼢: $directionText"
+                    getBinding().tvScrollInfo.text = "방향: $directionText"
                 }
             }
 
@@ -93,12 +93,12 @@ class RecyclerViewActivity : BaseDataBindingActivity<ActivityRecyclerviewBinding
                 sfEdgeReachedFlow.collect { (edge, isReached) ->
                     val edgeText =
                         when (edge) {
-                            ScrollEdge.TOP -> "?곷떒"
-                            ScrollEdge.BOTTOM -> "?섎떒"
-                            ScrollEdge.LEFT -> "醫뚯륫"
-                            ScrollEdge.RIGHT -> "?곗륫"
+                            ScrollEdge.TOP -> "상단"
+                            ScrollEdge.BOTTOM -> "하단"
+                            ScrollEdge.LEFT -> "좌측"
+                            ScrollEdge.RIGHT -> "우측"
                         }
-                    val statusText = if (isReached) "?꾨떖" else "踰쀬뼱??
+                    val statusText = if (isReached) "도달" else "벗어남"
                     getBinding().tvScrollInfo.text = "$edgeText $statusText"
                 }
             }
@@ -118,8 +118,8 @@ class RecyclerViewActivity : BaseDataBindingActivity<ActivityRecyclerviewBinding
     private fun getItem(position: Int) =
         SampleItem(
             id = System.currentTimeMillis(),
-            title = "???꾩씠??$position",
-            description = "?숈쟻?쇰줈 異붽????꾩씠?쒖엯?덈떎",
+            title = "새 아이템 $position",
+            description = "동적으로 추가된 아이템입니다",
         )
 
     private fun currentRemoveAtAdapter(position: Int) {

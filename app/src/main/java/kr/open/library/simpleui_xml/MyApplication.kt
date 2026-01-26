@@ -1,4 +1,4 @@
-package kr.open.library.simpleui_xml
+﻿package kr.open.library.simpleui_xml
 
 import android.app.Application
 import kr.open.library.simple_ui.core.logcat.Logx
@@ -9,7 +9,7 @@ class MyApplication : Application() {
         super.onCreate()
         Logx.init(this)
         // Setup crash reporter for verification build only
-        // Verification 鍮뚮뱶?먯꽌留??щ옒??由ы룷???ㅼ젙
+        // verification 빌드에서만 크래시 리포터를 설정합니다.
         Logx.d("BuildConfig.BUILD_TYPE_NAME ${BuildConfig.BUILD_TYPE_NAME}")
         if (BuildConfig.BUILD_TYPE_NAME == "verification") {
             setupCrashReporter()
@@ -17,10 +17,8 @@ class MyApplication : Application() {
     }
 
     /**
-     * Setup crash reporter for verification build
-     * <br><br>
-     * Verification 鍮뚮뱶???щ옒??由ы룷???ㅼ젙
-     * <br>
+     * Setup crash reporter for verification build.<br><br>
+     * verification 빌드에서 크래시 리포터를 설정합니다.<br>
      */
     private fun setupCrashReporter() {
         val crashReporter =

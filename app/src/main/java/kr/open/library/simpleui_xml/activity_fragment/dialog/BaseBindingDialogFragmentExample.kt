@@ -1,4 +1,4 @@
-package kr.open.library.simpleui_xml.activity_fragment.dialog
+﻿package kr.open.library.simpleui_xml.activity_fragment.dialog
 
 import android.os.Bundle
 import android.view.View
@@ -13,29 +13,30 @@ class BaseBindingDialogFragmentExample :
         super.onViewCreated(view, savedInstanceState)
         Logx.d("BaseBindingDialogFragmentExample - onViewCreated() called")
 
-        // resizeDialog ?몄텧 - ?붾㈃??85% ?덈퉬, 60% ?믪씠
+        // resizeDialog call - screen width 85%, height 60%
+        // resizeDialog 호출 - 화면의 85% 너비, 60% 높이
         resizeDialog(0.85f, 0.6f)
         Logx.d("BaseBindingDialogFragmentExample - resizeDialog(0.85f, 0.6f) called")
     }
 
     override fun onCreateView(binding: DialogBaseBindingDialogFragmentBinding, savedInstanceState: Bundle?) {
-        // DataBinding?쇰줈 ?곗씠???ㅼ젙
+        // Set texts via DataBinding - DataBinding으로 텍스트 설정
         binding.tvDialogTitle.text = "BaseBindingDialogFragment Example"
         binding.tvDialogContent.text =
             "This dialog uses:\n\n" +
-            "??BaseBindingDialogFragment\n" +
-            "??DataBinding\n" +
-            "??resizeDialog(0.85f, 0.6f)\n\n" +
+            "• BaseBindingDialogFragment\n" +
+            "• DataBinding\n" +
+            "• resizeDialog(0.85f, 0.6f)\n\n" +
             "Width: 85% of screen\n" +
             "Height: 60% of screen"
 
-        // OK 踰꾪듉
+        // OK button - 확인 버튼
         binding.btnOk.setOnClickListener {
             Logx.d("BaseBindingDialogFragmentExample - OK button clicked")
             safeDismiss()
         }
 
-        // Cancel 踰꾪듉
+        // Cancel button - 취소 버튼
         binding.btnCancel.setOnClickListener {
             Logx.d("BaseBindingDialogFragmentExample - Cancel button clicked")
             safeDismiss()

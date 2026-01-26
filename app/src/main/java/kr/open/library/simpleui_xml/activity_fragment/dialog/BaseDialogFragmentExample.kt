@@ -1,4 +1,4 @@
-package kr.open.library.simpleui_xml.activity_fragment.dialog
+﻿package kr.open.library.simpleui_xml.activity_fragment.dialog
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -27,24 +27,25 @@ class BaseDialogFragmentExample : BaseDialogFragment(R.layout.dialog_base_dialog
         super.onViewCreated(view, savedInstanceState)
         Logx.d("BaseDialogFragmentExample - onViewCreated() called")
 
-        // resizeDialog ?몄텧 - ?붾㈃??80% ?덈퉬, 50% ?믪씠
+        // resizeDialog call - screen width 80%, height 50%
+        // resizeDialog 호출 - 화면의 80% 너비, 50% 높이
         resizeDialog(0.8f, null)
         Logx.d("BaseDialogFragmentExample - resizeDialog(0.8f, 0.5f) called")
 
-        // UI 珥덇린??
+        // Initialize UI - UI 초기화
         view.findViewById<TextView>(R.id.tvDialogTitle).text = "BaseDialogFragment Example"
         view.findViewById<TextView>(R.id.tvDialogContent).text =
             "This dialog uses resizeDialog(0.8f, 0.5f)\n\n" +
             "Width: 80% of screen\n" +
             "Height: 50% of screen"
 
-        // OK 踰꾪듉
+        // OK button - 확인 버튼
         view.findViewById<Button>(R.id.btnOk).setOnClickListener {
             Logx.d("BaseDialogFragmentExample - OK button clicked")
             safeDismiss()
         }
 
-        // Cancel 踰꾪듉
+        // Cancel button - 취소 버튼
         view.findViewById<Button>(R.id.btnCancel).setOnClickListener {
             Logx.d("BaseDialogFragmentExample - Cancel button clicked")
             safeDismiss()

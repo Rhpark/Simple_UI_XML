@@ -1,4 +1,4 @@
-package kr.open.library.simpleui_xml.crash
+﻿package kr.open.library.simpleui_xml.crash
 
 import android.os.Build
 import android.util.Log
@@ -15,14 +15,15 @@ import java.util.Date
 import java.util.Locale
 
 /**
- * Crash Reporter for Verification Build
- * <br><br>
- * Verification 鍮뚮뱶???щ옒??由ы룷??
- * <br>
+ * Crash Reporter for Verification Build.<br><br>
+ * Verification 빌드 전용 크래시 리포터입니다.<br>
  *
- * @param cloudFunctionUrl Cloud Functions URL for crash reporting<br><br>?щ옒??蹂닿퀬??Cloud Functions URL<br>
- * @param apiKey API Key for authentication<br><br>?몄쬆??API ??br>
- * @param appVersion App version name<br><br>??踰꾩쟾 ?대쫫<br>
+ * @param cloudFunctionUrl Cloud Functions URL for crash reporting<br><br>
+ * 크래시 리포트를 전송할 Cloud Functions URL입니다.<br>
+ * @param apiKey API Key for authentication<br><br>
+ * 인증용 API 키입니다.<br>
+ * @param appVersion App version name<br><br>
+ * 앱 버전 이름입니다.<br>
  */
 class CrashReporter(
     private val cloudFunctionUrl: String,
@@ -36,31 +37,28 @@ class CrashReporter(
         throwable: Throwable,
     ) {
         try {
-            // Collect crash information
-            // ?щ옒???뺣낫 ?섏쭛
+            // Collect crash information - 크래시 정보 수집
             Log.e(TAG, "Failed to report crash + $throwable")
             val crashData = collectCrashData(throwable)
 
-            // Send crash report to Cloud Functions
-            // Cloud Functions濡??щ옒??蹂닿퀬 ?꾩넚
+            // Send crash report to Cloud Functions - Cloud Functions로 크래시 리포트 전송
             sendCrashReport(crashData)
         } catch (e: Exception) {
             Log.e(TAG, "Failed to report crash", e)
         } finally {
-            // Call default handler to terminate the app
-            // 湲곕낯 ?몃뱾???몄텧?섏뿬 ??醫낅즺
+            // Call default handler to terminate the app - 앱 종료를 위해 기본 핸들러 호출
             defaultHandler?.uncaughtException(thread, throwable)
         }
     }
 
     /**
-     * Collect crash data from throwable
-     * <br><br>
-     * Throwable濡쒕????щ옒???곗씠???섏쭛
-     * <br>
+     * Collect crash data from throwable.<br><br>
+     * Throwable로부터 크래시 데이터를 수집합니다.<br>
      *
-     * @param throwable Exception that caused the crash<br><br>?щ옒?쒕? 諛쒖깮?쒗궓 Exception<br>
-     * @return JSON object containing crash information<br><br>?щ옒???뺣낫瑜??댁? JSON 媛앹껜<br>
+     * @param throwable Exception that caused the crash<br><br>
+     * 크래시를 발생시킨 Exception입니다.<br>
+     * @return JSON object containing crash information<br><br>
+     * 크래시 정보를 담은 JSON 객체입니다.<br>
      */
     private fun collectCrashData(throwable: Throwable): JSONObject {
         val stackTrace =
@@ -81,16 +79,14 @@ class CrashReporter(
     }
 
     /**
-     * Send crash report to Cloud Functions
-     * <br><br>
-     * Cloud Functions濡??щ옒??蹂닿퀬 ?꾩넚
-     * <br>
+     * Send crash report to Cloud Functions.<br><br>
+     * Cloud Functions로 크래시 리포트를 전송합니다.<br>
      *
-     * @param crashData JSON object containing crash information<br><br>?щ옒???뺣낫瑜??댁? JSON 媛앹껜<br>
+     * @param crashData JSON object containing crash information<br><br>
+     * 크래시 정보를 담은 JSON 객체입니다.<br>
      */
     private fun sendCrashReport(crashData: JSONObject) {
-        // Send in background thread (quick execution before app dies)
-        // 諛깃렇?쇱슫???ㅻ젅?쒖뿉???꾩넚 (?깆씠 二쎄린 ??鍮좊Ⅸ ?ㅽ뻾)
+        // Send in background thread (quick execution before app dies) - 앱 종료 전에 빠르게 전송하기 위해 백그라운드 스레드에서 처리
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val url = URL(cloudFunctionUrl)
@@ -105,8 +101,7 @@ class CrashReporter(
                     setRequestProperty("X-API-Key", apiKey)
                 }
 
-                // Send JSON data
-                // JSON ?곗씠???꾩넚
+                // Send JSON data - JSON 데이터 전송
                 connection.outputStream.use { outputStream ->
                     outputStream.write(crashData.toString().toByteArray())
                 }
@@ -118,8 +113,7 @@ class CrashReporter(
             }
         }
 
-        // Wait briefly for transmission to complete
-        // ?꾩넚 ?꾨즺瑜??꾪빐 ?좎떆 ?湲?
+        // Wait briefly for transmission to complete - 전송 완료를 잠시 대기
         Thread.sleep(500)
     }
 
