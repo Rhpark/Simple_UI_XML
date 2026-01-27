@@ -3,7 +3,6 @@ package kr.open.library.simple_ui.core.extensions.trycatch
 import android.os.Build
 import kotlinx.coroutines.CancellationException
 import kr.open.library.simple_ui.core.logcat.Logx
-import kr.open.library.simple_ui.core.logcat.internal.file_writer.LogxFileWriter.LogFileWriteException
 
 /**
  * Executes a code block with safe exception handling, logging exceptions without returning a value.<br><br>
@@ -189,8 +188,3 @@ public inline fun requireMaxSdkVersion(sdkVersion: Int) {
     throw UnsupportedOperationException("require Max SDK version $sdkVersion but current SDK version is ${Build.VERSION.SDK_INT}")
 }
 
-public inline fun requireLogFileWriter(value: Boolean, lazyMessage: () -> Any) {
-    if (value) return
-    val message = lazyMessage()
-    throw LogFileWriteException(message.toString())
-}

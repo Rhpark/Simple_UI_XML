@@ -41,7 +41,7 @@
                 <Button
                     android:id="@+id/btnLogxActivity"
                     style="@style/Button.MatchWrap"
-                    android:text="Go to Logx Example Activity" />
+                    android:text="Go to Logx Activity" />
 
                 <Button
                     android:id="@+id/btnNewRecyclerView"

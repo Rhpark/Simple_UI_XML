@@ -1,204 +1,147 @@
 package kr.open.library.simpleui_xml.logx
 
 import android.os.Bundle
-import android.os.PersistableBundle
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
+import java.io.File
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kr.open.library.simple_ui.core.logcat.Logx
-import kr.open.library.simple_ui.core.logcat.config.LogxStorageType
-import kr.open.library.simple_ui.core.logcat.extensions.logxD
-import kr.open.library.simple_ui.core.logcat.model.LogxType
+import kr.open.library.simple_ui.core.logcat.config.StorageType
 import kr.open.library.simple_ui.xml.ui.components.activity.binding.BaseDataBindingActivity
 import kr.open.library.simpleui_xml.R
 import kr.open.library.simpleui_xml.databinding.ActivityLogxBinding
 
-class LogxActivity : BaseDataBindingActivity<ActivityLogxBinding>(R.layout.activity_logx) {
+class LogxActivity :
+    BaseDataBindingActivity<ActivityLogxBinding>(R.layout.activity_logx) {
     private val vm: LogxActivityVm by viewModels()
 
-    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-        super.onCreate(savedInstanceState, persistentState)
-
-        Logx.setSaveToFile(true)
-        getBinding().vm = vm
-        lifecycle.addObserver(vm)
+    override fun onCreate(binding: ActivityLogxBinding, savedInstanceState: Bundle?) {
+        super.onCreate(binding, savedInstanceState)
+        binding.vm = vm
+        initLogxForFileLogging()
+        updateStatus("준비 완료. 버튼을 눌러 Logcat/파일을 확인하세요.")
     }
 
     override fun onEventVmCollect(binding: ActivityLogxBinding) {
         lifecycleScope.launch {
             vm.mEventVm.collect { event ->
                 when (event) {
-                    is LogxActivityVmEvent.OnClickBasicLogging -> demonstrateBasicLogging()
-                    is LogxActivityVmEvent.OnClickJsonLogging -> demonstrateJsonLogging()
-                    is LogxActivityVmEvent.OnClickParentTracking -> parentMethodExample()
-                    is LogxActivityVmEvent.OnClickThreadTracking -> demonstrateThreadTracking()
-                    is LogxActivityVmEvent.OnClickFileLogging -> demonstrateFileLogging()
-                    is LogxActivityVmEvent.OnClickStorageConfig -> demonstrateStorageConfig()
-                    is LogxActivityVmEvent.OnClickAdvancedConfig -> demonstrateAdvancedConfig()
-                    is LogxActivityVmEvent.OnClickLogFiltering -> demonstrateLogFiltering()
+                    LogxActivityVmEvent.OnClickBasicLogging -> demonstrateBasicLogging()
+                    LogxActivityVmEvent.OnClickJsonLogging -> demonstrateJsonLogging()
+                    LogxActivityVmEvent.OnClickParentLogging -> demonstrateParentLogging()
+                    LogxActivityVmEvent.OnClickThreadLogging -> demonstrateThreadLogging()
+                    LogxActivityVmEvent.OnClickFileLogging -> demonstrateFileLogging()
+                    LogxActivityVmEvent.OnClickStorageConfig -> demonstrateStorageConfig()
+                    LogxActivityVmEvent.OnClickTagBlockList -> demonstrateTagBlockList()
+                    LogxActivityVmEvent.OnClickSkipPackages -> demonstrateSkipPackages()
+                    LogxActivityVmEvent.OnClickSaveDirectory -> demonstrateSaveDirectory()
                 }
             }
         }
     }
 
-    /**
-     * 기본 로깅 기능 시연
-     */
-    private fun demonstrateBasicLogging() {
-        Logx.v("VERBOSE LEVEL")
-        "DEBUG LEVEL".logxD()
-        Logx.i("INFO LEVEL")
-        Logx.w("WARNING LEVEL")
-        Logx.e("ERROR LEVEL")
+    private fun initLogxForFileLogging() {
+        Logx.initialize(applicationContext)
+        Logx.setAppName("TempLogcatDemo")
     }
 
-    /**
-     * JSON 포맷팅 기능 시연
-     */
+    private fun demonstrateBasicLogging() {
+        Logx.v("BASIC", "VERBOSE 로그")
+        Logx.d("BASIC", "DEBUG 로그")
+        Logx.i("BASIC", "INFO 로그")
+        Logx.w("BASIC", "WARN 로그")
+        Logx.e("BASIC", "ERROR 로그")
+        updateStatus("기본 로그 출력 완료")
+    }
+
     private fun demonstrateJsonLogging() {
-        val jsonData =
+        val json =
             """
-            {"user": {"name": "홍길동","age": 30,"skills": ["Kotlin", "Android", "Java"]},"timestamp": "${System.currentTimeMillis()}"}
+            {
+                "name": "Lee",
+                "items": [1, 2, 3]
+            }
             """.trimIndent()
 
-        Logx.j("JSON_DEMO", jsonData)
-        Logx.d("NORMAL LOG: $jsonData")
+        Logx.j("JSON", json)
+        updateStatus("JSON 로그 출력 완료")
     }
 
-    /**
-     * Parent Method 추적 기능 시연
-     */
-    private fun parentMethodExample() {
-        nestedMethodLevel1()
+    private fun demonstrateParentLogging() {
+        parentLevel1()
+        updateStatus("PARENT 로그 출력 완료")
     }
 
-    private fun nestedMethodLevel1() {
-        Logx.p("Parent Method 추적: 어떤 함수에서 호출되었는지 확인")
-        Logx.d("일반 로그: 호출 위치가 표시되지 않음")
+    private fun parentLevel1() {
+        parentLevel2()
     }
 
-    /**
-     * Thread ID 추적 기능 시연
-     */
-    private fun demonstrateThreadTracking() {
-        // Main Thread
-        Logx.t("Main Thread에서의 로깅")
-
-        // Background Thread
-        lifecycleScope.launch(Dispatchers.IO) { Logx.t("Background Thread에서의 로깅") }
+    private fun parentLevel2() {
+        Logx.p("PARENT", "호출 위치 확인용 로그")
     }
 
-    /**
-     * 파일 저장 기능 시연
-     */
+    private fun demonstrateThreadLogging() {
+        Logx.t("THREAD", "Main Thread 로그")
+        lifecycleScope.launch(Dispatchers.IO) {
+            Logx.t("THREAD", "IO Thread 로그")
+        }
+        updateStatus("THREAD 로그 출력 완료")
+    }
+
     private fun demonstrateFileLogging() {
-        Logx.setSaveToFile(true)
-
-        Logx.d("FILE_SAVE", "이 로그는 파일에도 저장됩니다")
-        Logx.i("FILE_SAVE", "파일 경로: ${Logx.getFilePath()}")
-        Logx.w("FILE_SAVE", "저장소 정보: ${Logx.getStorageInfo()}")
-
-        val storageInfo = Logx.getStorageInfo()
-        val currentPath = storageInfo[LogxStorageType.APP_EXTERNAL] ?: "Unknown"
-        Logx.i("FILE_SAVE", "파일 저장 완료!\n경로: $currentPath")
+        Logx.setSaveEnabled(true)
+        Logx.d("FILE", "파일 저장 활성화")
+        val saveDirectory = Logx.getSaveDirectory() ?: "기본 경로"
+        updateStatus("파일 저장 ON (storage=${Logx.getStorageType()}, dir=$saveDirectory)")
     }
 
-    /**
-     * 저장소 타입 변경 시연
-     */
     private fun demonstrateStorageConfig() {
-        // 내부 저장소로 변경
-        Logx.setInternalStorage()
-        Logx.d("STORAGE", "내부 저장소로 변경됨")
+        Logx.setStorageType(StorageType.INTERNAL)
+        Logx.d("STORAGE", "INTERNAL 설정")
+        Logx.setStorageType(StorageType.APP_EXTERNAL)
+        Logx.d("STORAGE", "APP_EXTERNAL 설정")
 
-        // 앱 전용 외부 저장소로 변경
-        Logx.setAppExternalStorage()
-        Logx.d("STORAGE", "앱 전용 외부 저장소로 변경됨")
-
-        val storageInfo = Logx.getStorageInfo()
-        Logx.i("STORAGE", "사용 가능한 저장소들: $storageInfo")
+        try {
+            Logx.setStorageType(StorageType.PUBLIC_EXTERNAL)
+            Logx.d("STORAGE", "PUBLIC_EXTERNAL 설정")
+            updateStatus("PUBLIC_EXTERNAL 설정 완료")
+        } catch (e: Exception) {
+            updateStatus("PUBLIC_EXTERNAL 설정 실패: ${e.message}")
+        }
     }
 
-    /**
-     * DSL 고급 설정 시연
-     */
-    private fun demonstrateAdvancedConfig() {
-        // 먼저 저장소 타입 설정
-        Logx.setAppExternalStorage()
-
-        // DSL을 사용한 고급 설정
-        Logx.configure {
-            appName = "RhParkLogx"
-            debugMode = true
-            debugFilter = false
-
-            fileConfig {
-                saveToFile = true
-                filePath = Logx.getFilePath()
-            }
-
-            logTypes {
-                all() // 모든 로그 타입 허용
-            }
-
-            filters {
-                addAll("DSL_CONFIG", "DEMO")
-            }
-        }
-
-        Logx.d("DSL_CONFIG", "DSL로 설정 완료!")
-        Logx.i("DSL_CONFIG", "앱 이름: ${Logx.getAppName()}")
-        Logx.i("DSL_CONFIG", "디버그 모드: ${Logx.getDebugMode()}")
-        Logx.p("DSL_CONFIG", "Parent 추적도 활성화됨")
+    private fun demonstrateTagBlockList() {
+        Logx.setLogTagBlockListEnabled(true)
+        Logx.setLogTagBlockList(setOf("BLOCKED_TAG"))
+        Logx.d("ALLOWED_TAG", "출력되는 태그")
+        Logx.d("BLOCKED_TAG", "차단되는 태그")
+        updateStatus("태그 블록리스트 적용 완료 (BLOCKED_TAG 차단)")
     }
 
-    /**
-     * 로그 필터링 기능 시연
-     */
-    private fun demonstrateLogFiltering() {
-        // DSL로 필터링 설정
-        Logx.configure {
-            debugMode = true
-            debugFilter = true
+    private fun demonstrateSkipPackages() {
+        TempLogcatStackHelper.logFromHelper("SKIP_BEFORE")
+        Logx.addSkipPackages(setOf(TempLogcatStackHelper::class.java.name))
+        TempLogcatStackHelper.logFromHelper("SKIP_AFTER")
+        updateStatus("skipPackages 추가 전/후 로그 위치를 비교하세요")
+    }
 
-            logTypes {
-                +LogxType.ERROR
-                +LogxType.WARN
-                +LogxType.INFO
-                // VERBOSE와 DEBUG는 제외
-            }
+    private fun demonstrateSaveDirectory() {
+        val baseDir = getExternalFilesDir(null) ?: filesDir
+        val customDir = File(baseDir, "logx_custom").absolutePath
+        Logx.setSaveDirectory(customDir)
+        Logx.setSaveEnabled(true)
+        Logx.d("FILE", "저장 경로 설정: $customDir")
+        updateStatus("저장 경로 설정 완료: $customDir")
+    }
 
-            filters {
-                addAll("ALLOWED_TAG", "IMPORTANT")
-            }
+    private fun updateStatus(message: String) {
+        getBinding().tvLastAction.text = message
+    }
+
+    private object TempLogcatStackHelper {
+        fun logFromHelper(label: String) {
+            Logx.d("SKIP", "헬퍼 호출 ($label)")
         }
-
-        // 필터링 테스트
-        Logx.v("FILTER_TEST", "이 VERBOSE 로그는 표시되지 않습니다")
-        Logx.d("FILTER_TEST", "이 DEBUG 로그는 표시되지 않습니다")
-        Logx.i("FILTER_TEST", "이 INFO 로그는 표시됩니다")
-        Logx.w("FILTER_TEST", "이 WARNING 로그는 표시됩니다")
-        Logx.e("FILTER_TEST", "이 ERROR 로그는 표시됩니다")
-
-        // 태그 필터링 테스트
-        Logx.i("ALLOWED_TAG", "이 로그는 허용된 태그입니다")
-        Logx.i("BLOCKED_TAG", "이 로그는 차단된 태그입니다")
-
-        // 필터 초기화
-        lifecycleScope.launch {
-            kotlinx.coroutines.delay(3000)
-            Logx.configure {
-                debugFilter = false
-                logTypes {
-                    all() // 모든 타입 허용
-                }
-                filters {
-                    clear() // 필터 제거
-                }
-            }
-            Logx.i("필터링 해제됨")
-        }
-        Logx.i("로그 필터링 시연 완료!\n3초 후 필터 해제")
     }
 }

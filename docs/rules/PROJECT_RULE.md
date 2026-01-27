@@ -28,7 +28,7 @@
  - build.gradle.kts 생성 (simple_core, simple_xml 템플릿 참조)
  - namespace 설정 및 의존성 구성
  - 모듈별 claude.md 작성
- - 루트 문서(AGENT.md 및 RULE 문서)에 모듈 링크 추가
+ - 루트 문서(AGENTS.md 및 RULE 문서)에 모듈 링크 추가
  - publishing 설정 (groupId, artifactId)
  - Dokka 설정 추가
  - Kover 설정 추가

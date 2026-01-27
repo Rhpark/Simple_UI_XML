@@ -1,680 +1,607 @@
-package kr.open.library.simple_ui.core.logcat
+﻿package kr.open.library.simple_ui.core.logcat
 
-import android.annotation.SuppressLint
+import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.content.Context
-import kr.open.library.simple_ui.core.logcat.config.LogxConfig
-import kr.open.library.simple_ui.core.logcat.config.LogxConfigFactory
-import kr.open.library.simple_ui.core.logcat.config.LogxConfigManager
-import kr.open.library.simple_ui.core.logcat.config.LogxDslBuilder
-import kr.open.library.simple_ui.core.logcat.config.LogxPathUtils
-import kr.open.library.simple_ui.core.logcat.config.LogxStorageType
-import kr.open.library.simple_ui.core.logcat.config.logxConfig
-import kr.open.library.simple_ui.core.logcat.model.LogxType
-import kr.open.library.simple_ui.core.logcat.runtime.LogxWriter
-import java.util.EnumSet
+import android.os.Build
+import android.os.Process
+import android.util.Log
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.ProcessLifecycleOwner
+import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
+import kr.open.library.simple_ui.core.permissions.extentions.hasPermissions
+import java.util.concurrent.atomic.AtomicBoolean
+import kr.open.library.simple_ui.core.logcat.config.LogType
+import kr.open.library.simple_ui.core.logcat.config.LogxConfigStore
+import kr.open.library.simple_ui.core.logcat.config.StorageType
+import kr.open.library.simple_ui.core.logcat.internal.common.LogxTagHelper
+import kr.open.library.simple_ui.core.logcat.internal.pipeline.LogxPipeline
+import kr.open.library.simple_ui.core.logcat.internal.writer.LogxFileWriter
 
 /**
- * Main singleton object for the Logx logging library (refactored with SRP principle).<br>
- * Configuration management is delegated to LogxConfigManager following the Single Responsibility Principle.<br><br>
- * Logx 로깅 라이브러리의 메인 싱글톤 객체입니다 (SRP 원칙으로 리팩토링됨).<br>
- * 단일 책임 원칙에 따라 설정 관리는 LogxConfigManager에 위임됩니다.<br>
- *
- * Basic usage:<br>
- * ```kotlin
- * // Initialize with Context (recommended), Context로 초기화 (권장)
- * Logx.init(context)
- *
- * // Standard logging
- * Logx.d()                    // Debug log with stack trace, 스택 트레이스와 함께 Debug 로그
- * Logx.d("message")           // Debug log with message, 메시지와 함께 Debug 로그
- * Logx.d("TAG", "message")    // Debug log with custom tag, 커스텀 태그와 메시지
- *
- * // Same pattern for v(), i(), w(), e()
- *
- * Log output format:<br>
- * `D/AppName ["tag"] : (FileName:LineNumber).Method - msg`<br><br>
- * 로그 출력 형식:<br>
- * `D/AppName ["tag"] : (FileName:LineNumber).Method - msg`<br>
- *
- * Extended features:<br>
- * - `Logx.p()`: Parent method call tracking, 부모 메서드 호출 추적<<br>
- * - `Logx.j()`: JSON formatting with visual markers, 시각적 마커를 사용한 JSON 포맷팅<br>
- * - `Logx.t()`: Current thread ID display, 현재 스레드 ID 표시<br><br>
- *
- * Configuration:<br>
- * ```kotlin
- * // DSL-based configuration
- * Logx.configure {
- *     debugMode = true
- *     appName = "MyApp"
- *     fileConfig {
- *         saveToFile = true
- *     }
- * }
- *
- * // Or use individual setters, 또는 개별 setter 사용
- * Logx.setDebugMode(true)
- * Logx.setSaveToFile(true)
- * ```
+ * Main entry point for temp_logcat logging API.<br><br>
+ * temp_logcat 로그 API의 진입점이다.<br>
  */
-object Logx : ILogx {
+object Logx {
     /**
-     * Application context for Android-specific operations.<br>
-     * Used for file path resolution and lifecycle management.<br><br>
-     * Android 특정 작업을 위한 애플리케이션 컨텍스트입니다.<br>
-     * 파일 경로 확인 및 라이프사이클 관리에 사용됩니다.<br>
+     * Application context used for file logging and permission checks.<br><br>
+     * 파일 저장 및 권한 확인에 사용하는 애플리케이션 컨텍스트.<br>
      */
     @Volatile
     private var appContext: Context? = null
 
     /**
-     * Default tag used when no custom tag is specified.<br><br>
-     * 커스텀 태그가 지정되지 않았을 때 사용되는 기본 태그입니다.<br>
+     * File writer responsible for file output.<br><br>
+     * 파일 출력을 담당하는 작성기.<br>
      */
-    public const val DEFAULT_TAG = ""
+    private val fileWriter = LogxFileWriter()
 
     /**
-     * Configuration manager responsible for managing Logx settings.<br>
-     * Follows Single Responsibility Principle by delegating configuration logic.<br><br>
-     * Logx 설정 관리를 담당하는 설정 관리자입니다.<br>
-     * 단일 책임 원칙에 따라 설정 로직을 위임합니다.<br>
+     * Guard to ensure lifecycle observer is registered once.<br><br>
+     * 라이프사이클 옵저버가 1회만 등록되도록 보장하는 플래그.<br>
      */
-    private val configManager = LogxConfigManager()
+    private val lifecycleRegistered = AtomicBoolean(false)
 
     /**
-     * Writer responsible for outputting log messages to Logcat and files.<br>
-     * Automatically receives configuration updates from configManager.<br><br>
-     * 로그 메시지를 Logcat과 파일로 출력하는 작성기입니다.<br>
-     * configManager로부터 설정 업데이트를 자동으로 받습니다.<br>
+     * Log processing pipeline entry.<br><br>
+     * 로그 처리 파이프라인 진입점.<br>
      */
-    @SuppressLint("StaticFieldLeak")
-    public var logWriter = LogxWriter(configManager.config)
-
-    init {
-        // 설정 변경 시 LogxWriter에 자동 전파
-        configManager.addConfigChangeListener(
-            object : LogxConfigManager.ConfigChangeListener {
-                override fun onConfigChanged(newConfig: LogxConfig) {
-                    logWriter.updateConfig(newConfig)
-                }
-            },
-        )
-    }
+    private val pipeline = LogxPipeline(
+        contextProvider = { appContext },
+        fileWriter = fileWriter,
+    )
 
     /**
-     * Initializes Logx with Android Context (recommended).<br>
-     * Automatically configures optimal storage paths for new users and activates Android Lifecycle-based flush system.<br><br>
-     * Android Context로 Logx를 초기화합니다 (권장).<br>
-     * 신규 사용자를 위한 최적 저장소 경로를 자동으로 구성하고 Android Lifecycle 기반 플러시 시스템을 활성화합니다.<br>
-     *
-     * @param context The Android application context.<br><br>
-     *                Android 애플리케이션 컨텍스트.
+     * Lifecycle observer to close file writer on app backgrounding.<br><br>
+     * 앱 백그라운드 진입 시 파일 작성기를 닫는 라이프사이클 옵저버.<br>
      */
-    @Synchronized
-    override fun init(context: Context) {
-        appContext = context.applicationContext
-
-        // Context가 설정되면 LogxWriter를 Context와 함께 재생성
-        logWriter = LogxWriter(configManager.config, appContext)
-
-        // Context 기반 최적 설정으로 업데이트
-        val contextConfig = LogxConfigFactory.createDefault(context)
-        configManager.updateConfig(contextConfig)
-    }
-
-    /**
-     * Sets the storage type for log files.<br>
-     * Requires Context to be initialized via init() first.<br><br>
-     * 로그 파일의 저장소 타입을 설정합니다.<br>
-     * 먼저 init()를 통해 Context를 초기화해야 합니다.<br>
-     *
-     * @param storageType The storage type to use (INTERNAL, APP_EXTERNAL, or PUBLIC_EXTERNAL).<br><br>
-     *                    사용할 저장소 타입 (INTERNAL, APP_EXTERNAL, PUBLIC_EXTERNAL).
-     */
-    fun setStorageType(storageType: LogxStorageType) {
-        appContext?.let { context ->
-            val newConfig = LogxConfigFactory.create(context, storageType)
-            configManager.updateConfig(newConfig)
+    private val lifecycleObserver = object : DefaultLifecycleObserver {
+        /**
+         * Called when app goes to background.<br><br>
+         * 앱이 백그라운드로 전환될 때 호출된다.<br>
+         *
+         * @param owner Lifecycle owner.<br><br>
+         *              라이프사이클 소유자.<br>
+         */
+        override fun onStop(owner: LifecycleOwner) {
+            fileWriter.requestClose()
         }
     }
 
     /**
-     * Configures log storage to use internal storage (no permissions required, not user-accessible).<br><br>
-     * 내부 저장소를 사용하도록 로그 저장소를 구성합니다 (권한 불필요, 사용자 접근 불가).<br>
-     */
-    fun setInternalStorage() {
-        setStorageType(LogxStorageType.INTERNAL)
-    }
-
-    /**
-     * Configures log storage to use app-specific external storage (no permissions required, user-accessible via file manager).<br><br>
-     * 앱 전용 외부 저장소를 사용하도록 로그 저장소를 구성합니다 (권한 불필요, 파일 관리자로 사용자 접근 가능).<br>
-     */
-    fun setAppExternalStorage() {
-        setStorageType(LogxStorageType.APP_EXTERNAL)
-    }
-
-    /**
-     * Configures log storage to use public external storage (requires permission on API 28 and below).<br><br>
-     * 공용 외부 저장소를 사용하도록 로그 저장소를 구성합니다 (API 28 이하에서 권한 필요).<br>
-     */
-    fun setPublicExternalStorage() {
-        setStorageType(LogxStorageType.PUBLIC_EXTERNAL)
-    }
-
-    /**
-     * Returns the absolute paths for all available storage types.<br><br>
-     * 모든 사용 가능한 저장소 타입의 절대 경로를 반환합니다.<br>
+     * Initializes Logx with application context.<br><br>
+     * Logx를 애플리케이션 컨텍스트로 초기화한다.<br>
      *
-     * @return A map of storage types to their absolute paths, or empty map if Context not initialized.<br><br>
-     *         저장소 타입과 절대 경로의 맵, Context가 초기화되지 않은 경우 빈 맵.
+     * @param context Application context.<br><br>
+     *                애플리케이션 컨텍스트.<br>
      */
-    fun getStorageInfo(): Map<LogxStorageType, String> = appContext?.let { context ->
-        mapOf(
-            LogxStorageType.INTERNAL to LogxPathUtils.getInternalLogPath(context),
-            LogxStorageType.APP_EXTERNAL to LogxPathUtils.getAppExternalLogPath(context),
-            LogxStorageType.PUBLIC_EXTERNAL to LogxPathUtils.getPublicExternalLogPath(context),
+    @JvmStatic
+    fun initialize(context: Context) {
+        appContext = context.applicationContext
+        registerLifecycleObserverOnce()
+    }
+
+    /**
+     * Registers lifecycle observer only once.<br><br>
+     * 라이프사이클 옵저버를 한 번만 등록한다.<br>
+     */
+    private fun registerLifecycleObserverOnce() {
+        if (!lifecycleRegistered.compareAndSet(false, true)) return
+        ProcessLifecycleOwner.get().lifecycle.addObserver(lifecycleObserver)
+    }
+
+    /**
+     * Enables or disables logging globally.<br><br>
+     * 전역 로그 출력 활성화 여부를 설정한다.<br>
+     *
+     * @param enabled Whether to enable logging.<br><br>
+     *                로그 활성화 여부.<br>
+     */
+    @JvmStatic
+    fun setLogging(enabled: Boolean) {
+        LogxConfigStore.setLogging(enabled)
+    }
+
+    /**
+     * Sets allowed log types (allowlist).<br><br>
+     * 허용할 로그 타입 목록을 설정한다.<br>
+     *
+     * @param types Allowed log types.<br><br>
+     *              허용할 로그 타입 목록.<br>
+     */
+    @JvmStatic
+    fun setLogTypes(types: Set<LogType>) {
+        LogxConfigStore.setLogTypes(types)
+    }
+
+    /**
+     * Enables or disables tag blocklist filtering.<br><br>
+     * 태그 차단 목록 필터 사용 여부를 설정한다.<br>
+     *
+     * @param enabled Whether to enable blocklist filtering.<br><br>
+     *                차단 목록 필터 활성화 여부.<br>
+     */
+    @JvmStatic
+    fun setLogTagBlockListEnabled(enabled: Boolean) {
+        LogxConfigStore.setLogTagBlockListEnabled(enabled)
+    }
+
+    /**
+     * Sets tag blocklist entries.<br><br>
+     * 태그 차단 목록을 설정한다.<br>
+     *
+     * @param tags Tags to block.<br><br>
+     *             차단할 태그 목록.<br>
+     */
+    @JvmStatic
+    fun setLogTagBlockList(tags: Set<String>) {
+        val filtered = tags.filter { it.isNotBlank() }.toSet()
+        if (filtered.size != tags.size) {
+            Log.e(LogxTagHelper.errorTag(null), "Tag block list contains blank tags. Removed invalid entries.")
+        }
+        LogxConfigStore.setLogTagBlockList(filtered)
+    }
+
+    /**
+     * Enables or disables file logging.<br><br>
+     * 파일 로그 저장 활성화 여부를 설정한다.<br>
+     *
+     * @param enabled Whether to enable file logging.<br><br>
+     *                파일 로그 활성화 여부.<br>
+     */
+    @JvmStatic
+    fun setSaveEnabled(enabled: Boolean) {
+        if (enabled && appContext == null) {
+            throw IllegalStateException("Logx.initialize(context) must be called before enabling file logging.")
+        }
+        if (!enabled) {
+            fileWriter.requestClose()
+        }
+        LogxConfigStore.setSaveEnabled(enabled)
+    }
+
+    /**
+     * Sets storage type for file logging.<br><br>
+     * 파일 로그 저장소 타입을 설정한다.<br>
+     *
+     * @param type Storage type to use.<br><br>
+     *             사용할 저장소 타입.<br>
+     */
+    @JvmStatic
+    fun setStorageType(type: StorageType) {
+        checkSdkVersion(Build.VERSION_CODES.Q,
+            positiveWork = {
+                LogxConfigStore.setStorageType(type)
+            },
+            negativeWork = {
+                if(type == StorageType.PUBLIC_EXTERNAL) {
+                    if(appContext == null) {
+                        throw IllegalStateException("Logx.initialize(context) must be called before setting PUBLIC_EXTERNAL.")
+                    } else {
+                        if(!appContext!!.hasPermissions(WRITE_EXTERNAL_STORAGE)) {
+                            throw SecurityException("WRITE_EXTERNAL_STORAGE permission is not granted.")
+                        }
+                    }
+                }
+                LogxConfigStore.setStorageType(type)
+            }
         )
-    } ?: emptyMap()
-
-    /**
-     * Checks whether the current storage type requires runtime permissions.<br><br>
-     * 현재 저장소 타입이 런타임 권한을 필요로 하는지 확인합니다.<br>
-     *
-     * @return `true` if WRITE_EXTERNAL_STORAGE permission is required, `false` otherwise.<br><br>
-     *         WRITE_EXTERNAL_STORAGE 권한이 필요하면 `true`, 그 외는 `false`.
-     */
-    fun requiresStoragePermission(): Boolean = LogxPathUtils.requiresPermission(configManager.config.storageType)
-
-    // 설정 관리 메서드들 - ConfigManager에 위임
-    override fun setDebugMode(isDebug: Boolean) {
-        configManager.setDebugMode(isDebug)
-    }
-
-    override fun setDebugFilter(isFilter: Boolean) {
-        configManager.setDebugFilter(isFilter)
-    }
-
-    override fun setSaveToFile(isSave: Boolean) {
-        configManager.setSaveToFile(isSave)
-    }
-
-    override fun setFilePath(path: String) {
-        configManager.setFilePath(path)
-    }
-
-    override fun setAppName(name: String) {
-        configManager.setAppName(name)
-    }
-
-    override fun setDebugLogTypeList(types: EnumSet<LogxType>) {
-        configManager.setDebugLogTypeList(types)
-    }
-
-    override fun setDebugFilterList(tags: List<String>) {
-        configManager.setDebugFilterList(tags)
     }
 
     /**
-     * Updates the entire configuration at once.<br><br>
-     * 전체 설정을 한 번에 업데이트합니다.<br>
+     * Sets a custom save directory path.<br><br>
+     * 사용자 지정 저장 경로를 설정한다.<br>
      *
-     * @param newConfig The new configuration to apply.<br><br>
-     *                  적용할 새로운 설정.
+     * @param path Directory path.<br><br>
+     *             저장 경로.<br>
      */
-    fun updateConfig(newConfig: LogxConfig) {
-        configManager.updateConfig(newConfig)
+    @JvmStatic
+    fun setSaveDirectory(path: String) {
+        LogxConfigStore.setSaveDirectory(path)
     }
 
     /**
-     * Configures Logx using a type-safe DSL builder.<br><br>
-     * DSL 빌더를 사용하여 Logx를 구성합니다.<br>
+     * Sets application name used in tags and file names.<br><br>
+     * 태그/파일명에 사용할 앱 이름을 설정한다.<br>
      *
-     * Example usage:<br>
-     * ```kotlin
-     * Logx.configure {
-     *     debugMode = true
-     *     appName = "MyApp"
-     *     fileConfig {
-     *         saveToFile = true
-     *         filePath = "/custom/path"
-     *     }
-     *     logTypes {
-     *         basic()
-     *         +LogxType.JSON
-     *     }
-     * }
-     * ```
-     *
-     * @param block The DSL configuration block.<br><br>
-     *              DSL 설정 블록.
+     * @param name Application name.<br><br>
+     *             앱 이름.<br>
      */
-    fun configure(block: LogxDslBuilder.() -> Unit) {
-        val newConfig = logxConfig(block)
-        updateConfig(newConfig)
+    @JvmStatic
+    fun setAppName(name: String) {
+        LogxConfigStore.setAppName(name)
+    }
+    /**
+     * Adds package prefixes to skip in stack trace resolution.<br><br>
+     * 스택 트레이스 탐색에서 제외할 패키지 prefix를 추가합니다.<br>
+     *
+     * This does NOT suppress logs. It only shifts the reported call site to the next frame.<br><br>
+     * 로그 출력 자체를 차단하는 기능이 아니며, 표시되는 호출 위치를 다음 프레임으로 이동시킵니다.<br>
+     *
+     * Use when you have a custom wrapper/logger and want the log location to point to the real caller.<br><br>
+     * 커스텀 래퍼/로거를 사용해 로그 위치가 래퍼로 찍힐 때 실제 호출 지점으로 이동시키기 위해 사용합니다.<br>
+     *
+     * Example use case: MyLogger.d(...) wraps Logx.d(...). Without this, the call site may show MyLogger.<br><br>
+     * 예) MyLogger.d(...)가 Logx.d(...)를 감싸는 구조라면, 설정 전에는 MyLogger가 호출 위치로 보일 수 있습니다.<br>
+     *
+     * @param packages Package prefixes to add (package or class FQCN prefixes).<br><br>
+     *                 추가할 패키지/클래스 prefix(전체 경로 포함) 목록.<br>
+     */
+    @JvmStatic
+    fun addSkipPackages(packages: Set<String>) {
+        LogxConfigStore.addSkipPackages(packages)
     }
 
     /**
-     * Logs a VERBOSE level message with stack trace information.<br><br>
-     * VERBOSE 레벨 메시지를 스택 트레이스 정보와 함께 기록합니다.<br>
+     * Returns whether logging is enabled.<br><br>
+     * 로그 출력 활성화 여부를 반환합니다.<br>
      */
-    override fun v() = logWriter.write(DEFAULT_TAG, "", LogxType.VERBOSE)
+    @JvmStatic
+    fun isLogging(): Boolean = LogxConfigStore.isLogging()
+/**
+     * Returns allowed log types.<br><br>
+     * 허용된 로그 타입 목록을 반환한다.<br>
+     */
+    @JvmStatic
+    fun getLogTypes(): Set<LogType> = LogxConfigStore.getLogTypes()
 
     /**
-     * Logs a VERBOSE level message.<br><br>
-     * VERBOSE 레벨 메시지를 기록합니다.<br>
+     * Returns whether tag blocklist filtering is enabled.<br><br>
+     * 태그 차단 목록 필터 활성화 여부를 반환한다.<br>
+     */
+    @JvmStatic
+    fun isLogTagBlockListEnabled(): Boolean = LogxConfigStore.isLogTagBlockListEnabled()
+
+    /**
+     * Returns tag blocklist entries.<br><br>
+     * 태그 차단 목록을 반환한다.<br>
+     */
+    @JvmStatic
+    fun getLogTagBlockList(): Set<String> = LogxConfigStore.getLogTagBlockList()
+
+    /**
+     * Returns whether file logging is enabled.<br><br>
+     * 파일 저장 활성화 여부를 반환한다.<br>
+     */
+    @JvmStatic
+    fun isSaveEnabled(): Boolean = LogxConfigStore.isSaveEnabled()
+
+    /**
+     * Returns current storage type.<br><br>
+     * 현재 저장소 타입을 반환한다.<br>
+     */
+    @JvmStatic
+    fun getStorageType(): StorageType = LogxConfigStore.getStorageType()
+
+    /**
+     * Returns custom save directory path.<br><br>
+     * 사용자 지정 저장 경로를 반환한다.<br>
+     */
+    @JvmStatic
+    fun getSaveDirectory(): String? = LogxConfigStore.getSaveDirectory()
+
+    /**
+     * Returns current application name.<br><br>
+     * 현재 앱 이름을 반환한다.<br>
+     */
+    @JvmStatic
+    fun getAppName(): String = LogxConfigStore.getAppName()
+
+    /**
+     * Returns skip package prefixes used in stack trace resolution.<br><br>
+     * 스택 트레이스 해석에 사용하는 제외 패키지 prefix를 반환한다.<br>
+     */
+    @JvmStatic
+    fun getSkipPackages(): Set<String> = LogxConfigStore.getSkipPackages()
+
+    /**
+     * Logs a VERBOSE message without message body.<br><br>
+     * 메시지 없이 VERBOSE 로그를 출력한다.<br>
+     */
+    @JvmStatic
+    fun v() = logStandard(LogType.VERBOSE, null, null, hasMessage = false, tagProvided = false)
+
+    /**
+     * Logs a VERBOSE message with body.<br><br>
+     * 메시지를 포함한 VERBOSE 로그를 출력한다.<br>
      *
-     * @param msg The message to log.<br><br>
-     *            기록할 메시지.
+     * @param msg Message payload.<br><br>
+     *            메시지 본문.<br>
      */
-    override fun v(msg: Any?) = logWriter.write(DEFAULT_TAG, msg, LogxType.VERBOSE)
+    @JvmStatic
+    fun v(msg: Any?) = logStandard(LogType.VERBOSE, null, msg, hasMessage = true, tagProvided = false)
 
     /**
-     * Logs a VERBOSE level message with a custom tag.<br><br>
-     * 커스텀 태그와 함께 VERBOSE 레벨 메시지를 기록합니다.<br>
+     * Logs a VERBOSE message with custom tag and body.<br><br>
+     * 커스텀 태그와 메시지를 포함한 VERBOSE 로그를 출력한다.<br>
      *
-     * @param tag Custom tag for filtering logs.<br><br>
-     *            로그 필터링을 위한 커스텀 태그.
-     * @param msg The message to log.<br><br>
-     *            기록할 메시지.
+     * @param tag Tag to use.<br><br>
+     *            사용할 태그.<br>
+     * @param msg Message payload.<br><br>
+     *            메시지 본문.<br>
      */
-    override fun v(tag: String, msg: Any?) = logWriter.write(tag, msg, LogxType.VERBOSE)
+    @JvmStatic
+    fun v(tag: String, msg: Any?) = logStandard(LogType.VERBOSE, tag, msg, hasMessage = true, tagProvided = true)
 
     /**
-     * Logs a VERBOSE level message with extended formatting.<br><br>
-     * 확장된 포맷으로 VERBOSE 레벨 메시지를 기록합니다.<br>
+     * Logs a DEBUG message without message body.<br><br>
+     * 메시지 없이 DEBUG 로그를 출력한다.<br>
+     */
+    @JvmStatic
+    fun d() = logStandard(LogType.DEBUG, null, null, hasMessage = false, tagProvided = false)
+
+    /**
+     * Logs a DEBUG message with body.<br><br>
+     * 메시지를 포함한 DEBUG 로그를 출력한다.<br>
      *
-     * @param msg The message to log.<br><br>
-     *            기록할 메시지.
+     * @param msg Message payload.<br><br>
+     *            메시지 본문.<br>
      */
-    fun v1(msg: Any?) = logWriter.writeExtensions(DEFAULT_TAG, msg, LogxType.VERBOSE)
+    @JvmStatic
+    fun d(msg: Any?) = logStandard(LogType.DEBUG, null, msg, hasMessage = true, tagProvided = false)
 
     /**
-     * Logs a VERBOSE level message with extended formatting and a custom tag.<br><br>
-     * 확장된 포맷과 커스텀 태그로 VERBOSE 레벨 메시지를 기록합니다.<br>
+     * Logs a DEBUG message with custom tag and body.<br><br>
+     * 커스텀 태그와 메시지를 포함한 DEBUG 로그를 출력한다.<br>
      *
-     * @param tag Custom tag for filtering logs.<br><br>
-     *            로그 필터링을 위한 커스텀 태그.
-     * @param msg The message to log.<br><br>
-     *            기록할 메시지.
+     * @param tag Tag to use.<br><br>
+     *            사용할 태그.<br>
+     * @param msg Message payload.<br><br>
+     *            메시지 본문.<br>
      */
-    fun v1(tag: String, msg: Any?) = logWriter.writeExtensions(tag, msg, LogxType.VERBOSE)
+    @JvmStatic
+    fun d(tag: String, msg: Any?) = logStandard(LogType.DEBUG, tag, msg, hasMessage = true, tagProvided = true)
 
     /**
-     * Logs a DEBUG level message with stack trace information.<br><br>
-     * DEBUG 레벨 메시지를 스택 트레이스 정보와 함께 기록합니다.<br>
+     * Logs an INFO message without message body.<br><br>
+     * 메시지 없이 INFO 로그를 출력한다.<br>
      */
-    override fun d() = logWriter.write(DEFAULT_TAG, "", LogxType.DEBUG)
+    @JvmStatic
+    fun i() = logStandard(LogType.INFO, null, null, hasMessage = false, tagProvided = false)
 
     /**
-     * Logs a DEBUG level message.<br><br>
-     * DEBUG 레벨 메시지를 기록합니다.<br>
+     * Logs an INFO message with body.<br><br>
+     * 메시지를 포함한 INFO 로그를 출력한다.<br>
      *
-     * @param msg The message to log.<br><br>
-     *            기록할 메시지.
+     * @param msg Message payload.<br><br>
+     *            메시지 본문.<br>
      */
-    override fun d(msg: Any?) = logWriter.write(DEFAULT_TAG, msg, LogxType.DEBUG)
+    @JvmStatic
+    fun i(msg: Any?) = logStandard(LogType.INFO, null, msg, hasMessage = true, tagProvided = false)
 
     /**
-     * Logs a DEBUG level message with a custom tag.<br><br>
-     * 커스텀 태그와 함께 DEBUG 레벨 메시지를 기록합니다.<br>
+     * Logs an INFO message with custom tag and body.<br><br>
+     * 커스텀 태그와 메시지를 포함한 INFO 로그를 출력한다.<br>
      *
-     * @param tag Custom tag for filtering logs.<br><br>
-     *            로그 필터링을 위한 커스텀 태그.
-     * @param msg The message to log.<br><br>
-     *            기록할 메시지.
+     * @param tag Tag to use.<br><br>
+     *            사용할 태그.<br>
+     * @param msg Message payload.<br><br>
+     *            메시지 본문.<br>
      */
-    override fun d(tag: String, msg: Any?) = logWriter.write(tag, msg, LogxType.DEBUG)
+    @JvmStatic
+    fun i(tag: String, msg: Any?) = logStandard(LogType.INFO, tag, msg, hasMessage = true, tagProvided = true)
 
     /**
-     * Logs a DEBUG level message with extended formatting.<br><br>
-     * 확장된 포맷으로 DEBUG 레벨 메시지를 기록합니다.<br>
+     * Logs a WARN message without message body.<br><br>
+     * 메시지 없이 WARN 로그를 출력한다.<br>
+     */
+    @JvmStatic
+    fun w() = logStandard(LogType.WARN, null, null, hasMessage = false, tagProvided = false)
+
+    /**
+     * Logs a WARN message with body.<br><br>
+     * 메시지를 포함한 WARN 로그를 출력한다.<br>
      *
-     * @param msg The message to log.<br><br>
-     *            기록할 메시지.
+     * @param msg Message payload.<br><br>
+     *            메시지 본문.<br>
      */
-    fun d1(msg: Any?) = logWriter.writeExtensions(DEFAULT_TAG, msg, LogxType.DEBUG)
+    @JvmStatic
+    fun w(msg: Any?) = logStandard(LogType.WARN, null, msg, hasMessage = true, tagProvided = false)
 
     /**
-     * Logs a DEBUG level message with extended formatting and a custom tag.<br><br>
-     * 확장된 포맷과 커스텀 태그로 DEBUG 레벨 메시지를 기록합니다.<br>
+     * Logs a WARN message with custom tag and body.<br><br>
+     * 커스텀 태그와 메시지를 포함한 WARN 로그를 출력한다.<br>
      *
-     * @param tag Custom tag for filtering logs.<br><br>
-     *            로그 필터링을 위한 커스텀 태그.
-     * @param msg The message to log.<br><br>
-     *            기록할 메시지.
+     * @param tag Tag to use.<br><br>
+     *            사용할 태그.<br>
+     * @param msg Message payload.<br><br>
+     *            메시지 본문.<br>
      */
-    fun d1(tag: String, msg: Any?) = logWriter.writeExtensions(tag, msg, LogxType.DEBUG)
+    @JvmStatic
+    fun w(tag: String, msg: Any?) = logStandard(LogType.WARN, tag, msg, hasMessage = true, tagProvided = true)
 
     /**
-     * Logs an INFO level message with stack trace information.<br><br>
-     * INFO 레벨 메시지를 스택 트레이스 정보와 함께 기록합니다.<br>
+     * Logs an ERROR message without message body.<br><br>
+     * 메시지 없이 ERROR 로그를 출력한다.<br>
      */
-    override fun i() = logWriter.write(DEFAULT_TAG, "", LogxType.INFO)
+    @JvmStatic
+    fun e() = logStandard(LogType.ERROR, null, null, hasMessage = false, tagProvided = false)
 
     /**
-     * Logs an INFO level message.<br><br>
-     * INFO 레벨 메시지를 기록합니다.<br>
+     * Logs an ERROR message with body.<br><br>
+     * 메시지를 포함한 ERROR 로그를 출력한다.<br>
      *
-     * @param msg The message to log.<br><br>
-     *            기록할 메시지.
+     * @param msg Message payload.<br><br>
+     *            메시지 본문.<br>
      */
-    override fun i(msg: Any?) = logWriter.write(DEFAULT_TAG, msg, LogxType.INFO)
+    @JvmStatic
+    fun e(msg: Any?) = logStandard(LogType.ERROR, null, msg, hasMessage = true, tagProvided = false)
 
     /**
-     * Logs an INFO level message with a custom tag.<br><br>
-     * 커스텀 태그와 함께 INFO 레벨 메시지를 기록합니다.<br>
+     * Logs an ERROR message with custom tag and body.<br><br>
+     * 커스텀 태그와 메시지를 포함한 ERROR 로그를 출력한다.<br>
      *
-     * @param tag Custom tag for filtering logs.<br><br>
-     *            로그 필터링을 위한 커스텀 태그.
-     * @param msg The message to log.<br><br>
-     *            기록할 메시지.
+     * @param tag Tag to use.<br><br>
+     *            사용할 태그.<br>
+     * @param msg Message payload.<br><br>
+     *            메시지 본문.<br>
      */
-    override fun i(tag: String, msg: Any?) = logWriter.write(tag, msg, LogxType.INFO)
+    @JvmStatic
+    fun e(tag: String, msg: Any?) = logStandard(LogType.ERROR, tag, msg, hasMessage = true, tagProvided = true)
 
     /**
-     * Logs an INFO level message with extended formatting.<br><br>
-     * 확장된 포맷으로 INFO 레벨 메시지를 기록합니다.<br>
+     * Logs parent trace without message body.<br><br>
+     * 메시지 없이 부모 호출 트레이스를 출력한다.<br>
+     */
+    @JvmStatic
+    fun p() = logParent(null, null, hasMessage = false, tagProvided = false)
+
+    /**
+     * Logs parent trace with body.<br><br>
+     * 메시지를 포함한 부모 호출 트레이스를 출력한다.<br>
      *
-     * @param msg The message to log.<br><br>
-     *            기록할 메시지.
+     * @param msg Message payload.<br><br>
+     *            메시지 본문.<br>
      */
-    fun i1(msg: Any?) = logWriter.writeExtensions(DEFAULT_TAG, msg, LogxType.INFO)
+    @JvmStatic
+    fun p(msg: Any?) = logParent(null, msg, hasMessage = true, tagProvided = false)
 
     /**
-     * Logs an INFO level message with extended formatting and a custom tag.<br><br>
-     * 확장된 포맷과 커스텀 태그로 INFO 레벨 메시지를 기록합니다.<br>
+     * Logs parent trace with custom tag and body.<br><br>
+     * 커스텀 태그와 메시지를 포함한 부모 호출 트레이스를 출력한다.<br>
      *
-     * @param tag Custom tag for filtering logs.<br><br>
-     *            로그 필터링을 위한 커스텀 태그.
-     * @param msg The message to log.<br><br>
-     *            기록할 메시지.
+     * @param tag Tag to use.<br><br>
+     *            사용할 태그.<br>
+     * @param msg Message payload.<br><br>
+     *            메시지 본문.<br>
      */
-    fun i1(tag: String, msg: Any?) = logWriter.writeExtensions(tag, msg, LogxType.INFO)
+    @JvmStatic
+    fun p(tag: String, msg: Any?) = logParent(tag, msg, hasMessage = true, tagProvided = true)
 
     /**
-     * Logs a WARN level message with stack trace information.<br><br>
-     * WARN 레벨 메시지를 스택 트레이스 정보와 함께 기록합니다.<br>
-     */
-    override fun w() = logWriter.write(DEFAULT_TAG, "", LogxType.WARN)
-
-    /**
-     * Logs a WARN level message.<br><br>
-     * WARN 레벨 메시지를 기록합니다.<br>
+     * Logs JSON string with JSON formatting.<br><br>
+     * JSON 문자열을 JSON 포맷으로 출력한다.<br>
      *
-     * @param msg The message to log.<br><br>
-     *            기록할 메시지.
+     * @param json JSON string.<br><br>
+     *             JSON 문자열.<br>
      */
-    override fun w(msg: Any?) = logWriter.write(DEFAULT_TAG, msg, LogxType.WARN)
+    @JvmStatic
+    fun j(json: String) = logJson(null, json, tagProvided = false)
 
     /**
-     * Logs a WARN level message with a custom tag.<br><br>
-     * 커스텀 태그와 함께 WARN 레벨 메시지를 기록합니다.<br>
+     * Logs JSON string with JSON formatting and custom tag.<br><br>
+     * JSON 문자열을 JSON 포맷과 커스텀 태그로 출력한다.<br>
      *
-     * @param tag Custom tag for filtering logs.<br><br>
-     *            로그 필터링을 위한 커스텀 태그.
-     * @param msg The message to log.<br><br>
-     *            기록할 메시지.
+     * @param tag Tag to use.<br><br>
+     *            사용할 태그.<br>
+     * @param json JSON string.<br><br>
+     *             JSON 문자열.<br>
      */
-    override fun w(tag: String, msg: Any?) = logWriter.write(tag, msg, LogxType.WARN)
+    @JvmStatic
+    fun j(tag: String, json: String) = logJson(tag, json, tagProvided = true)
 
     /**
-     * Logs a WARN level message with extended formatting.<br><br>
-     * 확장된 포맷으로 WARN 레벨 메시지를 기록합니다.<br>
+     * Logs current thread id without message body.<br><br>
+     * 메시지 없이 현재 스레드 ID를 출력한다.<br>
+     */
+    @JvmStatic
+    fun t() = logThread(null, null, hasMessage = false, tagProvided = false)
+
+    /**
+     * Logs current thread id with body.<br><br>
+     * 메시지를 포함한 현재 스레드 ID를 출력한다.<br>
      *
-     * @param msg The message to log.<br><br>
-     *            기록할 메시지.
+     * @param msg Message payload.<br><br>
+     *            메시지 본문.<br>
      */
-    fun w1(msg: Any?) = logWriter.writeExtensions(DEFAULT_TAG, msg, LogxType.WARN)
+    @JvmStatic
+    fun t(msg: Any?) = logThread(null, msg, hasMessage = true, tagProvided = false)
 
     /**
-     * Logs a WARN level message with extended formatting and a custom tag.<br><br>
-     * 확장된 포맷과 커스텀 태그로 WARN 레벨 메시지를 기록합니다.<br>
+     * Logs current thread id with custom tag and body.<br><br>
+     * 커스텀 태그와 메시지를 포함한 현재 스레드 ID를 출력한다.<br>
      *
-     * @param tag Custom tag for filtering logs.<br><br>
-     *            로그 필터링을 위한 커스텀 태그.
-     * @param msg The message to log.<br><br>
-     *            기록할 메시지.
+     * @param tag Tag to use.<br><br>
+     *            사용할 태그.<br>
+     * @param msg Message payload.<br><br>
+     *            메시지 본문.<br>
      */
-    fun w1(tag: String, msg: Any?) = logWriter.writeExtensions(tag, msg, LogxType.WARN)
+    @JvmStatic
+    fun t(tag: String, msg: Any?) = logThread(tag, msg, hasMessage = true, tagProvided = true)
 
     /**
-     * Logs an ERROR level message with stack trace information.<br><br>
-     * ERROR 레벨 메시지를 스택 트레이스 정보와 함께 기록합니다.<br>
-     */
-    override fun e() = logWriter.write(DEFAULT_TAG, "", LogxType.ERROR)
-
-    /**
-     * Logs an ERROR level message.<br><br>
-     * ERROR 레벨 메시지를 기록합니다.<br>
+     * Internal helper for standard log output.<br><br>
+     * 표준 로그 출력용 내부 헬퍼이다.<br>
      *
-     * @param msg The message to log.<br><br>
-     *            기록할 메시지.
+     * @param type Log type to output.<br><br>
+     *             출력할 로그 타입.<br>
+     * @param inputTag Optional input tag.<br><br>
+     *                 입력된 태그(선택).<br>
+     * @param msg Message payload.<br><br>
+     *            메시지 본문.<br>
+     * @param hasMessage Whether message should be appended.<br><br>
+     *                   메시지 포함 여부.<br>
+     * @param tagProvided Whether tag parameter was provided by caller.<br><br>
+     *                    호출자가 태그를 제공했는지 여부.<br>
      */
-    override fun e(msg: Any?) = logWriter.write(DEFAULT_TAG, msg, LogxType.ERROR)
+    private fun logStandard(
+        type: LogType,
+        inputTag: String?,
+        msg: Any?,
+        hasMessage: Boolean,
+        tagProvided: Boolean,
+    ) = pipeline.logStandard(type, inputTag, msg, hasMessage, tagProvided)
 
     /**
-     * Logs an ERROR level message with a custom tag.<br><br>
-     * 커스텀 태그와 함께 ERROR 레벨 메시지를 기록합니다.<br>
+     * Internal helper for parent trace logging.<br><br>
+     * 부모 호출 트레이스 출력용 내부 헬퍼이다.<br>
      *
-     * @param tag Custom tag for filtering logs.<br><br>
-     *            로그 필터링을 위한 커스텀 태그.
-     * @param msg The message to log.<br><br>
-     *            기록할 메시지.
+     * @param inputTag Optional input tag.<br><br>
+     *                 입력된 태그(선택).<br>
+     * @param msg Message payload.<br><br>
+     *            메시지 본문.<br>
+     * @param hasMessage Whether message should be appended.<br><br>
+     *                   메시지 포함 여부.<br>
+     * @param tagProvided Whether tag parameter was provided by caller.<br><br>
+     *                    호출자가 태그를 제공했는지 여부.<br>
      */
-    override fun e(tag: String, msg: Any?) = logWriter.write(tag, msg, LogxType.ERROR)
+    private fun logParent(
+        inputTag: String?,
+        msg: Any?,
+        hasMessage: Boolean,
+        tagProvided: Boolean,
+    ) = pipeline.logParent(inputTag, msg, hasMessage, tagProvided)
 
     /**
-     * Logs an ERROR level message with extended formatting.<br><br>
-     * 확장된 포맷으로 ERROR 레벨 메시지를 기록합니다.<br>
+     * Internal helper for thread id logging.<br><br>
+     * 스레드 ID 출력용 내부 헬퍼이다.<br>
      *
-     * @param msg The message to log.<br><br>
-     *            기록할 메시지.
+     * @param inputTag Optional input tag.<br><br>
+     *                 입력된 태그(선택).<br>
+     * @param msg Message payload.<br><br>
+     *            메시지 본문.<br>
+     * @param hasMessage Whether message should be appended.<br><br>
+     *                   메시지 포함 여부.<br>
+     * @param tagProvided Whether tag parameter was provided by caller.<br><br>
+     *                    호출자가 태그를 제공했는지 여부.<br>
      */
-    fun e1(msg: Any?) = logWriter.writeExtensions(DEFAULT_TAG, msg, LogxType.ERROR)
+    private fun logThread(
+        inputTag: String?,
+        msg: Any?,
+        hasMessage: Boolean,
+        tagProvided: Boolean,
+    ) = pipeline.logThread(
+        inputTag,
+        msg,
+        hasMessage,
+        tagProvided,
+        Process.myTid().toLong(),
+    )
 
     /**
-     * Logs an ERROR level message with extended formatting and a custom tag.<br><br>
-     * 확장된 포맷과 커스텀 태그로 ERROR 레벨 메시지를 기록합니다.<br>
+     * Internal helper for JSON logging.<br><br>
+     * JSON 출력용 내부 헬퍼이다.<br>
      *
-     * @param tag Custom tag for filtering logs.<br><br>
-     *            로그 필터링을 위한 커스텀 태그.
-     * @param msg The message to log.<br><br>
-     *            기록할 메시지.
+     * @param inputTag Optional input tag.<br><br>
+     *                 입력된 태그(선택).<br>
+     * @param json JSON string payload.<br><br>
+     *             JSON 문자열 본문.<br>
+     * @param tagProvided Whether tag parameter was provided by caller.<br><br>
+     *                    호출자가 태그를 제공했는지 여부.<br>
      */
-    fun e1(tag: String, msg: Any?) = logWriter.writeExtensions(tag, msg, LogxType.ERROR)
-
-    // 확장 기능들
-
-    /**
-     * Logs the parent method call information.<br>
-     * Useful for debugging call hierarchies.<br><br>
-     * 부모 메서드 호출 정보를 기록합니다.<br>
-     * 호출 계층 디버깅에 유용합니다.<br>
-     */
-    override fun p() = logWriter.writeParent(DEFAULT_TAG, "")
-
-    /**
-     * Logs the parent method call information with a message.<br><br>
-     * 부모 메서드 호출 정보를 메시지와 함께 기록합니다.<br>
-     *
-     * @param msg The message to log.<br><br>
-     *            기록할 메시지.
-     */
-    override fun p(msg: Any?) = logWriter.writeParent(DEFAULT_TAG, msg)
-
-    /**
-     * Logs the parent method call information with a custom tag and message.<br><br>
-     * 부모 메서드 호출 정보를 커스텀 태그와 메시지와 함께 기록합니다.<br>
-     *
-     * @param tag Custom tag for filtering logs.<br><br>
-     *            로그 필터링을 위한 커스텀 태그.
-     * @param msg The message to log.<br><br>
-     *            기록할 메시지.
-     */
-    override fun p(tag: String, msg: Any?) = logWriter.writeParent(tag, msg)
-
-    /**
-     * Logs the parent method call information with extended formatting.<br><br>
-     * 확장된 포맷으로 부모 메서드 호출 정보를 기록합니다.<br>
-     *
-     * @param msg The message to log.<br><br>
-     *            기록할 메시지.
-     */
-    fun p1(msg: Any?) = logWriter.writeExtensionsParent(DEFAULT_TAG, msg)
-
-    /**
-     * Logs the parent method call information with extended formatting and a custom tag.<br><br>
-     * 확장된 포맷과 커스텀 태그로 부모 메서드 호출 정보를 기록합니다.<br>
-     *
-     * @param tag Custom tag for filtering logs.<br><br>
-     *            로그 필터링을 위한 커스텀 태그.
-     * @param msg The message to log.<br><br>
-     *            기록할 메시지.
-     */
-    fun p1(tag: String, msg: Any?) = logWriter.writeExtensionsParent(tag, msg)
-
-    /**
-     * Logs the current thread ID.<br>
-     * Useful for debugging multi-threaded applications.<br><br>
-     * 현재 스레드 ID를 기록합니다.<br>
-     * 멀티스레드 애플리케이션 디버깅에 유용합니다.<br>
-     */
-    override fun t() = logWriter.writeThreadId(DEFAULT_TAG, "")
-
-    /**
-     * Logs the current thread ID with a message.<br><br>
-     * 현재 스레드 ID를 메시지와 함께 기록합니다.<br>
-     *
-     * @param msg The message to log.<br><br>
-     *            기록할 메시지.
-     */
-    override fun t(msg: Any?) = logWriter.writeThreadId(DEFAULT_TAG, msg)
-
-    /**
-     * Logs the current thread ID with a custom tag and message.<br><br>
-     * 현재 스레드 ID를 커스텀 태그와 메시지와 함께 기록합니다.<br>
-     *
-     * @param tag Custom tag for filtering logs.<br><br>
-     *            로그 필터링을 위한 커스텀 태그.
-     * @param msg The message to log.<br><br>
-     *            기록할 메시지.
-     */
-    override fun t(tag: String, msg: Any?) = logWriter.writeThreadId(tag, msg)
-
-    /**
-     * Logs a JSON-formatted message with visual markers for enhanced readability.<br><br>
-     * 가독성을 높이기 위한 시각적 마커와 함께 JSON 형식의 메시지를 기록합니다.<br>
-     *
-     * @param msg The JSON string to log.<br><br>
-     *            기록할 JSON 문자열.
-     */
-    override fun j(msg: String) = logWriter.writeJson(DEFAULT_TAG, msg)
-
-    /**
-     * Logs a JSON-formatted message with visual markers and a custom tag.<br><br>
-     * 시각적 마커와 커스텀 태그로 JSON 형식의 메시지를 기록합니다.<br>
-     *
-     * @param tag Custom tag for filtering logs.<br><br>
-     *            로그 필터링을 위한 커스텀 태그.
-     * @param msg The JSON string to log.<br><br>
-     *            기록할 JSON 문자열.
-     */
-    override fun j(tag: String, msg: String) = logWriter.writeJson(tag, msg)
-
-    /**
-     * Logs a JSON-formatted message with extended formatting and visual markers.<br><br>
-     * 확장된 포맷과 시각적 마커로 JSON 형식의 메시지를 기록합니다.<br>
-     *
-     * @param msg The JSON string to log.<br><br>
-     *            기록할 JSON 문자열.
-     */
-    fun j1(msg: String) = logWriter.writeJsonExtensions(DEFAULT_TAG, msg)
-
-    /**
-     * Logs a JSON-formatted message with extended formatting, visual markers, and a custom tag.<br><br>
-     * 확장된 포맷, 시각적 마커, 커스텀 태그로 JSON 형식의 메시지를 기록합니다.<br>
-     *
-     * @param tag Custom tag for filtering logs.<br><br>
-     *            로그 필터링을 위한 커스텀 태그.
-     * @param msg The JSON string to log.<br><br>
-     *            기록할 JSON 문자열.
-     */
-    fun j1(tag: String, msg: String) = logWriter.writeJsonExtensions(tag, msg)
-
-    // 레거시 호환성을 위한 getter 메서드들
-
-    /**
-     * Returns the current debug mode setting.<br><br>
-     * 현재 디버그 모드 설정을 반환합니다.<br>
-     *
-     * @return `true` if debug mode is enabled, `false` otherwise.<br><br>
-     *         디버그 모드가 활성화되어 있으면 `true`, 그렇지 않으면 `false`.<br>
-     */
-    fun getDebugMode(): Boolean = configManager.config.isDebug
-
-    /**
-     * Returns the current debug filter setting.<br><br>
-     * 현재 디버그 필터 설정을 반환합니다.<br>
-     *
-     * @return `true` if debug filter is enabled, `false` otherwise.<br><br>
-     *         디버그 필터가 활성화되어 있으면 `true`, 그렇지 않으면 `false`.<br>
-     */
-    fun getDebugFilter(): Boolean = configManager.config.isDebugFilter
-
-    /**
-     * Returns the current save-to-file setting.<br><br>
-     * 현재 파일 저장 설정을 반환합니다.<br>
-     *
-     * @return `true` if saving logs to file is enabled, `false` otherwise.<br><br>
-     *         로그를 파일에 저장하는 기능이 활성화되어 있으면 `true`, 그렇지 않으면 `false`.<br>
-     */
-    fun getSaveToFile(): Boolean = configManager.config.isDebugSave
-
-    /**
-     * Returns the current log file path.<br><br>
-     * 현재 로그 파일 경로를 반환합니다.<br>
-     *
-     * @return The absolute path where log files are saved.<br><br>
-     *         로그 파일이 저장되는 절대 경로.<br>
-     */
-    fun getFilePath(): String = configManager.config.saveFilePath
-
-    /**
-     * Returns the current application name used in logs.<br><br>
-     * 로그에 사용되는 현재 애플리케이션 이름을 반환합니다.<br>
-     *
-     * @return The application name string.<br><br>
-     *         애플리케이션 이름 문자열.<br>
-     */
-    fun getAppName(): String = configManager.config.appName
-
-    /**
-     * Returns the current set of tags used for debug filtering.<br><br>
-     * 디버그 필터링에 사용되는 현재 태그 집합을 반환합니다.<br>
-     *
-     * @return A set of filter tag strings.<br><br>
-     *         필터 태그 문자열의 집합.<br>
-     */
-    fun getDebugFilterList(): Set<String> = configManager.config.debugFilterList
-
-    /**
-     * Returns the current set of enabled log types.<br><br>
-     * 현재 활성화된 로그 타입 집합을 반환합니다.<br>
-     *
-     * @return An EnumSet of enabled LogxType values.<br><br>
-     *         활성화된 LogxType 값들의 EnumSet.<br>
-     */
-    fun getDebugLogTypeList(): EnumSet<LogxType> = configManager.config.debugLogTypeList
-
-    /**
-     * Cleans up all resources including file writers and configuration listeners.<br>
-     * Recommended to call when the application is shutting down to ensure all buffered logs are written.<br><br>
-     * 파일 작성기 및 설정 리스너를 포함한 모든 리소스를 정리합니다.<br>
-     * 모든 버퍼링된 로그가 작성되도록 애플리케이션 종료 시 호출하는 것이 권장됩니다.<br>
-     */
-    fun cleanup() {
-        logWriter.cleanup()
-        configManager.removeAllConfigChangeListener()
-    }
+    private fun logJson(
+        inputTag: String?,
+        json: String,
+        tagProvided: Boolean,
+    ) = pipeline.logJson(inputTag, json, tagProvided)
 }

@@ -5,15 +5,17 @@ sealed interface LogxActivityVmEvent {
 
     data object OnClickJsonLogging : LogxActivityVmEvent
 
-    data object OnClickParentTracking : LogxActivityVmEvent
+    data object OnClickParentLogging : LogxActivityVmEvent
 
-    data object OnClickThreadTracking : LogxActivityVmEvent
+    data object OnClickThreadLogging : LogxActivityVmEvent
 
     data object OnClickFileLogging : LogxActivityVmEvent
 
     data object OnClickStorageConfig : LogxActivityVmEvent
 
-    data object OnClickAdvancedConfig : LogxActivityVmEvent
+    data object OnClickTagBlockList : LogxActivityVmEvent
 
-    data object OnClickLogFiltering : LogxActivityVmEvent
+    data object OnClickSkipPackages : LogxActivityVmEvent
+
+    data object OnClickSaveDirectory : LogxActivityVmEvent
 }

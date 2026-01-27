@@ -7,15 +7,17 @@ class LogxActivityVm : BaseViewModelEvent<LogxActivityVmEvent>() {
 
     fun onClickJsonLogging() = sendEventVm(LogxActivityVmEvent.OnClickJsonLogging)
 
-    fun onClickParentTracking() = sendEventVm(LogxActivityVmEvent.OnClickParentTracking)
+    fun onClickParentLogging() = sendEventVm(LogxActivityVmEvent.OnClickParentLogging)
 
-    fun onClickThreadTracking() = sendEventVm(LogxActivityVmEvent.OnClickThreadTracking)
+    fun onClickThreadLogging() = sendEventVm(LogxActivityVmEvent.OnClickThreadLogging)
 
     fun onClickFileLogging() = sendEventVm(LogxActivityVmEvent.OnClickFileLogging)
 
     fun onClickStorageConfig() = sendEventVm(LogxActivityVmEvent.OnClickStorageConfig)
 
-    fun onClickAdvancedConfig() = sendEventVm(LogxActivityVmEvent.OnClickAdvancedConfig)
+    fun onClickTagBlockList() = sendEventVm(LogxActivityVmEvent.OnClickTagBlockList)
 
-    fun onClickLogFiltering() = sendEventVm(LogxActivityVmEvent.OnClickLogFiltering)
+    fun onClickSkipPackages() = sendEventVm(LogxActivityVmEvent.OnClickSkipPackages)
+
+    fun onClickSaveDirectory() = sendEventVm(LogxActivityVmEvent.OnClickSaveDirectory)
 }

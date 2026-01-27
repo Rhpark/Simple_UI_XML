@@ -7,7 +7,7 @@ import kr.open.library.simpleui_xml.crash.CrashReporter
 class MyApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        Logx.init(this)
+        Logx.initialize(this)
         // Setup crash reporter for verification build only
         // verification 빌드에서만 크래시 리포터를 설정합니다.
         Logx.d("BuildConfig.BUILD_TYPE_NAME ${BuildConfig.BUILD_TYPE_NAME}")
