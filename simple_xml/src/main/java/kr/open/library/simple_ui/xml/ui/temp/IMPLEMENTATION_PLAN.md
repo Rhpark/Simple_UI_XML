@@ -20,7 +20,7 @@
 ## 단계별 구현 순서
 1) 공통 코어 정리 (상태: 완료)
    - `RootRcvAdapterCore`, `RootListAdapterCore`
-   - 큐 처리 공통화(OperationQueueCoordinator), commitCallback, 스레드 계약, 클릭/롱클릭 정책, Diff 실행 경로 정리
+   - 큐 처리 공통화(AdapterOperationQueueCoordinator), commitCallback, 스레드 계약, 클릭/롱클릭 정책, Diff 실행 경로 정리
    - 큐 병합 키(setQueueMergeKeys) 지원
 2) ListAdapter 계열 정리 (상태: 완료)
    - list.normal
@@ -67,12 +67,12 @@
 - 아이템 변환 Executor 주입 가능
 - 큐 폭주 대응 정책 제공(maxPending/overflowPolicy)
 - 큐 병합 키(setQueueMergeKeys) 제공
-- QueueMergeKeys 상수 제공
-- 실패 원인 리스너(OperationFailureInfo) 제공
+- AdapterQueueMergeKeys 상수 제공
+- 실패 원인 리스너(AdapterOperationFailureInfo) 제공
 - 큐 디버그 리스너 제공
 - clearQueue API 제공
 - setItemsLatest API 제공
-- ThreadCheckMode(LOG/CRASH/OFF) 정책 제공
+- AdapterThreadCheckMode(LOG/CRASH/OFF) 정책 제공
 - Diff OFF 시 notifyItem* 분배 및 폴백 처리
 - createViewHolderInternal 구현, attachClickListeners는 코어 처리
 - 다중 ViewBinding 혼합 가능

@@ -14,11 +14,11 @@ import kr.open.library.simple_ui.xml.BuildConfig
 import kr.open.library.simple_ui.xml.ui.adapter.queue.QueueDebugEvent
 import kr.open.library.simple_ui.xml.ui.adapter.queue.QueueOverflowPolicy
 import kr.open.library.simple_ui.xml.ui.temp.base.AdapterClickBinder
-import kr.open.library.simple_ui.xml.ui.temp.base.OperationFailure
-import kr.open.library.simple_ui.xml.ui.temp.base.OperationFailureInfo
-import kr.open.library.simple_ui.xml.ui.temp.base.OperationQueueCoordinator
-import kr.open.library.simple_ui.xml.ui.temp.base.OperationQueueCoordinator.OperationResult
-import kr.open.library.simple_ui.xml.ui.temp.base.ThreadCheckMode
+import kr.open.library.simple_ui.xml.ui.temp.base.AdapterOperationFailure
+import kr.open.library.simple_ui.xml.ui.temp.base.AdapterOperationFailureInfo
+import kr.open.library.simple_ui.xml.ui.temp.base.AdapterOperationQueueCoordinator
+import kr.open.library.simple_ui.xml.ui.temp.base.AdapterOperationQueueCoordinator.OperationResult
+import kr.open.library.simple_ui.xml.ui.temp.base.AdapterThreadCheckMode
 import kr.open.library.simple_ui.xml.ui.temp.base.list.diffcallback.DefaultDiffCallback
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
@@ -96,8 +96,8 @@ abstract class RootListAdapterCore<ITEM : Any, VH : RecyclerView.ViewHolder>(
      * Thread check mode for API contract validation.<br><br>
      * API 스레드 계약 검증 모드입니다.<br>
      */
-    private var threadCheckMode: ThreadCheckMode =
-        if (BuildConfig.DEBUG) ThreadCheckMode.CRASH else ThreadCheckMode.LOG
+    private var threadCheckMode: AdapterThreadCheckMode =
+        if (BuildConfig.DEBUG) AdapterThreadCheckMode.CRASH else AdapterThreadCheckMode.LOG
 
     /**
      * Executor for background item transformation; null means main-thread execution.<br><br>
@@ -121,9 +121,9 @@ abstract class RootListAdapterCore<ITEM : Any, VH : RecyclerView.ViewHolder>(
      */
     private fun handleThreadViolation(message: String) {
         when (threadCheckMode) {
-            ThreadCheckMode.OFF -> return
-            ThreadCheckMode.LOG -> Logx.w(message)
-            ThreadCheckMode.CRASH -> throw IllegalStateException(message)
+            AdapterThreadCheckMode.OFF -> return
+            AdapterThreadCheckMode.LOG -> Logx.w(message)
+            AdapterThreadCheckMode.CRASH -> throw IllegalStateException(message)
         }
     }
 
@@ -144,7 +144,7 @@ abstract class RootListAdapterCore<ITEM : Any, VH : RecyclerView.ViewHolder>(
             if (position < 0 || position > current.size) {
                 val message = "Cannot add items at position $position. Valid range: 0..${current.size}"
                 Logx.e(message)
-                return@enqueueOperation OperationResult(current, false, failure = OperationFailure.Validation(message))
+                return@enqueueOperation OperationResult(current, false, failure = AdapterOperationFailure.Validation(message))
             }
             OperationResult(current.toMutableList().apply { addAll(position, itemsToAdd) }, true)
         }
@@ -166,19 +166,19 @@ abstract class RootListAdapterCore<ITEM : Any, VH : RecyclerView.ViewHolder>(
      * Operation failure listener invoked with failure details.<br><br>
      * 연산 실패 상세를 전달하는 리스너입니다.<br>
      */
-    private var onOperationFailureListener: ((OperationFailureInfo) -> Unit)? = null
+    private var onAdapterOperationFailureListener: ((AdapterOperationFailureInfo) -> Unit)? = null
 
     /**
      * Shared coordinator for queued adapter operations.<br><br>
      * 어댑터 연산을 직렬 처리하는 공통 코디네이터입니다.<br>
      */
     private val operationCoordinator =
-        OperationQueueCoordinator<ITEM, Unit>(
+        AdapterOperationQueueCoordinator<ITEM, Unit>(
             runOnMainThread = { action -> runOnMainThread(action) },
             getCurrentItems = { currentList.toList() },
             operationExecutorProvider = { operationExecutor },
             applyResult = { oldItems, result, complete -> applyOperationResult(oldItems, result, complete) },
-            onFailure = { operationName, failure -> dispatchOperationFailure(operationName, failure) },
+            onFailure = { operationName, failure -> dispatchAdapterOperationFailure(operationName, failure) },
             onError = { message, error ->
                 if (error != null) {
                     Logx.e(message, error)
@@ -206,9 +206,9 @@ abstract class RootListAdapterCore<ITEM : Any, VH : RecyclerView.ViewHolder>(
      * Dispatches operation failure on the main thread.<br><br>
      * 연산 실패를 메인 스레드에서 전달합니다.<br>
      */
-    private fun dispatchOperationFailure(operationName: String, failure: OperationFailure) {
-        val listener = onOperationFailureListener ?: return
-        runOnMainThread { listener.invoke(OperationFailureInfo(operationName, failure)) }
+    private fun dispatchAdapterOperationFailure(operationName: String, failure: AdapterOperationFailure) {
+        val listener = onAdapterOperationFailureListener ?: return
+        runOnMainThread { listener.invoke(AdapterOperationFailureInfo(operationName, failure)) }
     }
 
     /**
@@ -236,9 +236,9 @@ abstract class RootListAdapterCore<ITEM : Any, VH : RecyclerView.ViewHolder>(
      * 연산 실패 상세를 전달하는 리스너를 등록합니다.<br>
      */
     @MainThread
-    fun setOnOperationFailureListener(listener: ((OperationFailureInfo) -> Unit)?) {
-        checkMainThread("setOnOperationFailureListener")
-        onOperationFailureListener = listener
+    fun setOnAdapterOperationFailureListener(listener: ((AdapterOperationFailureInfo) -> Unit)?) {
+        checkMainThread("setOnAdapterOperationFailureListener")
+        onAdapterOperationFailureListener = listener
     }
 
     /**
@@ -246,7 +246,7 @@ abstract class RootListAdapterCore<ITEM : Any, VH : RecyclerView.ViewHolder>(
      * API 스레드 계약 검증 모드를 설정합니다.<br>
      */
     @MainThread
-    fun setThreadCheckMode(mode: ThreadCheckMode) {
+    fun setThreadCheckMode(mode: AdapterThreadCheckMode) {
         checkMainThread("setThreadCheckMode")
         threadCheckMode = mode
     }
@@ -426,7 +426,7 @@ abstract class RootListAdapterCore<ITEM : Any, VH : RecyclerView.ViewHolder>(
             if (position < 0 || position > current.size) {
                 val message = "Cannot add item at position $position. Valid range: 0..${current.size}"
                 Logx.e(message)
-                return@enqueueOperation OperationResult(current, false, failure = OperationFailure.Validation(message))
+                return@enqueueOperation OperationResult(current, false, failure = AdapterOperationFailure.Validation(message))
             }
             OperationResult(current.toMutableList().apply { add(position, item) }, true)
         }
@@ -465,7 +465,7 @@ abstract class RootListAdapterCore<ITEM : Any, VH : RecyclerView.ViewHolder>(
             if (target == RecyclerView.NO_POSITION) {
                 val message = "Item not found in the list"
                 Logx.e(message)
-                return@enqueueOperation OperationResult(current, false, failure = OperationFailure.Validation(message))
+                return@enqueueOperation OperationResult(current, false, failure = AdapterOperationFailure.Validation(message))
             }
             OperationResult(current.toMutableList().apply { removeAt(target) }, true)
         }
@@ -498,7 +498,7 @@ abstract class RootListAdapterCore<ITEM : Any, VH : RecyclerView.ViewHolder>(
             if (position < 0 || position >= current.size) {
                 val message = "Cannot replace item at position $position. Valid range: 0 until ${current.size}"
                 Logx.e(message)
-                return@enqueueOperation OperationResult(current, false, failure = OperationFailure.Validation(message))
+                return@enqueueOperation OperationResult(current, false, failure = AdapterOperationFailure.Validation(message))
             }
             OperationResult(current.toMutableList().apply { set(position, item) }, true)
         }
@@ -517,7 +517,7 @@ abstract class RootListAdapterCore<ITEM : Any, VH : RecyclerView.ViewHolder>(
             if (position < 0 || position >= current.size) {
                 val message = "Cannot remove item at position $position. Valid range: 0 until ${current.size}"
                 Logx.e(message)
-                return@enqueueOperation OperationResult(current, false, failure = OperationFailure.Validation(message))
+                return@enqueueOperation OperationResult(current, false, failure = AdapterOperationFailure.Validation(message))
             }
             OperationResult(current.toMutableList().apply { removeAt(position) }, true)
         }
@@ -537,7 +537,7 @@ abstract class RootListAdapterCore<ITEM : Any, VH : RecyclerView.ViewHolder>(
             if (from < 0 || from >= current.size || to < 0 || to >= current.size) {
                 val message = "Cannot move item. Valid range: 0 until ${current.size}"
                 Logx.e(message)
-                return@enqueueOperation OperationResult(current, false, failure = OperationFailure.Validation(message))
+                return@enqueueOperation OperationResult(current, false, failure = AdapterOperationFailure.Validation(message))
             }
             if (from == to) {
                 return@enqueueOperation OperationResult(current, true)
@@ -671,7 +671,7 @@ abstract class RootListAdapterCore<ITEM : Any, VH : RecyclerView.ViewHolder>(
         if (Looper.myLooper() == Looper.getMainLooper()) {
             action()
         } else {
-            if (threadCheckMode == ThreadCheckMode.LOG) {
+            if (threadCheckMode == AdapterThreadCheckMode.LOG) {
                 Logx.w("Not on main thread. Posting to main.")
             }
             mainHandler.post(action)

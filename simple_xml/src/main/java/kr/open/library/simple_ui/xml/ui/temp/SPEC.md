@@ -49,8 +49,8 @@
 - `BaseListViewBindingAdapterCore`
 
 ## 공통 헬퍼
-- `OperationQueueCoordinator`
-- `QueueMergeKeys`
+- `AdapterOperationQueueCoordinator`
+- `AdapterQueueMergeKeys`
 
 ## ViewHolder 계열
 - `RootViewHolder`
@@ -97,10 +97,10 @@
 - RecyclerView.Adapter에서 Diff OFF + 메인 스레드 경로는 내부 리스트 재사용으로 할당을 줄입니다.
 - Diff 계산은 백그라운드 Executor에서 수행되며 주입이 가능합니다.
 - 아이템 변환은 기본적으로 백그라운드에서 수행되며, 필요 시 메인 스레드로 전환할 수 있습니다.
-- 실패 원인은 `OperationFailure`로 전달할 수 있습니다.
+- 실패 원인은 `AdapterOperationFailure`로 전달할 수 있습니다.
 - 큐 폭주 대응은 `maxPending`과 `QueueOverflowPolicy`로 제어합니다.
 - 큐 디버깅 이벤트는 `QueueDebugEvent`로 전달할 수 있습니다.
-- 공개 API는 메인 스레드 호출이 기본이며 ThreadCheckMode(LOG/CRASH/OFF)로 위반 처리 정책을 선택합니다.
+- 공개 API는 메인 스레드 호출이 기본이며 AdapterThreadCheckMode(LOG/CRASH/OFF)로 위반 처리 정책을 선택합니다.
 - 기본값: Debug=CRASH, Release=LOG.
 - ListAdapter의 `submitList` 직접 호출은 경고하며 큐 API 사용을 권장합니다.
 
@@ -123,8 +123,8 @@
 ## 큐 정책/디버깅 API
 - `setQueuePolicy(maxPending: Int, overflowPolicy: QueueOverflowPolicy)`
 - `setQueueDebugListener(listener: ((QueueDebugEvent) -> Unit)?)`
-- `setQueueMergeKeys(mergeKeys: Set<String>)` (예: `QueueMergeKeys.SET_ITEMS`)
-- `setOnOperationFailureListener(listener: ((OperationFailureInfo) -> Unit)?)`
+- `setQueueMergeKeys(mergeKeys: Set<String>)` (예: `AdapterQueueMergeKeys.SET_ITEMS`)
+- `setOnAdapterOperationFailureListener(listener: ((AdapterOperationFailureInfo) -> Unit)?)`
 
 ### 공통 API 동작
 - 모든 연산은 큐에 적재되어 순차 처리됩니다.
@@ -157,7 +157,7 @@
 ## 오류/검증 규칙
 - position 범위 오류 시 로그 후 실패 처리합니다.
 - viewType 매핑 누락 시 예외를 발생시킵니다.
-- 메인 스레드 계약 위반은 ThreadCheckMode 정책에 따라 로그/예외/무시 처리합니다.
+- 메인 스레드 계약 위반은 AdapterThreadCheckMode 정책에 따라 로그/예외/무시 처리합니다.
 - 병합된 연산은 `QueueDropReason.MERGED`로 전달됩니다.
 - clearQueue로 드롭된 연산은 `QueueDropReason.CLEARED_BY_API`로 전달됩니다.
 

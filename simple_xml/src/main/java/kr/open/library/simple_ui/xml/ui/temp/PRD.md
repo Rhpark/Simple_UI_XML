@@ -34,7 +34,7 @@
 - diff 옵션(diffExecutor/DiffUtil/커스텀 DiffCallback)을 기본 노출합니다.
 
 ## 구조(실제 구현 기준)
-- base: 공통 정책/헬퍼/추상 계층(OperationQueueCoordinator 포함)
+- base: 공통 정책/헬퍼/추상 계층(AdapterOperationQueueCoordinator 포함)
   - base.list: ListAdapter 공통 코어
   - base.normal: RecyclerView.Adapter 공통 코어
 - list: ListAdapter 계열
@@ -56,7 +56,7 @@
 - 큐 처리 공통화: Root*는 결과 적용만 담당하고 큐 실행/드롭/오류 처리는 공통 코디네이터에서 처리합니다.
 - 큐 병합: 동일 이름의 연속 연산은 머지 키로 병합되어 최신 요청만 유지됩니다.
 - commitCallback: 모든 큐 연산은 성공 여부(Boolean)를 메인 스레드에서 전달합니다.
-- operationFailureListener: 실패 상세(OperationFailure)를 메인 스레드에서 전달합니다.
+- AdapterOperationFailureListener: 실패 상세(AdapterOperationFailure)를 메인 스레드에서 전달합니다.
 - 큐 폭주 대응: maxPending/overflowPolicy 설정으로 드롭 정책을 제어합니다.
 - 큐 정리/최신화: clearQueue로 대기 큐를 비우고 setItemsLatest로 최신 요청만 유지합니다.
 - submitList 직접 호출 제한: ListAdapter 계열은 submitList 직접 호출을 경고하고 큐 API 사용을 권장합니다.
@@ -69,7 +69,7 @@
   - Diff OFF + 메인 스레드 경로에서는 내부 리스트 재사용으로 할당을 줄입니다.
   - 대량 변경은 DiffUtil OFF 또는 비교 로직 단순화를 권장합니다.
 - 스레드 계약:
-  - 공개 API는 메인 스레드 호출이 기본이며 ThreadCheckMode(LOG/CRASH/OFF)로 위반 처리 정책을 선택합니다.
+  - 공개 API는 메인 스레드 호출이 기본이며 AdapterThreadCheckMode(LOG/CRASH/OFF)로 위반 처리 정책을 선택합니다.
   - 기본값: Debug=CRASH, Release=LOG.
   - Diff 계산은 백그라운드 Executor에서 수행됩니다(주입 가능).
   - 아이템 변환은 기본적으로 백그라운드에서 수행되며, 필요 시 메인 스레드로 전환할 수 있습니다.

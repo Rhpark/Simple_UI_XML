@@ -13,11 +13,11 @@ import kr.open.library.simple_ui.xml.BuildConfig
 import kr.open.library.simple_ui.xml.ui.adapter.queue.QueueDebugEvent
 import kr.open.library.simple_ui.xml.ui.adapter.queue.QueueOverflowPolicy
 import kr.open.library.simple_ui.xml.ui.temp.base.AdapterClickBinder
-import kr.open.library.simple_ui.xml.ui.temp.base.OperationFailure
-import kr.open.library.simple_ui.xml.ui.temp.base.OperationFailureInfo
-import kr.open.library.simple_ui.xml.ui.temp.base.OperationQueueCoordinator
-import kr.open.library.simple_ui.xml.ui.temp.base.OperationQueueCoordinator.OperationResult
-import kr.open.library.simple_ui.xml.ui.temp.base.ThreadCheckMode
+import kr.open.library.simple_ui.xml.ui.temp.base.AdapterOperationFailure
+import kr.open.library.simple_ui.xml.ui.temp.base.AdapterOperationFailureInfo
+import kr.open.library.simple_ui.xml.ui.temp.base.AdapterOperationQueueCoordinator
+import kr.open.library.simple_ui.xml.ui.temp.base.AdapterOperationQueueCoordinator.OperationResult
+import kr.open.library.simple_ui.xml.ui.temp.base.AdapterThreadCheckMode
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
@@ -52,8 +52,8 @@ abstract class RootRcvAdapterCore<ITEM : Any, VH : RecyclerView.ViewHolder>(
          * Default thread check mode based on build type.<br><br>
          * 빌드 타입 기준 기본 스레드 검증 모드입니다.<br>
          */
-        private val defaultThreadCheckMode: ThreadCheckMode =
-            if (BuildConfig.DEBUG) ThreadCheckMode.CRASH else ThreadCheckMode.LOG
+        private val defaultThreadCheckMode: AdapterThreadCheckMode =
+            if (BuildConfig.DEBUG) AdapterThreadCheckMode.CRASH else AdapterThreadCheckMode.LOG
 
         /**
          * Shared executor for DiffUtil calculations when not provided.<br><br>
@@ -128,7 +128,7 @@ abstract class RootRcvAdapterCore<ITEM : Any, VH : RecyclerView.ViewHolder>(
                     current,
                     false,
                     UpdateOp.None,
-                    failure = OperationFailure.Validation(message),
+                    failure = AdapterOperationFailure.Validation(message),
                 )
             }
             val target = mutableItemsForUpdate(current)
@@ -153,7 +153,7 @@ abstract class RootRcvAdapterCore<ITEM : Any, VH : RecyclerView.ViewHolder>(
      * Thread check mode for API contract validation.<br><br>
      * API 스레드 계약 검증 모드입니다.<br>
      */
-    private var threadCheckMode: ThreadCheckMode = defaultThreadCheckMode
+    private var threadCheckMode: AdapterThreadCheckMode = defaultThreadCheckMode
 
     /**
      * Executor for background item transformation; null means main-thread execution.<br><br>
@@ -189,9 +189,9 @@ abstract class RootRcvAdapterCore<ITEM : Any, VH : RecyclerView.ViewHolder>(
      */
     private fun handleThreadViolation(message: String) {
         when (threadCheckMode) {
-            ThreadCheckMode.OFF -> return
-            ThreadCheckMode.LOG -> Logx.w(message)
-            ThreadCheckMode.CRASH -> throw IllegalStateException(message)
+            AdapterThreadCheckMode.OFF -> return
+            AdapterThreadCheckMode.LOG -> Logx.w(message)
+            AdapterThreadCheckMode.CRASH -> throw IllegalStateException(message)
         }
     }
 
@@ -239,7 +239,7 @@ abstract class RootRcvAdapterCore<ITEM : Any, VH : RecyclerView.ViewHolder>(
      * Operation failure listener invoked with failure details.<br><br>
      * 연산 실패 상세를 전달하는 리스너입니다.<br>
      */
-    private var onOperationFailureListener: ((OperationFailureInfo) -> Unit)? = null
+    private var onAdapterOperationFailureListener: ((AdapterOperationFailureInfo) -> Unit)? = null
 
     /**
      * Update metadata for notifyItem* dispatch when DiffUtil is disabled.<br><br>
@@ -300,12 +300,12 @@ abstract class RootRcvAdapterCore<ITEM : Any, VH : RecyclerView.ViewHolder>(
      * 어댑터 연산을 직렬 처리하는 공통 코디네이터입니다.<br>
      */
     private val operationCoordinator =
-        OperationQueueCoordinator<ITEM, UpdateOp>(
+        AdapterOperationQueueCoordinator<ITEM, UpdateOp>(
             runOnMainThread = { action -> runOnMainThread(action) },
             getCurrentItems = { items.toList() },
             operationExecutorProvider = { operationExecutor },
             applyResult = { oldItems, result, complete -> applyOperationResult(oldItems, result, complete) },
-            onFailure = { operationName, failure -> dispatchOperationFailure(operationName, failure) },
+            onFailure = { operationName, failure -> dispatchAdapterOperationFailure(operationName, failure) },
             onError = { message, error ->
                 if (error != null) {
                     Logx.e(message, error)
@@ -372,9 +372,9 @@ abstract class RootRcvAdapterCore<ITEM : Any, VH : RecyclerView.ViewHolder>(
      * Dispatches operation failure on the main thread.<br><br>
      * 연산 실패를 메인 스레드에서 전달합니다.<br>
      */
-    private fun dispatchOperationFailure(operationName: String, failure: OperationFailure) {
-        val listener = onOperationFailureListener ?: return
-        runOnMainThread { listener.invoke(OperationFailureInfo(operationName, failure)) }
+    private fun dispatchAdapterOperationFailure(operationName: String, failure: AdapterOperationFailure) {
+        val listener = onAdapterOperationFailureListener ?: return
+        runOnMainThread { listener.invoke(AdapterOperationFailureInfo(operationName, failure)) }
     }
 
     /**
@@ -392,7 +392,7 @@ abstract class RootRcvAdapterCore<ITEM : Any, VH : RecyclerView.ViewHolder>(
      * API 스레드 계약 검증 모드를 설정합니다.<br>
      */
     @MainThread
-    fun setThreadCheckMode(mode: ThreadCheckMode) {
+    fun setThreadCheckMode(mode: AdapterThreadCheckMode) {
         checkMainThread("setThreadCheckMode")
         threadCheckMode = mode
     }
@@ -493,9 +493,9 @@ abstract class RootRcvAdapterCore<ITEM : Any, VH : RecyclerView.ViewHolder>(
      * 연산 실패 상세를 전달하는 리스너를 등록합니다.<br>
      */
     @MainThread
-    fun setOnOperationFailureListener(listener: ((OperationFailureInfo) -> Unit)?) {
-        checkMainThread("setOnOperationFailureListener")
-        onOperationFailureListener = listener
+    fun setOnAdapterOperationFailureListener(listener: ((AdapterOperationFailureInfo) -> Unit)?) {
+        checkMainThread("setOnAdapterOperationFailureListener")
+        onAdapterOperationFailureListener = listener
     }
 
     /**
@@ -613,7 +613,7 @@ abstract class RootRcvAdapterCore<ITEM : Any, VH : RecyclerView.ViewHolder>(
                     current,
                     false,
                     UpdateOp.None,
-                    failure = OperationFailure.Validation(message),
+                    failure = AdapterOperationFailure.Validation(message),
                 )
             }
             val target = mutableItemsForUpdate(current)
@@ -662,7 +662,7 @@ abstract class RootRcvAdapterCore<ITEM : Any, VH : RecyclerView.ViewHolder>(
                     current,
                     false,
                     UpdateOp.None,
-                    failure = OperationFailure.Validation(message),
+                    failure = AdapterOperationFailure.Validation(message),
                 )
             }
             val list = mutableItemsForUpdate(current)
@@ -711,7 +711,7 @@ abstract class RootRcvAdapterCore<ITEM : Any, VH : RecyclerView.ViewHolder>(
                     current,
                     false,
                     UpdateOp.None,
-                    failure = OperationFailure.Validation(message),
+                    failure = AdapterOperationFailure.Validation(message),
                 )
             }
             val list = mutableItemsForUpdate(current)
@@ -737,7 +737,7 @@ abstract class RootRcvAdapterCore<ITEM : Any, VH : RecyclerView.ViewHolder>(
                     current,
                     false,
                     UpdateOp.None,
-                    failure = OperationFailure.Validation(message),
+                    failure = AdapterOperationFailure.Validation(message),
                 )
             }
             val list = mutableItemsForUpdate(current)
@@ -764,7 +764,7 @@ abstract class RootRcvAdapterCore<ITEM : Any, VH : RecyclerView.ViewHolder>(
                     current,
                     false,
                     UpdateOp.None,
-                    failure = OperationFailure.Validation(message),
+                    failure = AdapterOperationFailure.Validation(message),
                 )
             }
             if (from == to) {
@@ -932,7 +932,7 @@ abstract class RootRcvAdapterCore<ITEM : Any, VH : RecyclerView.ViewHolder>(
         if (Looper.myLooper() == Looper.getMainLooper()) {
             action()
         } else {
-            if (threadCheckMode == ThreadCheckMode.LOG) {
+            if (threadCheckMode == AdapterThreadCheckMode.LOG) {
                 Logx.w("Not on main thread. Posting to main.")
             }
             mainHandler.post(action)

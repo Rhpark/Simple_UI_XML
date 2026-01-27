@@ -1,4 +1,4 @@
-package kr.open.library.simpleui_xml.temp.multi.viewbinding.activity
+﻿package kr.open.library.simpleui_xml.temp.multi.viewbinding.activity
 
 import android.os.Bundle
 import android.view.View
@@ -14,8 +14,8 @@ import java.util.concurrent.Executors
 import kr.open.library.simple_ui.xml.ui.adapter.queue.QueueDebugEvent
 import kr.open.library.simple_ui.xml.ui.adapter.queue.QueueEventType
 import kr.open.library.simple_ui.xml.ui.adapter.queue.QueueOverflowPolicy
-import kr.open.library.simple_ui.xml.ui.temp.base.OperationFailure
-import kr.open.library.simple_ui.xml.ui.temp.base.OperationFailureInfo
+import kr.open.library.simple_ui.xml.ui.temp.base.AdapterOperationFailure
+import kr.open.library.simple_ui.xml.ui.temp.base.AdapterOperationFailureInfo
 import kr.open.library.simple_ui.xml.ui.temp.base.list.RootListAdapterCore
 import kr.open.library.simple_ui.xml.ui.temp.base.normal.RootRcvAdapterCore
 import kr.open.library.simpleui_xml.temp.data.TempItem
@@ -197,7 +197,7 @@ class TempAdapterRcvMultiActivity :
                 adapter = adapter,
                 onRcv = { rcvAdapter ->
                     rcvAdapter.setQueuePolicy(defaultQueueMaxPending, QueueOverflowPolicy.DROP_NEW)
-                    rcvAdapter.setOnOperationFailureListener { info ->
+                    rcvAdapter.setOnAdapterOperationFailureListener { info ->
                         updateStatus("queueFail(${formatFailure(info)})")
                     }
                     rcvAdapter.setQueueDebugListener { event ->
@@ -208,7 +208,7 @@ class TempAdapterRcvMultiActivity :
                 },
                 onList = { listAdapter ->
                     listAdapter.setQueuePolicy(defaultQueueMaxPending, QueueOverflowPolicy.DROP_NEW)
-                    listAdapter.setOnOperationFailureListener { info ->
+                    listAdapter.setOnAdapterOperationFailureListener { info ->
                         updateStatus("queueFail(${formatFailure(info)})")
                     }
                     listAdapter.setQueueDebugListener { event ->
@@ -623,11 +623,11 @@ class TempAdapterRcvMultiActivity :
      * Formats operation failure info.<br><br>
      * 연산 실패 정보를 포맷팅합니다.<br>
      */
-    private fun formatFailure(info: OperationFailureInfo): String {
+    private fun formatFailure(info: AdapterOperationFailureInfo): String {
         val detail = when (val failure = info.failure) {
-            is OperationFailure.Validation -> "validation=${failure.message}"
-            is OperationFailure.Exception -> "exception=${failure.error.message ?: "unknown"}"
-            is OperationFailure.Dropped -> "dropped=${failure.reason}"
+            is AdapterOperationFailure.Validation -> "validation=${failure.message}"
+            is AdapterOperationFailure.Exception -> "exception=${failure.error.message ?: "unknown"}"
+            is AdapterOperationFailure.Dropped -> "dropped=${failure.reason}"
         }
         return "op=${info.operationName}, $detail"
     }
