@@ -80,8 +80,8 @@ class LogxActivity : BaseDataBindingActivity<ActivityLogxBinding>(R.layout.activ
     }
 
     private fun parentLevel2() {
-        Logx.p( "호출 위치 확인용 로그")
-        Logx.p( "TAG","호출 위치 확인용 로그")
+        Logx.p("호출 위치 확인용 로그")
+        Logx.p("TAG", "호출 위치 확인용 로그")
         "호출 위치 확인용 로그".logp()
         "호출 위치 확인용 로그".logp("TAG")
     }

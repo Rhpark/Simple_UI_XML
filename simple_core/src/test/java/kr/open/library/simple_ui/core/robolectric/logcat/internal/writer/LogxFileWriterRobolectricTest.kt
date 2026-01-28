@@ -3,9 +3,9 @@
 import android.app.Application
 import android.os.Build
 import androidx.test.core.app.ApplicationProvider
+import kr.open.library.simple_ui.core.logcat.config.LogStorageType
 import kr.open.library.simple_ui.core.logcat.config.LogType
 import kr.open.library.simple_ui.core.logcat.config.LogxConfigSnapshot
-import kr.open.library.simple_ui.core.logcat.config.LogStorageType
 import kr.open.library.simple_ui.core.logcat.internal.writer.LogxFileWriter
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue

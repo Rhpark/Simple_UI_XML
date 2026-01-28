@@ -10,9 +10,9 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
+import kr.open.library.simple_ui.core.logcat.config.LogStorageType
 import kr.open.library.simple_ui.core.logcat.config.LogType
 import kr.open.library.simple_ui.core.logcat.config.LogxConfigStore
-import kr.open.library.simple_ui.core.logcat.config.LogStorageType
 import kr.open.library.simple_ui.core.logcat.internal.pipeline.LogxPipeline
 import kr.open.library.simple_ui.core.logcat.internal.writer.LogxFileWriter
 import kr.open.library.simple_ui.core.permissions.extentions.hasPermissions

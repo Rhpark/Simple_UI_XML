@@ -1,8 +1,8 @@
 ﻿package kr.open.library.simple_ui.core.unit.logcat.internal.filter
 
+import kr.open.library.simple_ui.core.logcat.config.LogStorageType
 import kr.open.library.simple_ui.core.logcat.config.LogType
 import kr.open.library.simple_ui.core.logcat.config.LogxConfigSnapshot
-import kr.open.library.simple_ui.core.logcat.config.LogStorageType
 import kr.open.library.simple_ui.core.logcat.internal.filter.LogxFilter
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue

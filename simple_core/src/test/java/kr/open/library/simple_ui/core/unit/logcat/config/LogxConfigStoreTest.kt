@@ -1,8 +1,8 @@
 ﻿package kr.open.library.simple_ui.core.unit.logcat.config
 
+import kr.open.library.simple_ui.core.logcat.config.LogStorageType
 import kr.open.library.simple_ui.core.logcat.config.LogType
 import kr.open.library.simple_ui.core.logcat.config.LogxConfigStore
-import kr.open.library.simple_ui.core.logcat.config.LogStorageType
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
