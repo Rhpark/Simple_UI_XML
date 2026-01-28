@@ -1,4 +1,4 @@
-﻿package kr.open.library.simple_ui.xml.ui.temp.base
+﻿package kr.open.library.simple_ui.xml.ui.temp.base.internal
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
@@ -40,3 +40,4 @@ internal object AdapterClickBinder {
         }
     }
 }
+

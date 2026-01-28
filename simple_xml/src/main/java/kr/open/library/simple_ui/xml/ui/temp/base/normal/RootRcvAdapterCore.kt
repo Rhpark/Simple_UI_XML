@@ -12,12 +12,15 @@ import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.xml.BuildConfig
 import kr.open.library.simple_ui.xml.ui.adapter.queue.QueueDebugEvent
 import kr.open.library.simple_ui.xml.ui.adapter.queue.QueueOverflowPolicy
-import kr.open.library.simple_ui.xml.ui.temp.base.AdapterClickBinder
+import kr.open.library.simple_ui.xml.ui.temp.base.internal.AdapterClickBinder
 import kr.open.library.simple_ui.xml.ui.temp.base.AdapterOperationFailure
 import kr.open.library.simple_ui.xml.ui.temp.base.AdapterOperationFailureInfo
-import kr.open.library.simple_ui.xml.ui.temp.base.AdapterOperationQueueCoordinator
-import kr.open.library.simple_ui.xml.ui.temp.base.AdapterOperationQueueCoordinator.OperationResult
+import kr.open.library.simple_ui.xml.ui.temp.base.internal.AdapterOperationQueueCoordinator
+import kr.open.library.simple_ui.xml.ui.temp.base.internal.AdapterOperationQueueCoordinator.OperationResult
 import kr.open.library.simple_ui.xml.ui.temp.base.AdapterThreadCheckMode
+import kr.open.library.simple_ui.xml.ui.temp.base.operation.AdapterListOperations
+import kr.open.library.simple_ui.xml.ui.temp.base.operation.ListOperationResult
+import kr.open.library.simple_ui.xml.ui.temp.base.operation.PositionInfo
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
@@ -118,22 +121,7 @@ abstract class RootRcvAdapterCore<ITEM : Any, VH : RecyclerView.ViewHolder>(
         commitCallback: ((Boolean) -> Unit)? = null,
     ) {
         enqueueOperation("addItemsAt", commitCallback) { current ->
-            if (itemsToAdd.isEmpty()) {
-                return@enqueueOperation OperationResult(current, true, UpdateOp.None)
-            }
-            if (position < 0 || position > current.size) {
-                val message = "Cannot add items at position $position. Valid range: 0..${current.size}"
-                Logx.e(message)
-                return@enqueueOperation OperationResult(
-                    current,
-                    false,
-                    UpdateOp.None,
-                    failure = AdapterOperationFailure.Validation(message),
-                )
-            }
-            val target = mutableItemsForUpdate(current)
-            target.addAll(position, itemsToAdd)
-            OperationResult(target, true, UpdateOp.Insert(position, itemsToAdd.size))
+            AdapterListOperations.addItemsAt(current, position, itemsToAdd).toUpdateOpResult()
         }
     }
 
@@ -296,6 +284,32 @@ abstract class RootRcvAdapterCore<ITEM : Any, VH : RecyclerView.ViewHolder>(
     }
 
     /**
+     * Converts PositionInfo to internal UpdateOp.<br><br>
+     * PositionInfo를 내부 UpdateOp로 변환합니다.<br>
+     */
+    private fun PositionInfo.toUpdateOp(): UpdateOp = when (this) {
+        is PositionInfo.None -> UpdateOp.None
+        is PositionInfo.Full -> UpdateOp.Full
+        is PositionInfo.Insert -> UpdateOp.Insert(position, count)
+        is PositionInfo.Remove -> UpdateOp.Remove(position, count)
+        is PositionInfo.Change -> UpdateOp.Change(position, count)
+        is PositionInfo.Move -> UpdateOp.Move(from, to)
+    }
+
+    /**
+     * Converts ListOperationResult to OperationResult with UpdateOp meta.<br><br>
+     * ListOperationResult를 UpdateOp 메타를 포함한 OperationResult로 변환합니다.<br>
+     */
+    private fun ListOperationResult<ITEM>.toUpdateOpResult(): OperationResult<ITEM, UpdateOp> {
+        return OperationResult(
+            items = items,
+            success = success,
+            meta = positionInfo?.toUpdateOp() ?: UpdateOp.None,
+            failure = failure,
+        )
+    }
+
+    /**
      * Shared coordinator for queued adapter operations.<br><br>
      * 어댑터 연산을 직렬 처리하는 공통 코디네이터입니다.<br>
      */
@@ -314,20 +328,6 @@ abstract class RootRcvAdapterCore<ITEM : Any, VH : RecyclerView.ViewHolder>(
                 }
             },
         )
-
-    /**
-     * Determines whether in-place mutation is allowed when DiffUtil is disabled.<br><br>
-     * DiffUtil 비활성 시 메인 스레드에서 인플레이스 변경이 가능한지 판단합니다.<br>
-     */
-    private fun canMutateInPlace(): Boolean =
-        !diffEnabled && Looper.myLooper() == Looper.getMainLooper()
-
-    /**
-     * Provides a mutable list for updates, reusing internal storage when safe.<br><br>
-     * 업데이트용 가변 리스트를 제공하며 안전한 경우 내부 저장소를 재사용합니다.<br>
-     */
-    private fun mutableItemsForUpdate(current: List<ITEM>): MutableList<ITEM> =
-        if (canMutateInPlace()) items else current.toMutableList()
 
     /**
      * Applies the operation result to adapter items and dispatches updates.<br><br>
@@ -508,13 +508,7 @@ abstract class RootRcvAdapterCore<ITEM : Any, VH : RecyclerView.ViewHolder>(
         commitCallback: ((Boolean) -> Unit)? = null,
     ) {
         enqueueOperation("setItems", commitCallback) {
-            if (canMutateInPlace()) {
-                items.clear()
-                items.addAll(newItems)
-                OperationResult(items, true, UpdateOp.Full)
-            } else {
-                OperationResult(newItems.toList(), true, UpdateOp.Full)
-            }
+            AdapterListOperations.setItems(newItems).toUpdateOpResult()
         }
     }
 
@@ -529,13 +523,7 @@ abstract class RootRcvAdapterCore<ITEM : Any, VH : RecyclerView.ViewHolder>(
     ) {
         checkMainThread("setItemsLatest")
         operationCoordinator.clearAndEnqueue("setItemsLatest", commitCallback) {
-            if (canMutateInPlace()) {
-                items.clear()
-                items.addAll(newItems)
-                OperationResult(items, true, UpdateOp.Full)
-            } else {
-                OperationResult(newItems.toList(), true, UpdateOp.Full)
-            }
+            AdapterListOperations.setItems(newItems).toUpdateOpResult()
         }
     }
 
@@ -552,9 +540,7 @@ abstract class RootRcvAdapterCore<ITEM : Any, VH : RecyclerView.ViewHolder>(
         updater: (MutableList<ITEM>) -> Unit,
     ) {
         enqueueOperation("updateItems", commitCallback) { current ->
-            val mutable = current.toMutableList()
-            updater(mutable)
-            OperationResult(mutable, true, UpdateOp.Full)
+            AdapterListOperations.updateItems(current, updater).toUpdateOpResult()
         }
     }
 
@@ -588,10 +574,7 @@ abstract class RootRcvAdapterCore<ITEM : Any, VH : RecyclerView.ViewHolder>(
         commitCallback: ((Boolean) -> Unit)? = null,
     ) {
         enqueueOperation("addItem", commitCallback) { current ->
-            val insertPosition = current.size
-            val target = mutableItemsForUpdate(current)
-            target.add(item)
-            OperationResult(target, true, UpdateOp.Insert(insertPosition, 1))
+            AdapterListOperations.addItem(current, item).toUpdateOpResult()
         }
     }
 
@@ -606,19 +589,7 @@ abstract class RootRcvAdapterCore<ITEM : Any, VH : RecyclerView.ViewHolder>(
         commitCallback: ((Boolean) -> Unit)? = null,
     ) {
         enqueueOperation("addItemAt", commitCallback) { current ->
-            if (position < 0 || position > current.size) {
-                val message = "Cannot add item at position $position. Valid range: 0..${current.size}"
-                Logx.e(message)
-                return@enqueueOperation OperationResult(
-                    current,
-                    false,
-                    UpdateOp.None,
-                    failure = AdapterOperationFailure.Validation(message),
-                )
-            }
-            val target = mutableItemsForUpdate(current)
-            target.add(position, item)
-            OperationResult(target, true, UpdateOp.Insert(position, 1))
+            AdapterListOperations.addItemAt(current, position, item).toUpdateOpResult()
         }
     }
 
@@ -632,14 +603,7 @@ abstract class RootRcvAdapterCore<ITEM : Any, VH : RecyclerView.ViewHolder>(
         commitCallback: ((Boolean) -> Unit)? = null,
     ) {
         enqueueOperation("addItems", commitCallback) { current ->
-            if (itemsToAdd.isEmpty()) {
-                OperationResult(current, true, UpdateOp.None)
-            } else {
-                val insertPosition = current.size
-                val target = mutableItemsForUpdate(current)
-                target.addAll(itemsToAdd)
-                OperationResult(target, true, UpdateOp.Insert(insertPosition, itemsToAdd.size))
-            }
+            AdapterListOperations.addItems(current, itemsToAdd).toUpdateOpResult()
         }
     }
 
@@ -653,21 +617,7 @@ abstract class RootRcvAdapterCore<ITEM : Any, VH : RecyclerView.ViewHolder>(
         commitCallback: ((Boolean) -> Unit)? = null,
     ) {
         enqueueOperation("removeItem", commitCallback) { current ->
-            // Target index for item removal.<br><br>아이템 제거 대상 인덱스입니다.<br>
-            val target = current.indexOf(item)
-            if (target == RecyclerView.NO_POSITION) {
-                val message = "Item not found in the list"
-                Logx.e(message)
-                return@enqueueOperation OperationResult(
-                    current,
-                    false,
-                    UpdateOp.None,
-                    failure = AdapterOperationFailure.Validation(message),
-                )
-            }
-            val list = mutableItemsForUpdate(current)
-            list.removeAt(target)
-            OperationResult(list, true, UpdateOp.Remove(target, 1))
+            AdapterListOperations.removeItem(current, item).toUpdateOpResult()
         }
     }
 
@@ -680,16 +630,7 @@ abstract class RootRcvAdapterCore<ITEM : Any, VH : RecyclerView.ViewHolder>(
         commitCallback: ((Boolean) -> Unit)? = null,
     ) {
         enqueueOperation("removeAll", commitCallback) { current ->
-            if (current.isEmpty()) {
-                OperationResult(current, true, UpdateOp.None)
-            } else {
-                if (canMutateInPlace()) {
-                    items.clear()
-                    OperationResult(items, true, UpdateOp.Remove(0, current.size))
-                } else {
-                    OperationResult(emptyList(), true, UpdateOp.Remove(0, current.size))
-                }
-            }
+            AdapterListOperations.removeAll(current).toUpdateOpResult()
         }
     }
 
@@ -704,19 +645,7 @@ abstract class RootRcvAdapterCore<ITEM : Any, VH : RecyclerView.ViewHolder>(
         commitCallback: ((Boolean) -> Unit)? = null,
     ) {
         enqueueOperation("replaceItemAt", commitCallback) { current ->
-            if (position < 0 || position >= current.size) {
-                val message = "Cannot replace item at position $position. Valid range: 0 until ${current.size}"
-                Logx.e(message)
-                return@enqueueOperation OperationResult(
-                    current,
-                    false,
-                    UpdateOp.None,
-                    failure = AdapterOperationFailure.Validation(message),
-                )
-            }
-            val list = mutableItemsForUpdate(current)
-            list[position] = item
-            OperationResult(list, true, UpdateOp.Change(position, 1))
+            AdapterListOperations.replaceItemAt(current, position, item).toUpdateOpResult()
         }
     }
 
@@ -730,19 +659,7 @@ abstract class RootRcvAdapterCore<ITEM : Any, VH : RecyclerView.ViewHolder>(
         commitCallback: ((Boolean) -> Unit)? = null,
     ) {
         enqueueOperation("removeAt", commitCallback) { current ->
-            if (position < 0 || position >= current.size) {
-                val message = "Cannot remove item at position $position. Valid range: 0 until ${current.size}"
-                Logx.e(message)
-                return@enqueueOperation OperationResult(
-                    current,
-                    false,
-                    UpdateOp.None,
-                    failure = AdapterOperationFailure.Validation(message),
-                )
-            }
-            val list = mutableItemsForUpdate(current)
-            list.removeAt(position)
-            OperationResult(list, true, UpdateOp.Remove(position, 1))
+            AdapterListOperations.removeAt(current, position).toUpdateOpResult()
         }
     }
 
@@ -757,24 +674,7 @@ abstract class RootRcvAdapterCore<ITEM : Any, VH : RecyclerView.ViewHolder>(
         commitCallback: ((Boolean) -> Unit)? = null,
     ) {
         enqueueOperation("moveItem", commitCallback) { current ->
-            if (from < 0 || from >= current.size || to < 0 || to >= current.size) {
-                val message = "Cannot move item. Valid range: 0 until ${current.size}"
-                Logx.e(message)
-                return@enqueueOperation OperationResult(
-                    current,
-                    false,
-                    UpdateOp.None,
-                    failure = AdapterOperationFailure.Validation(message),
-                )
-            }
-            if (from == to) {
-                return@enqueueOperation OperationResult(current, true, UpdateOp.None)
-            }
-            val list = mutableItemsForUpdate(current)
-            // Item instance being moved.<br><br>이동되는 아이템 인스턴스입니다.<br>
-            val movedItem = list.removeAt(from)
-            list.add(to, movedItem)
-            OperationResult(list, true, UpdateOp.Move(from, to))
+            AdapterListOperations.moveItem(current, from, to).toUpdateOpResult()
         }
     }
 
@@ -967,3 +867,4 @@ abstract class RootRcvAdapterCore<ITEM : Any, VH : RecyclerView.ViewHolder>(
         }
     }
 }
+

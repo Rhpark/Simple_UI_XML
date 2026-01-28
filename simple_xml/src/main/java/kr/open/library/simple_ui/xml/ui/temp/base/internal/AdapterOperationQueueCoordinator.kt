@@ -1,9 +1,10 @@
-﻿package kr.open.library.simple_ui.xml.ui.temp.base
+﻿package kr.open.library.simple_ui.xml.ui.temp.base.internal
 
 import kr.open.library.simple_ui.xml.ui.adapter.queue.OperationQueueProcessor
 import kr.open.library.simple_ui.xml.ui.adapter.queue.QueueDebugEvent
 import kr.open.library.simple_ui.xml.ui.adapter.queue.QueueDropReason
 import kr.open.library.simple_ui.xml.ui.adapter.queue.QueueOverflowPolicy
+import kr.open.library.simple_ui.xml.ui.temp.base.AdapterOperationFailure
 import java.util.concurrent.Executor
 
 /**
@@ -272,3 +273,4 @@ internal class AdapterOperationQueueCoordinator<ITEM : Any, META>(
         dispatchCommitCallback(operation.callback, false)
     }
 }
+

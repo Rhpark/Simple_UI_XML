@@ -34,7 +34,8 @@
 - diff 옵션(diffExecutor/DiffUtil/커스텀 DiffCallback)을 기본 노출합니다.
 
 ## 구조(실제 구현 기준)
-- base: 공통 정책/헬퍼/추상 계층(AdapterOperationQueueCoordinator 포함)
+- base: 공통 정책/헬퍼/추상 계층(AdapterOperationQueueCoordinator/AdapterClickBinder 포함, internal)
+  - base.internal: internal 헬퍼 패키지
   - base.list: ListAdapter 공통 코어
   - base.normal: RecyclerView.Adapter 공통 코어
 - list: ListAdapter 계열
@@ -88,6 +89,7 @@
 - simple/normal 분류는 클래스명으로 구분하며, 패키지로 분리하지 않습니다.
 - 대상 패키지:
   - kr.open.library.simple_ui.xml.ui.temp.base
+  - kr.open.library.simple_ui.xml.ui.temp.base.internal
   - kr.open.library.simple_ui.xml.ui.temp.base.list
   - kr.open.library.simple_ui.xml.ui.temp.base.list.diffcallback
   - kr.open.library.simple_ui.xml.ui.temp.base.normal

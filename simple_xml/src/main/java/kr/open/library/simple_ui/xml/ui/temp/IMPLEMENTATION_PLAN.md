@@ -21,6 +21,7 @@
 1) 공통 코어 정리 (상태: 완료)
    - `RootRcvAdapterCore`, `RootListAdapterCore`
    - 큐 처리 공통화(AdapterOperationQueueCoordinator), commitCallback, 스레드 계약, 클릭/롱클릭 정책, Diff 실행 경로 정리
+   - internal 헬퍼 패키지(ui.temp.base.internal) 정리
    - 큐 병합 키(setQueueMergeKeys) 지원
 2) ListAdapter 계열 정리 (상태: 완료)
    - list.normal
@@ -68,6 +69,7 @@
 - 큐 폭주 대응 정책 제공(maxPending/overflowPolicy)
 - 큐 병합 키(setQueueMergeKeys) 제공
 - AdapterQueueMergeKeys 상수 제공
+- internal 헬퍼 패키지 분리
 - 실패 원인 리스너(AdapterOperationFailureInfo) 제공
 - 큐 디버그 리스너 제공
 - clearQueue API 제공

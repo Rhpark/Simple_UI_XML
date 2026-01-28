@@ -20,6 +20,7 @@
 
 ## 패키지 구조
 - ui.temp.base
+- ui.temp.base.internal
 - ui.temp.base.list
 - ui.temp.base.list.diffcallback
 - ui.temp.base.normal
@@ -49,7 +50,8 @@
 - `BaseListViewBindingAdapterCore`
 
 ## 공통 헬퍼
-- `AdapterOperationQueueCoordinator`
+- `AdapterOperationQueueCoordinator` (internal)
+- `AdapterClickBinder` (internal)
 - `AdapterQueueMergeKeys`
 
 ## ViewHolder 계열
