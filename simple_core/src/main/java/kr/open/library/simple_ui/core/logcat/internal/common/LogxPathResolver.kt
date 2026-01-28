@@ -7,7 +7,7 @@ import android.os.Build
 import android.os.Environment
 import androidx.core.content.ContextCompat
 import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
-import kr.open.library.simple_ui.core.logcat.config.StorageType
+import kr.open.library.simple_ui.core.logcat.config.LogStorageType
 
 /**
  * Resolves log directory paths for different storage types.<br><br>
@@ -23,10 +23,10 @@ internal object LogxPathResolver {
      * @param storageType Storage target.<br><br>
      *                    저장소 대상.<br>
      */
-    fun resolvePath(context: Context, storageType: StorageType): String = when (storageType) {
-        StorageType.INTERNAL -> getInternalLogPath(context)
-        StorageType.APP_EXTERNAL -> getAppExternalLogPath(context)
-        StorageType.PUBLIC_EXTERNAL -> getPublicExternalLogPath(context)
+    fun resolvePath(context: Context, storageType: LogStorageType): String = when (storageType) {
+        LogStorageType.INTERNAL -> getInternalLogPath(context)
+        LogStorageType.APP_EXTERNAL -> getAppExternalLogPath(context)
+        LogStorageType.PUBLIC_EXTERNAL -> getPublicExternalLogPath(context)
     }
 
     /**
@@ -36,8 +36,8 @@ internal object LogxPathResolver {
      * @param storageType Storage target.<br><br>
      *                    저장소 대상.<br>
      */
-    fun requiresPermission(storageType: StorageType): Boolean =
-        storageType == StorageType.PUBLIC_EXTERNAL && Build.VERSION.SDK_INT <= Build.VERSION_CODES.P
+    fun requiresPermission(storageType: LogStorageType): Boolean =
+        storageType == LogStorageType.PUBLIC_EXTERNAL && Build.VERSION.SDK_INT <= Build.VERSION_CODES.P
 
     /**
      * Checks WRITE_EXTERNAL_STORAGE permission if required.<br><br>
@@ -48,7 +48,7 @@ internal object LogxPathResolver {
      * @param storageType Storage target.<br><br>
      *                    저장소 대상.<br>
      */
-    fun hasWritePermission(context: Context, storageType: StorageType): Boolean {
+    fun hasWritePermission(context: Context, storageType: LogStorageType): Boolean {
         if (!requiresPermission(storageType)) return true
         return ContextCompat.checkSelfPermission(
             context,
@@ -60,15 +60,14 @@ internal object LogxPathResolver {
      * Returns internal storage log path.<br><br>
      * 내부 저장소 로그 경로를 반환한다.<br>
      */
-    private fun getInternalLogPath(context: Context): String =
-        context.filesDir.absolutePath + "/${LogxConstants.logDirName}"
+    private fun getInternalLogPath(context: Context): String = context.filesDir.absolutePath + "/${LogxConstants.LOG_DIR_NAME}"
 
     /**
      * Returns app-specific external storage log path.<br><br>
      * 앱 전용 외부 저장소 로그 경로를 반환한다.<br>
      */
     private fun getAppExternalLogPath(context: Context): String {
-        val externalDir = context.getExternalFilesDir(LogxConstants.logDirName)
+        val externalDir = context.getExternalFilesDir(LogxConstants.LOG_DIR_NAME)
         return externalDir?.absolutePath ?: getInternalLogPath(context)
     }
 
@@ -81,15 +80,14 @@ internal object LogxPathResolver {
         positiveWork = {
             val documentsDir = context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)
             if (documentsDir != null) {
-                documentsDir.absolutePath + "/${LogxConstants.logDirName}"
+                documentsDir.absolutePath + "/${LogxConstants.LOG_DIR_NAME}"
             } else {
                 getAppExternalLogPath(context)
             }
         },
         negativeWork = {
             @Suppress("DEPRECATION")
-            Environment.getExternalStorageDirectory().absolutePath + "/${LogxConstants.logDirName}"
+            Environment.getExternalStorageDirectory().absolutePath + "/${LogxConstants.LOG_DIR_NAME}"
         },
     )
 }
-

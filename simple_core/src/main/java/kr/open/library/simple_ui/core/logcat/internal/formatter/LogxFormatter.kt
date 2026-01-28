@@ -1,8 +1,8 @@
 package kr.open.library.simple_ui.core.logcat.internal.formatter
 
-import kr.open.library.simple_ui.core.logcat.internal.extractor.StackFrame
-import kr.open.library.simple_ui.core.logcat.internal.extractor.StackFrames
 import kr.open.library.simple_ui.core.logcat.internal.common.LogxConstants
+import kr.open.library.simple_ui.core.logcat.internal.extractor.LogStackFrame
+import kr.open.library.simple_ui.core.logcat.internal.extractor.LogStackFrames
 
 /**
  * 로그 메시지 포맷을 생성하는 내부 포맷터입니다.
@@ -23,12 +23,12 @@ internal object LogxFormatter {
      * @param msg 출력 메시지(없을 수 있음).
      * @param hasMessage 메시지 포함 여부.
      */
-    fun formatBasic(frame: StackFrame, msg: String?, hasMessage: Boolean): String =
+    fun formatBasic(frame: LogStackFrame, msg: String?, hasMessage: Boolean): String =
         buildString {
             append(formatMeta(frame))
             if (hasMessage) {
-                append(" - ")
-                append(msg ?: "null")
+                append(LogxFormatConstants.MESSAGE_SEPARATOR)
+                append(msg ?: LogxFormatConstants.NULL_MESSAGE)
             }
         }
 
@@ -43,19 +43,19 @@ internal object LogxFormatter {
      * @param msg 출력 메시지(없을 수 있음).
      * @param hasMessage 메시지 포함 여부.
      */
-    fun formatParent(frames: StackFrames, msg: String?, hasMessage: Boolean): List<String> {
+    fun formatParent(frames: LogStackFrames, msg: String?, hasMessage: Boolean): List<String> {
         val parentPayload = if (frames.parent != null) {
-            "┌[PARENT] ${formatMeta(frames.parent)}"
+            LogxFormatConstants.PARENT_HEADER_PREFIX + formatMeta(frames.parent)
         } else {
-            "┌[PARENT]"
+            LogxFormatConstants.PARENT_HEADER_PLAIN
         }
 
         val currentPayload = buildString {
-            append("└[PARENT] ")
+            append(LogxFormatConstants.PARENT_FOOTER_PREFIX)
             append(formatMeta(frames.current))
             if (hasMessage) {
-                append(" - ")
-                append(msg ?: "null")
+                append(LogxFormatConstants.MESSAGE_SEPARATOR)
+                append(msg ?: LogxFormatConstants.NULL_MESSAGE)
             }
         }
 
@@ -74,15 +74,15 @@ internal object LogxFormatter {
      * @param msg 출력 메시지(없을 수 있음).
      * @param hasMessage 메시지 포함 여부.
      */
-    fun formatThread(frame: StackFrame, threadId: Long, msg: String?, hasMessage: Boolean): String =
+    fun formatThread(frame: LogStackFrame, threadId: Long, msg: String?, hasMessage: Boolean): String =
         buildString {
             append("[TID = ")
             append(threadId)
             append("]")
             append(formatMeta(frame))
             if (hasMessage) {
-                append(" - ")
-                append(msg ?: "null")
+                append(LogxFormatConstants.MESSAGE_SEPARATOR)
+                append(msg ?: LogxFormatConstants.NULL_MESSAGE)
             }
         }
 
@@ -96,9 +96,9 @@ internal object LogxFormatter {
      * @param frame 현재 프레임 정보.
      * @param json JSON 원문 문자열.
      */
-    fun formatJson(frame: StackFrame, json: String): FormattedJson {
+    fun formatJson(frame: LogStackFrame, json: String): FormattedJson {
         val meta = formatMeta(frame)
-        val header = "[JSON]$meta -"
+        val header = LogxFormatConstants.JSON_HEADER_MARKER + meta + LogxFormatConstants.JSON_HEADER_SEPARATOR
         val bodyLines = formatJsonBody(json)
         return FormattedJson(header = header, bodyLines = bodyLines)
     }
@@ -112,11 +112,11 @@ internal object LogxFormatter {
      *
      * @param frame 현재 프레임 정보.
      */
-    private fun formatMeta(frame: StackFrame): String {
+    private fun formatMeta(frame: LogStackFrame): String {
 //        val fileName = normalizeFileName(frame.fileName)
         val fileName = frame.fileName
         val lineNumber = if (frame.lineNumber > 0) frame.lineNumber else 0
-        return "(${fileName}:${lineNumber}).${frame.methodName}"
+        return "($fileName:$lineNumber).${frame.methodName}"
     }
 
     /**
@@ -170,7 +170,7 @@ internal object LogxFormatter {
      */
     private fun formatJsonPretty(jsonString: String): String {
         val result = StringBuilder()
-        val indentUnit = " ".repeat(LogxConstants.jsonIndent)
+        val indentUnit = " ".repeat(LogxConstants.JSON_INDENT)
         var indentLevel = 0
         var inQuotes = false
         var prevChar = ' '

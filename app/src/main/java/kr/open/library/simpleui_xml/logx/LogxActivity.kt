@@ -3,17 +3,19 @@ package kr.open.library.simpleui_xml.logx
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
-import java.io.File
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kr.open.library.simple_ui.core.logcat.Logx
-import kr.open.library.simple_ui.core.logcat.config.StorageType
+import kr.open.library.simple_ui.core.logcat.config.LogStorageType
+import kr.open.library.simple_ui.core.logcat.extension.logi
+import kr.open.library.simple_ui.core.logcat.extension.logp
+import kr.open.library.simple_ui.core.logcat.extension.logw
 import kr.open.library.simple_ui.xml.ui.components.activity.binding.BaseDataBindingActivity
 import kr.open.library.simpleui_xml.R
 import kr.open.library.simpleui_xml.databinding.ActivityLogxBinding
+import java.io.File
 
-class LogxActivity :
-    BaseDataBindingActivity<ActivityLogxBinding>(R.layout.activity_logx) {
+class LogxActivity : BaseDataBindingActivity<ActivityLogxBinding>(R.layout.activity_logx) {
     private val vm: LogxActivityVm by viewModels()
 
     override fun onCreate(binding: ActivityLogxBinding, savedInstanceState: Bundle?) {
@@ -43,14 +45,14 @@ class LogxActivity :
 
     private fun initLogxForFileLogging() {
         Logx.initialize(applicationContext)
-        Logx.setAppName("TempLogcatDemo")
+        Logx.setAppName("RhPark")
     }
 
     private fun demonstrateBasicLogging() {
-        Logx.v("BASIC", "VERBOSE 로그")
-        Logx.d("BASIC", "DEBUG 로그")
-        Logx.i("BASIC", "INFO 로그")
-        Logx.w("BASIC", "WARN 로그")
+        Logx.v("VERBOSE 로그")
+        Logx.d("DEBUG 로그")
+        "INFO 로그".logi()
+        "WARN 로그".logw("BASIC")
         Logx.e("BASIC", "ERROR 로그")
         updateStatus("기본 로그 출력 완료")
     }
@@ -78,7 +80,10 @@ class LogxActivity :
     }
 
     private fun parentLevel2() {
-        Logx.p("PARENT", "호출 위치 확인용 로그")
+        Logx.p( "호출 위치 확인용 로그")
+        Logx.p( "TAG","호출 위치 확인용 로그")
+        "호출 위치 확인용 로그".logp()
+        "호출 위치 확인용 로그".logp("TAG")
     }
 
     private fun demonstrateThreadLogging() {
@@ -97,13 +102,13 @@ class LogxActivity :
     }
 
     private fun demonstrateStorageConfig() {
-        Logx.setStorageType(StorageType.INTERNAL)
+        Logx.setStorageType(LogStorageType.INTERNAL)
         Logx.d("STORAGE", "INTERNAL 설정")
-        Logx.setStorageType(StorageType.APP_EXTERNAL)
+        Logx.setStorageType(LogStorageType.APP_EXTERNAL)
         Logx.d("STORAGE", "APP_EXTERNAL 설정")
 
         try {
-            Logx.setStorageType(StorageType.PUBLIC_EXTERNAL)
+            Logx.setStorageType(LogStorageType.PUBLIC_EXTERNAL)
             Logx.d("STORAGE", "PUBLIC_EXTERNAL 설정")
             updateStatus("PUBLIC_EXTERNAL 설정 완료")
         } catch (e: Exception) {

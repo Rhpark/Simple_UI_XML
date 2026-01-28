@@ -9,7 +9,7 @@ package kr.open.library.simple_ui.core.logcat.internal.extractor
  *
  * @param skipPackages 제외할 패키지 접두사 집합.
  */
-internal class StackTraceFrameFilter(
+internal class LogStackTraceFrameFilter(
     private val skipPackages: Set<String>,
 ) {
     /**
@@ -21,8 +21,7 @@ internal class StackTraceFrameFilter(
      *
      * @param element 검사 대상 스택 요소.
      */
-    fun isSkipped(element: StackTraceElement): Boolean =
-        skipPackages.any { prefix -> element.className.startsWith(prefix) }
+    fun isSkipped(element: StackTraceElement): Boolean = skipPackages.any { prefix -> element.className.startsWith(prefix) }
 
     /**
      * 컴파일러/런타임이 생성한 합성 프레임인지 판단합니다.
@@ -34,16 +33,15 @@ internal class StackTraceFrameFilter(
      * @param element 검사 대상 스택 요소.
      */
     fun isSynthetic(element: StackTraceElement): Boolean {
-        if (element.fileName.isNullOrBlank() || element.fileName == "Unknown") return true
+        if (element.fileName.isNullOrBlank() || element.fileName == LogStackTraceConstants.UNKNOWN_FILE_NAME) return true
         if (element.lineNumber <= 0) return true
 
         val className = element.className
         val methodName = element.methodName
 
-        if (className.contains("D8\$\$SyntheticClass")) return true
-        if (methodName.contains("access\$")) return true
+        if (className.contains(LogStackTraceConstants.D8_SYNTHETIC_CLASS)) return true
+        if (methodName.contains(LogStackTraceConstants.ACCESS_PREFIX)) return true
 
         return false
     }
 }
-

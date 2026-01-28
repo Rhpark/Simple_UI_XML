@@ -12,10 +12,9 @@ package kr.open.library.simple_ui.core.logcat.internal.extractor
  * @property methodName 메서드명.
  * @property className 클래스 전체 이름.
  */
-internal data class StackFrame(
+internal data class LogStackFrame(
     val fileName: String,
     val lineNumber: Int,
     val methodName: String,
     val className: String,
 )
-

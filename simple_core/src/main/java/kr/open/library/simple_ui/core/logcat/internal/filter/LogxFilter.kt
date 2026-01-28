@@ -31,5 +31,3 @@ internal object LogxFilter {
         return !config.logTagBlockList.contains(tag)
     }
 }
-
-

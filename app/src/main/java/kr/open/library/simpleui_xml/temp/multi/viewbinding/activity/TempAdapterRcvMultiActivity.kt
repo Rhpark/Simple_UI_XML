@@ -4,22 +4,22 @@ import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import kr.open.library.simple_ui.xml.ui.components.activity.binding.BaseViewBindingActivity
-import kr.open.library.simpleui_xml.databinding.ActivityTempAdapterExampleBinding
-import kr.open.library.simpleui_xml.temp.base.TempAdapterKind
-import kr.open.library.simpleui_xml.temp.multi.viewbinding.adapter.recyclerview.TempMultiViewBindingAdapter
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
-
 import kr.open.library.simple_ui.xml.ui.adapter.queue.QueueDebugEvent
 import kr.open.library.simple_ui.xml.ui.adapter.queue.QueueEventType
 import kr.open.library.simple_ui.xml.ui.adapter.queue.QueueOverflowPolicy
+import kr.open.library.simple_ui.xml.ui.components.activity.binding.BaseViewBindingActivity
 import kr.open.library.simple_ui.xml.ui.temp.base.AdapterOperationFailure
 import kr.open.library.simple_ui.xml.ui.temp.base.AdapterOperationFailureInfo
 import kr.open.library.simple_ui.xml.ui.temp.base.list.RootListAdapterCore
 import kr.open.library.simple_ui.xml.ui.temp.base.normal.RootRcvAdapterCore
+import kr.open.library.simpleui_xml.databinding.ActivityTempAdapterExampleBinding
+import kr.open.library.simpleui_xml.temp.base.TempAdapterKind
 import kr.open.library.simpleui_xml.temp.data.TempItem
 import kr.open.library.simpleui_xml.temp.data.TempItemGenerator
+import kr.open.library.simpleui_xml.temp.multi.viewbinding.adapter.recyclerview.TempMultiViewBindingAdapter
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
+
 /**
  * RecyclerView.Adapter multi-type example screen.<br><br>
  * RecyclerView.Adapter 다중 타입 예제 화면입니다.<br>
@@ -32,7 +32,6 @@ class TempAdapterRcvMultiActivity :
      */
     private val adapterKind: TempAdapterKind = TempAdapterKind.RV
 
-    
     /**
      * Title shown at the top of the screen.<br><br>
      * 화면 상단에 표시되는 제목입니다.<br>
@@ -58,7 +57,7 @@ class TempAdapterRcvMultiActivity :
      */
     private val diffExecutorService: ExecutorService = Executors.newSingleThreadExecutor()
 
-        /**
+    /**
      * Default max pending queue size.<br><br>
      * 기본 최대 대기 큐 크기입니다.<br>
      */
@@ -75,6 +74,7 @@ class TempAdapterRcvMultiActivity :
      * 이 화면에 바인딩된 현재 어댑터 인스턴스입니다.<br>
      */
     private var currentAdapter: RecyclerView.Adapter<*>? = null
+
     /**
      * Initializes UI and sets up example interactions.<br><br>
      * UI를 초기화하고 예제 동작을 설정합니다.<br>

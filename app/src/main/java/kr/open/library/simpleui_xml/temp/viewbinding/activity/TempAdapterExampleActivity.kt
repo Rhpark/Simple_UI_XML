@@ -11,8 +11,7 @@ import kr.open.library.simpleui_xml.temp.multi.viewbinding.activity.TempAdapterR
  * Menu activity that routes to temp adapter example screens.<br><br>
  * temp 어댑터 예제 화면으로 이동하는 메뉴 Activity입니다.<br>
  */
-class TempAdapterExampleActivity :
-    BaseViewBindingActivity<ActivityTempAdapterMenuBinding>(ActivityTempAdapterMenuBinding::inflate) {
+class TempAdapterExampleActivity : BaseViewBindingActivity<ActivityTempAdapterMenuBinding>(ActivityTempAdapterMenuBinding::inflate) {
     /**
      * Initializes menu UI and navigation actions.<br><br>
      * 메뉴 UI와 내비게이션 동작을 초기화합니다.<br>

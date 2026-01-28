@@ -29,7 +29,7 @@ internal data class LogxConfigSnapshot(
     val isLogTagBlockListEnabled: Boolean,
     val logTagBlockList: Set<String>,
     val isSaveEnabled: Boolean,
-    val storageType: StorageType,
+    val storageType: LogStorageType,
     val saveDirectory: String?,
     val appName: String,
     val skipPackages: Set<String>,

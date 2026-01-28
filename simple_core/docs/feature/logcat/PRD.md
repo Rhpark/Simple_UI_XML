@@ -1,44 +1,45 @@
 ﻿# Logx PRD
 
-## 臾몄꽌 ?뺣낫
-- 臾몄꽌紐? Logx PRD
-- ?묒꽦?? 2026-01-23
-- ???紐⑤뱢: simple_core
-- ?⑦궎吏: kr.open.library.simple_ui.core.logcat
-- ?곹깭: 珥덉븞
+## 문서 정보
+- 문서명: Logx PRD
+- 작성일: 2026-01-23
+- 대상 모듈: simple_core
+- 패키지: kr.open.library.simple_ui.core.logcat
+- 상태: 초안
 
-## 諛곌꼍/臾몄젣 ?뺤쓽
-- Android 湲곕낯 Log??tag/message 諛섎났 ?낅젰??留롪퀬, ?뚯씪/?쇱씤/硫붿꽌???ㅻ젅??媛숈? ?붾쾭源?硫뷀? ?뺣낫瑜?留ㅻ쾲 ?섎룞?쇰줈 ?뺤씤?댁빞 ?쒕떎.
-- JSON 濡쒓렇瑜?蹂닿린 醫뗪쾶 異쒕젰?섍굅???몄텧 寃쎈줈瑜?異붿쟻?섎뒗 湲곕뒫???⑹뼱???덉뼱 ?쇨????댁쁺 濡쒓렇 愿由ш? ?대졄??
+## 배경/문제 정의
+- Android 기본 Log는 tag/message 반복 입력이 많고, 파일/라인/메서드/스레드 같은 디버깅 메타 정보를 매번 수동으로 확인해야 한다.
+- JSON 로그를 보기 좋게 출력하거나 호출 경로를 추적하는 기능이 흩어져 있어 일관된 운영 로그 관리가 어렵다.
 
-## 紐⑺몴
-- 湲곕낯 Log ?ъ슜?깆쓣 ?좎??섎㈃???몄텧 ?꾩튂/?ㅻ젅??JSON ??異붽? ?뺣낫瑜??먮룞 ?쒓났?쒕떎.
-- ?ㅼ젙/?꾪꽣/?뚯씪 ??μ쓣 ?⑥씪 吏꾩엯?먯쑝濡??듯빀?쒕떎.
-- ?댁쁺 濡쒓렇(?뚯씪 ???源뚯? ?뺤옣 媛?ν븳 援ъ“濡??ㅺ퀎?쒕떎.
+## 목표
+- 기본 Log 사용성을 유지하면서 호출 위치/스레드/JSON 등 추가 정보를 자동 제공한다.
+- 설정/필터/파일 저장을 단일 진입점으로 통합한다.
+- 운영 로그(파일 저장)까지 확장 가능한 구조로 설계한다.
 
-## 鍮꾨ぉ??- 濡쒓렇 ?낅줈???먭꺽 ?섏쭛/遺꾩꽍 ?쒖뒪???쒓났.
-- UI 而댄룷?뚰듃/酉??섏〈 濡쒖쭅 ?꾩엯.
-- 濡쒓렇 ?뚯쟾(?ш린/湲곌컙 ?쒗븳) ?뺤콉 ?뺤쓽.
+## 비목표
+- 로그 업로드/원격 수집/분석 시스템 제공.
+- UI 컴포넌트/뷰 의존 로직 도입.
+- 로그 기간 제한 정책 정의.
 
-## 踰붿쐞
-### 湲곕낯 洹쒖튃
-- 湲곕낯 媛쒕컻 ?섍꼍/洹쒖튃? 猷⑦듃 AGENTS.md?먯꽌 ?곌껐?섎뒗 *_RULE.md瑜??곕Ⅸ??
+## 범위
+### 기본 규칙
+- 기본 개발 환경/규칙은 루트 AGENTS.md에서 연결되는 *_RULE.md를 따른다.
 
-### 吏???몄뼱
+### 지원 언어
 - Kotlin, Java
 
-### 鍮뚮뱶 ????뺤콉
-- Release 鍮뚮뱶?먯꽌??濡쒓렇 異쒕젰 ?덉슜
+### 빌드 타입 정책
+- Release 빌드에서도 로그 출력 허용
 
-## ?ㅺ퀎 ?먯튃
-- SRP 湲곕컲 ?⑦궎吏 遺꾨━濡??좎?蹂댁닔?깃낵 ?뺤옣?깆쓣 ?뺣낫?쒕떎.
-- ?꾩튂 ?뺣낫???ㅽ깮 ?몃젅?댁뒪 湲곕컲?쇰줈 怨꾩궛?쒕떎.
-- ?깅뒫 ??섎? 以꾩씠湲??꾪빐 濡쒓렇 鍮꾪솢?????щ㎎?낆쓣 理쒖냼?뷀븳??
-- ?뚯씪 ??μ? 利됱떆 flush 以묒떖?쇰줈 濡쒓렇 ?좎떎??理쒖냼?뷀븳??
-- ?뚯씪 ??μ? 肄붾（??湲곕컲 諛깃렇?쇱슫??writer濡?泥섎━???몄텧 ?ㅻ젅??李⑤떒??理쒖냼?뷀븳??
-- ???쇱씠?꾩궗?댄겢(ProcessLifecycleOwner) 湲곕컲?쇰줈 諛깃렇?쇱슫??吏꾩엯 ??writer瑜??뺣━?쒕떎.
+## 설계 원칙
+- SRP 기반 패키지 분리로 유지보수성과 확장성을 확보한다.
+- 위치 정보는 스택 트레이스 기반으로 계산한다.
+- 성능 저하를 줄이기 위해 로그 비활성 시 포맷팅을 최소화한다.
+- 파일 저장은 즉시 flush 중심으로 로그 유실을 최소화한다.
+- 파일 저장은 코루틴 기반 백그라운드 writer로 처리해 호출 스레드 차단을 최소화한다.
+- 앱 라이프사이클(ProcessLifecycleOwner) 기반으로 백그라운드 진입 시 writer를 정리한다.
 
-## 紐⑤뱢/?⑦궎吏 援ъ“(珥덉븞)
+## 모듈/패키지 구조(초안)
 - kr.open.library.simple_ui.core.logcat
   - root: Logx 공개 API
   - config: 설정 모델/기본값
@@ -51,39 +52,41 @@
     - writer: 콘솔/파일 라이터
   - extension: Kotlin 확장 함수
 
-## ?듭떖 湲곕뒫
-### ?쒖? 濡쒓렇
-- v/d/i/w/e ?몄텧濡?湲곕낯 濡쒓렇 異쒕젰.
-- ?몄텧 ?꾩튂 ?먮룞 遺李? (?뚯씪紐??쇱씤).硫붿꽌??- Throwable ?ㅻ쾭濡쒕뱶??1李?媛쒕컻 踰붿쐞?먯꽌 ?쒖쇅(異뷀썑 異붽? ?덉젙)
+## 핵심 기능
+### 표준 로그
+- v/d/i/w/e 호출로 기본 로그 출력.
+- 호출 위치 자동 부착: (파일명:라인).메서드
+- Throwable 오버로드는 개발 범위에서 제외
 
-### ?뺤옣 濡쒓렇
-- p(): 遺紐??몄텧 寃쎈줈 2?④퀎 異쒕젰 (Logcat?먯꽌 ??以꾨줈 異쒕젰)
-- j(): JSON ?щ㎎ 異쒕젰(??긽 pretty, ?쒖옉/醫낅즺 留덉빱 ?ы븿)
-- t(): ?ㅻ젅??ID 異쒕젰
-- JSON Logcat 異쒕젰? ??踰덉쓽 Log ?몄텧濡?硫?곕씪??硫붿떆吏 ?뺥깭濡?異쒕젰?쒕떎.
+### 확장 로그
+- p(): 부모 호출 경로 2단계 출력 (Logcat에서 두 줄로 출력)
+- j(): JSON 포맷 출력(항상 pretty, 시작/종료 마커 포함)
+- t(): 스레드 ID 출력
+- JSON Logcat 출력은 한 번의 Log 호출로 멀티라인 메시지 형태로 출력한다.
 
-### ?먮룞 硫뷀? ?뺣낫
-- (?뚯씪紐??쇱씤).硫붿꽌???먮룞 遺李?
-## ?곸꽭 ?ㅺ퀎 李멸퀬
-- API ?쒓렇?덉쿂, 異쒕젰 ?щ㎎, ?ㅽ깮 異붿텧 洹쒖튃, JSON 泥섎━, Context 泥섎━, ?뚯뒪???꾨왂? `SPEC.md`瑜??곕Ⅸ??
+### 자동 메타 정보
+- (파일명:라인).메서드 자동 부착
 
-## ?ъ슜踰??덉떆)
+## 상세 설계 참고
+- API 시그니처, 출력 포맷, 스택 추출 규칙, JSON 처리, Context 처리, 테스트 전략은 `SPEC.md`를 따른다.
+
+## 사용법(예시)
 ```
 Logx.d() -> AppName : (MainActivity.kt:25).onCreate
 Logx.d(msg) -> AppName : (MainActivity.kt:25).onCreate - msg
 Logx.d(tag, msg) -> AppName[tag] : (MainActivity.kt:25).onCreate - msg
 
 Logx.p()
-AppName : ??PARENT] (AppCompatActivity.kt:25).onCreate
-AppName : ??PARENT] (MainActivity.kt:25).onCreate
+AppName : ┌[PARENT] (AppCompatActivity.kt:25).onCreate
+AppName : └[PARENT] (MainActivity.kt:25).onCreate
 
 Logx.p(msg)
-AppName : ??PARENT] (AppCompatActivity.kt:25).onCreate
-AppName : ??PARENT] (MainActivity.kt:25).onCreate - msg
+AppName : ┌[PARENT] (AppCompatActivity.kt:25).onCreate
+AppName : └[PARENT] (MainActivity.kt:25).onCreate - msg
 
 Logx.p(tag, msg)
-AppName[tag] : ??PARENT] (AppCompatActivity.kt:25).onCreate
-AppName[tag] : ??PARENT] (MainActivity.kt:25).onCreate - msg
+AppName[tag] : ┌[PARENT] (AppCompatActivity.kt:25).onCreate
+AppName[tag] : └[PARENT] (MainActivity.kt:25).onCreate - msg
 
 Logx.j("{ \"key\": \"value\" }")
 AppName : [JSON](MainActivity.kt:25).onCreate -
@@ -104,9 +107,9 @@ Logx.t(msg) -> AppName : [TID = 1231](MainActivity.kt:25).onCreate - msg
 Logx.t(tag, msg) -> AppName[tag] : [TID = 1231](MainActivity.kt:25).onCreate - msg
 ```
 
-### Kotlin ?뺤옣 ?⑥닔(?덉떆)
+### Kotlin 확장 함수(예시)
 ```
-// ?쒖? 濡쒓렇
+// 표준 로그
 "AFEF".logv() -> AppName : (MainActivity.kt:25).onCreate - AFEF
 "AFEF".logv(tag) -> AppName[tag] : (MainActivity.kt:25).onCreate - AFEF
 "AFEF".logd() -> AppName : (MainActivity.kt:25).onCreate - AFEF
@@ -118,55 +121,60 @@ Logx.t(tag, msg) -> AppName[tag] : [TID = 1231](MainActivity.kt:25).onCreate - m
 "AFEF".loge() -> AppName : (MainActivity.kt:25).onCreate - AFEF
 "AFEF".loge(tag) -> AppName[tag] : (MainActivity.kt:25).onCreate - AFEF
 
-// ?뺤옣 濡쒓렇
+// 확장 로그
 "AFEF".logp() ->
-AppName : ??PARENT] (AppCompatActivity.kt:25).onCreate
-AppName : ??PARENT] (MainActivity.kt:25).onCreate - AFEF
+AppName : ┌[PARENT] (AppCompatActivity.kt:25).onCreate
+AppName : └[PARENT] (MainActivity.kt:25).onCreate - AFEF
 "AFEF".logp(tag) ->
-AppName[tag] : ??PARENT] (AppCompatActivity.kt:25).onCreate
-AppName[tag] : ??PARENT] (MainActivity.kt:25).onCreate - AFEF
+AppName[tag] : ┌[PARENT] (AppCompatActivity.kt:25).onCreate
+AppName[tag] : └[PARENT] (MainActivity.kt:25).onCreate - AFEF
 "AFEF".logt() -> AppName : [TID = 1231](MainActivity.kt:25).onCreate - AFEF
 "AFEF".logt(tag) -> AppName[tag] : [TID = 1231](MainActivity.kt:25).onCreate - AFEF
-"{\"key\":\"value\"}".logj() -> JSON ?щ㎎ 異쒕젰
-"{\"key\":\"value\"}".logj(tag) -> JSON ?щ㎎ 異쒕젰(tag ?ы븿)
+"{\"key\":\"value\"}".logj() -> JSON 포맷 출력
+"{\"key\":\"value\"}".logj(tag) -> JSON 포맷 출력(tag 포함)
 ```
 
-## ?ㅼ젙 ?쒖뒪??- setter/getter 湲곕컲 ?ㅼ젙 ?쒓났
-- ?꾩옱 ?ㅼ젙 議고쉶 getter ?쒓났
-- 濡쒓렇 ?꾩껜 on/off(異쒕젰/???
-- ????꾪꽣(LogType: v/d/i/w/e/p/j/t)
-- ?쒓렇 李⑤떒 ?꾪꽣(BLOCKLIST) (isLogTagBlockListEnabled=true???뚮쭔 ?곸슜)
-- ???on/off
-- ???寃쎈줈/?ㅽ넗由ъ? ????쒖뼱
-- AppName 蹂寃?吏??
-## ?뚯씪 ???- INTERNAL / APP_EXTERNAL / PUBLIC_EXTERNAL ???寃쎈줈 ?좏깮
-- 寃쎈줈 ?좏떥 ?쒓났 諛?沅뚰븳 ?꾩슂 ?щ? 泥댄겕
-- StorageType 寃쎈줈 洹쒖튃(?대?/?깆쇅遺/怨듭슜?몃?, API 遺꾧린/?대갚) 紐낆떆
-- ???寃쎈줈 ?붾젆?곕━ ?먮룞 ?앹꽦, ?ㅽ뙣 ??留??쒕룄 Log.e 寃쎄퀬
-- PUBLIC_EXTERNAL + API 28 이하에서 권한이 없으면 SecurityException을 던진다.
-- 利됱떆 flush 以묒떖(濡쒓렇 ?좎떎 理쒖냼???곗꽑)
-- 利됱떆 flush?대?濡?蹂꾨룄 ?몃━嫄?遺덊븘??(異뷀썑 踰꾪띁留??꾪솚 ???곸슜)
-- ?뚯씪 ??μ? Application initialize(context) ?댄썑?먮쭔 ?덉슜
-- 硫?곕씪??濡쒓렇 湲곕줉 ?뺤콉
-  - JSON: 泥?以꾩뿉留?timestamp/prefix 湲곕줉, 蹂몃Ц/End???먮Ц ?쇱씤 洹몃?濡?湲곕줉
-  - PARENT: 紐⑤뱺 以꾩뿉 timestamp/prefix 湲곕줉
-- ?뚯씪 ?곌린 諛섎났 ?ㅽ뙣 ??留ㅻ쾲 ?먮윭 濡쒓렇瑜?肄섏넄??異쒕젰
+## 설정 시스템
+- setter/getter 기반 설정 제공
+- 현재 설정 조회 getter 제공
+- 로그 전체 on/off(출력/저장)
+- 타입 필터(LogType: v/d/i/w/e/p/j/t)
+- 태그 차단 필터(BLOCKLIST) (isLogTagBlockListEnabled=true일 때만 적용)
+- 저장 on/off
+- 저장 경로/스토리지 타입 제어
+- AppName 변경 지원
 
-## ?쒖빟/?꾩젣
-- ?꾩튂 ?뺣낫???ㅽ깮 ?몃젅?댁뒪 湲곕컲 異붿텧
-- skipPackages??packageName prefix 湲곗??쇰줈 留ㅼ묶
-- ?뚯씪 ??μ? 利됱떆 flush 以묒떖
-- 濡쒓렇 硫붿떆吏 湲몄씠/硫?곕씪??泥섎━??Log.*? ?숈씪
-- ?뚯씪 ???湲곕뒫? initialize(context) ?댄썑?먮쭔 ?덉슜?섎ŉ, 誘명샇異??곹깭?먯꽌 setSaveEnabled(true) ???덉쇅媛 諛쒖깮?쒕떎.
+## 파일 저장
+- INTERNAL / APP_EXTERNAL / PUBLIC_EXTERNAL 저장 경로 선택
+- 경로 유틸 제공 및 권한 필요 여부 체크
+- StorageType 경로 규칙(내부/앱외부/공용외부, API 분기/폴백) 명시
+- 저장 경로 디렉터리 자동 생성, 실패 시 매 시도 Log.e 경고
+- PUBLIC_EXTERNAL + API 28 이하에서 권한이 없으면 디버그는 예외, 릴리즈는 Log.e 경고 후 저장 중단
+- 즉시 flush 중심(로그 유실 최소화 우선)
+- 즉시 flush이므로 별도 트리거 불필요 (추후 버퍼링 전환 시 적용)
+- 파일 로테이션 정책
+  - 파일 크기 10MB 초과 시 `_1`, `_2` 카운트 파일로 분리
+  - 파일 개수 제한 없음
+- 파일 저장은 Application initialize(context) 이후에만 허용
+- 멀티라인 로그 기록 정책
+  - JSON: 첫 줄에만 timestamp/prefix 기록, 본문/End는 원문 라인 그대로 기록
+  - PARENT: 모든 줄에 timestamp/prefix 기록
+- 파일 쓰기 반복 실패 시 매번 에러 로그를 콘솔에 출력
 
-## 由ъ뒪??- ?ㅽ깮 ?몃젅?댁뒪 源딆씠 蹂?붾줈 ?꾩튂 異붿텧 ?ㅽ뙣 媛?μ꽦
-- ?몃씪??肄붾（??由ы뵆?됱뀡 ?꾨젅???곹뼢?쇰줈 ?꾩튂 異붿텧 ?붾뱾由?媛?μ꽦
-- ?뚯씪 I/O 鍮덈쾲 ???깅뒫 ???媛?μ꽦
-- Context ?녿뒗 ?섍꼍?먯꽌 ?뚯씪 寃쎈줈 ?대갚???ㅽ슚???쒗븳
-- Logcat ?⑥씪 異쒕젰 湲몄씠 ?쒗븳?쇰줈 湲?JSON? 肄섏넄?먯꽌 ?섎┫ ???덉쓬(?뚯씪?먮뒗 ?꾩껜 ???
+## 제약/전제
+- 위치 정보는 스택 트레이스 기반 추출
+- skipPackages는 packageName prefix 기준으로 매칭
+- 파일 저장은 즉시 flush 중심
+- 로그 메시지 길이/멀티라인 처리는 Log.*와 동일
+- 파일 저장 기능은 initialize(context) 이후에만 허용하며, 미호출 상태에서 setSaveEnabled(true) 시 디버그는 예외, 릴리즈는 Log.e로 처리한다.
 
-## ?ㅽ뵂 ?댁뒋
-- 濡쒓렇 ?뚯쟾(?ш린/湲곌컙 ?쒗븳) ?뺤콉 遺??- 由대━利?鍮뚮뱶?먯꽌 ?쇱씤 ?뺣낫 異뺤빟 媛?μ꽦
+## 리스크
+- 스택 트레이스 깊이 변화로 위치 추출 실패 가능성
+- 인라인/코루틴/리플렉션 프레임 영향으로 위치 추출 흔들림 가능성
+- 파일 I/O 빈번 시 성능 저하 가능성
+- Context 없는 환경에서 파일 경로 폴백의 실효성 제한
+- Logcat 단일 출력 길이 제한으로 긴 JSON은 콘솔에서 잘릴 수 있음(파일에는 전체 저장)
 
-
-
+## 오픈 이슈
+- 로그 기간 제한 정책 부재
+- 릴리즈 빌드에서 라인 정보 축약 가능성

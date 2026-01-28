@@ -1,90 +1,15 @@
 package kr.open.library.simple_ui.core.logcat.config
 
 import kr.open.library.simple_ui.core.logcat.internal.common.LogxConstants
+import java.util.Collections
 
 /**
  * Central in-memory configuration store for Logx.<br><br>
  * Logx의 중앙 메모리 설정 저장소이다.<br>
  */
 internal object LogxConfigStore {
-    /**
-     * Whether logging output is enabled.<br><br>
-     * 로그 출력 활성화 여부.<br>
-     */
-    @Volatile
-    private var isLogging: Boolean = true
-
-    /**
-     * Lock for logTypes updates.<br><br>
-     * logTypes 갱신 동기화를 위한 락.<br>
-     */
-    private val logTypesLock = Any()
-
-    /**
-     * Allowed log types (allowlist).<br><br>
-     * 허용된 로그 타입 목록(허용 목록).<br>
-     */
-    private var logTypes: Set<LogType> = enumValues<LogType>().toSet()
-
-    /**
-     * Whether tag blocklist filtering is enabled.<br><br>
-     * 태그 차단 목록 필터 활성화 여부.<br>
-     */
-    @Volatile
-    private var isLogTagBlockListEnabled: Boolean = false
-
-    /**
-     * Lock for logTagBlockList updates.<br><br>
-     * logTagBlockList 갱신 동기화를 위한 락.<br>
-     */
-    private val logTagBlockListLock = Any()
-
-    /**
-     * Blocked tag list used when blocklist is enabled.<br><br>
-     * 차단 목록 활성화 시 적용되는 태그 목록.<br>
-     */
-    private var logTagBlockList: Set<String> = emptySet()
-
-    /**
-     * Whether file logging is enabled.<br><br>
-     * 파일 저장 활성화 여부.<br>
-     */
-    @Volatile
-    private var isSaveEnabled: Boolean = false
-
-    /**
-     * Current storage type for file output.<br><br>
-     * 파일 저장에 사용할 저장소 타입.<br>
-     */
-    @Volatile
-    private var storageType: StorageType = StorageType.APP_EXTERNAL
-
-    /**
-     * Custom save directory path (optional).<br><br>
-     * 사용자 지정 저장 경로(선택).<br>
-     */
-    @Volatile
-    private var saveDirectory: String? = null
-
-    /**
-     * Application name used for tags and file names.<br><br>
-     * 태그/파일명에 사용하는 앱 이름.<br>
-     */
-    @Volatile
-    private var appName: String = LogxConstants.defaultAppName
-
-    /**
-     * Lock for skipPackages updates.<br><br>
-     * skipPackages 갱신 동기화를 위한 락.<br>
-     */
-    private val skipPackagesLock = Any()
-
-    /**
-     * Package prefixes to skip when resolving stack frames.<br><br>
-     * 스택 프레임 해석 시 제외할 패키지 prefix 목록.<br>
-     */
-    private var skipPackages: Set<String> = linkedSetOf(
-        "kr.open.library.simple_ui.core.temp_logcat",
+    private val snapshotLock = Any()
+    private val defaultSkipPackages = Collections.unmodifiableSet(linkedSetOf(
         "kr.open.library.simple_ui.core.logcat",
         "java.",
         "kotlin.",
@@ -93,6 +18,23 @@ internal object LogxConfigStore {
         "android.util.",
         "android.os.",
         "dalvik.system.",
+    ))
+
+    /**
+     * Immutable snapshot that represents the current configuration.<br><br>
+     * 현재 설정을 표현하는 불변 스냅샷.<br>
+     */
+    @Volatile
+    private var snapshot: LogxConfigSnapshot = LogxConfigSnapshot(
+        isLogging = true,
+        logTypes = Collections.unmodifiableSet(enumValues<LogType>().toSet()),
+        isLogTagBlockListEnabled = false,
+        logTagBlockList = Collections.unmodifiableSet(emptySet()),
+        isSaveEnabled = false,
+        storageType = LogStorageType.APP_EXTERNAL,
+        saveDirectory = null,
+        appName = LogxConstants.DEFAULT_APP_NAME,
+        skipPackages = defaultSkipPackages,
     )
 
     /**
@@ -103,14 +45,16 @@ internal object LogxConfigStore {
      *                로그 활성화 여부.<br>
      */
     fun setLogging(enabled: Boolean) {
-        isLogging = enabled
+        synchronized(snapshotLock) {
+            snapshot = snapshot.copy(isLogging = enabled)
+        }
     }
 
     /**
      * Returns current logging enabled state.<br><br>
      * 현재 로그 활성화 여부를 반환한다.<br>
      */
-    fun isLogging(): Boolean = isLogging
+    fun isLogging(): Boolean = snapshot.isLogging
 
     /**
      * Sets allowed log types (allowlist).<br><br>
@@ -120,8 +64,9 @@ internal object LogxConfigStore {
      *              허용할 로그 타입 목록.<br>
      */
     fun setLogTypes(types: Set<LogType>) {
-        synchronized(logTypesLock) {
-            logTypes = types.toSet()
+        val sanitized = Collections.unmodifiableSet(types.toSet())
+        synchronized(snapshotLock) {
+            snapshot = snapshot.copy(logTypes = sanitized)
         }
     }
 
@@ -129,9 +74,7 @@ internal object LogxConfigStore {
      * Returns allowed log types.<br><br>
      * 허용된 로그 타입 목록을 반환한다.<br>
      */
-    fun getLogTypes(): Set<LogType> = synchronized(logTypesLock) {
-        logTypes.toSet()
-    }
+    fun getLogTypes(): Set<LogType> = snapshot.logTypes
 
     /**
      * Enables or disables tag blocklist filtering.<br><br>
@@ -141,14 +84,16 @@ internal object LogxConfigStore {
      *                차단 목록 필터 활성화 여부.<br>
      */
     fun setLogTagBlockListEnabled(enabled: Boolean) {
-        isLogTagBlockListEnabled = enabled
+        synchronized(snapshotLock) {
+            snapshot = snapshot.copy(isLogTagBlockListEnabled = enabled)
+        }
     }
 
     /**
      * Returns whether tag blocklist filtering is enabled.<br><br>
      * 태그 차단 목록 필터 활성화 여부를 반환한다.<br>
      */
-    fun isLogTagBlockListEnabled(): Boolean = isLogTagBlockListEnabled
+    fun isLogTagBlockListEnabled(): Boolean = snapshot.isLogTagBlockListEnabled
 
     /**
      * Sets tag blocklist entries.<br><br>
@@ -158,8 +103,9 @@ internal object LogxConfigStore {
      *             차단할 태그 목록.<br>
      */
     fun setLogTagBlockList(tags: Set<String>) {
-        synchronized(logTagBlockListLock) {
-            logTagBlockList = tags.toSet()
+        val sanitized = Collections.unmodifiableSet(tags.toSet())
+        synchronized(snapshotLock) {
+            snapshot = snapshot.copy(logTagBlockList = sanitized)
         }
     }
 
@@ -167,9 +113,7 @@ internal object LogxConfigStore {
      * Returns current tag blocklist entries.<br><br>
      * 현재 태그 차단 목록을 반환한다.<br>
      */
-    fun getLogTagBlockList(): Set<String> = synchronized(logTagBlockListLock) {
-        logTagBlockList.toSet()
-    }
+    fun getLogTagBlockList(): Set<String> = snapshot.logTagBlockList
 
     /**
      * Sets file logging enabled state.<br><br>
@@ -179,14 +123,16 @@ internal object LogxConfigStore {
      *                파일 저장 활성화 여부.<br>
      */
     fun setSaveEnabled(enabled: Boolean) {
-        isSaveEnabled = enabled
+        synchronized(snapshotLock) {
+            snapshot = snapshot.copy(isSaveEnabled = enabled)
+        }
     }
 
     /**
      * Returns file logging enabled state.<br><br>
      * 파일 저장 활성화 여부를 반환한다.<br>
      */
-    fun isSaveEnabled(): Boolean = isSaveEnabled
+    fun isSaveEnabled(): Boolean = snapshot.isSaveEnabled
 
     /**
      * Sets storage type for file output.<br><br>
@@ -195,15 +141,17 @@ internal object LogxConfigStore {
      * @param type Storage type to use.<br><br>
      *             사용할 저장소 타입.<br>
      */
-    fun setStorageType(type: StorageType) {
-        storageType = type
+    fun setStorageType(type: LogStorageType) {
+        synchronized(snapshotLock) {
+            snapshot = snapshot.copy(storageType = type)
+        }
     }
 
     /**
      * Returns current storage type.<br><br>
      * 현재 저장소 타입을 반환한다.<br>
      */
-    fun getStorageType(): StorageType = storageType
+    fun getStorageType(): LogStorageType = snapshot.storageType
 
     /**
      * Sets custom save directory path.<br><br>
@@ -213,14 +161,16 @@ internal object LogxConfigStore {
      *             저장 경로 또는 기본 경로 사용 시 null.<br>
      */
     fun setSaveDirectory(path: String?) {
-        saveDirectory = path
+        synchronized(snapshotLock) {
+            snapshot = snapshot.copy(saveDirectory = path)
+        }
     }
 
     /**
      * Returns custom save directory path.<br><br>
      * 사용자 지정 저장 경로를 반환한다.<br>
      */
-    fun getSaveDirectory(): String? = saveDirectory
+    fun getSaveDirectory(): String? = snapshot.saveDirectory
 
     /**
      * Sets application name used in log prefix and file name.<br><br>
@@ -230,14 +180,16 @@ internal object LogxConfigStore {
      *             앱 이름.<br>
      */
     fun setAppName(name: String) {
-        appName = name
+        synchronized(snapshotLock) {
+            snapshot = snapshot.copy(appName = name)
+        }
     }
 
     /**
      * Returns current application name.<br><br>
      * 현재 앱 이름을 반환한다.<br>
      */
-    fun getAppName(): String = appName
+    fun getAppName(): String = snapshot.appName
 
     /**
      * Adds package prefixes to skip during stack trace resolution.<br><br>
@@ -247,8 +199,12 @@ internal object LogxConfigStore {
      *                 추가할 패키지 prefix 목록.<br>
      */
     fun addSkipPackages(packages: Set<String>) {
-        synchronized(skipPackagesLock) {
-            skipPackages = skipPackages.toMutableSet().apply { addAll(packages) }.toSet()
+        val filtered = packages.filter { it.isNotBlank() }.toSet()
+        if (filtered.isEmpty()) return
+        synchronized(snapshotLock) {
+            val merged = snapshot.skipPackages.toMutableSet()
+            merged.addAll(filtered)
+            snapshot = snapshot.copy(skipPackages = Collections.unmodifiableSet(merged))
         }
     }
 
@@ -256,24 +212,11 @@ internal object LogxConfigStore {
      * Returns current skip package prefixes.<br><br>
      * 현재 제외 패키지 prefix 목록을 반환한다.<br>
      */
-    fun getSkipPackages(): Set<String> = synchronized(skipPackagesLock) {
-        skipPackages.toSet()
-    }
+    fun getSkipPackages(): Set<String> = snapshot.skipPackages
 
     /**
      * Creates an immutable snapshot of current configuration.<br><br>
      * 현재 설정의 불변 스냅샷을 생성한다.<br>
      */
-    fun snapshot(): LogxConfigSnapshot = LogxConfigSnapshot(
-        isLogging = isLogging,
-        logTypes = getLogTypes(),
-        isLogTagBlockListEnabled = isLogTagBlockListEnabled,
-        logTagBlockList = getLogTagBlockList(),
-        isSaveEnabled = isSaveEnabled,
-        storageType = storageType,
-        saveDirectory = saveDirectory,
-        appName = appName,
-        skipPackages = getSkipPackages(),
-    )
+    fun snapshot(): LogxConfigSnapshot = snapshot
 }
-

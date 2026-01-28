@@ -35,7 +35,6 @@ class TempAdapterRcvSingleActivity : BaseActivity(R.layout.activity_temp_adapter
      */
     private val adapterKind: TempAdapterKind = TempAdapterKind.RV
 
-    
     /**
      * Title shown at the top of the screen.<br><br>
      * 화면 상단에 표시되는 제목입니다.<br>

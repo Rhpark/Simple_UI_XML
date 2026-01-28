@@ -7,25 +7,25 @@ import android.widget.TextView
 import androidx.appcompat.widget.SwitchCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import kr.open.library.simple_ui.xml.ui.adapter.queue.QueueDebugEvent
+import kr.open.library.simple_ui.xml.ui.adapter.queue.QueueEventType
+import kr.open.library.simple_ui.xml.ui.adapter.queue.QueueOverflowPolicy
 import kr.open.library.simple_ui.xml.ui.components.activity.normal.BaseActivity
+import kr.open.library.simple_ui.xml.ui.temp.base.AdapterOperationFailure
+import kr.open.library.simple_ui.xml.ui.temp.base.AdapterOperationFailureInfo
+import kr.open.library.simple_ui.xml.ui.temp.base.list.RootListAdapterCore
 import kr.open.library.simple_ui.xml.ui.temp.base.list.diffcallback.DefaultDiffCallback
+import kr.open.library.simple_ui.xml.ui.temp.base.normal.RootRcvAdapterCore
 import kr.open.library.simpleui_xml.R
 import kr.open.library.simpleui_xml.temp.base.TempAdapterKind
 import kr.open.library.simpleui_xml.temp.data.TempItem
+import kr.open.library.simpleui_xml.temp.data.TempItemGenerator
 import kr.open.library.simpleui_xml.temp.normal.adapter.listadapter.TempSimpleSingleNormalListAdapter
 import kr.open.library.simpleui_xml.temp.normal.adapter.listadapter.TempSingleNormalListAdapter
 import kr.open.library.simpleui_xml.temp.util.TempItemDiffCallback
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-import kr.open.library.simple_ui.xml.ui.adapter.queue.QueueDebugEvent
-import kr.open.library.simple_ui.xml.ui.adapter.queue.QueueEventType
-import kr.open.library.simple_ui.xml.ui.adapter.queue.QueueOverflowPolicy
-import kr.open.library.simple_ui.xml.ui.temp.base.AdapterOperationFailure
-import kr.open.library.simple_ui.xml.ui.temp.base.AdapterOperationFailureInfo
-import kr.open.library.simple_ui.xml.ui.temp.base.list.RootListAdapterCore
-import kr.open.library.simple_ui.xml.ui.temp.base.normal.RootRcvAdapterCore
-import kr.open.library.simpleui_xml.temp.data.TempItemGenerator
 /**
  * ListAdapter single-type example screen.<br><br>
  * ListAdapter 단일 타입 예제 화면입니다.<br>
@@ -37,7 +37,6 @@ class TempAdapterListSingleActivity : BaseActivity(R.layout.activity_temp_adapte
      */
     private val adapterKind: TempAdapterKind = TempAdapterKind.LIST
 
-    
     /**
      * Title shown at the top of the screen.<br><br>
      * 화면 상단에 표시되는 제목입니다.<br>
@@ -56,7 +55,7 @@ class TempAdapterListSingleActivity : BaseActivity(R.layout.activity_temp_adapte
      */
     private val diffExecutorService: ExecutorService = Executors.newSingleThreadExecutor()
 
-        /**
+    /**
      * Default max pending queue size.<br><br>
      * 기본 최대 대기 큐 크기입니다.<br>
      */

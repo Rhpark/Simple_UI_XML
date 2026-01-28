@@ -20,13 +20,13 @@
 
 | Category                                      |     Plain Android Log      |                        Simple UI Logx                        |
 |:----------------------------------------------|:------------------------:|:------------------------------------------------------------:|
-| Output format                                 |     `D/TAG: message`     | `[App] [Package] [Level] (File:LineNumber).Method - message` |
+| Output format                                 |     `D/TAG: message`     | `AppName[tag] : (File:LineNumber).Method - message` |
 | Show file/line                                |            ❌             |                              ✅                               |
 | Show caller method                            |            ❌             |                              ✅                               |
 | Show thread ID                                |    △(manual handling)    |                              ✅                               |
 | Show JSON print                               |   △(manual formatting)   |                              ✅                               |
 | File Save archive                             | △(custom implementation) |                              ✅                               |
-| DSL-based configuration/filter  |            ❌             |                              ✅                               |
+| Setter-based configuration/filter |            ❌             |                              ✅                               |
 
 
 **Key point:** Logx automatically attaches the metadata you care about, dramatically accelerating debugging.
@@ -53,11 +53,9 @@
 
 **Default log output format (기본 로그 출력 형태):**
 ```
-RhPark[]  kr.open.library.simpleui_xml  V  (LogxActivity.kt:56).demonstrateBasicLogging - VERBOSE LEVEL
-RhPark[]  kr.open.library.simpleui_xml  D  (LogxActivity.kt:57).demonstrateBasicLogging - DEBUG LEVEL
-RhPark[]  kr.open.library.simpleui_xml  I  (LogxActivity.kt:58).demonstrateBasicLogging - INFO LEVEL
-RhPark[]  kr.open.library.simpleui_xml  W  (LogxActivity.kt:59).demonstrateBasicLogging - WARNING LEVEL
-RhPark[]  kr.open.library.simpleui_xml  E  (LogxActivity.kt:60).demonstrateBasicLogging - ERROR LEVEL
+AppName : (MainActivity.kt:25).onCreate
+AppName : (MainActivity.kt:25).onCreate - msg
+AppName[tag] : (MainActivity.kt:25).onCreate - msg
 ```
 
 <br>
@@ -65,35 +63,33 @@ RhPark[]  kr.open.library.simpleui_xml  E  (LogxActivity.kt:60).demonstrateBasic
 
 **Analyze the output structure (출력 구조 분석):**
 ```
-[AppName] [PackagePath] [Level] (FileName:LineNumber).Method - Message
-[앱이름] [패키지명] [레벨] (파일명:라인번호).메서드명 - 메시지
+AppName[tag] : (FileName:LineNumber).Method - Message
+앱이름[태그] : (파일명:라인번호).메서드명 - 메시지
 ```
 
 <br>
 </br>
 
 **Component breakdown (각 구성요소):**
-- `RhPark[TAG]` – App name [TAG] (customizable through DSL `configure`)
-- `kr.open.library.simpleui_xml` – Package name detected automatically
-- `V/D/I/W/E` – Log levels (Verbose/Debug/Info/Warning/Error)
-- `(LogxActivity.kt:56)` – File name and line number automatically tracked (click in the IDE to jump)
-- `.demonstrateBasicLogging` – Calling method name automatically tracked
-- `VERBOSE LEVEL` – Actual log message content
+- `AppName[tag]` – Logcat tag (setAppName + optional tag)
+- `(MainActivity.kt:25)` – File name and line number automatically tracked (click in the IDE to jump)
+- `.onCreate` – Calling method name automatically tracked
+- `msg` – Actual log message content (only when provided)
+- `V/D/I/W/E` – Log levels shown by Logcat based on the API call
   <br>
   </br>
-> - `RhPark[TAG]` - 앱 이름[TAG명] (DSL configure로 변경 가능)
-> - `kr.open.library.simpleui_xml` - 패키지명 자동 감지
-> - `V/D/I/W/E` - 로그 레벨 (Verbose/Debug/Info/Warning/Error)
-> - `(LogxActivity.kt:56)` - 파일명과 라인번호 **자동 추적(IDE에서 클릭 시 이동)**
-> - `.demonstrateBasicLogging` - 호출한 메서드명 **자동 추적**
-> - `VERBOSE LEVEL` - 실제 로그 메시지
+> - `AppName[tag]` - Logcat 태그 (setAppName + 태그)
+> - `(MainActivity.kt:25)` - 파일명과 라인번호 **자동 추적(IDE에서 클릭 시 이동)**
+> - `.onCreate` - 호출한 메서드명 **자동 추적**
+> - `msg` - 실제 로그 메시지(메시지 인자가 있을 때만)
+> - `V/D/I/W/E` - 로그 레벨 (Logcat에서 표시)
 
 <br>
 </br>
 
 **🎯 Core advantages (🎯 핵심 장점):**
 - Standard Android Log: `D/TAG: message`
-- **Logx**: `(File:Line).Method - message`
+- **Logx**: `AppName[tag] : (File:Line).Method - message`
 
 **Debugging becomes radically easier!** Instantly see which file, line, and method produced the log.
 > **디버깅이 혁신적으로 쉬워집니다!** 어느 파일의 몇 번째 줄, 어떤 메서드에서 호출했는지 한눈에 확인 가능!
@@ -108,7 +104,7 @@ RhPark[]  kr.open.library.simpleui_xml  E  (LogxActivity.kt:60).demonstrateBasic
 - Automatic thread ID display
 - Automatic JSON formatting
 - Automatic file saving
-- DSL-based configuration
+- Setter-based configuration
 - Advanced filtering
 - Optional TAG usage
 
@@ -122,8 +118,8 @@ RhPark[]  kr.open.library.simpleui_xml  E  (LogxActivity.kt:60).demonstrateBasic
 override fun onCreate() {
     super.onCreate()
 
-    // Logx Initialization required 초기화 (필수)
-    Logx.init(this)
+    // Logx 초기화 (필수)
+    Logx.initialize(applicationContext)
 }
 ```
 
@@ -138,10 +134,10 @@ Logx.i("정보 메시지")
 Logx.i("TAG","정보 메시지")
 
 // 확장 함수 사용
-"디버그 메시지".logxD()
+"디버그 메시지".logd()
 
 // 고급 기능
-Logx.j("JSON_TAG", jsonData)  // JSON 자동 포맷팅
+Logx.j("JSON_TAG", jsonData)  // JSON pretty-print + [JSON]/[End]
 Logx.p("Parent Method 추적")  // 호출자 추적
 Logx.t("Thread 정보")         // 스레드 정보
 ```
@@ -153,24 +149,27 @@ Logx.t("Thread 정보")         // 스레드 정보
 
 #### 📂 File saving configuration (파일 저장 설정)
 
-> **Note:** Storage helper APIs are provided through `LogxPathUtils` (import `kr.open.library.simple_ui.core.logcat.config.LogxPathUtils`) and require an Android `Context` such as `applicationContext`.
+> **Note:** 파일 저장을 사용하려면 `Logx.initialize(applicationContext)`가 선행되어야 합니다.
 
 **Default setup (no permission required) (기본 설정, 권한 불필요):**
 ```kotlin
-Logx.configure {
-    appName = "MyApp"
-    debugMode = true
+// Application.onCreate 등에서 1회 초기화
+Logx.initialize(applicationContext)
 
-    fileConfig {
-        saveToFile = true  // 파일 저장 활성화
-        // filePath는 생략 시 기본값(INTERNAL) 사용
-    }
+// 파일 저장 활성화
+Logx.setSaveEnabled(true)
 
-    logTypes {
-        all() // 모든 로그 레벨 허용
-    }
-}
+// 저장소 선택 (권장: APP_EXTERNAL)
+Logx.setStorageType(LogStorageType.APP_EXTERNAL)
+
+// (선택) 앱 이름 변경
+Logx.setAppName("MyApp")
+
+// (선택) 직접 경로 지정
+// Logx.setSaveDirectory("/storage/emulated/0/MyLogs")
 ```
+
+**Note:** 로그 파일은 10MB를 초과하면 `_1`, `_2`로 로테이션됩니다.
 
 <br>
 
@@ -193,16 +192,15 @@ Only the **file-saving feature** may require permissions depending on the storag
 
 <br>
 
+**Note:** API 28 이하에서 PUBLIC_EXTERNAL 권한이 없으면 디버그에서는 예외가 발생하고, 릴리즈에서는 Log.e로 경고 후 저장을 중단합니다.
+
 #### 💡 Storage type selection guide
 
 **1. INTERNAL (no permission required)**
 ```kotlin
-Logx.configure {
-    fileConfig {
-        saveToFile = true
-        filePath = LogxPathUtils.getInternalLogPath(applicationContext)  // 기본값
-    }
-}
+Logx.initialize(applicationContext)
+Logx.setSaveEnabled(true)
+Logx.setStorageType(LogStorageType.INTERNAL)
 ```
 ✅ **Pros:** No permission required, automatically cleaned up when the app is removed.
 
@@ -216,12 +214,9 @@ Logx.configure {
 
 **2. APP_EXTERNAL (no permission required, recommended**
 ```kotlin
-Logx.configure {
-    fileConfig {
-        saveToFile = true
-        filePath = LogxPathUtils.getAppExternalLogPath(applicationContext)
-    }
-}
+Logx.initialize(applicationContext)
+Logx.setSaveEnabled(true)
+Logx.setStorageType(LogStorageType.APP_EXTERNAL)
 ```
 ✅ **Pros:** No permission required, accessible through file manager, automatically cleaned up when the app is removed
 
@@ -237,12 +232,9 @@ Logx.configure {
 // AndroidManifest.xml에 권한 추가 (Android 9 이하만)
 // <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
 
-Logx.configure {
-    fileConfig {
-        saveToFile = true
-        filePath = LogxPathUtils.getPublicExternalLogPath(applicationContext)
-    }
-}
+Logx.initialize(applicationContext)
+Logx.setSaveEnabled(true)
+Logx.setStorageType(LogStorageType.PUBLIC_EXTERNAL)
 ```
 ✅ **Pros:** Logs remain even after uninstall, easy access
 
@@ -291,21 +283,15 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
     }
 
     private fun setupLogxWithPublicStorage() {
-        Logx.configure {
-            fileConfig {
-                saveToFile = true
-                filePath = LogxPathUtils.getPublicExternalLogPath(applicationContext)
-            }
-        }
+        Logx.initialize(applicationContext)
+        Logx.setSaveEnabled(true)
+        Logx.setStorageType(LogStorageType.PUBLIC_EXTERNAL)
     }
 
     private fun setupLogxWithAppExternalStorage() {
-        Logx.configure {
-            fileConfig {
-                saveToFile = true
-                filePath = LogxPathUtils.getAppExternalLogPath(applicationContext)  // 권한 불필요!
-            }
-        }
+        Logx.initialize(applicationContext)
+        Logx.setSaveEnabled(true)
+        Logx.setStorageType(LogStorageType.APP_EXTERNAL)  // 권한 불필요!
     }
 }
 ```
@@ -431,8 +417,8 @@ private fun logJsonData() {
     Logx.j("JSON_DEMO", jsonData) // 끝!
 }
 ```
-**Result :** Automatic JSON parsing, Auto formating, and error handling  
-> **결과:** 자동 JSON 파싱, 자동 포멧, 오류 처리 모두 자동!
+**Result :** Automatic JSON pretty-print with [JSON]/[End] markers (invalid JSON falls back to raw)  
+> **결과:** JSON pretty-print + [JSON]/[End] 마커 자동 처리(유효하지 않으면 원문 출력)
 </details>
 
 <br>
@@ -568,7 +554,8 @@ private fun logWithFile(tag: String, message: String) {
 ```kotlin
 // 자동 파일 저장 - 설정 한 줄
 private fun setupFileLogging() {
-    Logx.setSaveToFile(true) // 끝!
+    Logx.initialize(applicationContext)
+    Logx.setSaveEnabled(true) // 끝!
 }
 
 private fun logWithFile(tag: String, message: String) {
@@ -639,33 +626,24 @@ private fun setupLogging() {
 </details>
 
 <details>
-<summary><strong>Simple UI Logx - DSL configuration (Simple UI Logx - DSL 설정)</strong></summary>
+<summary><strong>Simple UI Logx - Setter configuration (Simple UI Logx - Setter 설정)</strong></summary>
 
 ```kotlin
-// DSL로 간편한 설정 - 한 번에 블록!
+// Setter로 간편한 설정
 private fun setupLogging() {
-    Logx.configure {
-        appName = "RhParkLogx"
-        debugMode = true
-        debugFilter = false
+    Logx.initialize(applicationContext)
+    Logx.setAppName("RhParkLogx")
+    Logx.setLogging(true)
+    Logx.setSaveEnabled(true)
+    Logx.setStorageType(LogStorageType.APP_EXTERNAL)
+    Logx.setLogTypes(enumValues<LogType>().toSet())
 
-        fileConfig {
-            saveToFile = true
-            filePath = LogxPathUtils.getAppExternalLogPath(applicationContext)
-        }
-
-        logTypes {
-            all() // 모든 로그 타입 허용
-        }
-
-        filters {
-            addAll("IMPORTANT", "ERROR")
-        }
-    }
+    Logx.setLogTagBlockListEnabled(true)
+    Logx.setLogTagBlockList(setOf("IMPORTANT", "ERROR"))
 }
 ```
-**Result:** Intuitive configuration, type safety, readable DSL, handled in one block  
-> **결과:** 직관적인 설정, 타입 안전성, 가독성 좋은 DSL, 한번에 처리!
+**Result:** Intuitive configuration via setters, clear and explicit  
+> **결과:** setter 기반으로 직관적이고 명확한 설정
 </details>
 
 <br>
@@ -688,20 +666,22 @@ private fun setupLogging() {
 - **Automatic storage path**: Choose between Internal/External/Public locations
 - **Automated retention**: Storage lifecycle handled for each option
 - **Resource cleanup**: Hooks into Android lifecycle automatically
+- **File rotation**: 10MB 기준으로 파일 분할
 > - **자동 저장 경로**: Internal/External/Public 저장소 중 선택
 > - **저장 관리 자동**: 저장소별 저장 라이프사이클 자동 관리
 > - **리소스 해제**: Android Lifecycle과 연동 자동화
+> - **파일 로테이션**: 10MB 기준 자동 분할
 
 <br>
 </br>
 
-### 3. **Powerful DSL configuration (고급 DSL 설정 기능)**
-- **DSL-based**: Kotlin DSL makes configuration readable
+### 3. **Simple setter configuration (간단한 setter 설정 기능)**
+- **Setter-based**: Explicit and easy-to-read configuration
 - **Runtime changes**: Adjust settings at runtime with ease
-- **Type safety**: Compile-time validation of options
-> - **DSL 기반**: Kotlin DSL로 가독성 좋은 설정
+- **Predictable behavior**: No hidden DSL state
+> - **Setter 기반**: 명시적이고 읽기 쉬운 설정
 > - **런타임 변경**: Runtime 설정 변경 가능
-> - **타입 안전성**: 컴파일 타임에 설정 검증
+> - **예측 가능한 동작**: DSL 상태 없이 명확
 
 <br>
 </br>
@@ -722,12 +702,12 @@ private fun setupLogging() {
 - **"Parent method tracing lets us grasp complex call chains at a glance!"**
 - **"JSON logging was never this easy!"**
 - **"One line of configuration and every log is backed up automatically!"**
-- **"The DSL let us unify the team’s logging rules in minutes!"**
+- **"The setters let us unify the team’s logging rules in minutes!"**
 
 > - **"Parent Method 추적으로 복잡한 호출 관계도 한 눈에 파악!"**
 > - **"JSON 로깅이 이렇게 간단할 줄 몰랐어!"**
 > - **"파일 저장 설정 한 줄로 모든 로그 자동 백업!"**
-> - **"DSL 설정으로 팀 전체 로깅 규칙을 통일했어!"**
+> - **"setter 설정으로 팀 전체 로깅 규칙을 통일했어!"**
 
 <br>
 </br>
@@ -761,16 +741,16 @@ Start now! ✨
 - Real-time thread ID and thread tracking
 - Real-time log file saving
 - Real-time storage and path switching
-- Advanced DSL-based configuration
-- Log filtering and level tooling
+- Setter-based configuration
+- Log filtering and level tooling (TagBlockList/skipPackages)
 > - 기본 로깅 vs 고급 로깅
 > - 실시간 JSON 데이터 처리
 > - 실시간 Parent Method 호출 추적
 > - 실시간 Thread ID 및 스레드 추적
 > - 실시간 로그 파일 저장
 > - 실시간 저장소 및 경로 변경
-> - 고급 DSL 기반 설정
-> - 로그 필터링 및 레벨 도구
+> - setter 기반 설정
+> - 로그 필터링 및 레벨 도구(TagBlockList/skipPackages)
 
 <br></br>
 
@@ -781,6 +761,8 @@ Only when you use the **file saving feature** might additional permissions be re
 
 > Logx의 **기본 로깅 기능(Logcat 출력)**은 **권한이 필요하지 않습니다**.  
 > **파일 저장 기능**을 사용할 때만 저장소 타입에 따라 권한이 필요할 수 있습니다.
+
+**Note:** API 28 이하에서 PUBLIC_EXTERNAL 권한이 없으면 디버그에서는 예외가 발생하고, 릴리즈에서는 Log.e로 경고 후 저장을 중단합니다.
 
 <br></br>
 
@@ -835,21 +817,15 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
     }
 
     private fun setupLogxWithPublicStorage() {
-        Logx.configure {
-            fileConfig {
-                saveToFile = true
-                filePath = LogxPathUtils.getPublicExternalLogPath(this)
-            }
-        }
+        Logx.initialize(applicationContext)
+        Logx.setSaveEnabled(true)
+        Logx.setStorageType(LogStorageType.PUBLIC_EXTERNAL)
     }
 
     private fun setupLogxWithAppExternalStorage() {
-        Logx.configure {
-            fileConfig {
-                saveToFile = true
-                filePath = LogxPathUtils.getAppExternalLogPath(this)  // 권한 불필요!
-            }
-        }
+        Logx.initialize(applicationContext)
+        Logx.setSaveEnabled(true)
+        Logx.setStorageType(LogStorageType.APP_EXTERNAL)  // 권한 불필요!
     }
 }
 ```

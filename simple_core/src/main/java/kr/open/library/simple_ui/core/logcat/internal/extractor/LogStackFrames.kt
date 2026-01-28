@@ -10,7 +10,7 @@ package kr.open.library.simple_ui.core.logcat.internal.extractor
  * @property current 현재 프레임.
  * @property parent 부모 프레임(없을 수 있음).
  */
-internal data class StackFrames(
-    val current: StackFrame,
-    val parent: StackFrame?,
+internal data class LogStackFrames(
+    val current: LogStackFrame,
+    val parent: LogStackFrame?,
 )

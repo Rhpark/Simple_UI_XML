@@ -40,4 +40,3 @@ internal object LogxConsoleWriter {
         lines.forEach { line -> type.writeToLog(tag, line) }
     }
 }
-

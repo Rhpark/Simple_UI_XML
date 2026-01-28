@@ -13,20 +13,20 @@ internal object LogxTimeUtils {
      * Pattern for log line timestamps.<br><br>
      * 로그 라인 타임스탬프 패턴.<br>
      */
-    private const val timePattern = "yyyy-MM-dd HH:mm:ss.SSS"
+    private const val TIME_PATTERN = "yyyy-MM-dd HH:mm:ss.SSS"
 
     /**
      * Pattern for log file name timestamps.<br><br>
      * 로그 파일명 타임스탬프 패턴.<br>
      */
-    private const val filePattern = "yyyy_MM_dd__HH-mm-ss-SSS"
+    private const val FILE_PATTERN = "yyyy_MM_dd__HH-mm-ss-SSS"
 
     /**
      * Thread-local formatter for log timestamps.<br><br>
      * 로그 타임스탬프용 ThreadLocal 포매터.<br>
      */
     private val formatter: ThreadLocal<SimpleDateFormat> = ThreadLocal.withInitial {
-        SimpleDateFormat(timePattern, Locale.getDefault())
+        SimpleDateFormat(TIME_PATTERN, Locale.getDefault())
     }
 
     /**
@@ -34,7 +34,7 @@ internal object LogxTimeUtils {
      * 파일 타임스탬프용 ThreadLocal 포매터.<br>
      */
     private val fileFormatter: ThreadLocal<SimpleDateFormat> = ThreadLocal.withInitial {
-        SimpleDateFormat(filePattern, Locale.getDefault())
+        SimpleDateFormat(FILE_PATTERN, Locale.getDefault())
     }
 
     /**
@@ -49,4 +49,3 @@ internal object LogxTimeUtils {
      */
     fun fileTimestamp(): String = fileFormatter.get().format(Date())
 }
-

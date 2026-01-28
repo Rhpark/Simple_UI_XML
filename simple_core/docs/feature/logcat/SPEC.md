@@ -1,25 +1,26 @@
 ﻿# Logx SPEC
 
-## 臾몄꽌 ?뺣낫
-- 臾몄꽌紐? Logx SPEC
-- ?묒꽦?? 2026-01-23
-- ???紐⑤뱢: simple_core
-- ?⑦궎吏: kr.open.library.simple_ui.core.logcat
-- ?섏?: 援ы쁽 以鍮??섏?(Implementation-ready)
-- ?곹깭: 珥덉븞
+## 문서 정보
+- 문서명: Logx SPEC
+- 작성일: 2026-01-23
+- 대상 모듈: simple_core
+- 패키지: kr.open.library.simple_ui.core.logcat
+- 수준: 구현 준비 수준(Implementation-ready)
+- 상태: 초안
 
-## ?꾩젣/李몄“
-- 湲곕낯 洹쒖튃/?섍꼍? 猷⑦듃 AGENTS.md?먯꽌 ?곌껐?섎뒗 *_RULE.md瑜??곕Ⅸ??
-- ?곸꽭 ?붽뎄??`PRD.md`瑜??곕Ⅸ??
-- ?ㅼ젣 肄붾뱶 援ы쁽? `kr.open.library.simple_ui.core.logcat` ?⑦궎吏 ?댁뿉?쒕쭔 吏꾪뻾?쒕떎.
+## 전제/참조
+- 기본 규칙/환경은 루트 AGENTS.md에서 연결되는 *_RULE.md를 따른다.
+- 상세 요구는 `PRD.md`를 따른다.
+- 실제 코드 구현은 `kr.open.library.simple_ui.core.logcat` 패키지 내에서만 진행한다.
 
-## 紐⑺몴/鍮꾨ぉ??- 紐⑺몴/鍮꾨ぉ?쒕뒗 PRD瑜??곕Ⅸ??
+## 목표/비목표
+- 목표/비목표는 PRD를 따른다.
 
-## 鍮뚮뱶 ????뺤콉
-- Release 鍮뚮뱶?먯꽌??濡쒓렇 異쒕젰 ?덉슜(?먮룞 鍮꾪솢?깊솕 ?놁쓬).
-- 異쒕젰 ?쒖뼱??setLogging(false)濡쒕쭔 ?섑뻾?쒕떎.
+## 빌드 타입 정책
+- Release 빌드에서도 로그 출력 허용(자동 비활성화 없음).
+- 출력 제어는 setLogging(false)로만 수행한다.
 
-## ?⑦궎吏 援ъ“ 諛?梨낆엫
+## 패키지 구조 및 책임
 - kr.open.library.simple_ui.core.logcat
   - root: Logx 공개 API
   - config: 설정 모델, 기본값 setter/getter
@@ -32,11 +33,11 @@
     - writer: 콘솔/파일 라이터
   - extension: Kotlin 확장 함수
 
-## ?곗씠??紐⑤뜽
+## 데이터 모델
 ### LogType
 - VERBOSE, DEBUG, INFO, WARN, ERROR, PARENT, JSON, THREAD
 
-### LogType 留ㅽ븨/異쒕젰
+### LogType 매핑/출력
 - VERBOSE -> v()
 - DEBUG -> d()
 - INFO -> i()
@@ -45,30 +46,31 @@
 - PARENT -> p()
 - JSON -> j()
 - THREAD -> t()
-- {type} 異쒕젰 媛? V/D/I/W/E/P/J/T
+- {type} 출력 값: V/D/I/W/E/P/J/T
 
 ### TagBlockList
-- 紐⑸줉???ы븿??tag??李⑤떒
+- 목록에 포함된 tag는 차단
 
 ### StorageType
 - INTERNAL, APP_EXTERNAL, PUBLIC_EXTERNAL
 
-### StackFrame(異붿긽 紐⑤뜽)
+### StackFrame(추상 모델)
 - fileName: String
 - lineNumber: Int
 - methodName: String
 - className: String
 
-## ?ㅼ젙 湲곕낯媛??뺤젙)
+## 설정 기본값(확정)
 - isLogging: true
-- logTypes: 紐⑤뱺 ????덉슜(v/d/i/w/e/p/j/t) // LogType 留ㅽ븨: v=VERBOSE, d=DEBUG, i=INFO, w=WARN, e=ERROR, p=PARENT, j=JSON, t=THREAD
+- logTypes: 모든 타입 허용(v/d/i/w/e/p/j/t) // LogType 매핑: v=VERBOSE, d=DEBUG, i=INFO, w=WARN, e=ERROR, p=PARENT, j=JSON, t=THREAD
 - isLogTagBlockListEnabled: false
 - logTagBlockList: emptySet
 - isSave: false
 - storageType: APP_EXTERNAL
 - appName: "AppName"
-- jsonIndent: 4 (怨좎젙 ?곸닔, ?ㅼ젙 蹂寃?遺덇?)
-- skipPackages(湲곕낯 紐⑸줉): packageName prefix 湲곗? 留ㅼ묶, addSkipPackages濡??뺤옣 媛??  - kr.open.library.simple_ui.core.logcat
+- jsonIndent: 4 (고정 상수, 설정 변경 불가)
+- skipPackages(기본 목록): packageName prefix 기준 매칭, addSkipPackages로 확장 가능
+  - kr.open.library.simple_ui.core.logcat
   - java.
   - kotlin.
   - kotlinx.coroutines.
@@ -77,63 +79,64 @@
   - android.os.
   - dalvik.system.
 
-## 珥덇린??Context 泥섎━
-- Logx.initialize(context: Context)濡?Application Context瑜?二쇱엯?쒕떎.
-- initialize 誘명샇異??곹깭?먯꽌 setSaveEnabled(true)瑜??몄텧?섎㈃ IllegalStateException???섏쭊??
-- initialize 미호출 상태에서 setStorageType(PUBLIC_EXTERNAL) 호출 시 IllegalStateException을 던진다.
-- Context媛 ?놁쑝硫?appName? "AppName"?쇰줈 怨좎젙?쒕떎.
-- ?뚯씪 ??μ? initialize ?댄썑?먮쭔 ?덉슜?쒕떎(setSaveDirectory ?ы븿).
-- initialize ?댁쟾 setSaveDirectory ?몄텧 ??寃쎈줈 媛믪? 蹂닿??섎릺, ?붾젆?곕━ ?앹꽦/?뚯씪 ??μ? initialize ?댄썑?먮쭔 ?섑뻾?쒕떎.
-- initialize??appName??蹂寃쏀븯吏 ?딅뒗??setAppName???곗꽑).
+## 초기화/Context 처리
+- Logx.initialize(context: Context)로 Application Context를 주입한다.
+- initialize 미호출 상태에서 setSaveEnabled(true)를 호출하면 디버그는 IllegalStateException, 릴리즈는 Log.e로 처리한다.
+- PUBLIC_EXTERNAL 설정 시 initialize 미호출이면 디버그는 IllegalStateException, 릴리즈는 Log.e로 처리한다.
+- PUBLIC_EXTERNAL + API 28 이하에서 권한 미보유 시 디버그는 SecurityException, 릴리즈는 Log.e로 처리한다.
+- Context가 없으면 appName은 "AppName"으로 고정한다.
+- 파일 저장은 initialize 이후에만 허용한다(setSaveDirectory 포함).
+- initialize 이전 setSaveDirectory 호출 시 경로 값은 보관하되, 디렉터리 생성/파일 저장은 initialize 이후에만 수행한다.
+- initialize는 appName을 변경하지 않는다(setAppName이 우선).
 
-## 怨듯넻 泥섎━ 洹쒖튃
-### ?쒓렇/?깅챸 ?⑹꽦
-- ?몃? ?낅젰 tag??null/鍮?臾몄옄?댁쓣 ?덉슜?섏? ?딅뒗??
-- ?섎せ??tag ?낅젰留덈떎 Log.e 1??異쒕젰 ??tag瑜?臾댁떆?섍퀬 AppName留??ъ슜?쒕떎.
-- 理쒖쥌 ?쒓린: AppName ?먮뒗 AppName[tag]
-- tag ?꾪꽣留곸? tag ?먯껜 湲곗??쇰줈 ?곸슜?쒕떎.
+## 공통 처리 규칙
+### 태그/앱명 합성
+- 외부 입력 tag는 null/빈 문자열을 허용하지 않는다.
+- 잘못된 tag 입력마다 Log.e 1회 출력 후 tag를 무시하고 AppName만 사용한다.
+- 최종 표기: AppName 또는 AppName[tag]
+- tag 필터링은 tag 자체 기준으로 적용한다.
 
-### ?대? 寃쎄퀬/?먮윭 濡쒓렇 ?쒓렇
-- ?대? 寃쎄퀬/?먮윭 Log.e ?쒓렇???낅젰 tag媛 ?덉쑝硫??대떦 tag瑜??ъ슜?쒕떎.
-- ?낅젰 tag媛 null/鍮?臾몄옄?댁씠硫?"ERROR"瑜??ъ슜?쒕떎.
+### 내부 경고/에러 로그 태그
+- 내부 경고/에러 Log.e 태그는 입력 tag가 있으면 해당 tag를 사용한다.
+- 입력 tag가 null/빈 문자열이면 "ERROR"를 사용한다.
 
-### 硫붿떆吏 泥섎━
-- msg媛 null?대㈃ 臾몄옄??"null"濡?泥섎━?쒕떎.
-- msg ?몄옄媛 ?녿뒗 ?ㅻ쾭濡쒕뱶??硫붿떆吏 ?놁씠 硫뷀?留?異쒕젰?쒕떎.
-- 硫?곕씪??湲몄씠 泥섎━??Android 湲곕낯 Log.* ?숈옉怨??숈씪?섍쾶 ?붾떎.
-- tag 湲몄씠 ?쒗븳? ?먯? ?딄퀬 ?먮Ц 洹몃?濡?異쒕젰?쒕떎.
+### 메시지 처리
+- msg가 null이면 문자열 "null"로 처리한다.
+- msg 인자가 없는 오버로드는 메시지 없이 메타만 출력한다.
+- 멀티라인/길이 처리는 Android 기본 Log.* 동작과 동일하게 둔다.
+- tag 길이 제한은 두지 않고 원문 그대로 출력한다.
 
-### ?꾪꽣 ?곸슜 ?쒖꽌
-1) isLogging ?뺤씤
-2) logTypes ?꾪꽣
+### 필터 적용 순서
+1) isLogging 확인
+2) logTypes 필터
 3) isLogTagBlockListEnabled + logTagBlockList
-4) ?щ㎎/異쒕젰
+4) 포맷/출력
 
-### LogType ?꾪꽣 洹쒖튃
-- logTypes??ALLOWLIST 諛⑹떇?쇰줈 ?숈옉?쒕떎.
-- DEBUG ?ы븿 ???쒖? DEBUG 濡쒓렇留??듦낵?쒕떎.
-- PARENT/JSON/THREAD??媛곴컖 ?ы븿???뚮쭔 ?듦낵?쒕떎.
-- p/j/t??DEBUG? 蹂꾧컻濡?痍④툒?쒕떎.
+### LogType 필터 규칙
+- logTypes는 ALLOWLIST 방식으로 동작한다.
+- DEBUG 포함 시 표준 DEBUG 로그만 통과한다.
+- PARENT/JSON/THREAD는 각각 포함될 때만 통과한다.
+- p/j/t는 DEBUG와 별개로 취급한다.
 
-## ?ㅽ깮 ?몃젅?댁뒪 異붿텧 洹쒖튃
-- Thread.currentThread().stackTrace瑜??ъ슜?쒕떎.
-- logcat ?대? prefix 留덉?留??꾨젅???ㅼ쓬 ?몃뜳?ㅻ????쒖감 ?먯깋?쒕떎.
-- ?대? prefix瑜?李얠? 紐삵븯嫄곕굹 踰붿쐞瑜?踰쀬뼱?섎㈃ fallbackStartIndex = 4遺???먯깋?쒕떎.
-- skipPackages prefix 留ㅼ묶?쇰줈 ?대? ?꾨젅?꾩쓣 嫄대꼫?대떎.
-- ?⑹꽦 ?꾨젅??以?D8$$SyntheticClass, access$? fileName Unknown/line<=0? 嫄대꼫?대떎(?뚮떎/$r8$??file/line???좏슚?섎㈃ ?덉슜).
-- 泥?踰덉㎏ ?몃? ?꾨젅?꾩쓣 ?꾩옱 ?꾩튂濡??ъ슜?쒕떎.
-- ??踰덉㎏ ?몃? ?꾨젅?꾩쓣 遺紐??꾩튂濡??ъ슜?쒕떎.
-- ?몃? ?꾨젅?꾩쓣 李얠? 紐삵븯硫?fallback ?붿냼濡??泥댄븳??媛?ν븯硫??먯깋 ?쒖옉 ?몃뜳??湲곗?, ?놁쑝硫?泥??붿냼).
-- 遺紐??꾨젅?꾩씠 ?놁쑝硫??꾨옒 ?щ㎎?쇰줈 異쒕젰?쒕떎:
+## 스택 트레이스 추출 규칙
+- Thread.currentThread().stackTrace를 사용한다.
+- logcat 내부 prefix 마지막 프레임 다음 인덱스부터 순차 탐색한다.
+- 내부 prefix를 찾지 못하거나 범위를 벗어나면 fallbackStartIndex = 4부터 탐색한다.
+- skipPackages prefix 매칭으로 내부 프레임을 건너뛴다.
+- 합성 프레임 중 D8$$SyntheticClass, access$와 fileName Unknown/line<=0은 건너뛴다(람다/$r8$는 file/line이 유효하면 허용).
+- 첫 번째 외부 프레임을 현재 위치로 사용한다.
+- 두 번째 외부 프레임을 부모 위치로 사용한다.
+- 외부 프레임을 찾지 못하면 fallback 요소로 대체한다(가능하면 탐색 시작 인덱스 기준, 없으면 첫 요소).
+- 부모 프레임이 없으면 아래 포맷으로 출력한다:
 ```
-AppName : ??PARENT]
-AppName : ??PARENT] (MainActivity.kt:25).onCreate
+AppName : ┌[PARENT]
+AppName : └[PARENT] (MainActivity.kt:25).onCreate
 ```
-- 湲곕낯 紐⑸줉? ?대????좎??섍퀬, addSkipPackages濡??뺤옣?????덉뼱???쒕떎.
-- className/methodName contains 諛⑹떇(access$/Lambda$)? ?뚯뒪????寃?좏븳??
+- 기본 목록은 내부에 유지하고, addSkipPackages로 확장할 수 있어야 한다.
+- className/methodName contains 방식(access$/Lambda$)은 테스트 후 검토한다.
 
-## API ?ㅺ퀎
-### ?쒖? 濡쒓렇(v/d/i/w/e 怨듯넻)
+## API 설계
+### 표준 로그(v/d/i/w/e 공통)
 ```
 object Logx {
     @JvmStatic fun v()
@@ -157,10 +160,10 @@ object Logx {
     @JvmStatic fun e(tag: String, msg: Any?)
 }
 ```
-- v/d/i/w/e 紐⑤몢 ?숈씪???ㅻ쾭濡쒕뱶 ?쒓렇?덉쿂瑜?媛吏꾨떎.
-- Throwable ?ㅻ쾭濡쒕뱶??1李?媛쒕컻 踰붿쐞?먯꽌 ?쒖쇅(異뷀썑 異붽? ?덉젙).
+- v/d/i/w/e 모두 동일한 오버로드 시그니처를 가진다.
+- Throwable 오버로드는 1차 개발 범위에서 제외(추후 추가 예정).
 
-### ?뺤옣 濡쒓렇
+### 확장 로그
 ```
 object Logx {
     @JvmStatic fun p()
@@ -175,10 +178,10 @@ object Logx {
     @JvmStatic fun t(tag: String, msg: Any?)
 }
 ```
-- p/j/t??LogType ?꾪꽣 洹쒖튃???곕Ⅸ??
-- p/j/t 肄섏넄 異쒕젰 ??android.util.Log.d()瑜??ъ슜?쒕떎.
+- p/j/t는 LogType 필터 규칙을 따른다.
+- p/j/t 콘솔 출력 시 android.util.Log.d()를 사용한다.
 
-### 珥덇린???ㅼ젙 Setter
+### 초기화/설정 Setter
 ```
 object Logx {
     @JvmStatic fun initialize(context: Context)
@@ -193,9 +196,9 @@ object Logx {
     @JvmStatic fun addSkipPackages(packages: Set<String>)
 }
 ```
-- setSaveDirectory???ъ슜?먭? 吏곸젒 寃쎈줈瑜?吏?뺥븷 ???ъ슜?쒕떎.
-- initialize媛 ?놁쑝硫?save 寃쎈줈 ?먮룞 怨꾩궛? ?섑뻾?섏? ?딅뒗??
-- logTagBlockList??鍮?怨듬갚 媛믪쓣 ?덉슜?섏? ?딆쑝硫? ?쒓굅 ??Log.e濡?1???뚮┛??
+- setSaveDirectory는 사용자가 직접 경로를 지정할 때 사용한다.
+- initialize가 없으면 save 경로 자동 계산은 수행하지 않는다.
+- logTagBlockList는 빈/공백 값을 허용하지 않으며, 제거 후 Log.e로 1회 알린다.
 
 ### Getter
 ```
@@ -211,11 +214,11 @@ object Logx {
     @JvmStatic fun getSkipPackages(): Set<String>
 }
 ```
-- getter???꾩옱 ?ㅼ젙 ?곹깭瑜?議고쉶?섎ŉ, 而щ젆?섏? 諛⑹뼱??蹂듭궗蹂몄쓣 諛섑솚?쒕떎.
+- getter는 현재 설정 상태를 조회하며, 컬렉션은 unmodifiable Set을 반환한다.
 
-### Kotlin ?뺤옣 ?⑥닔
+### Kotlin 확장 함수
 ```
-// ?쒖? 濡쒓렇
+// 표준 로그
 fun Any.logv() = Logx.v(this)
 fun Any.logv(tag: String) = Logx.v(tag, this)
 fun Any.logd() = Logx.d(this)
@@ -227,7 +230,7 @@ fun Any.logw(tag: String) = Logx.w(tag, this)
 fun Any.loge() = Logx.e(this)
 fun Any.loge(tag: String) = Logx.e(tag, this)
 
-// ?뺤옣 濡쒓렇
+// 확장 로그
 fun Any.logp() = Logx.p(this)
 fun Any.logp(tag: String) = Logx.p(tag, this)
 fun Any.logt() = Logx.t(this)
@@ -235,35 +238,35 @@ fun Any.logt(tag: String) = Logx.t(tag, this)
 fun String.logj() = Logx.j(this)
 fun String.logj(tag: String) = Logx.j(tag, this)
 ```
-- 媛앹껜.logd()??msg濡?泥섎━?쒕떎.
-- 媛앹껜.logd(tag)??tag + msg濡?泥섎━?쒕떎.
-- 臾몄옄??logj()??json 臾몄옄?대줈 泥섎━?쒕떎.
-- logv/logi/logw/loge/logp/logt???숈씪???⑦꽩???곕Ⅸ??
+- 객체.logd()는 msg로 처리한다.
+- 객체.logd(tag)는 tag + msg로 처리한다.
+- 문자열.logj()는 json 문자열로 처리한다.
+- logv/logi/logw/loge/logp/logt도 동일한 패턴을 따른다.
 
-## 肄섏넄 異쒕젰 ?щ㎎ 洹쒖튃
-### 湲곕낯 ?щ㎎
-- prefix: `AppName` ?먮뒗 `AppName[tag]`
+## 콘솔 출력 포맷 규칙
+### 기본 포맷
+- prefix: `AppName` 또는 `AppName[tag]`
 - meta: `(FileName:Line).method`
-- message: ` - {msg}` (msg ?몄옄媛 ?덉쓣 ?뚮쭔)
+- message: ` - {msg}` (msg 인자가 있을 때만)
 ```
 AppName : (MainActivity.kt:25).onCreate
 AppName : (MainActivity.kt:25).onCreate - msg
 AppName[tag] : (MainActivity.kt:25).onCreate - msg
 ```
 
-### p() ?щ㎎
-- ??以?異쒕젰
-- ?곷떒: ??PARENT] + 遺紐??꾩튂
-- ?섎떒: ??PARENT] + ?꾩옱 ?꾩튂 + msg(?덉쓣 ?뚮쭔)
+### p() 포맷
+- 두 줄 출력
+- 상단: ┌[PARENT] + 부모 위치
+- 하단: └[PARENT] + 현재 위치 + msg(있을 때만)
 
-### t() ?щ㎎
+### t() 포맷
 ```
 AppName : [TID = 1231](MainActivity.kt:25).onCreate
 AppName : [TID = 1231](MainActivity.kt:25).onCreate - msg
 AppName[tag] : [TID = 1231](MainActivity.kt:25).onCreate - msg
 ```
 
-### j() ?щ㎎
+### j() 포맷
 ```
 AppName : [JSON](MainActivity.kt:25).onCreate -
 {
@@ -271,90 +274,99 @@ AppName : [JSON](MainActivity.kt:25).onCreate -
 }
 [End]
 ```
-- [JSON] ?쒖옉 留덉빱? [End] 醫낅즺 留덉빱??怨좎젙.
-- 肄섏넄(JSON) 異쒕젰? ??踰덉쓽 Log ?몄텧濡?硫?곕씪??硫붿떆吏瑜?異쒕젰?쒕떎(?꾨━?쎌뒪??泥?以?湲곗?).
-- json 臾몄옄?댁씠 鍮꾩뼱 ?덉쑝硫??먮Ц 洹몃?濡?異쒕젰?쒕떎.
+- [JSON] 시작 마커와 [End] 종료 마커는 고정.
+- 콘솔(JSON) 출력은 한 번의 Log 호출로 멀티라인 메시지를 출력한다(프리픽스는 첫 줄 기준).
+- json 문자열이 비어 있으면 원문 그대로 출력한다.
 
-## JSON 泥섎━
-- 수동 pretty-print(문자열 파서)로 JSON 포맷팅한다.
-- indent는 4 고정(옵션 없음).
-- ?뚯떛 ?ㅽ뙣 ???먮Ц 洹몃?濡?異쒕젰?쒕떎.
+## JSON 처리
+- 수동 pretty-print 로직으로 포맷한다.
+- indent 4(고정)로 출력한다(옵션 없음).
+- 파싱 실패 시 원문 그대로 출력한다.
 
-## ?숈떆???꾨왂
-- 肄섏넄 異쒕젰: Android Log.*媛 thread-safe?대?濡?異붽? ?숆린??遺덊븘??
-- Config ?꾨뱶: @Volatile (?⑥닚 ?꾨뱶) + synchronized 諛⑹뼱??蹂듭궗 (Set ??而щ젆??.
-- ?뚯씪 ?앹꽦/?곌린 ?쒖젏?먮쭔 synchronized 釉붾줉???곸슜?쒕떎.
-- ?뚯씪? BufferedWriter瑜??좎???梨??ㅼ떆媛?湲곕줉?섎ŉ, write ??利됱떆 flush?쒕떎.
-- ?뚯씪 ?곌린??肄붾（??Dispatchers.IO) ?⑥씪 ?뚮퉬???먮줈 鍮꾨룞湲?泥섎━???몄텧 ?ㅻ젅??李⑤떒??理쒖냼?뷀븳??
-- isSave = false(湲곕낯媛????뚮뒗 ?숆린??鍮꾩슜 ?놁쓬.
+## 동시성 전략
+- 콘솔 출력: Android Log.*가 thread-safe이므로 추가 동기화 불필요.
+- Config 스냅샷: 단일 캐시 스냅샷을 유지하며 setter에서 copy-on-write로 교체한다.
+- Config 컬렉션: unmodifiable Set 반환(내부에서 copy-on-write로 갱신).
+- 파일 생성/쓰기 시점에만 synchronized 블록을 적용한다.
+- 파일은 BufferedWriter를 유지한 채 실시간 기록하며, write 후 즉시 flush한다.
+- 파일 쓰기는 코루틴(Dispatchers.IO) 단일 소비자 큐로 비동기 처리해 호출 스레드 차단을 최소화한다.
+- isSave = false(기본값)일 때는 동기화 비용 없음.
 
-## ?뚯씪 ???### 寃쎈줈 ?좏깮
-- setSaveDirectory媛 ?ㅼ젙?섎㈃ ?대떦 寃쎈줈瑜?理쒖슦?좎쑝濡??ъ슜?쒕떎.
-- setSaveDirectory媛 ?놁쓣 ??storageType 湲곗??쇰줈 寃쎈줈瑜?怨꾩궛?쒕떎.
-- 濡쒓렇 ?붾젆?곕━紐낆? "AppLogs"濡?怨좎젙?쒕떎.
-- StorageType 寃쎈줈 洹쒖튃:
-  - internal:
-    - common: 공통 유틸, 상수, 헬퍼
-    - filter: 타입/태그 필터 로직
-    - formatter: 메시지/메타/JSON/스레드 포맷터
-    - extractor: 스택 트레이스 위치 추출
-    - pipeline: LogxPipeline 오케스트레이션
-    - writer: 콘솔/파일 라이터
-  - APP_EXTERNAL: `{context.getExternalFilesDir("AppLogs")}` (null?대㈃ INTERNAL濡??대갚)
+## 파일 저장
+### 경로 선택
+- setSaveDirectory가 설정되면 해당 경로를 최우선으로 사용한다.
+- setSaveDirectory가 없을 때 storageType 기준으로 경로를 계산한다.
+- 로그 디렉터리명은 "AppLogs"로 고정한다.
+- StorageType 경로 규칙:
+  - INTERNAL: `{context.filesDir}/AppLogs`
+  - APP_EXTERNAL: `{context.getExternalFilesDir("AppLogs")}` (null이면 INTERNAL로 폴백)
   - PUBLIC_EXTERNAL:
-    - API 29+: `{context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)}/AppLogs` (null?대㈃ APP_EXTERNAL濡??대갚)
-    - API 28 ?댄븯: `{Environment.getExternalStorageDirectory()}/AppLogs`
-- PUBLIC_EXTERNAL + API 28 이하에서 권한이 없으면 SecurityException을 던진다.
-- ???寃쎈줈 ?붾젆?곕━???꾩슂 ???먮룞 ?앹꽦?섎ŉ, ?앹꽦 ?ㅽ뙣 ??Log.e濡?留??쒕룄 寃쎄퀬?섍퀬 ??μ쓣 以묐떒?쒕떎.
-- Context媛 ?놁쑝硫??뚯씪 ??μ쓣 鍮꾪솢?깊솕?쒕떎.
+    - API 29+: `{context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)}/AppLogs` (null이면 APP_EXTERNAL로 폴백)
+    - API 28 이하: `{Environment.getExternalStorageDirectory()}/AppLogs`
+- PUBLIC_EXTERNAL + API 28 이하에서는 권한이 필요하므로 경고 가능.
+- PUBLIC_EXTERNAL + API 28 이하에서 권한이 없으면 파일 저장을 중단하고 Log.e로 매 시도 경고한다.
+- 저장 경로 디렉터리는 필요 시 자동 생성하며, 생성 실패 시 Log.e로 매 시도 경고하고 저장을 중단한다.
+- Context가 없으면 파일 저장을 비활성화한다.
 
-### ?뚯씪紐??щ㎎
-- ?뚯씪 ?앹꽦 ?쒖젏: save ?ㅼ젙 ?댄썑 泥?濡쒓렇 ?몄텧 ??- ?뚯씪 ?ъ궗?? ???寃쎈줈/storageType/appName??蹂寃쎈릺吏 ?딅뒗 ????醫낅즺 ?꾧퉴吏 ?숈씪 ?뚯씪 ?ъ슜
-- ???寃쎈줈/storageType/appName??蹂寃쎈릺硫??ㅼ쓬 濡쒓렇 ?쒖젏?????뚯씪???앹꽦?쒕떎(湲곗〈 ?뚯씪? ?좎?).
-- 湲곕낯 ?뚯씪紐? `{appName}_yyyy_MM_dd__HH-mm-ss-SSS.txt`
-- ?뚯씪 ?щ㎎: `{timestamp} [{type}] {prefix} : {payload}`
-- timestamp ?щ㎎: `yyyy-MM-dd HH:mm:ss.SSS`
-- prefix: `AppName` ?먮뒗 `AppName[tag]`
-- payload: `(FileName:Line).method - msg` ?먮뒗 `(FileName:Line).method`
-- type: LogType 1湲???쒓린(V/D/I/W/E/P/J/T)
-- isSave false -> true ?꾪솚 ?쒖젏???뚯씪????踰덈룄 ?앹꽦???곸씠 ?놁쑝硫??앹꽦?섍퀬, ?대? ?앹꽦??寃쎌슦 湲곗〈 ?뚯씪???댁뼱??湲곕줉?쒕떎.
- - ?ㅼ떆媛?湲곕줉? BufferedWriter ?좎? + flush 諛⑹떇?쇰줈 ?섑뻾?쒕떎.
+### 파일명/포맷
+- 파일 생성 시점: save 설정 이후 첫 로그 호출 시
+- 파일 재사용: 저장 경로/storageType/appName이 변경되지 않는 한 앱 종료 전까지 동일 파일 사용
+- 저장 경로/storageType/appName이 변경되면 다음 로그 시점에 새 파일을 생성한다(기존 파일은 유지).
+- 기본 파일명: `{appName}_yyyy_MM_dd__HH-mm-ss-SSS.txt`
+- 로테이션 파일명: `{appName}_yyyy_MM_dd__HH-mm-ss-SSS_{count}.txt` (count는 1부터 증가)
+- 파일 포맷: `{timestamp} [{type}] {prefix} : {payload}`
+- timestamp 포맷: `yyyy-MM-dd HH:mm:ss.SSS`
+- prefix: `AppName` 또는 `AppName[tag]`
+- payload: `(FileName:Line).method - msg` 또는 `(FileName:Line).method`
+- type: LogType 1글자 표기(V/D/I/W/E/P/J/T)
+- isSave false -> true 전환 시점에 파일이 한 번도 생성된 적이 없으면 생성하고, 이미 생성된 경우 기존 파일에 이어서 기록한다.
+- 실시간 기록은 BufferedWriter 유지 + flush 방식으로 수행한다.
 
-### ?곌린 ?뺤콉
-- 利됱떆 flush 以묒떖(濡쒓렇 ?좎떎 理쒖냼??.
-- ?숈떆??蹂댄샇瑜??꾪빐 ?뚯씪 ?앹꽦/?뚯씪 ?곌린 ?쒖젏?먮쭔 synchronized 釉붾줉???곸슜?쒕떎.
-- ?뚯씪 ?곌린 ?ㅽ뙣?????щ옒?쒕? ?좊컻?섏? ?딅룄濡??덉쇅瑜??쇳궎怨?肄섏넄濡??먮윭 濡쒓렇瑜??④릿??留??쒕룄).
-- 諛섎났 ?ㅽ뙣 ?쒖뿉??留ㅻ쾲 ?먮윭 濡쒓렇瑜?異쒕젰?쒕떎.
-- isLogging = false?대㈃ ?뚯씪 ??λ룄 ?섑뻾?섏? ?딅뒗??
-- 硫?곕씪??濡쒓렇 ?뚯씪 湲곕줉 洹쒖튃:
-  - p(): 紐⑤뱺 以꾩뿉 ?숈씪 timestamp/prefix瑜?遺숈뿬 湲곕줉?쒕떎.
-  - j(): 泥?以꾨쭔 timestamp/prefix瑜?遺숈씠怨? JSON 蹂몃Ц? timestamp ?놁씠 湲곕줉?쒕떎.
+### 로테이션 정책
+- 파일 크기 ≥ 10MB이면 다음 로그부터 새 파일로 기록한다.
+- 로테이션 파일은 count를 증가시키며 생성하고, 파일 개수 제한은 두지 않는다.
 
-### ?쇱씠?꾩궗?댄겢 ?곕룞
-- ProcessLifecycleOwner瑜??ъ슜????諛깃렇?쇱슫??吏꾩엯 ???뚯씪 writer瑜?close?쒕떎.
-- ?ы룷洹몃씪?대뱶 ???ㅼ쓬 濡쒓렇 ??writer???먮룞?쇰줈 ?ㅼ떆 ?대┛??
-- ProcessLifecycleOwner ?ъ슜???꾪빐 lifecycle-process ?섏〈?깆쓣 異붽??쒕떎.
+### 쓰기 정책
+- 즉시 flush 중심(로그 유실 최소화).
+- 동시성 보호를 위해 파일 생성/파일 쓰기 시점에만 synchronized 블록을 적용한다.
+- 파일 쓰기 실패는 앱 크래시를 유발하지 않도록 예외를 삼키고 콘솔로 에러 로그를 남긴다(매 시도).
+- 반복 실패 시에도 매번 에러 로그를 출력한다.
+- isLogging = false이면 파일 저장도 수행하지 않는다.
+- 멀티라인 로그 파일 기록 규칙:
+  - p(): 모든 줄에 동일 timestamp/prefix를 붙여 기록한다.
+  - j(): 첫 줄만 timestamp/prefix를 붙이고, JSON 본문은 timestamp 없이 기록한다.
+- 로테이션 발생 시 현재 writer를 flush/close한 뒤 새 파일을 생성한다.
 
-### ?뚮윭???몃━嫄?- ?꾩옱 利됱떆 flush 諛⑹떇?대?濡?蹂꾨룄 ?몃━嫄?遺덊븘??
-- 異뷀썑 踰꾪띁留?諛⑹떇?쇰줈 ?꾪솚 ???곸슜 ?덉젙(諛깃렇?쇱슫???꾪솚, 醫낅즺, 硫붾え由??뺣컯, ?щ옒??.
+### 라이프사이클 연동
+- ProcessLifecycleOwner를 사용해 앱 백그라운드 진입 시 파일 writer를 close한다.
+- 재포그라운드 후 다음 로그 시 writer는 자동으로 다시 열린다.
+- ProcessLifecycleOwner 사용을 위해 lifecycle-process 의존성을 추가한다.
 
-## Context ?녿뒗 ?섍꼍 泥섎━
-- isSave = true?대뜑?쇰룄 Context媛 ?놁쑝硫??뚯씪 ??μ쓣 以묐떒?쒕떎.
-- ?대떦 ?곹깭??寃쎄퀬 濡쒓렇瑜?1?뚮쭔 異쒕젰?쒕떎(諛섎났 ?몄씠利?諛⑹?).
-- initialize 誘명샇異쒕줈 Context媛 ?녿뒗 寃쎌슦???숈씪 寃쎄퀬濡?泥섎━?섏뿬 以묐났 異쒕젰?섏? ?딅뒗??
+### 플러시 트리거
+- 기본은 즉시 flush 방식이다.
+- 앱 백그라운드/종료 시 writer close로 flush를 보장한다.
+- 로테이션 시에도 flush/close 후 새 writer로 전환한다.
+- 추후 버퍼링 방식으로 전환 시 별도 트리거를 추가한다(백그라운드 전환, 종료, 메모리 압박, 크래시).
 
-## ?뚯뒪???꾨왂(援ы쁽 以鍮?
-### ?⑥쐞 ?뚯뒪??- StackTraceExtractor: skip 紐⑸줉 ?곸슜, ?꾩옱/遺紐??꾨젅??異붿텧
-- Formatter: 湲곕낯/JSON/THREAD/Parent ?щ㎎ 寃利?- Filter: ?덈꺼/?쒓렇/紐⑤뱶蹂??꾪꽣留?- Config: 湲곕낯媛? setter ?곸슜, skip 紐⑸줉 ?뺤옣
+## Context 없는 환경 처리
+- isSave = true이더라도 Context가 없으면 파일 저장을 중단한다.
+- 해당 상태는 경고 로그를 1회만 출력한다(반복 노이즈 방지).
+- initialize 미호출로 Context가 없는 경우도 동일 경고로 처리하여 중복 출력하지 않는다.
 
-### Robolectric ?뚯뒪??- PathResolver: storageType 蹂?寃쎈줈 怨꾩궛
-- FileWriter: ?ㅼ젣 ?뚯씪 湲곕줉/利됱떆 flush ?숈옉
-- Context ?녿뒗 ?섍꼍 泥섎━(?뚯씪 ???鍮꾪솢?깊솕)
-- PUBLIC_EXTERNAL 권한 미보유 시 SecurityException 동작
+## 테스트 전략(구현 준비)
+### 단위 테스트
+- StackTraceExtractor: skip 목록 적용, 현재/부모 프레임 추출
+- Formatter: 기본/JSON/THREAD/Parent 포맷 검증
+- Filter: 레벨/태그/모드별 필터링
+- Config: 기본값, setter 적용, skip 목록 확장
+- Config: addSkipPackages는 빈/공백 prefix를 무시한다.
 
-## ?ㅽ뵂 ?댁뒋
-- 濡쒓렇 ?뚯쟾(?ш린/湲곌컙 ?쒗븳) ?뺤콉 遺??- 由대━利?鍮뚮뱶?먯꽌 ?쇱씤 ?뺣낫 異뺤빟 媛?μ꽦
+### Robolectric 테스트
+- PathResolver: storageType 별 경로 계산
+- FileWriter: 실제 파일 기록/즉시 flush 동작
+- Context 없는 환경 처리(파일 저장 비활성화)
+- PUBLIC_EXTERNAL 권한 미보유 시 저장 중단/경고 동작
 
-
-
-
+## 오픈 이슈
+- 로그 기간 제한 정책 부재
+- 릴리즈 빌드에서 라인 정보 축약 가능성

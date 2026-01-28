@@ -187,4 +187,3 @@ public inline fun requireMaxSdkVersion(sdkVersion: Int) {
     if (sdkVersion >= Build.VERSION.SDK_INT) return
     throw UnsupportedOperationException("require Max SDK version $sdkVersion but current SDK version is ${Build.VERSION.SDK_INT}")
 }
-

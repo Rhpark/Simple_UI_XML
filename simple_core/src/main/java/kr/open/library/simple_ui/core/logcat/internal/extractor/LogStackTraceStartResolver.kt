@@ -8,14 +8,20 @@ package kr.open.library.simple_ui.core.logcat.internal.extractor
  * 내부 프레임 이후부터 탐색하도록 시작 인덱스를 계산합니다.
  *
  * @param internalPrefixes 내부 프레임으로 간주할 패키지 접두사 목록.
+ * @param additionalPrefixes 추가로 포함할 내부 프레임 접두사 목록.
  * @param fallbackStartIndex 내부 프레임을 찾지 못했을 때 사용할 기본 시작 인덱스.
  */
-internal class StackTraceStartResolver(
-    private val internalPrefixes: List<String> = listOf(
-        "kr.open.library.simple_ui.core.temp_logcat",
+internal class LogStackTraceStartResolver(
+    internalPrefixes: List<String> = listOf(
+        LogStackTraceConstants.LOGCAT_INTERNAL_PREFIX,
     ),
-    private val fallbackStartIndex: Int = 4,
+    additionalPrefixes: Set<String> = emptySet(),
+    private val fallbackStartIndex: Int = LogStackTraceConstants.DEFAULT_FALLBACK_START_INDEX,
 ) {
+    private val startPrefixes: List<String> = (internalPrefixes + additionalPrefixes)
+        .filter { it.isNotBlank() }
+        .distinct()
+
     /**
      * 스택 트레이스 배열에서 탐색 시작 인덱스를 계산합니다.
      *
@@ -48,11 +54,12 @@ internal class StackTraceStartResolver(
         var last = -1
         for (i in 0..stackTrace.lastIndex) {
             val className = stackTrace[i].className
-            if (internalPrefixes.any { prefix -> className.startsWith(prefix) }) {
+            if (startPrefixes.any { prefix -> className.startsWith(prefix) }) {
                 last = i
             }
         }
         return last
     }
-}
 
+    private companion object
+}

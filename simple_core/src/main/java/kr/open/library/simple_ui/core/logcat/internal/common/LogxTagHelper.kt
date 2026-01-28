@@ -23,8 +23,7 @@ internal object LogxTagHelper {
      * @param tag Optional tag string.<br><br>
      *            선택 태그 문자열.<br>
      */
-    fun buildPrefix(appName: String, tag: String?): String =
-        if (isValidTag(tag)) "${appName}[${tag}]" else appName
+    fun buildPrefix(appName: String, tag: String?): String = if (isValidTag(tag)) "$appName[$tag]" else appName
 
     /**
      * Returns tag to use for internal error logs.<br><br>
@@ -34,9 +33,8 @@ internal object LogxTagHelper {
      *                 호출자가 입력한 태그.<br>
      */
     fun errorTag(inputTag: String?): String = if (isValidTag(inputTag)) {
-        inputTag ?: LogxConstants.errorTag
+        inputTag ?: LogxConstants.ERROR_TAG
     } else {
-        LogxConstants.errorTag
+        LogxConstants.ERROR_TAG
     }
 }
-

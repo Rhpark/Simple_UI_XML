@@ -64,5 +64,3 @@ internal class LogxFileLineBuilder {
     private fun buildLine(timestamp: String, type: LogType, prefix: String, payload: String): String =
         "$timestamp [${type.outputChar}] $prefix : $payload"
 }
-
-

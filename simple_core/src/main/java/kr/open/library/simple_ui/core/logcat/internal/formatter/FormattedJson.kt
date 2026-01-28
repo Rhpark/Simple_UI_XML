@@ -14,5 +14,5 @@ package kr.open.library.simple_ui.core.logcat.internal.formatter
 internal data class FormattedJson(
     val header: String,
     val bodyLines: List<String>,
-    val endLine: String = "[End]",
+    val endLine: String = LogxFormatConstants.JSON_END_MARKER,
 )

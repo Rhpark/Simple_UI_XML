@@ -9,42 +9,51 @@ import android.util.Log
  * @property outputChar Single character used in file output.<br><br>
  *                     파일 출력에 사용하는 1글자 식별자.<br>
  */
-enum class LogType(val outputChar: Char) {
+enum class LogType(
+    val outputChar: Char
+) {
     /**
      * Verbose log type.<br><br>
      * VERBOSE 로그 타입이다.<br>
      */
     VERBOSE('V'),
+
     /**
      * Debug log type.<br><br>
      * DEBUG 로그 타입이다.<br>
      */
     DEBUG('D'),
+
     /**
      * Info log type.<br><br>
      * INFO 로그 타입이다.<br>
      */
     INFO('I'),
+
     /**
      * Warning log type.<br><br>
      * WARN 로그 타입이다.<br>
      */
     WARN('W'),
+
     /**
      * Error log type.<br><br>
      * ERROR 로그 타입이다.<br>
      */
     ERROR('E'),
+
     /**
      * Parent trace log type.<br><br>
      * PARENT 로그 타입이다.<br>
      */
     PARENT('P'),
+
     /**
      * JSON log type.<br><br>
      * JSON 로그 타입이다.<br>
      */
     JSON('J'),
+
     /**
      * Thread id log type.<br><br>
      * THREAD 로그 타입이다.<br>

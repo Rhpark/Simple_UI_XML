@@ -2,9 +2,9 @@ package kr.open.library.simple_ui.core.logcat.internal.writer
 
 import android.content.Context
 import android.util.Log
-import java.io.File
 import kr.open.library.simple_ui.core.logcat.config.LogxConfigSnapshot
 import kr.open.library.simple_ui.core.logcat.internal.common.LogxPathResolver
+import java.io.File
 
 /**
  * 로그 파일 저장 경로를 계산하고 디렉터리를 보장합니다.
@@ -69,5 +69,3 @@ internal class LogxFilePathResolver {
         return LogxPathResolver.resolvePath(context, config.storageType)
     }
 }
-
-

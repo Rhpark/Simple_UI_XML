@@ -5,24 +5,26 @@ import android.content.Context
 import android.os.Build
 import android.os.Process
 import android.util.Log
+import androidx.annotation.RestrictTo
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
-import kr.open.library.simple_ui.core.permissions.extentions.hasPermissions
-import java.util.concurrent.atomic.AtomicBoolean
 import kr.open.library.simple_ui.core.logcat.config.LogType
 import kr.open.library.simple_ui.core.logcat.config.LogxConfigStore
-import kr.open.library.simple_ui.core.logcat.config.StorageType
-import kr.open.library.simple_ui.core.logcat.internal.common.LogxTagHelper
+import kr.open.library.simple_ui.core.logcat.config.LogStorageType
 import kr.open.library.simple_ui.core.logcat.internal.pipeline.LogxPipeline
 import kr.open.library.simple_ui.core.logcat.internal.writer.LogxFileWriter
+import kr.open.library.simple_ui.core.permissions.extentions.hasPermissions
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**
- * Main entry point for temp_logcat logging API.<br><br>
- * temp_logcat 로그 API의 진입점이다.<br>
+ * Main entry point for logcat logging API.<br><br>
+ * logcat 로그 API의 진입점이다.<br>
  */
 object Logx {
+    private val TAG = this::class.java.simpleName
+
     /**
      * Application context used for file logging and permission checks.<br><br>
      * 파일 저장 및 권한 확인에 사용하는 애플리케이션 컨텍스트.<br>
@@ -46,10 +48,8 @@ object Logx {
      * Log processing pipeline entry.<br><br>
      * 로그 처리 파이프라인 진입점.<br>
      */
-    private val pipeline = LogxPipeline(
-        contextProvider = { appContext },
-        fileWriter = fileWriter,
-    )
+    @Volatile
+    private var pipeline: LogxPipeline = createDefaultPipeline()
 
     /**
      * Lifecycle observer to close file writer on app backgrounding.<br><br>
@@ -78,6 +78,7 @@ object Logx {
     @JvmStatic
     fun initialize(context: Context) {
         appContext = context.applicationContext
+        pipeline.setDevelopmentMode(context)
         registerLifecycleObserverOnce()
     }
 
@@ -89,6 +90,11 @@ object Logx {
         if (!lifecycleRegistered.compareAndSet(false, true)) return
         ProcessLifecycleOwner.get().lifecycle.addObserver(lifecycleObserver)
     }
+
+    private fun createDefaultPipeline(): LogxPipeline = LogxPipeline(
+        contextProvider = { appContext },
+        fileWriter = fileWriter,
+    )
 
     /**
      * Enables or disables logging globally.<br><br>
@@ -137,7 +143,7 @@ object Logx {
     fun setLogTagBlockList(tags: Set<String>) {
         val filtered = tags.filter { it.isNotBlank() }.toSet()
         if (filtered.size != tags.size) {
-            Log.e(LogxTagHelper.errorTag(null), "Tag block list contains blank tags. Removed invalid entries.")
+            Log.e(TAG, "Tag block list contains blank tags. Removed invalid entries.")
         }
         LogxConfigStore.setLogTagBlockList(filtered)
     }
@@ -152,7 +158,13 @@ object Logx {
     @JvmStatic
     fun setSaveEnabled(enabled: Boolean) {
         if (enabled && appContext == null) {
-            throw IllegalStateException("Logx.initialize(context) must be called before enabling file logging.")
+            val message = "Logx.initialize(context) must be called before enabling file logging. " +
+                "Call Logx.initialize(applicationContext) in Application.onCreate()."
+            if (pipeline.isDevelopmentMode()) {
+                error(message)
+            } else {
+                Log.e(TAG, message)
+            }
         }
         if (!enabled) {
             fileWriter.requestClose()
@@ -168,18 +180,28 @@ object Logx {
      *             사용할 저장소 타입.<br>
      */
     @JvmStatic
-    fun setStorageType(type: StorageType) {
+    fun setStorageType(type: LogStorageType) {
         checkSdkVersion(Build.VERSION_CODES.Q,
-            positiveWork = {
-                LogxConfigStore.setStorageType(type)
-            },
+            positiveWork = { LogxConfigStore.setStorageType(type) },
             negativeWork = {
-                if(type == StorageType.PUBLIC_EXTERNAL) {
-                    if(appContext == null) {
-                        throw IllegalStateException("Logx.initialize(context) must be called before setting PUBLIC_EXTERNAL.")
+                if (type == LogStorageType.PUBLIC_EXTERNAL) {
+                    if (appContext == null) {
+                        val message =
+                            "Logx.initialize(context) must be called before setting PUBLIC_EXTERNAL. " +
+                                "Call Logx.initialize(applicationContext) in Application.onCreate()."
+                        if (pipeline.isDevelopmentMode()) {
+                            error(message)
+                        } else {
+                            Log.e(TAG, message)
+                        }
                     } else {
-                        if(!appContext!!.hasPermissions(WRITE_EXTERNAL_STORAGE)) {
-                            throw SecurityException("WRITE_EXTERNAL_STORAGE permission is not granted.")
+                        if (!appContext!!.hasPermissions(WRITE_EXTERNAL_STORAGE)) {
+                            val message = "WRITE_EXTERNAL_STORAGE permission is not granted."
+                            if (pipeline.isDevelopmentMode()) {
+                                error(message)
+                            } else {
+                                Log.e(TAG, message)
+                            }
                         }
                     }
                 }
@@ -211,6 +233,7 @@ object Logx {
     fun setAppName(name: String) {
         LogxConfigStore.setAppName(name)
     }
+
     /**
      * Adds package prefixes to skip in stack trace resolution.<br><br>
      * 스택 트레이스 탐색에서 제외할 패키지 prefix를 추가합니다.<br>
@@ -221,8 +244,23 @@ object Logx {
      * Use when you have a custom wrapper/logger and want the log location to point to the real caller.<br><br>
      * 커스텀 래퍼/로거를 사용해 로그 위치가 래퍼로 찍힐 때 실제 호출 지점으로 이동시키기 위해 사용합니다.<br>
      *
+     * Prefix matching is applied to className.startsWith(prefix).<br><br>
+     * className.startsWith(prefix) 기준으로 접두사 매칭을 수행합니다.<br>
+     *
+     * This affects all log types (standard/PARENT/THREAD/JSON).<br><br>
+     * 표준/PARENT/THREAD/JSON 모든 로그 타입에 동일하게 적용됩니다.<br>
+     *
+     * Note: Adding many prefixes can increase stack scan cost.<br><br>
+     * 주의: prefix가 많아질수록 스택 탐색 비용이 증가할 수 있습니다.<br>
+     *
      * Example use case: MyLogger.d(...) wraps Logx.d(...). Without this, the call site may show MyLogger.<br><br>
      * 예) MyLogger.d(...)가 Logx.d(...)를 감싸는 구조라면, 설정 전에는 MyLogger가 호출 위치로 보일 수 있습니다.<br>
+     * Example code:<br><br>
+     * 예시 코드:<br>
+     * ```
+     * Logx.addSkipPackages(setOf("com.example.logger."))
+     * MyLogger.d("message")
+     * ```
      *
      * @param packages Package prefixes to add (package or class FQCN prefixes).<br><br>
      *                 추가할 패키지/클래스 prefix(전체 경로 포함) 목록.<br>
@@ -233,12 +271,35 @@ object Logx {
     }
 
     /**
+     * Injects a pipeline for tests.<br><br>
+     * 테스트용 파이프라인을 주입합니다.<br>
+     *
+     * @param custom Pipeline for tests.<br><br>
+     *              테스트용 파이프라인.<br>
+     */
+    @JvmStatic
+    @RestrictTo(RestrictTo.Scope.TESTS)
+    internal fun setPipelineForTest(custom: LogxPipeline) {
+        pipeline = custom
+    }
+
+    /**
+     * Restores the default pipeline after tests.<br><br>
+     * 테스트 후 기본 파이프라인으로 복원합니다.<br>
+     */
+    @JvmStatic
+    internal fun resetPipelineForTest() {
+        pipeline = createDefaultPipeline()
+    }
+
+    /**
      * Returns whether logging is enabled.<br><br>
      * 로그 출력 활성화 여부를 반환합니다.<br>
      */
     @JvmStatic
     fun isLogging(): Boolean = LogxConfigStore.isLogging()
-/**
+
+    /**
      * Returns allowed log types.<br><br>
      * 허용된 로그 타입 목록을 반환한다.<br>
      */
@@ -271,7 +332,7 @@ object Logx {
      * 현재 저장소 타입을 반환한다.<br>
      */
     @JvmStatic
-    fun getStorageType(): StorageType = LogxConfigStore.getStorageType()
+    fun getStorageType(): LogStorageType = LogxConfigStore.getStorageType()
 
     /**
      * Returns custom save directory path.<br><br>
@@ -299,7 +360,7 @@ object Logx {
      * 메시지 없이 VERBOSE 로그를 출력한다.<br>
      */
     @JvmStatic
-    fun v() = logStandard(LogType.VERBOSE, null, null, hasMessage = false, tagProvided = false)
+    fun v() = pipeline.logStandard(LogType.VERBOSE, null, null, false, false)
 
     /**
      * Logs a VERBOSE message with body.<br><br>
@@ -309,7 +370,7 @@ object Logx {
      *            메시지 본문.<br>
      */
     @JvmStatic
-    fun v(msg: Any?) = logStandard(LogType.VERBOSE, null, msg, hasMessage = true, tagProvided = false)
+    fun v(msg: Any?) = pipeline.logStandard(LogType.VERBOSE, null, msg, true, false)
 
     /**
      * Logs a VERBOSE message with custom tag and body.<br><br>
@@ -321,14 +382,14 @@ object Logx {
      *            메시지 본문.<br>
      */
     @JvmStatic
-    fun v(tag: String, msg: Any?) = logStandard(LogType.VERBOSE, tag, msg, hasMessage = true, tagProvided = true)
+    fun v(tag: String, msg: Any?) = pipeline.logStandard(LogType.VERBOSE, tag, msg, true, true)
 
     /**
      * Logs a DEBUG message without message body.<br><br>
      * 메시지 없이 DEBUG 로그를 출력한다.<br>
      */
     @JvmStatic
-    fun d() = logStandard(LogType.DEBUG, null, null, hasMessage = false, tagProvided = false)
+    fun d() = pipeline.logStandard(LogType.DEBUG, null, null, false, false)
 
     /**
      * Logs a DEBUG message with body.<br><br>
@@ -338,7 +399,7 @@ object Logx {
      *            메시지 본문.<br>
      */
     @JvmStatic
-    fun d(msg: Any?) = logStandard(LogType.DEBUG, null, msg, hasMessage = true, tagProvided = false)
+    fun d(msg: Any?) = pipeline.logStandard(LogType.DEBUG, null, msg, true, false)
 
     /**
      * Logs a DEBUG message with custom tag and body.<br><br>
@@ -350,14 +411,14 @@ object Logx {
      *            메시지 본문.<br>
      */
     @JvmStatic
-    fun d(tag: String, msg: Any?) = logStandard(LogType.DEBUG, tag, msg, hasMessage = true, tagProvided = true)
+    fun d(tag: String, msg: Any?) = pipeline.logStandard(LogType.DEBUG, tag, msg, true, true)
 
     /**
      * Logs an INFO message without message body.<br><br>
      * 메시지 없이 INFO 로그를 출력한다.<br>
      */
     @JvmStatic
-    fun i() = logStandard(LogType.INFO, null, null, hasMessage = false, tagProvided = false)
+    fun i() = pipeline.logStandard(LogType.INFO, null, null, false, false)
 
     /**
      * Logs an INFO message with body.<br><br>
@@ -367,7 +428,7 @@ object Logx {
      *            메시지 본문.<br>
      */
     @JvmStatic
-    fun i(msg: Any?) = logStandard(LogType.INFO, null, msg, hasMessage = true, tagProvided = false)
+    fun i(msg: Any?) = pipeline.logStandard(LogType.INFO, null, msg, true, false)
 
     /**
      * Logs an INFO message with custom tag and body.<br><br>
@@ -379,14 +440,14 @@ object Logx {
      *            메시지 본문.<br>
      */
     @JvmStatic
-    fun i(tag: String, msg: Any?) = logStandard(LogType.INFO, tag, msg, hasMessage = true, tagProvided = true)
+    fun i(tag: String, msg: Any?) = pipeline.logStandard(LogType.INFO, tag, msg, true, true)
 
     /**
      * Logs a WARN message without message body.<br><br>
      * 메시지 없이 WARN 로그를 출력한다.<br>
      */
     @JvmStatic
-    fun w() = logStandard(LogType.WARN, null, null, hasMessage = false, tagProvided = false)
+    fun w() = pipeline.logStandard(LogType.WARN, null, null, false, false)
 
     /**
      * Logs a WARN message with body.<br><br>
@@ -396,7 +457,7 @@ object Logx {
      *            메시지 본문.<br>
      */
     @JvmStatic
-    fun w(msg: Any?) = logStandard(LogType.WARN, null, msg, hasMessage = true, tagProvided = false)
+    fun w(msg: Any?) = pipeline.logStandard(LogType.WARN, null, msg, true, false)
 
     /**
      * Logs a WARN message with custom tag and body.<br><br>
@@ -408,14 +469,14 @@ object Logx {
      *            메시지 본문.<br>
      */
     @JvmStatic
-    fun w(tag: String, msg: Any?) = logStandard(LogType.WARN, tag, msg, hasMessage = true, tagProvided = true)
+    fun w(tag: String, msg: Any?) = pipeline.logStandard(LogType.WARN, tag, msg, true, true)
 
     /**
      * Logs an ERROR message without message body.<br><br>
      * 메시지 없이 ERROR 로그를 출력한다.<br>
      */
     @JvmStatic
-    fun e() = logStandard(LogType.ERROR, null, null, hasMessage = false, tagProvided = false)
+    fun e() = pipeline.logStandard(LogType.ERROR, null, null, false, false)
 
     /**
      * Logs an ERROR message with body.<br><br>
@@ -425,7 +486,7 @@ object Logx {
      *            메시지 본문.<br>
      */
     @JvmStatic
-    fun e(msg: Any?) = logStandard(LogType.ERROR, null, msg, hasMessage = true, tagProvided = false)
+    fun e(msg: Any?) = pipeline.logStandard(LogType.ERROR, null, msg, true, false)
 
     /**
      * Logs an ERROR message with custom tag and body.<br><br>
@@ -437,14 +498,14 @@ object Logx {
      *            메시지 본문.<br>
      */
     @JvmStatic
-    fun e(tag: String, msg: Any?) = logStandard(LogType.ERROR, tag, msg, hasMessage = true, tagProvided = true)
+    fun e(tag: String, msg: Any?) = pipeline.logStandard(LogType.ERROR, tag, msg, true, true)
 
     /**
      * Logs parent trace without message body.<br><br>
      * 메시지 없이 부모 호출 트레이스를 출력한다.<br>
      */
     @JvmStatic
-    fun p() = logParent(null, null, hasMessage = false, tagProvided = false)
+    fun p() = pipeline.logParent(null, null, false, false)
 
     /**
      * Logs parent trace with body.<br><br>
@@ -454,7 +515,7 @@ object Logx {
      *            메시지 본문.<br>
      */
     @JvmStatic
-    fun p(msg: Any?) = logParent(null, msg, hasMessage = true, tagProvided = false)
+    fun p(msg: Any?) = pipeline.logParent(null, msg, true, false)
 
     /**
      * Logs parent trace with custom tag and body.<br><br>
@@ -466,7 +527,7 @@ object Logx {
      *            메시지 본문.<br>
      */
     @JvmStatic
-    fun p(tag: String, msg: Any?) = logParent(tag, msg, hasMessage = true, tagProvided = true)
+    fun p(tag: String, msg: Any?) = pipeline.logParent(tag, msg, true, true)
 
     /**
      * Logs JSON string with JSON formatting.<br><br>
@@ -476,7 +537,7 @@ object Logx {
      *             JSON 문자열.<br>
      */
     @JvmStatic
-    fun j(json: String) = logJson(null, json, tagProvided = false)
+    fun j(json: String) = pipeline.logJson(null, json, false)
 
     /**
      * Logs JSON string with JSON formatting and custom tag.<br><br>
@@ -488,14 +549,15 @@ object Logx {
      *             JSON 문자열.<br>
      */
     @JvmStatic
-    fun j(tag: String, json: String) = logJson(tag, json, tagProvided = true)
+    fun j(tag: String, json: String) = pipeline.logJson(tag, json, true)
 
     /**
      * Logs current thread id without message body.<br><br>
      * 메시지 없이 현재 스레드 ID를 출력한다.<br>
      */
     @JvmStatic
-    fun t() = logThread(null, null, hasMessage = false, tagProvided = false)
+    fun t() =
+        pipeline.logThread(null, null, false, false, Process.myTid().toLong())
 
     /**
      * Logs current thread id with body.<br><br>
@@ -505,7 +567,8 @@ object Logx {
      *            메시지 본문.<br>
      */
     @JvmStatic
-    fun t(msg: Any?) = logThread(null, msg, hasMessage = true, tagProvided = false)
+    fun t(msg: Any?) =
+        pipeline.logThread(null, msg, true, false, Process.myTid().toLong())
 
     /**
      * Logs current thread id with custom tag and body.<br><br>
@@ -517,91 +580,6 @@ object Logx {
      *            메시지 본문.<br>
      */
     @JvmStatic
-    fun t(tag: String, msg: Any?) = logThread(tag, msg, hasMessage = true, tagProvided = true)
-
-    /**
-     * Internal helper for standard log output.<br><br>
-     * 표준 로그 출력용 내부 헬퍼이다.<br>
-     *
-     * @param type Log type to output.<br><br>
-     *             출력할 로그 타입.<br>
-     * @param inputTag Optional input tag.<br><br>
-     *                 입력된 태그(선택).<br>
-     * @param msg Message payload.<br><br>
-     *            메시지 본문.<br>
-     * @param hasMessage Whether message should be appended.<br><br>
-     *                   메시지 포함 여부.<br>
-     * @param tagProvided Whether tag parameter was provided by caller.<br><br>
-     *                    호출자가 태그를 제공했는지 여부.<br>
-     */
-    private fun logStandard(
-        type: LogType,
-        inputTag: String?,
-        msg: Any?,
-        hasMessage: Boolean,
-        tagProvided: Boolean,
-    ) = pipeline.logStandard(type, inputTag, msg, hasMessage, tagProvided)
-
-    /**
-     * Internal helper for parent trace logging.<br><br>
-     * 부모 호출 트레이스 출력용 내부 헬퍼이다.<br>
-     *
-     * @param inputTag Optional input tag.<br><br>
-     *                 입력된 태그(선택).<br>
-     * @param msg Message payload.<br><br>
-     *            메시지 본문.<br>
-     * @param hasMessage Whether message should be appended.<br><br>
-     *                   메시지 포함 여부.<br>
-     * @param tagProvided Whether tag parameter was provided by caller.<br><br>
-     *                    호출자가 태그를 제공했는지 여부.<br>
-     */
-    private fun logParent(
-        inputTag: String?,
-        msg: Any?,
-        hasMessage: Boolean,
-        tagProvided: Boolean,
-    ) = pipeline.logParent(inputTag, msg, hasMessage, tagProvided)
-
-    /**
-     * Internal helper for thread id logging.<br><br>
-     * 스레드 ID 출력용 내부 헬퍼이다.<br>
-     *
-     * @param inputTag Optional input tag.<br><br>
-     *                 입력된 태그(선택).<br>
-     * @param msg Message payload.<br><br>
-     *            메시지 본문.<br>
-     * @param hasMessage Whether message should be appended.<br><br>
-     *                   메시지 포함 여부.<br>
-     * @param tagProvided Whether tag parameter was provided by caller.<br><br>
-     *                    호출자가 태그를 제공했는지 여부.<br>
-     */
-    private fun logThread(
-        inputTag: String?,
-        msg: Any?,
-        hasMessage: Boolean,
-        tagProvided: Boolean,
-    ) = pipeline.logThread(
-        inputTag,
-        msg,
-        hasMessage,
-        tagProvided,
-        Process.myTid().toLong(),
-    )
-
-    /**
-     * Internal helper for JSON logging.<br><br>
-     * JSON 출력용 내부 헬퍼이다.<br>
-     *
-     * @param inputTag Optional input tag.<br><br>
-     *                 입력된 태그(선택).<br>
-     * @param json JSON string payload.<br><br>
-     *             JSON 문자열 본문.<br>
-     * @param tagProvided Whether tag parameter was provided by caller.<br><br>
-     *                    호출자가 태그를 제공했는지 여부.<br>
-     */
-    private fun logJson(
-        inputTag: String?,
-        json: String,
-        tagProvided: Boolean,
-    ) = pipeline.logJson(inputTag, json, tagProvided)
+    fun t(tag: String, msg: Any?) =
+        pipeline.logThread(tag, msg, true, true, Process.myTid().toLong())
 }
