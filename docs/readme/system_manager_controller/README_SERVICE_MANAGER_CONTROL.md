@@ -1,4 +1,6 @@
 ﻿# System Service Manager Controller vs Plain Android - Complete Comparison Guide
+**System Service Manager Controller** consists of controllers in `simple_core` and Context extensions in `simple_xml`.
+This document is a quick summary for fast review, and details are split into separate docs.
 > **System Service Manager Controller vs 순수 Android - 완벽 비교 가이드**
 > **System Service Manager Controller**는 `simple_core`의 컨트롤러와 `simple_xml`의 Context 확장 함수로 구성됩니다.
 > 이 문서는 **핵심만 빠르게 확인**할 수 있도록 요약했고, 상세 내용은 별도 문서로 분리했습니다.
@@ -11,20 +13,20 @@
 ## 🔎 At a Glance (한눈 비교)
 
 ### simple_core (Controller)
-| 컨트롤러 | 역할 요약 | 상세 문서 |
+| 컨트롤러(Controller) | 역할 요약(Summary) | 상세 문서(Docs) |
 |---|---|---|
-| AlarmController | 알람 등록/삭제/존재 확인 | [core/README_ALARM_CONTROLLER.md](core/README_ALARM_CONTROLLER.md) |
-| NotificationController | 알림 표시/진행률/채널 관리 | [core/README_NOTIFICATION_CONTROLLER.md](core/README_NOTIFICATION_CONTROLLER.md) |
-| VibratorController | 진동 패턴/프리셋/SDK 분기 처리 | [core/README_VIBRATOR_CONTROLLER.md](core/README_VIBRATOR_CONTROLLER.md) |
-| WifiController | WiFi 정보/상태/스캔 | [core/README_WIFI_CONTROLLER.md](core/README_WIFI_CONTROLLER.md) |
+| AlarmController | Alarm register/remove/exists (알람 등록/삭제/존재 확인) | [core/README_ALARM_CONTROLLER.md](core/README_ALARM_CONTROLLER.md) |
+| NotificationController | Notifications: show/progress/channel (알림 표시/진행률/채널 관리) | [core/README_NOTIFICATION_CONTROLLER.md](core/README_NOTIFICATION_CONTROLLER.md) |
+| VibratorController | Vibration pattern/preset/SDK branching (진동 패턴/프리셋/SDK 분기 처리) | [core/README_VIBRATOR_CONTROLLER.md](core/README_VIBRATOR_CONTROLLER.md) |
+| WifiController | Wi-Fi info/state/scan (Wi-Fi 정보/상태/스캔) | [core/README_WIFI_CONTROLLER.md](core/README_WIFI_CONTROLLER.md) |
 
 ### simple_xml (Controller)
-| 컨트롤러 | 역할 요약 | 상세 문서 |
+| 컨트롤러(Controller) | 역할 요약(Summary) | 상세 문서(Docs) |
 |---|---|---|
-| SoftKeyboardController | 키보드 표시/숨김/지연, SDK 분기 처리 | [xml/README_SOFTKEYBOARD_CONTROLLER.md](xml/README_SOFTKEYBOARD_CONTROLLER.md) |
-| FloatingViewController | 플로팅 뷰 추가/이동/제거 | [xml/README_FLOATING_VIEW_CONTROLLER.md](xml/README_FLOATING_VIEW_CONTROLLER.md) |
+| SoftKeyboardController | Keyboard show/hide/delay + SDK branching (키보드 표시/숨김/지연, SDK 분기 처리) | [xml/README_SOFTKEYBOARD_CONTROLLER.md](xml/README_SOFTKEYBOARD_CONTROLLER.md) |
+| FloatingViewController | Floating view add/move/remove (플로팅 뷰 추가/이동/제거) | [xml/README_FLOATING_VIEW_CONTROLLER.md](xml/README_FLOATING_VIEW_CONTROLLER.md) |
 
-**Context 확장 함수 목록:**  
+**Context Extension Functions:**
 [xml/README_SYSTEM_MANAGER_EXTENSIONS.md](xml/README_SYSTEM_MANAGER_EXTENSIONS.md)
 
 <br></br>
@@ -61,13 +63,16 @@
 
 <br></br>
 
-## 공통 주의사항
-- Android 13+ 알림은 `POST_NOTIFICATIONS` 권한이 필요합니다.
-- `NotificationChannel` 전달은 필수이며, `createChannel()`은 **이후 생성되는 알림**에만 적용됩니다.
-- 진행률 알림을 사용했다면 Activity/Service 종료 시 `cleanup()` 호출을 권장합니다.
+## Common Notes (공통 주의사항)
+- Android 13+ notifications require the `POST_NOTIFICATIONS` permission.
+- `NotificationChannel` is required, and `createChannel()` applies only to notifications created afterward.
+- If you used progress notifications, call `cleanup()` when the Activity/Service ends.
+> Android 13+ 알림은 `POST_NOTIFICATIONS` 권한이 필요합니다.
+> `NotificationChannel` 전달은 필수이며, `createChannel()`은 **이후 생성되는 알림**에만 적용됩니다.
+> 진행률 알림을 사용했다면 Activity/Service 종료 시 `cleanup()` 호출을 권장합니다.
 
 <br></br>
 
-## 상세 문서 위치
-- core 상세 문서: `docs/readme/system_manager_controller/core/`
-- xml 상세 문서: `docs/readme/system_manager_controller/xml/`
+## Document Locations (상세 문서 위치)
+- core docs: `docs/readme/system_manager_controller/core/`
+- xml docs: `docs/readme/system_manager_controller/xml/`
