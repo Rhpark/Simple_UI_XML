@@ -134,23 +134,18 @@ class NotificationVoTest {
     }
 
     @Test
-    fun simplePendingIntentOptionVo_defaultFlags() {
+    fun simplePendingIntentOptionVo_storesValues() {
         val intent = mock(Intent::class.java)
-        val option = SimplePendingIntentOption(actionId = 10, clickIntent = intent)
-
         val expectedFlags = PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        assertEquals(10, option.actionId)
-        assertEquals(intent, option.clickIntent)
-        assertEquals(expectedFlags, option.flags)
-    }
-
-    @Test
-    fun simplePendingIntentOptionVo_customFlags() {
-        val intent = mock(Intent::class.java)
-        val option = SimplePendingIntentOption(actionId = 11, clickIntent = intent, flags = 0)
+        val option =
+            SimplePendingIntentOption(
+                actionId = 11,
+                clickIntent = intent,
+                flags = expectedFlags,
+            )
 
         assertEquals(11, option.actionId)
         assertEquals(intent, option.clickIntent)
-        assertEquals(0, option.flags)
+        assertEquals(expectedFlags, option.flags)
     }
 }

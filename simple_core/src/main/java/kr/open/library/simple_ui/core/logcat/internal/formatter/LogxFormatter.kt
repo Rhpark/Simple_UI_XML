@@ -1,5 +1,6 @@
 package kr.open.library.simple_ui.core.logcat.internal.formatter
 
+import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
 import kr.open.library.simple_ui.core.logcat.internal.common.LogxConstants
 import kr.open.library.simple_ui.core.logcat.internal.extractor.LogStackFrame
 import kr.open.library.simple_ui.core.logcat.internal.extractor.LogStackFrames
@@ -113,7 +114,6 @@ internal object LogxFormatter {
      * @param frame 현재 프레임 정보.
      */
     private fun formatMeta(frame: LogStackFrame): String {
-//        val fileName = normalizeFileName(frame.fileName)
         val fileName = frame.fileName
         val lineNumber = if (frame.lineNumber > 0) frame.lineNumber else 0
         return "($fileName:$lineNumber).${frame.methodName}"
@@ -145,15 +145,12 @@ internal object LogxFormatter {
     private fun formatJsonBody(json: String): List<String> {
         val trimmed = json.trim()
         if (trimmed.isEmpty()) return listOf(json)
-
-        val formatted = try {
+        val formatted = safeCatch(defaultValue = json) {
             if (trimmed.startsWith("{") || trimmed.startsWith("[")) {
                 formatJsonPretty(trimmed)
             } else {
                 trimmed
             }
-        } catch (_: Exception) {
-            json
         }
 
         return formatted.split("\n")

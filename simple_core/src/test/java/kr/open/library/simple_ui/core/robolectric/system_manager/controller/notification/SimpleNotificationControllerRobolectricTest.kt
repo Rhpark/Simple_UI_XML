@@ -2,6 +2,8 @@
 
 import android.Manifest
 import android.app.Application
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Build
@@ -41,11 +43,17 @@ class SimpleNotificationControllerRobolectricTest {
     private lateinit var application: Application
     private lateinit var controller: SimpleNotificationController
     private lateinit var shadowNotificationManager: ShadowNotificationManager
+    private lateinit var notificationChannel: NotificationChannel
 
     @Before
     fun setUp() {
         application = ApplicationProvider.getApplicationContext()
-        controller = SimpleNotificationController(application)
+        notificationChannel = NotificationChannel(
+            "test_notification_channel",
+            "Test Notifications",
+            NotificationManager.IMPORTANCE_DEFAULT,
+        )
+        controller = SimpleNotificationController(application, notificationChannel)
         shadowNotificationManager = Shadows.shadowOf(controller.notificationManager)
     }
 
@@ -144,6 +152,24 @@ class SimpleNotificationControllerRobolectricTest {
         val result = controller.updateProgress(7, 75)
 
         assertTrue(result)
+    }
+
+    @Test
+    @Config(sdk = [Build.VERSION_CODES.P])
+    fun updateProgress_sameValue_returnsFalse() {
+        val option =
+            ProgressNotificationOption(
+                notificationId = 15,
+                smallIcon = android.R.drawable.ic_dialog_info,
+                title = "Download",
+                content = null,
+                progressPercent = 50,
+            )
+
+        controller.showNotification(option, SimpleNotificationType.ACTIVITY)
+        val result = controller.updateProgress(15, 50)
+
+        assertFalse(result)
     }
 
     @Test
@@ -266,7 +292,7 @@ class SimpleNotificationControllerRobolectricTest {
     @Test
     @Config(sdk = [Build.VERSION_CODES.P])
     fun init_createsDefaultChannel() {
-        val testController = SimpleNotificationController(application)
+        val testController = SimpleNotificationController(application, notificationChannel)
 
         val channels = shadowNotificationManager.notificationChannels
         assertTrue(channels.isNotEmpty())
@@ -361,6 +387,44 @@ class SimpleNotificationControllerRobolectricTest {
     }
 
     @Test
+    @Config(sdk = [Build.VERSION_CODES.O])
+    fun createChannel_switchesOnlyForNewNotifications() {
+        val option1 =
+            DefaultNotificationOption(
+                notificationId = 40,
+                smallIcon = android.R.drawable.ic_dialog_info,
+                title = "Channel A",
+                content = "First",
+            )
+
+        controller.showNotification(option1, SimpleNotificationType.ACTIVITY)
+
+        val newChannel =
+            NotificationChannel(
+                "second_notification_channel",
+                "Second Notifications",
+                NotificationManager.IMPORTANCE_DEFAULT,
+            )
+        controller.createChannel(newChannel)
+
+        val option2 =
+            DefaultNotificationOption(
+                notificationId = 41,
+                smallIcon = android.R.drawable.ic_dialog_info,
+                title = "Channel B",
+                content = "Second",
+            )
+
+        controller.showNotification(option2, SimpleNotificationType.ACTIVITY)
+
+        val notification1 = shadowNotificationManager.getNotification(40)
+        val notification2 = shadowNotificationManager.getNotification(41)
+
+        assertEquals("test_notification_channel", notification1?.channelId)
+        assertEquals("second_notification_channel", notification2?.channelId)
+    }
+
+    @Test
     fun cleanup_whenAwaitTerminationReturnsFalse_callsShutdownNow() {
         val scheduler = AwaitFalseScheduler()
         controller.setCleanupSchedulerForTest(scheduler)
@@ -412,11 +476,12 @@ class SimpleNotificationControllerRobolectricTest {
                     .getDeclaredConstructor(
                         NotificationCompat.Builder::class.java,
                         Long::class.javaPrimitiveType,
+                        Int::class.javaPrimitiveType,
                     ).apply {
                         isAccessible = true
                     }
             val staleTime = System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(31)
-            progressBuilders[30] = constructor.newInstance(builder, staleTime)
+            progressBuilders[30] = constructor.newInstance(builder, staleTime, 5)
 
             recordingExecutor.runScheduledTask()
 
@@ -454,11 +519,12 @@ class SimpleNotificationControllerRobolectricTest {
                     .getDeclaredConstructor(
                         NotificationCompat.Builder::class.java,
                         Long::class.javaPrimitiveType,
+                        Int::class.javaPrimitiveType,
                     ).apply {
                         isAccessible = true
                     }
             val staleTime = System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(31)
-            progressBuilders[31] = constructor.newInstance(builder, staleTime)
+            progressBuilders[31] = constructor.newInstance(builder, staleTime, 10)
 
             mockStatic(Logx::class.java).use { logxMock ->
                 logxMock
@@ -530,7 +596,7 @@ class SimpleNotificationControllerRobolectricTest {
     @Test
     @Config(sdk = [Build.VERSION_CODES.TIRAMISU])
     fun init_onTiramisu_requiresPostNotificationPermission() {
-        val tiramisuController = SimpleNotificationController(application)
+        val tiramisuController = SimpleNotificationController(application, notificationChannel)
 
         val permissionInfo = tiramisuController.getPermissionInfo()
 

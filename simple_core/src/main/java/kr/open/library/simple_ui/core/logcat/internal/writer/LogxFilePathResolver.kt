@@ -25,11 +25,7 @@ internal class LogxFilePathResolver {
      * @param config 현재 설정 스냅샷.
      * @param errorTag 오류 로그에 사용할 태그.
      */
-    fun resolveDirectory(
-        context: Context,
-        config: LogxConfigSnapshot,
-        errorTag: String,
-    ): File? {
+    fun resolveDirectory(context: Context, config: LogxConfigSnapshot, errorTag: String): File? {
         val directoryPath = resolveDirectoryPath(context, config, errorTag) ?: return null
         val logDirectory = File(directoryPath)
         if (!logDirectory.exists() && !logDirectory.mkdirs()) {
@@ -50,11 +46,7 @@ internal class LogxFilePathResolver {
      * @param config 현재 설정 스냅샷.
      * @param errorTag 오류 로그에 사용할 태그.
      */
-    private fun resolveDirectoryPath(
-        context: Context,
-        config: LogxConfigSnapshot,
-        errorTag: String,
-    ): String? {
+    private fun resolveDirectoryPath(context: Context, config: LogxConfigSnapshot, errorTag: String): String? {
         if (config.saveDirectory != null) {
             return config.saveDirectory
         }

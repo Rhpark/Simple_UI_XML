@@ -2,6 +2,7 @@ package kr.open.library.simple_ui.xml.robolectric.system_manager.extensions
 
 import android.app.AlarmManager
 import android.app.Application
+import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.bluetooth.BluetoothManager
 import android.content.Context
@@ -17,7 +18,6 @@ import android.telephony.SubscriptionManager
 import android.telephony.TelephonyManager
 import android.telephony.euicc.EuiccManager
 import androidx.test.core.app.ApplicationProvider
-import kr.open.library.simple_ui.core.system_manager.controller.notification.SimpleNotificationType
 import kr.open.library.simple_ui.core.system_manager.controller.wifi.WifiController
 import kr.open.library.simple_ui.core.system_manager.extensions.getAlarmController
 import kr.open.library.simple_ui.core.system_manager.extensions.getAlarmManager
@@ -81,7 +81,13 @@ class SystemServiceExtensionsTest {
         val floatingViewController = application.getFloatingViewController()
         val batteryStateInfo = application.getBatteryStateInfo()
         val locationStateInfo = application.getLocationStateInfo()
-        val notificationController = application.getNotificationController(SimpleNotificationType.ACTIVITY, null)
+        val notificationChannel =
+            NotificationChannel(
+                "test_notification_channel",
+                "Test Notifications",
+                NotificationManager.IMPORTANCE_DEFAULT,
+            )
+        val notificationController = application.getNotificationController(notificationChannel)
         val displayInfo = application.getDisplayInfo()
         val vibratorController = application.getVibratorController()
         val alarmController = application.getAlarmController()

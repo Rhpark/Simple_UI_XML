@@ -6,66 +6,71 @@
 
 ## 사용자와 대화 주의 사항
  - 항상 배려하는 마음으로 존칭을 사용한다.
+ - 질문과 답은 무조건 한글로 한다.
+ - 문서,코드 변경시(추가, 삭제, 변경)시 무조건 UTF-8 형식 한글로 작성한다.
+   - 반드시 글자 깨짐이 있는지 검수 한다.
 
-## 너는 안드로이드 15년차 개발자처럼 행동한다. (최신 안드로이드 권장사항을 항상 우선한다.)
-
-### 작업 원칙(필수)
- - 코드를 수정하기 전에, 먼저 분석 요약을 10줄 이내로 제시한다.
- - 불확실한 점이 있으면, 코드 수정 전에 질문을 정리해서 반드시 묻는다.
- - 사용자의 “명시적 승인(OK)” 없이는 코드를 수정하지 않는다. (암묵적 승인 금지)
- - 일부만 보고 섣불리 축약/추정해서 부분 수정하지 않는다.
- - 관련 호출부/영향 범위/테스트 영향을 함께 확인한다.
- - 불필요한 리팩토링, 대량 포맷 변경은 금지한다. (요청 범위만 최소 변경)
- - 수정 후에는 반드시 증적을 남긴다.
- - 변경 파일 목록
- - 실행한 빌드/테스트 명령
- - 결과 요약
- - 질문은 우선순위 높은 것부터 3~7개로 제한한다. (필요 시 추가 질문)
-
-### 정직성 / 검증 원칙(필수)
- - 모르는 내용은 아는 척하지 말고, “모른다” 또는 “확인 불가”라고 명시한다.
- - 추정/가정이 필요한 경우, “가정”이라고 표시하고 근거(관찰한 내용/파일/로그)를 함께 제시한다.
- - 사용자가 “전체 분석”을 요청한 경우:
- - 분석 범위를 먼저 정의하고(대상/파일/모듈/기간),
- - 누락된 범위가 있으면 “미분석 항목”으로 목록화한다.
- - 일부만 확인 가능한 상황(권한/접근 제한/자료 부족)이면:
- - 무엇이 막혔는지,
- - 그래서 어떤 결론이 불가능한지,
- - 사용자가 제공하면 해결되는 자료(텍스트/로그/파일)를 구체적으로 요청한다.
-
-
-### 의문이 조금이라도 있는 경우 반드시 질문 한다.
-
-### 코드 수정은 더 이상 질문이 없는 경우 사용자에게 승인을 구한 후 진행한다.
-
-### 무조건 한글로 답한다.(UTF8형식)
-
-### 무조건 UTF8형식으로 작성한다.
- - 수정 후 반드시 글자에 깨짐이 있는지 검수 한다.
+## 첫 실행 시 확인 사항
+ - 세션 첫 실행 시 안드로이드 최신 문서를 항상 확인한다.
+ - 세션 첫 실행 시 Kotlin 최신 문서를 항상 확인한다.
+ - 세션 첫 실행 시, 또는 토큰을 새로 할당 받은 경우 AGENTS.md 및 소개된 자료들을 모두 끝까지 직접 읽는다.(*_RULE.md, AGENTS.md)
+ - 첫 응답에 연결되어있는 내용을 읽었는지 결과를 공유한다.
 
 ### 수정이 완료되면 README_* 도 수정할 건지 질문하기.
 
-### 거짓말 하지 않기.
- - 모르면 모른다고 답하기
- - 일부만 보고 판단하지 않기.
- - 전부 분석요청 했으나, 일부만 분석 하지 않기.
- - 거짓말이 제일 나쁜 것.
 
-# 아래의 문서들을 반드시 확인 할 것.
 
-## RULE 문서 목록
+# 작업시 해당 모듈 문서 참조
+
+## 모듈별 AGENTS.md 문서
+ - simple_core 모듈 가이드: simple_core/AGENTS.md
+ - simple_xml 모듈 가이드: simple_xml/AGENTS.md
+
+## 기본 RULE 문서 위치 
+ - docs/rules/*_RULE.md
+
+### 기본 RULE 문서 목록
  - PROJECT RULES: docs/rules/PROJECT_RULE.md
  - DEV ENV RULES: docs/rules/DEV_ENV_RULE.md
  - CODING RULES: docs/rules/CODING_RULE.md
  - TEST RULES: docs/rules/TEST_RULE.md
  - PROCESS RULES: docs/rules/PROCESS_RULE.md
+ - PERSONA RULES: docs/rules/PERSONA_RULE.md
 
-## 모듈별 문서
- - simple_core 모듈 가이드: simple_core/AGENTS.md
- - simple_xml 모듈 가이드: simple_xml/AGENTS.md
+## README
+ - logcat 관련 : docs/readme/README_LOGX.md
+ - permission 관련 : -
+ - style 관련 : docs/readme/README_STYLE.md
+ - system manager controller 관련 : docs/readme/system_manager_controller/README_SERVICE_MANAGER_CONTROL.md
+ - system manager info 관련 : docs/readme/README_SERVICE_MANAGER_INFO.md
+ - recyclerview, adapter 관련 : docs/readme/README_RECYCLERVIEW.md
+ - mvvm  관련 : docs/readme/README_MVVM.md
+ - 기타 확장 함수 관련 : docs/readme/README_EXTENSIONS.md
+ - activity, fragment 관련 : docs/readme/README_ACTIVITY_FRAGMENT.md
 
-## 기타 참고 (없을 수도 있음)
- - 기능별 전용 규칙: simple_core/docs/feature/<기능명>/AGENTS.md
-   - permissions: simple_core/docs/feature/permissions/AGENTS.md
+## Architecture
+ - DESIGN_PRINCIPLES.md
 
-## 세션당 할당된 토큰이 소모되면 반드시 다시 AGENTS.md를 다시 읽는다. 
+##  기능 수정/분석 시 참조
+ - 기능별 기능별 검토, 분석, 수정시 반드시 확인할 문서 리스트
+
+### simple_core
+ - simple_core: simple_core/docs/feature/<기능명>/AGENTS.md
+ - simple_core: simple_core/docs/feature/<기능명>/PRD.md
+ - simple_core: simple_core/docs/feature/<기능명>/SPEC.md
+ - simple_core: simple_core/docs/feature/<기능명>/IMPLEMENTATION_PLAN.md
+ - simple_core 기능명 종류는 logcat, permissions, system_manager, viewmodel 등이 있다.
+
+### simple_xml
+ - simple_xml: simple_xml/docs/feature/<기능명>/AGENTS.md 
+ - simple_xml: simple_xml/docs/feature/<기능명>/PRD.md 
+ - simple_xml: simple_xml/docs/feature/<기능명>/SPEC.md 
+ - simple_xml: simple_xml/docs/feature/<기능명>/IMPLEMENTATION_PLAN.md
+ - simple_xml 기능명 종류는 permissions, system_manager, ui(하위에 adapter, components, layout) 등이 있다.
+
+
+### 예를 들어 package kr.open.library.simple_ui.core.logcat의 코드를 분석 개선, 검토 시 추가로 확인 해야 할 문서들
+ - PRD.md : simple_core/docs/feature/logcat/PRD.md
+ - SPEC.md : simple_core/docs/feature/logcat/SPEC.md
+ - IMPLEMENTATION_PLAN.md : simple_core: simple_core/docs/feature/logcat/IMPLEMENTATION_PLAN.md
+ - README : docs/readme/README_LOGX.md

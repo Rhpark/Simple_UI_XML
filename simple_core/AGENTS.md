@@ -1,5 +1,5 @@
 # simple_core 모듈 개요
- - **전역 규칙은 루트 claude.md 참조**  
+ - **전역 규칙은 루트 AGENTS.md 참조**  
  - 주석 스타일, 코딩 컨벤션, 대화 규칙 등은 루트 AGENTS.md를 따름
  - **현재 버전**: 0.3.46 (JitPack)
  - **Maven 좌표**: `com.github.Rhpark:Simple_UI_Core:0.3.46`
@@ -59,6 +59,8 @@
    - **config**: 로그 설정 관리 (simple_core/src/main/java/kr/open/library/simple_ui/core/logcat/config/)
    - **internal**: 파일 저장/필터링/포맷팅 구현체 (simple_core/src/main/java/kr/open/library/simple_ui/core/logcat/internal/)
    - 파일 저장, 포매터, 필터, 스택트레이스 지원
+   - 참고 문서
+     - simple_core/docs/feature/logcat/*.md
 
 
   ### permissions
@@ -104,7 +106,7 @@
    - **safeCatch**: 모든 예외를 안전하게 처리하고 기본값 반환 (simple_core/src/main/java/kr/open/library/simple_ui/core/extensions/trycatch/TryCatchExtensions.kt)
    - **tryCatchSystemManager**: BaseSystemService에서 권한 검증 + 예외 처리 통합 (simple_core/src/main/java/kr/open/library/simple_ui/core/system_manager/base/BaseSystemService.kt)
    - 예외 발생 시 Logx로 자동 로깅
-   - 에러 처리 규칙은 루트의 claude.md(에러 처리 규칙)를 참조
+   - 에러 처리 규칙은 루트의 docs/rules/CODING_RULE.md를 참조
 
 
   ### 3. BaseSystemService 권한 검증 패턴
@@ -169,18 +171,8 @@
    - Context, Application
 
 
- ### 금지되는 의존성
-  - View, ViewGroup 등 UI 컴포넌트
-  - Activity, Fragment 등 UI 컨트롤러
-  - DataBinding, ViewBinding
-  - simple_xml 모듈 (역방향 의존 금지)
-
-
-
  ## 테스트 작성 규칙
   - **docs/rules/TEST_RULE.md 참조**
-  - 테스트 실행: `./gradlew :simple_core:koverHtmlReport`
-
 
 
  ## 주요 클래스 역할 요약

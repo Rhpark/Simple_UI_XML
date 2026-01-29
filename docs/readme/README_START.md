@@ -122,7 +122,7 @@ We built **Simple UI XML** to give you that time back.
 - **Recycler/Adapter example**: [README_RECYCLERVIEW.md](README_RECYCLERVIEW.md)
 - **Extensions example**: [README_EXTENSIONS.md](README_EXTENSIONS.md)
 - **System Service Manager Info example**: [README_SERVICE_MANAGER_INFO.md](README_SERVICE_MANAGER_INFO.md)
-- **System Service Manager Controller example**: [README_SERVICE_MANAGER_CONTROL.md](README_SERVICE_MANAGER_CONTROL.md)
+- **System Service Manager Controller example**: [README_SERVICE_MANAGER_CONTROL.md](system_manager_controller/README_SERVICE_MANAGER_CONTROL.md)
 - **Quick start** example: [README_SAMPLE.md](README_SAMPLE.md)
 
 

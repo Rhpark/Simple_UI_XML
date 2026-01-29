@@ -11,9 +11,6 @@ import androidx.core.app.NotificationCompat
 import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
 import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.core.system_manager.base.BaseSystemService
-import kr.open.library.simple_ui.core.system_manager.controller.notification.NotificationDefaultChannel.DEFAULT_CHANNEL_DESCRIPTION
-import kr.open.library.simple_ui.core.system_manager.controller.notification.NotificationDefaultChannel.DEFAULT_CHANNEL_ID
-import kr.open.library.simple_ui.core.system_manager.controller.notification.NotificationDefaultChannel.DEFAULT_CHANNEL_NAME
 import kr.open.library.simple_ui.core.system_manager.controller.notification.internal.SimpleNotificationBuilder
 import kr.open.library.simple_ui.core.system_manager.controller.notification.option.BigPictureNotificationOption
 import kr.open.library.simple_ui.core.system_manager.controller.notification.option.BigTextNotificationOption
@@ -63,47 +60,47 @@ import kr.open.library.simple_ui.core.system_manager.extensions.getNotificationM
  * - `IMPORTANCE_MIN`: 낮은 중요도, 알림음이 없고 상태표시줄에 표시되지 않음<br>
  *
  * **Usage / 사용법:**<br>
- * 1. Create a notification channel using `createChannel()` or use the default channel.<br>
+ * 1. Create a NotificationChannel and pass it to the constructor (required).<br>
  * 2. Create notification options (DefaultNotificationOption, BigTextNotificationOption, etc.).<br>
  * 3. Call `showNotification()` with the options and show type (Activity, Service, Broadcast).<br>
- * 4. For progress notifications, use `updateProgressNotification()` and `finishProgressNotification()`.<br><br>
- * 1. `createChannel()`로 알림 채널을 생성하거나 기본 채널을 사용하세요.<br>
+ * 4. For progress notifications, use `updateProgress()` and `completeProgress()`.<br><br>
+ * 1. NotificationChannel을 생성한 뒤 생성자에 전달하세요(필수).<br>
  * 2. 알림 옵션을 생성하세요 (DefaultNotificationOption, BigTextNotificationOption 등).<br>
  * 3. 옵션과 표시 타입(Activity, Service, Broadcast)으로 `showNotification()`을 호출하세요.<br>
- * 4. 진행률 알림의 경우 `updateProgressNotification()`과 `finishProgressNotification()`을 사용하세요.<br>
+ * 4. 진행률 알림의 경우 `updateProgress()`와 `completeProgress()`를 사용하세요.<br>
  *
  * @param context The application context.<br><br>
  *                애플리케이션 컨텍스트.<br>
- * @param notificationChannel Initially active notification channel (default channel is used if not specified).<br><br>
- *                            초기 활성화될 알림 채널 (지정하지 않으면 기본 채널 사용).<br>
+ * @param notificationChannel Required initial notification channel.<br><br>
+ *                            필수 초기 알림 채널입니다.<br>
  */
 public open class SimpleNotificationController(
     context: Context,
     /**
-     * Currently active notification channel.<br><br>
+     * Currently active notification channel.<br>
+     * Example:<br>
+     * NotificationChannel(DEFAULT_CHANNEL_ID, DEFAULT_CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT)<br>
+     *     .apply { description = DEFAULT_CHANNEL_DESCRIPTION }<br><br>
      * 현재 활성화된 알림 채널입니다.<br>
+     * 예시:<br>
+     * NotificationChannel(DEFAULT_CHANNEL_ID, DEFAULT_CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT)<br>
+     *     .apply { description = DEFAULT_CHANNEL_DESCRIPTION }<br>
      */
-    private var notificationChannel: NotificationChannel = NotificationChannel(
-        DEFAULT_CHANNEL_ID,
-        DEFAULT_CHANNEL_NAME,
-        NotificationManager.IMPORTANCE_DEFAULT
-    ).apply {
-        description = DEFAULT_CHANNEL_DESCRIPTION
-    }
+    private var notificationChannel: NotificationChannel
 ) : BaseSystemService(
-        context,
-        checkSdkVersion(Build.VERSION_CODES.TIRAMISU,
-            positiveWork = { listOf(POST_NOTIFICATIONS) },
-            negativeWork = { null }
-        )
-    ) {
+    context.applicationContext,
+    checkSdkVersion(Build.VERSION_CODES.TIRAMISU,
+        positiveWork = { listOf(POST_NOTIFICATIONS) },
+        negativeWork = { null }
+    )
+) {
     /**
      * Lazy-initialized NotificationManager instance for managing notifications.<br><br>
      * 알림 관리를 위한 지연 초기화된 NotificationManager 인스턴스입니다.<br>
      */
-    public val notificationManager: NotificationManager by lazy { context.getNotificationManager() }
+    public val notificationManager: NotificationManager by lazy { context.applicationContext.getNotificationManager() }
 
-    private val builder = SimpleNotificationBuilder(context)
+    private val builder = SimpleNotificationBuilder(context.applicationContext)
 
     init {
         /**
@@ -193,8 +190,8 @@ public open class SimpleNotificationController(
      *                       고유 알림 식별자.
      * @param progressPercent Progress percentage (0-100).<br><br>
      *                        진행률 (0-100).
-     * @return `true` if update was successful, `false` otherwise.<br><br>
-     *         업데이트 성공 시 `true`, 그렇지 않으면 `false`.<br>
+     * @return `true` if update was applied, `false` if unchanged or not found.<br><br>
+     *         업데이트가 반영되면 `true`, 변경 없음/대상 없음이면 `false`.<br>
      */
     @RequiresPermission(POST_NOTIFICATIONS)
     public fun updateProgress(notificationId: Int, progressPercent: Int): Boolean = tryCatchSystemManager(false) {
@@ -203,12 +200,20 @@ public open class SimpleNotificationController(
             Logx.w("Invalid progress: $progressPercent (must be 0 ~ 100)")
             return false
         }
-        builder.updateProgress(notificationId, progressPercent)?.let {
-            showNotification(notificationId, it.builder)
-            return true
+        return when (val result = builder.updateProgress(notificationId, progressPercent)) {
+            is SimpleNotificationBuilder.ProgressUpdateResult.Updated -> {
+                showNotification(notificationId, result.info.builder)
+                true
+            }
+            SimpleNotificationBuilder.ProgressUpdateResult.NoChange -> {
+                Logx.d("Progress unchanged for ID: $notificationId")
+                false
+            }
+            SimpleNotificationBuilder.ProgressUpdateResult.NotFound -> {
+                Logx.w("Progress notification not found for ID: $notificationId")
+                false
+            }
         }
-        Logx.w("Progress notification not found for ID: $notificationId")
-        return false
     }
 
     /**

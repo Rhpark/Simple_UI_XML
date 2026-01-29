@@ -567,8 +567,7 @@ object Logx {
      *            메시지 본문.<br>
      */
     @JvmStatic
-    fun t(msg: Any?) =
-        pipeline.logThread(null, msg, true, false, Process.myTid().toLong())
+    fun t(msg: Any?) = pipeline.logThread(null, msg, true, false, Process.myTid().toLong())
 
     /**
      * Logs current thread id with custom tag and body.<br><br>
@@ -580,6 +579,5 @@ object Logx {
      *            메시지 본문.<br>
      */
     @JvmStatic
-    fun t(tag: String, msg: Any?) =
-        pipeline.logThread(tag, msg, true, true, Process.myTid().toLong())
+    fun t(tag: String, msg: Any?) = pipeline.logThread(tag, msg, true, true, Process.myTid().toLong())
 }

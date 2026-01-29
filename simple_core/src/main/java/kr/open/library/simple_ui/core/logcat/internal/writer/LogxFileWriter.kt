@@ -129,12 +129,7 @@ internal class LogxFileWriter {
      * @param lines 기록할 라인 목록.
      * @param errorTag 오류 로그 태그.
      */
-    fun writeLines(
-        context: Context,
-        config: LogxConfigSnapshot,
-        lines: List<String>,
-        errorTag: String,
-    ) {
+    fun writeLines(context: Context, config: LogxConfigSnapshot, lines: List<String>, errorTag: String) {
         if (lines.isEmpty()) return
         val command = WriterCommand.WriteLines(context, config, lines, errorTag)
         val result = channel.trySend(command)
@@ -169,12 +164,7 @@ internal class LogxFileWriter {
      * @param lines 기록할 라인 목록.
      * @param errorTag 오류 로그 태그.
      */
-    private fun writeLinesInternal(
-        context: Context,
-        config: LogxConfigSnapshot,
-        lines: List<String>,
-        errorTag: String,
-    ) {
+    private fun writeLinesInternal(context: Context, config: LogxConfigSnapshot, lines: List<String>, errorTag: String) {
         synchronized(fileLock) {
             val logDirectory = pathResolver.resolveDirectory(context, config, errorTag) ?: return
             try {

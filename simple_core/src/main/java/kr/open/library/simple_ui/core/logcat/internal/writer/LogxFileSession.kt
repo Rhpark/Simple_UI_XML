@@ -1,5 +1,6 @@
 package kr.open.library.simple_ui.core.logcat.internal.writer
 
+import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
 import kr.open.library.simple_ui.core.logcat.config.LogStorageType
 import kr.open.library.simple_ui.core.logcat.internal.common.LogxTimeUtils
 import java.io.BufferedWriter
@@ -114,13 +115,10 @@ internal class LogxFileSession {
     }
 
     private fun closeWriter() {
-        try {
+        safeCatch {
             writer?.close()
-        } catch (_: Exception) {
-            // ignore
-        } finally {
-            writer = null
         }
+        writer = null
     }
 
     private fun rotate(directory: File, appName: String) {
@@ -138,8 +136,7 @@ internal class LogxFileSession {
         return file.length() >= LogxFileConstants.MAX_FILE_SIZE_BYTES
     }
 
-    private fun buildBaseFileName(appName: String): String =
-        "${appName}_${LogxTimeUtils.fileTimestamp()}"
+    private fun buildBaseFileName(appName: String): String = "${appName}_${LogxTimeUtils.fileTimestamp()}"
 
     /**
      * 새로운 로그 파일을 생성합니다.

@@ -1,5 +1,5 @@
 # simple_xml 모듈 개요
- - **전역 규칙은 루트 claude.md 참조**
+ - **전역 규칙은 루트 AGENTS.md 참조**
  - 주석 스타일, 코딩 컨벤션, 대화 규칙 등은 루트 AGENTS.md를 따름
  - **현재 버전**: 0.3.46 (JitPack)
  - **Maven 좌표**: `com.github.Rhpark:Simple_UI_XML:0.3.46`
@@ -177,11 +177,8 @@
    - 애니메이션도 ViewAnimExtensions 사용
 
 
-
  ## 테스트 작성 규칙
   - **docs/rules/TEST_RULE.md 참조**
-  - 테스트 실행: `./gradlew :simple_xml:koverHtmlReport`
-
 
 
  ## 모듈 의존성 규칙
@@ -232,7 +229,7 @@
 
   ### simple_xml이 사용하는 simple_core 기능
    - Logx: 모든 로깅
-   - 에러 처리 규칙은 루트의 claude.md(에러 처리 규칙)를 참조
+   - 에러 처리 규칙은 루트의 docs/rules/CODING_RULE.md를 참조
    - checkSdkVersion: API 분기
    - PermissionExtensions: 권한 체크 기반
    - BaseViewModel: ViewModel 기반 클래스

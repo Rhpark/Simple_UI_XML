@@ -31,3 +31,11 @@
 
 ### Kover 커버리지
  - koverHtmlReport로 simple_xml, simple_core 리포트 생성
+
+
+## 테스트 실행 명령어
+- 전체 단위 테스트: ./gradlew testUnit
+- 전체 Robolectric: ./gradlew testRobolectric
+- simple_core 커버리지: ./gradlew :simple_core:koverHtmlReport
+- simple_xml 커버리지: ./gradlew :simple_xml:koverHtmlReport
+- KtLint 체크: ./gradlew ktlintCheck

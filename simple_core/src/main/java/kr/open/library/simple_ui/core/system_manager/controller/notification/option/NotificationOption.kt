@@ -3,7 +3,9 @@ package kr.open.library.simple_ui.core.system_manager.controller.notification.op
 import android.app.PendingIntent
 import android.content.Intent
 import android.graphics.Bitmap
+import android.os.Build
 import androidx.core.app.NotificationCompat.Action
+import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
 
 /**
  * Base sealed class containing common options for all notification types.<br><br>
@@ -25,6 +27,8 @@ import androidx.core.app.NotificationCompat.Action
  *                    알림 클릭 시 실행할 인텐트.<br>
  * @param actions List of action buttons to display.<br><br>
  *                표시할 액션 버튼 목록.<br>
+ * @param pendingIntentFlags PendingIntent flags used for clickIntent (validated on Android 12+).<br><br>
+ *                          clickIntent에 사용하는 PendingIntent 플래그이며 Android 12+에서 검증됩니다.<br>
  */
 sealed class SimpleNotificationOptionBase(
     public open val notificationId: Int,
@@ -35,7 +39,24 @@ sealed class SimpleNotificationOptionBase(
     public open val onGoing: Boolean,
     public open val clickIntent: Intent? = null,
     public open val actions: List<Action>? = null,
-)
+    public open val pendingIntentFlags: Int
+) {
+    init {
+        clickIntent?.let {
+            checkSdkVersion(Build.VERSION_CODES.S) {
+                val hasImmutable = pendingIntentFlags and PendingIntent.FLAG_IMMUTABLE != 0
+                val hasMutable = pendingIntentFlags and PendingIntent.FLAG_MUTABLE != 0
+
+                require(hasImmutable || hasMutable) {
+                    "Android 12+ requires FLAG_IMMUTABLE or FLAG_MUTABLE in pendingIntentFlags."
+                }
+                require(!(hasImmutable && hasMutable)) {
+                    "pendingIntentFlags must not include both FLAG_IMMUTABLE and FLAG_MUTABLE."
+                }
+            }
+        }
+    }
+}
 
 /**
  * Data class containing options for displaying a standard notification with title and content.<br><br>
@@ -67,6 +88,7 @@ public data class DefaultNotificationOption(
     override val onGoing: Boolean = false,
     override val clickIntent: Intent? = null,
     override val actions: List<Action>? = null,
+    override val pendingIntentFlags: Int = PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
 ) : SimpleNotificationOptionBase(
         notificationId = notificationId,
         smallIcon = smallIcon,
@@ -75,7 +97,8 @@ public data class DefaultNotificationOption(
         isAutoCancel = isAutoCancel,
         onGoing = onGoing,
         clickIntent = clickIntent,
-        actions = actions
+        actions = actions,
+        pendingIntentFlags = pendingIntentFlags
     )
 
 /**
@@ -112,7 +135,8 @@ public data class BigTextNotificationOption(
     override val onGoing: Boolean = false,
     override val clickIntent: Intent? = null,
     override val actions: List<Action>? = null,
-    public val snippet: String,
+    override val pendingIntentFlags: Int = PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+    public val snippet: String
 ) : SimpleNotificationOptionBase(
         notificationId = notificationId,
         smallIcon = smallIcon,
@@ -121,7 +145,8 @@ public data class BigTextNotificationOption(
         isAutoCancel = isAutoCancel,
         onGoing = onGoing,
         clickIntent = clickIntent,
-        actions = actions
+        actions = actions,
+        pendingIntentFlags = pendingIntentFlags
     )
 
 /**
@@ -158,6 +183,7 @@ public data class BigPictureNotificationOption(
     override val onGoing: Boolean = false,
     override val clickIntent: Intent? = null,
     override val actions: List<Action>? = null,
+    override val pendingIntentFlags: Int = PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
     public val bigPicture: Bitmap,
 ) : SimpleNotificationOptionBase(
         notificationId = notificationId,
@@ -167,7 +193,8 @@ public data class BigPictureNotificationOption(
         isAutoCancel = isAutoCancel,
         onGoing = onGoing,
         clickIntent = clickIntent,
-        actions = actions
+        actions = actions,
+        pendingIntentFlags = pendingIntentFlags
     )
 
 /**
@@ -204,6 +231,7 @@ public data class ProgressNotificationOption(
     override val onGoing: Boolean = false,
     override val clickIntent: Intent? = null,
     override val actions: List<Action>? = null,
+    override val pendingIntentFlags: Int = PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
     public val progressPercent: Int,
 ) : SimpleNotificationOptionBase(
         notificationId = notificationId,
@@ -213,7 +241,8 @@ public data class ProgressNotificationOption(
         isAutoCancel = isAutoCancel,
         clickIntent = clickIntent,
         onGoing = onGoing,
-        actions = actions
+        actions = actions,
+        pendingIntentFlags = pendingIntentFlags
     ) {
     init {
         require(progressPercent in 0..100) { "Progress percent must be between 0 and 100" }
@@ -234,5 +263,5 @@ public data class ProgressNotificationOption(
 public data class SimplePendingIntentOption(
     public val actionId: Int,
     public val clickIntent: Intent,
-    public val flags: Int = PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+    public val flags: Int,
 )

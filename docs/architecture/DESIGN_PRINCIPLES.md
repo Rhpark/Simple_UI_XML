@@ -134,8 +134,8 @@ The second goal is to make code predictable and easy to maintain over time.
 - **Encourage documentation-first changes**  
   **문서를 먼저 고치는 변경 문화를 장려**
 
-  Update `claude.md` and the relevant `docs/readme/README_*.md` before adding or modifying features in the code.  
-  코드를 추가·수정하기 전에 `claude.md`와 관련 `docs/readme/README_*.md`를 먼저 수정하는 흐름을 권장합니다.
+  Update `AGENTS.md` and the relevant `docs/readme/README_*.md` before adding or modifying features in the code.  
+  코드를 추가·수정하기 전에 `AGENTS.md`와 관련 `docs/readme/README_*.md`를 먼저 수정하는 흐름을 권장합니다.
 
 ---
 
@@ -418,11 +418,11 @@ We make it possible to test and observe behavior without rewriting components.
 We document rules and patterns before or alongside code changes.  
 코드를 변경하기 전에, 또는 변경과 동시에 규칙과 패턴을 문서로 남깁니다.
 
-- **Module-level `claude.md` files**  
-  **모듈별 `claude.md` 파일**
+- **Module-level `AGENTS.md` files**  
+  **모듈별 `AGENTS.md` 파일**
 
-  Each module has its own `claude.md` describing allowed patterns, boundaries, and expectations.  
-  각 모듈은 허용되는 패턴, 경계, 기대사항을 기술한 자체 `claude.md`를 가집니다.
+  Each module has its own `AGENTS.md` describing allowed patterns, boundaries, and expectations.  
+  각 모듈은 허용되는 패턴, 경계, 기대사항을 기술한 자체 `AGENTS.md`를 가집니다.
 
 - **Theme-specific READMEs**  
   **주제별 README 문서**
@@ -624,8 +624,8 @@ Before adding new code, decide which module and layer it should live in.
 We recommend following a consistent sequence when extending the library.  
 라이브러리를 확장할 때 일관된 순서를 따를 것을 권장합니다.
 
-1. **Clarify intent in `claude.md`.**  
-   **의도를 `claude.md`에 먼저 정리합니다.**
+1. **Clarify intent in `AGENTS.md`.**  
+   **의도를 `AGENTS.md`에 먼저 정리합니다.**
 
    Describe what you want to add, where it belongs, and any constraints or non-goals.  
    무엇을 추가할지, 어디에 둘지, 어떤 제약과 비목표가 있는지 명시합니다.

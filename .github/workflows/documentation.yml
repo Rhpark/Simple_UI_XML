@@ -74,34 +74,34 @@ jobs:
           
           echo "✅ README.md updated"
 
-      - name: Update claude.md
+      - name: Update AGENTS.md
         run: |
           VERSION="${{ steps.version.outputs.version }}"
           
           # Line 4: JitPack version
-          sed -i "s/JitPack [0-9.]\+/JitPack $VERSION/g" claude.md
+          sed -i "s/JitPack [0-9.]\+/JitPack $VERSION/g" AGENTS.md
           
-          echo "✅ claude.md updated"
+          echo "✅ AGENTS.md updated"
 
-      - name: Update simple_xml/claude.md
+      - name: Update simple_xml/AGENTS.md
         run: |
           VERSION="${{ steps.version.outputs.version }}"
           
           # Line 4-5: 현재 버전 및 Maven 좌표
-          sed -i "s/\*\*현재 버전\*\*: [0-9.]\+/**현재 버전**: $VERSION/g" simple_xml/claude.md
-          sed -i "s/Simple_UI_XML:[0-9.]\+/Simple_UI_XML:$VERSION/g" simple_xml/claude.md
+          sed -i "s/\*\*현재 버전\*\*: [0-9.]\+/**현재 버전**: $VERSION/g" simple_xml/AGENTS.md
+          sed -i "s/Simple_UI_XML:[0-9.]\+/Simple_UI_XML:$VERSION/g" simple_xml/AGENTS.md
           
-          echo "✅ simple_xml/claude.md updated"
+          echo "✅ simple_xml/AGENTS.md updated"
 
-      - name: Update simple_core/claude.md
+      - name: Update simple_core/AGENTS.md
         run: |
           VERSION="${{ steps.version.outputs.version }}"
           
           # Line 4-5: 현재 버전 및 Maven 좌표
-          sed -i "s/\*\*현재 버전\*\*: [0-9.]\+/**현재 버전**: $VERSION/g" simple_core/claude.md
-          sed -i "s/Simple_UI_Core:[0-9.]\+/Simple_UI_Core:$VERSION/g" simple_core/claude.md
+          sed -i "s/\*\*현재 버전\*\*: [0-9.]\+/**현재 버전**: $VERSION/g" simple_core/AGENTS.md
+          sed -i "s/Simple_UI_Core:[0-9.]\+/Simple_UI_Core:$VERSION/g" simple_core/AGENTS.md
           
-          echo "✅ simple_core/claude.md updated"
+          echo "✅ simple_core/AGENTS.md updated"
 
       - name: Update PRD.md
         run: |
@@ -132,7 +132,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           
-          git add README.md claude.md simple_xml/claude.md simple_core/claude.md PRD.md
+          git add README.md AGENTS.md simple_xml/AGENTS.md simple_core/AGENTS.md PRD.md
           git commit -m "docs: Update version to $VERSION [skip ci]"
           git push
           

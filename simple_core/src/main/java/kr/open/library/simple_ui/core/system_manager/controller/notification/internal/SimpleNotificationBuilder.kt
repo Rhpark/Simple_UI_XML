@@ -47,6 +47,14 @@ import java.util.concurrent.TimeUnit
 internal class SimpleNotificationBuilder(
     private val context: Context
 ) {
+    internal sealed class ProgressUpdateResult {
+        data class Updated(val info: ProgressNotificationInfo) : ProgressUpdateResult()
+
+        data object NotFound : ProgressUpdateResult()
+
+        data object NoChange : ProgressUpdateResult()
+    }
+
     /**
      * Thread-safe map storing progress notification builders by notification ID.<br>
      * Used for updating progress without recreating the builder.<br><br>
@@ -56,10 +64,19 @@ internal class SimpleNotificationBuilder(
     private val progressBuilders = ConcurrentHashMap<Int, ProgressNotificationInfo>()
 
     /**
-     * Scheduler for cleaning up stale progress notifications (created on demand).<br><br>
+     * Scheduler for cleaning up stale progress notifications (created on demand).<br>
+     * Uses @Volatile + double-checked locking to prevent race conditions during scheduler creation.<br><br>
      * 오래된 진행률 알림을 정리하기 위한 스케줄러(필요 시 생성).<br>
+     * @Volatile + double-checked locking으로 스케줄러 생성 시 경합 조건을 방지합니다.<br>
      */
+    @Volatile
     private var cleanupScheduler: ScheduledExecutorService? = null
+
+    /**
+     * Lock object for synchronizing cleanup scheduler creation and shutdown.<br><br>
+     * 정리 스케줄러 생성 및 종료 동기화를 위한 락 객체입니다.<br>
+     */
+    private val schedulerLock = Any()
 
     /**
      * Data class holding progress notification information.<br><br>
@@ -73,6 +90,7 @@ internal class SimpleNotificationBuilder(
     public data class ProgressNotificationInfo(
         val builder: NotificationCompat.Builder,
         val lastUpdateTime: Long = System.currentTimeMillis(),
+        var progressPercent: Int = 0,
     )
 
     /**
@@ -87,7 +105,7 @@ internal class SimpleNotificationBuilder(
     public fun getBuilder(
         notificationChannel: NotificationChannel,
         notificationOption: SimpleNotificationOptionBase,
-        showType: SimpleNotificationType
+        showType: SimpleNotificationType,
     ): NotificationCompat.Builder = with(notificationOption) {
         val builder = NotificationCompat.Builder(context, notificationChannel.id).apply {
             setSmallIcon(smallIcon)
@@ -98,7 +116,7 @@ internal class SimpleNotificationBuilder(
             clickIntent?.let {
                 setContentIntent(
                     getPendingIntentType(
-                        SimplePendingIntentOption(notificationId, it),
+                        SimplePendingIntentOption(notificationId, it, pendingIntentFlags),
                         showType
                     )
                 )
@@ -120,7 +138,7 @@ internal class SimpleNotificationBuilder(
     public fun getProgressBuilder(
         notificationChannel: NotificationChannel,
         notificationOption: ProgressNotificationOption,
-        showType: SimpleNotificationType
+        showType: SimpleNotificationType,
     ): NotificationCompat.Builder {
         val builder = getBuilder(notificationChannel, notificationOption, showType).apply {
             setProgress(100, notificationOption.progressPercent, false)
@@ -128,7 +146,10 @@ internal class SimpleNotificationBuilder(
         }
 
         progressBuilders[notificationOption.notificationId] =
-            ProgressNotificationInfo(builder) // 진행률 업데이트를 위해 빌더 저장
+            ProgressNotificationInfo(
+                builder = builder,
+                progressPercent = notificationOption.progressPercent,
+            ) // 진행률 업데이트를 위해 빌더 저장
 
         // 첫 번째 진행률 알림 생성 시 스케줄러 시작
         if (cleanupScheduler == null) {
@@ -145,36 +166,35 @@ internal class SimpleNotificationBuilder(
      * 30분 동안 업데이트되지 않은 진행률 알림 빌더를 제거하여 메모리 누수를 방지합니다.<br>
      */
     private fun startProgressCleanupScheduler() {
-        if (cleanupScheduler != null) {
-            return
-        }
-        try {
-            cleanupScheduler = Executors.newSingleThreadScheduledExecutor()
-            cleanupScheduler?.scheduleWithFixedDelay({
-                try {
-                    val currentTime = System.currentTimeMillis()
-                    val staleThreshold = 30 * 60 * 1000L // 30분
+        if (cleanupScheduler != null) return
+        synchronized(schedulerLock) {
+            if (cleanupScheduler != null) return // Double-checked locking
+            safeCatch {
+                cleanupScheduler = Executors.newSingleThreadScheduledExecutor()
+                cleanupScheduler?.scheduleWithFixedDelay({
+                    try {
+                        val currentTime = System.currentTimeMillis()
+                        val staleThreshold = 30 * 60 * 1000L // 30분
 
-                    val staleNotifications =
-                        progressBuilders.filter { (_, info) -> currentTime - info.lastUpdateTime > staleThreshold }.keys
+                        val staleNotifications =
+                            progressBuilders.filter { (_, info) -> currentTime - info.lastUpdateTime > staleThreshold }.keys
 
-                    staleNotifications.forEach { notificationId ->
-                        progressBuilders.remove(notificationId)
-                        stopProgressCleanupSchedulerIfIdle()
-                        Logx.d("Removed stale progress notification: $notificationId")
+                        staleNotifications.forEach { notificationId ->
+                            progressBuilders.remove(notificationId)
+                            stopProgressCleanupSchedulerIfIdle()
+                            Logx.d("Removed stale progress notification: $notificationId")
+                        }
+
+                        if (staleNotifications.isNotEmpty()) {
+                            Logx.d("Cleaned up ${staleNotifications.size} stale progress notifications")
+                        }
+                    } catch (e: Exception) {
+                        Logx.e("Error during progress notification cleanup: ${e.message}")
                     }
+                }, 5, 5, TimeUnit.MINUTES) // 5분 후 시작, 5분마다 실행
 
-                    if (staleNotifications.isNotEmpty()) {
-                        Logx.d("Cleaned up ${staleNotifications.size} stale progress notifications")
-                    }
-                } catch (e: Exception) {
-                    Logx.e("Error during progress notification cleanup: ${e.message}")
-                }
-            }, 5, 5, TimeUnit.MINUTES) // 5분 후 시작, 5분마다 실행
-
-            Logx.d("Progress cleanup scheduler started")
-        } catch (e: Exception) {
-            Logx.e("Failed to start progress cleanup scheduler: ${e.message}")
+                Logx.d("Progress cleanup scheduler started")
+            }
         }
     }
 
@@ -186,14 +206,16 @@ internal class SimpleNotificationBuilder(
      */
     private fun stopProgressCleanupSchedulerIfIdle() {
         if (progressBuilders.isNotEmpty()) return
-
-        cleanupScheduler?.let { scheduler ->
-            scheduler.shutdown()
-            if (!scheduler.awaitTermination(1, TimeUnit.SECONDS)) {
-                scheduler.shutdownNow()
+        synchronized(schedulerLock) {
+            if (progressBuilders.isNotEmpty()) return // Double-checked locking
+            cleanupScheduler?.let { scheduler ->
+                scheduler.shutdown()
+                if (!scheduler.awaitTermination(1, TimeUnit.SECONDS)) {
+                    scheduler.shutdownNow()
+                }
             }
+            cleanupScheduler = null
         }
-        cleanupScheduler = null
     }
 
     /**
@@ -208,11 +230,10 @@ internal class SimpleNotificationBuilder(
     public fun getBigPictureBuilder(
         notificationChannel: NotificationChannel,
         notificationOption: BigPictureNotificationOption,
-        showType: SimpleNotificationType
-    ): NotificationCompat.Builder =
-        getBuilder(notificationChannel, notificationOption, showType).apply {
-            setStyle(NotificationCompat.BigPictureStyle().bigPicture(notificationOption.bigPicture))
-        }
+        showType: SimpleNotificationType,
+    ): NotificationCompat.Builder = getBuilder(notificationChannel, notificationOption, showType).apply {
+        setStyle(NotificationCompat.BigPictureStyle().bigPicture(notificationOption.bigPicture))
+    }
 
     /**
      * Creates a notification builder with BigText style.<br><br>
@@ -226,31 +247,31 @@ internal class SimpleNotificationBuilder(
     public fun getBigTextBuilder(
         notificationChannel: NotificationChannel,
         notificationOption: BigTextNotificationOption,
-        showType: SimpleNotificationType
-    ): NotificationCompat.Builder =
-        getBuilder(notificationChannel, notificationOption, showType).apply {
-            setStyle(NotificationCompat.BigTextStyle().bigText(notificationOption.snippet))
-        }
+        showType: SimpleNotificationType,
+    ): NotificationCompat.Builder = getBuilder(notificationChannel, notificationOption, showType).apply {
+        setStyle(NotificationCompat.BigTextStyle().bigText(notificationOption.snippet))
+    }
 
     /**
      * Cleans up resources. Should be called when Activity/Service is destroyed.<br><br>
      * 리소스를 정리합니다. Activity/Service가 종료될 때 호출해야 합니다.<br>
      */
     public fun cleanup() {
-        try {
-            progressBuilders.clear()
-            stopProgressCleanupSchedulerIfIdle()
-            cleanupScheduler?.let { scheduler ->
-                scheduler.shutdown()
-                if (!scheduler.awaitTermination(1, TimeUnit.SECONDS)) {
-                    scheduler.shutdownNow()
+        progressBuilders.clear()
+        synchronized(schedulerLock) {
+            try {
+                cleanupScheduler?.let { scheduler ->
+                    scheduler.shutdown()
+                    if (!scheduler.awaitTermination(1, TimeUnit.SECONDS)) {
+                        scheduler.shutdownNow()
+                    }
                 }
+                cleanupScheduler = null
+            } catch (e: InterruptedException) {
+                cleanupScheduler?.shutdownNow()
+                cleanupScheduler = null
+                Thread.currentThread().interrupt()
             }
-            cleanupScheduler = null
-        } catch (e: InterruptedException) {
-            cleanupScheduler?.shutdownNow()
-            cleanupScheduler = null
-            Thread.currentThread().interrupt()
         }
     }
 
@@ -287,10 +308,7 @@ internal class SimpleNotificationBuilder(
      *         완료 처리 성공 시 `true`, 그렇지 않으면 `false`.<br>
      */
     @RequiresPermission(POST_NOTIFICATIONS)
-    public fun completeProgress(
-        notificationId: Int,
-        completedContent: String? = null
-    ): ProgressNotificationInfo? = safeCatch(null) {
+    public fun completeProgress(notificationId: Int, completedContent: String? = null): ProgressNotificationInfo? = safeCatch(null) {
         progressBuilders[notificationId]?.let { info ->
             info.builder.setProgress(0, 0, false) // 진행률 바 제거
             info.builder.setOnlyAlertOnce(false) // 완료 시 한 번 알림 허용
@@ -315,24 +333,32 @@ internal class SimpleNotificationBuilder(
      *                       고유 알림 식별자.
      * @param progressPercent Progress percentage (0-100).<br><br>
      *                        진행률 (0-100).
-     * @return `true` if update was successful, `false` otherwise.<br><br>
-     *         업데이트 성공 시 `true`, 그렇지 않으면 `false`.<br>
+     * @return ProgressUpdateResult indicating whether the update occurred, was skipped, or not found.<br><br>
+     *         업데이트 결과(성공/변경 없음/대상 없음)를 나타내는 ProgressUpdateResult.<br>
      */
     @RequiresPermission(POST_NOTIFICATIONS)
-    public fun updateProgress(
-        notificationId: Int,
-        progressPercent: Int
-    ): ProgressNotificationInfo? = safeCatch(null) {
-        progressBuilders[notificationId]?.let { info ->
-            info.builder.setProgress(100, progressPercent, false)
-            // 업데이트 시간 갱신
-            progressBuilders[notificationId] =
-                info.copy(lastUpdateTime = System.currentTimeMillis())
-            return progressBuilders[notificationId]
+    public fun updateProgress(notificationId: Int, progressPercent: Int): ProgressUpdateResult =
+        safeCatch(ProgressUpdateResult.NotFound) {
+            var result: ProgressUpdateResult = ProgressUpdateResult.NotFound
+            progressBuilders.compute(notificationId) { _, existing ->
+                if (existing == null) {
+                    result = ProgressUpdateResult.NotFound
+                    return@compute null
+                }
+                if (existing.progressPercent == progressPercent) {
+                    result = ProgressUpdateResult.NoChange
+                    return@compute existing
+                }
+                // var progressPercent 직접 변경, val lastUpdateTime은 copy()로 새 객체 생성
+                // Mutate var progressPercent directly, create new object via copy() for val lastUpdateTime
+                existing.progressPercent = progressPercent
+                existing.builder.setProgress(100, progressPercent, false)
+                val updated = existing.copy(lastUpdateTime = System.currentTimeMillis())
+                result = ProgressUpdateResult.Updated(updated)
+                updated
+            }
+            result
         }
-
-        return null
-    }
 
     /**
      * Returns the appropriate PendingIntent based on the configured show type.<br><br>
@@ -343,10 +369,7 @@ internal class SimpleNotificationBuilder(
      * @return Configured PendingIntent instance.<br><br>
      *         구성된 PendingIntent 인스턴스.<br>
      */
-    private fun getPendingIntentType(
-        pendingIntentOption: SimplePendingIntentOption,
-        showType: SimpleNotificationType
-    ) = when (showType) {
+    private fun getPendingIntentType(pendingIntentOption: SimplePendingIntentOption, showType: SimpleNotificationType) = when (showType) {
         SimpleNotificationType.ACTIVITY -> getClickShowActivityPendingIntent(pendingIntentOption)
         SimpleNotificationType.SERVICE -> getClickShowServicePendingIntent(pendingIntentOption)
         SimpleNotificationType.BROADCAST -> getClickShowBroadcastPendingIntent(pendingIntentOption)

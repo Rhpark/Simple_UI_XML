@@ -18,56 +18,21 @@
 
 
 # 모듈별 상세 가이드
- - **simple_core 모듈**: simple_core/claude.md 참조
- - **simple_xml 모듈**: simple_xml/claude.md 참조
- - 각 모듈별 특화 규칙 및 주의사항은 해당 모듈 claude.md 확인
+ - **simple_core 모듈**: simple_core/AGENTS.md 참조
+ - **simple_xml 모듈**: simple_xml/AGENTS.md 참조
+ - 각 모듈별 특화 규칙 및 주의사항은 해당 모듈 AGENTS.md 확인
 
 
 ## 새로운 모듈 추가 절차
  - settings.gradle.kts에 모듈 추가
  - build.gradle.kts 생성 (simple_core, simple_xml 템플릿 참조)
  - namespace 설정 및 의존성 구성
- - 모듈별 claude.md 작성
+ - 모듈별 AGENTS.md 작성
  - 루트 문서(AGENTS.md 및 RULE 문서)에 모듈 링크 추가
  - publishing 설정 (groupId, artifactId)
  - Dokka 설정 추가
  - Kover 설정 추가
  - test/testRobolectric 태스크 구성
-
-
-# 라이브러리 주요 기능
-
-## 베이스 UI 스캐폴딩
- - 시스템 바·권한·edge-to-edge 처리까지 포함한 simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/components/activity/root/RootActivity.kt.
- - 자동 레이아웃/데이터바인딩 포함 BaseActivity.kt.
- - BaseBindingActivity.kt.
- - 동일 컨셉의 Fragment/Dialog/라이프사이클 레이아웃 클래스들.
-
-## RecyclerView 편의
- - 안전한 리스트 연산 큐 simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/adapter/queue/AdapterOperationQueue.kt.
- - Diff/List/Binding 어댑터.
- - 스크롤 방향·엣지 감지용 RecyclerScrollStateView.kt.
-
-## 확장 함수 팩
- - 문자열/날짜/번들/단위 변환/try-catch 등 범용 확장 (simple_core/src/main/java/kr/open/library/simple_ui/core/extensions/...).
- - View/Resource/Toast/SnackBar/Anim 확장 (simple_xml/src/main/java/kr/open/library/simple_ui/xml/extensions/view/...).
-
-## System Manager 정보·제어
- - 배터리·위치·디스플레이·네트워크·Telephony·SIM을 StateFlow 기반으로 제공 (simple_core/src/main/java/kr/open/library/simple_ui/core/system_manager/info/*).
- - Wi-Fi/알람/알림/진동 등 제어기 (simple_core/src/main/java/kr/open/library/simple_ui/core/system_manager/controller/*).
- - 키보드·플로팅뷰 컨트롤러 (simple_xml/src/main/java/kr/open/library/simple_ui/xml/system_manager/controller/*).
-
-## 로깅
- - DSL 구성, 파일 저장, 포매터/필터/스택트레이스 지원하는 simple_core/src/main/java/kr/open/library/simple_ui/core/logcat/Logx.kt.
- - 내부 구성·작성기 구현체들.
-
-## 권한 처리
- - 플랫폼 특수 권한까지 아우르는 Context 확장 (simple_core/src/main/java/kr/open/library/simple_ui/core/permissions/extentions/PermissionExtensions.kt).
- - ActivityResult 기반 큐·재요청·특수 권한 흐름을 묶은 오케스트레이터 simple_xml/src/main/java/kr/open/library/simple_ui/xml/permissions/api/PermissionRequester.kt.
-
-## MVVM 베이스
- - 라이프사이클 옵저버를 포함한 simple_core/src/main/java/kr/open/library/simple_ui/core/viewmodel/BaseViewModel.kt
- - 이벤트 채널 제공 BaseViewModelEvent.kt.
 
 
 # 프로젝트 가치 제안

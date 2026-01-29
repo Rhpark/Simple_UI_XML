@@ -30,7 +30,6 @@ class NotificationControllerActivity :
 
     private val notificationController by lazy {
         getNotificationController(
-            showType = SimpleNotificationType.ACTIVITY,
             notificationChannel = NotificationChannel(
                 "default_channel",
                 "Default Notifications",
