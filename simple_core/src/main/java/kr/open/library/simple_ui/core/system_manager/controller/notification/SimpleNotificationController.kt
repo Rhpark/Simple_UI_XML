@@ -88,12 +88,12 @@ public open class SimpleNotificationController(
      */
     private var notificationChannel: NotificationChannel
 ) : BaseSystemService(
-    context.applicationContext,
-    checkSdkVersion(Build.VERSION_CODES.TIRAMISU,
-        positiveWork = { listOf(POST_NOTIFICATIONS) },
-        negativeWork = { null }
-    )
-) {
+        context.applicationContext,
+        checkSdkVersion(Build.VERSION_CODES.TIRAMISU,
+            positiveWork = { listOf(POST_NOTIFICATIONS) },
+            negativeWork = { null }
+        )
+    ) {
     /**
      * Lazy-initialized NotificationManager instance for managing notifications.<br><br>
      * 알림 관리를 위한 지연 초기화된 NotificationManager 인스턴스입니다.<br>

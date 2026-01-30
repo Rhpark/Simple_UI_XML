@@ -103,7 +103,7 @@ private fun removeAlarm(key: Int) {
 ```kotlin
 // Simple Alarm registration - One line (간단한 Alarm 등록 - 한 줄)
 private fun registerAlarm(hour: Int, minute: Int) {
-    val alarmVo = AlarmVo(
+    val AlarmVO = AlarmVO(
         key = 1,
         title = "Alarm Title",
         message = "Alarm Message",
@@ -111,19 +111,19 @@ private fun registerAlarm(hour: Int, minute: Int) {
         minute = minute,
         second = 0
     )
-    getAlarmController().registerAlarmClock(AlarmReceiver::class.java, alarmVo)
+    getAlarmController().registerAlarmClock(AlarmReceiver::class.java, AlarmVO)
 }
 
 // Exact Alarm (Idle 모드에서도 실행)
 private fun registerExactAlarm(hour: Int, minute: Int) {
-    val alarmVo = AlarmVo(
+    val AlarmVO = AlarmVO(
         key = 2,
         title = "Exact Alarm",
         message = "Exact Alarm Message",
         hour = hour,
         minute = minute
     )
-    getAlarmController().registerAlarmExactAndAllowWhileIdle(AlarmReceiver::class.java, alarmVo)
+    getAlarmController().registerAlarmExactAndAllowWhileIdle(AlarmReceiver::class.java, AlarmVO)
 }
 
 // Alarm removal - One line (알람 삭제 - 한 줄)

@@ -1,10 +1,11 @@
-package kr.open.library.simpleui_xml.system_service_manager.controller.alarm
+﻿package kr.open.library.simpleui_xml.system_service_manager.controller.alarm
 
-import android.Manifest.permission.SCHEDULE_EXACT_ALARM
 import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
-import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
+import kr.open.library.simple_ui.core.system_manager.controller.alarm.vo.AlarmIdleMode
+import kr.open.library.simple_ui.core.system_manager.controller.alarm.vo.AlarmNotificationVO
+import kr.open.library.simple_ui.core.system_manager.controller.alarm.vo.AlarmScheduleVO
 import kr.open.library.simple_ui.core.system_manager.controller.alarm.vo.AlarmVO
 import kr.open.library.simple_ui.core.system_manager.extensions.getAlarmController
 import kr.open.library.simple_ui.xml.extensions.view.toastShowShort
@@ -12,9 +13,11 @@ import kr.open.library.simple_ui.xml.ui.components.activity.normal.BaseActivity
 import kr.open.library.simpleui_xml.R
 import kr.open.library.simpleui_xml.databinding.ActivityAlarmControllerBinding
 import kr.open.library.simpleui_xml.system_service_manager.controller.receiver.AlarmReceiver
+import java.util.Locale
 
 class AlarmControllerActivity : BaseActivity(R.layout.activity_alarm_controller) {
     private lateinit var binding: ActivityAlarmControllerBinding
+    private val alarmController by lazy { getAlarmController() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,170 +31,185 @@ class AlarmControllerActivity : BaseActivity(R.layout.activity_alarm_controller)
     private fun initListener() {
         binding.run {
             btnRegisterAlarmClock.setOnClickListener {
-                checkSdkVersion(Build.VERSION_CODES.S,
-                    positiveWork = {
-                        requestPermissions(listOf(SCHEDULE_EXACT_ALARM)) {
-                            if (it.isEmpty()) registerAlarmClock()
-                            else toastShowShort("denied permissions $it")
-                        }
-                    },
-                    negativeWork = { registerAlarmClock() }
-                )
+                runExactAlarmPermissionOrOpenSettings { registerAlarmClock() }
             }
 
             btnRegisterExactAlarm.setOnClickListener {
-                checkSdkVersion(Build.VERSION_CODES.S,
-                    positiveWork = {
-                        requestPermissions(listOf(SCHEDULE_EXACT_ALARM)) {
-                            if (it.isEmpty()) registerAlarmExactAndAllowWhileIdle()
-                            else toastShowShort("denied permissions $it")
-                        }
-                    },
-                    negativeWork = { registerAlarmExactAndAllowWhileIdle() }
-                )
+                runExactAlarmPermissionOrOpenSettings { registerAlarmExactAndAllowWhileIdle() }
             }
 
             btnRegisterAllowWhileIdle.setOnClickListener {
-                checkSdkVersion(Build.VERSION_CODES.S,
-                    positiveWork = {
-                        requestPermissions(listOf(SCHEDULE_EXACT_ALARM)) {
-                            if (it.isEmpty()) registerAlarmAndAllowWhileIdle()
-                            else toastShowShort("denied permissions $it")
-                        }
-                    },
-                    negativeWork = { registerAlarmAndAllowWhileIdle() }
-                )
+                registerAlarmAndAllowWhileIdle()
             }
 
             btnRemoveAlarm.setOnClickListener {
-                checkSdkVersion(Build.VERSION_CODES.S,
-                    positiveWork = {
-                        requestPermissions(listOf(SCHEDULE_EXACT_ALARM)) {
-                            if (it.isEmpty()) remove()
-                            else toastShowShort("denied permissions $it")
-                        }
-                    },
-                    negativeWork = { remove() }
-                )
+                remove()
             }
 
             btnCheckExists.setOnClickListener {
-                checkSdkVersion(Build.VERSION_CODES.S,
-                    positiveWork = {
-                        requestPermissions(listOf(SCHEDULE_EXACT_ALARM)) {
-                            if (it.isEmpty()) exists()
-                            else toastShowShort("denied permissions $it")
-                        }
-                    },
-                    negativeWork = { exists() }
-                )
+                exists()
             }
         }
     }
 
     private fun registerAlarmClock() {
-        binding.run {
-            val hour = timePicker.hour
-            val minute = timePicker.minute
+        val key = getAlarmKeyOrNull() ?: return
+        val alarmVo = buildAlarmVo(
+            key = key,
+            idleMode = AlarmIdleMode.NONE,
+            title = "알람 시계",
+            message = "알람 시계 등록 테스트",
+        )
 
-            val alarmVo =
-                AlarmVO(
-                    key = 1,
-                    title = "AlarmClock Title",
-                    message = "AlarmClock Message",
-                    soundUri = null,
-                    hour = hour,
-                    minute = minute,
-                    second = 0,
-                )
-
-            val result = getAlarmController().registerAlarmClock(AlarmReceiver::class.java, alarmVo)
-            if (result) {
-                tvResult.text = "AlarmClock registered at $hour:$minute"
-                toastShowShort("AlarmClock registered")
-            } else {
-                tvResult.text = "Failed to register AlarmClock"
-                toastShowShort("Failed to register")
-            }
-        }
+        registerOrUpdate(
+            key = key,
+            alarmVo = alarmVo,
+            updateAction = { alarmController.updateAlarmClock(AlarmReceiver::class.java, alarmVo) },
+            successLabel = "알람 시계",
+        )
     }
 
     private fun registerAlarmExactAndAllowWhileIdle() {
-        binding.run {
-            val hour = timePicker.hour
-            val minute = timePicker.minute
+        val key = getAlarmKeyOrNull() ?: return
+        val alarmVo = buildAlarmVo(
+            key = key,
+            idleMode = AlarmIdleMode.EXACT,
+            title = "정확 알람",
+            message = "정확 알람(유휴 허용) 테스트",
+        )
 
-            val alarmVo =
-                AlarmVO(
-                    key = 2,
-                    title = "Exact Alarm Title",
-                    message = "Exact Alarm (Allow While Idle)",
-                    soundUri = null,
-                    hour = hour,
-                    minute = minute,
-                    second = 0,
-                )
-
-            val result = getAlarmController().registerAlarmExactAndAllowWhileIdle(AlarmReceiver::class.java, alarmVo)
-            if (result) {
-                tvResult.text = "Exact Alarm registered at $hour:$minute"
-                toastShowShort("Exact Alarm registered")
-            } else {
-                tvResult.text = "Failed to register Exact Alarm"
-                toastShowShort("Failed to register")
-            }
-        }
+        registerOrUpdate(
+            key = key,
+            alarmVo = alarmVo,
+            updateAction = { alarmController.updateExactAndAllowWhileIdle(AlarmReceiver::class.java, alarmVo) },
+            successLabel = "정확 알람",
+        )
     }
 
     private fun registerAlarmAndAllowWhileIdle() {
-        binding.run {
-            val hour = timePicker.hour
-            val minute = timePicker.minute
+        val key = getAlarmKeyOrNull() ?: return
+        val alarmVo = buildAlarmVo(
+            key = key,
+            idleMode = AlarmIdleMode.INEXACT,
+            title = "유휴 허용 알람",
+            message = "유휴 허용(부정확) 테스트",
+        )
 
-            val alarmVo =
-                AlarmVO(
-                    key = 3,
-                    title = "Allow While Idle Alarm",
-                    message = "This alarm allows idle mode",
-                    soundUri = null,
-                    hour = hour,
-                    minute = minute,
-                    second = 0,
-                )
-
-            val result = getAlarmController().registerAlarmAndAllowWhileIdle(AlarmReceiver::class.java, alarmVo)
-            if (result) {
-                tvResult.text = "Allow While Idle Alarm registered at $hour:$minute"
-                toastShowShort("Alarm registered")
-            } else {
-                tvResult.text = "Failed to register Alarm"
-                toastShowShort("Failed to register")
-            }
-        }
+        registerOrUpdate(
+            key = key,
+            alarmVo = alarmVo,
+            updateAction = { alarmController.updateAllowWhileIdle(AlarmReceiver::class.java, alarmVo) },
+            successLabel = "유휴 허용 알람",
+        )
     }
 
     private fun remove() {
-        binding.run {
-            val key = edtAlarmKey.text.toString().toIntOrNull() ?: 1
-            val result = getAlarmController().remove(key, AlarmReceiver::class.java)
+        val key = getAlarmKeyOrNull() ?: return
+        val removed = alarmController.remove(key, AlarmReceiver::class.java)
+        val storeRemoved = AlarmSampleStore.remove(key)
 
-            if (result) {
-                tvResult.text = "Alarm with key $key removed"
-                toastShowShort("Alarm removed")
-            } else {
-                tvResult.text = "Failed to remove alarm with key $key"
-                toastShowShort("Failed to remove")
-            }
-        }
+        showResult(
+            title = "알람 삭제",
+            detail = "컨트롤러 삭제=$removed, 저장소 삭제=$storeRemoved, key=$key",
+        )
     }
 
     private fun exists() {
-        binding.run {
-            val key = edtAlarmKey.text.toString().toIntOrNull() ?: 1
-            val exists = getAlarmController().exists(key, AlarmReceiver::class.java)
+        val key = getAlarmKeyOrNull() ?: return
+        val controllerExists = alarmController.exists(key, AlarmReceiver::class.java)
+        val storeExists = AlarmSampleStore.exists(key)
 
-            tvResult.text = "Alarm with key $key exists: $exists"
-            toastShowShort("Exists: $exists")
+        showResult(
+            title = "알람 존재 확인",
+            detail = "컨트롤러=$controllerExists, 저장소=$storeExists, key=$key",
+        )
+    }
+
+    private fun runExactAlarmPermissionOrOpenSettings(onGranted: () -> Unit) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+            onGranted()
+            return
         }
+
+        if (alarmController.canScheduleExactAlarms()) {
+            onGranted()
+            return
+        }
+
+        val intent = alarmController.buildExactAlarmPermissionIntent()
+        if (intent != null) {
+            toastShowShort("정확 알람 권한 설정 화면으로 이동합니다.")
+            startActivity(intent)
+        } else {
+            toastShowShort("정확 알람 권한이 필요합니다.")
+        }
+    }
+
+    private fun registerOrUpdate(
+        key: Int,
+        alarmVo: AlarmVO,
+        updateAction: () -> Boolean,
+        successLabel: String,
+    ) {
+        val wasStored = AlarmSampleStore.exists(key)
+        val result = updateAction()
+
+        if (result) {
+            AlarmSampleStore.put(alarmVo)
+        } else if (wasStored) {
+            AlarmSampleStore.remove(key)
+        }
+
+        val actionLabel = if (wasStored) "갱신" else "등록"
+        val timeText = formatTime(alarmVo.schedule.hour, alarmVo.schedule.minute, alarmVo.schedule.second)
+        showResult(
+            title = "$successLabel $actionLabel ${if (result) "성공" else "실패"}",
+            detail = "key=$key, 시간=$timeText, 모드=${alarmVo.schedule.idleMode}",
+        )
+    }
+
+    private fun buildAlarmVo(
+        key: Int,
+        idleMode: AlarmIdleMode,
+        title: String,
+        message: String,
+    ): AlarmVO {
+        val hour = binding.timePicker.hour
+        val minute = binding.timePicker.minute
+
+        return AlarmVO(
+            key = key,
+            schedule = AlarmScheduleVO(
+                hour = hour,
+                minute = minute,
+                second = 0,
+                idleMode = idleMode,
+            ),
+            notification = AlarmNotificationVO(
+                title = title,
+                message = message,
+                soundUri = null,
+            ),
+        )
+    }
+
+    private fun getAlarmKeyOrNull(): Int? {
+        val keyText = binding.edtAlarmKey.text
+            .toString()
+            .trim()
+        val key = keyText.toIntOrNull()
+        return if (key == null || key <= 0) {
+            toastShowShort("알람 키는 1 이상의 숫자여야 합니다.")
+            null
+        } else {
+            key
+        }
+    }
+
+    private fun formatTime(hour: Int, minute: Int, second: Int): String =
+        String.format(Locale.getDefault(), "%02d:%02d:%02d", hour, minute, second)
+
+    private fun showResult(title: String, detail: String) {
+        binding.tvResult.text = "$title\n$detail"
     }
 }

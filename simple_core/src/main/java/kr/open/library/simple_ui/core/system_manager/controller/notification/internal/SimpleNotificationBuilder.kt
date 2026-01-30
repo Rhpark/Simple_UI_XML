@@ -48,7 +48,9 @@ internal class SimpleNotificationBuilder(
     private val context: Context
 ) {
     internal sealed class ProgressUpdateResult {
-        data class Updated(val info: ProgressNotificationInfo) : ProgressUpdateResult()
+        data class Updated(
+            val info: ProgressNotificationInfo
+        ) : ProgressUpdateResult()
 
         data object NotFound : ProgressUpdateResult()
 
