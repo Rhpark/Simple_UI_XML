@@ -83,6 +83,7 @@ dependencies {
 - **[Getting Started Guide](docs/readme/README_START.md)** - 시작 가이드
 - **[Documentation Index](docs/readme/README.md)** - 전체 문서 목차
 - **[Logx Guide](docs/readme/README_LOGX.md)** - Logx 로깅 가이드
+- **[Permission Guide](docs/readme/README_PERMISSION.md)** - 권한 가이드
 - **[API Documentation](https://rhpark.github.io/Simple_UI_XML/api)** - Dokka로 생성된 API 문서
 - **[Code Coverage Report](https://rhpark.github.io/Simple_UI_XML/coverage)** - Kover 커버리지 리포트
 

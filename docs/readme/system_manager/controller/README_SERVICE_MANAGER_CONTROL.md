@@ -6,7 +6,7 @@ This document is a quick summary for fast review, and details are split into sep
 > 이 문서는 **핵심만 빠르게 확인**할 수 있도록 요약했고, 상세 내용은 별도 문서로 분리했습니다.
 
 ## 📦 Module Information (모듈 정보)
-- **Module**: `simple_core`, `simple_xml`
+- **Module**: `simple_core`, `simple_xml` (모듈)
 
 <br></br>
 
@@ -26,8 +26,8 @@ This document is a quick summary for fast review, and details are split into sep
 | SoftKeyboardController | Keyboard show/hide/delay + SDK branching (키보드 표시/숨김/지연, SDK 분기 처리) | [xml/README_SOFTKEYBOARD_CONTROLLER.md](xml/README_SOFTKEYBOARD_CONTROLLER.md) |
 | FloatingViewController | Floating view add/move/remove (플로팅 뷰 추가/이동/제거) | [xml/README_FLOATING_VIEW_CONTROLLER.md](xml/README_FLOATING_VIEW_CONTROLLER.md) |
 
-**Context Extension Functions:**
-[xml/README_SYSTEM_MANAGER_EXTENSIONS.md](xml/README_SYSTEM_MANAGER_EXTENSIONS.md)
+**Context Extension Functions (컨텍스트 확장 함수):**
+See full list / 전체 목록: [README_SYSTEM_MANAGER_EXTENSIONS.md](../README_SYSTEM_MANAGER_EXTENSIONS.md)
 
 <br></br>
 
@@ -74,5 +74,7 @@ This document is a quick summary for fast review, and details are split into sep
 <br></br>
 
 ## Document Locations (상세 문서 위치)
-- core docs: `docs/readme/system_manager_controller/core/`
-- xml docs: `docs/readme/system_manager_controller/xml/`
+- core docs: `docs/readme/system_manager/controller/core/` (core 문서 위치)
+- xml docs: `docs/readme/system_manager/controller/xml/` (xml 문서 위치)
+- extensions doc: `docs/readme/system_manager/README_SYSTEM_MANAGER_EXTENSIONS.md` (확장 문서)
+

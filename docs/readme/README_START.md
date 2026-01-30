@@ -1,4 +1,4 @@
-# 🚀 Simple UI XML — We handle the complexity, you keep your speed
+﻿# 🚀 Simple UI XML — We handle the complexity, you keep your speed
 > **복잡함은 우리가, 속도는 당신에게**
 
 <br>,</br>
@@ -121,8 +121,9 @@ We built **Simple UI XML** to give you that time back.
 - **Layout style XML example**: [README_STYLE.md](README_STYLE.md)
 - **Recycler/Adapter example**: [README_RECYCLERVIEW.md](README_RECYCLERVIEW.md)
 - **Extensions example**: [README_EXTENSIONS.md](README_EXTENSIONS.md)
-- **System Service Manager Info example**: [README_SERVICE_MANAGER_INFO.md](README_SERVICE_MANAGER_INFO.md)
-- **System Service Manager Controller example**: [README_SERVICE_MANAGER_CONTROL.md](system_manager_controller/README_SERVICE_MANAGER_CONTROL.md)
+- **Permission example**: [README_PERMISSION.md](README_PERMISSION.md)
+- **System Service Manager Info example**: [README_SERVICE_MANAGER_INFO.md](system_manager/info/README_SERVICE_MANAGER_INFO.md)
+- **System Service Manager Controller example**: [README_SERVICE_MANAGER_CONTROL.md](system_manager/controller/README_SERVICE_MANAGER_CONTROL.md)
 - **Quick start** example: [README_SAMPLE.md](README_SAMPLE.md)
 
 
@@ -132,3 +133,4 @@ We built **Simple UI XML** to give you that time back.
 </br>
 
 .
+

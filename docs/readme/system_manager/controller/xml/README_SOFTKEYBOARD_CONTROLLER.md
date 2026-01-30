@@ -1,39 +1,49 @@
-# SoftKeyboardController vs Plain Android - Complete Comparison Guide
+﻿# SoftKeyboardController vs Plain Android - Complete Comparison Guide
 > **SoftKeyboardController vs 순수 Android - 완벽 비교 가이드**
 
-## 📦 Module Information (모듈 정보)
+## Module Information (모듈 정보)
 - **Module**: `simple_xml` (UI-dependent module / UI 의존 모듈)
 - **Package**: `kr.open.library.simple_ui.xml.system_manager.controller.softkeyboard`
 
 <br></br>
 
-## 개요
-키보드 표시/숨김/지연 처리와 SDK 버전 분기를 단순화합니다.
+## Overview (개요)
+Simplifies keyboard show/hide/delay handling and SDK branching.  
+> 키보드 표시/숨김/지연 처리와 SDK 버전 분기를 단순화합니다.
 
 <br></br>
 
-## 🔎 At a Glance (한눈 비교)
-| Item (항목) | Plain Android (기본 방식) | Simple UI (Simple UI) | Notes (비고) |
-|---|---|---|---|
-| Service acquisition<br>서비스 획득 | Manual `getSystemService()`<br>`getSystemService()` 수동 | Simple call via extensions<br>확장 함수로 간단 호출 | Less boilerplate<br>코드 간소화 |
-| Focus/Token handling<br>Focus/Token 처리 | Manual handling<br>수동 처리 | Handled internally<br>내부 처리 | Improved stability<br>안정성 개선 |
-| Delayed show<br>지연 표시 | Manual implementation<br>수동 구현 | `showDelay()` provided<br>`showDelay()` 제공 | Job cancellation supported<br>Job 취소 지원 |
-| SDK branching<br>SDK 분기 | Manual branching<br>직접 분기 | Internal branching<br>내부 분기 | Includes resize handling<br>Resize 처리 포함 |
+## At a Glance (한눈 비교)
+| Item (항목)            | Plain Android (기본 방식)       | Simple UI (Simple UI)      | Notes (비고) |
+|----------------------|-----------------------------|----------------------------|---|
+| Service acquisition  | Manual `getSystemService()` | Simple call via extensions | Less boilerplate<br>코드 간소화 |
+| Focus/Token handling | Manual handling             | Handled internally         | Improved stability<br>안정성 개선 |
+| Delayed show         | Manual implementation       | `showDelay()` provided     | Job cancellation supported<br>Job 취소 지원 |
+| SDK branching        | Manual branching            | Internal branching         | Includes resize handling<br>Resize 처리 포함 |
 
 <br></br>
 
-## 💡 Why It Matters (왜 중요한가)
-**문제점:**
-- `getSystemService()` 반복 호출과 캐스팅
-- Null 처리, Focus 처리 수동 반복
-- 지연 표시 기능 수동 구현
-- SDK 버전 분기 복잡
+## Why It Matters (중요한 이유)
+**Issues**
+- Repeated `getSystemService()` calls and casting
+- Manual null handling and focus handling
+- Manual implementation of delayed show
+- Complex SDK branching
+> `getSystemService()` 반복 호출과 캐스팅
+> <br>Null 처리, Focus 처리 수동 반복
+> <br>지연 표시 기능 수동 구현
+> <br>SDK 버전 분기 복잡
 
-**장점:**
-- 코드 간소화(한 줄 호출)
-- Null/Focus 처리 자동
-- 지연 표시 제공
-- SDK 버전 분기 자동 처리
+**Advantages**
+- Simplified code (one-line calls)
+- Automatic null/focus handling
+- Delayed show provided
+- Automatic SDK branching
+> 코드 간소화(한 줄 호출)
+> <br>Null/Focus 처리 자동
+> <br>지연 표시 제공
+> <br>SDK 버전 분기 자동 처리
+
 <br></br>
 
 ## 순수 Android 방식 (Plain Android)
@@ -99,16 +109,16 @@ override fun onCreate(savedInstanceState: Bundle?) {
 
 <br></br>
 
-## Simple UI 방식
+## Simple UI Approach (Simple UI 방식)
 ```kotlin
 // Simple keyboard display - One line (간단한 키보드 표시 - 한 줄)
 private fun showKeyboard(editText: EditText) {
-    getSoftKeyboardController().show(editText) // Done! (끝!)
+    getSoftKeyboardController().show(editText) // Done (끝)
 }
 
 // Hide keyboard - Safe windowToken handling (키보드 숨김 - 안전한 windowToken 처리)
 private fun hideKeyboard(editText: EditText) {
-    getSoftKeyboardController().hide(editText) // Auto fallback to applicationWindowToken!
+    getSoftKeyboardController().hide(editText) // Auto fallback to applicationWindowToken (자동 대체 처리)
 }
 
 // Delayed display - Runnable version (지연 표시 - Runnable 버전)
@@ -116,7 +126,8 @@ private fun showKeyboardWithDelay(editText: EditText, delayMillis: Long) {
     getSoftKeyboardController().showDelay(editText, delayMillis) // Returns Boolean (Boolean 반환)
 }
 
-// ⭐ NEW: Delayed display with Job (cancellable)
+// New: Delayed display with Job (cancellable)
+// (새 기능: Job 기반 지연 표시 (취소 가능))
 private var showDelayJob: Job? = null
 
 private fun showKeyboardWithJobControl(editText: EditText) {
@@ -130,17 +141,18 @@ override fun onCreate(savedInstanceState: Bundle?) {
     getSoftKeyboardController().setAdjustPan(window)
 }
 
-// Window Input Mode - Adjust Resize setup
+// Window Input Mode - Adjust Resize setup (Adjust Resize 설정)
 override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    getSoftKeyboardController().setAdjustResize(window) // SDK 버전 자동 분기
+    getSoftKeyboardController().setAdjustResize(window) // Auto SDK branching (SDK 자동 분기)
 }
 ```
 
 <br></br>
 
-## 관련 확장 함수
+## Related Extensions (관련 확장 함수)
 - `getSoftKeyboardController()`  
-  자세한 목록: [README_SYSTEM_MANAGER_EXTENSIONS.md](README_SYSTEM_MANAGER_EXTENSIONS.md)
+  See full list / 전체 목록: [README_SYSTEM_MANAGER_EXTENSIONS.md](../../README_SYSTEM_MANAGER_EXTENSIONS.md)
 
 <br></br>
+

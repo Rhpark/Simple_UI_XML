@@ -38,7 +38,7 @@
 # 프로젝트 가치 제안
 
 ## 대폭 보일러플레이트 절감
- - 기본 Activity/Fragment/Adapter/권한/로그/시스템 서비스 래퍼로 표준 흐름만 남기도록 설계 (docs/readme/README_RECYCLERVIEW.md, docs/readme/README_SERVICE_MANAGER_INFO.md, docs/readme/README_SERVICE_MANAGER_CONTROL.md).
+ - 기본 Activity/Fragment/Adapter/권한/로그/시스템 서비스 래퍼로 표준 흐름만 남기도록 설계 (docs/readme/README_RECYCLERVIEW.md, docs/readme/system_manager/info/README_SERVICE_MANAGER_INFO.md, docs/readme/system_manager/controller/README_SERVICE_MANAGER_CONTROL.md).
 
 ## 안정성과 일관성
  - BaseSystemService.kt에서 권한 미리 검증 후 tryCatchSystemManager로 실패를 기본값 처리.
@@ -52,3 +52,4 @@
 ## 문서·배포 준비 완료
  - 한/영 병기 KDoc과 세분화된 README,
  - 다중 모듈 Dokka 산출물(docs/api) 및 JitPack 퍼블리싱 스크립트.(Maven 예정)
+

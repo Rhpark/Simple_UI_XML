@@ -81,8 +81,8 @@
  - Logx 기능 변경 → docs/readme/README_LOGX.md
  - ViewModel 관련 → docs/readme/README_MVVM.md
  - RecyclerView 관련 → docs/readme/README_RECYCLERVIEW.md
- - System Manager Info → docs/readme/README_SERVICE_MANAGER_INFO.md
- - System Manager Control → docs/readme/README_SERVICE_MANAGER_CONTROL.md
+ - System Manager Info → docs/readme/system_manager/info/README_SERVICE_MANAGER_INFO.md
+ - System Manager Control → docs/readme/system_manager/controller/README_SERVICE_MANAGER_CONTROL.md
  - 스타일 가이드 변경 → docs/readme/README_STYLE.md
  - 샘플 앱 변경 → docs/readme/README_SAMPLE.md
  - 시작 가이드 변경 → docs/readme/README_START.md

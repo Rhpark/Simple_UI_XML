@@ -1,40 +1,48 @@
-# WifiController vs Plain Android - Complete Comparison Guide
+﻿# WifiController vs Plain Android - Complete Comparison Guide
 > **WifiController vs 순수 Android - 완벽 비교 가이드**
 
-## 📦 Module Information (모듈 정보)
+## Module Information (모듈 정보)
 - **Module**: `simple_core` (UI-independent core module / UI 비의존 코어 모듈)
 - **Package**: `kr.open.library.simple_ui.core.system_manager.controller.wifi`
 
 <br></br>
 
-## 개요
-WiFi 정보/상태 조회 및 스캔을 간단한 API로 제공합니다.
+## Overview (개요)
+Provides simple APIs for WiFi info/status queries and scans.  
+> WiFi 정보/상태 조회 및 스캔을 간단한 API로 제공합니다.
 
 <br></br>
 
-## 🔎 At a Glance (한눈 비교)
-| Item (항목) | Plain Android (기본 방식) | Simple UI (Simple UI) | Notes (비고) |
-|---|---|---|---|
-| Info query<br>정보 조회 | Branching between `ConnectivityManager`/`WifiManager`<br>`ConnectivityManager`/`WifiManager` 분기 | One-line call<br>한 줄 호출 | SDK branching automated<br>SDK 분기 자동 |
-| SSID cleanup<br>SSID 정리 | Manual quote removal<br>따옴표 제거 수동 | Auto cleanup<br>자동 처리 | Helper provided<br>helper 제공 |
-| Scan handling<br>스캔 처리 | Manual permission + calls<br>권한/호출 직접 관리 | Simple call<br>간단 호출 | Permissions are the same<br>권한은 동일 |
-| Deprecated API handling<br>Deprecated API | Handled by caller<br>호출부에서 직접 처리 | Handled internally<br>내부 처리 | Less boilerplate<br>코드 간소화 |
+## At a Glance (한눈 비교)
+| Item (항목)                | Plain Android (기본 방식)                                 | Simple UI (Simple UI) | Notes (비고) |
+|--------------------------|-------------------------------------------------------|-----------------------|---|
+| Info query               | Branching between `ConnectivityManager`/`WifiManager` | One-line call         | SDK branching automated<br>SDK 분기 자동 |
+| SSID cleanup             | Manual quote removal                                  | Auto cleanup          | Helper provided<br>헬퍼 제공 |
+| Scan handling            | Manual permission + calls                             | Simple call           | Permissions are the same<br>권한은 동일 |
+| Deprecated API handling  | Handled by caller                                     | Handled internally    | Less boilerplate<br>코드 간소화 |
 
 <br></br>
 
-## 💡 Why It Matters (왜 중요한가)
-**문제점:**
-- SDK 버전별 분기 처리 복잡
-- ConnectivityManager/WifiManager 동시 사용 필요
-- Deprecated API 수동 처리
+## Why It Matters (중요한 이유)
+**Issues**
+- Complex SDK version branching
+- Need to use both ConnectivityManager and WifiManager
+- Manual handling of deprecated APIs
+> SDK 버전별 분기 처리 복잡
+> <br>ConnectivityManager/WifiManager 동시 사용 필요
+> <br>Deprecated API 수동 처리
 
-**장점:**
-- SDK 분기 자동 처리
-- SSID 따옴표 제거 자동 처리
-- 헬퍼 함수 제공
+**Advantages**
+- Automatic SDK branching
+- Automatic SSID quote removal
+- Helper functions provided
+> SDK 분기 자동 처리
+> <br>SSID 따옴표 제거 자동 처리
+> <br>헬퍼 함수 제공
+
 <br></br>
 
-## 순수 Android 방식 (Plain Android)
+## Plain Android (순수 Android 방식)
 ```kotlin
 // Traditional WiFi information query method (기존의 WiFi 정보 조회 방법)
 @RequiresPermission(allOf = [Manifest.permission.ACCESS_WIFI_STATE, Manifest.permission.ACCESS_NETWORK_STATE])
@@ -96,15 +104,15 @@ private fun scanWifi() {
 
 <br></br>
 
-## Simple UI 방식
+## Simple UI Approach (Simple UI 방식)
 ```kotlin
 // Simple WiFi information query - One line (간단한 WiFi 정보 조회 - 한 줄)
 @RequiresPermission(Manifest.permission.ACCESS_NETWORK_STATE)
 private fun getWifiInfo() {
-    val wifiInfo = getWifiController().getConnectionInfo() // Auto SDK branching!
+    val wifiInfo = getWifiController().getConnectionInfo() // Auto SDK branching (SDK 자동 분기)
 
     wifiInfo?.let {
-        val ssid = getWifiController().getCurrentSsid() // Auto quote removal
+        val ssid = getWifiController().getCurrentSsid() // Auto quote removal (따옴표 자동 제거)
         val rssi = getWifiController().getCurrentRssi()
         val linkSpeed = getWifiController().getCurrentLinkSpeed()
 
@@ -112,7 +120,7 @@ private fun getWifiInfo() {
     }
 }
 
-// WiFi scan - Simple call (WiFi 스캔 - 간단한 호출)
+// WiFi scan - Simple call (WiFi 스캔 - 간단 호출)
 @RequiresPermission(allOf = [
     Manifest.permission.CHANGE_WIFI_STATE,
     Manifest.permission.ACCESS_WIFI_STATE,
@@ -130,8 +138,9 @@ private fun scanWifi() {
 
 <br></br>
 
-## 관련 확장 함수
+## Related Extensions (관련 확장 함수)
 - `getWifiController()`  
-  자세한 목록: [../xml/README_SYSTEM_MANAGER_EXTENSIONS.md](../xml/README_SYSTEM_MANAGER_EXTENSIONS.md)
+  See full list / 전체 목록: [README_SYSTEM_MANAGER_EXTENSIONS.md](../../README_SYSTEM_MANAGER_EXTENSIONS.md)
 
 <br></br>
+

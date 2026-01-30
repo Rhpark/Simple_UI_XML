@@ -39,17 +39,17 @@
 
 ## README
  - logcat 관련 : docs/readme/README_LOGX.md
- - permission 관련 : -
+ - permission 관련 : docs/readme/README_PERMISSION.md
  - style 관련 : docs/readme/README_STYLE.md
- - system manager controller 관련 : docs/readme/system_manager_controller/README_SERVICE_MANAGER_CONTROL.md
- - system manager info 관련 : docs/readme/README_SERVICE_MANAGER_INFO.md
+ - system manager controller 관련 : docs/readme/system_manager/controller/README_SERVICE_MANAGER_CONTROL.md
+ - system manager info 관련 : docs/readme/system_manager/info/README_SERVICE_MANAGER_INFO.md
  - recyclerview, adapter 관련 : docs/readme/README_RECYCLERVIEW.md
  - mvvm  관련 : docs/readme/README_MVVM.md
  - 기타 확장 함수 관련 : docs/readme/README_EXTENSIONS.md
  - activity, fragment 관련 : docs/readme/README_ACTIVITY_FRAGMENT.md
 
 ## Architecture
- - DESIGN_PRINCIPLES.md
+ - architecture/DESIGN_PRINCIPLES.md
 
 ##  기능 수정/분석 시 참조
  - 기능별 기능별 검토, 분석, 수정시 반드시 확인할 문서 리스트
@@ -74,3 +74,5 @@
  - SPEC.md : simple_core/docs/feature/logcat/SPEC.md
  - IMPLEMENTATION_PLAN.md : simple_core: simple_core/docs/feature/logcat/IMPLEMENTATION_PLAN.md
  - README : docs/readme/README_LOGX.md
+
+

@@ -1,38 +1,46 @@
-# AlarmController vs Plain Android - Complete Comparison Guide
+﻿# AlarmController vs Plain Android - Complete Comparison Guide
 > **AlarmController vs 순수 Android - 완벽 비교 가이드**
 
-## 📦 Module Information (모듈 정보)
+## Module Information (모듈 정보)
 - **Module**: `simple_core` (UI-independent core module / UI 비의존 코어 모듈)
-- **Package**: `kr.open.library.simple_ui.core.system_manager.controller.alarm`
+- **Package**: `kr.open.library.simple_ui.core.system_manager.controller.alarm` (패키지)
 
 <br></br>
 
-## 개요
-알람 등록/삭제/존재 확인을 간단한 API로 제공합니다.
+## Overview (개요)
+Provides simple APIs for alarm register/remove/existence checks.  
+> 알람 등록/삭제/존재 확인을 간단한 API로 제공합니다.
 
 <br></br>
 
-## 🔎 At a Glance (한눈 비교)
+## At a Glance (한눈 비교)
 | Item (항목) | Plain Android (기본 방식) | Simple UI (Simple UI) | Notes (비고) |
 |---|---|---|---|
-| Time calculation<br>시간 계산 | Manual Calendar calculation<br>Calendar 직접 계산 | VO-based auto calculation<br>VO 기반 자동 계산 | Includes today/tomorrow branching<br>오늘/내일 분기 포함 |
-| PendingIntent<br>PendingIntent | Manual creation + flag management<br>직접 생성 + 플래그 관리 | Created internally<br>내부에서 생성 | Key-based management<br>키 기반 관리 |
-| AlarmClockInfo<br>AlarmClockInfo | Manual creation<br>직접 생성 | Handled internally<br>내부 처리 | Less boilerplate<br>코드 간소화 |
-| Remove / Exists check<br>삭제/존재 확인 | Manual query/cancel<br>직접 조회/취소 | `remove()` / `exists()`<br>`remove()`/`exists()` | One-line call<br>한 줄 호출 |
-| Permission / SDK branching<br>권한/SDK 분기 | Handled by caller<br>호출부에서 직접 처리 | Handled internally<br>내부 처리 | Exact alarm permission required<br>Exact 알람 권한 주의 |
+| Time calculation | Manual Calendar calculation | VO-based auto calculation | Includes today/tomorrow branching<br>오늘/내일 분기 포함 |
+| PendingIntent | Manual creation + flag management | Created internally | Key-based management<br>키 기반 관리 |
+| AlarmClockInfo | Manual creation | Handled internally | Less boilerplate<br>코드 간소화 |
+| Remove / Exists check | Manual query/cancel | `remove()` / `exists()` | One-line call<br>한 줄 호출 |
+| Permission / SDK branching | Handled by caller | Handled internally | Exact alarm permission required<br>Exact 알람 권한 주의 |
 
 <br></br>
 
-## 💡 Why It Matters (왜 중요한가)
-**문제점:**
-- Calendar 계산 수동 처리
-- PendingIntent 플래그 직접 관리
-- AlarmClockInfo 직접 생성 필요
+## Why It Matters (중요한 이유)
+**Issues / 문제점**
+- Manual Calendar calculation
+- Manual PendingIntent flag management
+- AlarmClockInfo manual creation required
+> Calendar 계산 수동 처리
+> <br>PendingIntent 플래그 직접 관리
+> <br>AlarmClockInfo 직접 생성 필요
 
-**장점:**
-- 등록/삭제/존재 확인을 한 줄로 처리
-- Calendar 계산, PendingIntent 생성 자동 처리
-- 예외 처리 및 SDK 분기 내부 처리
+**Advantages / 장점:**
+- One-line register/remove/exist checks
+- Auto Calendar calculation and PendingIntent creation
+- Internal exception handling and SDK branching
+> 등록/삭제/존재 확인을 한 줄로 처리
+> <br>Calendar 계산, PendingIntent 생성 자동 처리
+> <br>예외 처리 및 SDK 분기 내부 처리
+
 <br></br>
 
 ## 순수 Android 방식 (Plain Android)
@@ -91,7 +99,7 @@ private fun removeAlarm(key: Int) {
 
 <br></br>
 
-## Simple UI 방식
+## Simple UI Approach (Simple UI 방식)
 ```kotlin
 // Simple Alarm registration - One line (간단한 Alarm 등록 - 한 줄)
 private fun registerAlarm(hour: Int, minute: Int) {
@@ -118,12 +126,12 @@ private fun registerExactAlarm(hour: Int, minute: Int) {
     getAlarmController().registerAlarmExactAndAllowWhileIdle(AlarmReceiver::class.java, alarmVo)
 }
 
-// Alarm removal - One line
+// Alarm removal - One line (알람 삭제 - 한 줄)
 private fun removeAlarm(key: Int) {
     getAlarmController().remove(key, AlarmReceiver::class.java)
 }
 
-// Check Alarm exists - One line
+// Check Alarm exists - One line (알람 존재 확인 - 한 줄)
 private fun checkAlarmExists(key: Int): Boolean {
     return getAlarmController().exists(key, AlarmReceiver::class.java)
 }
@@ -131,8 +139,9 @@ private fun checkAlarmExists(key: Int): Boolean {
 
 <br></br>
 
-## 관련 확장 함수
+## Related Extensions (관련 확장 함수)
 - `getAlarmController()`  
-  자세한 목록: [../xml/README_SYSTEM_MANAGER_EXTENSIONS.md](../xml/README_SYSTEM_MANAGER_EXTENSIONS.md)
+  See full list / 전체 목록: [README_SYSTEM_MANAGER_EXTENSIONS.md](../../README_SYSTEM_MANAGER_EXTENSIONS.md)
 
 <br></br>
+
