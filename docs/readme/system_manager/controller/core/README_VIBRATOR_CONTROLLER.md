@@ -8,18 +8,20 @@
 <br></br>
 
 ## Overview (개요)
-Simplifies vibration execution, pattern/preset vibration, and SDK branching.  
-> 진동 실행, 패턴/프리셋 진동, SDK 버전 분기를 단순화합니다.
+Simplifies vibration execution, pattern/preset vibration, and SDK branching, with amplitude support checks.  
+> 진동 실행, 패턴/프리셋 진동, SDK 버전 분기를 단순화하고 강도 지원 여부 확인까지 제공합니다.
 
 <br></br>
 
 ## At a Glance (한눈 비교)
 | Item (항목)               | Plain Android (기본 방식)               | Simple UI (Simple UI)                                                        | Notes (비고) |
 |-------------------------|-------------------------------------|------------------------------------------------------------------------------|---|
-| SDK branching           | Version-specific branching required | Automatic branching internally                                               | Supports 7/8/12+<br>7/8/12+ 대응 |
+| SDK branching           | Version-specific branching required | Automatic branching internally                                               | API 28+ / 29+ / 31+ 분기<br>API 28+ / 29+ / 31+ 대응 |
 | Deprecated API handling | Handled by caller                   | Handled internally                                                           | Less boilerplate<br>코드 단순화 |
 | Patterns / presets      | Manual creation/call                | `vibratePattern` / `createPredefined`<br>`vibratePattern`/`createPredefined` | Better usability<br>사용성 개선 |
-| Permission              | Handled by caller                   | Same                                                                         | `VIBRATE` permission required<br>`VIBRATE` 권한 필요 |
+| Amplitude support       | Caller must check                   | `hasAmplitudeControl()`                                                     | Device-dependent<br>기기 의존 |
+| Predefined(Q+) safety   | Caller must guard                   | pre-Q returns false + logs                                                   | Safe fallback<br>안전 실패 |
+| Permission              | Handled by caller                   | Same                                                                         | `VIBRATE` permission required<br>매니페스트 선언 필요(일반 권한) |
 
 <br></br>
 
@@ -113,14 +115,37 @@ private fun vibrateWaveform() {
 
 // System-defined vibration (시스템 정의 진동)
 private fun vibrateClick() {
-    getVibratorController().createPredefined(VibrationEffect.EFFECT_CLICK)
+    val ok = getVibratorController().createPredefined(VibrationEffect.EFFECT_CLICK)
+    if (!ok) {
+        // pre-Q: returns false with log
+    }
 }
 
 // Cancel vibration (진동 취소)
 private fun cancelVibrate() {
     getVibratorController().cancel()
 }
+
+// Vibrator hardware check (진동 하드웨어 지원 확인)
+private fun checkVibratorSupport() {
+    val hasVibrator = getVibratorController().hasVibrator()
+}
+
+// Amplitude support check (강도 지원 여부 확인)
+private fun checkAmplitudeSupport() {
+    val supported = getVibratorController().hasAmplitudeControl()
+}
 ```
+
+<br></br>
+
+## Notes (주의사항)
+- `createPredefined()` is available from Android Q(29). pre-Q returns false and logs a warning.  
+  `createPredefined()`는 Android Q(29)+에서만 지원되며, pre-Q에서는 false 반환 + 경고 로그를 출력합니다.
+- `repeat` >= 0 repeats until `cancel()` is called.  
+  `repeat`가 0 이상이면 `cancel()` 호출 전까지 반복됩니다.
+- `VIBRATE` is a normal permission: declare in AndroidManifest.xml (no runtime prompt).  
+  `VIBRATE`는 일반 권한이므로 매니페스트 선언이 필요하고 런타임 요청은 없습니다.
 
 <br></br>
 

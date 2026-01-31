@@ -89,37 +89,37 @@ public open class VibratorController(
     /**
      * Creates a one-shot vibration with specified duration and amplitude.<br>
      * Notes.<br>
-     * - `effect` is an amplitude value (DEFAULT_AMPLITUDE(-1) or 1..255).<br>
+     * - `amplitude` is an amplitude value (DEFAULT_AMPLITUDE(-1) or 1..255).<br>
      * - Available since SDK O (26) (this library minSdk=28).<br>
      * - Devices without amplitude control may ignore the requested amplitude.<br><br>
      *
      * 지정된 지속 시간과 강도로 단발성 진동을 생성합니다.<br>
      * 참고.<br>
-     * - `effect`는 강도(amplitude) 값이며 DEFAULT_AMPLITUDE(-1) 또는 1..255를 사용합니다.<br>
+     * - `amplitude`는 강도(amplitude) 값이며 DEFAULT_AMPLITUDE(-1) 또는 1..255를 사용합니다.<br>
      * - SDK O(26)부터 지원되며, 본 라이브러리 minSdk=28에서는 런타임에서 항상 사용 가능합니다.<br>
      * - 기기가 amplitude control을 지원하지 않으면 지정한 강도가 무시될 수 있습니다.<br>
      *
      * @param timer Duration in milliseconds.<br><br>
      *              진동 지속 시간 (밀리초).
      *
-     * @param effect Amplitude value (DEFAULT_AMPLITUDE(-1) or 1..255).<br><br>
+     * @param amplitude Amplitude value (DEFAULT_AMPLITUDE(-1) or 1..255).<br><br>
      *               강도 값 (DEFAULT_AMPLITUDE(-1) 또는 1..255).
      *
      * @return `true` if vibration was triggered successfully, `false` otherwise.<br><br>
      *         진동 실행 성공 시 `true`, 그렇지 않으면 `false`.
      */
     @RequiresPermission(VIBRATE)
-    public fun createOneShot(timer: Long, effect: Int = VibrationEffect.DEFAULT_AMPLITUDE): Boolean = tryCatchSystemManager(false) {
+    public fun createOneShot(timer: Long, amplitude: Int = VibrationEffect.DEFAULT_AMPLITUDE): Boolean = tryCatchSystemManager(false) {
         if (timer <= 0L) {
             Logx.e("timer > 0L, timer $timer")
             return false
         }
-        if (effect != VibrationEffect.DEFAULT_AMPLITUDE && effect !in 1..255) {
-            Logx.e("effect must be 1..255 or DEFAULT_AMPLITUDE(-1). effect=$effect")
+        if (amplitude != VibrationEffect.DEFAULT_AMPLITUDE && amplitude !in 1..255) {
+            Logx.e("amplitude must be 1..255 or DEFAULT_AMPLITUDE(-1). amplitude=$amplitude")
             return false
         }
 
-        val oneShot = VibrationEffect.createOneShot(timer, effect)
+        val oneShot = VibrationEffect.createOneShot(timer, amplitude)
         checkSdkVersion(Build.VERSION_CODES.S,
             positiveWork = { vibratorManager.vibrate(CombinedVibration.createParallel(oneShot)) },
             negativeWork = { vibrator.vibrate(oneShot) },
@@ -169,9 +169,12 @@ public open class VibratorController(
                     positiveWork = { vibratorManager.vibrate(CombinedVibration.createParallel(predefinedEffect)) },
                     negativeWork = { vibrator.vibrate(predefinedEffect) },
                 )
-                return true
+                true
             },
-            negativeWork = { return false },
+            negativeWork = {
+                Logx.e("createPredefined는 Android Q(29) 이상에서만 지원됩니다. currentSdk=${Build.VERSION.SDK_INT}")
+                false
+            },
         )
     }
 
@@ -293,6 +296,24 @@ public open class VibratorController(
             negativeWork = { vibrator.cancel() },
         )
         return true
+    }
+
+    /**
+     * Checks if the device supports amplitude control for vibration.<br>
+     * When not supported, amplitude values passed to vibration methods will be ignored
+     * and the device will vibrate at its default intensity.<br><br>
+     * 기기가 진동 강도 조절을 지원하는지 확인합니다.<br>
+     * 지원하지 않는 경우, 진동 메서드에 전달된 강도 값은 무시되고
+     * 기기의 기본 강도로 진동합니다.<br>
+     *
+     * @return true if amplitude control is supported, false otherwise.<br><br>
+     *         강도 조절이 지원되면 true, 그렇지 않으면 false.<br>
+     */
+    public fun hasAmplitudeControl(): Boolean = safeCatch(false) {
+        return checkSdkVersion(Build.VERSION_CODES.S,
+            positiveWork = { vibratorManager.defaultVibrator.hasAmplitudeControl() },
+            negativeWork = { vibrator.hasAmplitudeControl() },
+        )
     }
 
     /**

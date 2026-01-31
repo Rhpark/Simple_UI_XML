@@ -207,6 +207,19 @@ class VibratorControllerRobolectricTest {
     }
 
     @Test
+    @Config(sdk = [Build.VERSION_CODES.P])
+    fun createPredefined_preQ_returnsFalse() {
+        grantVibratePermission()
+        val controller = VibratorController(application)
+
+        val result = controller.createPredefined(VibrationEffect.EFFECT_CLICK)
+
+        assertFalse(result)
+        verifyNoInteractions(vibrator)
+        verifyNoInteractions(vibratorManager)
+    }
+
+    @Test
     @Config(sdk = [Build.VERSION_CODES.S])
     fun vibratePattern_s_usesVibratorManager() {
         grantVibratePermission()
@@ -332,7 +345,7 @@ class VibratorControllerRobolectricTest {
         grantVibratePermission()
         val controller = VibratorController(application)
 
-        val result = controller.createOneShot(100L, effect = -2)
+        val result = controller.createOneShot(100L, amplitude = -2)
 
         assertFalse(result)
         verifyNoInteractions(vibrator)
@@ -345,7 +358,7 @@ class VibratorControllerRobolectricTest {
         grantVibratePermission()
         val controller = VibratorController(application)
 
-        val result = controller.createOneShot(100L, effect = 256)
+        val result = controller.createOneShot(100L, amplitude = 256)
 
         assertFalse(result)
         verifyNoInteractions(vibrator)
@@ -358,7 +371,7 @@ class VibratorControllerRobolectricTest {
         grantVibratePermission()
         val controller = VibratorController(application)
 
-        val result = controller.createOneShot(100L, effect = 128)
+        val result = controller.createOneShot(100L, amplitude = 128)
 
         assertTrue(result)
         verify(vibrator).vibrate(any(VibrationEffect::class.java))
@@ -604,6 +617,53 @@ class VibratorControllerRobolectricTest {
         assertTrue(result)
         verify(vibrator).vibrate(any(VibrationEffect::class.java))
     }
+
+    // ========== hasAmplitudeControl Tests ==========
+
+    @Test
+    @Config(sdk = [Build.VERSION_CODES.Q])
+    fun hasAmplitudeControl_preS_delegatesToLegacyVibrator() {
+        doReturn(true).`when`(vibrator).hasAmplitudeControl()
+        val controller = VibratorController(application)
+
+        assertTrue(controller.hasAmplitudeControl())
+        verify(vibrator).hasAmplitudeControl()
+        verifyNoInteractions(vibratorManager)
+    }
+
+    @Test
+    @Config(sdk = [Build.VERSION_CODES.S])
+    fun hasAmplitudeControl_s_usesDefaultVibratorFromManager() {
+        doReturn(vibrator).`when`(vibratorManager).defaultVibrator
+        doReturn(true).`when`(vibrator).hasAmplitudeControl()
+        val controller = VibratorController(application)
+
+        assertTrue(controller.hasAmplitudeControl())
+        verify(vibratorManager).defaultVibrator
+        verify(vibrator).hasAmplitudeControl()
+    }
+
+    @Test
+    @Config(sdk = [Build.VERSION_CODES.Q])
+    fun hasAmplitudeControl_withoutSupport_returnsFalse() {
+        doReturn(false).`when`(vibrator).hasAmplitudeControl()
+        val controller = VibratorController(application)
+
+        assertFalse(controller.hasAmplitudeControl())
+        verify(vibrator).hasAmplitudeControl()
+    }
+
+    @Test
+    @Config(sdk = [Build.VERSION_CODES.Q])
+    fun hasAmplitudeControl_withoutPermission_stillWorks() {
+        doReturn(true).`when`(vibrator).hasAmplitudeControl()
+        val controller = VibratorController(application)
+
+        assertTrue(controller.hasAmplitudeControl())
+        verify(vibrator).hasAmplitudeControl()
+    }
+
+    // ========== hasVibrator Tests ==========
 
     @Test
     @Config(sdk = [Build.VERSION_CODES.Q])

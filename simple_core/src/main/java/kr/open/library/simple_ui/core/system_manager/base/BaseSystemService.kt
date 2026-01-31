@@ -1,6 +1,9 @@
 package kr.open.library.simple_ui.core.system_manager.base
 
 import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
+import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
 import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
 import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.core.permissions.extentions.remainPermissions
@@ -68,6 +71,7 @@ public abstract class BaseSystemService(
 
     init {
         requiredPermissions?.let {
+            logMissingManifestPermissions(it)
             remainPermissions = context.remainPermissions(it)
             if (remainPermissions.isEmpty()) {
                 Logx.d("All required runtime/special permissions granted for ${this::class.simpleName}")
@@ -75,6 +79,47 @@ public abstract class BaseSystemService(
                 Logx.w("Missing runtime/special permissions for ${this::class.simpleName}: $remainPermissions")
             }
         }
+    }
+
+    /**
+     * Logs a warning if any required permissions are not declared in AndroidManifest.xml.<br><br>
+     * 필요한 권한이 AndroidManifest.xml에 선언되지 않은 경우 경고 로그를 출력합니다.<br>
+     *
+     * @param permissions The list of permissions to check against the manifest.<br><br>
+     *                    매니페스트에서 확인할 권한 목록.
+     */
+    private fun logMissingManifestPermissions(permissions: List<String>) {
+        val declaredPermissions = getDeclaredManifestPermissions()
+        val missingPermissions = permissions.filterNot { declaredPermissions.contains(it) }
+        if (missingPermissions.isNotEmpty()) {
+            Logx.w("${this::class.simpleName}: AndroidManifest.xml에 선언되지 않은 권한이 있습니다. missing=$missingPermissions")
+        }
+    }
+
+    /**
+     * Retrieves the set of permissions declared in AndroidManifest.xml.<br>
+     * Uses SDK TIRAMISU+ API when available, falls back to deprecated API for older versions.<br><br>
+     * AndroidManifest.xml에 선언된 권한 집합을 조회합니다.<br>
+     * SDK TIRAMISU+ API를 우선 사용하고, 이전 버전에서는 deprecated API로 폴백합니다.<br>
+     *
+     * @return The set of declared permissions, or an empty set if retrieval fails.<br><br>
+     *         선언된 권한 집합, 조회 실패 시 빈 집합을 반환.<br>
+     */
+    private fun getDeclaredManifestPermissions(): Set<String> = safeCatch(defaultValue = emptySet()) {
+        val packageInfo = checkSdkVersion(
+            Build.VERSION_CODES.TIRAMISU,
+            positiveWork = {
+                context.packageManager.getPackageInfo(
+                    context.packageName,
+                    PackageManager.PackageInfoFlags.of(PackageManager.GET_PERMISSIONS.toLong()),
+                )
+            },
+            negativeWork = {
+                @Suppress("DEPRECATION")
+                context.packageManager.getPackageInfo(context.packageName, PackageManager.GET_PERMISSIONS)
+            },
+        )
+        packageInfo.requestedPermissions?.toSet() ?: emptySet()
     }
 
     /**

@@ -17,7 +17,7 @@ This document is a quick summary for fast review, and details are split into sep
 |---|---|---|
 | AlarmController | Alarm register/remove/exists (알람 등록/삭제/존재 확인) | [core/README_ALARM_CONTROLLER.md](core/README_ALARM_CONTROLLER.md) |
 | NotificationController | Notifications: show/progress/channel (알림 표시/진행률/채널 관리) | [core/README_NOTIFICATION_CONTROLLER.md](core/README_NOTIFICATION_CONTROLLER.md) |
-| VibratorController | Vibration pattern/preset/SDK branching (진동 패턴/프리셋/SDK 분기 처리) | [core/README_VIBRATOR_CONTROLLER.md](core/README_VIBRATOR_CONTROLLER.md) |
+| VibratorController | Vibration pattern/preset/SDK branching + amplitude check (진동 패턴/프리셋/SDK 분기 + 강도 지원 확인) | [core/README_VIBRATOR_CONTROLLER.md](core/README_VIBRATOR_CONTROLLER.md) |
 | WifiController | Wi-Fi info/state/scan (Wi-Fi 정보/상태/스캔) | [core/README_WIFI_CONTROLLER.md](core/README_WIFI_CONTROLLER.md) |
 
 ### simple_xml (Controller)
@@ -67,9 +67,16 @@ See full list / 전체 목록: [README_SYSTEM_MANAGER_EXTENSIONS.md](../README_S
 - Android 13+ notifications require the `POST_NOTIFICATIONS` permission.
 - `NotificationChannel` is required, and `createChannel()` applies only to notifications created afterward.
 - If you used progress notifications, call `cleanup()` when the Activity/Service ends.
+- VibratorController: `createPredefined()` is available from Android Q(29); pre-Q returns false and logs a warning.
+- VibratorController: `VIBRATE` is a normal permission (declare in AndroidManifest.xml; no runtime prompt).
+- VibratorController: `repeat` >= 0 repeats until `cancel()` is called.
+
 > Android 13+ 알림은 `POST_NOTIFICATIONS` 권한이 필요합니다.
 > `NotificationChannel` 전달은 필수이며, `createChannel()`은 **이후 생성되는 알림**에만 적용됩니다.
 > 진행률 알림을 사용했다면 Activity/Service 종료 시 `cleanup()` 호출을 권장합니다.
+> VibratorController: `createPredefined()`는 Android Q(29)+에서만 지원되며, pre-Q에서는 false 반환 + 경고 로그를 출력합니다.
+> VibratorController: `VIBRATE`는 일반 권한이므로 매니페스트 선언만 필요하고 런타임 요청은 없습니다.
+> VibratorController: `repeat`가 0 이상이면 `cancel()` 호출 전까지 반복됩니다.
 
 <br></br>
 

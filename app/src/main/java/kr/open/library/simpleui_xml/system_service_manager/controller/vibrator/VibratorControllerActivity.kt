@@ -94,6 +94,11 @@ class VibratorControllerActivity : BaseActivity(R.layout.activity_vibrator_contr
                 val hasVibrator = vibratorController.hasVibrator()
                 toastShowShort("Has Vibrator: $hasVibrator")
             }
+
+            btnCheckAmplitudeControl.setOnClickListener {
+                val hasAmplitudeControl = vibratorController.hasAmplitudeControl()
+                toastShowShort("강도 지원: $hasAmplitudeControl")
+            }
         }
     }
 }
