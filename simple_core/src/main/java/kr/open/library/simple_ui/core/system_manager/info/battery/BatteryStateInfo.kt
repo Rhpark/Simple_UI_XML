@@ -50,6 +50,7 @@ import kr.open.library.simple_ui.core.system_manager.info.battery.internal.model
  * - 본 라이브러리는 BATTERY_STATS를 강제 검증하지 않습니다(런타임/특수 권한만 검증).<br>
  * - 기기/OS 지원 범위에 따라 일부 값이 제한될 수 있으며, 미지원 값은 기본값을 반환합니다.<br>
  * - BATTERY_STATS가 가능한 환경(시스템/프리로드 앱)에서는 일부 값이 더 풍부할 수 있습니다.<br>
+ * - BATTERY_STATS는 시스템/프리로드 전용이므로 매니페스트 미선언 경고를 출력하지 않습니다.<br>
  *
  * **Usage / 사용법:**<br>
  * 1. Call `registerStart(coroutineScope)` before collecting flows to start receiver and periodic updates.<br>
@@ -62,9 +63,7 @@ import kr.open.library.simple_ui.core.system_manager.info.battery.internal.model
  */
 public open class BatteryStateInfo(
     context: Context
-) : BaseSystemService(
-        context, listOf(android.Manifest.permission.BATTERY_STATS)
-    ) {
+) : BaseSystemService(context) {
     /**
      * Helper that queries battery properties from BatteryManager and manages StateFlow caching.<br>
      * Provides battery property access methods and maintains reactive flows for battery metrics.<br><br>
@@ -133,7 +132,9 @@ public open class BatteryStateInfo(
      *                        but some values (e.g., Current Ampere, Current Average Ampere) continuously change without triggering broadcasts.<br>
      *                        - 2000ms (default): Recommended for most cases - fast updates, moderate battery usage.<br>
      *                        - 10000ms: Slower updates, lower battery consumption.<br>
-     *                        - 60000ms: Very slow updates, minimal battery impact.<br><br>
+     *                        - 60000ms: Very slow updates, minimal battery impact.<br>
+     *                        - MIN_UPDATE_CYCLE_TIME (1000ms): Lower than this may cause excessive polling and battery drain.<br>
+     *                        - DISABLE_UPDATE_CYCLE_TIME: Disables periodic polling and relies on broadcasts only (current/average may update slowly).<br><br>
      *                        일정 간격(밀리초)으로 배터리 값을 확인하고 변경 시 업데이트를 발행하는 주기입니다.<br>
      *                        `MIN_UPDATE_CYCLE_TIME` 이상이어야 하며, 미만이면 IllegalArgumentException이 발생합니다.<br>
      *                        BroadcastReceiver가 대부분의 배터리 이벤트를 실시간으로 제공하지만,<br>
@@ -141,9 +142,17 @@ public open class BatteryStateInfo(
      *                        - 2000ms (기본값): 대부분의 경우 권장 - 빠른 업데이트, 적당한 배터리 사용.<br>
      *                        - 10000ms: 느린 업데이트, 낮은 배터리 소비.<br>
      *                        - 60000ms: 매우 느린 업데이트, 최소 배터리 영향.<br>
+     *                        - MIN_UPDATE_CYCLE_TIME(1000ms) 미만은 과도한 폴링으로 CPU/배터리 부담이 커질 수 있습니다.<br>
+     *                        - DISABLE_UPDATE_CYCLE_TIME은 주기 폴링을 중단하고 브로드캐스트 기반 갱신만 수행합니다(전류/평균 전류는 갱신이 느릴 수 있음).<br>
      *
-     * @throws IllegalArgumentException if updateCycleTime is less than `MIN_UPDATE_CYCLE_TIME`.<br><br>
-     *                                  updateCycleTime이 `MIN_UPDATE_CYCLE_TIME`보다 작으면 IllegalArgumentException이 발생합니다.<br>
+     * @return `true` if registration and update start succeeded; `false` if a runtime failure occurred
+     *         (e.g., BroadcastReceiver registration failed, internal scope setup error).<br><br>
+     *         등록 및 업데이트 시작 성공 시 `true`; 런타임 실패(예: BroadcastReceiver 등록 실패, 내부 스코프 설정 오류) 시 `false`.<br>
+     *
+     * @throws IllegalArgumentException if updateCycleTime is less than `MIN_UPDATE_CYCLE_TIME`.
+     *         This is a programming error (invalid argument), not a runtime failure.<br><br>
+     *         updateCycleTime이 `MIN_UPDATE_CYCLE_TIME`보다 작으면 IllegalArgumentException이 발생합니다.
+     *         이는 런타임 실패가 아닌 프로그래밍 오류(잘못된 인자)입니다.<br>
      */
     public fun registerStart(coroutine: CoroutineScope, updateCycleTime: Long = DEFAULT_UPDATE_CYCLE_TIME): Boolean {
         require(updateCycleTime >= MIN_UPDATE_CYCLE_TIME) { "updateCycleTime must be greater than or equal to $MIN_UPDATE_CYCLE_TIME" }
@@ -200,7 +209,7 @@ public open class BatteryStateInfo(
      *         순간 배터리 전류 (마이크로암페어).<br>
      */
     public fun getCurrentAmpere(): Int = tryCatchSystemManager(BATTERY_ERROR_VALUE) {
-        batteryPropertyReader.bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW)
+        batteryPropertyReader.getIntProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW)
     }
 
     /**
@@ -216,7 +225,7 @@ public open class BatteryStateInfo(
      *         평균 배터리 전류 (마이크로암페어, µA).<br>
      */
     public fun getCurrentAverageAmpere(): Int = tryCatchSystemManager(BATTERY_ERROR_VALUE) {
-        batteryPropertyReader.bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_AVERAGE)
+        batteryPropertyReader.getIntProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_AVERAGE)
     }
 
     /**

@@ -34,16 +34,48 @@ import kr.open.library.simple_ui.core.system_manager.info.battery.internal.helpe
 internal class BatteryPropertyReader(
     private val context: Context,
     /**
-     * Lazy BatteryManager instance used to query battery properties.<br><br>
-     * 배터리 속성을 조회하기 위해 사용하는 지연 초기화 BatteryManager입니다.<br>
+     * BatteryManager instance used to query battery properties.<br><br>
+     * 배터리 속성을 조회하기 위해 사용하는 BatteryManager입니다.<br>
      */
-    public val bm: BatteryManager = context.getBatteryManager(),
+    private val bm: BatteryManager = context.getBatteryManager(),
     /**
      * Lazy PowerProfile instance used for capacity estimation fallbacks.<br><br>
      * 용량 추정 폴백에 사용하는 지연 초기화 PowerProfile 인스턴스입니다.<br>
      */
     private val powerProfile: PowerProfile = PowerProfile(context)
 ) {
+    companion object {
+        /**
+         * Minimum valid battery temperature in Celsius.<br><br>
+         * 유효한 최소 배터리 온도 (섭씨).<br>
+         */
+        private const val MIN_TEMPERATURE_CELSIUS = -40.0
+
+        /**
+         * Maximum valid battery temperature in Celsius.<br><br>
+         * 유효한 최대 배터리 온도 (섭씨).<br>
+         */
+        private const val MAX_TEMPERATURE_CELSIUS = 120.0
+
+        /**
+         * Minimum reasonable battery capacity in mAh for sanity check.<br><br>
+         * 정상성 검사를 위한 최소 합리적 배터리 용량 (mAh).<br>
+         */
+        private const val MIN_REASONABLE_CAPACITY_MAH = 1000.0
+
+        /**
+         * Maximum reasonable battery capacity in mAh for sanity check.<br><br>
+         * 정상성 검사를 위한 최대 합리적 배터리 용량 (mAh).<br>
+         */
+        private const val MAX_REASONABLE_CAPACITY_MAH = 30000.0
+
+        /**
+         * Minimum valid battery voltage in volts.<br><br>
+         * 유효한 최소 배터리 전압 (볼트).<br>
+         */
+        private const val MIN_VOLTAGE = 0.0
+    }
+
     /**
      * Reads an integer extra from the given battery intent.<br><br>
      * 전달된 배터리 인텐트에서 정수 extra를 읽습니다.<br>
@@ -61,12 +93,7 @@ internal class BatteryPropertyReader(
         safeCatch(defaultValue) {
             // Try to get charge status from current batteryStatus first
             // 먼저 현재 batteryStatus에서 충전 상태를 가져오기 시도
-            var chargeStatus = defaultValue
-            batteryStatus?.let {
-                chargeStatus = it.getIntExtra(type, defaultValue)
-            }
-
-            return chargeStatus
+            batteryStatus?.getIntExtra(type, defaultValue) ?: defaultValue
         }
 
     /**
@@ -163,7 +190,7 @@ internal class BatteryPropertyReader(
         if (raw == null || raw == BATTERY_ERROR_VALUE) return BATTERY_ERROR_VALUE_DOUBLE
 
         val temp = raw / 10.0
-        return if (temp in -40.0..120.0) temp else BATTERY_ERROR_VALUE_DOUBLE
+        return if (temp in MIN_TEMPERATURE_CELSIUS..MAX_TEMPERATURE_CELSIUS) temp else BATTERY_ERROR_VALUE_DOUBLE
     }
 
     /**
@@ -217,15 +244,16 @@ internal class BatteryPropertyReader(
      * get battery voltage.<br><br>
      * 배터리 전압을 반환합니다.<br>
      *
-     * @return Battery voltage in volts (ex 3.5). Returns [BATTERY_ERROR_VALUE_DOUBLE] on error.<br><br>
-     *         볼트 단위의 배터리 전압 (예: 3.5). 오류 시 [BATTERY_ERROR_VALUE_DOUBLE] 반환.<br>
+     * @return Battery voltage in volts (ex 3.5). Returns [BATTERY_ERROR_VALUE_DOUBLE] on error or if voltage is 0V or below.<br><br>
+     *         볼트 단위의 배터리 전압 (예: 3.5). 오류이거나 전압이 0V 이하이면 [BATTERY_ERROR_VALUE_DOUBLE] 반환.<br>
      */
     public fun getVoltage(batteryStatus: Intent?): Double {
         val voltage = getStatus(batteryStatus, EXTRA_VOLTAGE, BATTERY_ERROR_VALUE)
         if (voltage == BATTERY_ERROR_VALUE) {
             return BATTERY_ERROR_VALUE_DOUBLE
         }
-        return voltage.toDouble() / 1000
+        val volts = voltage.toDouble() / 1000
+        return if (volts > MIN_VOLTAGE) volts else BATTERY_ERROR_VALUE_DOUBLE
     }
 
     /**
@@ -235,15 +263,7 @@ internal class BatteryPropertyReader(
      * @return Battery technology (ex Li-ion). Returns null on error.<br><br>
      *         배터리 기술 방식 (예: Li-ion). 오류 시 null 반환.<br>
      */
-    public fun getTechnology(batteryStatus: Intent?): String? {
-        batteryStatus?.let {
-            val technology = it.getStringExtra(BatteryManager.EXTRA_TECHNOLOGY)
-            if (technology != null) {
-                return technology
-            }
-        }
-        return null
-    }
+    public fun getTechnology(batteryStatus: Intent?): String? = batteryStatus?.getStringExtra(BatteryManager.EXTRA_TECHNOLOGY)
 
     /**
      * Battery charge status, from a BATTERY_STATUS_* value.<br><br>
@@ -364,10 +384,11 @@ internal class BatteryPropertyReader(
 
             // Sanity check: reasonable mobile device battery capacity range
             // 정상성 검사: 합리적인 모바일 기기 배터리 용량 범위
-            if (estimatedTotalCapacity in 1000.0..15000.0) {
+            if (estimatedTotalCapacity in MIN_REASONABLE_CAPACITY_MAH..MAX_REASONABLE_CAPACITY_MAH) {
                 estimatedTotalCapacity
             } else {
-                Logx.w("Estimated capacity out of range: $estimatedTotalCapacity mAh (expected 1000..15000)")
+                Logx.w("Estimated capacity out of range: " +
+                    "$estimatedTotalCapacity mAh (expected $MIN_REASONABLE_CAPACITY_MAH..$MAX_REASONABLE_CAPACITY_MAH)")
                 BATTERY_ERROR_VALUE_DOUBLE
             }
         } else {

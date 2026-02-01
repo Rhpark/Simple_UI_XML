@@ -85,6 +85,11 @@
                 style="@style/Button.MatchWrap.Normal"
                 android:text="Check Has Vibrator" />
 
+            <Button
+                android:id="@+id/btnCheckAmplitudeControl"
+                style="@style/Button.MatchWrap.Normal"
+                android:text="강도 지원 확인" />
+
         </LinearLayout>
     </ScrollView>
 </layout>

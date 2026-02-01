@@ -6,11 +6,19 @@ object BatteryStateConstants {
      * 기본 업데이트 주기 시간 (밀리초)입니다.<br>
      */
     public const val DEFAULT_UPDATE_CYCLE_TIME = 2000L
+
+    /**
+     * Disable periodic update cycle time (sentinel value).<br><br>
+     * 주기 업데이트를 비활성화하기 위한 특수 값입니다.<br>
+     * 이 값을 전달하면 주기 폴링이 중단되고, 브로드캐스트 기반 갱신만 수행됩니다.<br>
+     * (전류/평균 전류 등 일부 값은 즉시 변동이 반영되지 않을 수 있습니다.)<br>
+     */
     public const val DISABLE_UPDATE_CYCLE_TIME = 9999000L
 
     /**
      * Minimum update cycle time in milliseconds.<br><br>
      * 최소 업데이트 주기 시간 (밀리초)입니다.<br>
+     * 이보다 짧으면 과도한 폴링으로 CPU/배터리 부담이 커질 수 있습니다.<br>
      */
     public const val MIN_UPDATE_CYCLE_TIME = 1000L
 

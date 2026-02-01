@@ -6,7 +6,6 @@ import android.content.Context.RECEIVER_NOT_EXPORTED
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Build
-import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DisposableHandle
 import kotlinx.coroutines.Job
@@ -19,7 +18,6 @@ import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
 import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
 import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateConstants.DISABLE_UPDATE_CYCLE_TIME
-import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateConstants.MIN_UPDATE_CYCLE_TIME
 
 /**
  * Internal helper class that manages battery broadcast receiver and periodic updates.<br>
@@ -181,11 +179,6 @@ internal class BatteryStateReceiver(
      *         업데이트 시작 성공 시 `true`, 실패 시 `false`.<br>
      */
     public fun updateStart(coroutineScope: CoroutineScope, updateCycleTime: Long, setupDataFlows: () -> Unit): Boolean = safeCatch(false) {
-        if (updateCycleTime < MIN_UPDATE_CYCLE_TIME) {
-            Log.w("BatteryStateInfo", "updateCycleTime must be greater than or equal to $MIN_UPDATE_CYCLE_TIME")
-            return false
-        }
-
         if (!isReceiverRegistered) {
             Logx.w("BatteryStateInfo: Receiver not registered, calling registerBatteryReceiver().")
             if (!registerReceiver()) {
@@ -217,12 +210,14 @@ internal class BatteryStateReceiver(
 
         setupDataFlows() // Setup reactive flows for data updates
 
+        val scope = checkNotNull(internalCoroutineScope) { "internalCoroutineScope must be initialized before starting updates" }
+
         updateJob = if (updateCycleTime == DISABLE_UPDATE_CYCLE_TIME) {
-            internalCoroutineScope!!.launch {
+            scope.launch {
                 receiveBatteryInfo.invoke()
             }
         } else {
-            internalCoroutineScope!!.launch {
+            scope.launch {
                 while (isActive) {
                     receiveBatteryInfo.invoke()
                     delay(updateCycleTime)
@@ -230,13 +225,6 @@ internal class BatteryStateReceiver(
             }
         }
 
-//        // For Current Ampere, Current Average Ampere 더 자주 받기 위함
-//        updateJob = internalCoroutineScope!!.launch {
-//            while (isActive) {
-//                receiveBatteryInfo.invoke()
-//                delay(updateCycleTime)
-//            }
-//        }
         return true
     }
 

@@ -31,6 +31,7 @@ internal class BatteryStateEmitter {
      * Buffer size: 1 (replay) + 16 (extra) = 17 total.<br><br>
      * 버퍼링을 통해 배터리 이벤트를 보관하는 SharedFlow입니다.<br>
      * 버퍼 크기: 1 (replay) + 16 (추가) = 총 17개.<br>
+     * 현재 버퍼 설정은 고정값이며 옵션화는 제공하지 않습니다.<br>
      */
     private val msfUpdate: MutableSharedFlow<BatteryStateEvent> = MutableSharedFlow(
         replay = 1,
@@ -75,31 +76,15 @@ internal class BatteryStateEmitter {
     }
 
     /**
-     * Refreshes cached battery metrics and emits events.<br><br>
-     * 캐시된 배터리 지표를 갱신하고 이벤트를 방출합니다.<br>
+     * Refreshes cached battery metrics and emits events.<br>
+     * Each field in [stateInfoData] is written to its corresponding MutableStateFlow,
+     * triggering change-based emission through [setupDataFlows].<br><br>
+     * [stateInfoData]의 각 필드를 대응하는 MutableStateFlow에 기록하여
+     * [setupDataFlows]를 통해 변경 기반 이벤트를 발행합니다.<br>
      *
-     * @param capacity Battery capacity percentage (0-100).<br><br>
-     *                 배터리 용량 백분율 (0-100).<br>
-     * @param currentAmpere Current battery current in microamperes (µA).<br><br>
-     *                      마이크로암페어 단위의 현재 배터리 전류 (µA).<br>
-     * @param chargeCounter Remaining battery charge in microampere-hours (µAh).<br><br>
-     *                      마이크로암페어시 단위의 남은 배터리 충전량 (µAh).<br>
-     * @param chargePlug Charging plug type (AC, USB, Wireless, etc.).<br><br>
-     *                   충전 플러그 타입 (AC, USB, Wireless 등).<br>
-     * @param chargeStatus Charging status (Charging, Discharging, Full, etc.).<br><br>
-     *                     충전 상태 (충전 중, 방전 중, 완충 등).<br>
-     * @param currentAverageAmpere Average battery current in microamperes (µA).<br><br>
-     *                             마이크로암페어 단위의 평균 배터리 전류 (µA).<br>
-     * @param energyCounter Battery energy counter in nanowatt-hours (nWh).<br><br>
-     *                      나노와트시 단위의 배터리 에너지 카운터 (nWh).<br>
-     * @param health Battery health status (Good, Overheat, Dead, etc.).<br><br>
-     *               배터리 건강 상태 (양호, 과열, 손상 등).<br>
-     * @param present Whether the battery is present in the device.<br><br>
-     *                기기에 배터리가 장착되어 있는지 여부.<br>
-     * @param temperature Battery temperature in degrees Celsius (°C).<br><br>
-     *                    섭씨 온도 단위의 배터리 온도 (°C).<br>
-     * @param voltage Battery voltage in volts (V).<br><br>
-     *                볼트 단위의 배터리 전압 (V).<br>
+     * @param stateInfoData Snapshot of all battery metrics to update.<br><br>
+     *                      갱신할 모든 배터리 메트릭의 스냅샷입니다.<br>
+     * @see BatteryStateData
      */
     public fun updateBatteryInfo(stateInfoData: BatteryStateData) {
         with(stateInfoData) {
