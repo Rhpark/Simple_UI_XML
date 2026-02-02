@@ -13,12 +13,12 @@ import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.xml.BuildConfig
 import kr.open.library.simple_ui.xml.ui.adapter.queue.QueueDebugEvent
 import kr.open.library.simple_ui.xml.ui.adapter.queue.QueueOverflowPolicy
-import kr.open.library.simple_ui.xml.ui.temp.base.internal.AdapterClickBinder
 import kr.open.library.simple_ui.xml.ui.temp.base.AdapterOperationFailure
 import kr.open.library.simple_ui.xml.ui.temp.base.AdapterOperationFailureInfo
+import kr.open.library.simple_ui.xml.ui.temp.base.AdapterThreadCheckMode
+import kr.open.library.simple_ui.xml.ui.temp.base.internal.AdapterClickBinder
 import kr.open.library.simple_ui.xml.ui.temp.base.internal.AdapterOperationQueueCoordinator
 import kr.open.library.simple_ui.xml.ui.temp.base.internal.AdapterOperationQueueCoordinator.OperationResult
-import kr.open.library.simple_ui.xml.ui.temp.base.AdapterThreadCheckMode
 import kr.open.library.simple_ui.xml.ui.temp.base.list.diffcallback.DefaultDiffCallback
 import kr.open.library.simple_ui.xml.ui.temp.base.operation.AdapterListOperations
 import kr.open.library.simple_ui.xml.ui.temp.base.operation.toOperationResult
@@ -638,4 +638,3 @@ abstract class RootListAdapterCore<ITEM : Any, VH : RecyclerView.ViewHolder>(
         super.submitList(items, commitCallback)
     }
 }
-

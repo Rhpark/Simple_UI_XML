@@ -1,4 +1,4 @@
-# simple_xml 모듈 개요
+﻿# simple_xml 모듈 개요
  - **전역 규칙은 루트 AGENTS.md 참조**
  - 주석 스타일, 코딩 컨벤션, 대화 규칙 등은 루트 AGENTS.md를 따름
  - **현재 버전**: 0.3.46 (JitPack)
@@ -23,12 +23,12 @@
 
   ### DataBinding/ViewBinding 집중
    - XML 레이아웃에 특화된 바인딩 시스템 활용
-   - BaseActivity, BaseBindingActivity 등 바인딩 자동화
+   - BaseActivity, BaseDataBindingActivity 등 바인딩 자동화
    - View 확장 함수로 XML UI 조작 간소화
 
   ### 라이프사이클 관리
    - Activity/Fragment 생명주기 통합 관리
-   - PermissionManager의 ActivityResult 기반 권한 처리
+   - PermissionRequester의 ActivityResult 기반 권한 처리
    - RecyclerView Adapter의 안전한 리스트 연산 큐
 
 
@@ -38,13 +38,13 @@
   ### ui/activity
    - **RootActivity**: 시스템 바 제어, 권한 관리 기본 클래스 (simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/components/activity/root/RootActivity.kt)
    - **BaseActivity**: 자동 레이아웃 바인딩 (simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/components/activity/normal/BaseActivity.kt)
-   - **BaseBindingActivity**: DataBinding 자동 바인딩 (simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/components/activity/binding/BaseDataBindingActivity.kt)
+   - **BaseDataBindingActivity**: DataBinding 자동 바인딩 (simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/components/activity/binding/BaseDataBindingActivity.kt)
    - StatusBar/NavigationBar 색상 제어, Edge-to-edge 대응
 
 
   ### ui/fragment
    - **BaseFragment**: Fragment 자동 레이아웃 바인딩 (simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/fragment/)
-   - **BaseBindingFragment**: DataBinding Fragment
+   - **BaseDataBindingFragment**: DataBinding Fragment
    - **dialog**: DialogFragment 기본 구현 (simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/fragment/dialog/)
 
 
@@ -59,15 +59,15 @@
 
   ### ui/view
    - **RecyclerScrollStateView**: 스크롤 방향/엣지 감지 RecyclerView (simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/view/recyclerview/RecyclerScrollStateView.kt)
-   - 스크롤 상태를 StateFlow로 제공
+   - 스크롤 상태를 SharedFlow로 제공
 
 
   ### ui/layout
    - 라이프사이클 인식 레이아웃 클래스 (simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/layout/)
 
 
-  ### permissions/manager
-   - **PermissionManager**: ActivityResult 기반 권한 요청 오케스트레이터 (simple_xml/src/main/java/kr/open/library/simple_ui/xml/permissions/manager/PermissionManager.kt)
+  ### permissions/api
+   - **PermissionRequester**: ActivityResult 기반 권한 요청 오케스트레이터 (simple_xml/src/main/java/kr/open/library/simple_ui/xml/permissions/api/PermissionRequester.kt)
    - 일반 권한 + 특수 권한(SYSTEM_ALERT_WINDOW 등) 통합 처리
    - 큐 기반 순차 처리, 재요청 로직
    - **register**: PermissionDelegate, PermissionRequester (simple_xml/src/main/java/kr/open/library/simple_ui/xml/permissions/register/)
@@ -104,13 +104,13 @@
 
   ### 1. 자동 바인딩 패턴
    - BaseActivity/BaseFragment: layoutId만 지정하면 자동 setContentView/inflate
-   - BaseBindingActivity/BaseBindingFragment: DataBinding 자동 생성 및 바인딩
+   - BaseDataBindingActivity/BaseDataBindingFragment: DataBinding 자동 생성 및 바인딩
    - 보일러플레이트 최소화
 
 
   ### 2. 라이프사이클 통합
    - RootActivity: onCreate에서 시스템 바 자동 설정
-   - PermissionManager: ActivityResult API 활용, 라이프사이클 안전
+   - PermissionRequester: ActivityResult API 활용, 라이프사이클 안전
    - RecyclerScrollStateView: LifecycleOwner 인식, 자동 구독 해제
 
 
@@ -121,15 +121,15 @@
 
 
   ### 4. 권한 처리 통합
-   - PermissionManager: 일반 권한 + 특수 권한 단일 인터페이스
+   - PermissionRequester: 일반 권한 + 특수 권한 단일 인터페이스
    - 큐 기반 순차 요청으로 사용자 경험 개선
    - 재요청 로직 내장 (거부 시 설정 화면 이동 옵션)
 
 
-  ### 5. StateFlow 기반 상태 관리
-   - RecyclerScrollStateView: 스크롤 상태를 StateFlow로 제공
+  ### 5. SharedFlow 기반 스크롤 상태 관리
+   - RecyclerScrollStateView: 스크롤 상태를 SharedFlow로 제공
    - UI 컴포넌트 상태를 반응형으로 관찰 가능
-   - simple_core의 StateFlow 패턴과 일관성 유지
+   - simple_core의 Flow 패턴과 일관성 유지
 
 
 
@@ -143,12 +143,12 @@
   ### RootActivity 상속 체계
    - RootActivity: 시스템 바, 권한, Edge-to-edge 처리
    - BaseActivity: RootActivity + 자동 레이아웃 바인딩
-   - BaseBindingActivity: RootActivity + DataBinding
+   - BaseDataBindingActivity: RootActivity + DataBinding
    - 커스텀 Activity는 이 중 하나를 상속하여 일관성 유지
 
 
   ### DataBinding 사용 시
-   - BaseBindingActivity/BaseBindingFragment 상속
+   - BaseDataBindingActivity/BaseDataBindingFragment 상속
    - binding 프로퍼티 자동 초기화됨
    - onDestroy에서 binding null 처리 자동
 
@@ -200,13 +200,13 @@
    - Edge-to-edge 대응 (API 35+)
 
 
-  ### BaseActivity / BaseBindingActivity
+  ### BaseActivity / BaseDataBindingActivity
    - 자동 레이아웃/DataBinding 바인딩
    - layoutId 지정만으로 setContentView 자동
    - 보일러플레이트 최소화
 
 
-  ### PermissionManager
+  ### PermissionRequester
    - ActivityResult 기반 권한 요청 큐 관리
    - 일반 권한 + 특수 권한 통합 처리
    - 재요청 로직 내장
@@ -220,7 +220,7 @@
 
   ### RecyclerScrollStateView
    - 스크롤 방향(UP/DOWN) 및 엣지(TOP/BOTTOM) 감지
-   - StateFlow로 상태 제공
+   - SharedFlow로 상태 제공
    - 라이프사이클 인식 자동 구독 해제
 
 
@@ -239,7 +239,7 @@
   ### simple_xml이 추가 제공하는 기능
    - UI 컴포넌트 (Activity, Fragment, Adapter, View)
    - DataBinding/ViewBinding 자동화
-   - 권한 요청 UI 흐름 (PermissionManager)
+   - 권한 요청 UI 흐름 (PermissionRequester)
    - View 확장 함수 (Toast, SnackBar, Animation 등)
    - 키보드, 플로팅 뷰 등 UI 특화 제어
 
@@ -263,9 +263,10 @@
 
 
   ### 권한 요청
-   - PermissionManager 사용: (simple_xml/src/main/java/kr/open/library/simple_ui/xml/permissions/manager/PermissionManager.kt)
+   - PermissionRequester 사용: (simple_xml/src/main/java/kr/open/library/simple_ui/xml/permissions/api/PermissionRequester.kt)
 
 
   ### View 확장
    - Toast/SnackBar: (simple_xml/src/main/java/kr/open/library/simple_ui/xml/extensions/view/)
+
 

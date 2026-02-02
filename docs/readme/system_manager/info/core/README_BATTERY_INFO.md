@@ -196,13 +196,11 @@ class BatteryMonitor(private val context: Context) {
 ## Simple UI Approach (Simple UI 방식)
 ```kotlin
 // Simple Battery information collection - SharedFlow based (간단한 Battery 정보 수집 - SharedFlow 기반)
-class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
+class MainActivity : BaseDataBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
 
     private val batteryInfo by lazy { BatteryStateInfo(this) }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
+    override fun onCreate(binding: ActivityMainBinding, savedInstanceState: Bundle?) {
         // 1. Start battery monitoring with default update cycle (2000ms)
         // (기본 업데이트 주기로 배터리 모니터링 시작 (2000ms))
         val success = batteryInfo.registerStart(lifecycleScope)

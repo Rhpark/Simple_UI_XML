@@ -29,7 +29,7 @@ Provides telephony helpers, network type parsing, and real-time callbacks with A
 - **TelephonyManager Query:** `getTelephonyManagerFromUSim(slotIndex)` - Return TelephonyManager for specific SIM slot (특정 SIM 슬롯의 TelephonyManager 반환)
 - **Permission fallback:** Returns safe defaults/empty lists and logs warnings when permission is missing; call `refreshPermissions()` after grant.
   - 권한이 없으면 안전한 기본값/빈 리스트를 반환하며 로그에 경고가 남습니다. 권한을 허용했다면 `refreshPermissions()`를 호출해 상태를 갱신하세요.
-- **Real-time Callback (Basic):** `registerCallback(handler, onSignalStrength, onServiceState, onNetworkState)` - StateFlow-based real-time updates (StateFlow 기반 실시간 업데이트)
+- **Real-time Callback (Basic):** `registerCallback(handler, onSignalStrength, onServiceState, onNetworkState)` - Callback + StateFlow updates (콜백 + StateFlow 자동 업데이트)
 - **Unregister Callback:** `unregisterCallback()` - Unregister registered callback (등록된 콜백 해제)
 - **Auto API Compatibility:** Automatic branching between TelephonyCallback (API 31+) vs PhoneStateListener (TelephonyCallback (API 31+) vs PhoneStateListener 자동 분기)
 

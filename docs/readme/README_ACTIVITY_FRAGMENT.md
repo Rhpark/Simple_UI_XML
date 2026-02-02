@@ -1,18 +1,18 @@
-# 📘 Simple UI Activity & Fragment - Complete Guide
+﻿# 📘 Simple UI Activity & Fragment - Complete Guide
 > **Simple UI Activity & Fragment 전체 가이드**
 
 ## 📦 Module Information (모듈 정보)
 - **Module**: `simple_xml` (UI-dependent module / UI 의존 모듈)
 - **Package**: `kr.open.library.simple_ui.xml.ui.*`
 - **Provides**: Base classes for Activity and Fragment
-  - `components/activity/` - RootActivity, BaseActivity, BaseBindingActivity
-  - `components/fragment/` - RootFragment, BaseFragment, BaseBindingFragment, DialogFragment
+  - `components/activity/` - RootActivity, BaseActivity, BaseDataBindingActivity
+  - `components/fragment/` - RootFragment, BaseFragment, BaseDataBindingFragment, DialogFragment
 
 <br></br>
 Simple UI's Activity/Fragment base classes are productivity tools that eliminate repetitive initialization code and centralize permission handling and MVVM interactions in one place. This document provides the philosophy behind each base class, usage scenarios, and practical examples.
  > Simple UI의 Activity/Fragment 베이스 클래스는 반복되는 초기화 코드를 걷어내고, 권한 처리, MVVM 상호 작용까지 한 곳에 모아둔 생산성 도구입니다. 이 문서는 각 베이스 클래스의 철학과 사용 시나리오, 실제 예제까지 상세히 정리했습니다.
 
-### BaseBindingActivity Quick Setup (BaseBindingActivity 빠른 설정)
+### BaseDataBindingActivity Quick Setup (BaseDataBindingActivity 빠른 설정)
 ![mvvm_activity_init.gif](../../example_gif/mvvm_activity_init.gif)
 
 ### BaseActivity Quick Setup (BaseActivity 빠른 설정)
@@ -32,9 +32,9 @@ Complete Activity/Fragment initialization in just 3 lines!" – See how much fas
 | Category  | Plain Android                     | Simple UI                                              |
 |:--|:---------------------------------------------|:-------------------------------------------------------|
 |  `setContentView` setup | Multiple boilerplate `onCreate` code | Automatically handled via constructor parameter        |
-| DataBinding setup | Manual inflate +  `binding.lifecycleOwner`  assignment | Auto-assigned by BaseBinding classes                   | 
-| Nullable Fragment binding |`_binding?` null safety + manual `onDestroyView` cleanup | Lifecycle automatically managed by BaseBindingFragment |
-| Lifecycle observer connection | Manually write `lifecycleScope` / `repeatOnLifecycle` | Provides hook methods like `eventVmCollect()`            |
+| DataBinding setup | Manual inflate + `binding.lifecycleOwner` assignment | BaseDataBindingActivity/Fragment가 lifecycleOwner 자동 설정 |
+| Nullable Fragment binding |`_binding?` null safety + manual `onDestroyView` cleanup | Lifecycle automatically managed by BaseDataBindingFragment |
+| Lifecycle observer connection | `lifecycleScope` / `repeatOnLifecycle` 직접 구성 | `onEventVmCollect(binding)` 훅 제공 |
 | MVVM glue code | Manually write ViewModel factory and binding connection | Instant injection with getViewModel() helper          |
 
 ### Permission Management (권한 관리)
@@ -71,7 +71,7 @@ To use Simple UI's Activity/Fragment base classes, you need to verify the minima
 android {
     buildFeatures {
 //        viewBinding = true // ViewBinding만 사용할 경우
-        dataBinding = true   // BaseBindingActivity / BaseBindingFragment 사용 시 필수
+        dataBinding = true   // BaseDataBindingActivity / BaseDataBindingFragment 사용 시 필수
     }
 }
 ```
@@ -85,7 +85,7 @@ android {
 ### ⚠️ Common pitfalls (자주 발생하는 문제)
 
 #### 1. DataBinding not enabled (DataBinding 비활성화)
-   - Symptom: BaseBindingActivity throws `UninitializedPropertyAccessException`
+   - Symptom: BaseDataBindingActivity throws `UninitializedPropertyAccessException`
    - Solution: Make sure to add the `dataBinding = true` option and Sync.
 
 #### 2. Missing `<layout>` tag in the layout file (레이아웃에 `<layout>` 태그 누락)
@@ -126,13 +126,13 @@ android {
 
 <br></br>
 
-## 🧱 Tier 2: BaseBindingActivity / BaseBindingFragment (DataBinding 기반)
+## 🧱 Tier 2: BaseDataBindingActivity / BaseDataBindingFragment (DataBinding 기반)
 
 ### Key features(주요 기능)
-- Provides binding object as `protected val binding` and cleans up with lifecycle
-- Automatically sets `binding.lifecycleOwner = this`
-- Supports ViewModelProvider + SavedState with `getViewModel<T>()` method
-- Provides UI event collection point using `eventVmCollect()` hook
+- `onCreate(binding, savedInstanceState)` / `onCreateView(binding, savedInstanceState)`에서 binding 제공, 필요 시 `getBinding()` 사용
+- Activity는 `binding.lifecycleOwner = this`, Fragment는 `binding.lifecycleOwner = viewLifecycleOwner` 자동 설정
+- ViewModelProvider + SavedState 지원 (`getViewModel<T>()`)
+- UI 이벤트 수집 훅 `onEventVmCollect(binding)` 제공 (바인딩 초기화 후 자동 호출)
 
 ### When to use(언제 사용?)
 - MVVM + DataBinding View
@@ -141,23 +141,23 @@ android {
 
 
 ### Activity Initialization Comparison
-| Category         | Plain Android | BaseBindingActivity |
+| Category         | Plain Android | BaseDataBindingActivity |
 |:-----------------|:--|:--|
 | Binding creation | Need `DataBindingUtil.setContentView`/cast | Complete by just passing layoutRes to constructor | 
 | LifecycleOwner   | Manual assignment | Automatically assigned |
 | bind ViewModel   | Write `ViewModelProvider` directly | Use `getViewModel()` helper |
-| Event collection | Repeat `lifecycleScope.launch` | Common implementation inside `eventVmCollect()` |
+| Event collection | Repeat `lifecycleScope.launch` | `onEventVmCollect(binding)` 내부에서 공통 구현 |
 
 ### Fragment Initialization Comparison
-| Category | Plain Android | BaseBindingFragment |
+| Category | Plain Android | BaseDataBindingFragment |
 |:--|:--|:--|
 | Nullable binding | `_binding` 관리 + `onDestroyView`에서 null 처리 | 내부에서 자동 정리 |
 | ViewModel 범위 | `by viewModels()`/`activityViewModels()` 분기 | `getViewModel()` 선택 사용 |
 | SavedState | 별도 Bundle 처리 | ViewModelProvider가 자동 처리 |
 
 ### MVVM Pattern Tip
-BaseBinding classes call `binding.setVariable()` and `binding.executePendingBindings()` inside `onCreateView()`, so you can use @{} expressions in XML right away. Also, `eventVmCollect()` is automatically called after binding initialization (Activity: `onCreate()`, Fragment: `onViewCreated()`), allowing you to safely receive one-time events flowing from the ViewModel.
-> BaseBinding 계열은 `binding.setVariable()`과 `binding.executePendingBindings()`를 `onCreateView()` 내부에서 호출해주므로 XML의 `@{}` 표현식을 바로 사용할 수 있습니다. 또한 `eventVmCollect()`가 바인딩 초기화 후 자동으로 호출되어(Activity: `onCreate()`, Fragment: `onViewCreated()`) ViewModel에서 흘러오는 단발성 이벤트를 안전하게 수신할 수 있습니다.
+BaseDataBindingActivity/Fragment는 바인딩을 생성해 주므로 `onCreate(binding, savedInstanceState)`(Activity) 또는 `onViewCreated(binding, savedInstanceState)`(Fragment)에서 ViewModel을 연결하면 됩니다. `onEventVmCollect(binding)`는 바인딩 초기화 이후 자동 호출됩니다(Activity: `onCreate(binding, ...)`, Fragment: `onViewCreated(binding, ...)`), 그래서 1회성 이벤트를 안전하게 수집할 수 있습니다.
+> BaseDataBindingActivity/Fragment는 바인딩을 생성해 주므로 `onCreate(binding, savedInstanceState)`(Activity) 또는 `onViewCreated(binding, savedInstanceState)`(Fragment)에서 ViewModel을 연결하면 됩니다. `onEventVmCollect(binding)`는 바인딩 초기화 이후 자동 호출됩니다(Activity: `onCreate(binding, ...)`, Fragment: `onViewCreated(binding, ...)`), 그래서 1회성 이벤트를 안전하게 수집할 수 있습니다.
 
 <br></br>
 
@@ -202,10 +202,10 @@ requestPermissions(
 - Lightest layer, only pass layout resource
 - BaseFragment controls attach behavior with `isAttachToParent` flag
 
-#### BaseBindingActivity / BaseBindingFragment
-- Exposes binding object and manages lifecycle
-- Provides `getViewModel()`, `eventVmCollect()`
-- Extends same pattern to `BaseBindingDialogFragment`
+#### BaseDataBindingActivity / BaseDataBindingFragment
+- 바인딩 생명주기 자동 관리 + `getBinding()` 제공
+- `getViewModel()`, `onEventVmCollect(binding)` 제공
+- Extends same pattern to `BaseDataBindingDialogFragment`
 <br></br>
 
 ## ⚙️ Advanced Features – Initialization Callbacks (고급 초기화 콜백)
@@ -219,30 +219,31 @@ override fun beforeOnCreated(savedInstanceState: Bundle?) {
 }
 ```
 
-### BaseBindingActivity - `onCreateView(rootView: View, savedInstanceState: Bundle?)`
-- **Call timing:** After Binding inflate , Before `setContentView`  
-- **Use case:** `binding.viewModel = vm`, Init View 
+### BaseDataBindingActivity - `onCreate(binding: BINDING, savedInstanceState: Bundle?)`
+- **Call timing:** 바인딩 생성 직후 (super.onCreate 이후)
+- **Use case:** `binding.viewModel = vm`, View 초기화
 ```kotlin
-override fun onCreateView(rootView: View, savedInstanceState: Bundle?) {
+override fun onCreate(binding: ActivityMainBinding, savedInstanceState: Bundle?) {
     binding.vm = viewModel
     binding.recyclerview.adapter = listAdapter
 }
 ```
 
-### BaseBindingFragment - `afterOnCreateView(rootView: View, savedInstanceState: Bundle?)`
-- **Call timing:** After onCreateView(..)  
-- **Use case:** config Transaction, ex childFragmentManager
+### BaseDataBindingFragment - `onViewCreated(binding: BINDING, savedInstanceState: Bundle?)`
+- **Call timing:** View 생성 완료 직후
+- **Use case:** childFragmentManager 트랜잭션, UI 초기화
 ```kotlin
-override fun afterOnCreateView(rootView: View, savedInstanceState: Bundle?) {
+override fun onViewCreated(binding: FragmentDetailBinding, savedInstanceState: Bundle?) {
     childFragmentManager.beginTransaction()
         .replace(R.id.container, DetailFragment.newInstance())
         .commit()
 }
 ```
+> 필요 시 `onCreateView(binding, savedInstanceState)`를 더 이른 초기화 지점으로 사용할 수 있으며, 이때는 `super.onCreateView(...)` 호출로 lifecycleOwner 설정을 유지하세요.
 
-### 🪟 BaseBindingDialogFragment same BaseBindingFragment!
-DialogFragment also overrides `onCreateView()`, `eventVmCollect()`, etc. in the same way to provide an identical coding experience with Activity/Fragment.
-> DialogFragment 역시 `onCreateView()`, `eventVmCollect()` 등을 동일하게 override하여 Activity/Fragment와 완벽히 동일한 코딩 경험을 제공합니다.
+### 🪟 BaseDataBindingDialogFragment same BaseDataBindingFragment!
+DialogFragment도 `onCreateView(binding, ...)`, `onViewCreated(binding, ...)`, `onEventVmCollect(binding)`을 동일하게 override하여 Activity/Fragment와 같은 코딩 경험을 제공합니다.
+> DialogFragment도 `onCreateView(binding, ...)`, `onViewCreated(binding, ...)`, `onEventVmCollect(binding)`을 동일하게 override하여 Activity/Fragment와 같은 코딩 경험을 제공합니다.
 
 <br></br>
 
@@ -250,15 +251,15 @@ DialogFragment also overrides `onCreateView()`, `eventVmCollect()`, etc. in the 
 ### Activity
 1. `beforeOnCreated()` – Ready to Window/Theme
 2. `onCreate()` – Ready to RootActivity permission requester
-3. (BaseBindingActivity) `onCreateView()` – Binding inflate & viewModel bind, child class initialization
-4. `eventVmCollect()` – Automatically called in `onCreate()` after `onCreateView()` completes / `onCreateView()` 완료 후 `onCreate()`에서 자동 호출
-5. `onDestroy()` – Binding unBind
+3. (BaseDataBindingActivity) `onCreate(binding, savedInstanceState)` – Binding 생성 및 초기화
+4. `onEventVmCollect(binding)` – Automatically called after `onCreate(binding, ...)` completes / `onCreate(binding)` 이후 자동 호출
+5. `onDestroy()` – Activity 종료
 
 ### Fragment
 1. `onCreate()` – RootFragment 권한 delegate 준비
-2. `onCreateView()` – Layout inflate (BaseBinding이면 Binding 생성)
-3. `afterOnCreateView()` – UI initialization, child class initialization
-4. `eventVmCollect()` – Automatically called in `onViewCreated()` after `afterOnCreateView()` completes / `afterOnCreateView()` 완료 후 `onViewCreated()`에서 자동 호출
+2. `onCreateView()` – Binding 생성 + `onCreateView(binding, savedInstanceState)` 호출
+3. `onViewCreated()` – `onViewCreated(binding, savedInstanceState)` 호출
+4. `onEventVmCollect(binding)` – Automatically called after `onViewCreated(binding, ...)` completes / `onViewCreated(binding)` 이후 자동 호출
 5. `onDestroyView()` – Binding/리소스 자동 정리
 
 <br></br>
@@ -273,10 +274,10 @@ DialogFragment also overrides `onCreateView()`, `eventVmCollect()`, etc. in the 
 <br></br>
 
 ## 🗣️ Developer Reviews (사용자 후기)
-- "Every time I create a new screen, I just copy-paste the BaseBindingActivity template and I'm done—it's more than twice as fast."
+- "Every time I create a new screen, I just copy-paste the BaseDataBindingActivity template and I'm done—it's more than twice as fast."
 - "Permission requests are the same across the entire team, making reviews much easier."
 - "Being able to manage even DialogFragments with the same pattern has made maintenance easier than I ever imagined."
-> - "새 화면을 만들 때마다 BaseBindingActivity 템플릿을 복붙하면 끝이라 작업 속도가 2배 이상 빨라졌습니다."
+> - "새 화면을 만들 때마다 BaseDataBindingActivity 템플릿을 복붙하면 끝이라 작업 속도가 2배 이상 빨라졌습니다."
 > - "권한 요청 코드가 팀 전체에서 동일하니 리뷰가 쉬워졌어요."
 > - "DialogFragment까지 동일한 패턴으로 관리할 수 있어 유지보수가 상상 이상으로 편해졌습니다."
 
@@ -294,8 +295,8 @@ Simple UI Activity/Fragment base classes set a new standard for Android UI devel
 |Requirements	|Recommended Base Class|
 |:--|:--|
 |Lightest Activity/Fragment, no ViewBinding	|  `BaseActivity`, `BaseFragment` |
-|DataBinding + MVVM	|  `BaseBindingActivity`, `BaseBindingFragment`|
-|DialogFragment + Binding|	`BaseBindingDialogFragment`|
+|DataBinding + MVVM	|  `BaseDataBindingActivity`, `BaseDataBindingFragment`|
+|DialogFragment + Binding|	`BaseDataBindingDialogFragment`|
 |permission requests|	 `RootActivity`, `RootFragment`|
 
 
@@ -306,7 +307,7 @@ Simple UI Activity/Fragment base classes set a new standard for Android UI devel
 - When mixing with custom view libraries/커스텀 뷰 라이브러리와 혼용할 때
 
 
-#### Choose BaseBindingActivity / BaseBindingFragment
+#### Choose BaseDataBindingActivity / BaseDataBindingFragment
 - Using MVVM + LiveData/StateFlow/ MVVM + LiveData/StateFlow 사용
 - When binding safety and event hooks are needed/ Binding 안전성과 이벤트 훅이 필요한 경우
 - When you want to maintain the same code style in Dialog/Fragment/ Dialog/Fragment에서도 동일한 코드 스타일을 유지하고 싶은 경우
@@ -342,27 +343,27 @@ class CustomFragment : BaseFragment(
 ### `getViewModel()` - Easy ViewModel Creation (간편 ViewModel 생성)
 ```kotlin
 class SampleActivity :
-    BaseBindingActivity<ActivitySampleBinding>(R.layout.activity_sample) {
+    BaseDataBindingActivity<ActivitySampleBinding>(R.layout.activity_sample) {
 
     private val vm: SampleViewModel by lazy { getViewModel() }
 
-    override fun onCreateView(rootView: View, savedInstanceState: Bundle?) {
+    override fun onCreate(binding: ActivitySampleBinding, savedInstanceState: Bundle?) {
         binding.vm = vm
     }
 }
 ```
 - SavedStateHandle까지 자동 연결되어 Configuration 변화에도 안전합니다.
 
-### `eventVmCollect()` - ViewModel Event Subscription (ViewModel 이벤트 수집)
-- Note: Both **BaseBindingActivity** and **BaseBindingFragment** automatically call `eventVmCollect()` after binding initialization (Activity: `onCreate()`, Fragment: `onViewCreated()`). Simply override this method to collect ViewModel events.
-> - 주의: **BaseBindingActivity**와 **BaseBindingFragment** 모두 바인딩 초기화 후 `eventVmCollect()`를 자동으로 호출합니다(Activity: `onCreate()`, Fragment: `onViewCreated()`). 이 메서드를 오버라이드하여 ViewModel 이벤트를 수집하세요.  
+### `onEventVmCollect(binding)` - ViewModel Event Subscription (ViewModel 이벤트 수집)
+- Note: **BaseDataBindingActivity**와 **BaseDataBindingFragment**는 바인딩 초기화 이후 `onEventVmCollect(binding)`를 자동 호출합니다 (Activity: `onCreate(binding, ...)`, Fragment: `onViewCreated(binding, ...)`). 이 메서드만 override해서 ViewModel 이벤트를 수집하면 됩니다.
+> - 주의: **BaseDataBindingActivity**와 **BaseDataBindingFragment**는 바인딩 초기화 이후 `onEventVmCollect(binding)`를 자동 호출합니다 (Activity: `onCreate(binding, ...)`, Fragment: `onViewCreated(binding, ...)`). 이 메서드만 override해서 ViewModel 이벤트를 수집하면 됩니다.
 
 #### Activity example (Activity 예제)
 ```kotlin
-// BaseBindingActivity automatically calls eventVmCollect() in onCreate()
-// BaseBindingActivity는 onCreate()에서 eventVmCollect()를 자동으로 호출합니다
+// BaseDataBindingActivity automatically calls onEventVmCollect(binding) after onCreate(binding, ...)
+// BaseDataBindingActivity는 onCreate(binding, ...) 이후 onEventVmCollect(binding)를 자동 호출합니다
 
-override fun eventVmCollect() {
+override fun onEventVmCollect(binding: ActivitySampleBinding) {
     lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {  // ✅ Best Practice
             vm.eventFlow.collect { event ->
@@ -377,10 +378,10 @@ override fun eventVmCollect() {
 
 #### Fragment example (Fragment 예제)
 ```kotlin
-// BaseBindingFragment automatically calls eventVmCollect() in onViewCreated()
-// BaseBindingFragment는 onViewCreated()에서 eventVmCollect()를 자동으로 호출합니다
+// BaseDataBindingFragment automatically calls onEventVmCollect(binding) after onViewCreated(binding, ...)
+// BaseDataBindingFragment는 onViewCreated(binding, ...) 이후 onEventVmCollect(binding)를 자동 호출합니다
 
-override fun eventVmCollect() {
+override fun onEventVmCollect(binding: FragmentSampleBinding) {
     viewLifecycleOwner.lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {  // ✅ Best Practice
             vm.eventFlow.collect { event ->
@@ -400,7 +401,7 @@ override fun eventVmCollect() {
 #### ❌ Wrong Way (Causes Duplicate Collectors) / 잘못된 방법 (중복 수집 발생)
 
 ```kotlin
-override fun eventVmCollect() {
+override fun onEventVmCollect(binding: ActivityMainBinding) {
     lifecycleScope.launch {
         vm.events.collect { event ->  // ❌ May cause duplicate collectors
             handleEvent(event)
@@ -416,16 +417,16 @@ During configuration changes (e.g., screen rotation), a new Activity instance is
 
 **Example Scenario / 문제 시나리오:**
 ```kotlin
-// 1. Initial Activity created → eventVmCollect() → collect starts (Collector #1)
+// 1. Initial Activity created → onEventVmCollect(binding) → collect starts (Collector #1)
 // 2. Screen rotation occurs
 // 3. Old Activity destroyed (but Collector #1 still active!)
-// 4. New Activity created → eventVmCollect() → collect starts (Collector #2)
+// 4. New Activity created → onEventVmCollect(binding) → collect starts (Collector #2)
 // 5. Result: Same event triggers TWICE! 💥
 
-// 1. 초기 Activity 생성 → eventVmCollect() → 수집 시작 (Collector #1)
+// 1. 초기 Activity 생성 → onEventVmCollect(binding) → 수집 시작 (Collector #1)
 // 2. 화면 회전 발생
 // 3. 기존 Activity 파괴 (하지만 Collector #1은 여전히 활성!)
-// 4. 새 Activity 생성 → eventVmCollect() → 수집 시작 (Collector #2)
+// 4. 새 Activity 생성 → onEventVmCollect(binding) → 수집 시작 (Collector #2)
 // 5. 결과: 동일한 이벤트가 2번 실행! 💥
 ```
 
@@ -434,7 +435,7 @@ During configuration changes (e.g., screen rotation), a new Activity instance is
 #### ✅ Correct Way (Safe for Configuration Changes) / 올바른 방법 (구성 변경에 안전)
 
 ```kotlin
-override fun eventVmCollect() {
+override fun onEventVmCollect(binding: ActivityMainBinding) {
     lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {  // ✅ Recommended
             vm.events.collect { event ->
@@ -466,15 +467,15 @@ This ensures **only one active collector** exists at any time, even during confi
 
 **Activity:**
 ```kotlin
-class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
+class MainActivity : BaseDataBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
     private val vm: MainViewModel by lazy { getViewModel() }
 
-    override fun onCreateView(rootView: View, savedInstanceState: Bundle?) {
+    override fun onCreate(binding: ActivityMainBinding, savedInstanceState: Bundle?) {
         binding.vm = vm
         lifecycle.addObserver(vm)
     }
 
-    override fun eventVmCollect() {
+    override fun onEventVmCollect(binding: ActivityMainBinding) {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {  // ✅ Best Practice
                 vm.eventFlow.collect { event ->
@@ -491,15 +492,15 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 
 **Fragment:**
 ```kotlin
-class HomeFragment : BaseBindingFragment<FragmentHomeBinding>(R.layout.fragment_home) {
+class HomeFragment : BaseDataBindingFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     private val vm: HomeViewModel by lazy { getViewModel() }
 
-    override fun afterOnCreateView(rootView: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(binding: FragmentHomeBinding, savedInstanceState: Bundle?) {
         binding.vm = vm
         lifecycle.addObserver(vm)
     }
 
-    override fun eventVmCollect() {
+    override fun onEventVmCollect(binding: FragmentHomeBinding) {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {  // ✅ Best Practice
                 vm.eventFlow.collect { event ->
@@ -518,12 +519,12 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding>(R.layout.fragment_
 
 #### 🎯 Key Takeaways / 핵심 요약
 
-- ✅ **Always** use `repeatOnLifecycle(Lifecycle.State.STARTED)` when collecting Flow in `eventVmCollect()`
+- ✅ **Always** use `repeatOnLifecycle(Lifecycle.State.STARTED)` when collecting Flow in `onEventVmCollect(binding)`
 - ❌ **Never** collect Flow directly in `lifecycleScope.launch` without `repeatOnLifecycle`
 - 📱 This prevents duplicate event handling during **screen rotation** and other configuration changes
 - 🔄 The pattern works for both **Activity** (`lifecycleScope`) and **Fragment** (`viewLifecycleOwner.lifecycleScope`)
 
-- ✅ `eventVmCollect()`에서 Flow를 수집할 때 **항상** `repeatOnLifecycle(Lifecycle.State.STARTED)`를 사용하세요
+- ✅ `onEventVmCollect(binding)`에서 Flow를 수집할 때 **항상** `repeatOnLifecycle(Lifecycle.State.STARTED)`를 사용하세요
 - ❌ `repeatOnLifecycle` 없이 `lifecycleScope.launch`에서 직접 Flow를 수집하지 **마세요**
 - 📱 이를 통해 **화면 회전** 및 기타 구성 변경 시 중복 이벤트 처리를 방지합니다
 - 🔄 이 패턴은 **Activity** (`lifecycleScope`)와 **Fragment** (`viewLifecycleOwner.lifecycleScope`) 모두에서 작동합니다
@@ -533,7 +534,7 @@ class HomeFragment : BaseBindingFragment<FragmentHomeBinding>(R.layout.fragment_
 <br></br>
 
 ## 👀 View Real Implementation Examples (실제 구현 예제)
-- `app/src/main/java/kr/open/library/simpleui_xml/activity_fragment/activity/BaseBindingActivityExample.kt`
+- `app/src/main/java/kr/open/library/simpleui_xml/activity_fragment/activity/BaseDataBindingActivityExample.kt`
 - `app/src/main/java/kr/open/library/simpleui_xml/activity_fragment/fragment/FragmentContainerActivity.kt`
 - `app/src/main/java/kr/open/library/simpleui_xml/activity_fragment/ActivityFragmentActivity.kt`
 

@@ -95,8 +95,7 @@ class PermissionRequester private constructor(
      * Runtime permission handler for rationale and result mapping.<br><br>
      * 런타임 권한의 설명 및 결과 매핑 처리기입니다.<br>
      */
-    private val runtimeHandler: RuntimePermissionHandler =
-        RuntimePermissionHandler(host, stateSnapshot.requestedHistory)
+    private val runtimeHandler: RuntimePermissionHandler = RuntimePermissionHandler(host, stateSnapshot.requestedHistory)
 
     /**
      * Special permission handler for settings intents and checks.<br><br>
@@ -258,22 +257,80 @@ class PermissionRequester private constructor(
         onRationaleNeeded: ((PermissionRationaleRequest) -> Unit)? = null,
         onNavigateToSettings: ((PermissionSettingsRequest) -> Unit)? = null,
     ) {
+        if (handleEmptyRequest(permissions, onDeniedResult)) return
+
+        val normalizedPermissions = normalizePermissions(permissions)
+        val invalidPermissions = normalizedPermissions.filter { classifier.isInvalid(it) }.toSet()
+        if (handleLifecycleNotReady(normalizedPermissions, invalidPermissions, onDeniedResult)) return
+
+        hasRequestStarted = true
+        ensureCoordinatorStarted()
+
+        val requestId = UUID.randomUUID().toString()
+        val results = mutableMapOf<String, PermissionDecisionType>()
+        val pendingPermissions = mutableListOf<String>()
+
+        for (permission in normalizedPermissions) {
+            val decision = resolvePermission(requestId, permission)
+            if (decision != null) {
+                results[permission] = decision
+            } else {
+                pendingPermissions.add(permission)
+            }
+        }
+
+        submitRequest(
+            requestId, normalizedPermissions, results, pendingPermissions,
+            onDeniedResult, onRationaleNeeded, onNavigateToSettings,
+        )
+    }
+
+    /**
+     * Handles empty permission request by invoking the denied callback.<br><br>
+     * 빈 권한 요청을 처리하고 거부 콜백을 호출합니다.<br>
+     *
+     * @param permissions Original permission list to check.<br><br>
+     *                    확인할 원본 권한 목록입니다.<br>
+     * @param onDeniedResult Callback invoked with EMPTY_REQUEST denied item.<br><br>
+     *                       EMPTY_REQUEST 거부 항목을 전달받는 콜백입니다.<br>
+     * @return `true` if the request was empty and handled, `false` otherwise.<br><br>
+     *         요청이 비어 있어 처리되었으면 `true`, 아니면 `false`.<br>
+     */
+    private fun handleEmptyRequest(
+        permissions: List<String>,
+        onDeniedResult: (List<PermissionDeniedItem>) -> Unit,
+    ): Boolean {
         if (permissions.isEmpty()) {
             safeCatch {
                 onDeniedResult(
                     listOf(
-                        PermissionDeniedItem(
-                            EMPTY_REQUEST_PERMISSION,
-                            PermissionDeniedType.EMPTY_REQUEST,
-                        ),
+                        PermissionDeniedItem(EMPTY_REQUEST_PERMISSION, PermissionDeniedType.EMPTY_REQUEST,),
                     ),
                 )
             }
-            return
+            return true
         }
+        return false
+    }
 
-        val normalizedPermissions = normalizePermissions(permissions)
-        val invalidPermissions = normalizedPermissions.filter { classifier.isInvalid(it) }.toSet()
+    /**
+     * Handles lifecycle-not-ready state by invoking the denied callback.<br><br>
+     * 라이프사이클 미준비 상태를 처리하고 거부 콜백을 호출합니다.<br>
+     *
+     * @param normalizedPermissions Deduplicated permission list.<br><br>
+     *                              중복 제거된 권한 목록입니다.<br>
+     * @param invalidPermissions Set of permissions not declared in manifest.<br><br>
+     *                           매니페스트에 선언되지 않은 권한 집합입니다.<br>
+     * @param onDeniedResult Callback invoked with LIFECYCLE_NOT_READY or MANIFEST_UNDECLARED denied items.<br><br>
+     *                       LIFECYCLE_NOT_READY 또는 MANIFEST_UNDECLARED 거부 항목을 전달받는 콜백입니다.<br>
+     * @return `true` if lifecycle was not ready and handled, `false` otherwise.<br><br>
+     *         라이프사이클이 준비되지 않아 처리되었으면 `true`, 아니면 `false`.<br>
+     */
+    private fun handleLifecycleNotReady(
+        normalizedPermissions: List<String>,
+        invalidPermissions: Set<String>,
+        onDeniedResult: (List<PermissionDeniedItem>) -> Unit,
+    ): Boolean {
         if (!flowProcessor.isLifecycleRequestAllowed()) {
             safeCatch {
                 onDeniedResult(
@@ -286,90 +343,147 @@ class PermissionRequester private constructor(
                     },
                 )
             }
-            return
+            return true
         }
+        return false
+    }
 
-        hasRequestStarted = true
-        ensureCoordinatorStarted()
-
-        val requestId = UUID.randomUUID().toString()
-        val results = mutableMapOf<String, PermissionDecisionType>()
-        val pendingPermissions = mutableListOf<String>()
-
-        for (permission in normalizedPermissions) {
-            val type = classifier.classify(permission)
-            if (classifier.isInvalid(permission)) {
-                results[permission] = PermissionDecisionType.MANIFEST_UNDECLARED
-                resultAggregator.logResult(
-                    requestId = requestId,
-                    permission = permission,
-                    result = PermissionDecisionType.MANIFEST_UNDECLARED,
-                )
-                continue
-            }
-            when (type) {
-                PermissionType.ROLE -> {
-                    if (!roleHandler.isRoleAvailable(permission)) {
-                        results[permission] = PermissionDecisionType.NOT_SUPPORTED
-                        resultAggregator.logResult(
-                            requestId = requestId,
-                            permission = permission,
-                            result = PermissionDecisionType.NOT_SUPPORTED,
-                        )
-                    } else if (roleHandler.isRoleHeld(permission)) {
-                        results[permission] = PermissionDecisionType.GRANTED
-                        resultAggregator.logResult(
-                            requestId = requestId,
-                            permission = permission,
-                            result = PermissionDecisionType.GRANTED,
-                        )
-                    } else {
-                        pendingPermissions.add(permission)
-                    }
-                }
-
-                PermissionType.SPECIAL -> {
-                    if (!classifier.isSupported(permission)) {
-                        results[permission] = PermissionDecisionType.NOT_SUPPORTED
-                        resultAggregator.logResult(
-                            requestId = requestId,
-                            permission = permission,
-                            result = PermissionDecisionType.NOT_SUPPORTED,
-                        )
-                    } else if (specialHandler.isGranted(permission)) {
-                        results[permission] = PermissionDecisionType.GRANTED
-                        resultAggregator.logResult(
-                            requestId = requestId,
-                            permission = permission,
-                            result = PermissionDecisionType.GRANTED,
-                        )
-                    } else {
-                        pendingPermissions.add(permission)
-                    }
-                }
-
-                PermissionType.RUNTIME -> {
-                    if (!classifier.isSupported(permission)) {
-                        results[permission] = PermissionDecisionType.GRANTED
-                        resultAggregator.logResult(
-                            requestId = requestId,
-                            permission = permission,
-                            result = PermissionDecisionType.GRANTED,
-                        )
-                    } else if (host.context.hasPermission(permission)) {
-                        results[permission] = PermissionDecisionType.GRANTED
-                        resultAggregator.logResult(
-                            requestId = requestId,
-                            permission = permission,
-                            result = PermissionDecisionType.GRANTED,
-                        )
-                    } else {
-                        pendingPermissions.add(permission)
-                    }
-                }
-            }
+    /**
+     * Resolves a single permission's decision before actual request dispatch.<br><br>
+     * 실제 요청 전에 단일 권한의 결정을 사전 해결합니다.<br>
+     *
+     * @param requestId Unique ID for the current request batch.<br><br>
+     *                  현재 요청 배치의 고유 ID입니다.<br>
+     * @param permission Permission string to resolve.<br><br>
+     *                   해결할 권한 문자열입니다.<br>
+     * @return Resolved decision type, or `null` if the permission needs runtime dispatch.<br><br>
+     *         해결된 결정 타입, 또는 런타임 디스패치가 필요하면 `null`.<br>
+     */
+    private fun resolvePermission(requestId: String, permission: String): PermissionDecisionType? {
+        if (classifier.isInvalid(permission)) {
+            resultAggregator.logResult(
+                requestId = requestId,
+                permission = permission,
+                result = PermissionDecisionType.MANIFEST_UNDECLARED,
+            )
+            return PermissionDecisionType.MANIFEST_UNDECLARED
         }
+        return when (classifier.classify(permission)) {
+            PermissionType.ROLE -> resolveRolePermission(requestId, permission)
+            PermissionType.SPECIAL -> resolveSpecialPermission(requestId, permission)
+            PermissionType.RUNTIME -> resolveRuntimePermission(requestId, permission)
+        }
+    }
 
+    /**
+     * Resolves a role permission pre-check.<br><br>
+     * Role 권한의 사전 확인을 수행합니다.<br>
+     */
+    private fun resolveRolePermission(
+        requestId: String,
+        permission: String,
+    ): PermissionDecisionType? {
+        if (!roleHandler.isRoleAvailable(permission)) {
+            resultAggregator.logResult(
+                requestId = requestId,
+                permission = permission,
+                result = PermissionDecisionType.NOT_SUPPORTED,
+            )
+            return PermissionDecisionType.NOT_SUPPORTED
+        }
+        if (roleHandler.isRoleHeld(permission)) {
+            resultAggregator.logResult(
+                requestId = requestId,
+                permission = permission,
+                result = PermissionDecisionType.GRANTED,
+            )
+            return PermissionDecisionType.GRANTED
+        }
+        return null
+    }
+
+    /**
+     * Resolves a special permission pre-check.<br><br>
+     * 특수 권한의 사전 확인을 수행합니다.<br>
+     */
+    private fun resolveSpecialPermission(
+        requestId: String,
+        permission: String,
+    ): PermissionDecisionType? {
+        if (!classifier.isSupported(permission)) {
+            resultAggregator.logResult(
+                requestId = requestId,
+                permission = permission,
+                result = PermissionDecisionType.NOT_SUPPORTED,
+            )
+            return PermissionDecisionType.NOT_SUPPORTED
+        }
+        if (specialHandler.isGranted(permission)) {
+            resultAggregator.logResult(
+                requestId = requestId,
+                permission = permission,
+                result = PermissionDecisionType.GRANTED,
+            )
+            return PermissionDecisionType.GRANTED
+        }
+        return null
+    }
+
+    /**
+     * Resolves a runtime permission pre-check.<br><br>
+     * 런타임 권한의 사전 확인을 수행합니다.<br>
+     */
+    private fun resolveRuntimePermission(
+        requestId: String,
+        permission: String,
+    ): PermissionDecisionType? {
+        if (!classifier.isSupported(permission)) {
+            resultAggregator.logResult(
+                requestId = requestId,
+                permission = permission,
+                result = PermissionDecisionType.GRANTED,
+            )
+            return PermissionDecisionType.GRANTED
+        }
+        if (host.context.hasPermission(permission)) {
+            resultAggregator.logResult(
+                requestId = requestId,
+                permission = permission,
+                result = PermissionDecisionType.GRANTED,
+            )
+            return PermissionDecisionType.GRANTED
+        }
+        return null
+    }
+
+    /**
+     * Registers the request entry and submits pending permissions to the coordinator.<br><br>
+     * 요청 엔트리를 등록하고 미결 권한을 코디네이터에 제출합니다.<br>
+     *
+     * @param requestId Unique ID for the current request batch.<br><br>
+     *                  현재 요청 배치의 고유 ID입니다.<br>
+     * @param normalizedPermissions Deduplicated permission list.<br><br>
+     *                              중복 제거된 권한 목록입니다.<br>
+     * @param results Pre-resolved permission decisions.<br><br>
+     *                사전 해결된 권한 결정 맵입니다.<br>
+     * @param pendingPermissions Permissions requiring runtime dispatch.<br><br>
+     *                           런타임 디스패치가 필요한 권한 목록입니다.<br>
+     * @param onDeniedResult Callback invoked with denied items.<br><br>
+     *                       거부 항목을 전달받는 콜백입니다.<br>
+     * @param onRationaleNeeded Callback for rationale UI when needed.<br><br>
+     *                          필요 시 설명 UI를 제공하는 콜백입니다.<br>
+     * @param onNavigateToSettings Callback for settings navigation when needed.<br><br>
+     *                             필요 시 설정 이동을 안내하는 콜백입니다.<br>
+     */
+    private fun submitRequest(
+        requestId: String,
+        normalizedPermissions: List<String>,
+        results: MutableMap<String, PermissionDecisionType>,
+        pendingPermissions: List<String>,
+        onDeniedResult: (List<PermissionDeniedItem>) -> Unit,
+        onRationaleNeeded: ((PermissionRationaleRequest) -> Unit)?,
+        onNavigateToSettings: ((PermissionSettingsRequest) -> Unit)?,
+    ) {
         val entry = RequestEntry(
             requestId = requestId,
             permissions = normalizedPermissions,
@@ -419,6 +533,5 @@ class PermissionRequester private constructor(
      * @return Return value: normalized permission list. Log behavior: none.<br><br>
      *         반환값: 정규화된 권한 목록입니다. 로그 동작: 없음.<br>
      */
-    private fun normalizePermissions(permissions: List<String>): List<String> =
-        permissions.distinct()
+    private fun normalizePermissions(permissions: List<String>): List<String> = permissions.distinct()
 }

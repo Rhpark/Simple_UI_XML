@@ -22,7 +22,7 @@
  - testRobolectric 태스크 사용
  - Android 컴포넌트 의존성 있는 테스트
  - Android 프레임워크 필요 시 사용
- - 파일명: `*RobolectricTest.kt` (예: `PermissionManagerRobolectricTest.kt`)
+ - 파일명: `*RobolectricTest.kt` (예: `PermissionRequesterRobolectricTest.kt`)
 
 ### 테스트 파일 네이밍 규칙
  - 단위 테스트: `{클래스명}Test.kt`

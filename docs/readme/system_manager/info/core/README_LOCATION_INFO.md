@@ -8,13 +8,13 @@
 <br></br>
 
 ## Overview (개요)
-Provides StateFlow-based location tracking and location helper utilities.  
-> StateFlow 기반 위치 추적과 위치 헬퍼 유틸을 제공합니다.
+Provides SharedFlow-based location tracking and location helper utilities.  
+> SharedFlow 기반 위치 추적과 위치 헬퍼 유틸을 제공합니다.
 
 <br></br>
 
 ## At a Glance (한눈 비교)
-- **Real-time Updates:** `registerStart(coroutineScope, locationProvider, updateCycleTime, minDistanceM)` - StateFlow-based location tracking
+- **Real-time Updates:** `registerStart(coroutineScope, locationProvider, updateCycleTime, minDistanceM)` - SharedFlow-based location tracking
   - `coroutineScope` - Coroutine scope (Lifecycle integrated) (코루틴 스코프 (Lifecycle과 연동))
   - `locationProvider` - Location provider (GPS_PROVIDER, NETWORK_PROVIDER, PASSIVE_PROVIDER, FUSED_PROVIDER, etc.) (위치 제공자)
   - `updateCycleTime` - Update cycle time in milliseconds (default: 2000ms) (밀리초 단위 업데이트 주기 시간 (기본값: 2000ms))
@@ -63,14 +63,14 @@ Provides StateFlow-based location tracking and location helper utilities.
 **Advantages**
 - **Dramatically simplified** (Complex Listener → One line registration)
 - Automatic LocationListener management
-- StateFlow-based reactive updates
+- SharedFlow-based reactive updates
 - 5 type-safe events (Location, GPS, Network, Passive, Fused)
 - Automatic Provider status tracking
 - Distance/bearing calculation helpers provided
 - Automatic Lifecycle cleanup
 > - **대폭 간소화** (복잡한 Listener → 한 줄 등록)
 > - LocationListener 자동 관리
-> - StateFlow 기반 반응형 업데이트
+> - SharedFlow 기반 반응형 업데이트
 > - 5가지 타입 안전한 이벤트 (위치, GPS, Network, Passive, Fused)
 > - Provider 상태 자동 추적
 > - 거리/방향 계산 헬퍼 제공
@@ -176,14 +176,12 @@ class LocationTracker(private val context: Context) {
 
 ## Simple UI Approach (Simple UI 방식)
 ```kotlin
-// Simple Location tracking - StateFlow based (간단한 Location 추적 - StateFlow 기반)
-class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
+// Simple Location tracking - SharedFlow based (간단한 Location 추적 - SharedFlow 기반)
+class MainActivity : BaseDataBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
 
     private val locationInfo by lazy { LocationStateInfo(this) }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
+    override fun onCreate(binding: ActivityMainBinding, savedInstanceState: Bundle?) {
         // Permission request (Simple UI auto handling) (권한 요청 (Simple UI 자동 처리))
         requestPermissions(
             permissions = listOf(
@@ -211,7 +209,7 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
         val lastLocation = locationInfo.getLocation()
         val isGpsEnabled = locationInfo.isGpsEnabled()
 
-        // 3. StateFlow-based real-time updates - Auto collect (StateFlow 기반 실시간 업데이트 - 자동 collect)
+        // 3. SharedFlow-based real-time updates - Auto collect (SharedFlow 기반 실시간 업데이트 - 자동 collect)
         lifecycleScope.launch {
             locationInfo.sfUpdate.collect { event ->
                 when (event) {

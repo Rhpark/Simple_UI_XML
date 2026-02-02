@@ -1,4 +1,4 @@
-# Simple UI XML - Product Requirements Document
+﻿# Simple UI XML - Product Requirements Document
 > **Comprehensive Android XML Development Productivity Library**
 > 
 > **종합 Android XML 개발 생산성 라이브러리**
@@ -163,16 +163,14 @@ View 스타일링을 위한 표준화된 **메서드 체이닝** 없음<br><br>
 
 #### **Pillar 1: Zero-Boilerplate UI** (보일러플레이트 제로 UI)
 ```kotlin
-// Simple UI solution - BaseBindingActivity
-class MainActivity : BaseBindingActivity<ActivityMainBinding>() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
+// Simple UI solution - BaseDataBindingActivity
+class MainActivity : BaseDataBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
+    override fun onCreate(binding: ActivityMainBinding, savedInstanceState: Bundle?) {
         // binding, setContentView auto-handled
         setStatusBarColor(Color.BLACK, isDrakMode = false)
 
         // Permission with lambda callback - no override needed
-        onRequestPermissions(listOf(CAMERA)) { deniedPermissions ->
+        requestPermissions(listOf(CAMERA)) { deniedPermissions ->
             if (deniedPermissions.isEmpty()) {
                 // All granted
             }
@@ -184,7 +182,7 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>() {
 
 <br>
 
-#### **Pillar 2: StateFlow System Managers** (StateFlow 시스템 매니저)
+#### **Pillar 2: Flow/Callback System Managers** (Flow/Callback 시스템 매니저: SharedFlow + StateFlow + 콜백)
 **12 System Services** with unified reactive API<br>
 **12개 시스템 서비스**를 통합 반응형 API로 제공<br><br>
 
@@ -224,7 +222,7 @@ TypedValue.applyDimension(COMPLEX_DP, 16f, ...) // Plain Android
 - **AdapterOperationQueue**: Mutex-based sequential list operations<br>
 Mutex 기반 순차 리스트 연산 (동시성 보장)<br><br>
 
-- **PermissionManager**: Unified normal + special permissions<br>
+- **PermissionRequester**: Unified normal + special permissions<br>
 일반+특수 권한 통합 관리<br><br>
 
 - **safeCatch**: Auto-logging exception handler<br>
@@ -383,12 +381,12 @@ This matrix demonstrates how Simple UI fills the gaps left by AndroidX, providin
 
 | Feature | Plain Android | AndroidX | Simple UI | Improvement |
 |---------|--------------|----------|-----------|-------------|
-| **Activity Setup** | Manual binding + `setContentView()` (15 lines) | AppCompatActivity + manual binding (12 lines) | `BaseBindingActivity<T>()` - auto binding (0 lines boilerplate) | **100% boilerplate removed** |
-| **Fragment Setup** | Manual inflater + view binding (12 lines) | Fragment + manual binding (10 lines) | `BaseBindingFragment<T>()` - auto binding (0 lines) | **100% boilerplate removed** |
+| **Activity Setup** | Manual binding + `setContentView()` (15 lines) | AppCompatActivity + manual binding (12 lines) | `BaseDataBindingActivity<T>(layoutRes)` - auto binding (0 lines boilerplate) | **100% boilerplate removed** |
+| **Fragment Setup** | Manual inflater + view binding (12 lines) | Fragment + manual binding (10 lines) | `BaseDataBindingFragment<T>(layoutRes)` - auto binding (0 lines) | **100% boilerplate removed** |
 | **System Bars Config** | `WindowCompat` + manual flags (8 lines) | Same as Plain (8 lines) | `setStatusBarColor()` - single call (1 line) | **87% ↓** |
 | **Edge-to-Edge Setup** | Manual insets listener (20 lines) | ViewCompat.setOnApplyWindowInsetsListener (15 lines) | Auto-handled in RootActivity (0 lines) | **100% handled** |
 | **ViewModel Creation** | Manual `ViewModelProvider` (5 lines) | by viewModels() delegate (1 line) | `BaseViewModel` with lifecycle (auto-cleanup) | **Lifecycle aware** |
-| **Permission Handling** | Override `onRequestPermissionsResult` (25 lines) | ActivityResultContracts (15 lines, no special permissions) | `onRequestPermissions()` lambda + special permissions (3 lines) | **80% ↓ + special permission support** |
+| **Permission Handling** | Override `onRequestPermissionsResult` (25 lines) | ActivityResultContracts (15 lines, no special permissions) | `requestPermissions()` lambda + special permissions (3 lines) | **80% ↓ + special permission support** |
 
 <br>
 
@@ -399,7 +397,7 @@ This matrix demonstrates how Simple UI fills the gaps left by AndroidX, providin
 | **Adapter Implementation** | Manual `onCreateViewHolder` + `onBindViewHolder` (50 lines) | ListAdapter with DiffUtil (30 lines) | `SimpleBindingRcvListAdapter` (10 lines) | **80% ↓** |
 | **List Update Safety** | Manual synchronization (crashes on concurrent updates) | DiffUtil helps but still crashes on rapid updates | `AdapterOperationQueue` - mutex-based queue (0 crashes) | **100% race condition eliminated** |
 | **Scroll Direction Detection** | Manual `onScrolled()` override (20 lines) | Same as Plain (20 lines) | `RecyclerScrollStateView` auto-detection (0 lines) | **100% automated** |
-| **Scroll Edge Detection** | Manual position calculation (15 lines) | Same as Plain (15 lines) | `RecyclerScrollStateView.sfUpdate` (Flow-based) | **Real-time StateFlow** |
+| **Scroll Edge Detection** | Manual position calculation (15 lines) | Same as Plain (15 lines) | `RecyclerScrollStateView.sfEdgeReachedFlow` (Flow-based) | **Real-time SharedFlow** |
 
 <br>
 
@@ -407,9 +405,9 @@ This matrix demonstrates how Simple UI fills the gaps left by AndroidX, providin
 
 | Feature | Plain Android | AndroidX | Simple UI | Improvement |
 |---------|--------------|----------|-----------|-------------|
-| **Normal Permissions** | Override callback + manual checks (25 lines) | ActivityResultContract (15 lines) | `onRequestPermissions()` lambda (3 lines) | **80% ↓** |
-| **Special Permissions** | Separate Intent flows for each (40+ lines per permission) | No built-in support (40+ lines) | Unified `PermissionManager` with queue (5 lines) | **87% ↓ + unified API** |
-| **Permission Re-request** | Manual tracking + SharedPreferences (30 lines) | Manual tracking (30 lines) | `PermissionManager` auto re-request logic (0 lines) | **Automatic** |
+| **Normal Permissions** | Override callback + manual checks (25 lines) | ActivityResultContract (15 lines) | `requestPermissions()` lambda (3 lines) | **80% ↓** |
+| **Special Permissions** | Separate Intent flows for each (40+ lines per permission) | No built-in support (40+ lines) | Unified `PermissionRequester` with queue (5 lines) | **87% ↓ + unified API** |
+| **Permission Re-request** | Manual tracking + SharedPreferences (30 lines) | Manual tracking (30 lines) | `PermissionRequester` auto re-request logic (0 lines) | **Automatic** |
 
 <br>
 
@@ -434,14 +432,14 @@ This matrix demonstrates how Simple UI fills the gaps left by AndroidX, providin
 
 <br>
 
-### Category 6: System Services - Info Classes (StateFlow-based) (시스템 서비스 - Info 클래스)
+### Category 6: System Services - Info Classes (Flow-based) (시스템 서비스 - Info 클래스)
 
 | Feature | Plain Android | AndroidX | Simple UI | Improvement |
 |---------|--------------|----------|-----------|-------------|
-| **Battery Monitoring** | BroadcastReceiver + IntentFilter + manual register/unregister (50 lines) | No improvement (50 lines) | `BatteryStateInfo().registerStart()` + StateFlow collect (3 lines) | **94% ↓ + reactive** |
-| **Location Updates** | LocationManager + callbacks + provider checks + permissions (60 lines) | FusedLocationProviderClient (still complex, 40 lines) | `LocationStateInfo().registerStart()` + StateFlow (3 lines) | **92% ↓ + auto provider** |
-| **Network Connectivity** | ConnectivityManager.NetworkCallback + register/unregister (35 lines) | Same (35 lines) | `NetworkConnectivityInfo().sfUpdate` (StateFlow, 3 lines) | **90% ↓ + reactive** |
-| **Display Metrics** | WindowManager + DisplayMetrics + SDK branching for R+ (25 lines) | Same (25 lines) | `DisplayInfo().getFullScreenSize()` (1 line, auto SDK handling) | **96% ↓** |
+| **Battery Monitoring** | BroadcastReceiver + IntentFilter + manual register/unregister (50 lines) | No improvement (50 lines) | `BatteryStateInfo().registerStart()` + SharedFlow collect (3 lines) | **94% ↓ + reactive** |
+| **Location Updates** | LocationManager + callbacks + provider checks + permissions (60 lines) | FusedLocationProviderClient (still complex, 40 lines) | `LocationStateInfo().registerStart()` + SharedFlow (3 lines) | **92% ↓ + auto provider** |
+| **Network Connectivity** | ConnectivityManager.NetworkCallback + register/unregister (35 lines) | Same (35 lines) | `NetworkConnectivityInfo().registerNetworkCallback()` (callback, 3 lines) | **90% ↓ + callback** |
+| **Display Metrics** | WindowManager + DisplayMetrics + SDK branching for R+ (25 lines) | Same (25 lines) | `DisplayInfo().getPhysicalScreenSize()` (1 line, auto SDK handling) | **96% ↓** |
 
 <br>
 
@@ -469,11 +467,11 @@ AndroidX는 아키텍처 컴포넌트(ViewModel, LiveData, Room)에 집중했지
 Across all categories, Simple UI reduces boilerplate by 70%+ through automation, reactive patterns, and Kotlin DSL design.<br>
 모든 카테고리에서 Simple UI는 자동화, 반응형 패턴, Kotlin DSL 설계를 통해 70% 이상의 보일러플레이트를 제거합니다.<br><br>
 
-**3. StateFlow Architecture is the Differentiator**<br>
-**StateFlow 아키텍처가 차별화 요소**<br><br>
+**3. Flow Architecture is the Differentiator**<br>
+**Flow 아키텍처가 차별화 요소**<br><br>
 
-System Service Info classes use StateFlow-based reactive architecture, eliminating manual BroadcastReceiver management and providing lifecycle-safe automatic cleanup.<br>
-시스템 서비스 Info 클래스는 StateFlow 기반 반응형 아키텍처를 사용하여 수동 BroadcastReceiver 관리를 제거하고 라이프사이클 안전한 자동 정리를 제공합니다.<br><br>
+System Service Info classes use a Flow/Callback hybrid architecture (SharedFlow/StateFlow + callbacks), eliminating manual BroadcastReceiver management and providing lifecycle-safe automatic cleanup.<br>
+시스템 서비스 Info 클래스는 Flow/Callback 하이브리드 아키텍처(SharedFlow/StateFlow + 콜백)를 사용하여 수동 BroadcastReceiver 관리를 제거하고 라이프사이클 안전한 자동 정리를 제공합니다.<br><br>
 
 ---
 
@@ -486,13 +484,13 @@ System Service Info classes use StateFlow-based reactive architecture, eliminati
 **Problem**: Even with AndroidX, developers still write 15+ lines of boilerplate for Activity setup, including binding initialization, setContentView, system bar configuration, and permission handling.<br>
 **문제점**: AndroidX를 사용해도 여전히 Activity 설정을 위해 15줄 이상의 보일러플레이트(binding 초기화, setContentView, 시스템 바 설정, 권한 처리)를 작성해야 합니다.<br><br>
 
-**Solution**: Simple UI provides `BaseBindingActivity<T>`, `BaseBindingFragment<T>`, and `RootActivity` that auto-handle binding inflation, content view setup, system bars (including edge-to-edge for API 35), and provide lambda-based permission callbacks—eliminating all UI setup boilerplate.<br>
-**해결책**: Simple UI는 `BaseBindingActivity<T>`, `BaseBindingFragment<T>`, `RootActivity`를 제공하여 binding inflation, content view 설정, 시스템 바(API 35 edge-to-edge 포함), 람다 기반 권한 콜백을 자동 처리하여 모든 UI 설정 보일러플레이트를 제거합니다.<br><br>
+**Solution**: Simple UI provides `BaseDataBindingActivity<T>`, `BaseDataBindingFragment<T>`, and `RootActivity` that auto-handle binding inflation, content view setup, system bars (including edge-to-edge for API 35), and provide lambda-based permission callbacks—eliminating all UI setup boilerplate.<br>
+**해결책**: Simple UI는 `BaseDataBindingActivity<T>`, `BaseDataBindingFragment<T>`, `RootActivity`를 제공하여 binding inflation, content view 설정, 시스템 바(API 35 edge-to-edge 포함), 람다 기반 권한 콜백을 자동 처리하여 모든 UI 설정 보일러플레이트를 제거합니다.<br><br>
 
 **Key APIs**:
-- `BaseBindingActivity<ActivityMainBinding>()` - Auto binding + setContentView
+- `BaseDataBindingActivity<ActivityMainBinding>(R.layout.activity_main)` - Auto binding + setContentView
 - `RootActivity` - Edge-to-edge + system bar configuration
-- `onRequestPermissions(listOf(CAMERA)) { deniedList -> }` - Lambda permission callback
+- `requestPermissions(listOf(CAMERA)) { deniedList -> }` - Lambda permission callback
 - `BaseViewModel` - Lifecycle-aware with auto cleanup
 
 **Code Example**:
@@ -513,9 +511,8 @@ class MainActivity : AppCompatActivity() {
 }
 
 // Simple UI: 3 lines
-class MainActivity : BaseBindingActivity<ActivityMainBinding>() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+class MainActivity : BaseDataBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
+    override fun onCreate(binding: ActivityMainBinding, savedInstanceState: Bundle?) {
         setStatusBarColor(Color.BLACK, isDrakMode = false)
     }
 }
@@ -575,14 +572,14 @@ textView.bold().underline()
 **Problem**: DiffUtil helps with list updates, but concurrent modifications (multiple rapid calls to `submitList`) still cause `ConcurrentModificationException` crashes. Scroll direction and edge detection require manual `onScrolled()` override with 20+ lines of position tracking logic.<br>
 **문제점**: DiffUtil은 리스트 업데이트에 도움이 되지만, 동시 수정(여러 번의 빠른 `submitList` 호출)은 여전히 `ConcurrentModificationException` 크래시를 유발합니다. 스크롤 방향 및 엣지 감지는 20줄 이상의 위치 추적 로직을 포함한 수동 `onScrolled()` 오버라이드가 필요합니다.<br><br>
 
-**Solution**: Simple UI provides `AdapterOperationQueue` (synchronized-based sequential operation queue that eliminates race conditions) and `RecyclerScrollStateView` (auto-detecting scroll direction, edge detection, and scroll state via StateFlow)—achieving 90% adapter code reduction and 100% race condition elimination.<br>
-**해결책**: Simple UI는 `AdapterOperationQueue`(경쟁 조건을 제거하는 synchronized 기반 순차 작업 큐)와 `RecyclerScrollStateView`(StateFlow를 통한 스크롤 방향, 엣지 감지, 스크롤 상태 자동 감지)를 제공하여 90% 어댑터 코드 감소 및 100% 경쟁 조건 제거를 달성합니다.<br><br>
+**Solution**: Simple UI provides `AdapterOperationQueue` (synchronized-based sequential operation queue that eliminates race conditions) and `RecyclerScrollStateView` (auto-detecting scroll direction/edge via SharedFlow events)—achieving 90% adapter code reduction and 100% race condition elimination.<br>
+**해결책**: Simple UI는 `AdapterOperationQueue`(경쟁 조건을 제거하는 synchronized 기반 순차 작업 큐)와 `RecyclerScrollStateView`(SharedFlow 이벤트로 스크롤 방향/엣지를 자동 감지)를 제공하여 90% 어댑터 코드 감소 및 100% 경쟁 조건 제거를 달성합니다.<br><br>
 
 **Key APIs**:
 - `SimpleBindingRcvListAdapter<T, B>` - 10-line adapter implementation
 - `addItem(item)`, `removeAt(position)`, `replaceItemAt(position, item)`, `removeAll()` - Safe list operations
-- `RecyclerScrollStateView` - Auto scroll detection with `sfUpdate: StateFlow<ScrollEvent>`
-- `ScrollEvent` sealed class: `OnScrollChanged`, `ReachTop`, `ReachBottom`, `DirectionUp`, `DirectionDown`
+- `RecyclerScrollStateView` - `sfScrollDirectionFlow: SharedFlow<ScrollDirection>`
+- `RecyclerScrollStateView` - `sfEdgeReachedFlow: SharedFlow<Pair<ScrollEdge, Boolean>>`
 
 **Code Example**:
 ```kotlin
@@ -631,23 +628,23 @@ adapter.removeAt(0)
 
 ---
 
-### Feature 4: StateFlow-based System Services - Info Classes (6개)
+### Feature 4: Flow/Callback-based System Services - Info Classes (6개)
 
-**StateFlow-based System Services - Info Classes (StateFlow 기반 시스템 서비스 - Info 클래스)**<br><br>
+**Flow/Callback-based System Services - Info Classes (Flow/Callback 기반 시스템 서비스 - Info 클래스)**<br><br>
 
 **Problem**: System service information (Battery, Location, Network, SIM, Telephony, Display) requires manual BroadcastReceiver registration/unregistration, scattered SDK branching (`if (Build.VERSION.SDK_INT >= ...)`), and callback-based APIs that cause memory leaks if not properly cleaned up.<br>
 **문제점**: 시스템 서비스 정보(Battery, Location, Network, SIM, Telephony, Display)는 수동 BroadcastReceiver 등록/해제, 산재된 SDK 분기(`if (Build.VERSION.SDK_INT >= ...)`), 적절히 정리되지 않으면 메모리 누수를 유발하는 콜백 기반 API를 요구합니다.<br><br>
 
-**Solution**: Simple UI provides 6 Info classes (`BatteryStateInfo`, `LocationStateInfo`, `NetworkConnectivityInfo`, `SimInfo`, `TelephonyInfo`, `DisplayInfo`) with unified StateFlow-based reactive APIs that auto-handle BroadcastReceiver lifecycle, SDK branching, permission checks, and provide lifecycle-safe coroutine-based collection—achieving 90-96% code reduction.<br>
-**해결책**: Simple UI는 6개의 Info 클래스(`BatteryStateInfo`, `LocationStateInfo`, `NetworkConnectivityInfo`, `SimInfo`, `TelephonyInfo`, `DisplayInfo`)를 제공하여 BroadcastReceiver 라이프사이클, SDK 분기, 권한 체크를 자동 처리하고 라이프사이클 안전한 코루틴 기반 수집을 제공하는 통합 StateFlow 기반 반응형 API로 90-96% 코드 감소를 달성합니다.<br><br>
+**Solution**: Simple UI provides 6 Info classes (`BatteryStateInfo`, `LocationStateInfo`, `NetworkConnectivityInfo`, `SimInfo`, `TelephonyInfo`, `DisplayInfo`) with unified Flow/Callback APIs (SharedFlow/StateFlow + callbacks) that auto-handle BroadcastReceiver lifecycle, SDK branching, permission checks, and provide lifecycle-safe collection—achieving 90-96% code reduction.<br>
+**해결책**: Simple UI는 6개의 Info 클래스(`BatteryStateInfo`, `LocationStateInfo`, `NetworkConnectivityInfo`, `SimInfo`, `TelephonyInfo`, `DisplayInfo`)를 제공하여 BroadcastReceiver 라이프사이클, SDK 분기, 권한 체크를 자동 처리하고 Flow/Callback 통합 API(SharedFlow/StateFlow + 콜백)로 라이프사이클 안전한 수집을 제공하여 90-96% 코드 감소를 달성합니다.<br><br>
 
 **Key APIs**:
-- **BatteryStateInfo**: `registerStart()` + `sfUpdate: StateFlow<BatteryEvent>`
-- **LocationStateInfo**: `registerStart()` + `sfUpdate: StateFlow<LocationEvent>`
-- **NetworkConnectivityInfo**: `sfUpdate: StateFlow<NetworkEvent>`
-- **DisplayInfo**: `getFullScreenSize()`, `getRealScreenSize()` (auto SDK branching for API R+)
-- **SimInfo**: `getActiveSimCount()`, `getSimInfoList()` (auto multi-SIM handling)
-- **TelephonyInfo**: `registerCallback()` + `sfUpdate: StateFlow<TelephonyEvent>`
+- **BatteryStateInfo**: `registerStart()` + `sfUpdate: SharedFlow<BatteryEvent>`
+- **LocationStateInfo**: `registerStart()` + `sfUpdate: SharedFlow<LocationEvent>`
+- **NetworkConnectivityInfo**: `registerNetworkCallback()` / `registerDefaultNetworkCallback()`
+- **DisplayInfo**: `getPhysicalScreenSize()`, `getAppWindowSize(activity?)` (auto SDK branching for API R+)
+- **SimInfo**: `getActiveSimCount()`, `getActiveSubscriptionInfoList()` (auto multi-SIM handling)
+- **TelephonyInfo**: `currentSignalStrength/currentServiceState/currentNetworkState` (StateFlow) + `registerCallback()`
 
 **Code Example**:
 ```kotlin
@@ -681,7 +678,7 @@ class BatteryMonitor(private val context: Context) {
     }
 }
 
-// Simple UI: 3 lines with StateFlow
+// Simple UI: 3 lines with SharedFlow
 val batteryInfo = BatteryStateInfo(context)
 batteryInfo.registerStart(lifecycleScope, 5000L)
 lifecycleScope.launch {
@@ -768,20 +765,20 @@ controller.showNotification(
 
 ---
 
-### Feature 6: Permission Orchestrator (PermissionManager)
+### Feature 6: Permission Orchestrator (PermissionRequester)
 
 **Permission Orchestrator (권한 오케스트레이터)**<br><br>
 
 **Problem**: AndroidX ActivityResultContracts simplified normal permission requests, but special permissions (SYSTEM_ALERT_WINDOW, WRITE_SETTINGS, MANAGE_EXTERNAL_STORAGE, etc.) still require separate Intent flows, manual tracking for re-request logic, and no unified API—resulting in 40+ lines per special permission type.<br>
 **문제점**: AndroidX ActivityResultContracts는 일반 권한 요청을 간소화했지만, 특수 권한(SYSTEM_ALERT_WINDOW, WRITE_SETTINGS, MANAGE_EXTERNAL_STORAGE 등)은 여전히 별도의 Intent 흐름, 재요청 로직을 위한 수동 추적, 통합 API 부재를 요구하여 특수 권한 유형당 40줄 이상의 코드가 필요합니다.<br><br>
 
-**Solution**: Simple UI provides `PermissionManager` that unifies normal + special permissions into a single queue-based orchestrator with automatic re-request logic, lifecycle-safe coroutine integration, and synchronized-based sequential processing—achieving 87% code reduction.<br>
-**해결책**: Simple UI는 일반 + 특수 권한을 자동 재요청 로직, 라이프사이클 안전 코루틴 통합, synchronized 기반 순차 처리를 갖춘 단일 큐 기반 오케스트레이터로 통합한 `PermissionManager`를 제공하여 87% 코드 감소를 달성합니다.<br><br>
+**Solution**: Simple UI provides `PermissionRequester` that unifies normal + special permissions into a single queue-based orchestrator with automatic re-request logic, lifecycle-safe coroutine integration, and synchronized-based sequential processing—achieving 87% code reduction.<br>
+**해결책**: Simple UI는 일반 + 특수 권한을 자동 재요청 로직, 라이프사이클 안전 코루틴 통합, synchronized 기반 순차 처리를 갖춘 단일 큐 기반 오케스트레이터로 통합한 `PermissionRequester`를 제공하여 87% 코드 감소를 달성합니다.<br><br>
 
 **Key APIs**:
-- `PermissionManager(activity)` - Initialize with Activity reference
-- `requestPermission(permission, callback)` - Request single permission (normal or special)
-- `requestPermissions(list, callback)` - Request multiple permissions
+- `PermissionRequester(activity)` - Initialize with Activity reference
+- `requestPermission(permission, onDeniedResult)` - Request single permission (normal or special)
+- `requestPermissions(list, onDeniedResult)` - Request multiple permissions
 - Auto-detects special permissions: `SYSTEM_ALERT_WINDOW`, `WRITE_SETTINGS`, `MANAGE_EXTERNAL_STORAGE`, `REQUEST_INSTALL_PACKAGES`, etc.
 - Queue-based sequential processing (no concurrent permission dialogs)
 
@@ -808,10 +805,10 @@ override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) 
     }
 }
 
-// Simple UI: 5 lines with PermissionManager
-val permissionManager = PermissionManager(this)
-permissionManager.requestPermission(Manifest.permission.SYSTEM_ALERT_WINDOW) { granted ->
-    if (granted) {
+// Simple UI: 5 lines with PermissionRequester
+val permissionRequester = PermissionRequester(this)
+permissionRequester.requestPermission(Manifest.permission.SYSTEM_ALERT_WINDOW) { denied ->
+    if (denied.isEmpty()) {
         // Permission granted (normal or special, unified API)
     }
 }
@@ -1006,14 +1003,14 @@ class MainActivity : AppCompatActivity() {
 
 </details>
 
-**Simple UI - Location State Monitoring (8 lines with StateFlow collect)**
+**Simple UI - Location State Monitoring (8 lines with SharedFlow collect)**
 
 ```kotlin
 // Initialize LocationStateInfo
 val locationInfo = LocationStateInfo(context)
 locationInfo.registerStart(lifecycleScope, 5000L) // Auto lifecycle management
 
-// Collect location updates via StateFlow
+// Collect location updates via SharedFlow
 lifecycleScope.launch {
     locationInfo.sfUpdate.collect { event ->
         when (event) {
@@ -1043,7 +1040,7 @@ lifecycleScope.launch {
   - Auto lifecycle management (no manual `removeUpdates`)
   - Auto permission verification + exception handling
   - Auto SDK branching (Fused provider API 31+ vs GPS/Network)
-  - StateFlow-based reactive updates (no callback boilerplate)
+  - SharedFlow-based reactive updates (no callback boilerplate)
   - Type-safe sealed class events
 
 ---
@@ -1347,7 +1344,7 @@ class MyActivity : AppCompatActivity() {
 
 </details>
 
-**Simple UI - RecyclerScrollStateView (3 lines + StateFlow collect)**
+**Simple UI - RecyclerScrollStateView (3 lines + SharedFlow collect)**
 
 ```xml
 <!-- XML: Use RecyclerScrollStateView instead of RecyclerView -->
@@ -1358,24 +1355,30 @@ class MyActivity : AppCompatActivity() {
 ```
 
 ```kotlin
-// Kotlin: Collect scroll events via StateFlow
+// Kotlin: Collect scroll events via SharedFlow
 lifecycleScope.launch {
-    binding.rcvList.sfUpdate.collect { event ->
-        when (event) {
-            is ScrollEvent.DirectionUp -> toolbar.show()
-            is ScrollEvent.DirectionDown -> toolbar.hide()
-            is ScrollEvent.ReachTop -> Log.d("Scroll", "Reached top")
-            is ScrollEvent.ReachBottom -> loadMoreItems()
-            is ScrollEvent.OnScrollChanged -> {
-                Log.d("Scroll", "dx: ${event.dx}, dy: ${event.dy}")
-            }
+    binding.rcvList.sfScrollDirectionFlow.collect { direction ->
+        when (direction) {
+            ScrollDirection.UP -> toolbar.show()
+            ScrollDirection.DOWN -> toolbar.hide()
+            else -> Unit
+        }
+    }
+}
+
+lifecycleScope.launch {
+    binding.rcvList.sfEdgeReachedFlow.collect { (edge, isReached) ->
+        if (!isReached) return@collect
+        when (edge) {
+            ScrollEdge.TOP -> Log.d("Scroll", "Reached top")
+            ScrollEdge.BOTTOM -> loadMoreItems()
+            else -> Unit
         }
     }
 }
 
 // ✅ Auto scroll detection (no manual addOnScrollListener)
-// ✅ Type-safe sealed class events
-// ✅ StateFlow-based reactive updates
+// ✅ SharedFlow-based reactive updates
 ```
 
 **Metrics**:
@@ -1383,8 +1386,8 @@ lifecycleScope.launch {
 - **Key benefits**:
   - Auto scroll direction detection (no manual `dy` tracking)
   - Auto edge detection (top/bottom)
-  - StateFlow-based reactive updates (no callback boilerplate)
-  - Type-safe sealed class events
+  - SharedFlow-based reactive updates (no callback boilerplate)
+  - 타입 안전한 ScrollDirection/ScrollEdge 이벤트
 
 ---
 
@@ -1456,24 +1459,24 @@ class MainActivity : AppCompatActivity() {
 **Simple UI - Unified Permission API (5 lines)**
 
 ```kotlin
-val permissionManager = PermissionManager(this)
+val PermissionRequester = PermissionRequester(this)
 
 // Request camera permission (normal) - unified API
-permissionManager.requestPermission(Manifest.permission.CAMERA) { granted ->
+PermissionRequester.requestPermission(Manifest.permission.CAMERA) { granted ->
     if (granted) {
         // Permission granted
     }
 }
 
 // Request overlay permission (special) - same unified API
-permissionManager.requestPermission(Manifest.permission.SYSTEM_ALERT_WINDOW) { granted ->
+PermissionRequester.requestPermission(Manifest.permission.SYSTEM_ALERT_WINDOW) { granted ->
     if (granted) {
         // Permission granted
     }
 }
 
 // Request multiple permissions (normal + special mixed) - single call
-permissionManager.requestPermissions(
+PermissionRequester.requestPermissions(
     listOf(
         Manifest.permission.CAMERA,
         Manifest.permission.SYSTEM_ALERT_WINDOW,

@@ -145,13 +145,11 @@ class DisplayHelper(private val context: Context) {
 ## Simple UI Approach (Simple UI 방식)
 ```kotlin
 // Simple Display information query - Auto SDK handling (간단한 Display 정보 조회 - SDK 자동 처리)
-class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
+class MainActivity : BaseDataBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
 
     private val displayInfo by lazy { getDisplayInfo(this) }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
+    override fun onCreate(binding: ActivityMainBinding, savedInstanceState: Bundle?) {
         // 1. Physical screen size (auto SDK branching) (물리적 화면 크기 (SDK 자동 분기))
         val physicalSize = displayInfo.getPhysicalScreenSize()
         Log.d("Display", "Physical: ${physicalSize.width} x ${physicalSize.height}") // (물리적)

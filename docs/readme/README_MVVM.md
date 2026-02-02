@@ -1,4 +1,4 @@
-# 📱 Simple UI MVVM Pattern – Complete Guide
+﻿# 📱 Simple UI MVVM Pattern – Complete Guide
 > **Simple UI MVVM 패턴 - 완벽 가이드**
 
 ## 📦 Module Information (모듈 정보)
@@ -12,7 +12,7 @@ This feature **spans two modules** (이 기능은 **두 모듈**에 걸쳐 있�
 
 ### **simple_xml** - MVVM Integration (MVVM 통합)
 - **Package**: `kr.open.library.simple_ui.xml.ui.*`
-- **Provides**: BaseBindingActivity, BaseBindingFragment with ViewModel integration
+- **Provides**: BaseDataBindingActivity, BaseDataBindingFragment with ViewModel integration
 - **Purpose**: Seamless DataBinding + ViewModel connection
 
 <br></br>
@@ -55,7 +55,7 @@ This feature **spans two modules** (이 기능은 **두 모듈**에 걸쳐 있�
 | Event channel setup  | Manually wire Flow/Channel (10+ lines) | Automatically handled by `BaseViewModelEvent` ✅ |
 | Event dispatch  | `viewModelScope.launch` + `send` | Single-line `sendEventVm()` ✅ |
 | Channel resource management  | Manually call `close()` | Managed automatically ✅ |
-| Event collection  | Manually launch with `lifecycleScope` | Override `eventVmCollect()` ✅ (자동 호출됨) |
+| Event collection  | Manually launch with `lifecycleScope` | Override `onEventVmCollect(binding)` ✅ (자동 호출됨) |
 
 **Key takeaway:** Simple UI boosts development speed through **automation of complex MVVM boilerplate**.
 > **핵심:** Simple UI는 "복잡한 MVVM 보일러플레이트"의 **자동화**를 통해 개발 속도를 향상시킵니다.
@@ -91,12 +91,12 @@ To leverage Simple UI’s MVVM features, you must **enable DataBinding and under
 📌 **Unsure about the basic Activity/Fragment flow?**  
 Visit [README_ACTIVITY_FRAGMENT.md](README_ACTIVITY_FRAGMENT.md) and review:
 - Required setup (enable DataBinding)
-- Basics of `BaseBindingActivity` / `BaseBindingFragment`
+- Basics of `BaseDataBindingActivity` / `BaseDataBindingFragment`
 - Common troubleshooting steps
 > **Activity/Fragment 기본 사용법을 모르시나요?**  
 > → [README_ACTIVITY_FRAGMENT.md](README_ACTIVITY_FRAGMENT.md)에서 다음 내용을 먼저 확인하세요:
 > - 필수 설정 (DataBinding 활성화)
-> - BaseBindingActivity/BaseBindingFragment 기본 사용법
+> - BaseDataBindingActivity/BaseDataBindingFragment 기본 사용법
 > - 자주 발생하는 오류 해결 방법
 
 <br>
@@ -126,7 +126,7 @@ android {
 </layout>
 ```
 
-3. Use **BaseBindingActivity** or **BaseBindingFragment**
+3. Use **BaseDataBindingActivity** or **BaseDataBindingFragment**
 
 <br></br>
 
@@ -184,7 +184,7 @@ class MainActivity : AppCompatActivity() {
         setupObservers()
 
         // 8. 초기화 로직
-        initViews()
+        initViews(binding)
     }
 
     private fun setupObservers() {
@@ -209,7 +209,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun initViews() {
+    private fun initViews(binding: FragmentMainBinding) {
         binding.btnIncrement.setOnClickListener {
             viewModel.onIncrementClick()
         }
@@ -225,14 +225,12 @@ class MainActivity : AppCompatActivity() {
 <summary><strong>Simple UI — automatic Activity + ViewModel setup/ Simple UI - Activity + ViewModel 자동 초기화</strong></summary>
 
 ```kotlin
-class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
+class MainActivity : BaseDataBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
 
     // 1. viewmodel 선언
     private val vm: MainViewModel by viewModels()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
+    override fun onCreate(binding: ActivityMainBinding, savedInstanceState: Bundle?) {
         // DataBinding 자동 설정! ✅
         // LifecycleOwner 자동 연결! ✅
 
@@ -243,11 +241,11 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
         lifecycle.addObserver(vm)
 
         // 4. 핵심 로직만 집중!
-        initViews()
+        initViews(binding)
     }
 
     // 이벤트 수집 규격화
-    override fun eventVmCollect() {
+    override fun onEventVmCollect(binding: ActivityMainBinding) {
         // 이벤트 수집
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {  // ✅ Best Practice
@@ -266,29 +264,29 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
     }
 
     // 핵심 로직에 더 집중!
-    private fun initViews() {
+    private fun initViews(binding: ActivityMainBinding) {
         binding.btnIncrement.setOnClickListener {
             vm.onIncrementClick()
         }
     }
 }
 ```
-**Result:** Automatic DataBinding, automatic LifecycleOwner wiring, streamlined event collection, and a standardized `eventVmCollect()`!
-> **결과:** DataBinding 자동, LifecycleOwner 자동, 이벤트 수집 간소화, 표준화된 eventVmCollect()!
+**Result:** Automatic DataBinding, automatic LifecycleOwner wiring, streamlined event collection, and a standardized `onEventVmCollect(binding)`!
+> **결과:** DataBinding 자동, LifecycleOwner 자동, 이벤트 수집 간소화, 표준화된 onEventVmCollect(binding)!
 </details>
 
 ---
 
 ### ⚠️ Important: Event Collection Best Practices (중요: 이벤트 수집 모범 사례)
 
-When using `eventVmCollect()` in your Activities, Fragments, or DialogFragments, **always** use `repeatOnLifecycle(Lifecycle.State.STARTED)` to prevent duplicate event collectors during configuration changes.
+When using `onEventVmCollect(binding)` in your Activities, Fragments, or DialogFragments, **always** use `repeatOnLifecycle(Lifecycle.State.STARTED)` to prevent duplicate event collectors during configuration changes.
 
-Activity, Fragment, DialogFragment에서 `eventVmCollect()`를 사용할 때는 구성 변경 시 중복 이벤트 수집을 방지하기 위해 **반드시** `repeatOnLifecycle(Lifecycle.State.STARTED)`를 사용하세요.
+Activity, Fragment, DialogFragment에서 `onEventVmCollect(binding)`를 사용할 때는 구성 변경 시 중복 이벤트 수집을 방지하기 위해 **반드시** `repeatOnLifecycle(Lifecycle.State.STARTED)`를 사용하세요.
 
 #### ❌ Wrong Way (Causes Duplicate Collectors) / 잘못된 방법 (중복 수집 발생)
 
 ```kotlin
-override fun eventVmCollect() {
+override fun onEventVmCollect(binding: ActivityMainBinding) {
     lifecycleScope.launch {
         vm.events.collect { event ->  // ❌ May cause duplicate collectors
             handleEvent(event)
@@ -304,7 +302,7 @@ override fun eventVmCollect() {
 #### ✅ Correct Way (Safe for Configuration Changes) / 올바른 방법 (구성 변경에 안전)
 
 ```kotlin
-override fun eventVmCollect() {
+override fun onEventVmCollect(binding: ActivityMainBinding) {
     lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {  // ✅ Recommended
             vm.events.collect { event ->
@@ -423,7 +421,7 @@ class MainFragment : Fragment() {
 <summary><strong>Simple UI — automatic Fragment + ViewModel setup/ Simple UI - Fragment + ViewModel 자동 초기화</strong></summary>
 
 ```kotlin
-class MainFragment : BaseBindingFragment<FragmentMainBinding>(R.layout.fragment_main) {
+class MainFragment : BaseDataBindingFragment<FragmentMainBinding>(R.layout.fragment_main) {
 
     // 1. viewmodel 선언
     private val vm: MainViewModel by viewModels()
@@ -433,10 +431,8 @@ class MainFragment : BaseBindingFragment<FragmentMainBinding>(R.layout.fragment_
     // nullable binding 자동 처리! ✅
     // 메모리 누수 방지 자동! ✅
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        // 2. ViewModel 수동 바인딩
+    override fun onViewCreated(binding: FragmentMainBinding, savedInstanceState: Bundle?) {
+        // 2. ViewModel 바인딩
         binding.vm = vm
 
         // 3. 생명 주기 콜백
@@ -446,8 +442,8 @@ class MainFragment : BaseBindingFragment<FragmentMainBinding>(R.layout.fragment_
         initViews()
     }
 
-    // 이벤트 수집 규격화 (BaseBindingFragment가 자동으로 호출)
-    override fun eventVmCollect() {
+    // 이벤트 수집 규격화 (BaseDataBindingFragment가 자동으로 호출)
+    override fun onEventVmCollect(binding: FragmentMainBinding) {
         // 이벤트 수집만 간단하게
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {  // ✅ Best Practice
@@ -471,8 +467,8 @@ class MainFragment : BaseBindingFragment<FragmentMainBinding>(R.layout.fragment_
     }
 }
 ```
-**Result:** DataBinding handled automatically, LifecycleOwner wired, nullable bindings managed safely, memory leaks prevented, and `eventVmCollect()` standardized!
-> **결과:** DataBinding 자동, LifecycleOwner 자동, nullable 처리 자동, 메모리 누수 방지 자동, 표준화된 eventVmCollect()!
+**Result:** DataBinding handled automatically, LifecycleOwner wired, nullable bindings managed safely, memory leaks prevented, and `onEventVmCollect(binding)` standardized!
+> **결과:** DataBinding 자동, LifecycleOwner 자동, nullable 처리 자동, 메모리 누수 방지 자동, 표준화된 `onEventVmCollect(binding)`!
 
 
 </details>
@@ -533,16 +529,14 @@ class InfoDialog : AppCompatDialogFragment() {
 </details>
 
 <details>
-<summary><strong>Simple UI — BaseBindingDialogFragment + ViewModel/ Simple UI - BaseBindingDialogFragment + ViewModel</strong></summary>
+<summary><strong>Simple UI — BaseDataBindingDialogFragment + ViewModel/ Simple UI - BaseDataBindingDialogFragment + ViewModel</strong></summary>
 
 ```kotlin
-class InfoDialog : BaseBindingDialogFragment<DialogInfoBinding>(R.layout.dialog_info) {
+class InfoDialog : BaseDataBindingDialogFragment<DialogInfoBinding>(R.layout.dialog_info) {
 
     private val vm: InfoDialogViewModel by lazy { getViewModel<InfoDialogViewModel>() }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
+    override fun onViewCreated(binding: DialogInfoBinding, savedInstanceState: Bundle?) {
         binding.vm = vm
         lifecycle.addObserver(vm)
 
@@ -551,8 +545,8 @@ class InfoDialog : BaseBindingDialogFragment<DialogInfoBinding>(R.layout.dialog_
 
     }
 
-    // 이벤트 수집 규격화 (BaseBindingDialogFragment가 자동으로 호출)
-    override fun eventVmCollect() {
+    // 이벤트 수집 규격화 (BaseDataBindingDialogFragment가 자동으로 호출)
+    override fun onEventVmCollect(binding: DialogInfoBinding) {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {  // ✅ Best Practice
                 vm.mEventVm.collect { event ->
@@ -705,11 +699,11 @@ sealed class MainEvent {
 ### 2. **🛠️ Standardized Event System (표준화된 이벤트 시스템)**
 - **`BaseViewModelEvent`:** Flow/Channel automatically prepared.
 - **`sendEventVm()`:** Dispatch events in one line.
-- **`eventVmCollect()`:** Unified entry point (hook) for event collection; automatically called by BaseBinding classes.
+- **`onEventVmCollect(binding)`:** Unified entry point (hook) for event collection; automatically called by BaseDataBindingActivity/Fragment/DialogFragment.
 - **Resource management:** Channels are released automatically.
 > - **`BaseViewModelEvent`**: Flow/Channel 자동 구성
 > - **`sendEventVm()`**: 이벤트 전송 한 줄
-> - **`eventVmCollect()`**: 표준화된 이벤트 수집 훅 (BaseBinding 클래스가 자동으로 호출)
+> - **`onEventVmCollect(binding)`**: 표준화된 이벤트 수집 훅 (BaseDataBindingActivity/Fragment/DialogFragment에서 자동 호출)
 > - **리소스 관리**: 채널 자동 해제
 
 <br>
@@ -753,14 +747,14 @@ sealed class MainEvent {
 - **"I never worry about DataBinding configuration anymore!"**
 - **"Automatic nullable binding in fragments is a lifesaver!"**
 - **"BaseViewModelEvent standardized our event system and cleaned up the code!"**
-- **"`eventVmCollect()` keeps event collection consistent—love it!"**
+- **"`onEventVmCollect(binding)` keeps event collection consistent—love it!"**
 - **"Activity/Fragment + ViewModel init code shrank by 60%!"**
 - **"`sendEventVm()` lets me dispatch events in a single line!"**
 
 > - **"DataBinding 설정을 더 이상 고민할 필요가 없어요!"**
 > - **"Fragment의 nullable binding 처리가 자동으로 되니 편해요!"**
 > - **"BaseViewModelEvent로 이벤트 시스템이 표준화되어 코드가 깔끔해졌어요!"**
-> - **"eventVmCollect()로 이벤트 수집 함수명이 통일되어 좋아요!"**
+> - **"onEventVmCollect(binding)로 이벤트 수집 함수명이 통일되어 좋아요!"**
 > - **"Activity/Fragment + ViewModel 초기화 코드가 60% 줄어들었습니다!"**
 > - **"sendEventVm()로 이벤트 전송이 한 줄로 끝나니 편해요!"**
 
@@ -773,7 +767,7 @@ sealed class MainEvent {
 
 ✅ **Automated DataBinding** — constructor parameters handle the heavy lifting.  
 ✅ **Complete event system** — Flow/Channel wiring happens automatically.  
-✅ **Standardized function names** — `eventVmCollect()`, `sendEventVm()` stay consistent.  
+✅ **Standardized function names** — `onEventVmCollect(binding)`, `sendEventVm()` stay consistent.  
 ✅ **Boilerplate elimination** — achieve a 60–65% reduction in setup code.
 
 Leave the old complexity behind.  
@@ -783,7 +777,7 @@ Leave the old complexity behind.
 >
 > ✅ **DataBinding 자동화** - 복잡한 초기화를 생성자 파라미터로!  
 > ✅ **이벤트 시스템 완성** - Flow/Channel 구성을 자동으로!  
-> ✅ **표준화된 함수명** - eventVmCollect(), sendEventVm() 통일!  
+> ✅ **표준화된 함수명** - onEventVmCollect(binding), sendEventVm() 통일!  
 > ✅ **보일러플레이트 제거** - 60-65% 코드 간소화!
 >
 > **전통적인 복잡함은 이제 그만.**  
@@ -810,7 +804,7 @@ Leave the old complexity behind.
 - DialogFragment + ViewModel automatic initialization
 - `BaseViewModelEvent` event system
 - Event dispatch via `sendEventVm()`
-- Event collection via `eventVmCollect()` (automatically called)
+- Event collection via `onEventVmCollect(binding)` (automatically called)
 - Automatic DataBinding wiring
 - Automated lifecycle management
 - Automatic nullable binding handling
@@ -820,7 +814,7 @@ Leave the old complexity behind.
 > - DialogFragment + ViewModel 자동 초기화
 > - BaseViewModelEvent 이벤트 시스템
 > - sendEventVm() 이벤트 전송
-> - eventVmCollect() 이벤트 수집 (자동 호출됨)
+> - onEventVmCollect(binding) 이벤트 수집 (자동 호출됨)
 > - DataBinding 자동 연동
 > - Lifecycle 자동 관리
 > - nullable binding 자동 처리

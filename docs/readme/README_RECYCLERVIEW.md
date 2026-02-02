@@ -565,7 +565,7 @@ recyclerView.apply {
 
 **Set via XML attributes (XML 속성으로 설정):**
 ```xml
-<kr.open.library.simple_ui.presenter.ui.view.recyclerview.RecyclerScrollStateView
+<kr.open.library.simple_ui.xml.ui.view.recyclerview.RecyclerScrollStateView
     android:id="@+id/recyclerView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"

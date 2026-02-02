@@ -9,7 +9,7 @@
  - 상태 StateFlow 관리.
  - 이벤트 SharedFlow/Channel 관리.
  - 동시성 Mutex/SupervisorJob 관리.
- - 예제 코드(simple_xml/src/main/java/kr/open/library/simple_ui/xml/permissions/manager/PermissionManager.kt, simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/view/recyclerview/RecyclerScrollStateView.kt).
+- 예제 코드(simple_xml/src/main/java/kr/open/library/simple_ui/xml/permissions/api/PermissionRequester.kt, simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/view/recyclerview/RecyclerScrollStateView.kt).
 
 ### 명시적 가시성·어노테이션
  - public/private를 드러내고 @RequiresPermission, @RequiresApi로 API·권한 요구사항을 문서화 (simple_core/src/main/java/kr/open/library/simple_ui/core/system_manager/info/location/LocationStateInfo.kt, simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/components/activity/root/RootActivity.kt).

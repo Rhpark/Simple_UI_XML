@@ -46,7 +46,7 @@
  - safeCatch로 예외 안전성 확보.
 
 ## 바로 현업에 쓰기 좋은 툴링
- - 로그 파일 저장·필터·DSL, 특수 권한까지 이어받는 PermissionManager.
+ - 로그 파일 저장·필터·DSL, 특수 권한까지 이어받는 PermissionRequester.
  - API 35 대응 시스템 바 처리 등 실기기 이슈 대응 로직을 기본 제공.
 
 ## 문서·배포 준비 완료

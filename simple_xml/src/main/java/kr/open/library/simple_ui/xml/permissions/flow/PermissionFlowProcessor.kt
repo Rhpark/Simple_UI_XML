@@ -146,9 +146,7 @@ internal class PermissionFlowProcessor(
      * @return Return value: true when lifecycle is at least CREATED. Log behavior: none.<br><br>
      *         반환값: CREATED 이상이면 true입니다. 로그 동작: 없음.<br>
      */
-    fun isLifecycleRequestAllowed(): Boolean =
-        host.lifecycleOwner.lifecycle.currentState
-            .isAtLeast(Lifecycle.State.CREATED)
+    fun isLifecycleRequestAllowed(): Boolean = host.lifecycleOwner.lifecycle.currentState.isAtLeast(Lifecycle.State.CREATED)
 
     /**
      * Processes runtime, special, and role permissions for [entry].<br><br>

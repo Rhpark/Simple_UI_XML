@@ -1,4 +1,4 @@
-# 📦 Simple UI Extensions & Style vs Plain Android - Complete Comparison Guide
+﻿# 📦 Simple UI Extensions & Style vs Plain Android - Complete Comparison Guide
 > **"Simple UI Extensions & Style vs 순수 Android - 완벽 비교 가이드"**
 
 ## 📦 Module Information (모듈 정보)
@@ -262,11 +262,9 @@ class MainActivity : AppCompatActivity() {
 <summary><strong>Simple UI — one-line extensions (Simple UI - Extensions 한 줄)</strong></summary>
 
 ```kotlin
-class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
+class MainActivity : BaseDataBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
+    override fun onCreate(binding: ActivityMainBinding, savedInstanceState: Bundle?) {
         // Toast - 한 줄 끝!
         binding.btnToastShort.setOnClickListener {
             toastShowShort("Toast Short 표시")
@@ -370,11 +368,9 @@ class MainActivity : AppCompatActivity() {
 <summary><strong>Simple UI — extension chaining (Simple UI - Extensions 체이닝)</strong></summary>
 
 ```kotlin
-class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
+class MainActivity : BaseDataBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
+    override fun onCreate(binding: ActivityMainBinding, savedInstanceState: Bundle?) {
         // TextView 스타일링 - 한 줄 끝!
         binding.btnBold.setOnClickListener {
             binding.tvSampleText.bold()
@@ -473,11 +469,9 @@ class MainActivity : AppCompatActivity() {
 <summary><strong>Simple UI — one-line extensions (Simple UI - Extensions 한 줄)</strong></summary>
 
 ```kotlin
-class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
+class MainActivity : BaseDataBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
+    override fun onCreate(binding: ActivityMainBinding, savedInstanceState: Bundle?) {
         // DP to PX - 한 줄 끝!
         binding.btnDpToPx.setOnClickListener {
             val value = binding.edtDisplayValue.text.toString().toFloatOrNull() ?: 0f
@@ -573,11 +567,9 @@ class MainActivity : AppCompatActivity() {
 <summary><strong>Simple UI — one-line extensions (Simple UI - Extensions 한 줄)</strong></summary>
 
 ```kotlin
-class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
+class MainActivity : BaseDataBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
+    override fun onCreate(binding: ActivityMainBinding, savedInstanceState: Bundle?) {
         // 이메일 검증 실시간 - isEmailValid() 한 줄!
         binding.edtEmail.addTextChangedListener {
             val email = it.toString()

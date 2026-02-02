@@ -12,12 +12,12 @@ import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.xml.BuildConfig
 import kr.open.library.simple_ui.xml.ui.adapter.queue.QueueDebugEvent
 import kr.open.library.simple_ui.xml.ui.adapter.queue.QueueOverflowPolicy
-import kr.open.library.simple_ui.xml.ui.temp.base.internal.AdapterClickBinder
 import kr.open.library.simple_ui.xml.ui.temp.base.AdapterOperationFailure
 import kr.open.library.simple_ui.xml.ui.temp.base.AdapterOperationFailureInfo
+import kr.open.library.simple_ui.xml.ui.temp.base.AdapterThreadCheckMode
+import kr.open.library.simple_ui.xml.ui.temp.base.internal.AdapterClickBinder
 import kr.open.library.simple_ui.xml.ui.temp.base.internal.AdapterOperationQueueCoordinator
 import kr.open.library.simple_ui.xml.ui.temp.base.internal.AdapterOperationQueueCoordinator.OperationResult
-import kr.open.library.simple_ui.xml.ui.temp.base.AdapterThreadCheckMode
 import kr.open.library.simple_ui.xml.ui.temp.base.operation.AdapterListOperations
 import kr.open.library.simple_ui.xml.ui.temp.base.operation.ListOperationResult
 import kr.open.library.simple_ui.xml.ui.temp.base.operation.PositionInfo
@@ -300,14 +300,12 @@ abstract class RootRcvAdapterCore<ITEM : Any, VH : RecyclerView.ViewHolder>(
      * Converts ListOperationResult to OperationResult with UpdateOp meta.<br><br>
      * ListOperationResult를 UpdateOp 메타를 포함한 OperationResult로 변환합니다.<br>
      */
-    private fun ListOperationResult<ITEM>.toUpdateOpResult(): OperationResult<ITEM, UpdateOp> {
-        return OperationResult(
-            items = items,
-            success = success,
-            meta = positionInfo?.toUpdateOp() ?: UpdateOp.None,
-            failure = failure,
-        )
-    }
+    private fun ListOperationResult<ITEM>.toUpdateOpResult(): OperationResult<ITEM, UpdateOp> = OperationResult(
+        items = items,
+        success = success,
+        meta = positionInfo?.toUpdateOp() ?: UpdateOp.None,
+        failure = failure,
+    )
 
     /**
      * Shared coordinator for queued adapter operations.<br><br>
@@ -867,4 +865,3 @@ abstract class RootRcvAdapterCore<ITEM : Any, VH : RecyclerView.ViewHolder>(
         }
     }
 }
-

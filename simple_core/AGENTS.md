@@ -67,12 +67,12 @@
    - **Context 확장 기반 권한 체크** (simple_core/src/main/java/kr/open/library/simple_ui/core/permissions/extentions/PermissionExtensions.kt)
    - 일반 권한 + 특수 권한(SYSTEM_ALERT_WINDOW, WRITE_SETTINGS 등) 통합 처리
    - 권한 VO 모델 (simple_core/src/main/java/kr/open/library/simple_ui/core/permissions/vo/)
-   - simple_xml의 PermissionManager가 이 레이어를 사용
+   - simple_xml의 PermissionRequester가 이 레이어를 사용
 
 
   ### system_manager
    - **base**: 시스템 서비스 기본 클래스 (simple_core/src/main/java/kr/open/library/simple_ui/core/system_manager/base/BaseSystemService.kt)
-   - **info**: 시스템 정보 StateFlow 제공
+   - **info**: 시스템 정보 Flow(SharedFlow/StateFlow) 제공
      - battery: 배터리 상태 (simple_core/src/main/java/kr/open/library/simple_ui/core/system_manager/info/battery/)
      - location: 위치 정보 (simple_core/src/main/java/kr/open/library/simple_ui/core/system_manager/info/location/)
      - network: 네트워크/SIM/Telephony (simple_core/src/main/java/kr/open/library/simple_ui/core/system_manager/info/network/)
@@ -95,10 +95,10 @@
 
  ## 핵심 설계 원칙
 
-  ### 1. Coroutine & StateFlow 우선
+  ### 1. Coroutine & Flow 우선
    - 모든 비동기 작업은 Coroutine 기반
-   - 시스템 상태는 StateFlow로 반응형 제공
-   - 이벤트는 SharedFlow/Channel로 처리
+   - 시스템 상태/이벤트는 Flow로 반응형 제공 (상태: StateFlow, 이벤트: SharedFlow)
+   - 일회성 이벤트는 SharedFlow/Channel로 처리
    - Mutex를 통한 동시성 제어
 
 
@@ -151,7 +151,7 @@
 
 
   ### StateFlow/SharedFlow 사용
-   - 시스템 상태는 StateFlow로 제공 (초기값 필수)
+   - 시스템 상태는 StateFlow로 제공하는 것을 기본으로 하되, 이벤트 스트림은 SharedFlow 사용
    - 일회성 이벤트는 SharedFlow 또는 Channel 사용
    - 백그라운드 스레드에서 안전하게 수집 가능하도록 설계
 

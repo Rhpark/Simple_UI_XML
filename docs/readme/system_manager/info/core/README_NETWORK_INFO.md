@@ -101,8 +101,8 @@ Log.d("Network", "Mobile Connected (모바일 연결): $isMobile")
 val summary = networkInfo.getNetworkConnectivitySummary()
 Log.d("Network", "Summary (요약): $summary")
 
-// Real-time network changes via StateFlow (optional)
-// (StateFlow로 네트워크 변경 실시간 수신 (선택))
+// Real-time network changes via ConnectivityManager callback (optional)
+// (ConnectivityManager 콜백으로 네트워크 변경 실시간 수신 (선택))
 networkInfo.registerDefaultNetworkCallback()
 lifecycleScope.launch {
     // Detect network state changes (네트워크 상태 변경 감지)

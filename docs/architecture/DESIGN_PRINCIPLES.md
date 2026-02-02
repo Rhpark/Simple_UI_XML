@@ -1,4 +1,4 @@
-# DESIGN PRINCIPLES / 설계 원칙
+﻿# DESIGN PRINCIPLES / 설계 원칙
 
 > **We handle the complexity, you keep your speed.**  
 > **복잡한 부분은 라이브러리가 맡고, 속도는 개발자가 가져갑니다.**
@@ -76,8 +76,8 @@ Concretely, the library aims to:
 - **Make frequently used features immediately available**  
   **실무에서 자주 쓰는 기능을 즉시 사용 가능하게 제공**
 
-  Ship practical features (Logx, PermissionManager, System Manager, View/Toast/SnackBar/Anim extensions, etc.) ready to use on day one.  
-  Logx, PermissionManager, System Manager, View/Toast/SnackBar/Anim 확장 등 실무에서 자주 쓰는 기능을 바로 사용할 수 있게 제공합니다.
+  Ship practical features (Logx, PermissionRequester, System Manager, View/Toast/SnackBar/Anim extensions, etc.) ready to use on day one.  
+  Logx, PermissionRequester, System Manager, View/Toast/SnackBar/Anim 확장 등 실무에서 자주 쓰는 기능을 바로 사용할 수 있게 제공합니다.
 
 - **Increase team-wide speed and consistency**  
   **팀 전체의 속도와 일관성을 동시에 향상**
@@ -147,8 +147,8 @@ The third goal is to keep behavior observable and verifiable.
 - **State & event exposure via Flows**  
   **Flow를 통한 상태 및 이벤트 노출**
 
-  System managers expose device state via StateFlow, scroll helpers use SharedFlow, and BaseViewModelEvent exposes ViewModel events as Flow.  
-  System Manager들은 기기 상태를 StateFlow로 노출하고, 스크롤 헬퍼는 SharedFlow를 사용하며, BaseViewModelEvent는 ViewModel 이벤트를 Flow 형태로 노출합니다.
+  System managers expose device state/events via StateFlow or SharedFlow, scroll helpers use SharedFlow, and BaseViewModelEvent exposes ViewModel events as Flow.  
+  System Manager들은 기기 상태/이벤트를 StateFlow 또는 SharedFlow로 노출하고, 스크롤 헬퍼는 SharedFlow를 사용하며, BaseViewModelEvent는 ViewModel 이벤트를 Flow 형태로 노출합니다.
 
 - **Dedicated test structures**  
   **전용 테스트 구조**
@@ -402,8 +402,8 @@ We make it possible to test and observe behavior without rewriting components.
 - **State & event exposure via Flows**  
   **Flow를 통한 상태 및 이벤트 노출**
 
-  System managers expose device state via StateFlow, scroll helpers use SharedFlow, and BaseViewModelEvent exposes ViewModel events as Flow.  
-  System Manager들은 기기 상태를 StateFlow로 노출하고, 스크롤 헬퍼는 SharedFlow를 사용하며, BaseViewModelEvent는 ViewModel 이벤트를 Flow 형태로 노출합니다.
+  System managers expose device state/events via StateFlow or SharedFlow, scroll helpers use SharedFlow, and BaseViewModelEvent exposes ViewModel events as Flow.  
+  System Manager들은 기기 상태/이벤트를 StateFlow 또는 SharedFlow로 노출하고, 스크롤 헬퍼는 SharedFlow를 사용하며, BaseViewModelEvent는 ViewModel 이벤트를 Flow 형태로 노출합니다.
 
 - **Dedicated test structures**  
   **전용 테스트 구조**
@@ -453,18 +453,18 @@ Activity와 Fragment 구조를 통일하기 위해 베이스 클래스를 제공
   RootActivity and BaseActivity handle window configuration, edge-to-edge, and common lifecycle patterns.  
   RootActivity와 BaseActivity는 윈도 설정, edge-to-edge, 공통 라이프사이클 패턴을 처리합니다.
 
-  BaseBindingActivity adds DataBinding support on top of those behaviors.  
-  BaseBindingActivity는 위 동작 위에 DataBinding 지원을 추가합니다.
+  BaseDataBindingActivity adds DataBinding support on top of those behaviors.  
+  BaseDataBindingActivity는 위 동작 위에 DataBinding 지원을 추가합니다.
 
 - **Fragment base classes**  
   **Fragment 베이스 클래스**
 
-  BaseFragment and BaseBindingFragment unify fragment creation, view lifecycle, and binding usage.  
-  BaseFragment와 BaseBindingFragment는 Fragment 생성, View 라이프사이클, 바인딩 사용 방식을 통일합니다.
+  BaseFragment and BaseDataBindingFragment unify fragment creation, view lifecycle, and binding usage.  
+  BaseFragment와 BaseDataBindingFragment는 Fragment 생성, View 라이프사이클, 바인딩 사용 방식을 통일합니다.
 
 ---
 
-### 6.2 PermissionManager & PermissionExtensions (PermissionManager와 PermissionExtensions)
+### 6.2 PermissionRequester & PermissionExtensions (PermissionRequester와 PermissionExtensions)
 
 We centralize permission handling into a small, focused set of APIs.  
 권한 처리를 소수의 집중된 API로 중앙화합니다.
@@ -475,11 +475,11 @@ We centralize permission handling into a small, focused set of APIs.
   Extensions on Context encapsulate permission checks, rationale, and special cases.  
   Context 확장 함수는 권한 체크, 설명 필요 여부, 특수 케이스를 캡슐화합니다.
 
-- **PermissionManager in `simple_xml`**  
-  **`simple_xml`의 PermissionManager**
+- **PermissionRequester in `simple_xml`**  
+  **`simple_xml`의 PermissionRequester**
 
-  PermissionManager orchestrates request flows using ActivityResult and exposes results in a predictable way.  
-  PermissionManager는 ActivityResult를 사용해 권한 요청 흐름을 관리하고, 결과를 예측 가능한 방식으로 제공합니다.
+  PermissionRequester orchestrates request flows using ActivityResult and exposes results in a predictable way.  
+  PermissionRequester는 ActivityResult를 사용해 권한 요청 흐름을 관리하고, 결과를 예측 가능한 방식으로 제공합니다.
 
 ---
 

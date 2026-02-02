@@ -8,8 +8,8 @@
 <br></br>
 
 ## Overview (개요)
-Provides StateFlow/SharedFlow-based system information collection with helper APIs.  
-> StateFlow/SharedFlow 기반 시스템 정보 수집과 헬퍼 API를 제공합니다.
+Provides Flow/Callback-based system information collection with helper APIs.  
+> Flow/Callback 기반 시스템 정보 수집과 헬퍼 API를 제공합니다.
 
 <br></br>
 
@@ -26,10 +26,10 @@ Provides StateFlow/SharedFlow-based system information collection with helper AP
 <br></br>
 
 ## Why It Matters (중요한 이유)
-- **Real-time Updates:** Collect system state in real time with StateFlow/SharedFlow.
+- **Real-time Updates:** Collect system state in real time with Flow/Callback.
 - **Automated Configuration:** Automate complex setup such as SDK branching and resource queries.
 - **Developer-Friendly API:** Improve usability with intuitive helper methods.
-> - **실시간 업데이트:** StateFlow/SharedFlow 기반으로 실시간 상태를 수집합니다.
+> - **실시간 업데이트:** Flow/Callback 기반으로 실시간 상태를 수집합니다.
 > - **설정 자동화:** SDK 분기/리소스 조회 등 복잡한 설정을 자동화합니다.
 > - **개발자 친화 API:** 직관적 헬퍼 메서드로 사용성을 개선합니다.
 

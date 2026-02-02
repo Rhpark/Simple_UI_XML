@@ -1,4 +1,4 @@
-# Logx vs Android Log - Complete Comparison Guide
+﻿# Logx vs Android Log - Complete Comparison Guide
 > **Logx vs Android Log - 완벽 비교 가이드**
 
 ## 📦 Module Information (모듈 정보)
@@ -256,10 +256,8 @@ Logx.setStorageType(LogStorageType.PUBLIC_EXTERNAL)
 
 **Runtime permission handling (런타임 권한 처리):**
 ```kotlin
-class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
+class MainActivity : BaseDataBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
+    override fun onCreate(binding: ActivityMainBinding, savedInstanceState: Bundle?) {
         // PUBLIC_EXTERNAL 사용 시 권한 확인 (Android 9 이하만)
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
             requestPermissions(
@@ -789,10 +787,8 @@ Only when you use the **file saving feature** might additional permissions be re
 ### 🛡️ Permission check and request (권한 확인 및 요청)
 
 ```kotlin
-class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
+class MainActivity : BaseDataBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
+    override fun onCreate(binding: ActivityMainBinding, savedInstanceState: Bundle?) {
         // PUBLIC_EXTERNAL 사용 시 권한 확인 (Android 9 이하만)
         checkSdkVersion(Build.VERSION_CODES.P,
             positiveWork = {

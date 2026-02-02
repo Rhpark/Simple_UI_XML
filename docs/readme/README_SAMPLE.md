@@ -1,4 +1,4 @@
-# 📊 Simple UI XML vs Plain Android - 완벽 비교 가이드
+﻿# 📊 Simple UI XML vs Plain Android - 완벽 비교 가이드
 
 ![simple_example.gif](../../example_gif/simple_example.gif)
 
@@ -24,7 +24,7 @@
 | Category                |        Plain Android         |            Simple UI             |
 |:------------------------|:----------------------------:|:--------------------------------:|
 | ViewModel events        |  Manual Flow channel setup   |  ✅ BaseViewModelEvent automatic  |
-| Activity initialization |   Manual DataBinding setup   | ✅ BaseBindingActivity automatic  |
+| Activity initialization |   Manual DataBinding setup   | ✅ BaseDataBindingActivity automatic  |
 | RecyclerView Adapter    | Custom implementation needed |   ✅ SimpleRcvAdapter provided    | 
 | SnackBar display        |    Manual Builder pattern    | ✅ Simple with extension function |
 
@@ -125,10 +125,11 @@ class PermissionsActivityOrigin : AppCompatActivity() {
 <summary><strong>Simple UI - requestPermissions() 한 줄</strong></summary>
 
 ```kotlin
-class PermissionsActivity : BaseBindingActivity<ActivityPermissionsBinding>(R.layout.activity_permissions) {
+class PermissionsActivity : BaseDataBindingActivity<ActivityPermissionsBinding>(R.layout.activity_permissions) {
 
     // 권한 요청이 단 한 줄!
     private fun permissions(permissions: List<String>) {
+        val binding = getBinding()
         requestPermissions(
             permissions = permissions,
             onDeniedResult = { deniedResults ->
@@ -237,15 +238,14 @@ class PermissionsActivityVm : BaseViewModelEvent<PermissionsActivityVmEvent>() {
 }
 
 class PermissionsActivity :
-    BaseBindingActivity<ActivityPermissionsBinding>(R.layout.activity_permissions) {
+    BaseDataBindingActivity<ActivityPermissionsBinding>(R.layout.activity_permissions) {
 
     private val vm: PermissionsActivityVm by lazy { getViewModel<PermissionsActivityVm>() }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onCreate(binding: ActivityPermissionsBinding, savedInstanceState: Bundle?) {
     }
 
-    override fun eventVmCollect() {
+    override fun onEventVmCollect(binding: ActivityPermissionsBinding) {
         lifecycleScope.launch {
             vm.mEventVm.collect { event ->
                 when (event) {
@@ -335,8 +335,7 @@ private val adapter = SimpleRcvAdapter<String>(R.layout.item_rcv_textview) { hol
 }
 
 // Activity에서 사용
-override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
+override fun onCreate(binding: ActivityPermissionsBinding, savedInstanceState: Bundle?) {
     binding.rcvPermission.adapter = adapter
     // layoutManager, 기타 설정 자동!
 }
@@ -415,11 +414,11 @@ binding.root.snackBarShowShort("권한이 허용되었습니다!")
 
 ### 2. ⚡ MVVM architecture automation
 - Event system: Manual Flow channel setup → BaseViewModelEvent automatic
-- Activity initialization: Manual DataBinding setup → - - BaseBindingActivity automatic
+- Activity initialization: Manual DataBinding setup → - - BaseDataBindingActivity automatic
 - Resource management: Manual cleanup → Lifecycle integration automatic
 > ### 2. **⚡ MVVM 아키텍처 자동화**
 > - **이벤트 시스템**: Flow 채널 수동 구성 → BaseViewModelEvent 자동
-> - **Activity 초기화**: DataBinding 수동 설정 → BaseBindingActivity 자동
+> - **Activity 초기화**: DataBinding 수동 설정 → BaseDataBindingActivity 자동
 > - **리소스 관리**: 수동 해제 → Lifecycle 연동 자동
 
 <br>
@@ -497,14 +496,14 @@ binding.root.snackBarShowShort("권한이 허용되었습니다!")
 - BaseViewModelEvent event system
 - Result display using SimpleRcvAdapter
 - Extension function-based SnackBar display
-- BaseBindingActivity automatic initialization
+- BaseDataBindingActivity automatic initialization
 - requestPermissions() unified permission request
 > **테스트 가능한 기능:**
 > - 일반 권한 vs 특수 권한 동일 처리 방식
 > - BaseViewModelEvent 이벤트 시스템
 > - SimpleRcvAdapter를 활용한 결과 표시
 > - 확장함수 기반 SnackBar 표시
-> - BaseBindingActivity 자동 초기화
+> - BaseDataBindingActivity 자동 초기화
 > - requestPermissions() 통합 권한 요청
 
 <br>

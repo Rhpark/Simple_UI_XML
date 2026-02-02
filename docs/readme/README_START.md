@@ -67,14 +67,14 @@ We built **Simple UI XML** to give you that time back.
 
 ### 📱 **Accelerate UI Development (UI 개발 가속화)**
 
-- **Base classes**: RootActivity, BaseActivity, BaseBindingActivity
-- **Fragment**: RootFragment, BaseFragment, BaseBindingFragment, RootDialogFragment, BaseDialogFragment, BaseBindingDialogFragment
+- **Base classes**: RootActivity, BaseActivity, BaseDataBindingActivity
+- **Fragment**: RootFragment, BaseFragment, BaseDataBindingFragment, RootDialogFragment, BaseDialogFragment, BaseDataBindingDialogFragment
 - **RecyclerView**: Rich adapters, view holders, DiffUtil + RecyclerScrollStateView
 - **Custom layouts**: Layout components with lifecycle awareness
 - **XML style system**: Comprehensive UI style library (style.xml)
 - **MVVM support**: Fully compatible with ViewModel and DataBinding
-> - **기본 클래스**: RootActivity, BaseActivity, BaseBindingActivity
-> - **Fragment**: RootFragment, BaseFragment, BaseBindingFragment, RootDialogFragment, BaseDialogFragment, BaseBindingDialogFragment
+> - **기본 클래스**: RootActivity, BaseActivity, BaseDataBindingActivity
+> - **Fragment**: RootFragment, BaseFragment, BaseDataBindingFragment, RootDialogFragment, BaseDialogFragment, BaseDataBindingDialogFragment
 > - **RecyclerView**: 다양한 Adapter, ViewHolder, DiffUtil + RecyclerScrollStateView
 > - **커스텀 레이아웃**: Lifecycle 지원하는 Layout 컴포넌트들
 > - **XML 스타일 시스템**: 포괄적인 UI 스타일 라이브러리 (style.xml)

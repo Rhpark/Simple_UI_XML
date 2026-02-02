@@ -19,23 +19,23 @@
 |:----------------------------------|:------------------------------------------------------------------:|:------------------------------------------------:|:-----------------------------:|
 | **Battery Info**                  |      `BroadcastReceiver` + `IntentFilter` + Manual management      |      `BatteryStateInfo().registerStart()`        |   **SharedFlow automation**   |
 | **Location Info**                 |     `LocationManager` + Permissions + Callback implementation      |      `LocationStateInfo().registerStart()`       | **Auto Provider management**  |
-| **Display Info**                  |           SDK branching + WindowManager + DisplayMetrics           |       `DisplayInfo().getFullScreenSize()`        |     **Auto SDK handling**     |
+| **Display Info**                  |           SDK branching + WindowManager + DisplayMetrics           |     `DisplayInfo().getPhysicalScreenSize()`      |     **Auto SDK handling**     |
 | **SIM Card Info**                 |        `SubscriptionManager` + Manual multi-SIM management         |         `SimInfo().getActiveSimCount()`          |   **Multi-SIM automation**    |
 | **Telephony Info**                |        `TelephonyManager` + Manual Callback implementation         |       `TelephonyInfo().registerCallback()`       |  **Auto API compatibility**   |
 | **Network Connectivity**          |          `ConnectivityManager` + Callback implementation           | `NetworkConnectivityInfo().isNetworkConnected()` | **Auto Transport detection**  |
 
-**Key takeaway:** System Service Manager Info simplifies complex system information collection with **StateFlow/SharedFlow-based** architecture.
-> **핵심:** System Service Manager Info는 복잡한 시스템 정보 수집을 **StateFlow/SharedFlow 기반**으로 단순화합니다.
+**Key takeaway:** System Service Manager Info simplifies complex system information collection with a **Flow/Callback-based** architecture.
+> **핵심:** System Service Manager Info는 복잡한 시스템 정보 수집을 **Flow/Callback 기반**으로 단순화합니다.
 
 <br></br>
 
 ## 💡 Why It Matters (왜 중요한가)
 
-### StateFlow/SharedFlow-Based Reactive Architecture (StateFlow/SharedFlow 기반 반응형 구조)
-- **Real-time Updates:** Manual BroadcastReceiver management → Automatic StateFlow/SharedFlow collect
+### Flow/Callback-Based Reactive Architecture (Flow/Callback 기반 반응형 구조)
+- **Real-time Updates:** Manual BroadcastReceiver management → Automatic Flow/Callback handling
 - **Lifecycle Safety:** Coroutine scope integration prevents memory leaks
 - **Event Type Separation:** Type-safe event handling with Sealed Classes
-> - **실시간 업데이트**: BroadcastReceiver 수동 관리 → StateFlow/SharedFlow 자동 collect
+> - **실시간 업데이트**: BroadcastReceiver 수동 관리 → Flow/Callback 자동 처리
 > - **Lifecycle 안전**: 코루틴 스코프 연동으로 메모리 누수 방지
 > - **이벤트 타입 분리**: Sealed Class로 타입 안전한 이벤트 처리
 
@@ -177,13 +177,11 @@ class BatteryMonitor(private val context: Context) {
 
 ```kotlin
 // Simple Battery information collection - SharedFlow based (간단한 Battery 정보 수집 - SharedFlow 기반)
-class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
+class MainActivity : BaseDataBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
 
     private val batteryInfo by lazy { BatteryStateInfo(this) }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
+    override fun onCreate(binding: ActivityMainBinding, savedInstanceState: Bundle?) {
         // 1. Start battery monitoring with default update cycle (2000ms)
         // (기본 업데이트 주기로 배터리 모니터링 시작 (2000ms))
         val success = batteryInfo.registerStart(lifecycleScope)
@@ -375,14 +373,12 @@ class LocationTracker(private val context: Context) {
 <summary><strong>Simple UI - Location State Info</strong></summary>
 
 ```kotlin
-// Simple Location tracking - StateFlow based (간단한 Location 추적 - StateFlow 기반)
-class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
+// Simple Location tracking - SharedFlow based (간단한 Location 추적 - SharedFlow 기반)
+class MainActivity : BaseDataBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
 
     private val locationInfo by lazy { LocationStateInfo(this) }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
+    override fun onCreate(binding: ActivityMainBinding, savedInstanceState: Bundle?) {
         // Permission request (Simple UI auto handling) (권한 요청 (Simple UI 자동 처리))
         requestPermissions(
             permissions = listOf(
@@ -410,7 +406,7 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
         val lastLocation = locationInfo.getLocation()
         val isGpsEnabled = locationInfo.isGpsEnabled()
 
-        // 3. StateFlow-based real-time updates - Auto collect (StateFlow 기반 실시간 업데이트 - 자동 collect)
+        // 3. SharedFlow-based real-time updates - Auto collect (SharedFlow 기반 실시간 업데이트 - 자동 collect)
         lifecycleScope.launch {
             locationInfo.sfUpdate.collect { event ->
                 when (event) {
@@ -449,7 +445,7 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 **Advantages:**
 - **Dramatically simplified** (Complex Listener → One line registration)
 - Automatic LocationListener management
-- StateFlow-based reactive updates
+- SharedFlow-based reactive updates
 - 5 type-safe events (Location, GPS, Network, Passive, Fused)
 - Automatic Provider status tracking
 - Distance/bearing calculation helpers provided
@@ -457,7 +453,7 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 > **장점:**
 > - **대폭 간소화** (복잡한 Listener → 한 줄 등록)
 > - LocationListener 자동 관리
-> - StateFlow 기반 반응형 업데이트
+> - SharedFlow 기반 반응형 업데이트
 > - 5가지 타입 안전한 이벤트 (위치, GPS, Network, Passive, Fused)
 > - Provider 상태 자동 추적
 > - 거리/방향 계산 헬퍼 제공
@@ -570,13 +566,11 @@ class DisplayHelper(private val context: Context) {
 
 ```kotlin
 // Simple Display information query - Auto SDK handling (간단한 Display 정보 조회 - SDK 자동 처리)
-class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
+class MainActivity : BaseDataBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
 
     private val displayInfo by lazy { getDisplayInfo(this) }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
+    override fun onCreate(binding: ActivityMainBinding, savedInstanceState: Bundle?) {
         // 1. Physical screen size (auto SDK branching) (물리적 화면 크기 (SDK 자동 분기))
         val physicalSize = displayInfo.getPhysicalScreenSize()
         Log.d("Display", "Physical: ${physicalSize.width} x ${physicalSize.height}") // (물리적)
@@ -633,9 +627,11 @@ class MainActivity : BaseBindingActivity<ActivityMainBinding>(R.layout.activity_
 
 ## Core Advantages of System Service Manager Info
 
-### 1. **StateFlow/SharedFlow-Based Reactive Architecture (StateFlow/SharedFlow 기반 반응형 구조)**
-- Battery: BroadcastReceiver → SharedFlow
-- Location: LocationListener → StateFlow
+### 1. **Flow/Callback-Based Reactive Architecture (Flow/Callback 기반 반응형 구조)**
+- Battery: BroadcastReceiver + polling → SharedFlow 이벤트 스트림 (`sfUpdate`)
+- Location: LocationListener + provider 변화 → SharedFlow 이벤트 스트림 (`sfUpdate`)
+- Telephony: TelephonyCallback → StateFlow + 콜백
+- Network: ConnectivityManager 콜백 (registerNetworkCallback / registerDefaultNetworkCallback)
 - Sealed Class type safety
 
 <br>
@@ -702,7 +698,7 @@ System Service Manager Info : [ServiceManagerInfoActivity.kt](../../app/src/main
 </br>
 
 ### **Location State Info** - Location Status Information
-- **Real-time Updates:** `registerStart(coroutineScope, locationProvider, updateCycleTime, minDistanceM)` - StateFlow-based location tracking
+- **Real-time Updates:** `registerStart(coroutineScope, locationProvider, updateCycleTime, minDistanceM)` - SharedFlow-based location tracking
   - `coroutineScope` - Coroutine scope (Lifecycle integrated) (코루틴 스코프 (Lifecycle과 연동))
   - `locationProvider` - Location provider (GPS_PROVIDER, NETWORK_PROVIDER, PASSIVE_PROVIDER, FUSED_PROVIDER, etc.) (위치 제공자)
   - `updateCycleTime` - Update cycle time in milliseconds (default: 2000ms) (밀리초 단위 업데이트 주기 시간 (기본값: 2000ms))
@@ -792,7 +788,7 @@ System Service Manager Info : [ServiceManagerInfoActivity.kt](../../app/src/main
 - **Multi-SIM:** `getActiveSimCount()`, `getActiveSubscriptionInfoList()` - Multi-SIM support (멀티 SIM 지원)
 - **TelephonyManager Query:** `getTelephonyManagerFromUSim(slotIndex)` - Return TelephonyManager for specific SIM slot (특정 SIM 슬롯의 TelephonyManager 반환)
 - **Permission fallback:** 권한이 없으면 안전한 기본값/빈 리스트를 반환하며 로그에 경고가 남습니다. 권한을 허용했다면 `refreshPermissions()`를 호출해 상태를 갱신하세요.
-- **Real-time Callback (Basic):** `registerCallback(handler, onSignalStrength, onServiceState, onNetworkState)` - StateFlow-based real-time updates (StateFlow 기반 실시간 업데이트)
+- **Real-time Callback (Basic):** `registerCallback(handler, onSignalStrength, onServiceState, onNetworkState)` - Callback + StateFlow updates (콜백 + StateFlow 자동 업데이트)
 - **Unregister Callback:** `unregisterCallback()` - Unregister registered callback (등록된 콜백 해제)
 - **Auto API Compatibility:** Automatic branching between TelephonyCallback (API 31+) vs PhoneStateListener (TelephonyCallback (API 31+) vs PhoneStateListener 자동 분기)
 
@@ -952,14 +948,13 @@ Display information queries **do not require permissions**.
 // Ready to use immediately (바로 사용 가능)
 val displayInfo = DisplayInfo(context)
 
-// Full screen size (including status bar, navigation bar)
-// (전체 화면 크기 (상태바, 네비게이션바 포함))
-val fullSize = displayInfo.getFullScreenSize()
-Log.d("Display", "Full Screen (전체 화면): ${fullSize.x} x ${fullSize.y}")
+// Physical screen size (물리 화면 크기)
+val physicalSize = displayInfo.getPhysicalScreenSize()
+Log.d("Display", "Physical (물리 화면): ${physicalSize.width} x ${physicalSize.height}")
 
-// Status bar height (상태바 높이)
-val statusBarHeight = displayInfo.getStatusBarHeight()
-Log.d("Display", "Status Bar Height (상태바 높이): $statusBarHeight")
+// Status bar size (상태바 크기)
+val statusBarSize = displayInfo.getStatusBarSize()
+Log.d("Display", "Status Bar (상태바): ${statusBarSize?.width} x ${statusBarSize?.height}")
 ```
 
 **Note:** Display information is available via public APIs and does not require permissions.
@@ -997,7 +992,7 @@ requestPermissions(
                 minDistanceM = 10f
             )
 
-            // Real-time location updates via StateFlow (StateFlow로 위치 변경 실시간 수신)
+            // Real-time location updates via SharedFlow (SharedFlow로 위치 변경 실시간 수신)
             lifecycleScope.launch {
                 locationInfo.sfUpdate.collect { event ->
                     when (event) {
@@ -1203,8 +1198,8 @@ Log.d("Network", "Mobile Connected (모바일 연결): $isMobile")
 val summary = networkInfo.getNetworkConnectivitySummary()
 Log.d("Network", "Summary (요약): $summary")
 
-// Real-time network changes via StateFlow (optional)
-// (StateFlow로 네트워크 변경 실시간 수신 (선택))
+// Real-time network changes via ConnectivityManager callback (optional)
+// (ConnectivityManager 콜백으로 네트워크 변경 실시간 수신 (선택))
 networkInfo.registerDefaultNetworkCallback()
 lifecycleScope.launch {
     // Detect network state changes (네트워크 상태 변경 감지)
