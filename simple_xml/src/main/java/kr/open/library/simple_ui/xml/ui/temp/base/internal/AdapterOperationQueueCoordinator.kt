@@ -273,4 +273,3 @@ internal class AdapterOperationQueueCoordinator<ITEM : Any, META>(
         dispatchCommitCallback(operation.callback, false)
     }
 }
-

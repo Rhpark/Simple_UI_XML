@@ -41,25 +41,37 @@ sealed class PositionInfo {
      * Insert operation metadata.<br><br>
      * 삽입 연산 메타데이터입니다.<br>
      */
-    data class Insert(val position: Int, val count: Int) : PositionInfo()
+    data class Insert(
+        val position: Int,
+        val count: Int
+    ) : PositionInfo()
 
     /**
      * Remove operation metadata.<br><br>
      * 제거 연산 메타데이터입니다.<br>
      */
-    data class Remove(val position: Int, val count: Int) : PositionInfo()
+    data class Remove(
+        val position: Int,
+        val count: Int
+    ) : PositionInfo()
 
     /**
      * Change operation metadata.<br><br>
      * 변경 연산 메타데이터입니다.<br>
      */
-    data class Change(val position: Int, val count: Int) : PositionInfo()
+    data class Change(
+        val position: Int,
+        val count: Int
+    ) : PositionInfo()
 
     /**
      * Move operation metadata.<br><br>
      * 이동 연산 메타데이터입니다.<br>
      */
-    data class Move(val from: Int, val to: Int) : PositionInfo()
+    data class Move(
+        val from: Int,
+        val to: Int
+    ) : PositionInfo()
 }
 
 /**
@@ -67,7 +79,6 @@ sealed class PositionInfo {
  * 검증이 포함된 리스트 연산 순수 함수들입니다.<br>
  */
 object AdapterListOperations {
-
     /**
      * Adds a single item at the end of the list.<br><br>
      * 리스트 끝에 단일 아이템을 추가합니다.<br>
@@ -315,13 +326,11 @@ object AdapterListOperations {
      */
     fun <ITEM> setItems(
         newItems: List<ITEM>,
-    ): ListOperationResult<ITEM> {
-        return ListOperationResult(
-            items = newItems.toList(),
-            success = true,
-            positionInfo = PositionInfo.Full,
-        )
-    }
+    ): ListOperationResult<ITEM> = ListOperationResult(
+        items = newItems.toList(),
+        success = true,
+        positionInfo = PositionInfo.Full,
+    )
 
     /**
      * Updates items using a transform function.<br><br>

@@ -5,7 +5,6 @@ package kr.open.library.simple_ui.xml.ui.temp.base.operation
  * 어댑터 연산용 에러 메시지를 중앙 관리합니다.<br>
  */
 internal object AdapterOperationMessages {
-
     /**
      * Message for invalid insert position.<br><br>
      * 유효하지 않은 삽입 위치 메시지입니다.<br>
