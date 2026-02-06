@@ -1,5 +1,5 @@
 ﻿# AlarmController vs Plain Android - Complete Comparison Guide
-> **AlarmController vs 순수 Android - 완벽 비교 가이드**
+> **AlarmController vs 순수 Android - 비교 가이드**
 
 ## Module Information (모듈 정보)
 - **Module**: `simple_core` (UI-independent core module / UI 비의존 코어 모듈)
@@ -144,4 +144,5 @@ private fun checkAlarmExists(key: Int): Boolean {
   See full list / 전체 목록: [README_SYSTEM_MANAGER_EXTENSIONS.md](../../README_SYSTEM_MANAGER_EXTENSIONS.md)
 
 <br></br>
+
 

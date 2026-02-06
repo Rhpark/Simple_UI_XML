@@ -1,5 +1,5 @@
 ﻿# System Manager Extensions vs Plain Android - Complete Comparison Guide
-> **System Manager Extensions vs 순수 Android - 완벽 비교 가이드**
+> **System Manager Extensions vs 순수 Android - 비교 가이드**
 
 ## Module Information (모듈 정보)
 - **Module**: `simple_xml` (UI-dependent module / UI 의존 모듈)
@@ -50,3 +50,4 @@ private fun showKeyboard(editText: EditText) {
 > 시스템 바 컨트롤러는 Window 단위 캐싱이며 사용 종료 시 정리를 권장합니다.
 
 <br></br>
+

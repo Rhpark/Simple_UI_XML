@@ -1,5 +1,5 @@
 ﻿# FloatingViewController vs Plain Android - Complete Comparison Guide
-> **FloatingViewController vs 순수 Android - 완벽 비교 가이드**
+> **FloatingViewController vs 순수 Android - 비교 가이드**
 
 ## Module Information (모듈 정보)
 - **Module**: `simple_xml` (UI-dependent module / UI 의존 모듈)
@@ -139,4 +139,5 @@ private fun removeAll() {
   See full list / 전체 목록: [README_SYSTEM_MANAGER_EXTENSIONS.md](../../README_SYSTEM_MANAGER_EXTENSIONS.md)
 
 <br></br>
+
 

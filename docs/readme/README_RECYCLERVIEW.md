@@ -1,5 +1,5 @@
 ﻿# 📱 Simple UI RecyclerView vs Plain Android – Complete Comparison Guide
-> **Simple UI RecyclerView vs 기본 Android - 완벽 비교 가이드**
+> **Simple UI RecyclerView vs 기본 Android - 비교 가이드**
 
 ## 📦 Module Information (모듈 정보)
 - **Module**: `simple_xml` (UI-dependent module / UI 의존 모듈)
@@ -790,3 +790,4 @@ override fun onViewRecycled(holder: VH) {
 </br>
 
 .
+

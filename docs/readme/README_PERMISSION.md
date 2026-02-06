@@ -95,22 +95,23 @@ See feature doc: [README_NETWORK_INFO.md](system_manager/info/core/README_NETWOR
 <br></br>
 
 ## Permission Request Tips (권한 요청 팁)
-### Start with Minimum Permissions (최소 권한으로 시작)
+### Start with Required Permissions (필수 권한으로 시작)
 ```kotlin
-// LocationStateInfo usage example - Minimum permissions
-// (LocationStateInfo 사용 예시 - 최소 권한)
+// LocationStateInfo usage example - Required permissions
+// (LocationStateInfo 사용 예시 - 필수 권한)
 requestPermissions(
     permissions = listOf(
-        Manifest.permission.ACCESS_COARSE_LOCATION  // Approximate location only (대략적 위치만)
+        Manifest.permission.ACCESS_FINE_LOCATION,
+        Manifest.permission.ACCESS_COARSE_LOCATION
     ),
     onDeniedResult = { deniedResults ->
         if (deniedResults.isEmpty()) {
-            // Use network-based location only (네트워크 기반 위치만 사용)
+            // Start location tracking (위치 추적 시작)
             locationInfo.registerStart(
                 coroutineScope = lifecycleScope,
                 locationProvider = LocationManager.NETWORK_PROVIDER,
-                updateCycleTime = 2000L,
-                minDistanceM = 0f
+                updateCycleTime = 5000L,
+                minDistanceM = 0.1f
             )
         }
     },
@@ -130,8 +131,8 @@ requestPermissions(
             locationInfo.registerStart(
                 coroutineScope = lifecycleScope,
                 locationProvider = LocationManager.GPS_PROVIDER,
-                updateCycleTime = 2000L,
-                minDistanceM = 0f
+                updateCycleTime = 5000L,
+                minDistanceM = 0.1f
             )
         }
     },

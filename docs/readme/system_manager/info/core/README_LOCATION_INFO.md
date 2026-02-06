@@ -1,5 +1,5 @@
 ﻿# Location Info vs Plain Android - Complete Comparison Guide
-> **Location Info vs 순수 Android - 완벽 비교 가이드**
+> **Location Info vs 순수 Android - 비교 가이드**
 
 ## Module Information (모듈 정보)
 - **Module**: `simple_core` (UI-independent core module / UI 비의존 코어 모듈)
@@ -17,17 +17,21 @@ Provides SharedFlow-based location tracking and location helper utilities.
 - **Real-time Updates:** `registerStart(coroutineScope, locationProvider, updateCycleTime, minDistanceM)` - SharedFlow-based location tracking
   - `coroutineScope` - Coroutine scope (Lifecycle integrated) (코루틴 스코프 (Lifecycle과 연동))
   - `locationProvider` - Location provider (GPS_PROVIDER, NETWORK_PROVIDER, PASSIVE_PROVIDER, FUSED_PROVIDER, etc.) (위치 제공자)
-  - `updateCycleTime` - Update cycle time in milliseconds (default: 2000ms) (밀리초 단위 업데이트 주기 시간 (기본값: 2000ms))
-    - 2000ms (default): Recommended for most cases - fast updates, moderate battery usage. (대부분의 경우 권장 - 빠른 업데이트, 적당한 배터리 사용)
+  - `updateCycleTime` - Update cycle time in milliseconds (default: 5000ms) (밀리초 단위 업데이트 주기 시간 (기본값: 5000ms))
+    - 5000ms (default): Recommended for most cases - fast updates, moderate battery usage. (대부분의 경우 권장 - 빠른 업데이트, 적당한 배터리 사용)
     - 10000ms: Slower updates, lower battery consumption. (느린 업데이트, 낮은 배터리 소비)
     - 60000ms: Very slow updates, minimal battery impact. (매우 느린 업데이트, 최소 배터리 영향)
+    - POLLING_DISABLED_UPDATE_CYCLE_TIME: Low-power mode (polling disabled, one initial sync) (alias: DISABLE_UPDATE_CYCLE_TIME) (저전력 모드: 폴링 비활성 + 초기 1회 동기화, DISABLE_UPDATE_CYCLE_TIME 별칭)
+      - Note: In low-power mode, periodic polling is disabled, but LocationListener remains registered. (저전력 모드에서는 주기 폴링만 비활성화되며 LocationListener 등록은 유지됩니다.)
   - `minDistanceM` - Minimum movement distance (meters) (default: 2.0m) (최소 이동 거리 (미터) (기본값: 2.0m))
+    - Minimum allowed value: 0.1m (최소 허용값: 0.1m)
   - Automatic LocationListener and BroadcastReceiver registration/unregistration (자동 LocationListener 및 BroadcastReceiver 등록/해제)
+  - Re-calling `registerStart(...)` automatically re-registers LocationListener and reapplies provider/time/distance settings (재호출 시 LocationListener 자동 재등록 + provider/time/distance 설정 재적용)
 - **Provider Status:** `isGpsEnabled()`, `isNetworkEnabled()`, `isPassiveEnabled()`, `isFusedEnabled()` (API 31+)
 - **Extended Provider Status:**
-  - `isLocationEnabled()` - Check GPS Provider enabled (same as isGpsEnabled()) (GPS Provider 활성화 확인 (isGpsEnabled()와 동일))
+  - `isLocationEnabled()` - Check whether system location service is enabled (시스템 위치 서비스 활성화 여부 확인)
   - `isAnyEnabled()` - Check if any Provider is enabled (includes Fused on API 31+) (모든 Provider 중 하나라도 활성화 확인 (API 31+에서는 Fused 포함))
-- **Current Location:** `getLocation()` - Last known location (GPS Provider priority) (마지막으로 알려진 위치 (GPS Provider 우선))
+- **Current Location:** `getLocation()` - Last known best location among available providers (사용 가능한 Provider 중 최적의 마지막 위치)
 - **Distance Calculation:** `calculateDistance(from, to)` - Distance between two locations (meters) (두 위치 간 거리 (미터))
 - **Bearing Calculation:** `calculateBearing(from, to)` - Bearing between two locations (degrees) (두 위치 간 방향 (도))
 - **Radius Check:** `isLocationWithRadius(from, to, radius)` - Check location within specific radius (특정 반경 내 위치 확인)
@@ -36,11 +40,13 @@ Provides SharedFlow-based location tracking and location helper utilities.
   - `loadLocation()` - Load saved location (저장된 위치 로드)
   - `removeLocation()` - Delete saved location (저장된 위치 삭제)
 - **Lifecycle Management:**
+  - `unRegister()` - Stop updates immediately and keep the instance reusable (즉시 업데이트 중지, 인스턴스 재사용 가능)
   - `onDestroy()` - Manual cleanup required to release resources (리소스 해제를 위해 수동 정리 필요)
-- **Smart Location Filtering:** Intelligent algorithm filters out inaccurate or stale coordinates. Prefers latest data within **10 seconds** and compares accuracy (AccuracyDelta) to ensure best location.
-  - **스마트 위치 필터링:** 부정확하거나 오래된 좌표를 걸러내는 지능형 알고리즘 탑재. **10초** 이내의 최신 데이터를 우선하며, 정확도(AccuracyDelta)를 비교하여 최적의 위치를 보장합니다.
-- **Stable Polling Mechanism:** Double-checks system status via periodic polling (default 2000ms) alongside Event Listeners, ensuring no missed provider changes.
-  - **안정적 폴링 메커니즘:** 이벤트 리스너와 함께 주기적 폴링(기본 2000ms)으로 시스템 상태를 이중 감시하여, Provider 상태 변경 누락을 원천 차단합니다.
+- **Smart Location Filtering:** Intelligent algorithm filters out inaccurate or stale coordinates. It prioritizes recent data within **10 seconds** and compares accuracy (AccuracyDelta) to select a better last-known location.
+  - **스마트 위치 필터링:** 부정확하거나 오래된 좌표를 걸러내는 지능형 알고리즘 탑재. **10초** 이내의 최신 데이터를 우선하고 정확도(AccuracyDelta)를 비교해 더 나은 마지막 위치 선택에 도움을 줍니다.
+- **Stable Polling Mechanism:** Periodic polling (default 5000ms) runs alongside event listeners to double-check system state and reduce the chance of missing provider state changes.
+  - **안정적 폴링 메커니즘:** 이벤트 리스너와 함께 주기적 폴링(기본 5000ms)으로 시스템 상태를 이중 확인하여 Provider 상태 변경 누락 가능성을 줄입니다.
+  - **저전력 모드:** 필요 시 `POLLING_DISABLED_UPDATE_CYCLE_TIME`(별칭: `DISABLE_UPDATE_CYCLE_TIME`)로 폴링을 비활성화할 수 있습니다.
 - **LocationStateEvent:** 5 event types (OnLocationChanged, OnGpsEnabled, OnNetworkEnabled, OnPassiveEnabled, OnFusedEnabled) (5가지 이벤트 타입)
 
 <br></br>
@@ -67,14 +73,14 @@ Provides SharedFlow-based location tracking and location helper utilities.
 - 5 type-safe events (Location, GPS, Network, Passive, Fused)
 - Automatic Provider status tracking
 - Distance/bearing calculation helpers provided
-- Automatic Lifecycle cleanup
+- Explicit stop/destroy APIs (`unRegister()`, `onDestroy()`)
 > - **대폭 간소화** (복잡한 Listener → 한 줄 등록)
 > - LocationListener 자동 관리
 > - SharedFlow 기반 반응형 업데이트
 > - 5가지 타입 안전한 이벤트 (위치, GPS, Network, Passive, Fused)
 > - Provider 상태 자동 추적
 > - 거리/방향 계산 헬퍼 제공
-> - Lifecycle 자동 정리
+> - 명시적 중지/정리 API 제공 (`unRegister()`, `onDestroy()`)
 
 <br></br>
 
@@ -201,7 +207,9 @@ class MainActivity : BaseDataBindingActivity<ActivityMainBinding>(R.layout.activ
         locationInfo.registerStart(
             coroutineScope = lifecycleScope,
             locationProvider = LocationManager.GPS_PROVIDER,
-            updateCycleTime = 1000L,
+            // Low-power mode (polling disabled) (저전력 모드 - 폴링 비활성)
+            // Alias: POLLING_DISABLED_UPDATE_CYCLE_TIME (별칭)
+            updateCycleTime = DISABLE_UPDATE_CYCLE_TIME,
             minDistanceM = 10f
         )
 
@@ -261,3 +269,4 @@ See the permission guide for required permissions and policy.
 - Permission Guide: [README_PERMISSION.md](../../../README_PERMISSION.md)
 
 <br></br>
+

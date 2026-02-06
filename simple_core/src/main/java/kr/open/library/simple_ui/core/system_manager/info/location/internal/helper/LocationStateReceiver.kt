@@ -24,6 +24,7 @@ import kotlinx.coroutines.launch
 import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
 import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
 import kr.open.library.simple_ui.core.logcat.Logx
+import kr.open.library.simple_ui.core.system_manager.info.location.LocationStateConstants.POLLING_DISABLED_UPDATE_CYCLE_TIME
 
 /**
  * Manages location updates via LocationListener, BroadcastReceiver, and periodic polling.<br><br>
@@ -97,7 +98,7 @@ internal class LocationStateReceiver(
      */
     private val locationListener = object : LocationListener {
         override fun onLocationChanged(location: Location) {
-            Logx.d("Location updated: lat=${location.latitude}, lng=${location.longitude}, accuracy=${location.accuracy}m")
+//            Logx.d("Location updated: lat=${location.latitude}, lng=${location.longitude}, accuracy=${location.accuracy}m")
             receiveLocationChangedInfo.invoke()
         }
 
@@ -180,6 +181,8 @@ internal class LocationStateReceiver(
 
     /**
      * Registers location listener for the specified provider.<br><br>
+     * If already registered, it is unregistered first and then re-registered with new settings.<br><br>
+     * 이미 등록된 상태면 기존 리스너를 먼저 해제한 뒤 새 설정으로 재등록합니다.<br>
      * 지정된 제공자에 대한 위치 리스너를 등록합니다.<br>
      *
      * @param locationProvider The location provider to use (GPS, NETWORK, etc.).<br><br>
@@ -196,8 +199,9 @@ internal class LocationStateReceiver(
         synchronized(registerLock) {
             safeCatch(false) {
                 if (isLocationListenerRegistered) {
-                    Logx.w("LocationStateReceiver: LocationListener already registered")
-                    return true
+                    // Re-register to immediately apply new provider/time/distance settings.
+                    Logx.i("LocationStateReceiver: Re-register LocationListener with updated settings")
+                    unRegisterLocationListener()
                 }
                 locationManager.requestLocationUpdates(
                     locationProvider,
@@ -206,7 +210,6 @@ internal class LocationStateReceiver(
                     locationListener
                 )
                 isLocationListenerRegistered = true
-                Logx.d("LocationListener registered for provider: $locationProvider")
                 return true
             }
         }
@@ -240,6 +243,8 @@ internal class LocationStateReceiver(
      *
      * @param updateCycleTime Update cycle time in milliseconds.<br><br>
      *                        밀리초 단위의 업데이트 주기 시간입니다.<br>
+     *                        If set to `POLLING_DISABLED_UPDATE_CYCLE_TIME`, low-power mode is enabled (polling disabled, one initial sync).<br><br>
+     *                        `POLLING_DISABLED_UPDATE_CYCLE_TIME`일 경우 저전력 모드로 동작하며 주기 폴링을 수행하지 않고 초기 1회만 동기화합니다.<br>
      *
      * @param setupDataFlows Callback to setup reactive data flows.<br><br>
      *                       반응형 데이터 플로우를 설정하는 콜백입니다.<br>
@@ -285,10 +290,17 @@ internal class LocationStateReceiver(
          * This polling does not guarantee new GPS updates; it only checks for refreshed location/provider state on a regular interval.<br><br>
          * 이 폴링은 새로운 GPS 업데이트를 보장하지 않으며, 일정 주기로 위치/제공자 상태 갱신 여부를 확인하기 위한 것입니다.<br>
          */
-        updateJob = internalCoroutineScope!!.launch {
-            while (isActive) {
+        val scope = checkNotNull(internalCoroutineScope) { "internalCoroutineScope must be initialized before starting updates" }
+        updateJob = if (updateCycleTime == POLLING_DISABLED_UPDATE_CYCLE_TIME) {
+            scope.launch {
                 receiveLocationChangedInfo.invoke()
-                delay(updateCycleTime)
+            }
+        } else {
+            scope.launch {
+                while (isActive) {
+                    receiveLocationChangedInfo.invoke()
+                    delay(updateCycleTime)
+                }
             }
         }
 

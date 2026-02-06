@@ -459,11 +459,11 @@ override fun onEventVmCollect(binding: ActivityMainBinding) {
 
 This ensures **only one active collector** exists at any time, even during configuration changes.
 
-이를 통해 구성 변경 중에도 **항상 하나의 활성 수집기만** 존재하도록 보장합니다.
+이를 통해 구성 변경 중에도 **하나의 활성 수집기만 유지되도록** 설계되었습니다.
 
 ---
 
-#### 📚 Complete Example / 완전한 예제
+#### 📚 Complete Example / 전체 예제
 
 **Activity:**
 ```kotlin
@@ -540,3 +540,4 @@ class HomeFragment : BaseDataBindingFragment<FragmentHomeBinding>(R.layout.fragm
 
 Run the actual app module to see each base class in action with your own eyes. Don't stop at the README—run the code yourself!
 > 실제 앱 모듈을 실행하면 각 베이스 클래스의 동작을 눈으로 확인할 수 있습니다. README에서 끝나지 말고 코드를 직접 실행해 보세요!
+

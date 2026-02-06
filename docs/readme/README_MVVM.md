@@ -1,5 +1,5 @@
 ﻿# 📱 Simple UI MVVM Pattern – Complete Guide
-> **Simple UI MVVM 패턴 - 완벽 가이드**
+> **Simple UI MVVM 패턴 - 가이드**
 
 ## 📦 Module Information (모듈 정보)
 
@@ -822,3 +822,4 @@ Leave the old complexity behind.
 <br>
 </br>
 .
+

@@ -1,5 +1,5 @@
 ﻿# 📦 Simple UI Extensions & Style vs Plain Android - Complete Comparison Guide
-> **"Simple UI Extensions & Style vs 순수 Android - 완벽 비교 가이드"**
+> **"Simple UI Extensions & Style vs 순수 Android - 비교 가이드"**
 
 ## 📦 Module Information (모듈 정보)
 
@@ -98,7 +98,7 @@ This feature **spans two modules** (이 기능은 **두 모듈**에 걸쳐 있�
 <br>
 </br>
 
-## 📦 Complete Comparison: Extensions & Style vs Plain Android (완벽 비교 목록: Extensions & Style vs 순수 Android)
+## 📦 Complete Comparison: Extensions & Style vs Plain Android (비교 목록: Extensions & Style vs 순수 Android)
 
 ### 📂 **Available Extension Packages (제공되는 Extensions 패키지)** — organized by package
 
@@ -1554,7 +1554,7 @@ val response = safeCatch(
 )
 ```
 
-**Safety guarantees (안전성 보장):**
+**Safety behavior (안전성 동작):**
 ```kotlin
 // 모든 safeCatch는 다음 예외를 자동으로 재전파합니다:
 // 1. CancellationException - 코루틴 취소는 반드시 전파
@@ -1587,3 +1587,4 @@ public inline fun <T> safeCatch(defaultValue: T, block: () -> T): T {
 
 
 .
+

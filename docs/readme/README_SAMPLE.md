@@ -1,4 +1,4 @@
-﻿# 📊 Simple UI XML vs Plain Android - 완벽 비교 가이드
+﻿# 📊 Simple UI XML vs Plain Android - 비교 가이드
 
 ![simple_example.gif](../../example_gif/simple_example.gif)
 
@@ -404,7 +404,7 @@ binding.root.snackBarShowShort("권한이 허용되었습니다!")
 - Normal/special permission separation: 50+ lines separation logic → automatic distinction
 - Permission result handling: Individual callback implementation → unified callback provided
 
-> ### 1. **📉 권한 관리 완전 자동화**
+> ### 1. **📉 권한 관리 자동화**
 > - **복잡한 launcher 등록**: ActivityResultContract 등록 → requestPermissions() 한 줄
 > - **일반/특수 권한 분리**: 50줄+ 분리 로직 → 자동 구분 처리
 > - **권한 결과 처리**: 개별 콜백 구현 → 통합 콜백 제공
@@ -510,3 +510,4 @@ binding.root.snackBarShowShort("권한이 허용되었습니다!")
 </br>
 
 .
+

@@ -1,5 +1,5 @@
 ﻿# Logx vs Android Log - Complete Comparison Guide
-> **Logx vs Android Log - 완벽 비교 가이드**
+> **Logx vs Android Log - 비교 가이드**
 
 ## 📦 Module Information (모듈 정보)
 - **Module**: `simple_core` (UI-independent core module / UI 비의존 코어 모듈)
@@ -660,7 +660,7 @@ private fun setupLogging() {
 <br>
 </br>
 
-### 2. **Fully automated file saving (완전 자동화된 파일 저장 기능)**
+### 2. **Fully automated file saving (자동화된 파일 저장 기능)**
 - **Automatic storage path**: Choose between Internal/External/Public locations
 - **Automated retention**: Storage lifecycle handled for each option
 - **Resource cleanup**: Hooks into Android lifecycle automatically
@@ -715,7 +715,7 @@ private fun setupLogging() {
 **Simple UI Logx** completely transforms traditional logging.  
 It **shortens complex logging code**, **dramatically improves developer productivity**, and delivers an **intuitive logging experience**.
 
->**Simple UI Logx**는 기존의 로깅 방식을 완전히 바꿉니다.
+>**Simple UI Logx**는 기존 로깅 작업을 더 단순하게 만듭니다.
 >**복잡한 로깅 코드를 단축**시키고, **개발 생산성을 크게 향상**시키며 **직관적인 로깅 경험**을 제공합니다.
 
 
@@ -828,3 +828,4 @@ class MainActivity : BaseDataBindingActivity<ActivityMainBinding>(R.layout.activ
 
 
 .
+

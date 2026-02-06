@@ -1,5 +1,5 @@
 ﻿# System Service Manager Info vs Plain Android - Complete Comparison Guide
-> **System Service Manager Info vs 순수 Android - 완벽 비교 가이드**
+> **System Service Manager Info vs 순수 Android - 비교 가이드**
 
 ## Module Information (모듈 정보)
 - **Module**: `simple_core`, `simple_xml` 
@@ -29,9 +29,11 @@ Provides Flow/Callback-based system information collection with helper APIs.
 - **Real-time Updates:** Collect system state in real time with Flow/Callback.
 - **Automated Configuration:** Automate complex setup such as SDK branching and resource queries.
 - **Developer-Friendly API:** Improve usability with intuitive helper methods.
+- **Lifecycle-friendly control:** Location supports explicit stop (`unRegister()`) and re-call auto reconfiguration on `registerStart(...)`.
 > - **실시간 업데이트:** Flow/Callback 기반으로 실시간 상태를 수집합니다.
 > - **설정 자동화:** SDK 분기/리소스 조회 등 복잡한 설정을 자동화합니다.
 > - **개발자 친화 API:** 직관적 헬퍼 메서드로 사용성을 개선합니다.
+> - **라이프사이클 친화 제어:** Location은 `unRegister()`로 명시적 중지가 가능하고, `registerStart(...)` 재호출 시 설정이 자동 재적용됩니다.
 
 <br></br>
 
@@ -63,3 +65,4 @@ System Service Manager Info example code:
 - [ServiceManagerInfoActivity.kt](../../../../app/src/main/java/kr/open/library/simpleui_xml/system_service_manager/info/ServiceManagerInfoActivity.kt)
 
 <br></br>
+

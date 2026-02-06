@@ -1,7 +1,7 @@
 ﻿# System Service Manager Controller vs Plain Android - Complete Comparison Guide
 **System Service Manager Controller** consists of controllers in `simple_core` and Context extensions in `simple_xml`.
 This document is a quick summary for fast review, and details are split into separate docs.
-> **System Service Manager Controller vs 순수 Android - 완벽 비교 가이드**
+> **System Service Manager Controller vs 순수 Android - 비교 가이드**
 > **System Service Manager Controller**는 `simple_core`의 컨트롤러와 `simple_xml`의 Context 확장 함수로 구성됩니다.
 > 이 문서는 **핵심만 빠르게 확인**할 수 있도록 요약했고, 상세 내용은 별도 문서로 분리했습니다.
 
@@ -84,4 +84,5 @@ See full list / 전체 목록: [README_SYSTEM_MANAGER_EXTENSIONS.md](../README_S
 - core docs: `docs/readme/system_manager/controller/core/` (core 문서 위치)
 - xml docs: `docs/readme/system_manager/controller/xml/` (xml 문서 위치)
 - extensions doc: `docs/readme/system_manager/README_SYSTEM_MANAGER_EXTENSIONS.md` (확장 문서)
+
 

@@ -1,5 +1,5 @@
-# Network Connectivity Info vs Plain Android - Complete Comparison Guide
-> **Network Connectivity Info vs 순수 Android - 완벽 비교 가이드**
+﻿# Network Connectivity Info vs Plain Android - Complete Comparison Guide
+> **Network Connectivity Info vs 순수 Android - 비교 가이드**
 
 ## Module Information (모듈 정보)
 - **Module**: `simple_core` (UI-independent core module / UI 비의존 코어 모듈)
@@ -124,3 +124,4 @@ NetworkConnectivityInfo requires network state permissions; Wi-Fi state is optio
 - Permission Guide: [README_PERMISSION.md](../../../README_PERMISSION.md)
 
 <br></br>
+

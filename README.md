@@ -84,6 +84,7 @@ dependencies {
 - **[Documentation Index](docs/readme/README.md)** - 전체 문서 목차
 - **[Logx Guide](docs/readme/README_LOGX.md)** - Logx 로깅 가이드
 - **[Permission Guide](docs/readme/README_PERMISSION.md)** - 권한 가이드
+- **[Location Info Guide](docs/readme/system_manager/info/core/README_LOCATION_INFO.md)** - 위치 상태 가이드 (기본 주기 5000ms, 최소 거리 0.1m)
 - **[API Documentation](https://rhpark.github.io/Simple_UI_XML/api)** - Dokka로 생성된 API 문서
 - **[Code Coverage Report](https://rhpark.github.io/Simple_UI_XML/coverage)** - Kover 커버리지 리포트
 

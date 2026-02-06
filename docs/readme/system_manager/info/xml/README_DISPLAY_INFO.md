@@ -1,5 +1,5 @@
 ﻿# Display Info vs Plain Android - Complete Comparison Guide
-> **Display Info vs 순수 Android - 완벽 비교 가이드**
+> **Display Info vs 순수 Android - 비교 가이드**
 
 ## Module Information (모듈 정보)
 - **Module**: `simple_xml` (UI-dependent module / UI 의존 모듈)
@@ -195,3 +195,4 @@ No permission is required for DisplayInfo, but see the guide for policy context.
 - Permission Guide: [README_PERMISSION.md](../../../README_PERMISSION.md)
 
 <br></br>
+

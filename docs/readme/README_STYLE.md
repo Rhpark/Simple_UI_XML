@@ -1,5 +1,5 @@
-# 📦 Simple Style vs Plain Android - Complete Comparison Guide
-> **Simple Style vs 순수 Android - 완벽 비교 가이드**
+﻿# 📦 Simple Style vs Plain Android - Complete Comparison Guide
+> **Simple Style vs 순수 Android - 비교 가이드**
 
 ## 📦 Module Information (모듈 정보)
 - **Module**: `simple_xml` (UI-dependent module / UI 의존 모듈)
@@ -421,3 +421,4 @@ The following lists applicable Style patterns organized by View type.
 </br>
 
 .
+

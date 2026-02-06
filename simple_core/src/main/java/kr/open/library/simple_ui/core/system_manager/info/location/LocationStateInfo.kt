@@ -2,7 +2,6 @@ package kr.open.library.simple_ui.core.system_manager.info.location
 
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
-import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Location
 import android.location.LocationManager
@@ -11,18 +10,17 @@ import androidx.annotation.RequiresApi
 import androidx.annotation.RequiresPermission
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharedFlow
-import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
-import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
 import kr.open.library.simple_ui.core.logcat.Logx
-import kr.open.library.simple_ui.core.permissions.extentions.hasPermissions
 import kr.open.library.simple_ui.core.system_manager.base.BaseSystemService
 import kr.open.library.simple_ui.core.system_manager.extensions.getLocationManager
 import kr.open.library.simple_ui.core.system_manager.info.location.LocationStateConstants.DEFAULT_UPDATE_CYCLE_DISTANCE
 import kr.open.library.simple_ui.core.system_manager.info.location.LocationStateConstants.DEFAULT_UPDATE_CYCLE_TIME
 import kr.open.library.simple_ui.core.system_manager.info.location.LocationStateConstants.MIN_UPDATE_CYCLE_DISTANCE
 import kr.open.library.simple_ui.core.system_manager.info.location.LocationStateConstants.MIN_UPDATE_CYCLE_TIME
-import kr.open.library.simple_ui.core.system_manager.info.location.internal.helper.LocationStateEmitter
-import kr.open.library.simple_ui.core.system_manager.info.location.internal.helper.LocationStateReceiver
+import kr.open.library.simple_ui.core.system_manager.info.location.LocationStateConstants.POLLING_DISABLED_UPDATE_CYCLE_TIME
+import kr.open.library.simple_ui.core.system_manager.info.location.internal.helper.LocationCalculator
+import kr.open.library.simple_ui.core.system_manager.info.location.internal.helper.LocationQueryHelper
+import kr.open.library.simple_ui.core.system_manager.info.location.internal.helper.LocationUpdateManager
 import kr.open.library.simple_ui.core.system_manager.info.location.internal.model.LocationStateData
 
 /**
@@ -94,28 +92,22 @@ public open class LocationStateInfo(
     public val locationManager: LocationManager by lazy { context.getLocationManager() }
 
     /**
-     * Manages event emission to SharedFlow and caches location metrics in StateFlows.<br><br>
-     * SharedFlow로 이벤트를 발행하고 StateFlow에 위치 메트릭을 캐싱합니다.<br>
+     * Provides provider status queries and best-location selection.<br><br>
+     * 제공자 상태 조회와 최적 위치 선택 로직을 제공합니다.<br>
      */
-    private val sender = LocationStateEmitter()
+    private val queryHelper = LocationQueryHelper(context, locationManager)
 
     /**
-     * Manages location updates via LocationListener, BroadcastReceiver, and periodic polling.<br><br>
-     * LocationListener, BroadcastReceiver, 주기적 폴링을 통한 위치 업데이트를 관리합니다.<br>
+     * Manages receiver registration and event flow emission.<br><br>
+     * 리시버 등록과 이벤트 플로우 발행을 관리합니다.<br>
      */
-    @SuppressLint("MissingPermission")
-    private val receiver = LocationStateReceiver(context, locationManager) {
-        sender.updateLocationInfo(
-            LocationStateData(
-                location = getLocation(),
-                isGpsEnabled = isGpsEnabled(),
-                isNetworkEnabled = isNetworkEnabled(),
-                isPassiveEnabled = isPassiveEnabled(),
-                isFusedEnabled = checkSdkVersion(Build.VERSION_CODES.S,
-                    positiveWork = { isFusedEnabled() },
-                    negativeWork = { null }
-                )
-            )
+    private val updateManager = LocationUpdateManager(context, locationManager) {
+        LocationStateData(
+            location = queryHelper.getLocation(),
+            isGpsEnabled = queryHelper.isGpsEnabled(),
+            isNetworkEnabled = queryHelper.isNetworkEnabled(),
+            isPassiveEnabled = queryHelper.isPassiveEnabled(),
+            isFusedEnabled = queryHelper.getFusedEnabledOrNull()
         )
     }
 
@@ -135,11 +127,13 @@ public open class LocationStateInfo(
      * Unsupported or unavailable metrics may emit no events until a valid value becomes available.<br><br>
      * 미지원/미사용 가능 값은 유효한 값이 나오기 전까지 이벤트가 발생하지 않을 수 있습니다.<br>
      */
-    public val sfUpdate: SharedFlow<LocationStateEvent> = sender.getSfUpdate()
+    public val sfUpdate: SharedFlow<LocationStateEvent> = updateManager.getSfUpdate()
 
     /**
      * Registers and starts location updates with the specified parameters.<br><br>
      * 지정한 매개변수로 위치 업데이트를 등록하고 시작합니다.<br>
+     * Re-calling this method automatically re-registers LocationListener and reapplies provider/time/distance settings.<br><br>
+     * 이 메서드를 다시 호출하면 LocationListener를 자동 재등록하며 provider/time/distance 설정을 즉시 재적용합니다.<br>
      *
      * @param coroutineScope The coroutine scope for managing location updates.<br><br>
      *                       위치 업데이트를 관리할 코루틴 스코프입니다.<br>
@@ -151,22 +145,31 @@ public open class LocationStateInfo(
      *                        Must be greater than or equal to `MIN_UPDATE_CYCLE_TIME`; otherwise IllegalArgumentException is thrown.<br>
      *                        LocationListener provides real-time updates for location changes,<br>
      *                        This polling does not guarantee new GPS updates; it only checks for refreshed location/provider state on a regular interval.<br>
-     *                        - 2000ms (default): Recommended for most cases - fast updates, moderate battery usage.<br>
+     *                        - 5000ms (default): Recommended for most cases - fast updates, moderate battery usage.<br>
      *                        - 10000ms: Slower updates, lower battery consumption.<br>
      *                        - 60000ms: Very slow updates, minimal battery impact.<br><br>
+     *                        - POLLING_DISABLED_UPDATE_CYCLE_TIME: Low-power mode (polling disabled, one initial sync only).<br>
+     *                          Alias: DISABLE_UPDATE_CYCLE_TIME.<br><br>
+     *                        - Recommended for battery-sensitive use cases to use POLLING_DISABLED_UPDATE_CYCLE_TIME (low-power mode).<br><br>
      *                        일정 간격(밀리초)으로 위치 값을 확인하고 변경 시 업데이트를 발행하는 주기입니다.<br>
      *                        `MIN_UPDATE_CYCLE_TIME` 이상이어야 하며, 미만이면 IllegalArgumentException이 발생합니다.<br>
      *                        LocationListener가 위치 변경에 대한 실시간 업데이트를 제공하지만,<br>
      *                        이 폴링은 새로운 GPS 업데이트를 보장하지 않으며, 일정 주기로 위치/제공자 상태 갱신 여부를 확인하기 위한 것입니다.<br>
-     *                        - 2000ms (기본값): 대부분의 경우 권장 - 빠른 업데이트, 적당한 배터리 사용.<br>
+     *                        - 5000ms (기본값): 대부분의 경우 권장 - 빠른 업데이트, 적당한 배터리 사용.<br>
      *                        - 10000ms: 느린 업데이트, 낮은 배터리 소비.<br>
      *                        - 60000ms: 매우 느린 업데이트, 최소 배터리 영향.<br>
+     *                        - POLLING_DISABLED_UPDATE_CYCLE_TIME: 저전력 모드(주기 폴링 비활성 + 초기 1회 동기화).<br>
+     *                          별칭: DISABLE_UPDATE_CYCLE_TIME.<br>
+     *                          이 경우 LocationListener의 minTime은 DEFAULT_UPDATE_CYCLE_TIME(5000ms)로 적용됩니다.<br>
+     *                        - 배터리 민감한 환경에서는 POLLING_DISABLED_UPDATE_CYCLE_TIME(저전력 모드) 사용을 권장합니다.<br>
      *
      * @param minDistanceM Minimum distance between location updates in meters.<br><br>
      *                     위치 업데이트 최소 거리(미터)입니다.<br>
      *
-     * @throws IllegalArgumentException if updateCycleTime is less than `MIN_UPDATE_CYCLE_TIME`.<br><br>
-     *                                  updateCycleTime이 `MIN_UPDATE_CYCLE_TIME`보다 작으면 IllegalArgumentException이 발생합니다.<br>
+     * @throws IllegalArgumentException if updateCycleTime is not `POLLING_DISABLED_UPDATE_CYCLE_TIME`
+     *                                  and less than `MIN_UPDATE_CYCLE_TIME`.<br><br>
+     *                                  updateCycleTime이 `POLLING_DISABLED_UPDATE_CYCLE_TIME`가 아니면서
+     *                                  `MIN_UPDATE_CYCLE_TIME`보다 작으면 IllegalArgumentException이 발생합니다.<br>
      */
     @RequiresPermission(allOf = [ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION])
     public fun registerStart(
@@ -175,33 +178,51 @@ public open class LocationStateInfo(
         updateCycleTime: Long = DEFAULT_UPDATE_CYCLE_TIME,
         minDistanceM: Float = DEFAULT_UPDATE_CYCLE_DISTANCE
     ): Boolean {
-        require(updateCycleTime >= MIN_UPDATE_CYCLE_TIME) { "updateCycleTime must be greater than or equal to $MIN_UPDATE_CYCLE_TIME" }
+        require(updateCycleTime == POLLING_DISABLED_UPDATE_CYCLE_TIME || updateCycleTime >= MIN_UPDATE_CYCLE_TIME) {
+            "updateCycleTime must be POLLING_DISABLED_UPDATE_CYCLE_TIME or greater than or equal to $MIN_UPDATE_CYCLE_TIME"
+        }
         require(minDistanceM >= MIN_UPDATE_CYCLE_DISTANCE) { "minDistanceM must be greater than or equal to $MIN_UPDATE_CYCLE_DISTANCE" }
 
-        val isRegister = receiver.registerReceiver()
+        val isRegister = updateManager.registerReceiver()
         if (!isRegister) {
             Logx.e("LocationStateInfo: Receiver not registered!!.")
             return false
         }
 
-        val isLocationListenerRegister = receiver.registerLocationListener(locationProvider, updateCycleTime, minDistanceM)
+        // Low-power polling disabled mode affects only periodic polling; listener minTime falls back to default.
+        val normalizedLocationListenerCycleTime = if (updateCycleTime == POLLING_DISABLED_UPDATE_CYCLE_TIME) {
+            DEFAULT_UPDATE_CYCLE_TIME
+        } else {
+            updateCycleTime
+        }
+        val isLocationListenerRegister = updateManager.registerLocationListener(
+            locationProvider,
+            normalizedLocationListenerCycleTime,
+            minDistanceM
+        )
         if (!isLocationListenerRegister) {
             Logx.e("LocationStateInfo: LocationListener not registered!!.")
-            receiver.destroy()
+            updateManager.destroy()
             return false
         }
 
         val result = tryCatchSystemManager(false) {
-            receiver.updateStart(coroutineScope, updateCycleTime) {
-                receiver.getCoroutineScope()?.let { sender.setupDataFlows(it) }
-            }
+            updateManager.updateStart(coroutineScope, updateCycleTime)
         }
 
         if (!result) {
-            receiver.destroy()
+            updateManager.destroy()
             Logx.e("LocationStateInfo: updateStart() failed!!.")
         }
         return result
+    }
+
+    /**
+     * Stops updates and unregisters location receiver/listener resources.<br><br>
+     * 위치 업데이트를 중지하고 receiver/listener 리소스를 해제합니다.<br>
+     */
+    public fun unRegister() {
+        updateManager.destroy()
     }
 
     /**
@@ -210,7 +231,7 @@ public open class LocationStateInfo(
      */
     public override fun onDestroy() {
         super.onDestroy()
-        receiver.destroy()
+        updateManager.destroy()
     }
 
     /**
@@ -220,9 +241,7 @@ public open class LocationStateInfo(
      * @return `true` if location is enabled; `false` otherwise.<br><br>
      *         위치가 활성화되어 있으면 `true`, 아니면 `false`입니다.<br>
      */
-    public fun isLocationEnabled(): Boolean = safeCatch(false) {
-        locationManager.isLocationEnabled
-    }
+    public fun isLocationEnabled(): Boolean = queryHelper.isLocationEnabled()
 
     /**
      * Checks if GPS provider is enabled.<br><br>
@@ -231,9 +250,7 @@ public open class LocationStateInfo(
      * @return `true` if GPS is enabled; `false` otherwise.<br><br>
      *         GPS가 활성화되어 있으면 `true`, 아니면 `false`입니다.<br>
      */
-    public fun isGpsEnabled(): Boolean = safeCatch(false) {
-        locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
-    }
+    public fun isGpsEnabled(): Boolean = queryHelper.isGpsEnabled()
 
     /**
      * Checks if Network provider is enabled.<br><br>
@@ -242,9 +259,7 @@ public open class LocationStateInfo(
      * @return `true` if the Network provider is enabled; `false` otherwise.<br><br>
      *         네트워크 제공자가 활성화되어 있으면 `true`, 아니면 `false`입니다.<br>
      */
-    public fun isNetworkEnabled(): Boolean = safeCatch(false) {
-        locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
-    }
+    public fun isNetworkEnabled(): Boolean = queryHelper.isNetworkEnabled()
 
     /**
      * Checks if Passive provider is enabled.<br><br>
@@ -253,9 +268,7 @@ public open class LocationStateInfo(
      * @return `true` if the Passive provider is enabled; `false` otherwise.<br><br>
      *         Passive 제공자가 활성화되어 있으면 `true`, 아니면 `false`입니다.<br>
      */
-    public fun isPassiveEnabled(): Boolean = safeCatch(false) {
-        locationManager.isProviderEnabled(LocationManager.PASSIVE_PROVIDER)
-    }
+    public fun isPassiveEnabled(): Boolean = queryHelper.isPassiveEnabled()
 
     /**
      * Checks if Fused provider is enabled (API 31+).<br><br>
@@ -265,9 +278,7 @@ public open class LocationStateInfo(
      *         Fused 제공자가 활성화되어 있으면 `true`, 아니면 `false`입니다.<br>
      */
     @RequiresApi(Build.VERSION_CODES.S)
-    public fun isFusedEnabled(): Boolean = safeCatch(false) {
-        locationManager.isProviderEnabled(LocationManager.FUSED_PROVIDER)
-    }
+    public fun isFusedEnabled(): Boolean = queryHelper.isFusedEnabled()
 
     /**
      * Checks if any location provider is enabled.<br><br>
@@ -276,10 +287,7 @@ public open class LocationStateInfo(
      * @return `true` if any provider is enabled; `false` otherwise.<br><br>
      *         하나라도 제공자가 활성화되어 있으면 `true`, 아니면 `false`입니다.<br>
      */
-    public fun isAnyEnabled(): Boolean = checkSdkVersion(Build.VERSION_CODES.S,
-        positiveWork = { (isLocationEnabled() || isGpsEnabled() || isNetworkEnabled() || isPassiveEnabled() || isFusedEnabled()) },
-        negativeWork = { (isLocationEnabled() || isGpsEnabled() || isNetworkEnabled() || isPassiveEnabled()) },
-    )
+    public fun isAnyEnabled(): Boolean = queryHelper.isAnyEnabled()
 
     /**
      * Gets the last known location from the location provider.<br><br>
@@ -289,111 +297,7 @@ public open class LocationStateInfo(
      *         마지막으로 알려진 Location이며, 없으면 `null`을 반환합니다.<br>
      */
     @RequiresPermission(allOf = [ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION])
-    public fun getLocation(): Location? {
-        if (!isAnyEnabled()) {
-            var logcatData =
-                "can not find location!, isLocationEnabled ${isLocationEnabled()}, isGpsEnabled ${isGpsEnabled()}, isNetworkEnabled ${isNetworkEnabled()}, isPassiveEnabled ${isPassiveEnabled()}"
-            logcatData += checkSdkVersion(Build.VERSION_CODES.S) { ", isFusedEnabled ${isFusedEnabled()}" } ?: ""
-            Logx.e(logcatData)
-            return null
-        }
-
-        if (!context.hasPermissions(ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION)) {
-            Logx.d("ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION permission is not granted")
-            return null
-        }
-
-        return getBestLastKnownLocation()
-    }
-
-    /**
-     * Selects the best last known location from available providers.<br><br>
-     * Chooses among Fused/GPS/Network/Passive based on permission availability and provider enabled state,
-     * and prefers newer/more accurate values.<br><br>
-     * 사용 가능한 제공자 중에서 가장 적절한 최근 위치를 선택합니다.<br>
-     * 권한 여부와 제공자 활성 상태를 고려해 Fused/GPS/Network/Passive를 비교하고,
-     * 더 새로운/정확한 값을 우선합니다.<br>
-     *
-     * @return The best last known location or `null` if none is available; no logging is performed here.<br><br>
-     *         사용 가능한 최근 위치가 없으면 `null`을 반환하며, 여기서는 로그를 남기지 않습니다.<br>
-     */
-    @RequiresPermission(allOf = [ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION])
-    private fun getBestLastKnownLocation(): Location? {
-        val hasFine = context.hasPermissions(ACCESS_FINE_LOCATION)
-        val hasCoarse = context.hasPermissions(ACCESS_COARSE_LOCATION)
-
-        // 최적화: 최대 4개(Fused, GPS, Network, Passive) 제공자를 고려해 초기 용량을 지정
-        val providers = ArrayList<String>(4)
-
-        // API 31+면 FUSED 우선 고려
-        checkSdkVersion(Build.VERSION_CODES.S) {
-            if (isFusedEnabled()) providers.add(LocationManager.FUSED_PROVIDER)
-        }
-
-        // 정밀 권한이 있으면 GPS
-        if (hasFine && isGpsEnabled()) {
-            providers.add(LocationManager.GPS_PROVIDER)
-        }
-
-        // 대략 권한이 있으면 NETWORK
-        if (hasCoarse && isNetworkEnabled()) {
-            providers.add(LocationManager.NETWORK_PROVIDER)
-        }
-
-        // PASSIVE는 권한에 영향 덜 받으므로 마지막 후보
-        if (isPassiveEnabled()) {
-            providers.add(LocationManager.PASSIVE_PROVIDER)
-        }
-
-        var best: Location? = null
-        for (provider in providers) {
-            val loc = locationManager.getLastKnownLocation(provider) ?: continue
-            if (isBetterLocation(loc, best)) {
-                best = loc
-            }
-        }
-        return best
-    }
-
-    /**
-     * Determines whether the new location is better than the current best.<br><br>
-     * Compares recency and accuracy using the standard time/accuracy thresholds.<br><br>
-     * 새 위치가 현재 최적 위치보다 나은지 판단합니다.<br>
-     * 시간/정확도 기준을 사용해 최신성과 정확도를 비교합니다.<br>
-     *
-     * @param newLoc Candidate location to compare.<br><br>
-     *               비교할 후보 위치입니다.<br>
-     *
-     * @param currentBest Current best location; may be `null`.<br><br>
-     *                    현재 최적 위치이며 `null`일 수 있습니다.<br>
-     * @return Returns `true` if newLoc is considered better; no logging is performed here.<br><br>
-     *         newLoc가 더 낫다고 판단되면 `true`를 반환하며, 여기서는 로그를 남기지 않습니다.<br>
-     */
-    private fun isBetterLocation(newLoc: Location, currentBest: Location?): Boolean {
-        if (currentBest == null) return true
-
-        val timeDelta = newLoc.time - currentBest.time
-        val isSignificantlyNewer = timeDelta > 10 * 1000L // 2 * 60 * 1000L
-        val isSignificantlyOlder = timeDelta < -10 * 1000L // -2 * 60 * 1000L
-        val isNewer = timeDelta > 0
-
-        if (isSignificantlyNewer) return true
-        if (isSignificantlyOlder) return false
-
-        val accuracyDelta = (newLoc.accuracy - currentBest.accuracy).toInt()
-        val isMoreAccurate = accuracyDelta < 0
-        val isLessAccurate = accuracyDelta > 0
-        val isSignificantlyLessAccurate = accuracyDelta > 200
-
-        val isFromSameProvider = newLoc.provider == currentBest.provider
-
-        return when {
-            isMoreAccurate -> true
-            isNewer && !isLessAccurate -> true
-            isNewer && !isSignificantlyLessAccurate && isFromSameProvider -> true
-            else -> false
-        }
-    }
+    public fun getLocation(): Location? = queryHelper.getLocation()
 
     /**
      * Calculates the distance between two locations in meters.<br><br>
@@ -407,7 +311,8 @@ public open class LocationStateInfo(
      * @return Distance in meters.<br><br>
      *         미터 단위 거리입니다.<br>
      */
-    public fun calculateDistance(fromLocation: Location, toLocation: Location): Float = fromLocation.distanceTo(toLocation)
+    public fun calculateDistance(fromLocation: Location, toLocation: Location): Float =
+        LocationCalculator.calculateDistance(fromLocation, toLocation)
 
     /**
      * Calculates the bearing between two locations in degrees.<br><br>
@@ -421,7 +326,8 @@ public open class LocationStateInfo(
      * @return Bearing in degrees.<br><br>
      *         도 단위 방위각입니다.<br>
      */
-    public fun calculateBearing(fromLocation: Location, toLocation: Location): Float = fromLocation.bearingTo(toLocation)
+    public fun calculateBearing(fromLocation: Location, toLocation: Location): Float =
+        LocationCalculator.calculateBearing(fromLocation, toLocation)
 
     /**
      * Checks if two locations are within a specified radius.<br><br>
@@ -439,7 +345,7 @@ public open class LocationStateInfo(
      *         반경 안에 있으면 `true`, 아니면 `false`입니다.<br>
      */
     public fun isLocationWithRadius(fromLocation: Location, toLocation: Location, radius: Float): Boolean =
-        calculateDistance(fromLocation, toLocation) <= radius
+        LocationCalculator.isLocationWithRadius(fromLocation, toLocation, radius)
 
     /**
      * Helper for persisting last known location.<br><br>

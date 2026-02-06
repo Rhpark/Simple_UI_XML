@@ -49,7 +49,7 @@
  - activity, fragment 관련 : docs/readme/README_ACTIVITY_FRAGMENT.md
 
 ## Architecture
- - architecture/DESIGN_PRINCIPLES.md
+ - docs/architecture/DESIGN_PRINCIPLES.md
 
 ##  기능 수정/분석 시 참조
  - 기능별 기능별 검토, 분석, 수정시 반드시 확인할 문서 리스트

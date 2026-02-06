@@ -1,5 +1,5 @@
 ﻿# Battery Info vs Plain Android - Complete Comparison Guide
-> **Battery Info vs 순수 Android - 완벽 비교 가이드**
+> **Battery Info vs 순수 Android - 비교 가이드**
 
 ## Module Information (모듈 정보)
 - **Module**: `simple_core` (UI-independent core module / UI 비의존 코어 모듈)
@@ -277,3 +277,4 @@ See the permission guide for required permissions and policy.
 - Feature Plan: [IMPLEMENTATION_PLAN.md](../../../../simple_core/docs/feature/system_manager/info/battery/IMPLEMENTATION_PLAN.md)
 
 <br></br>
+

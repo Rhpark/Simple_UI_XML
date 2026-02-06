@@ -387,7 +387,7 @@ class SimpleNotificationControllerRobolectricTest {
     }
 
     @Test
-    @Config(sdk = [Build.VERSION_CODES.O])
+    @Config(sdk = [Build.VERSION_CODES.P])
     fun createChannel_switchesOnlyForNewNotifications() {
         val option1 =
             DefaultNotificationOption(

@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.dropWhile
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import kr.open.library.simple_ui.core.system_manager.info.location.LocationStateConstants.LOCATION_ERROR_VALUE_BOOLEAN
 import kr.open.library.simple_ui.core.system_manager.info.location.LocationStateConstants.LOCATION_ERROR_VALUE_LOCATION
@@ -113,22 +114,26 @@ internal class LocationStateEmitter {
             collectorJobs += scope.launch {
                 msfIsGpsEnabled
                     .dropWhile { it == LOCATION_ERROR_VALUE_BOOLEAN }
-                    .collect { sendFlow(LocationStateEvent.OnGpsEnabled(it!!)) }
+                    .filterNotNull()
+                    .collect { sendFlow(LocationStateEvent.OnGpsEnabled(it)) }
             }
             collectorJobs += scope.launch {
                 msfIsNetworkEnabled
                     .dropWhile { it == LOCATION_ERROR_VALUE_BOOLEAN }
-                    .collect { sendFlow(LocationStateEvent.OnNetworkEnabled(it!!)) }
+                    .filterNotNull()
+                    .collect { sendFlow(LocationStateEvent.OnNetworkEnabled(it)) }
             }
             collectorJobs += scope.launch {
                 msfIsPassiveEnabled
                     .dropWhile { it == LOCATION_ERROR_VALUE_BOOLEAN }
-                    .collect { sendFlow(LocationStateEvent.OnPassiveEnabled(it!!)) }
+                    .filterNotNull()
+                    .collect { sendFlow(LocationStateEvent.OnPassiveEnabled(it)) }
             }
             collectorJobs += scope.launch {
                 msfIsFusedEnabled
                     .dropWhile { it == LOCATION_ERROR_VALUE_BOOLEAN }
-                    .collect { sendFlow(LocationStateEvent.OnFusedEnabled(it!!)) }
+                    .filterNotNull()
+                    .collect { sendFlow(LocationStateEvent.OnFusedEnabled(it)) }
             }
         }
     }

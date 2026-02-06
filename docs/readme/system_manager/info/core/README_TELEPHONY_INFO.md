@@ -1,5 +1,5 @@
-# Telephony Info vs Plain Android - Complete Comparison Guide
-> **Telephony Info vs 순수 Android - 완벽 비교 가이드**
+﻿# Telephony Info vs Plain Android - Complete Comparison Guide
+> **Telephony Info vs 순수 Android - 비교 가이드**
 
 ## Module Information (모듈 정보)
 - **Module**: `simple_core` (UI-independent core module / UI 비의존 코어 모듈)
@@ -175,3 +175,4 @@ TelephonyInfo requires phone state/number and fine location permissions.
 - Permission Guide: [README_PERMISSION.md](../../../README_PERMISSION.md)
 
 <br></br>
+
