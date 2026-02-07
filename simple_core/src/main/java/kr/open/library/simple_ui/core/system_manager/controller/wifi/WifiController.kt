@@ -271,14 +271,14 @@ public open class WifiController(
 
     /**
      * Checks if WPA3 SAE (Simultaneous Authentication of Equals) is supported.<br>
-     * Requires Android Q (API 29) or higher.<br><br>
+     * Requires Android Q (API 30) or higher.<br><br>
      * WPA3 SAE (Simultaneous Authentication of Equals) 지원 여부를 확인합니다.<br>
-     * Android Q (API 29) 이상이 필요합니다.<br>
+     * Android Q (API 30) 이상이 필요합니다.<br>
      *
      * @return `true` if WPA3 SAE is supported, `false` otherwise.<br><br>
      *         WPA3 SAE가 지원되면 `true`, 그렇지 않으면 `false`.<br>
      */
-    @RequiresApi(Build.VERSION_CODES.Q)
+    @RequiresApi(Build.VERSION_CODES.R)
     public fun isWpa3SaeSupported(): Boolean = capabilityChecker.isWpa3SaeSupported()
 
     /**

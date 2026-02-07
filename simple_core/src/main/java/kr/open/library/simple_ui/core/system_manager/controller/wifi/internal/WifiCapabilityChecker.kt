@@ -86,7 +86,7 @@ internal class WifiCapabilityChecker(
      * @return `true` if WPA3 SAE is supported, `false` otherwise.<br><br>
      *         WPA3 SAE가 지원되면 `true`, 그렇지 않으면 `false`.<br>
      */
-    @RequiresApi(Build.VERSION_CODES.Q)
+    @RequiresApi(Build.VERSION_CODES.R)
     fun isWpa3SaeSupported(): Boolean = guard.run(false) {
         checkSdkVersion(Build.VERSION_CODES.R,
             positiveWork = { invokeBooleanCapability("isWpa3SaeSupported") },
