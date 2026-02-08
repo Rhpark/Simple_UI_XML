@@ -14,9 +14,9 @@ import androidx.annotation.RequiresApi
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -195,10 +195,10 @@ public open class SoftKeyboardController(
                     message = "showAwaitAsync must be called on Main thread.",
                 )
             }
-        coroutineScope.async(Dispatchers.Main.immediate) {
-            showAwait(v, delayMillis, flag, timeoutMillis)
+            coroutineScope.async(Dispatchers.Main.immediate) {
+                showAwait(v, delayMillis, flag, timeoutMillis)
+            }
         }
-    }
 
     /**
      * Hides the soft keyboard from input-capable views.<br><br>

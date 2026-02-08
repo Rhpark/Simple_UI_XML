@@ -47,6 +47,9 @@ Provides Flow/Callback-based system information collection with helper APIs.
 
 ### simple_xml (Info)
 - Display: [README_DISPLAY_INFO.md](xml/README_DISPLAY_INFO.md)
+- Display PRD: [PRD.md](../../../../simple_xml/docs/feature/system_manager/info/display/PRD.md)
+- Display SPEC: [SPEC.md](../../../../simple_xml/docs/feature/system_manager/info/display/SPEC.md)
+- Display Plan: [IMPLEMENTATION_PLAN.md](../../../../simple_xml/docs/feature/system_manager/info/display/IMPLEMENTATION_PLAN.md)
 
 <br></br>
 

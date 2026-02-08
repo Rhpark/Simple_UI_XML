@@ -3,18 +3,17 @@ package kr.open.library.simple_ui.xml.robolectric.system_manager.controller.soft
 import android.app.Application
 import android.os.Build
 import android.view.View
-import android.view.ViewTreeObserver
 import android.view.Window
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import androidx.test.core.app.ApplicationProvider
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
-import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.runCurrent
+import kotlinx.coroutines.test.runTest
 import kr.open.library.simple_ui.xml.system_manager.controller.softkeyboard.SoftKeyboardActionResult
-import kr.open.library.simple_ui.xml.system_manager.controller.softkeyboard.SoftKeyboardFailureReason
 import kr.open.library.simple_ui.xml.system_manager.controller.softkeyboard.SoftKeyboardController
+import kr.open.library.simple_ui.xml.system_manager.controller.softkeyboard.SoftKeyboardFailureReason
 import kr.open.library.simple_ui.xml.system_manager.controller.softkeyboard.SoftKeyboardResizePolicy
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -434,7 +433,8 @@ class SoftKeyboardControllerRobolectricTest {
     fun `showAwaitAsync returns OFF_MAIN_THREAD failure when called off main thread`() =
         runTest {
             val latch = CountDownLatch(1)
-            val resultRef = java.util.concurrent.atomic.AtomicReference<SoftKeyboardActionResult?>(null)
+            val resultRef = java.util.concurrent.atomic
+                .AtomicReference<SoftKeyboardActionResult?>(null)
 
             Thread {
                 val deferred = controller.showAwaitAsync(v = mockView, coroutineScope = this)

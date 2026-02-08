@@ -281,4 +281,122 @@ class DisplayUnitExtensionsRobolectricTest {
         assertTrue(px >= 0f)
         assertTrue(px.isFinite())
     }
+
+    // ========================================
+    // Mathematical Correctness Tests
+    // ========================================
+
+    @Test
+    fun dpToPx_matchesDensityMultiplication() {
+        val dp = 16
+        val density = context.resources.displayMetrics.density
+        val px = dp.dpToPx(context)
+
+        assertEquals(dp * density, px, 0.5f)
+    }
+
+    @Test
+    fun pxToDp_matchesDensityDivision() {
+        val px = 48
+        val density = context.resources.displayMetrics.density
+        val dp = px.pxToDp(context)
+
+        assertEquals(px / density, dp, 0.01f)
+    }
+
+    @Test
+    fun spToPx_matchesScaledDensityMultiplication() {
+        val sp = 14
+        val scaledDensity = context.resources.displayMetrics.scaledDensity
+        val px = sp.spToPx(context)
+
+        assertEquals(sp * scaledDensity, px, 0.5f)
+    }
+
+    @Test
+    fun pxToSp_matchesScaledDensityDivision() {
+        val px = 48
+        val scaledDensity = context.resources.displayMetrics.scaledDensity
+        val sp = px.pxToSp(context)
+
+        assertEquals(px / scaledDensity, sp, 0.01f)
+    }
+
+    @Test
+    fun dpToSp_equalsDpDividedByFontScale() {
+        val dp = 16
+        val fontScale = context.resources.configuration.fontScale
+        val sp = dp.dpToSp(context)
+
+        assertEquals(dp / fontScale, sp, 0.01f)
+    }
+
+    @Test
+    fun spToDp_equalsSpMultipliedByFontScale() {
+        val sp = 14
+        val fontScale = context.resources.configuration.fontScale
+        val dp = sp.spToDp(context)
+
+        assertEquals(sp * fontScale, dp, 0.01f)
+    }
+
+    // ========================================
+    // FontScale Relationship Tests
+    // ========================================
+
+    @Test
+    fun dpToSp_and_spToDp_are_inverse_operations() {
+        val originalDp = 16
+        val sp = originalDp.dpToSp(context)
+        val backToDp = sp.spToDp(context)
+
+        assertEquals(originalDp.toFloat(), backToDp, 0.01f)
+    }
+
+    @Test
+    fun spToDp_and_dpToSp_roundTrip() {
+        val originalSp = 14
+        val dp = originalSp.spToDp(context)
+        val backToSp = dp.dpToSp(context)
+
+        assertEquals(originalSp.toFloat(), backToSp, 0.01f)
+    }
+
+    @Test
+    fun dpAndSp_equal_when_fontScale_is_one() {
+        // Robolectric 기본 fontScale은 1.0
+        val fontScale = context.resources.configuration.fontScale
+        if (fontScale == 1.0f) {
+            val value = 16
+            val sp = value.dpToSp(context)
+            assertEquals(value.toFloat(), sp, 0.01f)
+
+            val dp = value.spToDp(context)
+            assertEquals(value.toFloat(), dp, 0.01f)
+        }
+    }
+
+    @Test
+    fun allSixConversions_areConsistent() {
+        val dp = 16f
+        val density = context.resources.displayMetrics.density
+        val fontScale = context.resources.configuration.fontScale
+
+        // dp -> px -> dp
+        val px = dp.dpToPx(context)
+        assertEquals(dp, px.pxToDp(context), 0.01f)
+
+        // dp -> sp -> dp
+        val sp = dp.dpToSp(context)
+        assertEquals(dp, sp.spToDp(context), 0.01f)
+
+        // sp -> px -> sp
+        val pxFromSp = sp.spToPx(context)
+        assertEquals(sp, pxFromSp.pxToSp(context), 0.01f)
+
+        // dp -> px should equal sp -> px when fontScale is 1.0
+        if (fontScale == 1.0f) {
+            assertEquals(dp.dpToPx(context), dp.spToPx(context), 0.5f)
+        }
+    }
 }

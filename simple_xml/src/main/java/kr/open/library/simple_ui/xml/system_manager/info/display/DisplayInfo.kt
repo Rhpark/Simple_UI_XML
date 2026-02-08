@@ -10,6 +10,7 @@ import android.util.DisplayMetrics
 import android.view.WindowInsets
 import android.view.WindowManager
 import android.view.WindowMetrics
+import androidx.annotation.MainThread
 import androidx.annotation.RequiresApi
 import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
 import kr.open.library.simple_ui.core.logcat.Logx
@@ -34,13 +35,15 @@ import kr.open.library.simple_ui.core.system_manager.extensions.getWindowManager
  *
  * **Design decisions / 설계 결정 이유:**<br>
  * - **SDK version branching**: Uses `checkSdkVersion` to handle API 30+ WindowMetrics vs legacy DisplayMetrics APIs.<br>
- * - **Nullable return types**: Returns null instead of throwing exceptions for unavailable values (e.g., gesture mode navigation bar).<br>
+ * - **Return semantics**: `null` means measurement is unavailable (e.g., missing Activity on pre-R, Insets not ready, resource lookup failure),
+ *   while zero-size results (`DisplayInfoSize(0, 0)` / zero-thickness insets) mean measurement succeeded but no reserved system-bar area exists.<br>
  * - **tryCatchSystemManager pattern**: Inherits from BaseSystemService to provide consistent error handling and logging.<br>
  * - **Resource name constants**: Hardcoded Android system resource names are extracted to companion object for maintainability.<br>
  * - **DisplayInfoBarInsets semantics**: `DisplayInfoBarInsets(top, bottom, left, right)` represents system bar insets.
  *   Status bar only uses `top` (others are 0), while navigation bar uses the direction where it appears (bottom/left/right depending on orientation and device).<br><br>
  * - **SDK 버전 분기**: API 30+ WindowMetrics와 레거시 DisplayMetrics API를 처리하기 위해 `checkSdkVersion`을 사용합니다.<br>
- * - **Nullable 반환 타입**: 사용 불가능한 값(예: 제스처 모드 내비게이션 바)에 대해 예외를 던지지 않고 null을 반환합니다.<br>
+ * - **반환 의미 구분**: `null`은 측정 불가(예: pre-R에서 Activity 없음, Insets 미수신, 리소스 조회 실패)를 의미하고,
+ *   0 크기 결과(`DisplayInfoSize(0, 0)` / 두께 0 insets)는 측정 성공 + 시스템 바 점유 영역 없음(예: 제스처 모드)을 의미합니다.<br>
  * - **tryCatchSystemManager 패턴**: BaseSystemService를 상속하여 일관된 에러 처리 및 로깅을 제공합니다.<br>
  * - **리소스 이름 상수화**: 하드코딩된 Android 시스템 리소스 이름을 companion object로 추출하여 유지보수성을 높였습니다.<br>
  * - **DisplayInfoBarInsets 의미**: `DisplayInfoBarInsets(top, bottom, left, right)`는 시스템 바 insets를 나타냅니다.
@@ -113,9 +116,12 @@ public open class DisplayInfo(
      *                 API 28-29에서 정확한 앱 윈도우 크기 측정을 위해 `window.decorView` 접근에 필요한 Activity 인스턴스입니다.
      *                 API 30+에서는 `currentWindowMetrics`를 사용하므로 이 파라미터는 무시됩니다.
      *                 Activity를 사용할 수 없는 경우 null을 전달하면 API 28-29에서는 null을 반환하고, API 30+에서는 정상적인 크기를 반환합니다.<br>
-     * @return `DisplayInfoSize(width, height)` representing the app window size.<br><br>
-     *         앱 윈도우의 너비와 높이를 담은 `DisplayInfoSize`입니다.<br>
+     * @return App window size as `DisplayInfoSize(width, height)`, or null if unavailable.<br>
+     *         - `null`: API 28-29에서 Activity가 없거나 측정이 불가능한 경우.<br><br>
+     *         앱 윈도우의 너비/높이를 담은 `DisplayInfoSize` 또는 측정 불가능 시 null입니다.<br>
+     *         - `null`: API 28-29에서 Activity가 없거나 측정이 불가능한 경우.<br>
      */
+    @MainThread
     public fun getAppWindowSize(activity: Activity? = null): DisplayInfoSize? = tryCatchSystemManager(null) {
         checkSdkVersion(
             Build.VERSION_CODES.R,
@@ -161,8 +167,12 @@ public open class DisplayInfo(
     private fun getMaximumWindowMetricsSdkR(): WindowMetrics = windowManager.maximumWindowMetrics
 
     /**
-     * Returns the status bar size based on physical screen dimensions as `DisplayInfoSize(width, height)`, or null if unavailable.<br><br>
-     * 물리 화면 기준 상태 바 크기를 `DisplayInfoSize(가로, 세로)`로 반환하며, 사용 불가능한 경우 null을 반환합니다.<br>
+     * Returns the status bar size based on physical screen dimensions as `DisplayInfoSize(width, height)`, or null if unavailable.<br>
+     * - `DisplayInfoSize(0, 0)`: Measured successfully but no reserved status-bar area is reported.<br>
+     * - `null`: Measurement unavailable (resource lookup failure, unexpected error).<br><br>
+     * 물리 화면 기준 상태 바 크기를 `DisplayInfoSize(가로, 세로)`로 반환합니다.<br>
+     * - `DisplayInfoSize(0, 0)`: 측정은 성공했지만 상태 바 점유 영역이 없는 경우입니다.<br>
+     * - `null`: 측정 불가(리소스 조회 실패, 예외)입니다.<br>
      */
     @SuppressLint("InternalInsetResource")
     public fun getStatusBarSize(): DisplayInfoSize? = tryCatchSystemManager(null) {
@@ -173,13 +183,23 @@ public open class DisplayInfo(
                 val metrics = getMaximumWindowMetricsSdkR()
                 val bounds = metrics.bounds
                 val status = metrics.windowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.statusBars())
-                DisplayInfoSize(bounds.width(), status.top)
+                if (status.top > 0) {
+                    DisplayInfoSize(bounds.width(), status.top)
+                } else {
+                    DisplayInfoSize(0, 0)
+                }
             },
             negativeWork = {
                 // Pre-R: 물리 기준(리소스)로 높이 추정 + 물리 화면 폭
                 val resId = context.resources.getIdentifier(STATUS_BAR_RES, DISPLAY_DEF_TYPE, DISPLAY_DEF_PACKAGE)
                 val height = resId.takeIf { it > 0 }?.let { context.resources.getDimensionPixelSize(it) }
-                height?.let { DisplayInfoSize(width = getPhysicalScreenSize().width, height = it) }
+                height?.let {
+                    if (it > 0) {
+                        DisplayInfoSize(width = getPhysicalScreenSize().width, height = it)
+                    } else {
+                        DisplayInfoSize(0, 0)
+                    }
+                }
             },
         )
     }
@@ -188,8 +208,12 @@ public open class DisplayInfo(
      * Returns the navigation bar size for API 30+ (R) based on physical screen dimensions using WindowInsets.<br><br>
      * API 30+ (R)에서 WindowInsets를 사용하여 물리 화면 기준 내비게이션 바 크기를 반환합니다.<br>
      *
-     * @return Navigation bar size as `DisplayInfoSize(width, height)`, or null if unavailable.<br><br>
-     *         내비게이션 바 크기를 `DisplayInfoSize(가로, 세로)`로 반환하며, 사용 불가능한 경우 null을 반환합니다.<br>
+     * @return Navigation bar size as `DisplayInfoSize(width, height)`, or null if unavailable.<br>
+     *         - `DisplayInfoSize(0, 0)`: Measured successfully but no reserved navigation-bar area exists.<br>
+     *         - `null`: Measurement unavailable (unexpected error).<br><br>
+     *         내비게이션 바 크기를 `DisplayInfoSize(가로, 세로)`로 반환합니다.<br>
+     *         - `DisplayInfoSize(0, 0)`: 측정은 성공했지만 내비게이션 바 점유 영역이 없는 경우입니다.<br>
+     *         - `null`: 측정 불가(예외)입니다.<br>
      */
     @RequiresApi(Build.VERSION_CODES.R)
     protected fun getNavigationBarSizeSdkR(): DisplayInfoSize? = tryCatchSystemManager(null) {
@@ -211,8 +235,12 @@ public open class DisplayInfo(
      * Returns the navigation bar size for API 28-29 using resource dimensions.<br><br>
      * API 28-29에서 리소스 dimension을 사용하여 내비게이션 바 크기를 반환합니다.<br>
      *
-     * @return Navigation bar size as `DisplayInfoSize(width, height)`, or null if unavailable.<br><br>
-     *         내비게이션 바 크기를 `DisplayInfoSize(가로, 세로)`로 반환하며, 사용 불가능한 경우 null을 반환합니다.<br>
+     * @return Navigation bar size as `DisplayInfoSize(width, height)`, or null if unavailable.<br>
+     *         - `DisplayInfoSize(0, 0)`: Measured successfully but no reserved navigation-bar area exists.<br>
+     *         - `null`: Measurement unavailable (resources missing, unexpected error).<br><br>
+     *         내비게이션 바 크기를 `DisplayInfoSize(가로, 세로)`로 반환합니다.<br>
+     *         - `DisplayInfoSize(0, 0)`: 측정은 성공했지만 내비게이션 바 점유 영역이 없는 경우입니다.<br>
+     *         - `null`: 측정 불가(리소스 누락, 예외)입니다.<br>
      */
     @SuppressLint("InternalInsetResource")
     private fun getNavigationBarSizeSdkNormal(): DisplayInfoSize? = tryCatchSystemManager(null) {
@@ -239,7 +267,8 @@ public open class DisplayInfo(
                 val height = portraitHeight ?: landscapeHeight
                 when {
                     height == null -> null // 세로 높이를 알 수 없음(측정불가)
-                    else -> DisplayInfoSize(screenSize.width, height)
+                    height > 0 -> DisplayInfoSize(screenSize.width, height)
+                    else -> DisplayInfoSize(0, 0)
                 }
             }
 
@@ -251,7 +280,7 @@ public open class DisplayInfo(
                 when {
                     prefersSide -> DisplayInfoSize(side, screenSize.height)
                     bottom > 0 -> DisplayInfoSize(screenSize.width, bottom)
-                    else -> DisplayInfoSize(screenSize.width, 0)
+                    else -> DisplayInfoSize(0, 0)
                 }
             }
 
@@ -269,8 +298,12 @@ public open class DisplayInfo(
     }
 
     /**
-     * Returns the navigation bar size as `DisplayInfoSize(width, height)`, or null if unavailable.<br><br>
-     * 내비게이션 바 크기를 `DisplayInfoSize(가로, 세로)`로 반환하며, 사용 불가능한 경우 null을 반환합니다.<br>
+     * Returns the navigation bar size as `DisplayInfoSize(width, height)`, or null if unavailable.<br>
+     * - `DisplayInfoSize(0, 0)`: Measured successfully but no reserved navigation-bar area exists.<br>
+     * - `null`: Measurement unavailable.<br><br>
+     * 내비게이션 바 크기를 `DisplayInfoSize(가로, 세로)`로 반환합니다.<br>
+     * - `DisplayInfoSize(0, 0)`: 측정은 성공했지만 내비게이션 바 점유 영역이 없는 경우입니다.<br>
+     * - `null`: 측정 불가입니다.<br>
      */
     @SuppressLint("InternalInsetResource")
     public fun getNavigationBarSize(): DisplayInfoSize? = checkSdkVersion(
@@ -302,6 +335,7 @@ public open class DisplayInfo(
      *                 `isInMultiWindowMode` 속성에 접근하기 위해 필요한 Activity 인스턴스입니다.
      *                 멀티윈도우 모드 상태는 Context가 아닌 Activity 레벨에서만 확인 가능합니다.<br>
      */
+    @MainThread
     public fun isInMultiWindowMode(activity: Activity): Boolean = activity.isInMultiWindowMode
 
     /**
@@ -334,11 +368,12 @@ public open class DisplayInfo(
      *                 Activity를 사용할 수 없는 경우 null을 전달하면 API 28-29에서는 null을 반환하고, API 30+에서는 정상적인 insets를 반환합니다.<br>
      * @return `DisplayInfoBarInsets(top, bottom, left, right)` or null if unavailable.<br>
      *         - `(0, 0, 0, 0)`: Gesture mode, hardware keys, or the app window doesn't reach that area (e.g., bottom split window).<br>
-     *         - `null`: WindowInsets not yet received (called too early).<br><br>
+     *         - `null`: WindowInsets not yet received (called too early) or measurement unavailable.<br><br>
      *         `DisplayInfoBarInsets(top, bottom, left, right)` 또는 사용 불가능한 경우 null을 반환합니다.<br>
      *         - `(0, 0, 0, 0)`: 제스처 모드, 하드웨어 키, 또는 앱 윈도우가 해당 영역에 닿지 않는 경우 (예: 분할 하단창).<br>
-     *         - `null`: WindowInsets를 아직 받지 못한 시점 (너무 이른 호출).<br>
+     *         - `null`: WindowInsets 미수신(너무 이른 호출) 또는 측정 불가입니다.<br>
      */
+    @MainThread
     public fun getNavigationBarStableInsets(activity: Activity? = null): DisplayInfoBarInsets? = tryCatchSystemManager(null) {
         checkSdkVersion(
             Build.VERSION_CODES.R,
@@ -402,10 +437,13 @@ public open class DisplayInfo(
      *                 API 30+에서는 `currentWindowMetrics.windowInsets`를 사용하므로 이 파라미터는 무시됩니다.
      *                 Activity를 사용할 수 없는 경우 null을 전달하면 API 28-29에서는 null을 반환하고, API 30+에서는 정상적인 insets를 반환합니다.<br>
      * @return `DisplayInfoBarInsets(top, bottom, left, right)` or null if unavailable.<br>
-     *         - `null`: WindowInsets not yet received (called too early).<br><br>
+     *         - `(0, 0, 0, 0)`: Measured successfully but no reserved status-bar area exists.<br>
+     *         - `null`: WindowInsets not yet received (called too early) or measurement unavailable.<br><br>
      *         `DisplayInfoBarInsets(top, bottom, left, right)` 또는 사용 불가능한 경우 null을 반환합니다.<br>
-     *         - `null`: WindowInsets를 아직 받지 못한 시점 (너무 이른 호출).<br>
+     *         - `(0, 0, 0, 0)`: 측정은 성공했지만 상태 바 점유 영역이 없는 경우입니다.<br>
+     *         - `null`: WindowInsets 미수신(너무 이른 호출) 또는 측정 불가입니다.<br>
      */
+    @MainThread
     public fun getStatusBarStableInsets(activity: Activity? = null): DisplayInfoBarInsets? = tryCatchSystemManager(null) {
         checkSdkVersion(
             Build.VERSION_CODES.R,

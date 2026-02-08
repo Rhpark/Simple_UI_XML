@@ -15,7 +15,7 @@ Provides display size/insets utilities with automatic SDK branching.
 
 ## At a Glance (한눈 비교)
 - **Physical Screen Size:** `getPhysicalScreenSize()` - Physical screen size (물리적 화면 크기)
-- **App Window Size:** `getAppWindowSize(activity?)` - App window size excluding bars, supports multi-window (상태바/네비게이션바 제외한 앱 윈도우 크기, 멀티윈도우 지원)
+- **App Window Size:** `getAppWindowSize(activity?)` - Current app window bounds with multi-window support (현재 앱 윈도우 경계 크기, 멀티윈도우 지원)
 - **Status Bar Size:** `getStatusBarSize()` - Status bar size as DisplayInfoSize (상태바 크기 (DisplayInfoSize))
 - **Navigation Bar Size:** `getNavigationBarSize()` - Navigation bar size as DisplayInfoSize (네비게이션바 크기 (DisplayInfoSize))
 - **Status Bar Insets:** `getStatusBarStableInsets(activity?)` - Status bar stable insets (상태바 고정 인셋)
@@ -23,6 +23,14 @@ Provides display size/insets utilities with automatic SDK branching.
 - **Multi-window Mode:** `isInMultiWindowMode(activity)` - Check if app is in multi-window mode (멀티윈도우 모드 확인)
 - **Context-based:** Uses Context for construction, Activity only when needed (생성 시 Context 사용, 필요 시에만 Activity 사용)
 - **Auto SDK Branching:** Automatic handling for Android R (API 30) and above/below (Android R (API 30) 이상/이하 자동 처리)
+- **Main Thread Required:** Methods that access `activity.window.decorView` should be called on main thread (`@MainThread`) (`activity.window.decorView` 접근 메서드는 메인 스레드 호출 권장)
+
+<br></br>
+
+## Return Contract (반환 규약: null vs 0)
+- `null`: Measurement unavailable (e.g., API 28-29에서 Activity 없음, Insets 미수신, 시스템 리소스 조회 실패)
+- `DisplayInfoSize(0, 0)` / `DisplayInfoBarInsets(0, 0, 0, 0)`: Measurement succeeded, but there is no reserved system-bar area (e.g., 제스처 내비게이션, 하드웨어 키, 앱 창 미도달 영역)
+- Non-zero values: Reserved area is detected and reported
 
 <br></br>
 
@@ -147,15 +155,15 @@ class DisplayHelper(private val context: Context) {
 // Simple Display information query - Auto SDK handling (간단한 Display 정보 조회 - SDK 자동 처리)
 class MainActivity : BaseDataBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
 
-    private val displayInfo by lazy { getDisplayInfo(this) }
+    private val displayInfo by lazy { getDisplayInfo() }
 
     override fun onCreate(binding: ActivityMainBinding, savedInstanceState: Bundle?) {
         // 1. Physical screen size (auto SDK branching) (물리적 화면 크기 (SDK 자동 분기))
         val physicalSize = displayInfo.getPhysicalScreenSize()
         Log.d("Display", "Physical: ${physicalSize.width} x ${physicalSize.height}") // (물리적)
 
-        // 2. App window size (exclude bars automatically, supports multi-window)
-        // (앱 윈도우 크기 (상단/하단 바 자동 제외, 멀티윈도우 지원))
+        // 2. App window bounds (multi-window aware)
+        // (현재 앱 윈도우 경계 크기, 멀티윈도우 반영)
         val windowSize = displayInfo.getAppWindowSize(this)
         windowSize?.let {
             Log.d("Display", "Window: ${it.width} x ${it.height}") // (윈도우)
@@ -193,6 +201,9 @@ No permission is required for DisplayInfo, but see the guide for policy context.
 ## Related Docs (관련 문서)
 - Summary: [README_SERVICE_MANAGER_INFO.md](../README_SERVICE_MANAGER_INFO.md)
 - Permission Guide: [README_PERMISSION.md](../../../README_PERMISSION.md)
+- Feature PRD: [PRD.md](../../../../../simple_xml/docs/feature/system_manager/info/display/PRD.md)
+- Feature SPEC: [SPEC.md](../../../../../simple_xml/docs/feature/system_manager/info/display/SPEC.md)
+- Feature Plan: [IMPLEMENTATION_PLAN.md](../../../../../simple_xml/docs/feature/system_manager/info/display/IMPLEMENTATION_PLAN.md)
 
 <br></br>
 
