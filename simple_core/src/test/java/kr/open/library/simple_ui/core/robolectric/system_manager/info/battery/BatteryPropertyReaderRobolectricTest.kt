@@ -160,6 +160,49 @@ class BatteryPropertyReaderRobolectricTest {
         assertTrue(capacity > 0.0 || capacity == BatteryStateConstants.BATTERY_ERROR_VALUE_DOUBLE)
     }
 
+    // ==============================================
+    // Temperature Boundary Tests
+    // ==============================================
+
+    @Test
+    fun `getTemperature returns valid at minus 40 boundary`() {
+        val intent = createBatteryIntent(temperature = -400) // -400 / 10 = -40.0°C
+        val temp = batteryPropertyReader.getTemperature(intent)
+        assertEquals(-40.0, temp, 0.01)
+    }
+
+    @Test
+    fun `getTemperature returns valid at 120 boundary`() {
+        val intent = createBatteryIntent(temperature = 1200) // 1200 / 10 = 120.0°C
+        val temp = batteryPropertyReader.getTemperature(intent)
+        assertEquals(120.0, temp, 0.01)
+    }
+
+    @Test
+    fun `getTemperature returns error just beyond upper boundary`() {
+        val intent = createBatteryIntent(temperature = 1210) // 1210 / 10 = 121.0°C → out of range
+        val temp = batteryPropertyReader.getTemperature(intent)
+        assertEquals(BatteryStateConstants.BATTERY_ERROR_VALUE_DOUBLE, temp, 0.01)
+    }
+
+    // ==============================================
+    // Voltage Boundary Tests
+    // ==============================================
+
+    @Test
+    fun `getVoltage returns error for zero millivolts`() {
+        val intent = createBatteryIntent(voltage = 0) // 0 / 1000 = 0.0V → not > 0
+        val voltage = batteryPropertyReader.getVoltage(intent)
+        assertEquals(BatteryStateConstants.BATTERY_ERROR_VALUE_DOUBLE, voltage, 0.01)
+    }
+
+    @Test
+    fun `getVoltage returns valid for positive millivolts`() {
+        val intent = createBatteryIntent(voltage = 3700) // 3700 / 1000 = 3.7V
+        val voltage = batteryPropertyReader.getVoltage(intent)
+        assertEquals(3.7, voltage, 0.01)
+    }
+
     private fun createBatteryIntent(
         plugged: Int = BatteryManager.BATTERY_PLUGGED_AC,
         status: Int = BatteryManager.BATTERY_STATUS_CHARGING,

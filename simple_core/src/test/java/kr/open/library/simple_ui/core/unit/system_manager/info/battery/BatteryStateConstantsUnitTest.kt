@@ -4,15 +4,14 @@ import android.os.BatteryManager
 import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateConstants
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /**
- * Unit tests for BatteryStateVo constants and values
- *
- * Note: BatteryStateInfo requires Android Context and BatteryManager which are tested in Robolectric tests
+ * Unit tests for BatteryStateConstants.
  */
-class BatteryPropertyReaderInfoTest {
+class BatteryStateConstantsUnitTest {
     // ==============================================
     // BatteryStateVo Constants Tests
     // ==============================================
@@ -253,5 +252,53 @@ class BatteryPropertyReaderInfoTest {
     @Test
     fun `DEFAULT_UPDATE_CYCLE_TIME_MS is exactly 2 seconds`() {
         assertEquals(2000L, BatteryStateConstants.DEFAULT_UPDATE_CYCLE_TIME)
+    }
+
+    // ==============================================
+    // Missing Constants Tests
+    // ==============================================
+
+    @Test
+    fun `MIN_UPDATE_CYCLE_TIME is 1000L`() {
+        assertEquals(1000L, BatteryStateConstants.MIN_UPDATE_CYCLE_TIME)
+    }
+
+    @Test
+    fun `DISABLE_UPDATE_CYCLE_TIME is 9999000L`() {
+        assertEquals(9999000L, BatteryStateConstants.DISABLE_UPDATE_CYCLE_TIME)
+    }
+
+    @Test
+    fun `BATTERY_ERROR_VALUE_LONG is Long MIN_VALUE`() {
+        assertEquals(Long.MIN_VALUE, BatteryStateConstants.BATTERY_ERROR_VALUE_LONG)
+    }
+
+    @Test
+    fun `BATTERY_ERROR_VALUE_DOUBLE is Integer MIN_VALUE as Double`() {
+        assertEquals(Integer.MIN_VALUE.toDouble(), BatteryStateConstants.BATTERY_ERROR_VALUE_DOUBLE, 0.001)
+    }
+
+    @Test
+    fun `BATTERY_ERROR_VALUE_BOOLEAN is null`() {
+        assertNull(BatteryStateConstants.BATTERY_ERROR_VALUE_BOOLEAN)
+    }
+
+    @Test
+    fun `STR_CHARGE_PLUG_NONE is NONE`() {
+        assertEquals("NONE", BatteryStateConstants.STR_CHARGE_PLUG_NONE)
+    }
+
+    // ==============================================
+    // Relationship Constraints Tests
+    // ==============================================
+
+    @Test
+    fun `MIN_UPDATE_CYCLE_TIME is less than or equal to DEFAULT`() {
+        assertTrue(BatteryStateConstants.MIN_UPDATE_CYCLE_TIME <= BatteryStateConstants.DEFAULT_UPDATE_CYCLE_TIME)
+    }
+
+    @Test
+    fun `DISABLE_UPDATE_CYCLE_TIME is greater than DEFAULT`() {
+        assertTrue(BatteryStateConstants.DISABLE_UPDATE_CYCLE_TIME > BatteryStateConstants.DEFAULT_UPDATE_CYCLE_TIME)
     }
 }

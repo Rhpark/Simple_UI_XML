@@ -9,7 +9,7 @@ import org.junit.Test
 /**
  * Unit tests for BatteryStateEvent sealed class and its data classes
  */
-class BatteryPropertyReaderEventUnitTest {
+class BatteryStateEventUnitTest {
     // ==============================================
     // OnCapacity Tests
     // ==============================================

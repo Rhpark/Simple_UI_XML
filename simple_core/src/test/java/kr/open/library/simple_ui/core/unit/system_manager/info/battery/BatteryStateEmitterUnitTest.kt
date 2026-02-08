@@ -218,6 +218,108 @@ class BatteryStateEmitterUnitTest {
         scope.cancel()
     }
 
+    @Test
+    fun `updateBatteryInfo emits correct chargeCounter value`() = runTest {
+        val events = mutableListOf<BatteryStateEvent>()
+        val scope = CoroutineScope(testDispatcher + Job())
+
+        emitter.setupDataFlows(scope)
+        val collectJob = launch(testDispatcher) { emitter.getSfUpdate().collect { events.add(it) } }
+
+        emitter.updateBatteryInfo(createTestData(chargeCounter = 2500000))
+
+        val event = events.filterIsInstance<BatteryStateEvent.OnChargeCounter>().first()
+        assertEquals(2500000, event.counter)
+
+        collectJob.cancel()
+        scope.cancel()
+    }
+
+    @Test
+    fun `updateBatteryInfo emits correct chargePlug value`() = runTest {
+        val events = mutableListOf<BatteryStateEvent>()
+        val scope = CoroutineScope(testDispatcher + Job())
+
+        emitter.setupDataFlows(scope)
+        val collectJob = launch(testDispatcher) { emitter.getSfUpdate().collect { events.add(it) } }
+
+        emitter.updateBatteryInfo(createTestData(chargePlug = 1))
+
+        val event = events.filterIsInstance<BatteryStateEvent.OnChargePlug>().first()
+        assertEquals(1, event.type)
+
+        collectJob.cancel()
+        scope.cancel()
+    }
+
+    @Test
+    fun `updateBatteryInfo emits correct chargeStatus value`() = runTest {
+        val events = mutableListOf<BatteryStateEvent>()
+        val scope = CoroutineScope(testDispatcher + Job())
+
+        emitter.setupDataFlows(scope)
+        val collectJob = launch(testDispatcher) { emitter.getSfUpdate().collect { events.add(it) } }
+
+        emitter.updateBatteryInfo(createTestData(chargeStatus = 3))
+
+        val event = events.filterIsInstance<BatteryStateEvent.OnChargeStatus>().first()
+        assertEquals(3, event.status)
+
+        collectJob.cancel()
+        scope.cancel()
+    }
+
+    @Test
+    fun `updateBatteryInfo emits correct currentAmpere value`() = runTest {
+        val events = mutableListOf<BatteryStateEvent>()
+        val scope = CoroutineScope(testDispatcher + Job())
+
+        emitter.setupDataFlows(scope)
+        val collectJob = launch(testDispatcher) { emitter.getSfUpdate().collect { events.add(it) } }
+
+        emitter.updateBatteryInfo(createTestData(currentAmpere = -800000))
+
+        val event = events.filterIsInstance<BatteryStateEvent.OnCurrentAmpere>().first()
+        assertEquals(-800000, event.current)
+
+        collectJob.cancel()
+        scope.cancel()
+    }
+
+    @Test
+    fun `updateBatteryInfo emits correct currentAverageAmpere value`() = runTest {
+        val events = mutableListOf<BatteryStateEvent>()
+        val scope = CoroutineScope(testDispatcher + Job())
+
+        emitter.setupDataFlows(scope)
+        val collectJob = launch(testDispatcher) { emitter.getSfUpdate().collect { events.add(it) } }
+
+        emitter.updateBatteryInfo(createTestData(currentAverageAmpere = 950000))
+
+        val event = events.filterIsInstance<BatteryStateEvent.OnCurrentAverageAmpere>().first()
+        assertEquals(950000, event.current)
+
+        collectJob.cancel()
+        scope.cancel()
+    }
+
+    @Test
+    fun `updateBatteryInfo emits correct health value`() = runTest {
+        val events = mutableListOf<BatteryStateEvent>()
+        val scope = CoroutineScope(testDispatcher + Job())
+
+        emitter.setupDataFlows(scope)
+        val collectJob = launch(testDispatcher) { emitter.getSfUpdate().collect { events.add(it) } }
+
+        emitter.updateBatteryInfo(createTestData(health = 3))
+
+        val event = events.filterIsInstance<BatteryStateEvent.OnHealth>().first()
+        assertEquals(3, event.health)
+
+        collectJob.cancel()
+        scope.cancel()
+    }
+
     // ==============================================
     // dropWhile sentinel filtering
     // ==============================================
