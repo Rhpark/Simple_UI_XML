@@ -23,7 +23,7 @@ This document is a quick summary for fast review, and details are split into sep
 ### simple_xml (Controller)
 | 컨트롤러(Controller) | 역할 요약(Summary) | 상세 문서(Docs) |
 |---|---|---|
-| SoftKeyboardController | Keyboard show/hide/delay + SDK branching (키보드 표시/숨김/지연, SDK 분기 처리) | [xml/README_SOFTKEYBOARD_CONTROLLER.md](xml/README_SOFTKEYBOARD_CONTROLLER.md) |
+| SoftKeyboardController | Keyboard request/await contract + resize policy (키보드 요청/대기 계약 + resize 정책) | [xml/README_SOFTKEYBOARD_CONTROLLER.md](xml/README_SOFTKEYBOARD_CONTROLLER.md) |
 | FloatingViewController | Floating view add/move/remove (플로팅 뷰 추가/이동/제거) | [xml/README_FLOATING_VIEW_CONTROLLER.md](xml/README_FLOATING_VIEW_CONTROLLER.md) |
 
 **Context Extension Functions (컨텍스트 확장 함수):**

@@ -2,8 +2,11 @@
 
 import android.os.Bundle
 import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.launch
 import kr.open.library.simple_ui.xml.extensions.view.toastShowShort
+import kr.open.library.simple_ui.xml.system_manager.controller.softkeyboard.SoftKeyboardActionResult
+import kr.open.library.simple_ui.xml.system_manager.controller.softkeyboard.SoftKeyboardResizePolicy
 import kr.open.library.simple_ui.xml.system_manager.extensions.getSoftKeyboardController
 import kr.open.library.simple_ui.xml.ui.components.activity.normal.BaseActivity
 import kr.open.library.simpleui_xml.R
@@ -18,10 +21,10 @@ class SoftKeyboardControllerActivity : BaseActivity(R.layout.activity_softkeyboa
 
     private val softKeyboardController by lazy { getSoftKeyboardController() }
 
-    // Store Job references for potential cancellation
-    // 취소 처리를 위해 Job 참조를 보관합니다.
-    private var showDelayJob: Job? = null
-    private var hideDelayJob: Job? = null
+    // Store Deferred references for cancellation and result observation
+    // 취소와 결과 관찰을 위해 Deferred 참조를 보관합니다.
+    private var showDelayDeferred: Deferred<SoftKeyboardActionResult>? = null
+    private var hideDelayDeferred: Deferred<SoftKeyboardActionResult>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,33 +39,47 @@ class SoftKeyboardControllerActivity : BaseActivity(R.layout.activity_softkeyboa
             // Basic show - 기본 표시
             btnShow.setOnClickListener {
                 edtTest.isFocusable = true
-                softKeyboardController.show(edtTest)
-                toastShowShort("Show keyboard")
+                val success = softKeyboardController.show(edtTest)
+                toastShowShort(if (success) "키보드 표시 요청 성공" else "키보드 표시 요청 실패")
             }
 
             // Basic hide - 기본 숨김
             btnHide.setOnClickListener {
-                softKeyboardController.hide(edtTest)
-                toastShowShort("Hide keyboard")
+                val success = softKeyboardController.hide(edtTest)
+                toastShowShort(if (success) "키보드 숨김 요청 성공" else "키보드 숨김 요청 실패")
             }
 
-            // Delayed show with Job (cancellable) - Job으로 지연 표시(취소 가능)
+            // Delayed show with actual result - 실제 결과를 받는 지연 표시
             btnShowDelay.setOnClickListener {
                 edtTest.isFocusable = true
-                // Cancel previous job if exists - 이전 작업이 있으면 취소
-                showDelayJob?.cancel()
-                // Launch new delayed show - 새 지연 표시 시작
-                showDelayJob = softKeyboardController.showDelay(edtTest, 300, coroutineScope = lifecycleScope)
-                toastShowShort("Show keyboard with 300ms delay")
+                showDelayDeferred?.cancel()
+                val deferred = softKeyboardController.showAwaitAsync(
+                    v = edtTest,
+                    coroutineScope = lifecycleScope,
+                    delayMillis = 300,
+                )
+                showDelayDeferred = deferred
+
+                lifecycleScope.launch {
+                    val result = deferred.await()
+                    toastShowShort("지연 표시 결과: ${result.toSummaryText()}")
+                }
             }
 
-            // Delayed hide with Job (cancellable) - Job으로 지연 숨김(취소 가능)
+            // Delayed hide with actual result - 실제 결과를 받는 지연 숨김
             btnHideDelay.setOnClickListener {
-                // Cancel previous job if exists - 이전 작업이 있으면 취소
-                hideDelayJob?.cancel()
-                // Launch new delayed hide - 새 지연 숨김 시작
-                hideDelayJob = softKeyboardController.hideDelay(edtTest, 300, coroutineScope = lifecycleScope)
-                toastShowShort("Hide keyboard with 300ms delay")
+                hideDelayDeferred?.cancel()
+                val deferred = softKeyboardController.hideAwaitAsync(
+                    v = edtTest,
+                    coroutineScope = lifecycleScope,
+                    delayMillis = 300,
+                )
+                hideDelayDeferred = deferred
+
+                lifecycleScope.launch {
+                    val result = deferred?.await() ?: return@launch
+                    toastShowShort("지연 숨김 결과: ${result.toSummaryText()}")
+                }
             }
 
             // Window mode: Adjust Pan - 창 모드: Adjust Pan
@@ -73,16 +90,25 @@ class SoftKeyboardControllerActivity : BaseActivity(R.layout.activity_softkeyboa
 
             // Window mode: Adjust Resize - 창 모드: Adjust Resize
             btnSetAdjustResize.setOnClickListener {
-                softKeyboardController.setAdjustResize(window)
-                toastShowShort("Set Adjust Resize Mode")
+                val success = softKeyboardController.configureImeResize(
+                    window = window,
+                    policy = SoftKeyboardResizePolicy.KEEP_CURRENT_WINDOW,
+                )
+                toastShowShort(if (success) "Resize 정책 적용 성공" else "Resize 정책 적용 실패")
             }
         }
     }
 
     override fun onDestroy() {
-        // Cancel pending jobs on destroy - onDestroy 시 대기 중인 작업 취소
-        showDelayJob?.cancel()
-        hideDelayJob?.cancel()
+        // Cancel pending deferred tasks on destroy - onDestroy 시 대기 중인 작업 취소
+        showDelayDeferred?.cancel()
+        hideDelayDeferred?.cancel()
         super.onDestroy()
+    }
+
+    private fun SoftKeyboardActionResult.toSummaryText(): String = when (this) {
+        SoftKeyboardActionResult.Success -> "성공"
+        SoftKeyboardActionResult.Timeout -> "타임아웃"
+        is SoftKeyboardActionResult.Failure -> "실패(${reason.name})"
     }
 }

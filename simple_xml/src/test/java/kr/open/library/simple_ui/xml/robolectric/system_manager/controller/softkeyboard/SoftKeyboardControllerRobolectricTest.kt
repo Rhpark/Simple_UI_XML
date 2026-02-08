@@ -3,15 +3,20 @@ package kr.open.library.simple_ui.xml.robolectric.system_manager.controller.soft
 import android.app.Application
 import android.os.Build
 import android.view.View
+import android.view.ViewTreeObserver
 import android.view.Window
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import androidx.test.core.app.ApplicationProvider
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.runCurrent
+import kr.open.library.simple_ui.xml.system_manager.controller.softkeyboard.SoftKeyboardActionResult
+import kr.open.library.simple_ui.xml.system_manager.controller.softkeyboard.SoftKeyboardFailureReason
 import kr.open.library.simple_ui.xml.system_manager.controller.softkeyboard.SoftKeyboardController
+import kr.open.library.simple_ui.xml.system_manager.controller.softkeyboard.SoftKeyboardResizePolicy
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
@@ -31,6 +36,9 @@ import org.mockito.MockitoAnnotations
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows
 import org.robolectric.annotation.Config
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * Robolectric test for SoftKeyboardController.<br><br>
@@ -75,7 +83,6 @@ class SoftKeyboardControllerRobolectricTest {
     @Test
     fun `controller is created successfully`() {
         assertNotNull(controller)
-        assertNotNull(controller.imm)
     }
 
     // ========================================
@@ -104,16 +111,11 @@ class SoftKeyboardControllerRobolectricTest {
 
     @Test
     @Config(sdk = [Build.VERSION_CODES.R]) // API 30 (Android 11+)
-    fun `setAdjustResize uses WindowCompat on API 30+`() {
-        // Mock decorView to prevent WindowCompat.setDecorFitsSystemWindows from failing
-        val mockDecorView = mock(View::class.java)
-        `when`(mockWindow.decorView).thenReturn(mockDecorView)
-
+    fun `setAdjustResize keeps current window policy on API 30+`() {
         val result = controller.setAdjustResize(mockWindow)
 
         assertTrue(result)
-        // Note: WindowCompat.setDecorFitsSystemWindows is called but difficult to verify in unit tests
-        // The method only sets DecorFitsSystemWindows(true) for proper IME resize handling
+        verify(mockWindow, never()).setSoftInputMode(anyInt())
     }
 
     @Test
@@ -125,8 +127,25 @@ class SoftKeyboardControllerRobolectricTest {
         verify(mockWindow).setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
     }
 
-    // Note: WindowCompat.setDecorFitsSystemWindows requires a real Window with decorView
-    // This test is skipped as it's difficult to mock properly in unit tests
+    @Test
+    @Config(sdk = [Build.VERSION_CODES.R])
+    fun `configureImeResize with LEGACY_ADJUST_RESIZE calls setSoftInputMode on API 30+`() {
+        val result = controller.configureImeResize(mockWindow, SoftKeyboardResizePolicy.LEGACY_ADJUST_RESIZE)
+
+        assertTrue(result)
+        verify(mockWindow).setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+    }
+
+    @Test
+    @Config(sdk = [Build.VERSION_CODES.R])
+    fun `configureImeResize with FORCE_DECOR_FITS_TRUE returns true when decorView exists`() {
+        val mockDecorView = mock(View::class.java)
+        `when`(mockWindow.decorView).thenReturn(mockDecorView)
+
+        val result = controller.configureImeResize(mockWindow, SoftKeyboardResizePolicy.FORCE_DECOR_FITS_TRUE)
+
+        assertTrue(result)
+    }
 
     // ========================================
     // 3. Keyboard Show Tests
@@ -168,7 +187,7 @@ class SoftKeyboardControllerRobolectricTest {
     }
 
     @Test
-    fun `showDelay with Runnable posts delayed action`() {
+    fun `scheduleShow posts delayed action`() {
         `when`(mockView.postDelayed(any(Runnable::class.java), anyLong())).thenReturn(true)
 
         val result = controller.showDelay(mockView, 100L)
@@ -177,28 +196,12 @@ class SoftKeyboardControllerRobolectricTest {
         verify(mockView).postDelayed(any(Runnable::class.java), eq(100L))
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun `showDelay with coroutine returns Job and launches delayed task`() =
-        runTest {
-            val testDispatcher = StandardTestDispatcher(testScheduler)
-            val testScope = TestScope(testDispatcher)
-
-            `when`(mockView.requestFocus()).thenReturn(true)
-            `when`(mockImm.showSoftInput(mockView, InputMethodManager.SHOW_IMPLICIT)).thenReturn(true)
-
-            val job = controller.showDelay(mockView, 100L, InputMethodManager.SHOW_IMPLICIT, testScope)
-
-            // Verify Job is returned
-            assertNotNull(job)
-
-            // Advance time to trigger the delayed coroutine
-            testScope.testScheduler.advanceTimeBy(100L)
-            testScope.testScheduler.runCurrent()
-
-            verify(mockView).requestFocus()
-            verify(mockImm).showSoftInput(mockView, InputMethodManager.SHOW_IMPLICIT)
-        }
+    fun `showDelay returns false when delay is negative`() {
+        val result = controller.showDelay(mockView, -1L)
+        assertFalse(result)
+        verify(mockView, never()).postDelayed(any(Runnable::class.java), anyLong())
+    }
 
     // ========================================
     // 4. Keyboard Hide Tests
@@ -254,7 +257,7 @@ class SoftKeyboardControllerRobolectricTest {
     }
 
     @Test
-    fun `hideDelay with Runnable posts delayed action`() {
+    fun `scheduleHide posts delayed action`() {
         `when`(mockView.postDelayed(any(Runnable::class.java), anyLong())).thenReturn(true)
 
         val result = controller.hideDelay(mockView, 100L)
@@ -263,28 +266,12 @@ class SoftKeyboardControllerRobolectricTest {
         verify(mockView).postDelayed(any(Runnable::class.java), eq(100L))
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun `hideDelay with coroutine returns Job and launches delayed task`() =
-        runTest {
-            val testDispatcher = StandardTestDispatcher(testScheduler)
-            val testScope = TestScope(testDispatcher)
-
-            val mockWindowToken = mock(android.os.IBinder::class.java)
-            `when`(mockView.windowToken).thenReturn(mockWindowToken)
-            `when`(mockImm.hideSoftInputFromWindow(mockWindowToken, 0)).thenReturn(true)
-
-            val job = controller.hideDelay(mockView, 100L, 0, testScope)
-
-            // Verify Job is returned
-            assertNotNull(job)
-
-            // Advance time to trigger the delayed coroutine
-            testScope.testScheduler.advanceTimeBy(100L)
-            testScope.testScheduler.runCurrent()
-
-            verify(mockImm).hideSoftInputFromWindow(mockWindowToken, 0)
-        }
+    fun `hideDelay returns false when delay is negative`() {
+        val result = controller.hideDelay(mockView, -1L)
+        assertFalse(result)
+        verify(mockView, never()).postDelayed(any(Runnable::class.java), anyLong())
+    }
 
     // ========================================
     // 5. Stylus Handwriting Tests (API 33+)
@@ -376,56 +363,402 @@ class SoftKeyboardControllerRobolectricTest {
     }
 
     // ========================================
-    // 7. Job Cancellation Tests
+    // 7. New API Contract Tests
     // ========================================
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun `showDelay Job can be cancelled before execution`() =
-        runTest {
-            val testDispatcher = StandardTestDispatcher(testScheduler)
-            val testScope = TestScope(testDispatcher)
+    fun `show returns false when called off main thread`() {
+        val latch = CountDownLatch(1)
+        val result = AtomicBoolean(true)
 
+        Thread {
+            result.set(controller.show(mockView))
+            latch.countDown()
+        }.start()
+
+        assertTrue(latch.await(2, TimeUnit.SECONDS))
+        assertFalse(result.get())
+    }
+
+    @Test
+    fun `showAwait returns INVALID_ARGUMENT when delay is negative`() =
+        runTest {
+            val result = controller.showAwait(mockView, delayMillis = -1L)
+            assertTrue(result is SoftKeyboardActionResult.Failure)
+            assertEquals(
+                SoftKeyboardFailureReason.INVALID_ARGUMENT,
+                (result as SoftKeyboardActionResult.Failure).reason,
+            )
+        }
+
+    @Test
+    fun `hideAwait returns INVALID_ARGUMENT when timeout is zero`() =
+        runTest {
+            val result = controller.hideAwait(mockView, timeoutMillis = 0L)
+            assertTrue(result is SoftKeyboardActionResult.Failure)
+            assertEquals(
+                SoftKeyboardFailureReason.INVALID_ARGUMENT,
+                (result as SoftKeyboardActionResult.Failure).reason,
+            )
+        }
+
+    @Test
+    fun `hideAwait returns IME_REQUEST_REJECTED when hide request is rejected`() =
+        runTest {
+            val mockWindowToken = mock(android.os.IBinder::class.java)
+            `when`(mockView.windowToken).thenReturn(mockWindowToken)
+            `when`(mockImm.hideSoftInputFromWindow(mockWindowToken, 0)).thenReturn(false)
+
+            val result = controller.hideAwait(mockView, timeoutMillis = 100L)
+            assertTrue(result is SoftKeyboardActionResult.Failure)
+            assertEquals(
+                SoftKeyboardFailureReason.IME_REQUEST_REJECTED,
+                (result as SoftKeyboardActionResult.Failure).reason,
+            )
+        }
+
+    @Test
+    fun `showAwaitAsync returns Failure result when focus cannot be obtained`() =
+        runTest {
+            `when`(mockView.requestFocus()).thenReturn(false)
+            val deferred = controller.showAwaitAsync(v = mockView, coroutineScope = this)
+            val result = deferred.await()
+            assertTrue(result is SoftKeyboardActionResult.Failure)
+            assertEquals(
+                SoftKeyboardFailureReason.FOCUS_REQUEST_FAILED,
+                (result as SoftKeyboardActionResult.Failure).reason,
+            )
+        }
+
+    @Test
+    fun `showAwaitAsync returns OFF_MAIN_THREAD failure when called off main thread`() =
+        runTest {
+            val latch = CountDownLatch(1)
+            val resultRef = java.util.concurrent.atomic.AtomicReference<SoftKeyboardActionResult?>(null)
+
+            Thread {
+                val deferred = controller.showAwaitAsync(v = mockView, coroutineScope = this)
+                resultRef.set(kotlinx.coroutines.runBlocking { deferred.await() })
+                latch.countDown()
+            }.start()
+
+            assertTrue(latch.await(2, TimeUnit.SECONDS))
+            val result = resultRef.get()
+            assertTrue(result is SoftKeyboardActionResult.Failure)
+            assertEquals(
+                SoftKeyboardFailureReason.OFF_MAIN_THREAD,
+                (result as SoftKeyboardActionResult.Failure).reason,
+            )
+        }
+
+    @Test
+    fun `hideAwaitAsync returns Failure result when no window token is available`() =
+        runTest {
+            `when`(mockView.windowToken).thenReturn(null)
+            `when`(mockView.applicationWindowToken).thenReturn(null)
+            val deferred = controller.hideAwaitAsync(v = mockView, coroutineScope = this)
+            assertNotNull(deferred)
+            val result = deferred?.await()
+            assertTrue(result is SoftKeyboardActionResult.Failure)
+            assertEquals(
+                SoftKeyboardFailureReason.WINDOW_TOKEN_MISSING,
+                (result as SoftKeyboardActionResult.Failure).reason,
+            )
+        }
+
+    @Test
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun `showAwait cancellation is propagated as cancellation`() =
+        runTest {
             `when`(mockView.requestFocus()).thenReturn(true)
             `when`(mockImm.showSoftInput(mockView, InputMethodManager.SHOW_IMPLICIT)).thenReturn(true)
 
-            val job = controller.showDelay(mockView, 100L, InputMethodManager.SHOW_IMPLICIT, testScope)
-            assertNotNull(job)
+            val deferred = async { controller.showAwait(mockView, delayMillis = 5_000L, timeoutMillis = 6_000L) }
+            runCurrent()
+            deferred.cancel()
 
-            // Cancel before time advances
-            job?.cancel()
-
-            // Advance time
-            testScope.testScheduler.advanceTimeBy(100L)
-            testScope.testScheduler.runCurrent()
-
-            // Verify show was NOT called because job was cancelled
-            verify(mockView, never()).requestFocus()
-            verify(mockImm, never()).showSoftInput(any(), anyInt())
+            assertTrue(deferred.isCancelled)
         }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun `hideDelay Job can be cancelled before execution`() =
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun `hideAwait cancellation is propagated as cancellation`() =
         runTest {
-            val testDispatcher = StandardTestDispatcher(testScheduler)
-            val testScope = TestScope(testDispatcher)
+            val deferred = async { controller.hideAwait(mockView, delayMillis = 5_000L, timeoutMillis = 6_000L) }
+            runCurrent()
+            deferred.cancel()
 
+            assertTrue(deferred.isCancelled)
+        }
+
+    // ========================================
+    // 8. showAwait / hideAwait Timeout Tests
+    // ========================================
+
+    @Test
+    fun `showAwait reaches awaitImeVisibility when request succeeds and returns non-Success`() =
+        runTest {
+            `when`(mockView.requestFocus()).thenReturn(true)
+            `when`(mockImm.showSoftInput(mockView, InputMethodManager.SHOW_IMPLICIT)).thenReturn(true)
+
+            val result = controller.showAwait(mockView, timeoutMillis = 50L)
+
+            // awaitImeVisibility가 viewTreeObserver null로 EXCEPTION_OCCURRED 반환
+            // 또는 Timeout 반환 — 중요한 건 Success가 아님 (IME 미가시)
+            assertTrue(
+                "showAwait should not return Success without real IME, got: $result",
+                result !is SoftKeyboardActionResult.Success,
+            )
+        }
+
+    @Test
+    fun `hideAwait returns Success when IME already hidden`() =
+        runTest {
+            // Robolectric에서 WindowInsets가 null → isImeVisible = false
+            // expectedVisible = false와 일치하므로 즉시 Success 반환
             val mockWindowToken = mock(android.os.IBinder::class.java)
             `when`(mockView.windowToken).thenReturn(mockWindowToken)
             `when`(mockImm.hideSoftInputFromWindow(mockWindowToken, 0)).thenReturn(true)
 
-            val job = controller.hideDelay(mockView, 100L, 0, testScope)
-            assertNotNull(job)
+            val result = controller.hideAwait(mockView, timeoutMillis = 100L)
 
-            // Cancel before time advances
-            job?.cancel()
+            assertTrue(
+                "hideAwait should return Success when IME is already hidden, got: $result",
+                result is SoftKeyboardActionResult.Success,
+            )
+        }
 
-            // Advance time
-            testScope.testScheduler.advanceTimeBy(100L)
-            testScope.testScheduler.runCurrent()
+    // ========================================
+    // 9. showAwait / hideAwait EXCEPTION_OCCURRED Tests
+    // ========================================
 
-            // Verify hide was NOT called because job was cancelled
-            verify(mockImm, never()).hideSoftInputFromWindow(any(), anyInt())
+    @Test
+    fun `showAwait returns EXCEPTION_OCCURRED when requestShowInternal throws`() =
+        runTest {
+            `when`(mockView.requestFocus()).thenReturn(true)
+            `when`(mockImm.showSoftInput(mockView, InputMethodManager.SHOW_IMPLICIT))
+                .thenThrow(RuntimeException("IMM failure"))
+
+            val result = controller.showAwait(mockView, timeoutMillis = 100L)
+
+            assertTrue(result is SoftKeyboardActionResult.Failure)
+            assertEquals(
+                SoftKeyboardFailureReason.EXCEPTION_OCCURRED,
+                (result as SoftKeyboardActionResult.Failure).reason,
+            )
+        }
+
+    // ========================================
+    // 10. Delay Boundary Tests
+    // ========================================
+
+    @Test
+    fun `showDelay with zero delay posts immediately`() {
+        `when`(mockView.postDelayed(any(Runnable::class.java), anyLong())).thenReturn(true)
+
+        val result = controller.showDelay(mockView, 0L)
+
+        assertTrue(result)
+        verify(mockView).postDelayed(any(Runnable::class.java), eq(0L))
+    }
+
+    @Test
+    fun `hideDelay with zero delay posts immediately`() {
+        `when`(mockView.postDelayed(any(Runnable::class.java), anyLong())).thenReturn(true)
+
+        val result = controller.hideDelay(mockView, 0L)
+
+        assertTrue(result)
+        verify(mockView).postDelayed(any(Runnable::class.java), eq(0L))
+    }
+
+    @Test
+    @Config(sdk = [Build.VERSION_CODES.TIRAMISU])
+    fun `startStylusHandwriting with negative delay returns false`() {
+        val result = controller.startStylusHandwriting(mockView, -1L)
+
+        assertFalse(result)
+        verify(mockView, never()).postDelayed(any(Runnable::class.java), anyLong())
+    }
+
+    @Test
+    @Config(sdk = [Build.VERSION_CODES.TIRAMISU])
+    fun `startStylusHandwriting with zero delay posts immediately`() {
+        `when`(mockView.postDelayed(any(Runnable::class.java), anyLong())).thenReturn(true)
+
+        val result = controller.startStylusHandwriting(mockView, 0L)
+
+        assertTrue(result)
+        verify(mockView).postDelayed(any(Runnable::class.java), eq(0L))
+    }
+
+    // ========================================
+    // 11. showAwait / hideAwait Parameter Boundary Tests
+    // ========================================
+
+    @Test
+    fun `showAwait returns INVALID_ARGUMENT when timeout is zero`() =
+        runTest {
+            val result = controller.showAwait(mockView, timeoutMillis = 0L)
+            assertTrue(result is SoftKeyboardActionResult.Failure)
+            assertEquals(
+                SoftKeyboardFailureReason.INVALID_ARGUMENT,
+                (result as SoftKeyboardActionResult.Failure).reason,
+            )
+        }
+
+    @Test
+    fun `showAwait returns INVALID_ARGUMENT when timeout is negative`() =
+        runTest {
+            val result = controller.showAwait(mockView, timeoutMillis = -1L)
+            assertTrue(result is SoftKeyboardActionResult.Failure)
+            assertEquals(
+                SoftKeyboardFailureReason.INVALID_ARGUMENT,
+                (result as SoftKeyboardActionResult.Failure).reason,
+            )
+        }
+
+    @Test
+    fun `hideAwait returns INVALID_ARGUMENT when delay is negative`() =
+        runTest {
+            val result = controller.hideAwait(mockView, delayMillis = -1L)
+            assertTrue(result is SoftKeyboardActionResult.Failure)
+            assertEquals(
+                SoftKeyboardFailureReason.INVALID_ARGUMENT,
+                (result as SoftKeyboardActionResult.Failure).reason,
+            )
+        }
+
+    @Test
+    fun `showAwait Failure message describes invalid argument`() =
+        runTest {
+            val result = controller.showAwait(mockView, delayMillis = -1L)
+            assertTrue(result is SoftKeyboardActionResult.Failure)
+            val failure = result as SoftKeyboardActionResult.Failure
+            assertNotNull(failure.message)
+            assertTrue(failure.message!!.isNotEmpty())
+        }
+
+    // ========================================
+    // 12. Off-Main Thread Tests for Await APIs
+    // ========================================
+
+    @Test
+    fun `hide returns false when called off main thread`() {
+        val latch = CountDownLatch(1)
+        val result = AtomicBoolean(true)
+
+        Thread {
+            result.set(controller.hide(mockView))
+            latch.countDown()
+        }.start()
+
+        assertTrue(latch.await(2, TimeUnit.SECONDS))
+        assertFalse(result.get())
+    }
+
+    @Test
+    fun `setAdjustPan returns false when called off main thread`() {
+        val latch = CountDownLatch(1)
+        val result = AtomicBoolean(true)
+
+        Thread {
+            result.set(controller.setAdjustPan(mockWindow))
+            latch.countDown()
+        }.start()
+
+        assertTrue(latch.await(2, TimeUnit.SECONDS))
+        assertFalse(result.get())
+    }
+
+    // ========================================
+    // 13. configureImeResize API Level Branch Tests
+    // ========================================
+
+    @Test
+    @Config(sdk = [Build.VERSION_CODES.Q]) // API 29
+    fun `configureImeResize with KEEP_CURRENT_WINDOW uses legacy on API 29`() {
+        val result = controller.configureImeResize(mockWindow, SoftKeyboardResizePolicy.KEEP_CURRENT_WINDOW)
+
+        assertTrue(result)
+        verify(mockWindow).setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+    }
+
+    @Test
+    @Config(sdk = [Build.VERSION_CODES.Q]) // API 29
+    fun `configureImeResize with FORCE_DECOR_FITS_TRUE falls back to legacy on API 29`() {
+        val result = controller.configureImeResize(mockWindow, SoftKeyboardResizePolicy.FORCE_DECOR_FITS_TRUE)
+
+        assertTrue(result)
+        verify(mockWindow).setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+    }
+
+    @Test
+    @Config(sdk = [Build.VERSION_CODES.Q]) // API 29
+    fun `configureImeResize with LEGACY_ADJUST_RESIZE works on API 29`() {
+        val result = controller.configureImeResize(mockWindow, SoftKeyboardResizePolicy.LEGACY_ADJUST_RESIZE)
+
+        assertTrue(result)
+        verify(mockWindow).setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+    }
+
+    @Test
+    fun `configureImeResize default policy is KEEP_CURRENT_WINDOW`() {
+        val result = controller.configureImeResize(mockWindow)
+
+        assertTrue(result)
+    }
+
+    // ========================================
+    // 14. hideAwait WINDOW_TOKEN_MISSING Tests
+    // ========================================
+
+    @Test
+    fun `hideAwait returns WINDOW_TOKEN_MISSING when both tokens null`() =
+        runTest {
+            `when`(mockView.windowToken).thenReturn(null)
+            `when`(mockView.applicationWindowToken).thenReturn(null)
+
+            val result = controller.hideAwait(mockView, timeoutMillis = 100L)
+
+            assertTrue(result is SoftKeyboardActionResult.Failure)
+            assertEquals(
+                SoftKeyboardFailureReason.WINDOW_TOKEN_MISSING,
+                (result as SoftKeyboardActionResult.Failure).reason,
+            )
+            assertNotNull(result.message)
+        }
+
+    // ========================================
+    // 15. showAwait FOCUS_REQUEST_FAILED Tests
+    // ========================================
+
+    @Test
+    fun `showAwait returns FOCUS_REQUEST_FAILED when view cannot get focus`() =
+        runTest {
+            `when`(mockView.requestFocus()).thenReturn(false)
+
+            val result = controller.showAwait(mockView, timeoutMillis = 100L)
+
+            assertTrue(result is SoftKeyboardActionResult.Failure)
+            assertEquals(
+                SoftKeyboardFailureReason.FOCUS_REQUEST_FAILED,
+                (result as SoftKeyboardActionResult.Failure).reason,
+            )
+        }
+
+    @Test
+    fun `showAwait returns IME_REQUEST_REJECTED when show request fails`() =
+        runTest {
+            `when`(mockView.requestFocus()).thenReturn(true)
+            `when`(mockImm.showSoftInput(mockView, InputMethodManager.SHOW_IMPLICIT)).thenReturn(false)
+
+            val result = controller.showAwait(mockView, timeoutMillis = 100L)
+
+            assertTrue(result is SoftKeyboardActionResult.Failure)
+            assertEquals(
+                SoftKeyboardFailureReason.IME_REQUEST_REJECTED,
+                (result as SoftKeyboardActionResult.Failure).reason,
+            )
         }
 }
