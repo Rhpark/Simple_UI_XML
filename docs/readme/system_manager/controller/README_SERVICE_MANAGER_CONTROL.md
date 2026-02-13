@@ -1,8 +1,8 @@
 ﻿# System Service Manager Controller vs Plain Android - Complete Comparison Guide
-**System Service Manager Controller** consists of controllers in `simple_core` and Context extensions in `simple_xml`.
+**System Service Manager Controller** consists of controllers in `simple_core` and Context/Window extensions in `simple_xml`.
 This document is a quick summary for fast review, and details are split into separate docs.
 > **System Service Manager Controller vs 순수 Android - 비교 가이드**
-> **System Service Manager Controller**는 `simple_core`의 컨트롤러와 `simple_xml`의 Context 확장 함수로 구성됩니다.
+> **System Service Manager Controller**는 `simple_core`의 컨트롤러와 `simple_xml`의 Context/Window 확장 함수로 구성됩니다.
 > 이 문서는 **핵심만 빠르게 확인**할 수 있도록 요약했고, 상세 내용은 별도 문서로 분리했습니다.
 
 ## 📦 Module Information (모듈 정보)
@@ -23,11 +23,22 @@ This document is a quick summary for fast review, and details are split into sep
 ### simple_xml (Controller)
 | 컨트롤러(Controller) | 역할 요약(Summary) | 상세 문서(Docs) |
 |---|---|---|
+| SystemBarController | Status/navigation bar color, visibility, edge-to-edge, insets state + sealed state contract (상태/내비게이션 바 색상·가시성·edge-to-edge·insets 상태 + sealed 상태 계약) | [xml/README_SYSTEMBAR_CONTROLLER.md](xml/README_SYSTEMBAR_CONTROLLER.md) |
 | SoftKeyboardController | Keyboard request/await contract + resize policy (키보드 요청/대기 계약 + resize 정책) | [xml/README_SOFTKEYBOARD_CONTROLLER.md](xml/README_SOFTKEYBOARD_CONTROLLER.md) |
 | FloatingViewController | Floating view add/move/remove (플로팅 뷰 추가/이동/제거) | [xml/README_FLOATING_VIEW_CONTROLLER.md](xml/README_FLOATING_VIEW_CONTROLLER.md) |
 
-**Context Extension Functions (컨텍스트 확장 함수):**
+**Context/Window Extension Functions (컨텍스트/윈도우 확장 함수):**
 See full list / 전체 목록: [README_SYSTEM_MANAGER_EXTENSIONS.md](../README_SYSTEM_MANAGER_EXTENSIONS.md)
+
+**SystemBar 실제 진입 경로 (Window Extension Path):**
+- `window.getSystemBarController()`
+- `window.destroySystemBarControllerCache()`
+
+**SystemBar 핵심 계약 (Quick Notes):**
+- 상태 계약: `NotReady`, `NotPresent`, `Hidden`, `Visible(rect)`, `Stable(rect)`
+- `Hidden`은 `stable`이 존재하고 `visible`이 0일 때만 해당하며, 둘 다 0이면 `NotPresent`
+- API 35+ 색상 적용 시 insets 미준비면 `WindowInsetsCompat.CONSUMED` 폴백을 사용
+- 가시성 API 내부 controller 경로는 `systemBarsBehavior = BEHAVIOR_DEFAULT`를 재설정
 
 <br></br>
 

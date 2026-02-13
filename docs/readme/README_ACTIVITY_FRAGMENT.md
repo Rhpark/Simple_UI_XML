@@ -192,6 +192,79 @@ requestPermissions(
 
 <br></br>
 
+## 🪟 Window Extension Based SystemBar Usage (Window 확장 기반 SystemBar 사용)
+When using Activity/Fragment base classes, prefer the Window extension path for SystemBar control.  
+> Activity/Fragment 베이스 클래스를 사용할 때 SystemBar 제어는 Window 확장 경로 사용을 권장합니다.
+
+This keeps one controller per Window and makes cleanup timing explicit.  
+> Window당 컨트롤러 1개를 유지하고 정리 시점을 명확하게 관리할 수 있습니다.
+
+### Activity Example (Activity 예시)
+```kotlin
+import android.graphics.Color
+import android.os.Bundle
+import kr.open.library.simple_ui.xml.system_manager.extensions.destroySystemBarControllerCache
+import kr.open.library.simple_ui.xml.system_manager.extensions.getSystemBarController
+
+class SampleActivity :
+    BaseDataBindingActivity<ActivitySampleBinding>(R.layout.activity_sample) {
+
+    override fun onCreate(binding: ActivitySampleBinding, savedInstanceState: Bundle?) {
+        val systemBarController = window.getSystemBarController()
+
+        systemBarController.setEdgeToEdgeMode(true)
+        systemBarController.setStatusBarColor(Color.TRANSPARENT, isDarkIcon = true)
+        systemBarController.setNavigationBarColor(Color.BLACK, isDarkIcon = false)
+    }
+
+    override fun onDestroy() {
+        window.destroySystemBarControllerCache()
+        super.onDestroy()
+    }
+}
+```
+
+### Fragment Example (Fragment 예시)
+```kotlin
+import android.os.Bundle
+import kr.open.library.simple_ui.xml.system_manager.extensions.getSystemBarController
+
+class SampleFragment :
+    BaseDataBindingFragment<FragmentSampleBinding>(R.layout.fragment_sample) {
+
+    override fun onViewCreated(binding: FragmentSampleBinding, savedInstanceState: Bundle?) {
+        val systemBarController = requireActivity().window.getSystemBarController()
+        systemBarController.setStatusBarDarkIcon(true)
+        systemBarController.setNavigationBarDarkIcon(false)
+    }
+}
+```
+
+### State Query Example (상태 조회 예시)
+```kotlin
+import kr.open.library.simple_ui.xml.system_manager.controller.systembar.model.SystemBarVisibleState
+
+val state = requireActivity().window.getSystemBarController().getStatusBarVisibleState()
+when (state) {
+    SystemBarVisibleState.NotReady -> Unit
+    SystemBarVisibleState.NotPresent -> Unit
+    SystemBarVisibleState.Hidden -> Unit
+    is SystemBarVisibleState.Visible -> {
+        // state.rect 사용
+    }
+}
+```
+
+### Notes (주의사항)
+- `SystemBarController(window)` 직접 생성보다 `window.getSystemBarController()`를 우선 사용하세요.
+- Fragment는 Activity의 Window를 공유하므로 캐시 정리는 보통 Activity `onDestroy()`에서 1회 처리하는 것을 권장합니다.
+- 컨트롤러 재생성이 필요하면 `window.destroySystemBarControllerCache()` 후 다시 `window.getSystemBarController()`를 호출하세요.
+- 상태 해석 기준: `stable`과 `visible`이 모두 0이면 `NotPresent`, `stable`이 존재하고 `visible`이 0이면 `Hidden`입니다.
+- API 35+에서 색상 적용 시 insets 미준비 구간은 내부 `WindowInsetsCompat.CONSUMED` 폴백으로 처리됩니다.
+- 가시성 API 호출 경로에서 내부 `systemBarsBehavior`가 `BEHAVIOR_DEFAULT`로 재설정됩니다.
+
+<br></br>
+
 ## 🧩 Base Class Features Summary (베이스 클래스 기능 정리)
 
 #### Common RootActivity / RootFragment

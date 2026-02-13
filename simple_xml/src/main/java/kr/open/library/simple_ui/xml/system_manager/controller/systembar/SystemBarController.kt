@@ -15,6 +15,8 @@ import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
 import kr.open.library.simple_ui.core.system_manager.base.BaseSystemService
 import kr.open.library.simple_ui.xml.system_manager.controller.systembar.internal.helper.NavigationBarHelper
 import kr.open.library.simple_ui.xml.system_manager.controller.systembar.internal.helper.StatusBarHelper
+import kr.open.library.simple_ui.xml.system_manager.controller.systembar.model.SystemBarStableState
+import kr.open.library.simple_ui.xml.system_manager.controller.systembar.model.SystemBarVisibleState
 
 /**
  * Controller for managing system bars (StatusBar and NavigationBar) independently.<br>
@@ -140,6 +142,8 @@ public class SystemBarController(
         systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_DEFAULT
     }
 
+    // region State Query / 상태 조회
+
     /**
      * Returns the window coordinates of the currently visible StatusBar area.<br>
      * Uses WindowInsetsCompat with visibility detection. Returns empty Rect if StatusBar is hidden.<br><br>
@@ -151,7 +155,19 @@ public class SystemBarController(
      *         decorView 기준 윈도우 좌표를 가진 Rect (left=0, top=0, right=decorView너비, bottom=상태바높이),
      *         WindowInsets 미준비 시 (뷰 측정 전 초기화 단계) null.<br>
      */
-    public fun getStatusBarVisibleRect(): Rect? = getRootWindowInsetsCompat()?.let { statusBarHelper.getStatusBarVisibleRect(it) }
+    public fun getStatusBarVisibleRect(): Rect? = getStatusBarVisibleState().toLegacyRectOrNull()
+
+    /**
+     * Returns status bar visible state using unified semantic states.<br><br>
+     * 통합된 의미 상태를 사용하여 상태바 visible 상태를 반환합니다.<br>
+     *
+     * @return Status bar visible state (NotReady / NotPresent / Hidden / Visible).<br><br>
+     *         상태바 visible 상태 (NotReady / NotPresent / Hidden / Visible).<br>
+     */
+    public fun getStatusBarVisibleState(): SystemBarVisibleState {
+        val insets = getRootWindowInsetsCompat()
+        return statusBarHelper.getStatusBarVisibleState(insets)
+    }
 
     /**
      * Returns the window coordinates of the system-defined (stable) StatusBar area.<br>
@@ -164,7 +180,19 @@ public class SystemBarController(
      *         decorView 기준 윈도우 좌표를 가진 Rect (left=0, top=0, right=decorView너비, bottom=상태바높이),
      *         WindowInsets 미준비 시 (뷰 측정 전 초기화 단계) null.<br>
      */
-    public fun getStatusBarStableRect(): Rect? = getRootWindowInsetsCompat()?.let { statusBarHelper.getStatusBarStableRect(it) }
+    public fun getStatusBarStableRect(): Rect? = getStatusBarStableState().toLegacyRectOrNull()
+
+    /**
+     * Returns status bar stable state using unified semantic states.<br><br>
+     * 통합된 의미 상태를 사용하여 상태바 stable 상태를 반환합니다.<br>
+     *
+     * @return Status bar stable state (NotReady / NotPresent / Stable).<br><br>
+     *         상태바 stable 상태 (NotReady / NotPresent / Stable).<br>
+     */
+    public fun getStatusBarStableState(): SystemBarStableState {
+        val insets = getRootWindowInsetsCompat()
+        return statusBarHelper.getStatusBarStableState(insets)
+    }
 
     /**
      * Returns the window coordinates of the currently visible NavigationBar area.<br>
@@ -181,8 +209,19 @@ public class SystemBarController(
      *         왼쪽: (0, 0, 네비너비, decorView높이), 오른쪽: (decorView너비-네비너비, 0, decorView너비, decorView높이),
      *         WindowInsets 미준비 시 (뷰 측정 전 초기화 단계) null.<br>
      */
-    public fun getNavigationBarVisibleRect(): Rect? =
-        getRootWindowInsetsCompat()?.let { navigationBarHelper.getNavigationBarVisibleRect(it) }
+    public fun getNavigationBarVisibleRect(): Rect? = getNavigationBarVisibleState().toLegacyRectOrNull()
+
+    /**
+     * Returns navigation bar visible state using unified semantic states.<br><br>
+     * 통합된 의미 상태를 사용하여 네비게이션 바 visible 상태를 반환합니다.<br>
+     *
+     * @return Navigation bar visible state (NotReady / NotPresent / Hidden / Visible).<br><br>
+     *         네비게이션 바 visible 상태 (NotReady / NotPresent / Hidden / Visible).<br>
+     */
+    public fun getNavigationBarVisibleState(): SystemBarVisibleState {
+        val insets = getRootWindowInsetsCompat()
+        return navigationBarHelper.getNavigationBarVisibleState(insets)
+    }
 
     /**
      * Returns the window coordinates of the system-defined (stable) NavigationBar area.<br>
@@ -199,7 +238,23 @@ public class SystemBarController(
      *         왼쪽: (0, 0, 네비너비, decorView높이), 오른쪽: (decorView너비-네비너비, 0, decorView너비, decorView높이),
      *         WindowInsets 미준비 시 (뷰 측정 전 초기화 단계) null.<br>
      */
-    public fun getNavigationBarStableRect(): Rect? = getRootWindowInsetsCompat()?.let { navigationBarHelper.getNavigationBarStableRect(it) }
+    public fun getNavigationBarStableRect(): Rect? = getNavigationBarStableState().toLegacyRectOrNull()
+
+    /**
+     * Returns navigation bar stable state using unified semantic states.<br><br>
+     * 통합된 의미 상태를 사용하여 네비게이션 바 stable 상태를 반환합니다.<br>
+     *
+     * @return Navigation bar stable state (NotReady / NotPresent / Stable).<br><br>
+     *         네비게이션 바 stable 상태 (NotReady / NotPresent / Stable).<br>
+     */
+    public fun getNavigationBarStableState(): SystemBarStableState {
+        val insets = getRootWindowInsetsCompat()
+        return navigationBarHelper.getNavigationBarStableState(insets)
+    }
+
+    // endregion
+
+    // region Color Control / 색상 제어
 
     /**
      * Sets the StatusBar color.<br><br>
@@ -303,6 +358,10 @@ public class SystemBarController(
         getWindowInsetController().apply { isAppearanceLightNavigationBars = isDarkIcon }
     }
 
+    // endregion
+
+    // region Visibility Control / 가시성 제어
+
     /**
      * Shows the StatusBar.<br>
      * Uses WindowInsetsController on API 30+ and FLAG_FULLSCREEN on older versions.<br><br>
@@ -399,6 +458,10 @@ public class SystemBarController(
         }
     }
 
+    // endregion
+
+    // region Reset / 초기화
+
     /**
      * Resets the StatusBar to its initial state.<br>
      * Removes custom background views on API 35+ and restores theme default color on older versions.<br><br>
@@ -454,6 +517,10 @@ public class SystemBarController(
             if (restoreVisibility) setNavigationBarVisible()
         }
     }
+
+    // endregion
+
+    // region Edge-to-Edge
 
     /**
      * Enables or disables edge-to-edge mode.<br>
@@ -518,6 +585,10 @@ public class SystemBarController(
      */
     public fun isEdgeToEdgeEnabled(): Boolean = isEdgeToEdge
 
+    // endregion
+
+    // region Lifecycle / 수명주기
+
     /**
      * Cleans up status bar overlay view (API 35+).<br>
      * Removes WindowInsets listener and removes view from decorView.<br><br>
@@ -549,4 +620,53 @@ public class SystemBarController(
         cleanupNavigationBarOverlay()
         super.onDestroy()
     }
+
+    // endregion
+
+    // region Legacy Compatibility / 레거시 호환
+
+    /**
+     * Converts visibility state to legacy Rect? contract.<br>
+     * Keeps backward compatibility for existing callers that still use Rect-based APIs.<br><br>
+     * 가시성 상태를 레거시 Rect? 계약으로 변환합니다.<br>
+     * Rect 기반 API를 계속 사용하는 기존 호출부와의 하위 호환을 유지합니다.<br>
+     *
+     * Mapping / 매핑 규칙:<br>
+     * - NotReady -> null<br>
+     * - NotPresent/Hidden -> Rect()<br>
+     * - Visible -> rect<br><br>
+     *
+     * - NotReady -> null<br>
+     * - NotPresent/Hidden -> Rect()<br>
+     * - Visible -> rect<br>
+     */
+    private fun SystemBarVisibleState.toLegacyRectOrNull(): Rect? = when (this) {
+        SystemBarVisibleState.NotReady -> null
+        SystemBarVisibleState.Hidden,
+        SystemBarVisibleState.NotPresent -> Rect()
+        is SystemBarVisibleState.Visible -> rect
+    }
+
+    /**
+     * Converts stable state to legacy Rect? contract.<br>
+     * Keeps backward compatibility for existing callers that still use Rect-based APIs.<br><br>
+     * stable 상태를 레거시 Rect? 계약으로 변환합니다.<br>
+     * Rect 기반 API를 계속 사용하는 기존 호출부와의 하위 호환을 유지합니다.<br>
+     *
+     * Mapping / 매핑 규칙:<br>
+     * - NotReady -> null<br>
+     * - NotPresent -> Rect()<br>
+     * - Stable -> rect<br><br>
+     *
+     * - NotReady -> null<br>
+     * - NotPresent -> Rect()<br>
+     * - Stable -> rect<br>
+     */
+    private fun SystemBarStableState.toLegacyRectOrNull(): Rect? = when (this) {
+        SystemBarStableState.NotReady -> null
+        SystemBarStableState.NotPresent -> Rect()
+        is SystemBarStableState.Stable -> rect
+    }
+
+    // endregion
 }

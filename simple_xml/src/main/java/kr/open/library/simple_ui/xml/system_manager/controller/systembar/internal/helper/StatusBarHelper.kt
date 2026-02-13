@@ -14,6 +14,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
 import kr.open.library.simple_ui.xml.system_manager.controller.systembar.internal.helper.base.SystemBarHelperBase
+import kr.open.library.simple_ui.xml.system_manager.controller.systembar.model.SystemBarStableState
+import kr.open.library.simple_ui.xml.system_manager.controller.systembar.model.SystemBarVisibleState
 
 /**
  * Helper class for managing StatusBar operations across different Android versions.<br>
@@ -28,62 +30,69 @@ internal class StatusBarHelper(
     decorView: View
 ) : SystemBarHelperBase(decorView) {
     /**
-     * Returns the window coordinates of the currently visible StatusBar area.<br>
-     * Uses WindowInsetsCompat with visibility detection and improved timing safety.<br><br>
-     * 현재 보이는 StatusBar 영역의 윈도우 좌표를 반환합니다.<br>
-     * WindowInsetsCompat과 가시성 감지 및 개선된 타이밍 안전성을 사용합니다.<br>
+     * Returns current visible StatusBar state with unified semantics.<br>
+     * Uses WindowInsetsCompat with visibility detection and timing-safe readiness check.<br><br>
+     * 통합 의미 체계로 현재 StatusBar visible 상태를 반환합니다.<br>
+     * WindowInsetsCompat 기반 가시성 감지와 타이밍 안전한 준비 상태 체크를 사용합니다.<br>
      *
-     * @return Rect with window coordinates relative to decorView, or Rect() if StatusBar is hidden, or null if view/WindowInsets not ready.<br>
-     *         - Rect(0, 0, decorViewWidth, statusBarHeight) when visible (coordinates clamped to decorView bounds)<br>
-     *         - Rect() when StatusBar is hidden (visibleTop is 0 but stableTop > 0)<br>
-     *         - null when decorView is not ready (not attached/invalid dimensions) OR WindowInsets not yet applied (both stable and visible are 0)<br><br>
-     *         decorView 기준 윈도우 좌표를 가진 Rect, StatusBar가 숨겨진 경우 Rect(), 뷰/WindowInsets가 준비되지 않은 경우 null.<br>
-     *         - Rect(0, 0, decorView너비, 상태바높이): 보이는 경우 (좌표는 decorView 경계로 클램핑됨)<br>
-     *         - StatusBar가 숨겨진 경우 (visibleTop은 0이지만 stableTop > 0): Rect()<br>
-     *         - decorView가 준비되지 않은 경우 (부착되지 않음/유효하지 않은 크기) 또는 WindowInsets가 아직 적용되지 않은 경우 (stable과 visible 모두 0): null<br>
+     * @return SystemBarVisibleState.<br>
+     *         - NotReady: decorView/insets 미준비<br>
+     *         - NotPresent: stableTop/visibleTop 모두 0<br>
+     *         - Hidden: stableTop > 0 && visibleTop == 0<br>
+     *         - Visible: visibleTop > 0 인 경우 Rect 포함<br><br>
+     *         SystemBarVisibleState.<br>
+     *         - NotReady: decorView/insets가 준비되지 않음<br>
+     *         - NotPresent: stableTop/visibleTop 모두 0<br>
+     *         - Hidden: stableTop > 0 && visibleTop == 0<br>
+     *         - Visible: visibleTop > 0 이며 Rect 포함<br>
      */
-    public fun getStatusBarVisibleRect(windowInsets: WindowInsetsCompat): Rect? = safeCatch(null) {
-        if (!decorView.isSystemBarRectReady()) return null
+    public fun getStatusBarVisibleState(windowInsets: WindowInsetsCompat?): SystemBarVisibleState =
+        safeCatch(defaultValue = SystemBarVisibleState.NotReady) {
+            if (!decorView.isSystemBarRectReady() || windowInsets == null) return@safeCatch SystemBarVisibleState.NotReady
 
-        val stableTop = windowInsets.getInsetsIgnoringVisibility(WindowInsetsCompat.Type.statusBars()).top
-        val visibleTop = windowInsets.getInsets(WindowInsetsCompat.Type.statusBars()).top
+            val stableTop = windowInsets.getInsetsIgnoringVisibility(WindowInsetsCompat.Type.statusBars()).top
+            val visibleTop = windowInsets.getInsets(WindowInsetsCompat.Type.statusBars()).top
 
-        // Both 0 means WindowInsets not yet applied (timing issue)
-        if (stableTop == 0 && visibleTop == 0) return null
+            // Both 0 means no status bar area in current mode/device.
+            if (stableTop == 0 && visibleTop == 0) return@safeCatch SystemBarVisibleState.NotPresent
 
-        // Only visibleTop 0 means StatusBar is hidden
-        if (visibleTop == 0) return Rect()
+            // stable exists, but visible area is 0 -> hidden.
+            if (visibleTop == 0) return@safeCatch SystemBarVisibleState.Hidden
 
-        // Clamp coordinates to prevent overflow during rotation/multi-window transitions
-        val clampedTop = visibleTop.coerceIn(0, decorView.height)
-        Rect(0, 0, decorView.width, clampedTop)
-    }
+            // Clamp coordinates to prevent overflow during rotation/multi-window transitions
+            val clampedTop = visibleTop.coerceIn(0, decorView.height)
+            val rect = Rect(0, 0, decorView.width, clampedTop)
+            SystemBarVisibleState.Visible(rect)
+        }
 
     /**
-     * Returns the window coordinates of the system-defined (stable) StatusBar area.<br>
-     * This value remains constant even if the StatusBar is hidden, with improved timing safety.<br><br>
-     * 시스템 정의(stable) StatusBar 영역의 윈도우 좌표를 반환하며, 개선된 타이밍 안전성을 제공합니다.<br>
-     * 이 값은 StatusBar가 숨겨진 경우에도 일정하게 유지됩니다.<br>
+     * Returns system-defined (stable) StatusBar state with unified semantics.<br>
+     * Stable size remains constant even when the bar is hidden.<br><br>
+     * 통합 의미 체계로 시스템 정의(stable) StatusBar 상태를 반환합니다.<br>
+     * stable 크기는 바가 숨겨져도 일정하게 유지됩니다.<br>
      *
-     * @return Rect with window coordinates relative to decorView, or null if view/WindowInsets not ready.<br>
-     *         - Rect(0, 0, decorViewWidth, statusBarHeight) when StatusBar exists (coordinates clamped to decorView bounds)<br>
-     *         - null when decorView is not ready (not attached/invalid dimensions) OR WindowInsets not yet applied (stableTop is 0)<br><br>
-     *         decorView 기준 윈도우 좌표를 가진 Rect, 뷰/WindowInsets가 준비되지 않은 경우 null.<br>
-     *         - Rect(0, 0, decorView너비, 상태바높이): StatusBar가 존재하는 경우 (좌표는 decorView 경계로 클램핑됨)<br>
-     *         - decorView가 준비되지 않은 경우 (부착되지 않음/유효하지 않은 크기) 또는 WindowInsets가 아직 적용되지 않은 경우 (stableTop이 0): null<br>
+     * @return SystemBarStableState.<br>
+     *         - NotReady: decorView/insets 미준비<br>
+     *         - NotPresent: stableTop == 0<br>
+     *         - Stable: stableTop > 0 인 경우 Rect 포함<br><br>
+     *         SystemBarStableState.<br>
+     *         - NotReady: decorView/insets가 준비되지 않음<br>
+     *         - NotPresent: stableTop == 0<br>
+     *         - Stable: stableTop > 0 이며 Rect 포함<br>
      */
-    public fun getStatusBarStableRect(windowInsets: WindowInsetsCompat): Rect? = safeCatch(null) {
-        if (!decorView.isSystemBarRectReady()) return null
+    public fun getStatusBarStableState(windowInsets: WindowInsetsCompat?): SystemBarStableState =
+        safeCatch(defaultValue = SystemBarStableState.NotReady) {
+            if (!decorView.isSystemBarRectReady() || windowInsets == null) return@safeCatch SystemBarStableState.NotReady
 
-        val stableTop = windowInsets.getInsetsIgnoringVisibility(WindowInsetsCompat.Type.statusBars()).top
+            val stableTop = windowInsets.getInsetsIgnoringVisibility(WindowInsetsCompat.Type.statusBars()).top
 
-        // stableTop == 0 means WindowInsets not yet applied (timing issue)
-        if (stableTop == 0) return null
+            if (stableTop == 0) return@safeCatch SystemBarStableState.NotPresent
 
-        // Clamp coordinates to prevent overflow during rotation/multi-window transitions
-        val clampedTop = stableTop.coerceIn(0, decorView.height)
-        Rect(0, 0, decorView.width, clampedTop)
-    }
+            // Clamp coordinates to prevent overflow during rotation/multi-window transitions
+            val clampedTop = stableTop.coerceIn(0, decorView.height)
+            val rect = Rect(0, 0, decorView.width, clampedTop)
+            SystemBarStableState.Stable(rect)
+        }
 
     /**
      * Initializes and adds a background View for StatusBar on API 35+.<br><br>
@@ -122,7 +131,11 @@ internal class StatusBarHelper(
         if (!alreadyAttached) {
             (overlay.parent as? ViewGroup)?.removeView(overlay)
 
-            val initialHeight = getStatusBarStableRect(windowInsets)?.height() ?: 0
+            val initialHeight = when (val stableState = getStatusBarStableState(windowInsets)) {
+                is SystemBarStableState.Stable -> stableState.rect.height()
+                SystemBarStableState.NotPresent,
+                SystemBarStableState.NotReady -> 0
+            }
             decorFrame.addView(
                 overlay,
                 FrameLayout.LayoutParams(MATCH_PARENT, initialHeight).apply { gravity = Gravity.TOP }

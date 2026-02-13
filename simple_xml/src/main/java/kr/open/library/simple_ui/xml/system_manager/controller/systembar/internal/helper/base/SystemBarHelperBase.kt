@@ -1,6 +1,7 @@
 package kr.open.library.simple_ui.xml.system_manager.controller.systembar.internal.helper.base
 
 import android.view.View
+import androidx.core.graphics.Insets
 
 internal abstract class SystemBarHelperBase(
     protected val decorView: View
@@ -39,4 +40,13 @@ internal abstract class SystemBarHelperBase(
      *         뷰가 window에 부착되어 있고 양수 width/height를 가지면 true, 그렇지 않으면 false.<br>
      */
     protected fun View.isSystemBarRectReady(): Boolean = isAttachedToWindow && width > 0 && height > 0
+
+    /**
+     * Checks whether all inset edges are zero.<br><br>
+     * Insets의 네 방향 값이 모두 0인지 확인합니다.<br>
+     *
+     * @return true if left/top/right/bottom are all zero, false otherwise.<br><br>
+     *         left/top/right/bottom이 모두 0이면 true, 아니면 false.<br>
+     */
+    protected fun Insets.isAllZero(): Boolean = left == 0 && top == 0 && right == 0 && bottom == 0
 }

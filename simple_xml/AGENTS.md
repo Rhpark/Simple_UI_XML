@@ -89,6 +89,10 @@
 
 
   ### system_manager/controller
+   - **systembar**: 상태바/내비게이션바 제어 (simple_xml/src/main/java/kr/open/library/simple_ui/xml/system_manager/controller/systembar/SystemBarController.kt)
+     - **실제 사용 경로**: Window 확장 함수 기반 진입 (simple_xml/src/main/java/kr/open/library/simple_ui/xml/system_manager/extensions/SystemServiceExtensionsXml.kt)
+       - `Window.getSystemBarController()`
+       - `Window.destroySystemBarControllerCache()`
    - **softkeyboard**: 키보드 제어 (simple_xml/src/main/java/kr/open/library/simple_ui/xml/system_manager/controller/softkeyboard/SoftKeyboardController.kt)
    - **window**: 플로팅 뷰 관리 (simple_xml/src/main/java/kr/open/library/simple_ui/xml/system_manager/controller/window/)
      - drag: 드래그 가능 플로팅 뷰 (simple_xml/src/main/java/kr/open/library/simple_ui/xml/system_manager/controller/window/drag/FloatingDragView.kt)
@@ -167,6 +171,8 @@
 
   ### 시스템 바 제어
    - RootActivity의 setStatusBarColor, setNavigationBarColor 사용
+   - Window 확장 경로 사용 시 `window.getSystemBarController()` 진입 권장
+   - 종료/재생성 시 `window.destroySystemBarControllerCache()`로 캐시 정리 권장
    - API 35 대응 Edge-to-edge 자동 처리
    - 커스텀 배경 뷰 지원
 

@@ -14,6 +14,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
 import kr.open.library.simple_ui.xml.system_manager.controller.systembar.internal.helper.base.SystemBarHelperBase
+import kr.open.library.simple_ui.xml.system_manager.controller.systembar.model.SystemBarStableState
+import kr.open.library.simple_ui.xml.system_manager.controller.systembar.model.SystemBarVisibleState
 
 /**
  * Helper class for managing NavigationBar operations across different Android versions.<br>
@@ -30,56 +32,74 @@ internal class NavigationBarHelper(
     decorView: View
 ) : SystemBarHelperBase(decorView) {
     /**
-     * Returns the window coordinates of the currently visible NavigationBar area.<br>
-     * Uses WindowInsetsCompat with visibility detection.<br>
-     * Supports bottom, left, and right NavigationBar positions.<br><br>
-     * 현재 보이는 NavigationBar 영역의 윈도우 좌표를 반환합니다.<br>
-     * WindowInsetsCompat과 가시성 감지를 사용합니다.<br>
-     * 하단, 왼쪽, 오른쪽 NavigationBar 위치를 지원합니다.<br>
+     * Returns current visible NavigationBar state with unified semantics.<br>
+     * Uses WindowInsetsCompat with visibility detection.<br><br>
+     * 통합 의미 체계로 현재 NavigationBar visible 상태를 반환합니다.<br>
+     * WindowInsetsCompat 기반 가시성 감지를 사용합니다.<br>
      *
-     * @return Rect with window coordinates relative to decorView, or Rect() if NavigationBar is hidden, or null if view not ready.<br>
-     *         - Bottom: (0, decorViewHeight-navHeight, decorViewWidth, decorViewHeight)<br>
-     *         - Left: (0, 0, navWidth, decorViewHeight)<br>
-     *         - Right: (decorViewWidth-navWidth, 0, decorViewWidth, decorViewHeight)<br>
-     *         - Rect() when NavigationBar is hidden (all insets are 0)<br>
-     *         - null when decorView is not attached to window or has invalid dimensions (width/height <= 0)<br><br>
-     *         decorView 기준 윈도우 좌표를 가진 Rect, NavigationBar가 숨겨진 경우 Rect(), 뷰가 준비되지 않은 경우 null.<br>
-     *         - 하단: (0, decorView높이-네비높이, decorView너비, decorView높이)<br>
-     *         - 왼쪽: (0, 0, 네비너비, decorView높이)<br>
-     *         - 오른쪽: (decorView너비-네비너비, 0, decorView너비, decorView높이)<br>
-     *         - NavigationBar가 숨겨진 경우 (모든 insets가 0): Rect()<br>
-     *         - decorView가 window에 부착되지 않았거나 크기가 유효하지 않은 경우 (width/height <= 0): null<br>
+     * @return SystemBarVisibleState.<br>
+     *         - NotReady: decorView/insets 미준비<br>
+     *         - NotPresent: stableInsets/visibleInsets 모두 0<br>
+     *         - Hidden: stableInsets 존재 + visibleInsets == 0<br>
+     *         - Visible: visibleInsets 존재 시 Rect 포함<br><br>
+     *         SystemBarVisibleState.<br>
+     *         - NotReady: decorView/insets가 준비되지 않음<br>
+     *         - NotPresent: stableInsets/visibleInsets 모두 0<br>
+     *         - Hidden: stableInsets 존재 + visibleInsets == 0<br>
+     *         - Visible: visibleInsets 존재 시 Rect 포함<br>
      */
-    public fun getNavigationBarVisibleRect(windowInsets: WindowInsetsCompat): Rect? = safeCatch(null) {
-        if (!decorView.isSystemBarRectReady()) return null
-        insetsToNavigationBarRect(windowInsets.getInsets(WindowInsetsCompat.Type.navigationBars()))
-    }
+    public fun getNavigationBarVisibleState(windowInsets: WindowInsetsCompat?): SystemBarVisibleState =
+        safeCatch(defaultValue = SystemBarVisibleState.NotReady) {
+            if (!decorView.isSystemBarRectReady() || windowInsets == null) return@safeCatch SystemBarVisibleState.NotReady
+
+            val stableInsets = windowInsets.getInsetsIgnoringVisibility(WindowInsetsCompat.Type.navigationBars())
+            val visibleInsets = windowInsets.getInsets(WindowInsetsCompat.Type.navigationBars())
+
+            val stableZero = stableInsets.isAllZero()
+            val visibleZero = visibleInsets.isAllZero()
+
+            if (stableZero && visibleZero) return@safeCatch SystemBarVisibleState.NotPresent
+            if (!stableZero && visibleZero) return@safeCatch SystemBarVisibleState.Hidden
+
+            val rect = insetsToNavigationBarRect(visibleInsets)
+            // Defensive fallback: if insets are non-zero but cannot be converted to a valid edge rect,
+            // treat as NotPresent to avoid exposing inconsistent coordinates to callers.
+            // 방어적 폴백: insets가 0이 아니어도 유효한 edge rect로 변환되지 않으면
+            // 호출부에 불일치 좌표를 노출하지 않기 위해 NotPresent로 처리합니다.
+            if (rect.isEmpty) return@safeCatch SystemBarVisibleState.NotPresent
+            SystemBarVisibleState.Visible(rect)
+        }
 
     /**
-     * Returns the window coordinates of the system-defined (stable) NavigationBar area.<br>
-     * This value remains constant even if the NavigationBar is hidden.<br>
-     * Supports bottom, left, and right NavigationBar positions.<br><br>
-     * 시스템 정의(stable) NavigationBar 영역의 윈도우 좌표를 반환합니다.<br>
-     * 이 값은 NavigationBar가 숨겨진 경우에도 일정하게 유지됩니다.<br>
-     * 하단, 왼쪽, 오른쪽 NavigationBar 위치를 지원합니다.<br>
+     * Returns system-defined (stable) NavigationBar state with unified semantics.<br>
+     * Stable size remains constant even when the bar is hidden.<br><br>
+     * 통합 의미 체계로 시스템 정의(stable) NavigationBar 상태를 반환합니다.<br>
+     * stable 크기는 바가 숨겨져도 일정하게 유지됩니다.<br>
      *
-     * @return Rect with window coordinates relative to decorView, or Rect() if stable insets are 0, or null if view not ready.<br>
-     *         - Bottom: (0, decorViewHeight-navHeight, decorViewWidth, decorViewHeight)<br>
-     *         - Left: (0, 0, navWidth, decorViewHeight)<br>
-     *         - Right: (decorViewWidth-navWidth, 0, decorViewWidth, decorViewHeight)<br>
-     *         - Rect() when navigationBars stableInsets are 0 (e.g., gesture navigation mode)<br>
-     *         - null when decorView is not attached to window or has invalid dimensions (width/height <= 0)<br><br>
-     *         decorView 기준 윈도우 좌표를 가진 Rect, stable insets가 0인 경우 Rect(), 뷰가 준비되지 않은 경우 null.<br>
-     *         - 하단: (0, decorView높이-네비높이, decorView너비, decorView높이)<br>
-     *         - 왼쪽: (0, 0, 네비너비, decorView높이)<br>
-     *         - 오른쪽: (decorView너비-네비너비, 0, decorView너비, decorView높이)<br>
-     *         - navigationBars stableInsets가 0인 경우 (예: 제스처 내비게이션 모드): Rect()<br>
-     *         - decorView가 window에 부착되지 않았거나 크기가 유효하지 않은 경우 (width/height <= 0): null<br>
+     * @return SystemBarStableState.<br>
+     *         - NotReady: decorView/insets 미준비<br>
+     *         - NotPresent: stableInsets == 0<br>
+     *         - Stable: stableInsets 존재 시 Rect 포함<br><br>
+     *         SystemBarStableState.<br>
+     *         - NotReady: decorView/insets가 준비되지 않음<br>
+     *         - NotPresent: stableInsets == 0<br>
+     *         - Stable: stableInsets 존재 시 Rect 포함<br>
      */
-    public fun getNavigationBarStableRect(windowInsets: WindowInsetsCompat): Rect? = safeCatch(null) {
-        if (!decorView.isSystemBarRectReady()) return null
-        insetsToNavigationBarRect(windowInsets.getInsetsIgnoringVisibility(WindowInsetsCompat.Type.navigationBars()))
-    }
+    public fun getNavigationBarStableState(windowInsets: WindowInsetsCompat?): SystemBarStableState =
+        safeCatch(defaultValue = SystemBarStableState.NotReady) {
+            if (!decorView.isSystemBarRectReady() || windowInsets == null) return@safeCatch SystemBarStableState.NotReady
+
+            val stableInsets = windowInsets.getInsetsIgnoringVisibility(WindowInsetsCompat.Type.navigationBars())
+            if (stableInsets.isAllZero()) return@safeCatch SystemBarStableState.NotPresent
+
+            val rect = insetsToNavigationBarRect(stableInsets)
+            // Stable insets should map to a concrete edge rect.
+            // If conversion fails, degrade gracefully as NotPresent.
+            // stable insets는 구체적인 edge rect로 변환되어야 하며,
+            // 변환 실패 시 NotPresent로 안전하게 폴백합니다.
+            if (rect.isEmpty) return@safeCatch SystemBarStableState.NotPresent
+            SystemBarStableState.Stable(rect)
+        }
 
     /**
      * Converts WindowInsets to NavigationBar Rect coordinates.<br>
@@ -97,6 +117,10 @@ internal class NavigationBarHelper(
         val decorWidth = decorView.width.coerceAtLeast(0)
         val decorHeight = decorView.height.coerceAtLeast(0)
 
+        // Priority: bottom -> left -> right.
+        // In normal Android behavior only one edge is expected, and this order keeps deterministic output.
+        // 우선순위: bottom -> left -> right.
+        // 일반적으로 한 번에 하나의 edge만 오므로, 이 순서로 결정적 결과를 보장합니다.
         return when {
             insets.bottom > 0 -> {
                 val top = (decorHeight - insets.bottom).coerceAtLeast(0)
@@ -178,7 +202,11 @@ internal class NavigationBarHelper(
             (overlay.parent as? ViewGroup)?.removeView(overlay)
 
             // 초기 배치 결정 (Insets 미준비/0이면 일단 bottom + height=0으로 붙이고 리스너가 나중에 보정)
-            val navRect = getNavigationBarStableRect(windowInsets) ?: Rect(0, 0, 0, 0)
+            val navRect = when (val stableState = getNavigationBarStableState(windowInsets)) {
+                is SystemBarStableState.Stable -> stableState.rect
+                SystemBarStableState.NotPresent,
+                SystemBarStableState.NotReady -> Rect(0, 0, 0, 0)
+            }
             val decorWidth = decorView.width
             val decorHeight = decorView.height
 
