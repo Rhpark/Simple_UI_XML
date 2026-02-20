@@ -177,7 +177,7 @@ internal class LogxFileWriter {
             } catch (e: IOException) {
                 Log.e(errorTag, "Failed to write log file: ${e.message}")
                 fileSession.close()
-            } catch (e: Exception) {
+            } catch (e: RuntimeException) {
                 Log.e(errorTag, "Failed to write log file: ${e.message}")
                 fileSession.close()
             }

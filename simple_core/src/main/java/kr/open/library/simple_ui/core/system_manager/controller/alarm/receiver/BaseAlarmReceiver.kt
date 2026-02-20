@@ -1,10 +1,14 @@
-﻿package kr.open.library.simple_ui.core.system_manager.controller.alarm.receiver
+package kr.open.library.simple_ui.core.system_manager.controller.alarm.receiver
 
+import android.Manifest.permission.POST_NOTIFICATIONS
+import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.PowerManager
+import androidx.core.content.ContextCompat
 import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
 import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.core.system_manager.controller.alarm.AlarmConstants.ACTION_SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED
@@ -208,7 +212,7 @@ public abstract class BaseAlarmReceiver : BroadcastReceiver() {
             Logx.e("Security exception acquiring WakeLock: ${e.message}")
             // Continue without WakeLock if permission is missing
             processAlarmIntent(context, intent)
-        } catch (e: Exception) {
+        } catch (e: RuntimeException) {
             Logx.e("Unexpected error in alarm processing: ${e.message}")
         } finally {
             // Always release WakeLock in finally block
@@ -253,7 +257,7 @@ public abstract class BaseAlarmReceiver : BroadcastReceiver() {
                     handleAlarmTrigger(context, intent)
                 }
             }
-        } catch (e: Exception) {
+        } catch (e: RuntimeException) {
             Logx.e("Error processing alarm intent: ${e.message}")
         }
     }
@@ -279,7 +283,7 @@ public abstract class BaseAlarmReceiver : BroadcastReceiver() {
                     registerAlarm(alarmController, alarmVo)
                 }
             }
-        } catch (e: Exception) {
+        } catch (e: RuntimeException) {
             Logx.e("Error re-registering alarms after $action: ${e.message}")
         }
     }
@@ -336,8 +340,15 @@ public abstract class BaseAlarmReceiver : BroadcastReceiver() {
             if (alarmVo != null) {
                 createNotificationChannel(context, alarmVo.notification)
                 if (!ensureNotificationControllerInitialized()) return
+                val hasPostNotificationsPermission =
+                    Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
+                        ContextCompat.checkSelfPermission(context, POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
+                if (!hasPostNotificationsPermission) {
+                    Logx.w("POST_NOTIFICATIONS permission is missing. Skip alarm notification for key: $key")
+                    return
+                }
                 val option = buildNotificationOption(context, alarmVo)
-                val shown = notificationController.showNotification(option, resolveNotificationShowType(alarmVo))
+                val shown = showAlarmNotification(option, alarmVo)
                 if (shown) {
                     Logx.d("Alarm notification shown for key: $key")
                 } else {
@@ -362,6 +373,14 @@ public abstract class BaseAlarmReceiver : BroadcastReceiver() {
         Logx.e("notificationController not initialized. Did you set it in createNotificationChannel()?")
         false
     }
+
+    /**
+     * Shows alarm notification after explicit runtime permission validation in caller.<br><br>
+     * 호출부에서 런타임 권한 검증 후 알람 알림을 표시합니다.<br>
+     */
+    @SuppressLint("MissingPermission")
+    private fun showAlarmNotification(option: SimpleNotificationOptionBase, alarmVo: AlarmVO): Boolean =
+        notificationController.showNotification(option, resolveNotificationShowType(alarmVo))
 
     /**
      * Registers an alarm using the resolved registration type.<br>

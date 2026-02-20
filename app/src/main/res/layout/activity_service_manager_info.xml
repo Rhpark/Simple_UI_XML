@@ -13,54 +13,54 @@
 
         <TextView
             style="@style/TextView.MatchWrap.Bold.Center"
-            android:text="Info"
+            android:text="@string/service_manager_info_title"
             android:textSize="24sp" />
 
         <Button
             android:id="@+id/btnDisplay"
             style="@style/Button.MatchWrap.Normal"
-            android:text="Display Info" />
+            android:text="@string/service_manager_display_info" />
 
         <Button
             android:id="@+id/btnSim"
             style="@style/Button.MatchWrap.Normal"
-            android:text="SIM Info" />
+            android:text="@string/service_manager_sim_info" />
 
         <Button
             android:id="@+id/btnTelephonyInfo"
             style="@style/Button.MatchWrap.Normal"
-            android:text="Telephony Basic Info" />
+            android:text="@string/service_manager_telephony_basic_info" />
 
         <LinearLayout style="@style/Layout.MatchWrap.Horizontal">
 
             <Button
                 android:id="@+id/btnTelephonyRegister"
                 style="@style/Button.WeightWrap.Normal"
-                android:text="Telephony Register" />
+                android:text="@string/service_manager_telephony_register" />
 
             <Button
                 android:id="@+id/btnTelephonyUnregister"
                 style="@style/Button.WeightWrap.Normal"
-                android:text="Telephony Unregister" />
+                android:text="@string/service_manager_telephony_unregister" />
 
         </LinearLayout>
 
         <Button
             android:id="@+id/btnNetworkInfo"
             style="@style/Button.MatchWrap.Normal"
-            android:text="Network Basic Info" />
+            android:text="@string/service_manager_network_basic_info" />
 
         <LinearLayout style="@style/Layout.MatchWrap.Horizontal">
 
             <Button
                 android:id="@+id/btnNetworkRegister"
                 style="@style/Button.WeightWrap.Normal"
-                android:text="Network Register" />
+                android:text="@string/service_manager_network_register" />
 
             <Button
                 android:id="@+id/btnNetworkUnregister"
                 style="@style/Button.WeightWrap.Normal"
-                android:text="Network Unregister" />
+                android:text="@string/service_manager_network_unregister" />
 
         </LinearLayout>
 
@@ -69,12 +69,12 @@
             <Button
                 android:id="@+id/btnBatteryRegister"
                 style="@style/Button.WeightWrap.Normal"
-                android:text="Battery Register" />
+                android:text="@string/service_manager_battery_register" />
 
             <Button
                 android:id="@+id/btnBatteryUnregister"
                 style="@style/Button.WeightWrap.Normal"
-                android:text="Battery Unregister" />
+                android:text="@string/service_manager_battery_unregister" />
 
         </LinearLayout>
 
@@ -84,38 +84,38 @@
             <Button
                 android:id="@+id/btnLocationRegister"
                 style="@style/Button.WeightWrap.Normal"
-                android:text="Location Register" />
+                android:text="@string/service_manager_location_register" />
 
             <Button
                 android:id="@+id/btnLocationUnregister"
                 style="@style/Button.WeightWrap.Normal"
-                android:text="Location Unregister" />
+                android:text="@string/service_manager_location_unregister" />
 
         </LinearLayout>
 
         <Button
             android:id="@+id/btnLocationGetLocation"
             style="@style/Button.MatchWrap.Normal"
-            android:text="Location Get Last Location" />
+            android:text="@string/service_manager_location_get_last_location" />
 
         <LinearLayout style="@style/Layout.MatchWrap.Horizontal">
 
             <Button
                 android:id="@+id/btnLocationCalculateDistance"
                 style="@style/Button.WeightWrap.Normal"
-                android:text="Location Calculate Distance" />
+                android:text="@string/service_manager_location_calculate_distance" />
 
             <Button
                 android:id="@+id/btnLocationCalculateBearing"
                 style="@style/Button.WeightWrap.Normal"
-                android:text="Location Calculate Bearing" />
+                android:text="@string/service_manager_location_calculate_bearing" />
 
         </LinearLayout>
 
         <Button
             android:id="@+id/btnLocationCheckRadius"
             style="@style/Button.MatchWrap.Normal"
-            android:text="Location Check Within Radius" />
+            android:text="@string/service_manager_location_check_within_radius" />
 
 
         <kr.open.library.simple_ui.xml.ui.view.recyclerview.RecyclerScrollStateView

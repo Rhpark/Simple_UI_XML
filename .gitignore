@@ -9,6 +9,7 @@
 /.idea/assetWizardSettings.xml
 .DS_Store
 /build
+**/build/
 /captures
 .externalNativeBuild
 .cxx
@@ -20,7 +21,18 @@ codex.md
 
 # Dokka generated documentation
 docs/*
+# Exception: Keep architecture documents
+!docs/ARCHITECTURE.md
+!docs/architecture/
+!docs/architecture/**
+# Exception: Keep README documents under docs/readme
+!docs/readme/
+!docs/readme/**
 # Exception: Keep coverage index page
 !docs/coverage/
 docs/coverage/*
 !docs/coverage/index.html
+
+# Windows reserved-name artifacts
+nul
+**/nul

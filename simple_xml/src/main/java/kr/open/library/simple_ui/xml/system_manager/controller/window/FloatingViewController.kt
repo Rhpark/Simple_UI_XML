@@ -40,16 +40,16 @@ public open class FloatingViewController(
      *
      * @param floatingView Fixed floating view to set, or null to remove.<br><br>
      *                     설정할 고정 플로팅 뷰이며 null이면 제거합니다.<br>
-     * @return true when the view was applied without errors.<br><br>
-     *         오류 없이 적용되면 true를 반환합니다.<br>
+     * @return true when WindowManager apply/remove operation succeeds and internal reference is updated accordingly.<br><br>
+     *         WindowManager 적용/제거가 성공하고 내부 참조가 그 결과에 맞게 갱신되면 true를 반환합니다.<br>
      */
     public fun setFloatingFixedView(floatingView: FloatingFixedView?): Boolean =
         tryCatchSystemManager(false) {
             if (floatingView == null) {
-                removeFloatingFixedView()
-            } else {
-                addView(floatingView.view, floatingView.params)
+                return removeFloatingFixedView()
             }
+
+            if (!addView(floatingView.view, floatingView.params)) return false
             this.floatingFixedView = floatingView
             return true
         }
@@ -69,8 +69,8 @@ public open class FloatingViewController(
      *
      * @param floatingView Draggable floating view to add.<br><br>
      *                     추가할 드래그 플로팅 뷰입니다.<br>
-     * @return true if the view was added and listeners registered.<br><br>
-     *         뷰 추가와 리스너 등록이 완료되면 true를 반환합니다.<br>
+     * @return true if WindowManager add succeeds and the config/listener state is committed.<br><br>
+     *         WindowManager 추가가 성공하고 구성/리스너 상태 반영까지 완료되면 true를 반환합니다.<br>
      */
     public fun addFloatingDragView(floatingView: FloatingDragView): Boolean =
         tryCatchSystemManager(false) {
@@ -113,8 +113,8 @@ public open class FloatingViewController(
                 }
             }
 
+            if (!addView(config.getView(), floatingView.params)) return false
             floatingDragViewInfoList.add(config)
-            addView(config.getView(), floatingView.params)
             return true
         }
 
@@ -176,14 +176,14 @@ public open class FloatingViewController(
      *
      * @param floatingView Draggable floating view to remove.<br><br>
      *                     제거할 드래그 플로팅 뷰입니다.<br>
-     * @return true if the view was found and removed.<br><br>
-     *         뷰를 찾아 제거하면 true를 반환합니다.<br>
+     * @return true if target is found and WindowManager remove succeeds.<br><br>
+     *         대상 뷰를 찾았고 WindowManager 제거가 성공하면 true를 반환합니다.<br>
      */
     public fun removeFloatingDragView(floatingView: FloatingDragView): Boolean =
         tryCatchSystemManager(false) {
             floatingDragViewInfoList.find { it.floatingView == floatingView }?.let {
                 it.getView().setOnTouchListener(null)
-                removeView(it.getView())
+                if (!removeView(it.getView())) return false
                 floatingDragViewInfoList.remove(it)
                 return true
             } ?: return false
@@ -208,29 +208,36 @@ public open class FloatingViewController(
      * Removes the fixed floating view if present.<br><br>
      * 고정 플로팅 뷰가 있으면 제거합니다.<br>
      *
-     * @return true after clearing the fixed view reference.<br><br>
-     *         고정 뷰 참조를 해제하면 true를 반환합니다.<br>
+     * @return true when WindowManager remove succeeds (or no fixed view exists) and the reference is cleared.<br><br>
+     *         WindowManager 제거가 성공했거나 제거 대상이 없어서, 참조 해제가 완료되면 true를 반환합니다.<br>
      */
     public fun removeFloatingFixedView(): Boolean =
         tryCatchSystemManager(false) {
-            floatingFixedView?.let { removeView(it.view) }
+            floatingFixedView?.let {
+                if (!removeView(it.view)) return false
+            }
             floatingFixedView = null
             return true
         }
 
     /**
-     * Removes all floating views (drag and fixed) and clears stored configs.<br><br>
-     * 모든 드래그/고정 플로팅 뷰를 제거하고 저장된 구성을 비웁니다.<br>
+     * Removes all floating views (drag and fixed).<br>
+     * Uses first-failure-stop strategy: returns false immediately on the first failure.<br>
+     * In that case, already-removed items stay removed and remaining items are left as-is (partial cleanup).<br><br>
+     * 모든 드래그/고정 플로팅 뷰를 제거합니다.<br>
+     * first-failure-stop 전략을 사용하며, 첫 실패 지점에서 즉시 false를 반환합니다.<br>
+     * 이 경우 이미 제거된 항목은 제거된 상태로 유지되고, 남은 항목은 그대로 남는 부분 정리 상태가 될 수 있습니다.<br>
      *
-     * @return true after cleanup completes.<br><br>
-     *         정리 완료 후 true를 반환합니다.<br>
+     * @return true when all remove operations succeed; false when any single step fails.<br><br>
+     *         모든 제거 작업이 성공하면 true, 하나라도 실패하면 false를 반환합니다.<br>
      */
     public fun removeAllFloatingView(): Boolean =
         tryCatchSystemManager(false) {
             val configs = floatingDragViewInfoList.toList()
-            configs.forEach { removeFloatingDragView(it.floatingView) }
-            floatingDragViewInfoList.clear()
-            removeFloatingFixedView()
+            configs.forEach { config ->
+                if (!removeFloatingDragView(config.floatingView)) return false
+            }
+            if (!removeFloatingFixedView()) return false
             return true
         }
 
@@ -247,7 +254,7 @@ public open class FloatingViewController(
 
             removeAllFloatingView()
             floatingDragViewInfoList.clear()
-        } catch (e: Exception) {
+        } catch (e: RuntimeException) {
             Logx.e("Error during FloatingViewController cleanup: ${e.message}")
         } finally {
             super.onDestroy()

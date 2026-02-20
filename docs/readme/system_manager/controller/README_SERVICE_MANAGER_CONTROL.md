@@ -25,7 +25,7 @@ This document is a quick summary for fast review, and details are split into sep
 |---|---|---|
 | SystemBarController | Status/navigation bar color, visibility, edge-to-edge, insets state + sealed state contract (상태/내비게이션 바 색상·가시성·edge-to-edge·insets 상태 + sealed 상태 계약) | [xml/README_SYSTEMBAR_CONTROLLER.md](xml/README_SYSTEMBAR_CONTROLLER.md) |
 | SoftKeyboardController | Keyboard request/await contract + resize policy (키보드 요청/대기 계약 + resize 정책) | [xml/README_SOFTKEYBOARD_CONTROLLER.md](xml/README_SOFTKEYBOARD_CONTROLLER.md) |
-| FloatingViewController | Floating view add/move/remove (플로팅 뷰 추가/이동/제거) | [xml/README_FLOATING_VIEW_CONTROLLER.md](xml/README_FLOATING_VIEW_CONTROLLER.md) |
+| FloatingViewController | Floating view add/move/remove + WindowManager success-based Boolean contract (플로팅 뷰 추가/이동/제거 + WindowManager 성공 기준 Boolean 계약) | [xml/README_FLOATING_VIEW_CONTROLLER.md](xml/README_FLOATING_VIEW_CONTROLLER.md) |
 
 **Context/Window Extension Functions (컨텍스트/윈도우 확장 함수):**
 See full list / 전체 목록: [README_SYSTEM_MANAGER_EXTENSIONS.md](../README_SYSTEM_MANAGER_EXTENSIONS.md)
@@ -38,7 +38,8 @@ See full list / 전체 목록: [README_SYSTEM_MANAGER_EXTENSIONS.md](../README_S
 - 상태 계약: `NotReady`, `NotPresent`, `Hidden`, `Visible(rect)`, `Stable(rect)`
 - `Hidden`은 `stable`이 존재하고 `visible`이 0일 때만 해당하며, 둘 다 0이면 `NotPresent`
 - API 35+ 색상 적용 시 insets 미준비면 `WindowInsetsCompat.CONSUMED` 폴백을 사용
-- 가시성 API 내부 controller 경로는 `systemBarsBehavior = BEHAVIOR_DEFAULT`를 재설정
+- 가시성 API(`setStatusBarVisible/Gone`, `setNavigationBarVisible/Gone`) 내부 controller 경로에서만 `systemBarsBehavior = BEHAVIOR_DEFAULT`를 재설정
+- 아이콘/색상 API(`setStatusBarDarkIcon`, `setNavigationBarDarkIcon`, `setStatusBarColor`, `setNavigationBarColor`)는 `systemBarsBehavior`를 변경하지 않음
 
 <br></br>
 
@@ -78,6 +79,9 @@ See full list / 전체 목록: [README_SYSTEM_MANAGER_EXTENSIONS.md](../README_S
 - Android 13+ notifications require the `POST_NOTIFICATIONS` permission.
 - `NotificationChannel` is required, and `createChannel()` applies only to notifications created afterward.
 - If you used progress notifications, call `cleanup()` when the Activity/Service ends.
+- Alarm trigger path also checks `POST_NOTIFICATIONS` at runtime and safely skips notification display if missing.
+- Controller async/cleanup paths use `RuntimeException` boundaries to avoid swallowing broad checked exceptions while keeping runtime safety.
+- Notification-related source/docs should be kept in UTF-8 to prevent Korean text corruption in KDoc and generated documents.
 - VibratorController: `createPredefined()` is available from Android Q(29); pre-Q returns false and logs a warning.
 - VibratorController: `VIBRATE` is a normal permission (declare in AndroidManifest.xml; no runtime prompt).
 - VibratorController: `repeat` >= 0 repeats until `cancel()` is called.
@@ -85,9 +89,13 @@ See full list / 전체 목록: [README_SYSTEM_MANAGER_EXTENSIONS.md](../README_S
 > Android 13+ 알림은 `POST_NOTIFICATIONS` 권한이 필요합니다.
 > `NotificationChannel` 전달은 필수이며, `createChannel()`은 **이후 생성되는 알림**에만 적용됩니다.
 > 진행률 알림을 사용했다면 Activity/Service 종료 시 `cleanup()` 호출을 권장합니다.
+> Alarm 트리거 경로도 런타임에서 `POST_NOTIFICATIONS`를 확인하며, 권한이 없으면 알림 표시를 안전하게 건너뜁니다.
+> Controller 비동기/정리 경로는 `RuntimeException` 경계를 사용하여, 과도한 checked 예외 삼킴을 피하면서 런타임 안전성을 유지합니다.
+> 알림 관련 소스/문서는 KDoc 및 생성 문서의 한글 깨짐 방지를 위해 UTF-8 인코딩을 유지해야 합니다.
 > VibratorController: `createPredefined()`는 Android Q(29)+에서만 지원되며, pre-Q에서는 false 반환 + 경고 로그를 출력합니다.
 > VibratorController: `VIBRATE`는 일반 권한이므로 매니페스트 선언만 필요하고 런타임 요청은 없습니다.
 > VibratorController: `repeat`가 0 이상이면 `cancel()` 호출 전까지 반복됩니다.
+> FloatingViewController: `removeAllFloatingView()`는 `first-failure-stop` 전략이며 일반 호출에서 부분 정리 상태가 남을 수 있습니다.
 
 <br></br>
 

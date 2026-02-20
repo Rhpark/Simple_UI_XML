@@ -193,7 +193,7 @@ internal class AdapterOperationQueueCoordinator<ITEM : Any, META>(
         val result =
             try {
                 operation.apply(oldItems)
-            } catch (e: Exception) {
+            } catch (e: RuntimeException) {
                 onError("Error executing operation: ${operation.name}", e)
                 onFailure(operation.name, AdapterOperationFailure.Exception(e))
                 complete(false)
@@ -230,7 +230,7 @@ internal class AdapterOperationQueueCoordinator<ITEM : Any, META>(
         val result =
             try {
                 operation.apply(oldItems)
-            } catch (e: Exception) {
+            } catch (e: RuntimeException) {
                 onError("Error executing operation: ${operation.name}", e)
                 onFailure(operation.name, AdapterOperationFailure.Exception(e))
                 runOnMainThread { complete(false) }

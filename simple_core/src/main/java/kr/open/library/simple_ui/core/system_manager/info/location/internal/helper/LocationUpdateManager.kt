@@ -1,8 +1,11 @@
 package kr.open.library.simple_ui.core.system_manager.info.location.internal.helper
 
+import android.Manifest.permission.ACCESS_COARSE_LOCATION
+import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.annotation.SuppressLint
 import android.content.Context
 import android.location.LocationManager
+import androidx.annotation.RequiresPermission
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharedFlow
 import kr.open.library.simple_ui.core.system_manager.info.location.LocationStateEvent
@@ -55,6 +58,7 @@ internal class LocationUpdateManager(
      * Registers location listener with the specified settings.<br><br>
      * 지정된 설정으로 위치 리스너를 등록합니다.<br>
      */
+    @RequiresPermission(allOf = [ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION])
     internal fun registerLocationListener(
         locationProvider: String,
         updateCycleTime: Long,

@@ -293,7 +293,7 @@ internal class OperationQueueProcessor<OPERATION>(
                 pendingSize = operationQueue.size,
             )
             execute(operation) { success -> complete(operation, success) }
-        } catch (e: Exception) {
+        } catch (e: RuntimeException) {
             reportError("Error executing operation: ${getName(operation)}", e)
             emitDebug(
                 type = QueueEventType.ERROR,
@@ -312,7 +312,7 @@ internal class OperationQueueProcessor<OPERATION>(
     private fun complete(operation: OPERATION, success: Boolean) {
         try {
             onComplete(operation, success)
-        } catch (e: Exception) {
+        } catch (e: RuntimeException) {
             reportError("Error in operation completion: ${getName(operation)}", e)
         }
 
@@ -344,7 +344,7 @@ internal class OperationQueueProcessor<OPERATION>(
     private fun reportError(message: String, cause: Exception?) {
         try {
             onError(message, cause)
-        } catch (_: Exception) {
+        } catch (_: RuntimeException) {
             // Swallow errors from error reporting to avoid breaking the queue flow.<br><br>
             // 에러 보고 중 예외는 큐 흐름을 깨지 않도록 무시합니다.<br>
         }

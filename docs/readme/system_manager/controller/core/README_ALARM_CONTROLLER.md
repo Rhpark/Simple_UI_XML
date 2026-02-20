@@ -11,6 +11,9 @@
 Provides simple APIs for alarm register/remove/existence checks.  
 > 알람 등록/삭제/존재 확인을 간단한 API로 제공합니다.
 
+- Android 13+ notification trigger path checks `POST_NOTIFICATIONS` first and safely skips when missing.
+> Android 13+에서 알림 트리거 시 `POST_NOTIFICATIONS` 권한을 먼저 확인하고, 권한이 없으면 크래시 없이 스킵합니다.
+
 <br></br>
 
 ## At a Glance (한눈 비교)
@@ -20,6 +23,7 @@ Provides simple APIs for alarm register/remove/existence checks.
 | PendingIntent | Manual creation + flag management | Created internally | Key-based management<br>키 기반 관리 |
 | AlarmClockInfo | Manual creation | Handled internally | Less boilerplate<br>코드 간소화 |
 | Remove / Exists check | Manual query/cancel | `remove()` / `exists()` | One-line call<br>한 줄 호출 |
+| Alarm trigger safety | Caller-side permission handling | Internal guard in receiver | Android 13+ `POST_NOTIFICATIONS` pre-check<br>권한 누락 시 안전 스킵 |
 | Permission / SDK branching | Handled by caller | Handled internally | Exact alarm permission required<br>Exact 알람 권한 주의 |
 
 <br></br>

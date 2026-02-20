@@ -21,10 +21,13 @@ package kr.open.library.simple_ui.xml.extensions.resource
 
 import android.app.Activity
 import android.content.Context
+import android.content.ContextWrapper
 import android.graphics.drawable.Drawable
+import androidx.annotation.ArrayRes
 import androidx.annotation.ColorRes
 import androidx.annotation.DimenRes
 import androidx.annotation.DrawableRes
+import androidx.annotation.IntegerRes
 import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
@@ -113,7 +116,9 @@ public fun Context.getStringFormatted(
  * @return Array of strings.<br><br>
  *         문자열 배열.<br>
  */
-public fun Context.getStringArray(arrayRes: Int): Array<String> = resources.getStringArray(arrayRes)
+public fun Context.getStringArray(
+    @ArrayRes arrayRes: Int,
+): Array<String> = resources.getStringArray(arrayRes)
 
 /**
  * Gets integer value from resources.<br><br>
@@ -125,7 +130,9 @@ public fun Context.getStringArray(arrayRes: Int): Array<String> = resources.getS
  * @return The integer value.<br><br>
  *         정수 값.<br>
  */
-public fun Context.getInteger(intRes: Int): Int = resources.getInteger(intRes)
+public fun Context.getInteger(
+    @IntegerRes intRes: Int,
+): Int = resources.getInteger(intRes)
 
 /**
  * Safely gets a drawable, returning null if resource is not found or invalid.<br><br>
@@ -183,8 +190,15 @@ public fun Context.getStringSafe(
  *         컨텍스트가 파괴되었거나 종료 중이면 true, 그렇지 않으면 false를 반환합니다.<br>
  */
 public fun Context.isContextDestroyed(): Boolean =
-    if (this is Activity) {
-        this.isDestroyed || this.isFinishing
-    } else {
-        false
+    when (this) {
+        is Activity -> isDestroyed || isFinishing
+        is ContextWrapper -> {
+            val base = baseContext
+            if (base == null || base === this) {
+                false
+            } else {
+                base.isContextDestroyed()
+            }
+        }
+        else -> false
     }

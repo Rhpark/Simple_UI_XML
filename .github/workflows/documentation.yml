@@ -22,7 +22,8 @@ jobs:
       - name: Download metadata artifact
         uses: dawidd6/action-download-artifact@v3
         with:
-          workflow: android-ci.yml
+          workflow: android-cd.yml
+          run_id: ${{ github.event.workflow_run.id }}
           name: release-metadata
           path: metadata
           if_no_artifact_found: ignore
@@ -186,10 +187,11 @@ jobs:
           echo "✅ Documentation generated successfully"
           ls -la docs/api/
 
-      - name: Download coverage report from CI
+      - name: Download coverage report from triggering CD run
         uses: dawidd6/action-download-artifact@v3
         with:
-          workflow: android-ci.yml
+          workflow: android-cd.yml
+          run_id: ${{ github.event.workflow_run.id }}
           name: coverage-report
           path: coverage-from-ci
           if_no_artifact_found: fail

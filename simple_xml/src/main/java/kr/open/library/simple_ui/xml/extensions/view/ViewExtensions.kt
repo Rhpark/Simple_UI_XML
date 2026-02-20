@@ -3,7 +3,9 @@ package kr.open.library.simple_ui.xml.extensions.view
 import android.os.SystemClock
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.MainThread
 import kr.open.library.simple_ui.xml.R
+import kr.open.library.simple_ui.xml.internal.thread.assertMainThreadDebug
 
 /**
  * View extension functions for visibility, sizing, margins, padding, and click handling.<br>
@@ -51,7 +53,9 @@ internal object ViewIds {
  * Sets the view's visibility to VISIBLE.<br><br>
  * View의 가시성을 VISIBLE로 설정합니다.<br>
  */
+@MainThread
 public fun View.setVisible() {
+    assertMainThreadDebug("View.setVisible")
     if (this.visibility != View.VISIBLE) this.visibility = View.VISIBLE
 }
 
@@ -59,7 +63,9 @@ public fun View.setVisible() {
  * Sets the view's visibility to GONE.<br><br>
  * View의 가시성을 GONE으로 설정합니다.<br>
  */
+@MainThread
 public fun View.setGone() {
+    assertMainThreadDebug("View.setGone")
     if (this.visibility != View.GONE) this.visibility = View.GONE
 }
 
@@ -67,7 +73,9 @@ public fun View.setGone() {
  * Sets the view's visibility to INVISIBLE.<br><br>
  * View의 가시성을 INVISIBLE로 설정합니다.<br>
  */
+@MainThread
 public fun View.setInvisible() {
+    assertMainThreadDebug("View.setInvisible")
     if (this.visibility != View.INVISIBLE) this.visibility = View.INVISIBLE
 }
 
@@ -83,10 +91,12 @@ public fun View.setInvisible() {
  * @param action The action to execute when a valid click occurs.<br><br>
  *               유효한 클릭이 발생했을 때 실행할 작업.<br>
  */
+@MainThread
 public fun View.setOnDebouncedClickListener(
     debounceTime: Long = 600L,
     action: (View) -> Unit,
 ) {
+    assertMainThreadDebug("View.setOnDebouncedClickListener")
     setOnClickListener { view ->
         val currentTime = SystemClock.elapsedRealtime()
         val lastClickTime = (view.getTag(ViewIds.LAST_CLICK_TIME) as? Long) ?: 0L
@@ -105,7 +115,9 @@ public fun View.setOnDebouncedClickListener(
  * @param action The action to execute for each child view.<br><br>
  *               각 자식 View에 대해 실행할 작업.<br>
  */
+@MainThread
 public fun ViewGroup.forEachChild(action: (View) -> Unit) {
+    assertMainThreadDebug("ViewGroup.forEachChild")
     for (i in 0 until childCount) {
         action(getChildAt(i))
     }
@@ -127,12 +139,14 @@ public fun ViewGroup.forEachChild(action: (View) -> Unit) {
  * @param bottom Bottom margin in pixels.<br><br>
  *               하단 여백(픽셀 단위).<br>
  */
+@MainThread
 public fun View.setMargins(
     left: Int,
     top: Int,
     right: Int,
     bottom: Int,
 ) {
+    assertMainThreadDebug("View.setMargins")
     if (layoutParams is ViewGroup.MarginLayoutParams) {
         val params = layoutParams as ViewGroup.MarginLayoutParams
         params.setMargins(left, top, right, bottom)
@@ -147,7 +161,9 @@ public fun View.setMargins(
  * @param margin Margin value in pixels for all sides.<br><br>
  *               모든 면의 여백 값(픽셀 단위).<br>
  */
+@MainThread
 public fun View.setMargin(margin: Int) {
+    assertMainThreadDebug("View.setMargin")
     setMargins(margin, margin, margin, margin)
 }
 
@@ -158,7 +174,9 @@ public fun View.setMargin(margin: Int) {
  * @param padding Padding value in pixels for all sides.<br><br>
  *                모든 면의 패딩 값(픽셀 단위).<br>
  */
+@MainThread
 public fun View.setPadding(padding: Int) {
+    assertMainThreadDebug("View.setPadding")
     setPadding(padding, padding, padding, padding)
 }
 
@@ -169,7 +187,9 @@ public fun View.setPadding(padding: Int) {
  * @param width Width in pixels.<br><br>
  *              너비(픽셀 단위).<br>
  */
+@MainThread
 public fun View.setWidth(width: Int) {
+    assertMainThreadDebug("View.setWidth")
     layoutParams?.let { params ->
         params.width = width
         layoutParams = params
@@ -183,7 +203,9 @@ public fun View.setWidth(width: Int) {
  * @param height Height in pixels.<br><br>
  *               높이(픽셀 단위).<br>
  */
+@MainThread
 public fun View.setHeight(height: Int) {
+    assertMainThreadDebug("View.setHeight")
     layoutParams?.let { params ->
         params.height = height
         layoutParams = params
@@ -200,10 +222,12 @@ public fun View.setHeight(height: Int) {
  * @param height Height in pixels.<br><br>
  *               높이(픽셀 단위).<br>
  */
+@MainThread
 public fun View.setSize(
     width: Int,
     height: Int,
 ) {
+    assertMainThreadDebug("View.setSize")
     layoutParams?.let { params ->
         params.width = width
         params.height = height
@@ -215,7 +239,9 @@ public fun View.setSize(
  * Sets the view width to match parent.<br><br>
  * View의 너비를 부모에 맞춥니다.<br>
  */
+@MainThread
 public fun View.setWidthMatchParent() {
+    assertMainThreadDebug("View.setWidthMatchParent")
     setWidth(ViewGroup.LayoutParams.MATCH_PARENT)
 }
 
@@ -223,7 +249,9 @@ public fun View.setWidthMatchParent() {
  * Sets the view height to match parent.<br><br>
  * View의 높이를 부모에 맞춥니다.<br>
  */
+@MainThread
 public fun View.setHeightMatchParent() {
+    assertMainThreadDebug("View.setHeightMatchParent")
     setHeight(ViewGroup.LayoutParams.MATCH_PARENT)
 }
 
@@ -231,7 +259,9 @@ public fun View.setHeightMatchParent() {
  * Sets the view width to wrap content.<br><br>
  * View의 너비를 내용에 맞춥니다.<br>
  */
+@MainThread
 public fun View.setWidthWrapContent() {
+    assertMainThreadDebug("View.setWidthWrapContent")
     setWidth(ViewGroup.LayoutParams.WRAP_CONTENT)
 }
 
@@ -239,6 +269,8 @@ public fun View.setWidthWrapContent() {
  * Sets the view height to wrap content.<br><br>
  * View의 높이를 내용에 맞춥니다.<br>
  */
+@MainThread
 public fun View.setHeightWrapContent() {
+    assertMainThreadDebug("View.setHeightWrapContent")
     setHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
 }

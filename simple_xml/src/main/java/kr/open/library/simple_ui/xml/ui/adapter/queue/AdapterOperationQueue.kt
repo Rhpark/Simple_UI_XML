@@ -47,7 +47,7 @@ internal class AdapterOperationQueue<ITEM>(
                 if (!success) return@OperationQueueProcessor
                 try {
                     operation.callback?.invoke()
-                } catch (e: Exception) {
+                } catch (e: RuntimeException) {
                     Logx.e("Error in operation callback", e)
                 }
             },
@@ -64,27 +64,27 @@ internal class AdapterOperationQueue<ITEM>(
      * Sealed class representing list operations.<br><br>
      * 리스트 연산을 표현하는 Sealed 클래스입니다.<br>
      */
-    sealed class Operation<ITEM> {
+    internal sealed class Operation<ITEM> {
         abstract val callback: (() -> Unit)?
 
         abstract fun execute(currentList: List<ITEM>): List<ITEM>
     }
 
-    data class SetItemsOp<ITEM>(
+    internal data class SetItemsOp<ITEM>(
         val items: List<ITEM>,
         override val callback: (() -> Unit)?,
     ) : Operation<ITEM>() {
         override fun execute(currentList: List<ITEM>): List<ITEM> = items
     }
 
-    data class AddItemOp<ITEM>(
+    internal data class AddItemOp<ITEM>(
         val item: ITEM,
         override val callback: (() -> Unit)?,
     ) : Operation<ITEM>() {
         override fun execute(currentList: List<ITEM>): List<ITEM> = currentList.toMutableList().apply { add(item) }
     }
 
-    data class AddItemAtOp<ITEM>(
+    internal data class AddItemAtOp<ITEM>(
         val position: Int,
         val item: ITEM,
         override val callback: (() -> Unit)?,
@@ -97,14 +97,14 @@ internal class AdapterOperationQueue<ITEM>(
         }
     }
 
-    data class AddItemsOp<ITEM>(
+    internal data class AddItemsOp<ITEM>(
         val items: List<ITEM>,
         override val callback: (() -> Unit)?,
     ) : Operation<ITEM>() {
         override fun execute(currentList: List<ITEM>): List<ITEM> = currentList.toMutableList().apply { addAll(items) }
     }
 
-    data class AddItemsAtOp<ITEM>(
+    internal data class AddItemsAtOp<ITEM>(
         val position: Int,
         val items: List<ITEM>,
         override val callback: (() -> Unit)?,
@@ -117,7 +117,7 @@ internal class AdapterOperationQueue<ITEM>(
         }
     }
 
-    data class RemoveAtOp<ITEM>(
+    internal data class RemoveAtOp<ITEM>(
         val position: Int,
         override val callback: (() -> Unit)?,
     ) : Operation<ITEM>() {
@@ -129,7 +129,7 @@ internal class AdapterOperationQueue<ITEM>(
         }
     }
 
-    data class RemoveItemOp<ITEM>(
+    internal data class RemoveItemOp<ITEM>(
         val item: ITEM,
         override val callback: (() -> Unit)?,
     ) : Operation<ITEM>() {
@@ -140,13 +140,13 @@ internal class AdapterOperationQueue<ITEM>(
         }
     }
 
-    data class ClearItemsOp<ITEM>(
+    internal data class ClearItemsOp<ITEM>(
         override val callback: (() -> Unit)?,
     ) : Operation<ITEM>() {
         override fun execute(currentList: List<ITEM>): List<ITEM> = emptyList()
     }
 
-    data class MoveItemOp<ITEM>(
+    internal data class MoveItemOp<ITEM>(
         val fromPosition: Int,
         val toPosition: Int,
         override val callback: (() -> Unit)?,
@@ -166,7 +166,7 @@ internal class AdapterOperationQueue<ITEM>(
         }
     }
 
-    data class ReplaceItemAtOp<ITEM>(
+    internal data class ReplaceItemAtOp<ITEM>(
         val position: Int,
         val item: ITEM,
         override val callback: (() -> Unit)?,

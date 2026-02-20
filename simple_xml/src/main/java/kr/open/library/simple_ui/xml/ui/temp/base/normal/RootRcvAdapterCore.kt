@@ -859,7 +859,7 @@ abstract class RootRcvAdapterCore<ITEM : Any, VH : RecyclerView.ViewHolder>(
                 override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any? =
                     diffUtilGetChangePayload(oldItems[oldItemPosition], newItems[newItemPosition])
             })
-        } catch (e: Exception) {
+        } catch (e: RuntimeException) {
             Logx.e("DiffUtil apply failed: ${e.message}")
             null
         }

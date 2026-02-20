@@ -38,6 +38,8 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
+import kr.open.library.simple_ui.xml.internal.thread.assertMainThreadDebug
+import kotlin.math.max
 
 /**
  * Inflates a layout resource into this ViewGroup.<br><br>
@@ -68,7 +70,10 @@ public fun ViewGroup.getLayoutInflater(
  *         LifecycleOwner 또는 찾을 수 없으면 null.<br>
  */
 @MainThread
-inline fun View.findHostLifecycleOwner(): LifecycleOwner? = findViewTreeLifecycleOwner() ?: (context as? LifecycleOwner)
+inline fun View.findHostLifecycleOwner(): LifecycleOwner? {
+    assertMainThreadDebug("View.findHostLifecycleOwner")
+    return findViewTreeLifecycleOwner() ?: (context as? LifecycleOwner)
+}
 
 /**
  * Binds a lifecycle observer to the current LifecycleOwner.<br>
@@ -84,17 +89,20 @@ inline fun View.findHostLifecycleOwner(): LifecycleOwner? = findViewTreeLifecycl
  */
 @MainThread
 fun View.bindLifecycleObserver(observer: DefaultLifecycleObserver): LifecycleOwner? {
+    assertMainThreadDebug("View.bindLifecycleObserver")
     val current = findHostLifecycleOwner() ?: return null
-    val old = getTag(ViewIds.TAG_OBSERVED_OWNER) as? LifecycleOwner
-    if (old !== current) {
-        old?.lifecycle?.removeObserver(observer)
-        val res =
+    val bindings = getLifecycleObserverBindings()
+    val oldOwner = bindings[observer]
+    if (oldOwner !== current) {
+        oldOwner?.lifecycle?.removeObserver(observer)
+        val registered =
             safeCatch(false) {
                 current.lifecycle.addObserver(observer)
-                setTag(ViewIds.TAG_OBSERVED_OWNER, current)
                 true
             }
-        if (res == false) return null
+        if (!registered) return null
+        bindings[observer] = current
+        setTag(ViewIds.TAG_OBSERVED_OWNER, bindings)
     }
     return current
 }
@@ -110,8 +118,32 @@ fun View.bindLifecycleObserver(observer: DefaultLifecycleObserver): LifecycleOwn
  */
 @MainThread
 fun View.unbindLifecycleObserver(observer: DefaultLifecycleObserver) {
-    (getTag(ViewIds.TAG_OBSERVED_OWNER) as? LifecycleOwner)?.lifecycle?.removeObserver(observer)
-    setTag(ViewIds.TAG_OBSERVED_OWNER, null)
+    assertMainThreadDebug("View.unbindLifecycleObserver")
+    @Suppress("UNCHECKED_CAST")
+    val bindings =
+        getTag(ViewIds.TAG_OBSERVED_OWNER) as? MutableMap<DefaultLifecycleObserver, LifecycleOwner>
+            ?: return
+
+    bindings.remove(observer)?.lifecycle?.removeObserver(observer)
+
+    if (bindings.isEmpty()) {
+        setTag(ViewIds.TAG_OBSERVED_OWNER, null)
+    } else {
+        setTag(ViewIds.TAG_OBSERVED_OWNER, bindings)
+    }
+}
+
+@MainThread
+private fun View.getLifecycleObserverBindings(): MutableMap<DefaultLifecycleObserver, LifecycleOwner> {
+    assertMainThreadDebug("View.getLifecycleObserverBindings")
+    @Suppress("UNCHECKED_CAST")
+    val existing =
+        getTag(ViewIds.TAG_OBSERVED_OWNER) as? MutableMap<DefaultLifecycleObserver, LifecycleOwner>
+    if (existing != null) return existing
+
+    return mutableMapOf<DefaultLifecycleObserver, LifecycleOwner>().also {
+        setTag(ViewIds.TAG_OBSERVED_OWNER, it)
+    }
 }
 
 /**
@@ -123,7 +155,9 @@ fun View.unbindLifecycleObserver(observer: DefaultLifecycleObserver) {
  * @param action Block to execute when view is laid out.<br><br>
  *               View가 레이아웃될 때 실행할 블록.<br>
  */
+@MainThread
 public inline fun View.doOnLayout(crossinline action: (view: View) -> Unit) {
+    assertMainThreadDebug("View.doOnLayout")
     if (isLaidOut && !isLayoutRequested) {
         action(this)
     } else {
@@ -145,7 +179,9 @@ public inline fun View.doOnLayout(crossinline action: (view: View) -> Unit) {
  * @return Pair of (x, y) coordinates on screen.<br><br>
  *         화면상 (x, y) 좌표의 Pair.<br>
  */
+@MainThread
 public fun View.getLocationOnScreen(): Pair<Int, Int> {
+    assertMainThreadDebug("View.getLocationOnScreen")
     val location = IntArray(2)
     getLocationOnScreen(location)
     return Pair(location[0], location[1])
@@ -169,22 +205,26 @@ public fun View.getLocationOnScreen(): Pair<Int, Int> {
  * @param bottom Whether to apply bottom inset as bottom padding (default: true).<br><br>
  *               하단 인셋을 하단 패딩으로 적용할지 여부 (기본값: true).<br>
  */
+@MainThread
 public fun View.applyWindowInsetsAsPadding(
     left: Boolean = true,
     top: Boolean = true,
     right: Boolean = true,
     bottom: Boolean = true,
 ) {
+    assertMainThreadDebug("View.applyWindowInsetsAsPadding")
     val initialPadding = Pair(Pair(paddingLeft, paddingTop), Pair(paddingRight, paddingBottom))
 
     ViewCompat.setOnApplyWindowInsetsListener(this) { view, insets ->
         val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+        val imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime())
+        val bottomInset = max(systemBars.bottom, imeInsets.bottom)
 
         view.setPadding(
             if (left) initialPadding.first.first + systemBars.left else initialPadding.first.first,
             if (top) initialPadding.first.second + systemBars.top else initialPadding.first.second,
             if (right) initialPadding.second.first + systemBars.right else initialPadding.second.first,
-            if (bottom) initialPadding.second.second + systemBars.bottom else initialPadding.second.second,
+            if (bottom) initialPadding.second.second + bottomInset else initialPadding.second.second,
         )
 
         insets

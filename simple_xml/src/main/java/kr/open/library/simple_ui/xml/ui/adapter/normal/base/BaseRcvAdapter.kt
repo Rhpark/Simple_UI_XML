@@ -555,7 +555,7 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder>(
                         method.invoke(this, executor)
                     } catch (_: NoSuchMethodException) {
                         Logx.w("AsyncListDiffer", "setBackgroundThreadExecutor not available")
-                    } catch (e: Exception) {
+                    } catch (e: ReflectiveOperationException) {
                         Logx.w("AsyncListDiffer", "Failed to set test executor: ${e.message}")
                     }
                 }
@@ -574,7 +574,7 @@ public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder>(
                             "setDetectMoves not available; detectMoves flag is ignored on this version.",
                         )
                     }
-                } catch (e: Exception) {
+                } catch (e: ReflectiveOperationException) {
                     Logx.w("AsyncListDiffer", "Failed to reflectively set detectMoves: ${e.message}")
                 }
             }.build()

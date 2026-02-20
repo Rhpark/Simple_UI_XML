@@ -26,9 +26,11 @@ The table below lists required permissions by Info type and whether runtime perm
 - **Runtime/Special only** – BaseSystemService validates runtime/special permissions only; non-dangerous permissions are treated as granted by design.
 - **Default value fallback** – If runtime/special permission is missing or an error occurs, tryCatchSystemManager() returns a default value and logs a warning.
 - **Refresh after grant** – Call BaseSystemService.refreshPermissions() after permissions are granted to update the internal cache.
+- **Shared manifest permission reader** – Manifest-declared permission loading is centralized in `Context.readDeclaredManifestPermissions()` and shared by BaseSystemService and PermissionClassifier for consistent behavior.
 > - **런타임/특수 권한만 검증** – BaseSystemService는 런타임/특수 권한만 검증하며, non-dangerous 권한은 설계상 허용된 것으로 간주합니다.
 > - **기본값 반환** – 런타임/특수 권한이 없거나 오류가 발생하면 tryCatchSystemManager()가 기본값을 반환하고 경고를 기록합니다.
 > - **권한 갱신** – 권한 허용 후 BaseSystemService.refreshPermissions()를 호출해 내부 캐시를 갱신하세요.
+> - **매니페스트 권한 조회 공통화** – 매니페스트 선언 권한 조회는 `Context.readDeclaredManifestPermissions()`로 일원화되어 BaseSystemService와 PermissionClassifier가 동일 동작을 사용합니다.
 
 <br></br>
 

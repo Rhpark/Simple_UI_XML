@@ -299,6 +299,9 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
+      - name: API compatibility check
+        run: bash -o pipefail -c "./gradlew apiCheck --build-cache |& tee api-check.log"
+
       - name: Run tests and generate coverage
         run: bash -o pipefail -c "./gradlew :simple_core:koverHtmlReport :simple_xml:koverHtmlReport --build-cache |& tee test-coverage.log"
 
@@ -423,7 +426,7 @@ jobs:
             echo "BUILD_FAILURE_SOURCE=assemble"
           } >> "$GITHUB_ENV"
 
-      - name: Android Lint (non-blocking)
+      - name: Android Lint (blocking)
         run: bash -o pipefail -c "./gradlew lint --build-cache |& tee build-lint.log"
 
       - name: Capture failure snippet (lint)

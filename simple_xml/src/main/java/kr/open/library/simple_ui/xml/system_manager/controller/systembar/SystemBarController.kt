@@ -138,9 +138,13 @@ public class SystemBarController(
      * @return WindowInsetsControllerCompat instance.<br><br>
      *         WindowInsetsControllerCompat 인스턴스.<br>
      */
-    private fun getWindowInsetController() = WindowCompat.getInsetsController(window, window.decorView).apply {
-        systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_DEFAULT
-    }
+    private fun getWindowInsetController(): WindowInsetsControllerCompat =
+        WindowCompat.getInsetsController(window, window.decorView)
+
+    private fun getWindowInsetControllerForVisibility(): WindowInsetsControllerCompat =
+        getWindowInsetController().apply {
+            systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_DEFAULT
+        }
 
     // region State Query / 상태 조회
 
@@ -380,7 +384,7 @@ public class SystemBarController(
         window.apply {
             checkSdkVersion(
                 Build.VERSION_CODES.R,
-                positiveWork = { getWindowInsetController().show(WindowInsetsCompat.Type.statusBars()) },
+                positiveWork = { getWindowInsetControllerForVisibility().show(WindowInsetsCompat.Type.statusBars()) },
                 negativeWork = {
                     @Suppress("DEPRECATION")
                     clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
@@ -407,7 +411,7 @@ public class SystemBarController(
         window.apply {
             checkSdkVersion(
                 Build.VERSION_CODES.R,
-                positiveWork = { getWindowInsetController().hide(WindowInsetsCompat.Type.statusBars()) },
+                positiveWork = { getWindowInsetControllerForVisibility().hide(WindowInsetsCompat.Type.statusBars()) },
                 negativeWork = {
                     @Suppress("DEPRECATION")
                     addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
@@ -426,7 +430,7 @@ public class SystemBarController(
         window.apply {
             checkSdkVersion(
                 Build.VERSION_CODES.R,
-                positiveWork = { getWindowInsetController().show(WindowInsetsCompat.Type.navigationBars()) },
+                positiveWork = { getWindowInsetControllerForVisibility().show(WindowInsetsCompat.Type.navigationBars()) },
                 negativeWork = {
                     @Suppress("DEPRECATION")
                     decorView.systemUiVisibility = decorView.systemUiVisibility and
@@ -447,7 +451,7 @@ public class SystemBarController(
         window.apply {
             checkSdkVersion(
                 Build.VERSION_CODES.R,
-                positiveWork = { getWindowInsetController().hide(WindowInsetsCompat.Type.navigationBars()) },
+                positiveWork = { getWindowInsetControllerForVisibility().hide(WindowInsetsCompat.Type.navigationBars()) },
                 negativeWork = {
                     @Suppress("DEPRECATION")
                     decorView.systemUiVisibility = decorView.systemUiVisibility or

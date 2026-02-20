@@ -180,7 +180,7 @@ public class TelephonyCallbackManager(
             updateUSimTelephonyManagerList()
         } catch (e: SecurityException) {
             Logx.w("TelephonyCallbackManager: Permission required for multi-SIM initialization", e)
-        } catch (e: Exception) {
+        } catch (e: RuntimeException) {
             Logx.e("TelephonyCallbackManager: Error during multi-SIM initialization", e)
         }
     }
@@ -699,14 +699,14 @@ public class TelephonyCallbackManager(
                 checkSdkVersion(Build.VERSION_CODES.S) {
                     try {
                         unregisterAdvancedCallback(key)
-                    } catch (e: Exception) {
+                    } catch (e: RuntimeException) {
                         Logx.w("TelephonyCallbackManager: Error unregistering callback for slot $key", e)
                     }
                 }
             }
 
             Logx.d("TelephonyCallbackManager destroyed")
-        } catch (e: Exception) {
+        } catch (e: RuntimeException) {
             Logx.e("Error during TelephonyCallbackManager cleanup: ${e.message}")
         } finally {
             super.onDestroy()

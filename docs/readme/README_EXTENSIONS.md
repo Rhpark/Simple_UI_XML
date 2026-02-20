@@ -1143,7 +1143,7 @@ imageView.setImageDrawableRes(R.drawable.icon)
 
 // Tint 설정
 imageView.setTint(R.color.primary)
-imageView.clearTint()
+imageView.clearTint() // 이미지 Tint만 제거 (grayscale colorFilter는 유지)
 
 // Grayscale 효과
 imageView.makeGrayscale()  // 흑백 전환
@@ -1266,6 +1266,9 @@ rootView.applyWindowInsetsAsPadding(
     right = true,
     bottom = true
 )
+// bottom = true일 때 systemBars.bottom, ime.bottom 중 큰 값을 반영
+// UI 상태를 변경하는 View 확장 함수는 @MainThread 계약을 따릅니다.
+// Debug 빌드에서는 오프 메인스레드 호출 시 IllegalStateException으로 즉시 실패합니다.
 
 // ViewGroup 자식 순회
 viewGroup.forEachChild { child ->
@@ -1301,12 +1304,12 @@ customView.unbindLifecycleObserver(observer)
 
 **Lifecycle highlights/ Lifecycle 기능 특징:**
 - **Automatic owner switching:** when a view moves to another screen, it rebinds to the new LifecycleOwner automatically
-- **Duplicate registration protection:** safely ignore duplicate observer registrations
+- **Observer-scoped binding map:** each observer is tracked independently to prevent cross-observer collisions
 - **Memory-leak prevention:** managed automatically via the View Tag system
 - **Fragment/Activity detection:** extracts the LifecycleOwner from the ViewTree or Context
 
 > - **자동 Owner 전환**: View가 다른 화면으로 이동하면 자동으로 새 LifecycleOwner에 바인딩
-> - **중복 등록 방지**: 동일한 Observer를 여러 번 등록해도 안전
+> - **Observer별 독립 추적**: 여러 Observer를 같은 View에 바인딩해도 서로 충돌하지 않음
 > - **메모리 누수 방지**: View Tag 시스템으로 자동 관리
 > - **Fragment/Activity 감지**: ViewTree 또는 Context에서 LifecycleOwner 자동 추출
 
@@ -1438,6 +1441,7 @@ private val ALPHANUMERIC_REGEX = "^[a-zA-Z0-9]*$".toRegex()
 Simple UI provides three `safeCatch` overloads for safe exception handling.
 
 > Simple UI는 안전한 예외 처리를 위한 3가지 `safeCatch` 오버로드를 제공합니다.
+> `safeCatch`는 `Exception` 경계에서 처리하고, `CancellationException`/`Error`는 재전파하며 내부 로깅은 `Logx.e`를 사용합니다.
 
 <br>
 </br>
@@ -1564,21 +1568,21 @@ val response = safeCatch(
 public inline fun <T> safeCatch(defaultValue: T, block: () -> T): T {
     return try {
         block()
-    } catch (e: CancellationException) {
-        throw e  // 코루틴 취소는 반드시 전파
-    } catch (e: Error) {
-        throw e  // OOM 등은 절대 삼키지 않음
-    } catch (e: Exception) {
-        e.printStackTrace()
-        defaultValue
-    }
+} catch (e: CancellationException) {
+    throw e  // 코루틴 취소는 반드시 전파
+} catch (e: Error) {
+    throw e  // OOM 등은 절대 삼키지 않음
+} catch (e: Exception) {
+    Logx.e("safeCatch(defaultValue): ${e.message}", e)
+    defaultValue
+}
 }
 ```
 
 **Benefits/ 장점:**
 - Remove try-catch boilerplate/ try-catch 보일러플레이트 제거
 - Safely handle coroutine cancellations and system errors/ 코루틴 취소 및 시스템 에러 안전하게 처리
-- Automatically log exceptions (`printStackTrace`)/ 자동 예외 로깅 (printStackTrace)
+- Automatically log exceptions (`Logx.e`)/ 자동 예외 로깅 (Logx.e)
 - Cover every scenario with three overloads/ 3가지 오버로드로 모든 상황 커버
 - Keep the code concise and easy to read/ 간결하고 읽기 쉬운 코드
 

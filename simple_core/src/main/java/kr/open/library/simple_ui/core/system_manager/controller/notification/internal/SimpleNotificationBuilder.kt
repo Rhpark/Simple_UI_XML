@@ -29,15 +29,15 @@ import java.util.concurrent.TimeUnit
  * - Separates notification building logic from controller logic for better testability and maintainability.<br>
  * - Manages progress notification state to enable efficient updates without recreating builders.<br>
  * - Provides automatic cleanup of stale progress notifications to prevent memory leaks.<br><br>
- * - 테스트 가능성과 유지보수성을 위해 알림 빌드 로직을 컨트롤러 로직에서 분리합니다.<br>
- * - 빌더를 재생성하지 않고 효율적인 업데이트를 위해 진행률 알림 상태를 관리합니다.<br>
- * - 메모리 누수를 방지하기 위해 오래된 진행률 알림의 자동 정리를 제공합니다.<br>
+ * - 테스트 용이성과 유지보수성을 위해 알림 빌드 로직을 컨트롤러 로직에서 분리합니다.<br>
+ * - 빌더를 재생성하지 않고 효율적으로 업데이트할 수 있도록 진행률 알림 상태를 관리합니다.<br>
+ * - 메모리 누수를 방지하기 위해 오래된 진행률 알림을 자동 정리합니다.<br>
  *
  * **Design decisions / 설계 결정 이유:**<br>
  * - Uses ConcurrentHashMap to store progress builders for thread-safe updates from any thread.<br>
  * - Implements lazy cleanup scheduler (30-minute idle timer) to minimize resource usage.<br>
  * - Supports Activity, Service, and Broadcast PendingIntent types for flexible notification actions.<br><br>
- * - 모든 스레드에서 스레드 안전한 업데이트를 위해 ConcurrentHashMap으로 진행률 빌더를 저장합니다.<br>
+ * - 모든 스레드에서 안전하게 업데이트할 수 있도록 ConcurrentHashMap으로 진행률 빌더를 저장합니다.<br>
  * - 리소스 사용을 최소화하기 위해 지연 정리 스케줄러(30분 유휴 타이머)를 구현합니다.<br>
  * - 유연한 알림 동작을 위해 Activity, Service, Broadcast PendingIntent 타입을 지원합니다.<br>
  *
@@ -60,16 +60,16 @@ internal class SimpleNotificationBuilder(
     /**
      * Thread-safe map storing progress notification builders by notification ID.<br>
      * Used for updating progress without recreating the builder.<br><br>
-     * 알림 ID별로 진행률 알림 빌더를 저장하는 스레드 세이프 맵입니다.<br>
-     * 빌더를 재생성하지 않고 진행률을 업데이트하는 데 사용됩니다.<br>
+     * 알림 ID별로 진행률 알림 빌더를 저장하는 스레드 안전 맵입니다.<br>
+     * 빌더를 재생성하지 않고 진행률을 업데이트할 때 사용합니다.<br>
      */
     private val progressBuilders = ConcurrentHashMap<Int, ProgressNotificationInfo>()
 
     /**
      * Scheduler for cleaning up stale progress notifications (created on demand).<br>
      * Uses @Volatile + double-checked locking to prevent race conditions during scheduler creation.<br><br>
-     * 오래된 진행률 알림을 정리하기 위한 스케줄러(필요 시 생성).<br>
-     * @Volatile + double-checked locking으로 스케줄러 생성 시 경합 조건을 방지합니다.<br>
+     * 오래된 진행률 알림을 정리하기 위한 스케줄러입니다(필요 시 생성).<br>
+     * @Volatile + double-checked locking으로 스케줄러 생성 시 경쟁 조건을 방지합니다.<br>
      */
     @Volatile
     private var cleanupScheduler: ScheduledExecutorService? = null
@@ -85,9 +85,9 @@ internal class SimpleNotificationBuilder(
      * 진행률 알림 정보를 담는 데이터 클래스입니다.<br>
      *
      * @param builder The notification builder instance.<br><br>
-     *                알림 빌더 인스턴스.
+     *                알림 빌더 인스턴스.<br>
      * @param lastUpdateTime Timestamp of last update in milliseconds.<br><br>
-     *                       마지막 업데이트 시간(밀리초).
+     *                       마지막 업데이트 시각(밀리초).<br>
      */
     public data class ProgressNotificationInfo(
         val builder: NotificationCompat.Builder,
@@ -97,10 +97,10 @@ internal class SimpleNotificationBuilder(
 
     /**
      * Creates a notification builder with standard configuration.<br><br>
-     * 표준 구성으로 알림 빌더를 생성합니다.<br>
+     * 기본 구성으로 알림 빌더를 생성합니다.<br>
      *
      * @param notificationOption Notification configuration options.<br><br>
-     *                           알림 구성 옵션.
+     *                           알림 구성 옵션.<br>
      * @return Configured NotificationCompat.Builder instance.<br><br>
      *         구성된 NotificationCompat.Builder 인스턴스.<br>
      */
@@ -133,7 +133,7 @@ internal class SimpleNotificationBuilder(
      * 진행률 바 구성으로 알림 빌더를 생성합니다.<br>
      *
      * @param notificationOption Progress notification configuration options.<br><br>
-     *                           진행률 알림 구성 옵션.
+     *                           진행률 알림 구성 옵션.<br>
      * @return NotificationCompat.Builder instance with progress bar.<br><br>
      *         진행률 바가 포함된 NotificationCompat.Builder 인스턴스.<br>
      */
@@ -153,7 +153,7 @@ internal class SimpleNotificationBuilder(
                 progressPercent = notificationOption.progressPercent,
             ) // 진행률 업데이트를 위해 빌더 저장
 
-        // 첫 번째 진행률 알림 생성 시 스케줄러 시작
+        // 첫 진행률 알림 생성 시 정리 스케줄러 시작
         if (cleanupScheduler == null) {
             startProgressCleanupScheduler()
         }
@@ -165,7 +165,7 @@ internal class SimpleNotificationBuilder(
      * Starts a scheduler that periodically cleans up stale progress notifications.<br>
      * Removes progress notification builders that haven't been updated for 30 minutes.<br><br>
      * 오래된 진행률 알림을 주기적으로 정리하는 스케줄러를 시작합니다.<br>
-     * 30분 동안 업데이트되지 않은 진행률 알림 빌더를 제거하여 메모리 누수를 방지합니다.<br>
+     * 30분 동안 업데이트되지 않은 진행률 알림 빌더를 제거해 메모리 누수를 방지합니다.<br>
      */
     private fun startProgressCleanupScheduler() {
         if (cleanupScheduler != null) return
@@ -190,7 +190,7 @@ internal class SimpleNotificationBuilder(
                         if (staleNotifications.isNotEmpty()) {
                             Logx.d("Cleaned up ${staleNotifications.size} stale progress notifications")
                         }
-                    } catch (e: Exception) {
+                    } catch (e: RuntimeException) {
                         Logx.e("Error during progress notification cleanup: ${e.message}")
                     }
                 }, 5, 5, TimeUnit.MINUTES) // 5분 후 시작, 5분마다 실행
@@ -204,7 +204,7 @@ internal class SimpleNotificationBuilder(
      * Stops the cleanup scheduler if there are no active progress notifications.<br>
      * Called after removing progress notifications to release scheduler resources when idle.<br><br>
      * 활성 진행률 알림이 없으면 정리 스케줄러를 중지합니다.<br>
-     * 진행률 알림 제거 후 호출되며 유휴 상태일 때 스케줄러 리소스를 해제합니다.<br>
+     * 진행률 알림 제거 후 호출되어 유휴 상태에서 스케줄러 리소스를 해제합니다.<br>
      */
     private fun stopProgressCleanupSchedulerIfIdle() {
         if (progressBuilders.isNotEmpty()) return
@@ -225,7 +225,7 @@ internal class SimpleNotificationBuilder(
      * BigPicture 스타일의 알림 빌더를 생성합니다.<br>
      *
      * @param notificationOption Notification configuration options.<br><br>
-     *                           알림 구성 옵션.
+     *                           알림 구성 옵션.<br>
      * @return NotificationCompat.Builder with BigPicture style.<br><br>
      *         BigPicture 스타일이 적용된 NotificationCompat.Builder.<br>
      */
@@ -242,7 +242,7 @@ internal class SimpleNotificationBuilder(
      * BigText 스타일의 알림 빌더를 생성합니다.<br>
      *
      * @param notificationOption Notification configuration options.<br><br>
-     *                           알림 구성 옵션.
+     *                           알림 구성 옵션.<br>
      * @return NotificationCompat.Builder with BigText style.<br><br>
      *         BigText 스타일이 적용된 NotificationCompat.Builder.<br>
      */
@@ -256,7 +256,7 @@ internal class SimpleNotificationBuilder(
 
     /**
      * Cleans up resources. Should be called when Activity/Service is destroyed.<br><br>
-     * 리소스를 정리합니다. Activity/Service가 종료될 때 호출해야 합니다.<br>
+     * 리소스를 정리합니다. Activity/Service 종료 시 호출해야 합니다.<br>
      */
     public fun cleanup() {
         progressBuilders.clear()
@@ -294,7 +294,7 @@ internal class SimpleNotificationBuilder(
      *                       고유 알림 식별자.<br>
      */
     public fun cancelNotification(notificationId: Int) {
-        progressBuilders.remove(notificationId) // 진행률 빌더도 함께 제거
+        progressBuilders.remove(notificationId) // 진행률 빌더 맵에서 제거
         stopProgressCleanupSchedulerIfIdle()
     }
 
@@ -303,17 +303,17 @@ internal class SimpleNotificationBuilder(
      * 진행률 알림을 완료 상태로 표시하고 선택적으로 메시지를 업데이트합니다.<br>
      *
      * @param notificationId Unique notification identifier.<br><br>
-     *                       고유 알림 식별자.
+     *                       고유 알림 식별자.<br>
      * @param completedContent Completion message (optional).<br><br>
-     *                         완료 메시지 (선택사항).
-     * @return `true` if completion was successful, `false` otherwise.<br><br>
-     *         완료 처리 성공 시 `true`, 그렇지 않으면 `false`.<br>
+     *                         완료 메시지(선택 사항).<br>
+     * @return Updated ProgressNotificationInfo on success, or null if target is not found.<br><br>
+     *         성공 시 갱신된 ProgressNotificationInfo를 반환하고, 대상이 없으면 null을 반환합니다.<br>
      */
     @RequiresPermission(POST_NOTIFICATIONS)
     public fun completeProgress(notificationId: Int, completedContent: String? = null): ProgressNotificationInfo? = safeCatch(null) {
         progressBuilders[notificationId]?.let { info ->
             info.builder.setProgress(0, 0, false) // 진행률 바 제거
-            info.builder.setOnlyAlertOnce(false) // 완료 시 한 번 알림 허용
+            info.builder.setOnlyAlertOnce(false) // 완료 시 재알림 허용
             info.builder.setOngoing(false)
             info.builder.setAutoCancel(true)
             completedContent?.let { info.builder.setContentText(it) }
@@ -329,12 +329,12 @@ internal class SimpleNotificationBuilder(
 
     /**
      * Updates the progress percentage of an existing progress notification.<br><br>
-     * 기존 진행률 알림의 진행률을 업데이트합니다.<br>
+     * 기존 진행률 알림의 진행률 값을 업데이트합니다.<br>
      *
      * @param notificationId Unique notification identifier.<br><br>
-     *                       고유 알림 식별자.
+     *                       고유 알림 식별자.<br>
      * @param progressPercent Progress percentage (0-100).<br><br>
-     *                        진행률 (0-100).
+     *                        진행률(0-100).<br>
      * @return ProgressUpdateResult indicating whether the update occurred, was skipped, or not found.<br><br>
      *         업데이트 결과(성공/변경 없음/대상 없음)를 나타내는 ProgressUpdateResult.<br>
      */
@@ -351,7 +351,6 @@ internal class SimpleNotificationBuilder(
                     result = ProgressUpdateResult.NoChange
                     return@compute existing
                 }
-                // var progressPercent 직접 변경, val lastUpdateTime은 copy()로 새 객체 생성
                 // Mutate var progressPercent directly, create new object via copy() for val lastUpdateTime
                 existing.progressPercent = progressPercent
                 existing.builder.setProgress(100, progressPercent, false)
@@ -364,10 +363,10 @@ internal class SimpleNotificationBuilder(
 
     /**
      * Returns the appropriate PendingIntent based on the configured show type.<br><br>
-     * 구성된 표시 유형에 따라 적절한 PendingIntent를 반환합니다.<br>
+     * 구성된 표시 타입에 따라 적절한 PendingIntent를 반환합니다.<br>
      *
      * @param pendingIntentOption PendingIntent configuration options.<br><br>
-     *                            PendingIntent 구성 옵션.
+     *                            PendingIntent 구성 옵션.<br>
      * @return Configured PendingIntent instance.<br><br>
      *         구성된 PendingIntent 인스턴스.<br>
      */
@@ -382,9 +381,9 @@ internal class SimpleNotificationBuilder(
      * 트리거될 때 Activity를 실행하는 PendingIntent를 생성합니다.<br>
      *
      * @param pendingIntentOption PendingIntent configuration options.<br><br>
-     *                            PendingIntent 구성 옵션.
+     *                            PendingIntent 구성 옵션.<br>
      * @return PendingIntent for Activity launch.<br><br>
-     *         Activity 실행을 위한 PendingIntent.<br>
+     *         Activity 실행용 PendingIntent.<br>
      */
     private fun getClickShowActivityPendingIntent(pendingIntentOption: SimplePendingIntentOption): PendingIntent =
         with(pendingIntentOption) {
@@ -401,9 +400,9 @@ internal class SimpleNotificationBuilder(
      * 트리거될 때 Service를 시작하는 PendingIntent를 생성합니다.<br>
      *
      * @param pendingIntentOption PendingIntent configuration options.<br><br>
-     *                            PendingIntent 구성 옵션.
+     *                            PendingIntent 구성 옵션.<br>
      * @return PendingIntent for Service start.<br><br>
-     *         Service 시작을 위한 PendingIntent.<br>
+     *         Service 시작용 PendingIntent.<br>
      */
     private fun getClickShowServicePendingIntent(pendingIntentOption: SimplePendingIntentOption): PendingIntent =
         with(pendingIntentOption) {
@@ -420,9 +419,9 @@ internal class SimpleNotificationBuilder(
      * 트리거될 때 Broadcast를 전송하는 PendingIntent를 생성합니다.<br>
      *
      * @param pendingIntentOption PendingIntent configuration options.<br><br>
-     *                            PendingIntent 구성 옵션.
+     *                            PendingIntent 구성 옵션.<br>
      * @return PendingIntent for Broadcast send.<br><br>
-     *         Broadcast 전송을 위한 PendingIntent.<br>
+     *         Broadcast 전송용 PendingIntent.<br>
      */
     private fun getClickShowBroadcastPendingIntent(pendingIntentOption: SimplePendingIntentOption): PendingIntent =
         with(pendingIntentOption) {

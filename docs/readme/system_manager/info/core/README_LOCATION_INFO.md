@@ -32,6 +32,8 @@ Provides SharedFlow-based location tracking and location helper utilities.
   - `isLocationEnabled()` - Check whether system location service is enabled (시스템 위치 서비스 활성화 여부 확인)
   - `isAnyEnabled()` - Check if any Provider is enabled (includes Fused on API 31+) (모든 Provider 중 하나라도 활성화 확인 (API 31+에서는 Fused 포함))
 - **Current Location:** `getLocation()` - Last known best location among available providers (사용 가능한 Provider 중 최적의 마지막 위치)
+- **Permission-safe Snapshot Path:** Internal snapshot generation checks runtime permissions first and returns `null` safely when missing.
+  - **권한 안전 스냅샷 경로:** 내부 스냅샷 생성 시 런타임 권한을 먼저 확인하며, 권한이 없으면 예외 없이 `null`을 반환합니다.
 - **Distance Calculation:** `calculateDistance(from, to)` - Distance between two locations (meters) (두 위치 간 거리 (미터))
 - **Bearing Calculation:** `calculateBearing(from, to)` - Bearing between two locations (degrees) (두 위치 간 방향 (도))
 - **Radius Check:** `isLocationWithRadius(from, to, radius)` - Check location within specific radius (특정 반경 내 위치 확인)

@@ -1,4 +1,4 @@
-﻿package kr.open.library.simple_ui.core.extensions.date
+package kr.open.library.simple_ui.core.extensions.date
 
 import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
 import java.text.ParsePosition
@@ -11,6 +11,7 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import java.util.Date
 import java.util.Locale
+import kotlin.math.abs
 
 /**
  * Converts a timestamp in milliseconds to a formatted string using the specified pattern and locale.<br><br>
@@ -179,7 +180,7 @@ public fun Date.toStringSimpleFormat(format: String, locale: Locale = Locale.get
  * @return The absolute time difference in seconds.<br><br>
  *         절대 시간 차이 (초 단위).<br>
  */
-public fun Date.toCompareInSeconds(other: Date): Long = Math.abs(this.time - other.time) / 1000
+public fun Date.toCompareInSeconds(other: Date): Long = abs(this.time - other.time) / 1000
 
 /**
  * Calculates the absolute time difference in minutes between this Date and another Date.<br><br>
@@ -191,7 +192,7 @@ public fun Date.toCompareInSeconds(other: Date): Long = Math.abs(this.time - oth
  * @return The absolute time difference in minutes.<br><br>
  *         절대 시간 차이 (분 단위).<br>
  */
-public fun Date.toCompareInMinutes(other: Date): Long = Math.abs(this.time - other.time) / (1000 * 60)
+public fun Date.toCompareInMinutes(other: Date): Long = abs(this.time - other.time) / (1000 * 60)
 
 /**
  * Calculates the absolute time difference in hours between this Date and another Date.<br><br>
@@ -203,7 +204,7 @@ public fun Date.toCompareInMinutes(other: Date): Long = Math.abs(this.time - oth
  * @return The absolute time difference in hours.<br><br>
  *         절대 시간 차이 (시간 단위).<br>
  */
-public fun Date.toCompareInHours(other: Date): Long = Math.abs(this.time - other.time) / (1000 * 3600)
+public fun Date.toCompareInHours(other: Date): Long = abs(this.time - other.time) / (1000 * 3600)
 
 /**
  * Calculates the number of hours between this LocalDateTime and another LocalDateTime.<br>

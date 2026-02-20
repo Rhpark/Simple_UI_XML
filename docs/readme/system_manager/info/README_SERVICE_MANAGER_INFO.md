@@ -30,10 +30,12 @@ Provides Flow/Callback-based system information collection with helper APIs.
 - **Automated Configuration:** Automate complex setup such as SDK branching and resource queries.
 - **Developer-Friendly API:** Improve usability with intuitive helper methods.
 - **Lifecycle-friendly control:** Location supports explicit stop (`unRegister()`) and re-call auto reconfiguration on `registerStart(...)`.
+- **Permission-safe location snapshot:** Location internal snapshot path returns `null` safely when runtime permissions are missing.
 > - **실시간 업데이트:** Flow/Callback 기반으로 실시간 상태를 수집합니다.
 > - **설정 자동화:** SDK 분기/리소스 조회 등 복잡한 설정을 자동화합니다.
 > - **개발자 친화 API:** 직관적 헬퍼 메서드로 사용성을 개선합니다.
 > - **라이프사이클 친화 제어:** Location은 `unRegister()`로 명시적 중지가 가능하고, `registerStart(...)` 재호출 시 설정이 자동 재적용됩니다.
+> - **권한 안전 위치 스냅샷:** Location 내부 스냅샷 경로는 런타임 권한이 없을 때 예외 없이 `null`을 반환합니다.
 
 <br></br>
 

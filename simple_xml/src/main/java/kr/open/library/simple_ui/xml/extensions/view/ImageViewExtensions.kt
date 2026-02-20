@@ -27,6 +27,7 @@
  */
 package kr.open.library.simple_ui.xml.extensions.view
 
+import android.content.res.ColorStateList
 import android.graphics.ColorMatrix
 import android.graphics.ColorMatrixColorFilter
 import android.graphics.PorterDuff
@@ -34,6 +35,7 @@ import android.widget.ImageView
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
+import androidx.core.widget.ImageViewCompat
 import kr.open.library.simple_ui.xml.extensions.resource.getDrawableSafe
 
 /**
@@ -72,7 +74,8 @@ public fun ImageView.setTint(
 ): ImageView =
     apply {
         val color = ContextCompat.getColor(context, colorRes)
-        setColorFilter(color, mode)
+        ImageViewCompat.setImageTintList(this, ColorStateList.valueOf(color))
+        ImageViewCompat.setImageTintMode(this, mode)
     }
 
 /**
@@ -84,7 +87,8 @@ public fun ImageView.setTint(
  */
 public fun ImageView.clearTint(): ImageView =
     apply {
-        clearColorFilter()
+        ImageViewCompat.setImageTintList(this, null)
+        ImageViewCompat.setImageTintMode(this, null)
     }
 
 /**

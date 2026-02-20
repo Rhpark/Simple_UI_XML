@@ -199,6 +199,21 @@ When using Activity/Fragment base classes, prefer the Window extension path for 
 This keeps one controller per Window and makes cleanup timing explicit.  
 > Window당 컨트롤러 1개를 유지하고 정리 시점을 명확하게 관리할 수 있습니다.
 
+### Quick Example (빠른 예시)
+```kotlin
+val controller = window.getSystemBarController()
+
+controller.setStatusBarColor(Color.TRANSPARENT, isDarkIcon = true)
+controller.setNavigationBarColor(Color.BLACK, isDarkIcon = false)
+
+controller.setStatusBarVisible()      // 이 경로에서만 BEHAVIOR_DEFAULT 재설정
+controller.setNavigationBarVisible()  // 이 경로에서만 BEHAVIOR_DEFAULT 재설정
+```
+
+```kotlin
+window.destroySystemBarControllerCache() // 종료 시 캐시 정리
+```
+
 ### Activity Example (Activity 예시)
 ```kotlin
 import android.graphics.Color
@@ -259,9 +274,17 @@ when (state) {
 - `SystemBarController(window)` 직접 생성보다 `window.getSystemBarController()`를 우선 사용하세요.
 - Fragment는 Activity의 Window를 공유하므로 캐시 정리는 보통 Activity `onDestroy()`에서 1회 처리하는 것을 권장합니다.
 - 컨트롤러 재생성이 필요하면 `window.destroySystemBarControllerCache()` 후 다시 `window.getSystemBarController()`를 호출하세요.
+- `window.getSystemBarController()` / `window.destroySystemBarControllerCache()`는 `@MainThread` 계약이며 Debug 빌드에서는 오프 메인스레드 호출 시 `IllegalStateException`으로 즉시 실패합니다.
 - 상태 해석 기준: `stable`과 `visible`이 모두 0이면 `NotPresent`, `stable`이 존재하고 `visible`이 0이면 `Hidden`입니다.
 - API 35+에서 색상 적용 시 insets 미준비 구간은 내부 `WindowInsetsCompat.CONSUMED` 폴백으로 처리됩니다.
-- 가시성 API 호출 경로에서 내부 `systemBarsBehavior`가 `BEHAVIOR_DEFAULT`로 재설정됩니다.
+- 가시성 API(`setStatusBarVisible/Gone`, `setNavigationBarVisible/Gone`) 호출 경로에서만 내부 `systemBarsBehavior`가 `BEHAVIOR_DEFAULT`로 재설정됩니다.
+- 아이콘/색상 API(`setStatusBarDarkIcon`, `setNavigationBarDarkIcon`, `setStatusBarColor`, `setNavigationBarColor`)는 `systemBarsBehavior`를 변경하지 않습니다.
+- View 확장 연계 주의: `clearTint()`는 Image tint만 제거하며 `makeGrayscale()`의 `colorFilter`는 유지됩니다.
+- View 확장 연계 주의: `applyWindowInsetsAsPadding(bottom = true)`는 `systemBars.bottom`과 `ime.bottom` 중 큰 값을 반영합니다.
+- View 확장 연계 주의: `bindLifecycleObserver`/`unbindLifecycleObserver`는 Observer별 독립 추적 모델입니다.
+- 샘플 Activity/Fragment 텍스트는 하드코딩 대신 `@string/...` 리소스 기반으로 관리하는 것을 권장합니다.
+- 동적 텍스트는 `getString(R.string.some_format, value)` 포맷 문자열 패턴을 사용하세요. (`BaseActivityExample`의 시스템바 높이 표기 참조)
+- 상세 내용은 `docs/readme/README_EXTENSIONS.md`를 참고하세요.
 
 <br></br>
 

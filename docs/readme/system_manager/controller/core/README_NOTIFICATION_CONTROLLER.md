@@ -194,6 +194,16 @@ private fun showBigTextNotification() {
 
 <br></br>
 
+## Documentation Notes (문서 관리 메모)
+- Source KDoc follows the bilingual style: English first, then `<br><br>`, then Korean, and ending with `<br>`.
+- Keep source/doc files in UTF-8 to prevent broken Korean characters in KDoc and generated docs.
+- Internal reference: `simple_core/src/main/java/kr/open/library/simple_ui/core/system_manager/controller/notification/internal/SimpleNotificationBuilder.kt`
+> 소스 KDoc은 영문 설명 뒤 `<br><br>`, 국문 설명 뒤 `<br>`를 유지하는 한·영 병기 규칙을 따릅니다.
+> KDoc/문서의 한글 깨짐을 방지하려면 소스/문서 파일 인코딩을 UTF-8로 유지해야 합니다.
+> 내부 구현 참고 파일: `simple_core/src/main/java/kr/open/library/simple_ui/core/system_manager/controller/notification/internal/SimpleNotificationBuilder.kt`
+
+<br></br>
+
 ## Related Extensions (관련 확장 함수)
 - `getNotificationController(channel)`  
   See full list / 전체 목록: [README_SYSTEM_MANAGER_EXTENSIONS.md](../../README_SYSTEM_MANAGER_EXTENSIONS.md)

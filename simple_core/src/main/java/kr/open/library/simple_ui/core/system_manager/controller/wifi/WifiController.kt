@@ -390,12 +390,7 @@ public open class WifiController(
      * 컨트롤러가 더 이상 필요하지 않을 때 호출해야 합니다.<br>
      */
     override fun onDestroy() {
-        try {
-            Logx.d("WifiController resources cleaned up")
-        } catch (e: Exception) {
-            Logx.e("Error during WifiController cleanup: ${e.message}")
-        } finally {
-            super.onDestroy()
-        }
+        Logx.d("WifiController resources cleaned up")
+        super.onDestroy()
     }
 }

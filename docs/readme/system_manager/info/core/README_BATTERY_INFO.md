@@ -272,9 +272,9 @@ See the permission guide for required permissions and policy.
 ## Related Docs (관련 문서)
 - Summary: [README_SERVICE_MANAGER_INFO.md](../README_SERVICE_MANAGER_INFO.md)
 - Permission Guide: [README_PERMISSION.md](../../../README_PERMISSION.md)
-- Feature PRD: [PRD.md](../../../../simple_core/docs/feature/system_manager/info/battery/PRD.md)
-- Feature SPEC: [SPEC.md](../../../../simple_core/docs/feature/system_manager/info/battery/SPEC.md)
-- Feature Plan: [IMPLEMENTATION_PLAN.md](../../../../simple_core/docs/feature/system_manager/info/battery/IMPLEMENTATION_PLAN.md)
+- Feature PRD: [PRD.md](../../../../../simple_core/docs/feature/system_manager/info/battery/PRD.md)
+- Feature SPEC: [SPEC.md](../../../../../simple_core/docs/feature/system_manager/info/battery/SPEC.md)
+- Feature Plan: [IMPLEMENTATION_PLAN.md](../../../../../simple_core/docs/feature/system_manager/info/battery/IMPLEMENTATION_PLAN.md)
 
 <br></br>
 

@@ -162,7 +162,7 @@ public open class SoftKeyboardController(
             }
         } catch (e: CancellationException) {
             throw e
-        } catch (e: Exception) {
+        } catch (e: RuntimeException) {
             Logx.e("SoftKeyboardController: showAwait failed: ${e.message}")
             SoftKeyboardActionResult.Failure(
                 reason = SoftKeyboardFailureReason.EXCEPTION_OCCURRED,
@@ -274,7 +274,7 @@ public open class SoftKeyboardController(
             }
         } catch (e: CancellationException) {
             throw e
-        } catch (e: Exception) {
+        } catch (e: RuntimeException) {
             Logx.e("SoftKeyboardController: hideAwait failed: ${e.message}")
             SoftKeyboardActionResult.Failure(
                 reason = SoftKeyboardFailureReason.EXCEPTION_OCCURRED,

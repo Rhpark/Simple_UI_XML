@@ -1,12 +1,10 @@
 package kr.open.library.simple_ui.core.system_manager.base
 
 import android.content.Context
-import android.content.pm.PackageManager
-import android.os.Build
-import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
 import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
 import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.core.permissions.extentions.remainPermissions
+import kr.open.library.simple_ui.core.permissions.internal.readDeclaredManifestPermissions
 
 /**
  * Base class for all system service wrappers providing unified permission management and error handling.<br><br>
@@ -86,7 +84,7 @@ public abstract class BaseSystemService(
      * 필요한 권한이 AndroidManifest.xml에 선언되지 않은 경우 경고 로그를 출력합니다.<br>
      *
      * @param permissions The list of permissions to check against the manifest.<br><br>
-     *                    매니페스트에서 확인할 권한 목록.
+     *                    매니페스트에서 확인할 권한 목록.<br>
      */
     private fun logMissingManifestPermissions(permissions: List<String>) {
         val declaredPermissions = getDeclaredManifestPermissions()
@@ -105,22 +103,7 @@ public abstract class BaseSystemService(
      * @return The set of declared permissions, or an empty set if retrieval fails.<br><br>
      *         선언된 권한 집합, 조회 실패 시 빈 집합을 반환.<br>
      */
-    private fun getDeclaredManifestPermissions(): Set<String> = safeCatch(defaultValue = emptySet()) {
-        val packageInfo = checkSdkVersion(
-            Build.VERSION_CODES.TIRAMISU,
-            positiveWork = {
-                context.packageManager.getPackageInfo(
-                    context.packageName,
-                    PackageManager.PackageInfoFlags.of(PackageManager.GET_PERMISSIONS.toLong()),
-                )
-            },
-            negativeWork = {
-                @Suppress("DEPRECATION")
-                context.packageManager.getPackageInfo(context.packageName, PackageManager.GET_PERMISSIONS)
-            },
-        )
-        packageInfo.requestedPermissions?.toSet() ?: emptySet()
-    }
+    private fun getDeclaredManifestPermissions(): Set<String> = context.readDeclaredManifestPermissions()
 
     /**
      * Gets the list of denied permissions.<br><br>
@@ -155,11 +138,11 @@ public abstract class BaseSystemService(
      * 실행 중 예외가 발생하면 이를 포착하고 기본값을 반환합니다.<br>
      *
      * @param T The type of the return value.<br><br>
-     *          반환값의 타입.
+     *          반환값의 타입.<br>
      * @param defaultValue The default value to return if runtime/special permissions are missing or an error occurs.<br><br>
-     *                     런타임/특수 권한이 누락되거나 오류가 발생할 경우 반환할 기본값.
+     *                     런타임/특수 권한이 누락되거나 오류가 발생할 경우 반환할 기본값.<br>
      * @param block The operation to execute if all runtime/special permissions are granted.<br><br>
-     *              모든 런타임/특수 권한이 부여된 경우 실행할 작업.
+     *              모든 런타임/특수 권한이 부여된 경우 실행할 작업.<br>
      * @return Returns the result of the block execution if successful, or defaultValue if runtime/special
      *         permissions are missing or an error occurs.<br><br>
      *         성공 시 블록 실행 결과를 반환하고, 런타임/특수 권한이 누락되거나 오류 발생 시 defaultValue를 반환.<br>
@@ -207,7 +190,7 @@ public abstract class BaseSystemService(
      * 특정 권한이 부여되었는지 확인합니다.<br>
      *
      * @param permission The permission to check.<br><br>
-     *                   확인할 권한.
+     *                   확인할 권한.<br>
      * @return Returns true if the permission is granted, false otherwise.<br><br>
      *         권한이 부여된 경우 true, 그렇지 않으면 false를 반환.<br>
      */

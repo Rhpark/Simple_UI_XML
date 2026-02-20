@@ -26,6 +26,7 @@ jobs:
         uses: dawidd6/action-download-artifact@v3
         with:
           workflow: android-ci.yml
+          run_id: ${{ github.event.workflow_run.id }}
           name: release-metadata
           path: metadata
           if_no_artifact_found: ignore
@@ -53,6 +54,50 @@ jobs:
             echo "body=" >> $GITHUB_OUTPUT
             echo "testers=" >> $GITHUB_OUTPUT
           fi
+
+      - name: Upload metadata artifact for downstream workflows
+        if: ${{ hashFiles('metadata/release-metadata.json') != '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-metadata
+          path: metadata/release-metadata.json
+          retention-days: 7
+
+      - name: Download coverage report artifact from triggering CI run
+        if: ${{ steps.load_metadata.outputs.should_release == 'true' }}
+        uses: dawidd6/action-download-artifact@v3
+        with:
+          workflow: android-ci.yml
+          run_id: ${{ github.event.workflow_run.id }}
+          name: coverage-report
+          path: coverage-from-ci
+          if_no_artifact_found: fail
+
+      - name: Normalize coverage artifact structure
+        if: ${{ steps.load_metadata.outputs.should_release == 'true' }}
+        run: |
+          set -euo pipefail
+          mkdir -p coverage-relay
+          if [ -d "coverage-from-ci/simple_core" ]; then
+            cp -r coverage-from-ci/simple_core coverage-relay/simple_core
+          fi
+          if [ -d "coverage-from-ci/simple_xml" ]; then
+            cp -r coverage-from-ci/simple_xml coverage-relay/simple_xml
+          fi
+          if [ ! -d "coverage-relay/simple_core" ] || [ ! -d "coverage-relay/simple_xml" ]; then
+            echo "::error::Coverage artifact structure is invalid."
+            exit 1
+          fi
+
+      - name: Upload coverage report artifact for downstream workflows
+        if: ${{ steps.load_metadata.outputs.should_release == 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: |
+            coverage-relay/simple_core
+            coverage-relay/simple_xml
+          retention-days: 7
 
   release:
     name: Release from Commit Message

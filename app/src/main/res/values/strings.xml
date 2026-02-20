@@ -1,3 +1,43 @@
 <resources>
     <string name="app_name">SimpleUI_XML</string>
+
+    <!-- Common -->
+    <string name="common_red">Red</string>
+    <string name="common_blue">Blue</string>
+    <string name="common_green">Green</string>
+    <string name="common_gone">Gone</string>
+    <string name="common_visible">Visible</string>
+    <string name="common_reset">Reset</string>
+    <string name="common_not_available_short">N/A</string>
+
+    <!-- BaseActivity example -->
+    <string name="base_activity_title">BaseActivity Example</string>
+    <string name="base_activity_status_bar_height_default">StatusBar Height: 0 px</string>
+    <string name="base_activity_navigation_bar_height_default">NavigationBar Height: 0 px</string>
+    <string name="base_activity_status_bar_height_value">StatusBar Height: %1$s px</string>
+    <string name="base_activity_navigation_bar_height_value">NavigationBar Height: %1$s px</string>
+    <string name="base_activity_status_bar_control">StatusBar Color Control</string>
+    <string name="base_activity_navigation_bar_control">NavigationBar Color Control</string>
+    <string name="base_activity_system_bars_control">System Bars Control</string>
+    <string name="base_activity_light_icons">Light Icons</string>
+    <string name="base_activity_dark_icons">Dark Icons</string>
+
+    <!-- Service manager info -->
+    <string name="service_manager_info_title">Info</string>
+    <string name="service_manager_display_info">Display Info</string>
+    <string name="service_manager_sim_info">SIM Info</string>
+    <string name="service_manager_telephony_basic_info">Telephony Basic Info</string>
+    <string name="service_manager_telephony_register">Telephony Register</string>
+    <string name="service_manager_telephony_unregister">Telephony Unregister</string>
+    <string name="service_manager_network_basic_info">Network Basic Info</string>
+    <string name="service_manager_network_register">Network Register</string>
+    <string name="service_manager_network_unregister">Network Unregister</string>
+    <string name="service_manager_battery_register">Battery Register</string>
+    <string name="service_manager_battery_unregister">Battery Unregister</string>
+    <string name="service_manager_location_register">Location Register</string>
+    <string name="service_manager_location_unregister">Location Unregister</string>
+    <string name="service_manager_location_get_last_location">Location Get Last Location</string>
+    <string name="service_manager_location_calculate_distance">Location Calculate Distance</string>
+    <string name="service_manager_location_calculate_bearing">Location Calculate Bearing</string>
+    <string name="service_manager_location_check_within_radius">Location Check Within Radius</string>
 </resources>

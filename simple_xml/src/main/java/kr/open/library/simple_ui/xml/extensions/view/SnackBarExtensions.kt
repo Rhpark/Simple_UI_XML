@@ -250,7 +250,7 @@ public fun View.snackBarShowShort(
  */
 public fun View.snackBarShowLong(
     msg: CharSequence,
-    snackBarOption: SnackBarOption?,
+    snackBarOption: SnackBarOption? = null,
 ) {
     snackBarMakeLong(msg, snackBarOption).show()
 }
@@ -269,7 +269,7 @@ public fun View.snackBarShowLong(
  */
 public fun Fragment.snackBarShowLong(
     msg: CharSequence,
-    snackBarOption: SnackBarOption?,
+    snackBarOption: SnackBarOption? = null,
 ) {
     withView("Fragment view is null, can not show SnackBar!!!") {
         it.snackBarMakeLong(msg, snackBarOption).show()
@@ -316,7 +316,7 @@ public fun View.snackBarShowLong(
  */
 public fun View.snackBarShowIndefinite(
     msg: CharSequence,
-    snackBarOption: SnackBarOption?,
+    snackBarOption: SnackBarOption? = null,
 ) {
     snackBarMakeIndefinite(msg, snackBarOption).show()
 }
@@ -335,7 +335,7 @@ public fun View.snackBarShowIndefinite(
  */
 public fun Fragment.snackBarShowIndefinite(
     msg: CharSequence,
-    snackBarOption: SnackBarOption?,
+    snackBarOption: SnackBarOption? = null,
 ) {
     withView("Fragment view is null, can not show SnackBar!!!") {
         it.snackBarMakeIndefinite(msg, snackBarOption).show()

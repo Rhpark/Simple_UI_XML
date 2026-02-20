@@ -4,7 +4,9 @@ package kr.open.library.simple_ui.xml.system_manager.extensions
  ****************************/
 import android.content.Context
 import android.view.Window
+import androidx.annotation.MainThread
 import kr.open.library.simple_ui.xml.R
+import kr.open.library.simple_ui.xml.internal.thread.assertMainThreadDebug
 import kr.open.library.simple_ui.xml.system_manager.controller.softkeyboard.SoftKeyboardController
 import kr.open.library.simple_ui.xml.system_manager.controller.systembar.SystemBarController
 import kr.open.library.simple_ui.xml.system_manager.controller.window.FloatingViewController
@@ -82,7 +84,9 @@ public fun Context.getDisplayInfo(): DisplayInfo = DisplayInfo(this)
  * @return Cached SystemBarController instance, or newly created instance if not cached.<br><br>
  *         캐시된 SystemBarController 인스턴스, 캐시되지 않은 경우 새로 생성된 인스턴스.<br>
  */
+@MainThread
 public fun Window.getSystemBarController(): SystemBarController {
+    assertMainThreadDebug("Window.getSystemBarController")
     val decor = decorView
 
     // ✅ Window당 1개: decorView에 컨트롤러를 캐싱
@@ -119,7 +123,9 @@ public fun Window.getSystemBarController(): SystemBarController {
  * val newController = window.getSystemBarController()
  * ```<br><br>
  */
+@MainThread
 public fun Window.destroySystemBarControllerCache() {
+    assertMainThreadDebug("Window.destroySystemBarControllerCache")
     val decor = decorView
     val controller = decor.getTag(R.id.tag_system_bar_controller) as? SystemBarController
     controller?.onDestroy()

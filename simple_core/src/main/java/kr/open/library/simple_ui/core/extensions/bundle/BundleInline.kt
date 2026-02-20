@@ -39,7 +39,7 @@ public inline fun <reified T> Bundle.getValue(key: String, defaultValue: T): T =
             ByteArray::class -> (getByteArray(key) ?: defaultValue as ByteArray) as T
             Bundle::class -> (getBundle(key) ?: defaultValue as Bundle) as T
             else -> {
-                Logx.e("Can not cast Type ${T::class} key $key, defaultVaule $defaultValue")
+                Logx.e("Can not cast Type ${T::class} key $key, defaultValue $defaultValue")
                 defaultValue
             }
         }

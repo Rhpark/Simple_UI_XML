@@ -2,12 +2,15 @@ package kr.open.library.simple_ui.core.system_manager.info.location
 
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
+import android.annotation.SuppressLint
 import android.content.Context
+import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.annotation.RequiresPermission
+import androidx.core.content.ContextCompat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharedFlow
 import kr.open.library.simple_ui.core.logcat.Logx
@@ -103,12 +106,32 @@ public open class LocationStateInfo(
      */
     private val updateManager = LocationUpdateManager(context, locationManager) {
         LocationStateData(
-            location = queryHelper.getLocation(),
+            location = getLocationOrNullByPermission(),
             isGpsEnabled = queryHelper.isGpsEnabled(),
             isNetworkEnabled = queryHelper.isNetworkEnabled(),
             isPassiveEnabled = queryHelper.isPassiveEnabled(),
             isFusedEnabled = queryHelper.getFusedEnabledOrNull()
         )
+    }
+
+    /**
+     * Checks whether both location runtime permissions are granted.<br><br>
+     * 위치 런타임 권한(FINE/COARSE)이 모두 허용되었는지 확인합니다.<br>
+     */
+    private fun hasLocationPermissions(): Boolean =
+        ContextCompat.checkSelfPermission(context, ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+            ContextCompat.checkSelfPermission(context, ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+
+    /**
+     * Returns current location only when required permissions are granted.<br><br>
+     * 필요한 권한이 허용된 경우에만 현재 위치를 반환합니다.<br>
+     */
+    @SuppressLint("MissingPermission")
+    private fun getLocationOrNullByPermission(): Location? {
+        if (!hasLocationPermissions()) {
+            return null
+        }
+        return queryHelper.getLocation()
     }
 
     /**

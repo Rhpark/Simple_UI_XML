@@ -7,13 +7,13 @@
         android:id="@+id/tvTitle"
         style="@style/TextView.MatchWrap.Bold.Center"
         android:layout_height="60dp"
-        android:text="BaseActivity Example"
+        android:text="@string/base_activity_title"
         android:textSize="24sp" />
 
     <TextView
         android:id="@+id/tvStatusBarHeight"
         style="@style/TextView.MatchWrap"
-        android:text="StatusBar Height: 0 px"
+        android:text="@string/base_activity_status_bar_height_default"
         android:textSize="16sp"
         android:paddingTop="8dp"
         android:paddingBottom="8dp" />
@@ -21,13 +21,13 @@
     <TextView
         android:id="@+id/tvNavigationBarHeight"
         style="@style/TextView.MatchWrap"
-        android:text="NavigationBar Height: 0 px"
+        android:text="@string/base_activity_navigation_bar_height_default"
         android:textSize="16sp"
         android:paddingBottom="16dp" />
 
     <TextView
         style="@style/TextView.MatchWrap.Bold"
-        android:text="StatusBar Color Control"
+        android:text="@string/base_activity_status_bar_control"
         android:textSize="18sp"
         android:paddingTop="8dp"
         android:paddingBottom="8dp" />
@@ -38,17 +38,17 @@
         <Button
             android:id="@+id/btnStatusBarRed"
             style="@style/Button.WeightWrap"
-            android:text="Red" />
+            android:text="@string/common_red" />
 
         <Button
             android:id="@+id/btnStatusBarBlue"
             style="@style/Button.WeightWrap"
-            android:text="Blue" />
+            android:text="@string/common_blue" />
 
         <Button
             android:id="@+id/btnStatusBarGreen"
             style="@style/Button.WeightWrap"
-            android:text="Green" />
+            android:text="@string/common_green" />
 
     </LinearLayout>
 
@@ -58,23 +58,23 @@
         <Button
             android:id="@+id/btnStatusBarGone"
             style="@style/Button.WeightWrap"
-            android:text="Gone" />
+            android:text="@string/common_gone" />
 
         <Button
             android:id="@+id/btnStatusBarVisible"
             style="@style/Button.WeightWrap"
-            android:text="Visible" />
+            android:text="@string/common_visible" />
 
         <Button
             android:id="@+id/btnStatusBarReset"
             style="@style/Button.WeightWrap"
-            android:text="Reset" />
+            android:text="@string/common_reset" />
 
     </LinearLayout>
 
     <TextView
         style="@style/TextView.MatchWrap.Bold"
-        android:text="NavigationBar Color Control"
+        android:text="@string/base_activity_navigation_bar_control"
         android:textSize="18sp"
         android:paddingTop="16dp"
         android:paddingBottom="8dp" />
@@ -85,17 +85,17 @@
         <Button
             android:id="@+id/btnNavigationBarRed"
             style="@style/Button.WeightWrap"
-            android:text="Red" />
+            android:text="@string/common_red" />
 
         <Button
             android:id="@+id/btnNavigationBarBlue"
             style="@style/Button.WeightWrap"
-            android:text="Blue" />
+            android:text="@string/common_blue" />
 
         <Button
             android:id="@+id/btnNavigationBarGreen"
             style="@style/Button.WeightWrap"
-            android:text="Green" />
+            android:text="@string/common_green" />
 
     </LinearLayout>
 
@@ -105,24 +105,24 @@
         <Button
             android:id="@+id/btnNavigationBarGone"
             style="@style/Button.WeightWrap"
-            android:text="Gone" />
+            android:text="@string/common_gone" />
 
         <Button
             android:id="@+id/btnNavigationBarVisible"
             style="@style/Button.WeightWrap"
-            android:text="Visible" />
+            android:text="@string/common_visible" />
 
         <Button
             android:id="@+id/btnNavigationBarReset"
             style="@style/Button.WeightWrap"
-            android:text="Reset" />
+            android:text="@string/common_reset" />
 
     </LinearLayout>
 
 
     <TextView
         style="@style/TextView.MatchWrap.Bold"
-        android:text="System Bars Control"
+        android:text="@string/base_activity_system_bars_control"
         android:textSize="18sp"
         android:paddingTop="16dp"
         android:paddingBottom="8dp" />
@@ -133,17 +133,17 @@
         <Button
             android:id="@+id/btnSystemBarsRed"
             style="@style/Button.WeightWrap"
-            android:text="Red" />
+            android:text="@string/common_red" />
 
         <Button
             android:id="@+id/btnSystemBarsBlue"
             style="@style/Button.WeightWrap"
-            android:text="Blue" />
+            android:text="@string/common_blue" />
 
         <Button
             android:id="@+id/btnSystemBarsGreen"
             style="@style/Button.WeightWrap"
-            android:text="Green" />
+            android:text="@string/common_green" />
 
     </LinearLayout>
 
@@ -153,12 +153,12 @@
         <Button
             android:id="@+id/btnSystemBarsLight"
             style="@style/Button.WeightWrap"
-            android:text="Light Icons" />
+            android:text="@string/base_activity_light_icons" />
 
         <Button
             android:id="@+id/btnSystemBarsDark"
             style="@style/Button.WeightWrap"
-            android:text="Dark Icons" />
+            android:text="@string/base_activity_dark_icons" />
 
     </LinearLayout>
 

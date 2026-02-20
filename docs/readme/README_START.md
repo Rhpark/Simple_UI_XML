@@ -52,6 +52,13 @@ We built **Simple UI XML** to give you that time back.
 <br>
 </br>
 
+## 📚 **Documentation Index (문서 인덱스)**
+
+- 전체 README 문서는 [README.md](README.md)에서 기능별로 바로 찾을 수 있습니다.
+
+<br>
+</br>
+
 ## 📋 **Library Defaults (라이브러리 기본 설정)**
 
 - **minSdk**: 28
@@ -59,6 +66,47 @@ We built **Simple UI XML** to give you that time back.
 - **Kotlin**: 2.0.21
 - **Android Gradle Plugin**: 8.8.2
 
+
+<br>
+</br>
+
+## 🔁 **Release Pipeline Notes (릴리즈 파이프라인 주의사항)**
+
+- The workflow chain is `1. Android CI -> 2. Android CD -> 3. Documentation (Dokka, Kover)`.
+- Artifacts are bound to the triggering run using `workflow_run.id` to avoid cross-run mixups.
+- `release-metadata` and `coverage-report` are relayed through CD for downstream consistency.
+> - 워크플로 체인은 `1. Android CI -> 2. Android CD -> 3. Documentation (Dokka, Kover)` 입니다.
+> - 아티팩트는 `workflow_run.id` 기준으로 트리거된 실행에 결합되어, 다른 실행과 섞이는 문제를 방지합니다.
+> - `release-metadata`, `coverage-report`는 하위 단계 정합성을 위해 CD 단계를 거쳐 전달됩니다.
+
+<br>
+</br>
+
+## 🔐 **Firebase App Distribution Config (Firebase App Distribution 설정)**
+
+App Distribution `appId` is resolved in this order:
+1. `gradle.properties` (`firebaseAppIdVerification`, `firebaseAppIdDebug`, `firebaseAppIdRelease`)
+2. Environment variables (`FIREBASE_APP_ID_VERIFICATION`, `FIREBASE_APP_ID_DEBUG`, `FIREBASE_APP_ID_RELEASE`)
+3. Hardcoded emergency fallback in `app/build.gradle.kts`
+
+> App Distribution `appId`는 아래 순서로 해석됩니다.
+> 1. `gradle.properties` (`firebaseAppIdVerification`, `firebaseAppIdDebug`, `firebaseAppIdRelease`)
+> 2. 환경변수 (`FIREBASE_APP_ID_VERIFICATION`, `FIREBASE_APP_ID_DEBUG`, `FIREBASE_APP_ID_RELEASE`)
+> 3. `app/build.gradle.kts`의 비상용 하드코딩 폴백
+
+```properties
+# gradle.properties
+firebaseAppIdVerification=1:549084067814:android:3ecfc4be81884ce0738827
+firebaseAppIdDebug=1:549084067814:android:d467d3ea55c4c608738827
+firebaseAppIdRelease=1:549084067814:android:2477eceb48b0314a738827
+```
+
+```bash
+# CI/CD environment variables (optional override)
+FIREBASE_APP_ID_VERIFICATION=...
+FIREBASE_APP_ID_DEBUG=...
+FIREBASE_APP_ID_RELEASE=...
+```
 
 <br>
 </br>
@@ -104,11 +152,46 @@ We built **Simple UI XML** to give you that time back.
 - **Carrier information**: Telephony support for GSM/LTE/5G NR/CDMA/WCDMA
 - **Device monitoring**: Real-time monitoring for battery, display, and location
 - **UI controls**: SoftKeyboard, Vibrator, FloatingView (Drag/Fixed)
+- **SystemBar note**: `BEHAVIOR_DEFAULT` is reset only in visibility APIs (`setStatusBarVisible/Gone`, `setNavigationBarVisible/Gone`)
 > - **알림 시스템**: Alarm, Notification 제어
 > - **네트워크 종합**: WiFi, Network Connectivity, Sim Info 상세 관리
 > - **통신망 정보**: Telephony (GSM/LTE/5G NR/CDMA/WCDMA)  지원
 > - **디바이스 정보**: Battery, Display, Location 실시간 모니터링
 > - **UI 제어**: SoftKeyboard, Vibrator, FloatingView (Drag/Fixed)
+> - **SystemBar 주의사항**: 가시성 API(`setStatusBarVisible/Gone`, `setNavigationBarVisible/Gone`)에서만 `BEHAVIOR_DEFAULT`가 재설정됩니다.
+
+<br>
+</br>
+
+### 🪟 **SystemBar Quick Example (빠른 사용 예시)**
+
+```kotlin
+import android.graphics.Color
+import kr.open.library.simple_ui.xml.system_manager.extensions.destroySystemBarControllerCache
+import kr.open.library.simple_ui.xml.system_manager.extensions.getSystemBarController
+
+fun applySystemBar(window: Window) {
+    val controller = window.getSystemBarController() // 권장 진입 경로
+
+    controller.setStatusBarColor(Color.TRANSPARENT, isDarkIcon = true)
+    controller.setNavigationBarColor(Color.BLACK, isDarkIcon = false)
+
+    controller.setStatusBarVisible()      // 여기서만 BEHAVIOR_DEFAULT 재설정
+    controller.setNavigationBarVisible()  // 여기서만 BEHAVIOR_DEFAULT 재설정
+}
+
+fun clearSystemBar(window: Window) {
+    window.destroySystemBarControllerCache() // Window 캐시 정리
+}
+```
+
+- 아이콘/색상 API(`setStatusBarDarkIcon`, `setNavigationBarDarkIcon`, `setStatusBarColor`, `setNavigationBarColor`)는 `systemBarsBehavior`를 변경하지 않습니다.
+- `window.getSystemBarController()` / `window.destroySystemBarControllerCache()`는 `@MainThread` 계약이며 Debug 빌드에서는 오프 메인스레드 호출 시 `IllegalStateException`으로 즉시 실패합니다.
+- 상세 계약(상태 모델, Hidden 기준, API 35+ 폴백)은 `README_SYSTEMBAR_CONTROLLER.md`를 참고하세요.
+- View 확장 연계: `clearTint()`는 Image tint만 제거하며 `makeGrayscale()`의 `colorFilter`는 유지됩니다.
+- View 확장 연계: `applyWindowInsetsAsPadding(bottom = true)`는 `systemBars.bottom`과 `ime.bottom` 중 큰 값을 반영합니다.
+- View 확장 연계: `bindLifecycleObserver`/`unbindLifecycleObserver`는 Observer별 독립 추적 모델입니다.
+- 상세 내용은 `README_EXTENSIONS.md`를 참고하세요.
 
 <br>
 </br>
@@ -124,6 +207,7 @@ We built **Simple UI XML** to give you that time back.
 - **Permission example**: [README_PERMISSION.md](README_PERMISSION.md)
 - **System Service Manager Info example**: [README_SERVICE_MANAGER_INFO.md](system_manager/info/README_SERVICE_MANAGER_INFO.md)
 - **System Service Manager Controller example**: [README_SERVICE_MANAGER_CONTROL.md](system_manager/controller/README_SERVICE_MANAGER_CONTROL.md)
+- **SystemBar controller detail**: [README_SYSTEMBAR_CONTROLLER.md](system_manager/controller/xml/README_SYSTEMBAR_CONTROLLER.md)
 - **Quick start** example: [README_SAMPLE.md](README_SAMPLE.md)
 
 

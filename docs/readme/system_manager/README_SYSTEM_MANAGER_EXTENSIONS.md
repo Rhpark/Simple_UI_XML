@@ -58,11 +58,19 @@ private fun clearSystemBar(window: Window) {
 
 ## Notes (주의사항)
 - Floating views may require the `SYSTEM_ALERT_WINDOW` permission.
+- Floating controller Boolean returns are based on actual WindowManager apply/remove success.
+- `removeAllFloatingView()` uses `first-failure-stop`; partial cleanup can remain on general call paths.
 - System bar controller is cached per Window; call destroy when done.
 - SystemBar 상태/폴백/테스트 한계는 `README_SYSTEMBAR_CONTROLLER.md`를 기준으로 확인하세요.
+- `clearTint`, `applyWindowInsetsAsPadding`, `bindLifecycleObserver`/`unbindLifecycleObserver` 동작 계약은 View 확장 범위이며 `docs/readme/README_EXTENSIONS.md`를 기준으로 확인하세요.
+- `window.getSystemBarController()` / `window.destroySystemBarControllerCache()`는 `@MainThread` 계약이며 Debug 빌드에서는 오프 메인스레드 호출 시 `IllegalStateException`으로 즉시 실패합니다.
 > 플로팅 뷰는 `SYSTEM_ALERT_WINDOW` 권한이 필요할 수 있습니다.
+> Floating 컨트롤러의 Boolean 반환은 실제 WindowManager 반영 성공 여부를 기준으로 합니다.
+> `removeAllFloatingView()`는 `first-failure-stop` 전략이며 일반 호출에서는 부분 정리 상태가 남을 수 있습니다.
 > 시스템 바 컨트롤러는 Window 단위 캐싱이며 사용 종료 시 정리를 권장합니다.
 > SystemBar의 상태 계약/폴백/테스트 한계는 `README_SYSTEMBAR_CONTROLLER.md`를 기준으로 확인하세요.
+> `clearTint`, `applyWindowInsetsAsPadding`, `bindLifecycleObserver`/`unbindLifecycleObserver`는 View 확장 범위이므로 `docs/readme/README_EXTENSIONS.md`를 기준으로 확인하세요.
+> `window.getSystemBarController()` / `window.destroySystemBarControllerCache()`는 `@MainThread` 계약이며 Debug 빌드에서는 오프 메인스레드 호출 시 `IllegalStateException`으로 즉시 실패합니다.
 
 <br></br>
 

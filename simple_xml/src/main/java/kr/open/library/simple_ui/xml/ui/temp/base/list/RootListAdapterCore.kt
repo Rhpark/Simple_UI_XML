@@ -46,7 +46,7 @@ private fun <ITEM : Any> buildDifferConfig(
             method.invoke(builder, diffExecutor)
         } catch (_: NoSuchMethodException) {
             Logx.w("setBackgroundThreadExecutor not available")
-        } catch (e: Exception) {
+        } catch (e: ReflectiveOperationException) {
             Logx.w("Failed to set diff executor: ${e.message}")
         }
     }

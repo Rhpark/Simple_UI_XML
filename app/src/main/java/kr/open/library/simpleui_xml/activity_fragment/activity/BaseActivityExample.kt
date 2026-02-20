@@ -27,8 +27,12 @@ class BaseActivityExample : BaseActivity(R.layout.activity_base_activity_example
         tvNavigationBarHeight = findViewById(R.id.tvNavigationBarHeight)
 
         window.decorView.post {
-            tvStatusBarHeight.text = "StatusBar Height: ${systemBarController.getStatusBarVisibleRect()?.height()} px"
-            tvNavigationBarHeight.text = "NavigationBar Height: ${systemBarController.getNavigationBarStableRect()?.height()} px"
+            val statusHeight = systemBarController.getStatusBarVisibleRect()?.height()?.toString()
+                ?: getString(R.string.common_not_available_short)
+            val navigationHeight = systemBarController.getNavigationBarStableRect()?.height()?.toString()
+                ?: getString(R.string.common_not_available_short)
+            tvStatusBarHeight.text = getString(R.string.base_activity_status_bar_height_value, statusHeight)
+            tvNavigationBarHeight.text = getString(R.string.base_activity_navigation_bar_height_value, navigationHeight)
         }
 
         setupStatusBarButtons()

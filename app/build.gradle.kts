@@ -101,11 +101,32 @@ firebaseAppDistribution {
         gradle.startParameter.taskNames
             .toString()
             .lowercase()
+    // Resolution order:
+    // 1) gradle.properties (firebaseAppId*)
+    // 2) environment variables (FIREBASE_APP_ID_*)
+    // 3) hardcoded emergency fallback
+    // Keep fallback values synchronized with gradle.properties defaults.
+    val verificationAppId =
+        (project.findProperty("firebaseAppIdVerification") as String?)
+            ?.takeIf { it.isNotBlank() }
+            ?: System.getenv("FIREBASE_APP_ID_VERIFICATION")?.takeIf { it.isNotBlank() }
+            ?: "1:549084067814:android:3ecfc4be81884ce0738827"
+    val debugAppId =
+        (project.findProperty("firebaseAppIdDebug") as String?)
+            ?.takeIf { it.isNotBlank() }
+            ?: System.getenv("FIREBASE_APP_ID_DEBUG")?.takeIf { it.isNotBlank() }
+            ?: "1:549084067814:android:d467d3ea55c4c608738827"
+    val releaseAppId =
+        (project.findProperty("firebaseAppIdRelease") as String?)
+            ?.takeIf { it.isNotBlank() }
+            ?: System.getenv("FIREBASE_APP_ID_RELEASE")?.takeIf { it.isNotBlank() }
+            ?: "1:549084067814:android:2477eceb48b0314a738827"
+
     appId =
         when {
-            taskNames.contains("verification") -> "1:549084067814:android:3ecfc4be81884ce0738827" // Verification
-            taskNames.contains("debug") -> "1:549084067814:android:d467d3ea55c4c608738827" // Debug
-            else -> "1:549084067814:android:2477eceb48b0314a738827" // Release (Default)
+            taskNames.contains("verification") -> verificationAppId // Verification
+            taskNames.contains("debug") -> debugAppId // Debug
+            else -> releaseAppId // Release (Default)
         }
 
     val credentialsFile =
@@ -160,9 +181,6 @@ dependencies {
      **************/
 
     implementation(platform("com.google.firebase:firebase-bom:34.5.0")) // Import the Firebase BoM
-
-    // When using the BoM, don't specify versions in Firebase dependencies
-    implementation("com.google.firebase:firebase-analytics")
 
     // Add the dependencies for any other desired Firebase products
     // https://firebase.google.com/docs/android/setup#available-libraries

@@ -14,6 +14,7 @@ plugins {
     id("org.jetbrains.dokka") version "2.1.0" // Dokka multi-module docs
 
     id("org.jlleitschuh.gradle.ktlint") version "14.0.1" // KtLint
+    id("org.jetbrains.kotlinx.binary-compatibility-validator") version "0.16.3"
 }
 
 // Dokka V2 Multi-Module Configuration + KtLint setup
@@ -34,6 +35,11 @@ subprojects {
             exclude { it.file.path.contains("${File.separator}build${File.separator}") }
         }
     }
+}
+
+apiValidation {
+    // App 모듈은 라이브러리 소비 API 대상이 아니므로 제외
+    ignoredProjects.add("app")
 }
 
 // Dokka 멀티 모듈 HTML 문서를 docs/api 이하로 복사·정리하는 커스텀 태스크

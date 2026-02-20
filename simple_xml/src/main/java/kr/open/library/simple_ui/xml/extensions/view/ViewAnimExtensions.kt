@@ -100,6 +100,8 @@ public fun View.pulse(
     duration: Long = 1000L,
     repeatCount: Int = ValueAnimator.INFINITE,
 ) {
+    (getTag(ViewIds.FADE_ANIMATOR) as? ValueAnimator)?.cancel()
+
     val animator = ValueAnimator.ofFloat(minScale, maxScale, minScale)
     animator.duration = duration
     animator.repeatCount = repeatCount
@@ -150,15 +152,7 @@ public fun View.slideIn(
     duration: Long = 300L,
     onComplete: (() -> Unit)? = null,
 ) {
-    val actualDistance =
-        if (distance == 0f) {
-            when (direction) {
-                SlideDirection.LEFT, SlideDirection.RIGHT -> width.toFloat()
-                SlideDirection.TOP, SlideDirection.BOTTOM -> height.toFloat()
-            }
-        } else {
-            distance
-        }
+    val actualDistance = resolveSlideDistance(direction, distance)
 
     val (startX, startY) =
         when (direction) {
@@ -212,15 +206,7 @@ public fun View.slideOut(
     hideOnComplete: Boolean = true,
     onComplete: (() -> Unit)? = null,
 ) {
-    val actualDistance =
-        if (distance == 0f) {
-            when (direction) {
-                SlideDirection.LEFT, SlideDirection.RIGHT -> width.toFloat()
-                SlideDirection.TOP, SlideDirection.BOTTOM -> height.toFloat()
-            }
-        } else {
-            distance
-        }
+    val actualDistance = resolveSlideDistance(direction, distance)
 
     val (endX, endY) =
         when (direction) {
@@ -440,4 +426,28 @@ public fun View.fadeToggle(
     } else {
         fadeIn(duration, onComplete)
     }
+}
+
+private fun View.resolveSlideDistance(
+    direction: SlideDirection,
+    requestedDistance: Float,
+): Float {
+    if (requestedDistance != 0f) return requestedDistance
+
+    val layoutDistance =
+        when (direction) {
+            SlideDirection.LEFT, SlideDirection.RIGHT -> width
+            SlideDirection.TOP, SlideDirection.BOTTOM -> height
+        }
+    if (layoutDistance > 0) return layoutDistance.toFloat()
+
+    val measuredDistance =
+        when (direction) {
+            SlideDirection.LEFT, SlideDirection.RIGHT -> measuredWidth
+            SlideDirection.TOP, SlideDirection.BOTTOM -> measuredHeight
+        }
+    if (measuredDistance > 0) return measuredDistance.toFloat()
+
+    val density = resources.displayMetrics.density
+    return if (density > 0f) 56f * density else 56f
 }

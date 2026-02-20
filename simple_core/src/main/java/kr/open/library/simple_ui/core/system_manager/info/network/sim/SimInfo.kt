@@ -563,12 +563,7 @@ public class SimInfo(
      * SimInfo에서 사용한 리소스를 정리합니다.<br>
      */
     override fun onDestroy() {
-        try {
-            Logx.d("SimInfo destroyed")
-        } catch (e: Exception) {
-            Logx.e("Error during SimInfo cleanup: ${e.message}")
-        } finally {
-            super.onDestroy()
-        }
+        Logx.d("SimInfo destroyed")
+        super.onDestroy()
     }
 }

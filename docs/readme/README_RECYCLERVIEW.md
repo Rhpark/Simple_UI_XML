@@ -477,8 +477,12 @@ Leave the traditional complexity behind.
 
 - All mutation methods support an optional `commitCallback`.
 - The callback runs on the main thread after the queue operation completes.
+- Queue processing callbacks are isolated with `RuntimeException` boundaries so callback failures do not break the queue flow.
+- Queue operation models (`Operation`, `SetItemsOp` etc.) are internal implementation details; use adapter public mutation methods instead of constructing operations directly.
 >- 모든 변경 메서드는 선택적 `commitCallback` 파라미터를 지원합니다.
 >- 이 콜백은 큐 연산 완료 후 메인 스레드에서 실행됩니다.
+>- 큐 처리 콜백은 `RuntimeException` 경계로 격리되어, 콜백 실패가 전체 큐 흐름을 깨뜨리지 않도록 보호합니다.
+>- 큐 연산 모델(`Operation`, `SetItemsOp` 등)은 internal 구현 상세이므로, 직접 생성하지 말고 어댑터 공개 변경 메서드를 사용하세요.
 
 <br></br>
 
