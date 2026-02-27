@@ -92,69 +92,13 @@
    - **SharedPreferences 래퍼** (simple_core/src/main/java/kr/open/library/simple_ui/core/local/base/BaseSharedPreference.kt)
 
 
-
- ## 핵심 설계 원칙
-
-  ### 1. Coroutine & Flow 우선
-   - 모든 비동기 작업은 Coroutine 기반
-   - 시스템 상태/이벤트는 Flow로 반응형 제공 (상태: StateFlow, 이벤트: SharedFlow)
-   - 일회성 이벤트는 SharedFlow/Channel로 처리
-   - Mutex를 통한 동시성 제어
-
-
-  ### 2. 안전한 예외 처리 패턴
-   - **safeCatch**: 모든 예외를 안전하게 처리하고 기본값 반환 (simple_core/src/main/java/kr/open/library/simple_ui/core/extensions/trycatch/TryCatchExtensions.kt)
-   - **tryCatchSystemManager**: BaseSystemService에서 권한 검증 + 예외 처리 통합 (simple_core/src/main/java/kr/open/library/simple_ui/core/system_manager/base/BaseSystemService.kt)
-   - 예외 발생 시 Logx로 자동 로깅
-   - 에러 처리 규칙은 루트의 docs/rules/CODING_RULE.md를 참조
-
-
-  ### 3. BaseSystemService 권한 검증 패턴
-   - 생성 시점에 필요 권한 자동 체크
-   - 권한 부족 시 경고 로그 + 기본값 반환
-   - refreshPermissions()로 권한 재검증
-   - 예제: (simple_core/src/main/java/kr/open/library/simple_ui/core/system_manager/info/location/LocationStateInfo.kt)
-
-
-  ### 4. API 레벨 분기 헬퍼
-   - **checkSdkVersion**: 인라인 함수로 API 분기 간소화 (simple_core/src/main/java/kr/open/library/simple_ui/core/extensions/conditional/SdkVersionInline.kt)
-   - @RequiresApi 어노테이션으로 최소 SDK 명시
-   - by lazy로 시스템 서비스 지연 초기화
-
-
-  ### 5. 통합 로깅 시스템
-   - 모든 로그는 Logx를 통해 단일 경로로 수집
-   - DSL 기반 설정으로 파일 저장/필터링/포맷팅 제어
-   - 스택트레이스 자동 수집 옵션
-
-
-
  ## 개발 시 주의사항
-
-  ### UI 의존성 금지
-   - simple_core에서는 View, Activity, Fragment, DataBinding 등 UI 관련 import 절대 금지
-   - Context는 사용 가능하나 UI 조작 로직은 simple_xml로 위임
-   - UI 관련 기능이 필요하면 simple_xml 모듈에 구현
-
 
   ### 권한 처리
    - 시스템 서비스 래퍼 작성 시 BaseSystemService 상속 필수
    - requiredPermissions 생성자 파라미터로 필요 권한 명시
    - tryCatchSystemManager로 안전한 기본값 반환 패턴 유지
    - @RequiresPermission 어노테이션 명시
-
-
-  ### API 레벨 대응
-   - SDK 버전별 분기가 필요한 경우 checkSdkVersion 사용
-   - @RequiresApi 어노테이션으로 최소 API 레벨 표기
-   - Deprecated API 사용 시 주석으로 이유 명시
-
-
-  ### StateFlow/SharedFlow 사용
-   - 시스템 상태는 StateFlow로 제공하는 것을 기본으로 하되, 이벤트 스트림은 SharedFlow 사용
-   - 일회성 이벤트는 SharedFlow 또는 Channel 사용
-   - 백그라운드 스레드에서 안전하게 수집 가능하도록 설계
-
 
   ### 테스트 용이성
    - 모든 시스템 서비스는 인터페이스 또는 추상 클래스 기반

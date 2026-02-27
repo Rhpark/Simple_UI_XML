@@ -8,7 +8,7 @@
  - **Robolectric 테스트**: `src/test/java/kr/open/library/simple_ui/{모듈}/robolectric/{원본_패키지_경로}/`
  - 원본 소스 파일의 패키지 구조를 `unit/` 또는 `robolectric/` 하위에 그대로 유지
  - 예시:
-   - 소스: `simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/view/recyclerview/RecyclerScrollStateCalculator.kt`
+   - 소스: `simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/view/recyclerview/RecyclerScrollStateCalculator.kt`rmfo 
    - 단위 테스트: `simple_xml/src/test/java/kr/open/library/simple_ui/xml/unit/ui/view/recyclerview/RecyclerScrollStateCalculatorTest.kt`
    - Robolectric: `simple_xml/src/test/java/kr/open/library/simple_ui/xml/robolectric/ui/view/recyclerview/RecyclerScrollStateCalculatorRobolectricTest.kt`
 
@@ -39,3 +39,7 @@
 - simple_core 커버리지: ./gradlew :simple_core:koverHtmlReport
 - simple_xml 커버리지: ./gradlew :simple_xml:koverHtmlReport
 - KtLint 체크: ./gradlew ktlintCheck
+
+
+## 주의 사항
+- 복잡한 Robolectric 테스트의 경우 작성하지 않고 사용자에게 사유를 알려주고 승인 요청을 한다.
