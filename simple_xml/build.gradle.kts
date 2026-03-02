@@ -14,7 +14,6 @@ publishing {
             groupId = "com.github.Rhpark"
             artifactId = "Simple_UI_XML"
             version = libs.versions.appVersion.get()
-
             afterEvaluate {
                 from(components.findByName("release"))
             }
