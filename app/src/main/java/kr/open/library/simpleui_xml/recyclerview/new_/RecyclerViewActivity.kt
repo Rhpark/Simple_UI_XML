@@ -1,11 +1,10 @@
 package kr.open.library.simpleui_xml.recyclerview.new_
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
-import kr.open.library.simple_ui.xml.ui.adapter.list.diffutil.RcvListDiffUtilCallBack
-import kr.open.library.simple_ui.xml.ui.adapter.list.simple.SimpleBindingRcvListAdapter
+import kr.open.library.simple_ui.xml.ui.adapter.list.base.diffutil.RcvListDiffUtilCallBack
+import kr.open.library.simple_ui.xml.ui.adapter.list.simple.SimpleRcvDataBindingListAdapter
 import kr.open.library.simple_ui.xml.ui.adapter.normal.simple.SimpleBindingRcvAdapter
 import kr.open.library.simple_ui.xml.ui.components.activity.binding.BaseDataBindingActivity
 import kr.open.library.simple_ui.xml.ui.view.recyclerview.ScrollDirection
@@ -15,25 +14,24 @@ import kr.open.library.simpleui_xml.databinding.ActivityRecyclerviewBinding
 import kr.open.library.simpleui_xml.databinding.ItemRcvTextviewBinding
 import kr.open.library.simpleui_xml.recyclerview.model.SampleItem
 import kr.open.library.simpleui_xml.recyclerview.new_.adapter.CustomListAdapter
-import kr.open.library.simpleui_xml.temp.base.TempAdapterBindingMenuActivity
 
 class RecyclerViewActivity : BaseDataBindingActivity<ActivityRecyclerviewBinding>(R.layout.activity_recyclerview) {
-    private val simpleListAdapter = SimpleBindingRcvListAdapter<SampleItem, ItemRcvTextviewBinding>(
+    private val simpleListAdapter = SimpleRcvDataBindingListAdapter<SampleItem, ItemRcvTextviewBinding>(
         R.layout.item_rcv_textview,
-        listDiffUtil =
-            RcvListDiffUtilCallBack(
-                itemsTheSame = { oldItem, newItem -> oldItem.id == newItem.id },
-                contentsTheSame = { oldItem, newItem -> oldItem == newItem },
-            ),
+        listDiffUtil = RcvListDiffUtilCallBack(
+            itemsTheSame = { oldItem, newItem -> oldItem.id == newItem.id },
+            contentsTheSame = { oldItem, newItem -> oldItem == newItem },
+        ),
     ) { holder, item, position ->
         holder.binding.apply {
             tvTitle.text = item.title
             tvDescription.text = item.description
             tvPosition.text = "Position: $position"
-
-            root.setOnClickListener { currentRemoveAtAdapter(position) }
         }
-    }.apply { setItems(SampleItem.createSampleData()) }
+    }.apply {
+        setItems(SampleItem.createSampleData())
+        setOnItemClickListener { position, _, _ -> currentRemoveAtAdapter(position) }
+    }
 
     private val simpleAdapter = SimpleBindingRcvAdapter<SampleItem, ItemRcvTextviewBinding>(
         R.layout.item_rcv_textview,
@@ -42,10 +40,11 @@ class RecyclerViewActivity : BaseDataBindingActivity<ActivityRecyclerviewBinding
             tvTitle.text = item.title
             tvDescription.text = item.description
             tvPosition.text = "Position: $position"
-
-            root.setOnClickListener { currentRemoveAtAdapter(position) }
         }
-    }.apply { setItems(SampleItem.createSampleData()) }
+    }.apply {
+        setItems(SampleItem.createSampleData())
+        setOnItemClickListener { position, _, _ -> currentRemoveAtAdapter(position) }
+    }
 
     private val customListAdapter = CustomListAdapter()
         .apply {
@@ -67,9 +66,6 @@ class RecyclerViewActivity : BaseDataBindingActivity<ActivityRecyclerviewBinding
             btnAddItem.setOnClickListener { currentSelectAdapter() }
             btnClearItems.setOnClickListener { currentRemoveAllAdapter() }
             btnShuffleItems.setOnClickListener { currentShuffleAdapter() }
-            btnTempAdapterExample.setOnClickListener {
-                startActivity(Intent(this@RecyclerViewActivity, TempAdapterBindingMenuActivity::class.java))
-            }
         }
     }
 
@@ -77,27 +73,25 @@ class RecyclerViewActivity : BaseDataBindingActivity<ActivityRecyclerviewBinding
         getBinding().rcvItems.apply {
             lifecycleScope.launch {
                 sfScrollDirectionFlow.collect { direction ->
-                    val directionText =
-                        when (direction) {
-                            ScrollDirection.UP -> "위로 스크롤"
-                            ScrollDirection.DOWN -> "아래로 스크롤"
-                            ScrollDirection.LEFT -> "왼쪽으로 스크롤"
-                            ScrollDirection.RIGHT -> "오른쪽으로 스크롤"
-                            ScrollDirection.IDLE -> "스크롤 정지"
-                        }
+                    val directionText = when (direction) {
+                        ScrollDirection.UP -> "위로 스크롤"
+                        ScrollDirection.DOWN -> "아래로 스크롤"
+                        ScrollDirection.LEFT -> "왼쪽으로 스크롤"
+                        ScrollDirection.RIGHT -> "오른쪽으로 스크롤"
+                        ScrollDirection.IDLE -> "스크롤 정지"
+                    }
                     getBinding().tvScrollInfo.text = "방향: $directionText"
                 }
             }
 
             lifecycleScope.launch {
                 sfEdgeReachedFlow.collect { (edge, isReached) ->
-                    val edgeText =
-                        when (edge) {
-                            ScrollEdge.TOP -> "상단"
-                            ScrollEdge.BOTTOM -> "하단"
-                            ScrollEdge.LEFT -> "좌측"
-                            ScrollEdge.RIGHT -> "우측"
-                        }
+                    val edgeText = when (edge) {
+                        ScrollEdge.TOP -> "상단"
+                        ScrollEdge.BOTTOM -> "하단"
+                        ScrollEdge.LEFT -> "좌측"
+                        ScrollEdge.RIGHT -> "우측"
+                    }
                     val statusText = if (isReached) "도달" else "벗어남"
                     getBinding().tvScrollInfo.text = "$edgeText $statusText"
                 }
@@ -115,12 +109,11 @@ class RecyclerViewActivity : BaseDataBindingActivity<ActivityRecyclerviewBinding
         }
     }
 
-    private fun getItem(position: Int) =
-        SampleItem(
-            id = System.currentTimeMillis(),
-            title = "새 아이템 $position",
-            description = "동적으로 추가된 아이템입니다",
-        )
+    private fun getItem(position: Int) = SampleItem(
+        id = System.currentTimeMillis(),
+        title = "새 아이템 $position",
+        description = "동적으로 추가된 아이템입니다",
+    )
 
     private fun currentRemoveAtAdapter(position: Int) {
         if (getBinding().rBtnChangeSimpleAdapter.isChecked) {

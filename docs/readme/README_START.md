@@ -1,7 +1,7 @@
 ﻿# 🚀 Simple UI XML — We handle the complexity, you keep your speed
 > **복잡함은 우리가, 속도는 당신에게**
 
-<br>,</br>
+<br></br>
 
 **Repetitive Activity/Fragment setups**, **never-ending permission handling**, and the swelling boilerplate... 
 
@@ -54,7 +54,7 @@ We built **Simple UI XML** to give you that time back.
 
 ## 📚 **Documentation Index (문서 인덱스)**
 
-- 전체 README 문서는 [README.md](README.md)에서 기능별로 바로 찾을 수 있습니다.
+- 전체 README 문서는 [README.md](../../README.md)에서 기능별로 바로 찾을 수 있습니다.
 
 <br>
 </br>
@@ -78,6 +78,18 @@ We built **Simple UI XML** to give you that time back.
 > - 워크플로 체인은 `1. Android CI -> 2. Android CD -> 3. Documentation (Dokka, Kover)` 입니다.
 > - 아티팩트는 `workflow_run.id` 기준으로 트리거된 실행에 결합되어, 다른 실행과 섞이는 문제를 방지합니다.
 > - `release-metadata`, `coverage-report`는 하위 단계 정합성을 위해 CD 단계를 거쳐 전달됩니다.
+
+<br>
+</br>
+
+## 🧩 **API Compatibility Baseline (API 호환성 베이스라인)**
+
+- Public API signatures are tracked in `simple_xml/api/simple_xml.api`.
+- Run `./gradlew :simple_xml:apiCheck` before merge/release to prevent unintended API breaks.
+- If an API change is intentional, run `./gradlew :simple_xml:apiDump` and include the updated `.api` diff.
+> - 공개 API 시그니처는 `simple_xml/api/simple_xml.api` 파일로 관리합니다.
+> - 머지/릴리즈 전 `./gradlew :simple_xml:apiCheck`를 실행해 의도치 않은 API 변경을 차단합니다.
+> - API 변경이 의도된 경우 `./gradlew :simple_xml:apiDump` 실행 후 `.api` 변경분을 함께 반영합니다.
 
 <br>
 </br>
@@ -117,13 +129,25 @@ FIREBASE_APP_ID_RELEASE=...
 
 - **Base classes**: RootActivity, BaseActivity, BaseDataBindingActivity
 - **Fragment**: RootFragment, BaseFragment, BaseDataBindingFragment, RootDialogFragment, BaseDialogFragment, BaseDataBindingDialogFragment
-- **RecyclerView**: Rich adapters, view holders, DiffUtil + RecyclerScrollStateView
+- **RecyclerView**: content-only normal adapters (`SimpleRcvAdapter`, `SimpleBindingRcvAdapter`, `SimpleViewBindingRcvAdapter`), section normal adapters (`SimpleHeaderFooterRcvAdapter`, `SimpleHeaderFooterDataBindingRcvAdapter`, `SimpleHeaderFooterViewBindingRcvAdapter`, `HeaderFooterRcvAdapter`), list adapters (`SimpleRcvListAdapter`, `SimpleRcvDataBindingListAdapter`, `SimpleRcvViewBindingListAdapter`), DiffUtil(ListAdapter) + RecyclerScrollStateView
+- **RecyclerView click contract**: listeners are attached once in `onCreateViewHolder`, and position/item are resolved at click time (`BaseRcvAdapter`: content index only, `BaseRcvListAdapter`: adapter index)
+- **RecyclerView bind signature**: override order is `onBindViewHolder(holder, item, position)` (same order for header/footer bind overrides)
+- **RecyclerView mutation contract**: mutation APIs (`setItems`, `addItems`, `removeItem` ...) use `onResult` callbacks and report `NormalAdapterResult` / `ListAdapterResult`
+- **Section replace contract**: `HeaderFooterRcvAdapter.setHeaderItems` / `setFooterItems` use `notifyItemRangeChanged` when size/viewType are compatible, otherwise fallback to remove+insert
+- **Large removal note**: `BaseRcvAdapter.removeItems(...)` emits per-item `notifyItemRemoved`; for large/contiguous removals, prefer `removeRange` / `removeAll`
+- **ListAdapter queue controls**: `BaseRcvListAdapter` provides `setQueuePolicy`, `setQueueMergeKeys`, `setQueueDebugListener`
 - **Custom layouts**: Layout components with lifecycle awareness
 - **XML style system**: Comprehensive UI style library (style.xml)
 - **MVVM support**: Fully compatible with ViewModel and DataBinding
 > - **기본 클래스**: RootActivity, BaseActivity, BaseDataBindingActivity
 > - **Fragment**: RootFragment, BaseFragment, BaseDataBindingFragment, RootDialogFragment, BaseDialogFragment, BaseDataBindingDialogFragment
-> - **RecyclerView**: 다양한 Adapter, ViewHolder, DiffUtil + RecyclerScrollStateView
+> - **RecyclerView**: content 전용 normal 어댑터(`SimpleRcvAdapter`, `SimpleBindingRcvAdapter`, `SimpleViewBindingRcvAdapter`), 섹션 normal 어댑터(`SimpleHeaderFooterRcvAdapter`, `SimpleHeaderFooterDataBindingRcvAdapter`, `SimpleHeaderFooterViewBindingRcvAdapter`, `HeaderFooterRcvAdapter`), list 어댑터(`SimpleRcvListAdapter`, `SimpleRcvDataBindingListAdapter`, `SimpleRcvViewBindingListAdapter`), DiffUtil(ListAdapter) + RecyclerScrollStateView
+> - **RecyclerView 클릭 규약**: 리스너는 `onCreateViewHolder`에서 1회 연결되고, position/item은 클릭 시점에 조회됩니다(`BaseRcvAdapter`: content 인덱스만 전달, `BaseRcvListAdapter`: adapter 인덱스 전달)
+> - **RecyclerView 바인딩 시그니처**: `onBindViewHolder(holder, item, position)` 순서로 오버라이드합니다(header/footer 바인딩도 동일 순서)
+> - **RecyclerView 변경 규약**: 변경 API(`setItems`, `addItems`, `removeItem` 등)는 `onResult` 콜백을 통해 `NormalAdapterResult` / `ListAdapterResult`를 전달합니다.
+> - **섹션 교체 규약**: `HeaderFooterRcvAdapter.setHeaderItems` / `setFooterItems`는 크기/뷰타입 호환 시 `notifyItemRangeChanged`를 사용하고, 아니면 remove+insert로 반영합니다.
+> - **대량 제거 주의**: `BaseRcvAdapter`의 `removeItems(...)`는 항목별 `notifyItemRemoved`를 호출하므로, 대량/연속 제거는 `removeRange` / `removeAll`을 권장합니다.
+> - **ListAdapter 큐 제어**: `BaseRcvListAdapter`에서 `setQueuePolicy`, `setQueueMergeKeys`, `setQueueDebugListener`를 제공합니다.
 > - **커스텀 레이아웃**: Lifecycle 지원하는 Layout 컴포넌트들
 > - **XML 스타일 시스템**: 포괄적인 UI 스타일 라이브러리 (style.xml)
 > - **MVVM 지원**: ViewModel, DataBinding 호환 지원

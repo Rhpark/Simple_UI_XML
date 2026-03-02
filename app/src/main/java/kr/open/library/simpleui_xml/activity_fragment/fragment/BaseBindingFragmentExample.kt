@@ -32,7 +32,7 @@ class BaseBindingFragmentExample : BaseDataBindingFragment<FragmentBaseBindingEx
     override fun onEventVmCollect(binding: FragmentBaseBindingExampleBinding) {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                vm.mEventVm.collect { event ->
+                vm.eventVmFlow.collect { event ->
                     when (event) {
                         is BaseBindingFragmentExampleVmEvent.ShowMessage -> {
                             getBinding().root.snackBarShowShort(event.message)

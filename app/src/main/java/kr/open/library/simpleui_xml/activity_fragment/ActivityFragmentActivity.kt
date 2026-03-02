@@ -32,7 +32,7 @@ class ActivityFragmentActivity : BaseDataBindingActivity<ActivityActivityFragmen
 
     override fun onEventVmCollect(binding: ActivityActivityFragmentBinding) {
         lifecycleScope.launch {
-            vm.mEventVm.collect { event ->
+            vm.eventVmFlow.collect { event ->
                 when (event) {
                     is ActivityFragmentActivityVmEvent.OnClickBaseActivity -> {
                         startActivity(Intent(this@ActivityFragmentActivity, BaseActivityExample::class.java))

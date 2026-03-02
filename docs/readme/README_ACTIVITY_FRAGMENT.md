@@ -6,7 +6,8 @@
 - **Package**: `kr.open.library.simple_ui.xml.ui.*`
 - **Provides**: Base classes for Activity and Fragment
   - `components/activity/` - RootActivity, BaseActivity, BaseDataBindingActivity
-  - `components/fragment/` - RootFragment, BaseFragment, BaseDataBindingFragment, DialogFragment
+  - `components/fragment/` - RootFragment, BaseFragment, BaseViewBindingFragment, BaseDataBindingFragment
+  - `components/dialog/` - RootDialogFragment, BaseDialogFragment, BaseViewBindingDialogFragment, BaseDataBindingDialogFragment
 
 <br></br>
 Simple UI's Activity/Fragment base classes are productivity tools that eliminate repetitive initialization code and centralize permission handling and MVVM interactions in one place. This document provides the philosophy behind each base class, usage scenarios, and practical examples.
@@ -18,8 +19,8 @@ Simple UI's Activity/Fragment base classes are productivity tools that eliminate
 ### BaseActivity Quick Setup (BaseActivity 빠른 설정)
 ![baseActivity.gif](../../example_gif/baseActivity.gif)
 
-**“Complete Activity / Fragment initialization in just three lines!”
->** – Simple UI는 순정 Android 대비 초기화 시간을 압축합니다.
+> **“Complete Activity / Fragment initialization in just three lines!”**  
+> Simple UI는 순정 Android 대비 초기화 시간을 압축합니다.
 
 Complete Activity/Fragment initialization in just 3 lines!" – See how much faster Simple UI is compared to vanilla Android
 > **“Activity/Fragment 초기화를 단 3줄로 끝냅니다!”** – 순정 Android 대비 Simple UI가 얼마나 빠른지 바로 확인해 보세요.
@@ -337,7 +338,7 @@ override fun onViewCreated(binding: FragmentDetailBinding, savedInstanceState: B
 ```
 > 필요 시 `onCreateView(binding, savedInstanceState)`를 더 이른 초기화 지점으로 사용할 수 있으며, 이때는 `super.onCreateView(...)` 호출로 lifecycleOwner 설정을 유지하세요.
 
-### 🪟 BaseDataBindingDialogFragment same BaseDataBindingFragment!
+### 🪟 BaseDataBindingDialogFragment follows the BaseDataBindingFragment pattern
 DialogFragment도 `onCreateView(binding, ...)`, `onViewCreated(binding, ...)`, `onEventVmCollect(binding)`을 동일하게 override하여 Activity/Fragment와 같은 코딩 경험을 제공합니다.
 > DialogFragment도 `onCreateView(binding, ...)`, `onViewCreated(binding, ...)`, `onEventVmCollect(binding)`을 동일하게 override하여 Activity/Fragment와 같은 코딩 경험을 제공합니다.
 

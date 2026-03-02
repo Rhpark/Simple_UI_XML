@@ -52,7 +52,7 @@ import kotlinx.coroutines.launch
  *
  *         lifecycleScope.launch {
  *             repeatOnLifecycle(Lifecycle.State.STARTED) {
- *                 viewModel.mEventVm.collect { event ->
+ *                 viewModel.eventVmFlow.collect { event ->
  *                     when (event) {
  *                         is MyEvent.ShowToast -> showToast(event.message)
  *                         is MyEvent.NavigateToHome -> navigateToHome()
@@ -89,7 +89,7 @@ public abstract class BaseViewModelEvent<EVENT_TYPE> : BaseViewModel() {
      * 이 이벤트 채널은 내비게이션·토스트 같은 단발 UI 이벤트 용도입니다. 타이머/센서/상태 갱신처럼 고빈도 스트림에는 부적합하며, 백프레셔나 UI 지연이 발생할 수 있습니다.<br>
      * ViewModel로부터 이벤트를 받으려면 Activity, Fragment 또는 CustomView에서 이 flow를 수집하세요.<br>
      */
-    public val mEventVm: Flow<EVENT_TYPE> = eventVm.receiveAsFlow()
+    public val eventVmFlow: Flow<EVENT_TYPE> = eventVm.receiveAsFlow()
 
     /**
      * Sends an event to the View layer through the event channel.<br>

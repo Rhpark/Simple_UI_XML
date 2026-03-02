@@ -1,4 +1,4 @@
-package kr.open.library.simple_ui.xml.robolectric.ui.adapter
+﻿package kr.open.library.simple_ui.xml.robolectric.ui.adapter
 
 import android.content.Context
 import android.os.Build
@@ -9,7 +9,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ApplicationProvider
 import kr.open.library.simple_ui.xml.ui.adapter.list.base.BaseRcvListAdapter
-import kr.open.library.simple_ui.xml.ui.adapter.list.diffutil.RcvListDiffUtilCallBack
+import kr.open.library.simple_ui.xml.ui.adapter.list.base.diffutil.RcvListDiffUtilCallBack
+import kr.open.library.simple_ui.xml.ui.adapter.list.base.result.ListAdapterResult
 import kr.open.library.simple_ui.xml.ui.adapter.viewholder.BaseRcvViewHolder
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -19,12 +20,12 @@ import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicReference
 
 /**
  * Robolectric tests for BaseRcvListAdapter
@@ -67,8 +68,8 @@ class BaseRcvListAdapterRobolectricTest {
 
         override fun onBindViewHolder(
             holder: TestViewHolder,
-            position: Int,
             item: TestItem,
+            position: Int,
         ) {
             // No binding needed for tests
         }
@@ -118,6 +119,27 @@ class BaseRcvListAdapterRobolectricTest {
         assertTrue(items.isEmpty())
     }
 
+    @Test
+    fun addItem_calledOffMainThread_throwsIllegalStateException() {
+        val failure = AtomicReference<Throwable?>(null)
+        val latch = CountDownLatch(1)
+
+        Thread {
+            try {
+                adapter.addItem(TestItem(1, "Item 1"))
+            } catch (t: Throwable) {
+                failure.set(t)
+            } finally {
+                latch.countDown()
+            }
+        }.start()
+
+        assertTrue(latch.await(2, TimeUnit.SECONDS))
+        val error = failure.get()
+        assertTrue(error is IllegalStateException)
+        assertTrue(error?.message?.contains("BaseRcvListAdapter.addItem") == true)
+    }
+
     // ==============================================
     // Item Addition Tests
     // ==============================================
@@ -162,20 +184,37 @@ class BaseRcvListAdapterRobolectricTest {
         val result = addItemsAwait(items)
 
         // Then
-        assertEquals(3, result)
+        assertTrue(result)
         assertEquals(3, adapter.itemCount)
     }
 
     @Test
-    fun addingEmptyList_returnsZero() {
+    fun addingEmptyList_returnsFalse() {
         // Given
         val emptyList = emptyList<TestItem>()
 
         // When
-        val result = adapter.addItems(emptyList)
+        val result = awaitListResult { onResult ->
+            adapter.addItems(emptyList, onResult)
+        }
 
         // Then
-        assertEquals(0, result)
+        assertTrue(result is ListAdapterResult.Rejected.EmptyInput)
+        assertEquals(0, adapter.itemCount)
+    }
+
+    @Test
+    fun addItemsResult_withEmptyList_returnsRejectedEmptyInput() {
+        // Given
+        var result: ListAdapterResult? = null
+
+        // When
+        adapter.addItems(emptyList()) { received ->
+            result = received
+        }
+
+        // Then
+        assertTrue(result is ListAdapterResult.Rejected.EmptyInput)
         assertEquals(0, adapter.itemCount)
     }
 
@@ -215,10 +254,12 @@ class BaseRcvListAdapterRobolectricTest {
         addItemAwait(TestItem(1, "Item 1"))
 
         // When
-        val result = adapter.addItemAt(999, TestItem(2, "Item 2"))
+        val result = awaitListResult { onResult ->
+            adapter.addItemAt(999, TestItem(2, "Item 2"), onResult)
+        }
 
         // Then
-        assertFalse(result)
+        assertTrue(result is ListAdapterResult.Rejected.InvalidPosition)
     }
 
     @Test
@@ -236,15 +277,17 @@ class BaseRcvListAdapterRobolectricTest {
     }
 
     @Test
-    fun addingEmptyListAtPosition_succeeds() {
+    fun addingEmptyListAtPosition_returnsFalse() {
         // Given
         addItemAwait(TestItem(1, "Item 1"))
 
         // When
-        val result = adapter.addItems(0, emptyList())
+        val result = awaitListResult { onResult ->
+            adapter.addItemsAt(0, emptyList(), onResult)
+        }
 
         // Then
-        assertTrue(result)
+        assertTrue(result is ListAdapterResult.Rejected.EmptyInput)
         assertEquals(1, adapter.itemCount)
     }
 
@@ -271,10 +314,12 @@ class BaseRcvListAdapterRobolectricTest {
         addItemAwait(TestItem(1, "Item 1"))
 
         // When
-        val result = adapter.removeAt(999)
+        val result = awaitListResult { onResult ->
+            adapter.removeAt(999, onResult)
+        }
 
         // Then
-        assertFalse(result)
+        assertTrue(result is ListAdapterResult.Rejected.InvalidPosition)
         assertEquals(1, adapter.itemCount)
     }
 
@@ -301,10 +346,48 @@ class BaseRcvListAdapterRobolectricTest {
         val nonExistentItem = TestItem(999, "Non-existent")
 
         // When
-        val result = adapter.removeItem(nonExistentItem)
+        val result = awaitListResult { onResult ->
+            adapter.removeItem(nonExistentItem, onResult)
+        }
 
         // Then
-        assertFalse(result)
+        assertTrue(result is ListAdapterResult.Rejected.ItemNotFound)
+    }
+
+    @Test
+    fun removeItemResult_withMissingItem_returnsRejectedItemNotFound() {
+        // Given
+        addItemAwait(TestItem(1, "Item 1"))
+        var result: ListAdapterResult? = null
+
+        // When
+        adapter.removeItem(TestItem(999, "Missing")) { received ->
+            result = received
+        }
+
+        // Then
+        assertTrue(result is ListAdapterResult.Rejected.ItemNotFound)
+        assertEquals(1, adapter.itemCount)
+    }
+
+    @Test
+    fun setItems_reportsAppliedAfterQueueCommit() {
+        // Given
+        val items = listOf(TestItem(1, "Item 1"), TestItem(2, "Item 2"))
+        val latch = CountDownLatch(1)
+        var result: ListAdapterResult? = null
+
+        // When
+        adapter.setItems(items) { received ->
+            result = received
+            latch.countDown()
+        }
+        drainListUpdates()
+
+        // Then
+        assertTrue(latch.await(1, TimeUnit.SECONDS))
+        assertEquals(ListAdapterResult.Applied, result)
+        assertEquals(items, adapter.getItems())
     }
 
     @Test
@@ -388,10 +471,12 @@ class BaseRcvListAdapterRobolectricTest {
         addItemAwait(TestItem(1, "Item 1"))
 
         // When
-        val result = adapter.replaceItemAt(999, TestItem(2, "Item 2"))
+        val result = awaitListResult { onResult ->
+            adapter.replaceItemAt(999, TestItem(2, "Item 2"), onResult)
+        }
 
         // Then
-        assertFalse(result)
+        assertTrue(result is ListAdapterResult.Rejected.InvalidPosition)
     }
 
     // ==============================================
@@ -432,15 +517,36 @@ class BaseRcvListAdapterRobolectricTest {
     }
 
     @Test
+    fun movingToSamePosition_withCallback_invokesCallback() {
+        // Given
+        setItemsAwait(listOf(TestItem(1, "Item 1"), TestItem(2, "Item 2")))
+        var callbackInvoked = false
+
+        // When
+        awaitListUpdate(expectedItemCount = 2) { onResult ->
+            adapter.moveItem(0, 0) {
+                callbackInvoked = true
+                onResult(it)
+            }
+        }
+
+        // Then
+        assertTrue(callbackInvoked)
+        assertEquals(2, adapter.itemCount)
+    }
+
+    @Test
     fun movingFromInvalidPosition_fails() {
         // Given
         addItemAwait(TestItem(1, "Item 1"))
 
         // When
-        val result = adapter.moveItem(999, 0)
+        val result = awaitListResult { onResult ->
+            adapter.moveItem(999, 0, onResult)
+        }
 
         // Then
-        assertFalse(result)
+        assertTrue(result is ListAdapterResult.Rejected.InvalidPosition)
     }
 
     @Test
@@ -449,10 +555,23 @@ class BaseRcvListAdapterRobolectricTest {
         addItemAwait(TestItem(1, "Item 1"))
 
         // When
-        val result = adapter.moveItem(0, 999)
+        val result = awaitListResult { onResult ->
+            adapter.moveItem(0, 999, onResult)
+        }
 
         // Then
-        assertFalse(result)
+        assertTrue(result is ListAdapterResult.Rejected.InvalidPosition)
+    }
+
+    @Test
+    fun movingToSameInvalidPosition_fails() {
+        // When
+        val result = awaitListResult { onResult ->
+            adapter.moveItem(0, 0, onResult)
+        }
+
+        // Then
+        assertTrue(result is ListAdapterResult.Rejected.InvalidPosition)
     }
 
     // ==============================================
@@ -466,10 +585,10 @@ class BaseRcvListAdapterRobolectricTest {
         val items = listOf(TestItem(1, "Item 1"))
 
         // When
-        awaitListUpdate(expectedItemCount = items.size) { commit ->
+        awaitListUpdate(expectedItemCount = items.size) { onResult ->
             adapter.setItems(items) {
                 callbackInvoked = true
-                commit()
+                onResult(it)
             }
         }
 
@@ -485,10 +604,10 @@ class BaseRcvListAdapterRobolectricTest {
         val item = TestItem(1, "Item 1")
 
         // When
-        awaitListUpdate(expectedItemCount = 1) { commit ->
+        awaitListUpdate(expectedItemCount = 1) { onResult ->
             adapter.addItem(item) {
                 callbackInvoked = true
-                commit()
+                onResult(it)
             }
         }
 
@@ -504,10 +623,10 @@ class BaseRcvListAdapterRobolectricTest {
         var callbackInvoked = false
 
         // When
-        awaitListUpdate(expectedItemCount = 0) { commit ->
+        awaitListUpdate(expectedItemCount = 0) { onResult ->
             adapter.removeItem(item) {
                 callbackInvoked = true
-                commit()
+                onResult(it)
             }
         }
 
@@ -519,23 +638,7 @@ class BaseRcvListAdapterRobolectricTest {
     // Click Listener Tests
     // ==============================================
 
-    @Test
-    fun itemClickListener_canBeConfigured() {
-        // When
-        addItemAwait(TestItem(1, "Item 1"))
-
-        // Then - Listener is set (actual click requires UI interaction)
-        assertNotNull(adapter)
-    }
-
-    @Test
-    fun itemLongClickListener_canBeConfigured() {
-        // When
-        addItemAwait(TestItem(1, "Item 1"))
-
-        // Then - Listener is set
-        assertNotNull(adapter)
-    }
+    // (click listener integration tests are covered below in the dedicated section)
 
     // ==============================================
     // Real-world Scenario Tests
@@ -586,6 +689,7 @@ class BaseRcvListAdapterRobolectricTest {
                 TestItem(2, "Banana"),
             )
         setItemsAwait(initialResults)
+        assertEquals(2, adapter.itemCount)
 
         // When - New search query
         val newResults =
@@ -595,27 +699,29 @@ class BaseRcvListAdapterRobolectricTest {
             )
         setItemsAwait(newResults)
 
-        // Then - ListAdapter internally uses AsyncListDiffer
-        assertTrue(adapter.itemCount >= 0)
+        // Then
+        assertEquals(2, adapter.itemCount)
+        assertEquals(newResults[0], adapter.getItems()[0])
+        assertEquals(newResults[1], adapter.getItems()[1])
     }
 
     @Test
     fun reorderableListScenario_behavesAsExpected() {
         // Given - Reorderable list (drag & drop scenario)
-        awaitListUpdate(expectedItemCount = 3) { commit ->
+        awaitListUpdate(expectedItemCount = 3) { onResult ->
             adapter.setItems(
                 listOf(
                     TestItem(1, "First"),
                     TestItem(2, "Second"),
                     TestItem(3, "Third"),
                 ),
-                commit,
+                onResult,
             )
         }
 
         // When - Move first item to last
-        awaitListUpdate(expectedItemCount = 3) { commit ->
-            adapter.moveItem(0, 2, commit)
+        awaitListUpdate(expectedItemCount = 3) { onResult ->
+            adapter.moveItem(0, 2, onResult)
         }
 
         // adapter.getItems()[0] = 2,"Second"
@@ -662,10 +768,12 @@ class BaseRcvListAdapterRobolectricTest {
         addItemAwait(TestItem(1, "Item 1"))
 
         // When
-        val result = adapter.removeAt(-1)
+        val result = awaitListResult { onResult ->
+            adapter.removeAt(-1, onResult)
+        }
 
         // Then
-        assertFalse(result)
+        assertTrue(result is ListAdapterResult.Rejected.InvalidPosition)
         assertEquals(1, adapter.itemCount)
     }
 
@@ -675,10 +783,12 @@ class BaseRcvListAdapterRobolectricTest {
         val item = TestItem(1, "Item 1")
 
         // When
-        val result = adapter.addItemAt(-1, item)
+        val result = awaitListResult { onResult ->
+            adapter.addItemAt(-1, item, onResult)
+        }
 
         // Then
-        assertFalse(result)
+        assertTrue(result is ListAdapterResult.Rejected.InvalidPosition)
         assertEquals(0, adapter.itemCount)
     }
 
@@ -688,43 +798,47 @@ class BaseRcvListAdapterRobolectricTest {
         addItemAwait(TestItem(1, "Item 1"))
 
         // When
-        val result = adapter.replaceItemAt(-1, TestItem(2, "Item 2"))
+        val result = awaitListResult { onResult ->
+            adapter.replaceItemAt(-1, TestItem(2, "Item 2"), onResult)
+        }
 
         // Then
-        assertFalse(result)
+        assertTrue(result is ListAdapterResult.Rejected.InvalidPosition)
     }
 
     @Test
     fun getMutableItemList_returnsIndependentCopy() {
         // Given
-        setItemsAwait(listOf(TestItem(1, "Item 1")))
+        setItemsAwait(listOf(TestItem(1, "Item 1"), TestItem(2, "Item 2")))
 
-        // When - Test that internal state is protected
-        addItemAwait(TestItem(2, "Item 2"))
+        // When - mutate the copy
+        val copy = adapter.getMutableItemList()
+        copy.add(TestItem(99, "Injected"))
 
-        // Then
+        // Then - adapter internal state must not change
         assertEquals(2, adapter.itemCount)
+        assertEquals(2, adapter.getItems().size)
     }
 
     private fun setItemsAwait(items: List<TestItem>) {
-        awaitListUpdate(expectedItemCount = items.size) { commit ->
-            adapter.setItems(items, commit)
+        awaitListUpdate(expectedItemCount = items.size) { onResult ->
+            adapter.setItems(items, onResult)
         }
         shadowOf(Looper.getMainLooper()).idle()
     }
 
     private fun addItemAwait(item: TestItem) {
         val expected = adapter.itemCount + 1
-        awaitListUpdate(expectedItemCount = expected) { commit ->
-            adapter.addItem(item, commit)
+        awaitListUpdate(expectedItemCount = expected) { onResult ->
+            adapter.addItem(item, onResult)
         }
     }
 
-    private fun addItemsAwait(items: List<TestItem>): Int {
+    private fun addItemsAwait(items: List<TestItem>): Boolean {
         val expected = adapter.itemCount + items.size
-        return awaitListUpdate(expectedItemCount = expected) { commit ->
-            adapter.addItems(items, commit)
-        }
+        return awaitListUpdate(expectedItemCount = expected) { onResult ->
+            adapter.addItems(items, onResult)
+        }.isAccepted()
     }
 
     private fun addItemAtAwait(
@@ -732,9 +846,9 @@ class BaseRcvListAdapterRobolectricTest {
         item: TestItem,
     ): Boolean {
         val expected = adapter.itemCount + 1
-        return awaitListUpdate(expectedItemCount = expected) { commit ->
-            adapter.addItemAt(position, item, commit)
-        }
+        return awaitListUpdate(expectedItemCount = expected) { onResult ->
+            adapter.addItemAt(position, item, onResult)
+        }.isAccepted()
     }
 
     private fun addItemsAtAwait(
@@ -742,28 +856,28 @@ class BaseRcvListAdapterRobolectricTest {
         items: List<TestItem>,
     ): Boolean {
         val expected = adapter.itemCount + items.size
-        return awaitListUpdate(expectedItemCount = expected) { commit ->
-            adapter.addItems(position, items, commit)
-        }
+        return awaitListUpdate(expectedItemCount = expected) { onResult ->
+            adapter.addItemsAt(position, items, onResult)
+        }.isAccepted()
     }
 
     private fun removeAtAwait(position: Int): Boolean {
         val expected = (adapter.itemCount - 1).coerceAtLeast(0)
-        return awaitListUpdate(expectedItemCount = expected) { commit ->
-            adapter.removeAt(position, commit)
-        }
+        return awaitListUpdate(expectedItemCount = expected) { onResult ->
+            adapter.removeAt(position, onResult)
+        }.isAccepted()
     }
 
     private fun removeItemAwait(item: TestItem): Boolean {
         val expected = (adapter.itemCount - 1).coerceAtLeast(0)
-        return awaitListUpdate(expectedItemCount = expected) { commit ->
-            adapter.removeItem(item, commit)
-        }.apply { shadowOf(Looper.getMainLooper()).idle() }
+        return awaitListUpdate(expectedItemCount = expected) { onResult ->
+            adapter.removeItem(item, onResult)
+        }.isAccepted().apply { shadowOf(Looper.getMainLooper()).idle() }
     }
 
     private fun clearItemsAwait() {
-        awaitListUpdate(expectedItemCount = 0) { commit ->
-            adapter.removeAll(commit)
+        awaitListUpdate(expectedItemCount = 0) { onResult ->
+            adapter.removeAll(onResult)
         }
     }
 
@@ -772,31 +886,42 @@ class BaseRcvListAdapterRobolectricTest {
         item: TestItem,
     ): Boolean {
         val expected = adapter.itemCount
-        return awaitListUpdate(expectedItemCount = expected) { commit ->
-            adapter.replaceItemAt(position, item, commit)
-        }.apply {
-        }
+        return awaitListUpdate(expectedItemCount = expected) { onResult ->
+            adapter.replaceItemAt(position, item, onResult)
+        }.isAccepted()
     }
 
     private fun moveItemAwait(
         fromPosition: Int,
         toPosition: Int,
     ): Boolean {
-        if (fromPosition == toPosition) {
-            return adapter.moveItem(fromPosition, toPosition)
-        }
         val expected = adapter.itemCount
-        return awaitListUpdate(expectedItemCount = expected) { commit ->
-            adapter.moveItem(fromPosition, toPosition, commit)
-        }
+        return awaitListUpdate(expectedItemCount = expected) { onResult ->
+            adapter.moveItem(fromPosition, toPosition, onResult)
+        }.isAccepted()
     }
 
-    private fun <T> awaitListUpdate(
+    private fun awaitListResult(
+        trigger: (((ListAdapterResult) -> Unit) -> Unit),
+    ): ListAdapterResult {
+        var result: ListAdapterResult? = null
+        trigger { received ->
+            result = received
+        }
+        drainListUpdates()
+        return requireNotNull(result) { "ListAdapterResult callback was not invoked" }
+    }
+
+    private fun awaitListUpdate(
         expectedItemCount: Int? = null,
-        trigger: ((() -> Unit) -> T),
-    ): T {
+        trigger: (((ListAdapterResult) -> Unit) -> Unit),
+    ): ListAdapterResult {
         val latch = CountDownLatch(1)
-        val result = trigger { latch.countDown() }
+        var result: ListAdapterResult? = null
+        trigger { received ->
+            result = received
+            latch.countDown()
+        }
 
         val deadline = System.currentTimeMillis() + 1_000L
         while (System.currentTimeMillis() < deadline) {
@@ -815,20 +940,16 @@ class BaseRcvListAdapterRobolectricTest {
         expectedItemCount?.let {
             assertEquals("Unexpected item count after update", it, adapter.itemCount)
         }
-        return result
+        return requireNotNull(result) { "ListAdapterResult callback was not invoked" }
     }
 
+    private fun ListAdapterResult.isAccepted(): Boolean = this !is ListAdapterResult.Rejected
+
     private fun drainListUpdates() {
-        shadowOf(Looper.getMainLooper()).idle()
-        try {
-            Robolectric.flushForegroundThreadScheduler()
-        } catch (_: IllegalStateException) {
-        }
-        try {
-            Robolectric.flushBackgroundThreadScheduler()
-        } catch (_: IllegalStateException) {
-        }
-        shadowOf(Looper.getMainLooper()).idle()
+        val mainLooper = shadowOf(Looper.getMainLooper())
+        mainLooper.idle()
+        mainLooper.runToEndOfTasks()
+        mainLooper.idle()
     }
 
     private fun createBoundViewHolder(position: Int): RecyclerView.ViewHolder {
@@ -872,8 +993,8 @@ class BaseRcvListAdapterRobolectricTest {
 
                 override fun onBindViewHolder(
                     holder: TestViewHolder,
-                    position: Int,
                     item: TestItem,
+                    position: Int,
                 ) {
                     bindCalled = true
                 }
@@ -911,16 +1032,16 @@ class BaseRcvListAdapterRobolectricTest {
 
                 override fun onBindViewHolder(
                     holder: TestViewHolder,
-                    position: Int,
                     item: TestItem,
+                    position: Int,
                 ) {
                     // Full binding
                 }
 
                 override fun onBindViewHolder(
                     holder: TestViewHolder,
-                    position: Int,
                     item: TestItem,
+                    position: Int,
                     payloads: List<Any>,
                 ) {
                     payloadBindCalled = true
@@ -959,8 +1080,8 @@ class BaseRcvListAdapterRobolectricTest {
 
             override fun onBindViewHolder(
                 holder: TestViewHolder,
+                item: TestItem,
                 position: Int,
-                item: TestItem
             ) {
                 fullBindCalled = true
             }
@@ -1022,8 +1143,8 @@ class BaseRcvListAdapterRobolectricTest {
 
                 override fun onBindViewHolder(
                     holder: BaseRcvViewHolder,
-                    position: Int,
                     item: TestItem,
+                    position: Int,
                 ) {
                     // No binding needed
                 }
@@ -1072,16 +1193,19 @@ class BaseRcvListAdapterRobolectricTest {
 
                 override fun onBindViewHolder(
                     holder: TestViewHolder,
-                    position: Int,
                     item: TestItem,
+                    position: Int,
                 ) {}
             }
 
         // When - Trigger unexpected exception scenario
-        val result = faultyAdapter.addItemAt(Int.MAX_VALUE, TestItem(1, "Item"))
+        var result: ListAdapterResult? = null
+        faultyAdapter.addItemAt(Int.MAX_VALUE, TestItem(1, "Item")) { received ->
+            result = received
+        }
 
         // Then
-        assertFalse(result)
+        assertTrue(result is ListAdapterResult.Rejected.InvalidPosition)
     }
 
     @Test
@@ -1090,39 +1214,47 @@ class BaseRcvListAdapterRobolectricTest {
         addItemAwait(TestItem(1, "Item 1"))
 
         // When
-        val result = adapter.addItems(999, listOf(TestItem(2, "Item 2")))
+        val result = awaitListResult { onResult ->
+            adapter.addItemsAt(999, listOf(TestItem(2, "Item 2")), onResult)
+        }
 
         // Then
-        assertFalse(result)
+        assertTrue(result is ListAdapterResult.Rejected.InvalidPosition)
     }
 
     @Test
     fun addItems_atNegativePosition_returnsFalse() {
         // When
-        val result = adapter.addItems(-1, listOf(TestItem(1, "Item 1")))
+        val result = awaitListResult { onResult ->
+            adapter.addItemsAt(-1, listOf(TestItem(1, "Item 1")), onResult)
+        }
 
         // Then
-        assertFalse(result)
+        assertTrue(result is ListAdapterResult.Rejected.InvalidPosition)
     }
 
     @Test
     fun removeAt_withRuntimeException_returnsFalse() {
         // Given - Empty adapter
         // When
-        val result = adapter.removeAt(Int.MAX_VALUE)
+        val result = awaitListResult { onResult ->
+            adapter.removeAt(Int.MAX_VALUE, onResult)
+        }
 
         // Then
-        assertFalse(result)
+        assertTrue(result is ListAdapterResult.Rejected.InvalidPosition)
     }
 
     @Test
     fun moveItem_withRuntimeException_returnsFalse() {
         // Given - Empty adapter
         // When
-        val result = adapter.moveItem(Int.MAX_VALUE, 0)
+        val result = awaitListResult { onResult ->
+            adapter.moveItem(Int.MAX_VALUE, 0, onResult)
+        }
 
         // Then
-        assertFalse(result)
+        assertTrue(result is ListAdapterResult.Rejected.InvalidPosition)
     }
 
     // ==============================================
@@ -1196,6 +1328,127 @@ class BaseRcvListAdapterRobolectricTest {
         assertFalse(consumed)
     }
 
+    // ==============================================
+    // removeItems / removeRange Tests
+    // ==============================================
+
+    @Test
+    fun removeItems_removesAllMatchingItems() {
+        // Given
+        val item1 = TestItem(1, "Item 1")
+        val item2 = TestItem(2, "Item 2")
+        val item3 = TestItem(3, "Item 3")
+        setItemsAwait(listOf(item1, item2, item3))
+
+        // When
+        val result = awaitListUpdate(expectedItemCount = 1) { onResult ->
+            adapter.removeItems(listOf(item1, item3), onResult)
+        }
+
+        // Then
+        assertTrue(result.isAccepted())
+        assertEquals(1, adapter.itemCount)
+        assertEquals(item2, adapter.getItems()[0])
+    }
+
+    @Test
+    fun removeItems_withEmptyList_fails() {
+        // Given
+        setItemsAwait(listOf(TestItem(1, "Item 1")))
+
+        // When
+        val result = awaitListResult { onResult ->
+            adapter.removeItems(emptyList(), onResult)
+        }
+
+        // Then
+        assertTrue(result is ListAdapterResult.Rejected.EmptyInput)
+        assertEquals(1, adapter.itemCount)
+    }
+
+    @Test
+    fun removeItems_withNonExistentItems_fails() {
+        // Given
+        setItemsAwait(listOf(TestItem(1, "Item 1")))
+
+        // When
+        val result = awaitListResult { onResult ->
+            adapter.removeItems(listOf(TestItem(99, "Ghost")), onResult)
+        }
+
+        // Then
+        assertTrue(result is ListAdapterResult.Rejected.NoMatchingItems)
+        assertEquals(1, adapter.itemCount)
+    }
+
+    @Test
+    fun removeRange_removesContiguousSlice() {
+        // Given
+        setItemsAwait(
+            listOf(
+                TestItem(1, "Item 1"),
+                TestItem(2, "Item 2"),
+                TestItem(3, "Item 3"),
+                TestItem(4, "Item 4"),
+            ),
+        )
+
+        // When
+        val result = awaitListUpdate(expectedItemCount = 2) { onResult ->
+            adapter.removeRange(1, 2, onResult)
+        }
+
+        // Then
+        assertTrue(result.isAccepted())
+        assertEquals(2, adapter.itemCount)
+        assertEquals(TestItem(1, "Item 1"), adapter.getItems()[0])
+        assertEquals(TestItem(4, "Item 4"), adapter.getItems()[1])
+    }
+
+    @Test
+    fun removeRange_withInvalidRange_fails() {
+        // Given
+        setItemsAwait(listOf(TestItem(1, "Item 1"), TestItem(2, "Item 2")))
+
+        // When
+        val result = awaitListResult { onResult ->
+            adapter.removeRange(0, 10, onResult)
+        }
+
+        // Then
+        assertTrue(result is ListAdapterResult.Rejected.InvalidPosition)
+        assertEquals(2, adapter.itemCount)
+    }
+
+    // ==============================================
+    // getItemOrNull Tests
+    // ==============================================
+
+    @Test
+    fun getItemOrNull_returnsItem_whenPositionValid() {
+        // Given
+        val item = TestItem(1, "Item 1")
+        setItemsAwait(listOf(item))
+
+        // When
+        val result = adapter.getItemOrNull(0)
+
+        // Then
+        assertEquals(item, result)
+    }
+
+    @Test
+    fun getItemOrNull_returnsNull_whenPositionInvalid() {
+        // Given
+        setItemsAwait(listOf(TestItem(1, "Item 1")))
+
+        // When
+        val result = adapter.getItemOrNull(999)
+
+        // Then
+        assertEquals(null, result)
+    }
+
     /**
      * Integration note:
      *
@@ -1211,7 +1464,7 @@ class BaseRcvListAdapterRobolectricTest {
      *
      * This Robolectric test focuses on:
      * - API correctness (methods don't crash)
-     * - Data manipulation (add/remove/replace/move)
+     * - Data manipulation (add/remove/replace/move/range/items)
      * - ListAdapter submitList behavior
      * - CommitCallback invocation
      * - Listener registration mechanics

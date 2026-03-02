@@ -394,7 +394,7 @@ This matrix demonstrates how Simple UI fills the gaps left by AndroidX, providin
 
 | Feature | Plain Android | AndroidX | Simple UI | Improvement |
 |---------|--------------|----------|-----------|-------------|
-| **Adapter Implementation** | Manual `onCreateViewHolder` + `onBindViewHolder` (50 lines) | ListAdapter with DiffUtil (30 lines) | `SimpleBindingRcvListAdapter` (10 lines) | **80% ↓** |
+| **Adapter Implementation** | Manual `onCreateViewHolder` + `onBindViewHolder` (50 lines) | ListAdapter with DiffUtil (30 lines) | `SimpleRcvDataBindingListAdapter` (10 lines) | **80% ↓** |
 | **List Update Safety** | Manual synchronization (crashes on concurrent updates) | DiffUtil helps but still crashes on rapid updates | `AdapterOperationQueue` - mutex-based queue (0 crashes) | **100% race condition eliminated** |
 | **Scroll Direction Detection** | Manual `onScrolled()` override (20 lines) | Same as Plain (20 lines) | `RecyclerScrollStateView` auto-detection (0 lines) | **100% automated** |
 | **Scroll Edge Detection** | Manual position calculation (15 lines) | Same as Plain (15 lines) | `RecyclerScrollStateView.sfEdgeReachedFlow` (Flow-based) | **Real-time SharedFlow** |
@@ -576,7 +576,7 @@ textView.bold().underline()
 **해결책**: Simple UI는 `AdapterOperationQueue`(경쟁 조건을 제거하는 synchronized 기반 순차 작업 큐)와 `RecyclerScrollStateView`(SharedFlow 이벤트로 스크롤 방향/엣지를 자동 감지)를 제공하여 90% 어댑터 코드 감소 및 100% 경쟁 조건 제거를 달성합니다.<br><br>
 
 **Key APIs**:
-- `SimpleBindingRcvListAdapter<T, B>` - 10-line adapter implementation
+- `SimpleRcvDataBindingListAdapter<T, B>` - 10-line adapter implementation
 - `addItem(item)`, `removeAt(position)`, `replaceItemAt(position, item)`, `removeAll()` - Safe list operations
 - `RecyclerScrollStateView` - `sfScrollDirectionFlow: SharedFlow<ScrollDirection>`
 - `RecyclerScrollStateView` - `sfEdgeReachedFlow: SharedFlow<Pair<ScrollEdge, Boolean>>`
@@ -607,7 +607,7 @@ class MyAdapter : RecyclerView.Adapter<MyAdapter.ViewHolder>() {
 }
 
 // Simple UI: 10 lines for adapter + 3 lines for scroll detection
-class MyAdapter : SimpleBindingRcvListAdapter<Item, ItemBinding>(
+class MyAdapter : SimpleRcvDataBindingListAdapter<Item, ItemBinding>(
     diffCallback = object : DiffUtil.ItemCallback<Item>() {
         override fun areItemsTheSame(old: Item, new: Item) = old.id == new.id
         override fun areContentsTheSame(old: Item, new: Item) = old == new
@@ -1193,7 +1193,7 @@ checkSdkVersion(S) {
 
 ---
 
-### Example 4: RecyclerView Adapter - SimpleBindingRcvListAdapter
+### Example 4: RecyclerView Adapter - SimpleRcvDataBindingListAdapter
 
 **Use Case**: Implement RecyclerView adapter with DiffUtil and data binding.<br>
 **사용 사례**: DiffUtil 및 데이터 바인딩을 사용한 RecyclerView 어댑터 구현.<br><br>
@@ -1251,10 +1251,10 @@ adapter.updateItems(newList) // If called rapidly, crashes with ConcurrentModifi
 
 </details>
 
-**Simple UI - SimpleBindingRcvListAdapter (10 lines)**
+**Simple UI - SimpleRcvDataBindingListAdapter (10 lines)**
 
 ```kotlin
-class MyAdapter : SimpleBindingRcvListAdapter<Item, ItemBinding>(
+class MyAdapter : SimpleRcvDataBindingListAdapter<Item, ItemBinding>(
     R.layout.item_layout,
     listDiffUtil = RcvListDiffUtilCallBack(
         itemsTheSame = { oldItem, newItem -> oldItem.id == newItem.id },

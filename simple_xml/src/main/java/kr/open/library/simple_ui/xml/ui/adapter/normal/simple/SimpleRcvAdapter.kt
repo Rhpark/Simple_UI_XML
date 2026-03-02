@@ -10,13 +10,12 @@ import kr.open.library.simple_ui.xml.ui.adapter.viewholder.BaseRcvViewHolder
  * DataBinding을 사용하지 않는 단순 RecyclerView 어댑터입니다.<br>
  *
  * @param ITEM Type of data items in the list.<br><br>
- *             리스트에 담길 아이템 타입입니다.
+ *             리스트에 담길 아이템 타입입니다.<br>
  *
  * @param layoutRes Layout resource ID for item views.<br><br>
- *                  아이템 레이아웃 리소스 ID입니다.
- *
+ *                  아이템 레이아웃 리소스 ID입니다.<br>
  * @param onBind Function to bind data to the ViewHolder.<br><br>
- *               뷰홀더에 데이터를 바인딩하는 함수입니다.
+ *               뷰홀더에 데이터를 바인딩하는 함수입니다.<br>
  */
 public open class SimpleRcvAdapter<ITEM : Any>(
     @LayoutRes private val layoutRes: Int,
@@ -36,7 +35,7 @@ public open class SimpleRcvAdapter<ITEM : Any>(
      * Binds data to the ViewHolder.<br><br>
      * ViewHolder에 데이터를 바인딩합니다.<br>
      */
-    override fun onBindViewHolder(holder: BaseRcvViewHolder, position: Int, item: ITEM) {
+    override fun onBindViewHolder(holder: BaseRcvViewHolder, item: ITEM, position: Int) {
         onBind(holder, item, position)
     }
 }

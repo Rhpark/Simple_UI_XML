@@ -23,7 +23,7 @@ class BaseBindingActivityExample :
 
     override fun onEventVmCollect(binding: ActivityBaseBindingActivityExampleBinding) {
         lifecycleScope.launch {
-            vm.mEventVm.collect { event ->
+            vm.eventVmFlow.collect { event ->
                 when (event) {
                     is BaseBindingActivityExampleVmEvent.ShowMessage -> {
                         getBinding().root.snackBarShowShort(event.message)

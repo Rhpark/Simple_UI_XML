@@ -148,7 +148,7 @@ android {
 <br>
 </br>
 
-## 🧩 Plain Android MVVM VS Setting UI MVVM Comparisons (코드 비교)
+## 🧩 Plain Android MVVM VS Simple UI MVVM Comparisons (코드 비교)
 
 
 ### 1. Activity + ViewModel Integration (첫째: Activity + ViewModel 연동)
@@ -249,7 +249,7 @@ class MainActivity : BaseDataBindingActivity<ActivityMainBinding>(R.layout.activ
         // 이벤트 수집
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {  // ✅ Best Practice
-                vm.mEventVm.collect { event ->
+                vm.eventVmFlow.collect { event ->
                     when (event) {
                         is MainEvent.ShowMessage -> {
                             binding.root.snackBarShowShort(event.message)
@@ -447,7 +447,7 @@ class MainFragment : BaseDataBindingFragment<FragmentMainBinding>(R.layout.fragm
         // 이벤트 수집만 간단하게
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {  // ✅ Best Practice
-                vm.mEventVm.collect { event ->
+                vm.eventVmFlow.collect { event ->
                     when (event) {
                         is MainEvent.ShowMessage -> {
                             binding.root.snackBarShowShort(event.message)
@@ -549,7 +549,7 @@ class InfoDialog : BaseDataBindingDialogFragment<DialogInfoBinding>(R.layout.dia
     override fun onEventVmCollect(binding: DialogInfoBinding) {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {  // ✅ Best Practice
-                vm.mEventVm.collect { event ->
+                vm.eventVmFlow.collect { event ->
                     when (event) {
                         InfoDialogEvent.Dismiss -> safeDismiss()
                         is InfoDialogEvent.ShowToast ->
@@ -638,7 +638,7 @@ sealed class MainEvent {
 ```kotlin
 class MainViewModel : BaseViewModelEvent<MainEvent>() {
     // 채널 자동 구성! ✅
-    // mEventVm 자동 제공! ✅
+    // eventVmFlow 자동 제공! ✅
 
     // 1. StateFlow 관리
     private val _counter = MutableStateFlow(0)

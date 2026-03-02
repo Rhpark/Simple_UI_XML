@@ -4,7 +4,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.LayoutRes
-import androidx.recyclerview.widget.RecyclerView
 
 /**
  * Base ViewHolder for RecyclerView without ViewDataBinding.<br><br>
@@ -21,7 +20,7 @@ public open class BaseRcvViewHolder(
     @LayoutRes xmlRes: Int,
     parent: ViewGroup,
     attachToRoot: Boolean = false,
-) : RecyclerView.ViewHolder(LayoutInflater.from(parent.context).inflate(xmlRes, parent, attachToRoot)) {
+) : RootViewHolder(LayoutInflater.from(parent.context).inflate(xmlRes, parent, attachToRoot)) {
     @PublishedApi
     internal val viewCache = mutableMapOf<Int, View>()
 
@@ -35,7 +34,6 @@ public open class BaseRcvViewHolder(
      *         타입 `T`로 캐스팅된 뷰를 반환합니다.<br>
      */
     public inline fun <reified T : View> findViewById(id: Int): T {
-        @Suppress("UNCHECKED_CAST")
         val cached = viewCache[id]
         if (cached != null && cached is T) return cached
 
@@ -85,22 +83,4 @@ public open class BaseRcvViewHolder(
     public fun clearViewCache() {
         viewCache.clear()
     }
-
-    /**
-     * Verifies whether the adapter position is valid (for listeners).<br><br>
-     * 어댑터 포지션이 유효한지 확인합니다(리스너용).<br>
-     *
-     * @return true if the position is valid.<br><br>
-     *         포지션이 유효하면 true를 반환합니다.<br>
-     */
-    protected fun isValidPosition(): Boolean = (adapterPosition > RecyclerView.NO_POSITION)
-
-    /**
-     * Gets the current adapter position safely.<br><br>
-     * 현재 어댑터 포지션을 안전하게 반환합니다.<br>
-     *
-     * @return Adapter position, or -1 if invalid.<br><br>
-     *         유효하지 않으면 -1을 반환합니다.<br>
-     */
-    protected fun getAdapterPositionSafe(): Int = if (isValidPosition()) adapterPosition else RecyclerView.NO_POSITION
 }

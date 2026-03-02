@@ -47,7 +47,7 @@ class PermissionsActivity : BaseDataBindingActivity<ActivityPermissionsBinding>(
 
     override fun onEventVmCollect(binding: ActivityPermissionsBinding) {
         lifecycleScope.launch {
-            vm.mEventVm.collect {
+            vm.eventVmFlow.collect {
                 when (it) {
                     is PermissionsActivityVmEvent.OnClickPermissionsCamera -> {
                         permissions(listOf(Manifest.permission.CAMERA))

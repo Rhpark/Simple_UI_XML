@@ -29,11 +29,11 @@
   ### 라이프사이클 관리
    - Activity/Fragment 생명주기 통합 관리
    - PermissionRequester의 ActivityResult 기반 권한 처리
-   - RecyclerView Adapter의 안전한 리스트 연산 큐
+   - RecyclerView ListAdapter 계열의 안전한 리스트 연산 큐(AdapterOperationQueue)
 
 
 
- ## 주요 패키지 구조 (총 47개 파일)
+ ## 주요 패키지 구조
 
   ### ui/activity
    - **RootActivity**: 시스템 바 제어, 권한 관리 기본 클래스 (simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/components/activity/root/RootActivity.kt)
@@ -49,11 +49,18 @@
 
 
   ### ui/adapter
-   - **queue**: 안전한 리스트 연산 큐 (simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/adapter/queue/AdapterOperationQueue.kt)
-   - **list**: ListAdapter 기반 (simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/adapter/list/)
-     - diffutil: DiffUtil 지원 어댑터
-     - simple: 간단한 ListAdapter
-   - **normal**: RecyclerView.Adapter 기반 (simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/adapter/normal/)
+   - **common**: 공통 클릭/데이터 검증/스레드 가드/읽기 API/결과 타입 (simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/adapter/common/)
+   - **list**: ListAdapter 기반 비동기 업데이트 계층 (simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/adapter/list/)
+     - base: `BaseRcvListAdapter`
+     - queue: `AdapterOperationQueue`, `OperationQueueProcessor`, `QueuePolicy`
+     - result: `ListAdapterResult`
+     - simple: `SimpleRcvListAdapter`, `SimpleRcvDataBindingListAdapter`, `SimpleRcvViewBindingListAdapter`
+   - **normal**: RecyclerView.Adapter 기반 즉시 반영 계층 (simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/adapter/normal/)
+     - root: `RootRcvAdapter`
+     - base: `BaseRcvAdapter` (content 전용)
+     - headerfooter: `HeaderFooterRcvAdapter` (Header / Content / Footer 섹션 지원)
+     - result: `NormalAdapterResult`
+     - simple: `SimpleRcvAdapter`, `SimpleBindingRcvAdapter`, `SimpleViewBindingRcvAdapter`, `SimpleHeaderFooter...`
    - **viewholder**: ViewHolder 기본 구현 (simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/adapter/viewholder/)
 
 
@@ -118,19 +125,25 @@
    - RecyclerScrollStateView: LifecycleOwner 인식, 자동 구독 해제
 
 
-  ### 3. AdapterOperationQueue 안전성
-   - 리스트 연산(add, remove, update)을 큐에 쌓아 순차 처리
-   - notifyDataSetChanged 등 Adapter 메서드 동기화
-   - ConcurrentModificationException 방지
+  ### 3. Adapter 업데이트 전략 분리
+   - list 패키지(`BaseRcvListAdapter`)는 DiffUtil + 큐 기반으로 리스트 연산(add, remove, update)을 순차 처리
+   - normal 패키지(`BaseRcvAdapter`, `HeaderFooterRcvAdapter`)는 내부 리스트를 즉시 갱신하고 notify 계열 API로 반영
+   - normal/list를 분리해 동기화 안정성, 실패 전달 방식, 업데이트 비용의 트레이드오프를 명확히 관리
 
 
-  ### 4. 권한 처리 통합
+  ### 4. Adapter 결과 모델 분리
+   - normal 패키지는 `NormalAdapterResult` 기반 동기 결과 모델 사용
+   - list 패키지는 `ListAdapterResult` 기반 비동기 결과 모델 사용
+   - 결과 모델을 분리해 즉시 반영과 큐 기반 처리의 실패 의미를 혼동하지 않도록 설계
+
+
+  ### 5. 권한 처리 통합
    - PermissionRequester: 일반 권한 + 특수 권한 단일 인터페이스
    - 큐 기반 순차 요청으로 사용자 경험 개선
    - 재요청 로직 내장 (거부 시 설정 화면 이동 옵션)
 
 
-  ### 5. SharedFlow 기반 스크롤 상태 관리
+  ### 6. SharedFlow 기반 스크롤 상태 관리
    - RecyclerScrollStateView: 스크롤 상태를 SharedFlow로 제공
    - UI 컴포넌트 상태를 반응형으로 관찰 가능
    - simple_core의 Flow 패턴과 일관성 유지
@@ -158,7 +171,10 @@
 
 
   ### RecyclerView Adapter
-   - 리스트 변경 시 AdapterOperationQueue 사용 권장
+   - 단순 content 즉시 반영은 normal 패키지(`BaseRcvAdapter`, `SimpleRcvAdapter` 계열) 사용
+   - Header / Content / Footer 섹션이 필요하면 `HeaderFooterRcvAdapter`, `SimpleHeaderFooter...` 계열 사용
+   - 빈번하거나 대량의 리스트 변경은 list 패키지(`BaseRcvListAdapter`) 사용
+   - list 패키지 어댑터는 `AdapterOperationQueue`를 내부 사용
    - DiffUtil 사용 시 list 패키지의 어댑터 활용
    - ViewHolder는 viewholder 패키지 기본 클래스 참고
 
@@ -218,10 +234,17 @@
    - 재요청 로직 내장
 
 
-  ### AdapterOperationQueue
-   - RecyclerView Adapter 리스트 연산 안전성 보장
+  ### AdapterOperationQueue (ListAdapter 계열)
+   - BaseRcvListAdapter 리스트 연산 안전성 보장
    - sealed class 기반 연산 모델
    - 순차 처리로 동기화 문제 방지
+   - queue policy를 통해 backpressure 동작 제어 가능
+
+
+  ### RootRcvAdapter / BaseRcvAdapter / HeaderFooterRcvAdapter
+   - `RootRcvAdapter`: normal 어댑터 공통 기반, 스레드 가드/클릭/legacy bridge 공통 처리
+   - `BaseRcvAdapter`: content 전용 normal 어댑터
+   - `HeaderFooterRcvAdapter`: Header / Content / Footer 섹션을 포함하는 normal 어댑터
 
 
   ### RecyclerScrollStateView
@@ -264,7 +287,11 @@
 
 
   ### Adapter 작성
-   - AdapterOperationQueue 활용: (simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/adapter/queue/AdapterOperationQueue.kt)
+   - RootRcvAdapter(공통 normal 기반): (simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/adapter/normal/root/RootRcvAdapter.kt)
+   - BaseRcvAdapter(일반 content 전용): (simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/adapter/normal/base/BaseRcvAdapter.kt)
+   - HeaderFooterRcvAdapter(section 지원): (simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/adapter/normal/headerfooter/HeaderFooterRcvAdapter.kt)
+   - BaseRcvListAdapter(ListAdapter 기반): (simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/adapter/list/base/BaseRcvListAdapter.kt)
+   - AdapterOperationQueue(BaseRcvListAdapter 내부): (simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/adapter/list/queue/AdapterOperationQueue.kt)
    - DiffUtil Adapter: (simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/adapter/list/diffutil/)
 
 

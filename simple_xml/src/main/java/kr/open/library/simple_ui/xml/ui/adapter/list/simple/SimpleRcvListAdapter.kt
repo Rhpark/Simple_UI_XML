@@ -3,7 +3,7 @@
 import android.view.ViewGroup
 import androidx.annotation.LayoutRes
 import kr.open.library.simple_ui.xml.ui.adapter.list.base.BaseRcvListAdapter
-import kr.open.library.simple_ui.xml.ui.adapter.list.diffutil.RcvListDiffUtilCallBack
+import kr.open.library.simple_ui.xml.ui.adapter.list.base.diffutil.RcvListDiffUtilCallBack
 import kr.open.library.simple_ui.xml.ui.adapter.viewholder.BaseRcvViewHolder
 
 /**
@@ -32,8 +32,8 @@ import kr.open.library.simple_ui.xml.ui.adapter.viewholder.BaseRcvViewHolder
  *         contentsTheSame = { old, new -> old == new }
  *     )
  * ) { holder, item, position ->
- *     holder.getView<TextView>(R.id.tvName).text = item.name
- *     holder.getView<TextView>(R.id.tvEmail).text = item.email
+ *     holder.findViewById<TextView>(R.id.tvName).text = item.name
+ *     holder.findViewById<TextView>(R.id.tvEmail).text = item.email
  * }
  * ```
  * <br>
@@ -50,8 +50,8 @@ import kr.open.library.simple_ui.xml.ui.adapter.viewholder.BaseRcvViewHolder
  * @param onBind Lambda function to bind data to the ViewHolder.<br><br>
  *               ViewHolder에 데이터를 바인딩하는 람다 함수.<br>
  *
- * @see SimpleBindingRcvListAdapter For adapter with DataBinding support.<br><br>
- *      DataBinding을 사용하는 어댑터는 SimpleBindingRcvListAdapter를 참조하세요.<br>
+ * @see SimpleRcvDataBindingListAdapter For adapter with DataBinding support.<br><br>
+ *      DataBinding을 사용하는 어댑터는 SimpleRcvDataBindingListAdapter를 참조하세요.<br>
  *
  * @see BaseRcvListAdapter For the base ListAdapter implementation.<br><br>
  *      기본 ListAdapter 구현은 BaseRcvListAdapter를 참조하세요.<br>
@@ -74,10 +74,7 @@ public open class SimpleRcvListAdapter<ITEM : Any>(
      * @return A new BaseRcvViewHolder that holds a view.<br><br>
      *         뷰를 보유하는 새로운 BaseRcvViewHolder.<br>
      */
-    override fun createViewHolderInternal(
-        parent: ViewGroup,
-        viewType: Int,
-    ): BaseRcvViewHolder = BaseRcvViewHolder(layoutRes, parent)
+    override fun createViewHolderInternal(parent: ViewGroup, viewType: Int): BaseRcvViewHolder = BaseRcvViewHolder(layoutRes, parent)
 
     /**
      * Binds data to the ViewHolder at the specified position.<br>
@@ -88,17 +85,13 @@ public open class SimpleRcvListAdapter<ITEM : Any>(
      * @param holder The ViewHolder to bind data to.<br><br>
      *               데이터를 바인딩할 ViewHolder.<br>
      *
-     * @param position The position of the item in the list.<br><br>
-     *                 리스트에서 아이템의 위치.<br>
-     *
      * @param item The item to bind.<br><br>
      *             바인딩할 아이템.<br>
+     *
+     * @param position The position of the item in the list.<br><br>
+     *                 리스트에서 아이템의 위치.<br>
      */
-    override fun onBindViewHolder(
-        holder: BaseRcvViewHolder,
-        position: Int,
-        item: ITEM,
-    ) {
+    override fun onBindViewHolder(holder: BaseRcvViewHolder, item: ITEM, position: Int) {
         onBind(holder, item, position)
     }
 }

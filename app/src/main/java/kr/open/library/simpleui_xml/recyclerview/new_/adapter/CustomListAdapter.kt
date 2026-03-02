@@ -2,14 +2,14 @@ package kr.open.library.simpleui_xml.recyclerview.new_.adapter
 
 import android.view.ViewGroup
 import kr.open.library.simple_ui.xml.ui.adapter.list.base.BaseRcvListAdapter
-import kr.open.library.simple_ui.xml.ui.adapter.list.diffutil.RcvListDiffUtilCallBack
-import kr.open.library.simple_ui.xml.ui.adapter.viewholder.BaseBindingRcvViewHolder
+import kr.open.library.simple_ui.xml.ui.adapter.list.base.diffutil.RcvListDiffUtilCallBack
+import kr.open.library.simple_ui.xml.ui.adapter.viewholder.BaseRcvDataBindingViewHolder
 import kr.open.library.simpleui_xml.R
 import kr.open.library.simpleui_xml.databinding.ItemRcvTextviewBinding
 import kr.open.library.simpleui_xml.recyclerview.model.SampleItem
 
 class CustomListAdapter :
-    BaseRcvListAdapter<SampleItem, BaseBindingRcvViewHolder<ItemRcvTextviewBinding>>(
+    BaseRcvListAdapter<SampleItem, BaseRcvDataBindingViewHolder<ItemRcvTextviewBinding>>(
         listDiffUtil =
             RcvListDiffUtilCallBack(
                 itemsTheSame = { oldItem, newItem -> oldItem.id == newItem.id },
@@ -17,9 +17,9 @@ class CustomListAdapter :
             ),
     ) {
     override fun onBindViewHolder(
-        holder: BaseBindingRcvViewHolder<ItemRcvTextviewBinding>,
-        position: Int,
+        holder: BaseRcvDataBindingViewHolder<ItemRcvTextviewBinding>,
         item: SampleItem,
+        position: Int,
     ) {
         holder.binding.apply {
             tvTitle.text = item.title
@@ -31,5 +31,5 @@ class CustomListAdapter :
     override fun createViewHolderInternal(
         parent: ViewGroup,
         viewType: Int,
-    ): BaseBindingRcvViewHolder<ItemRcvTextviewBinding> = BaseBindingRcvViewHolder(R.layout.item_rcv_textview, parent)
+    ): BaseRcvDataBindingViewHolder<ItemRcvTextviewBinding> = BaseRcvDataBindingViewHolder(R.layout.item_rcv_textview, parent)
 }

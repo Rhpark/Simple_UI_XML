@@ -60,7 +60,7 @@ class NotificationControllerActivity :
 
     override fun onEventVmCollect(binding: ActivityNotificationControllerBinding) {
         lifecycleScope.launch {
-            vm.mEventVm.collect { event ->
+            vm.eventVmFlow.collect { event ->
                 when (event) {
                     is NotificationControllerActivityVmEvent.ShowNotification -> {
                         showBasicNotification()

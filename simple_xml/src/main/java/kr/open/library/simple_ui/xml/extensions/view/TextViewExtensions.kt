@@ -101,10 +101,9 @@ public fun TextView.textToDouble(): Double? = this.text.toString().toDoubleOrNul
  * @return The TextView instance for method chaining.<br><br>
  *         메서드 체이닝을 위한 TextView 인스턴스.<br>
  */
-public fun TextView.bold(): TextView =
-    apply {
-        setTypeface(typeface, Typeface.BOLD)
-    }
+public fun TextView.bold(): TextView = apply {
+    setTypeface(typeface, Typeface.BOLD)
+}
 
 /**
  * Makes the TextView text italic.<br><br>

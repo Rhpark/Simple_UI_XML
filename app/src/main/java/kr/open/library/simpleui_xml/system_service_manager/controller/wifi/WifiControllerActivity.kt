@@ -44,7 +44,7 @@ class WifiControllerActivity : BaseDataBindingActivity<ActivityWifiControllerBin
 
     override fun onEventVmCollect(binding: ActivityWifiControllerBinding) {
         lifecycleScope.launch {
-            vm.mEventVm.collect { event ->
+            vm.eventVmFlow.collect { event ->
                 when (event) {
                     is WifiControllerActivityVmEvent.GetWifiInfo -> {
                         getWifiInfo()

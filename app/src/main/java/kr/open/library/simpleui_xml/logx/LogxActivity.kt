@@ -27,7 +27,7 @@ class LogxActivity : BaseDataBindingActivity<ActivityLogxBinding>(R.layout.activ
 
     override fun onEventVmCollect(binding: ActivityLogxBinding) {
         lifecycleScope.launch {
-            vm.mEventVm.collect { event ->
+            vm.eventVmFlow.collect { event ->
                 when (event) {
                     LogxActivityVmEvent.OnClickBasicLogging -> demonstrateBasicLogging()
                     LogxActivityVmEvent.OnClickJsonLogging -> demonstrateJsonLogging()

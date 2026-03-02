@@ -5,7 +5,6 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -42,7 +41,7 @@ class BaseViewModelEventTest {
         val viewModel = object : BaseViewModelEvent<String>() {}
 
         assertNotNull(viewModel)
-        assertNotNull(viewModel.mEventVm)
+        assertNotNull(viewModel.eventVmFlow)
     }
 
     // sendEventVm() 호출 시 Flow로 이벤트가 전달되는지 검증
@@ -60,7 +59,7 @@ class BaseViewModelEventTest {
             // Flow 수집 시작
             val job =
                 launch {
-                    viewModel.mEventVm.collect { events.add(it) }
+                    viewModel.eventVmFlow.collect { events.add(it) }
                 }
 
             // 이벤트 전송
@@ -86,7 +85,7 @@ class BaseViewModelEventTest {
 
             val job =
                 launch {
-                    viewModel.mEventVm.collect { events.add(it) }
+                    viewModel.eventVmFlow.collect { events.add(it) }
                 }
 
             // 여러 이벤트 전송
@@ -114,7 +113,7 @@ class BaseViewModelEventTest {
             val intEvents = mutableListOf<Int>()
             val intJob =
                 launch {
-                    intViewModel.mEventVm.collect { intEvents.add(it) }
+                    intViewModel.eventVmFlow.collect { intEvents.add(it) }
                 }
 
             intViewModel.sendEventPublic(100)
@@ -143,7 +142,7 @@ class BaseViewModelEventTest {
             val events = mutableListOf<CustomEvent>()
             val job =
                 launch {
-                    viewModel.mEventVm.collect { events.add(it) }
+                    viewModel.eventVmFlow.collect { events.add(it) }
                 }
 
             val event1 = CustomEvent(1, "First")
@@ -177,7 +176,7 @@ class BaseViewModelEventTest {
             val events = mutableListOf<String>()
             val job =
                 launch {
-                    viewModel.mEventVm.collect { events.add(it) }
+                    viewModel.eventVmFlow.collect { events.add(it) }
                 }
 
             viewModel.sendEventPublic("Event1")
@@ -214,7 +213,7 @@ class BaseViewModelEventTest {
 
             val job =
                 launch {
-                    viewModel.mEventVm.collect { events.add(it) }
+                    viewModel.eventVmFlow.collect { events.add(it) }
                     flowCompleted = true // Flow가 정상 종료되면 실행됨
                 }
 
@@ -249,12 +248,12 @@ class BaseViewModelEventTest {
 
             val job1 =
                 launch {
-                    viewModel.mEventVm.collect { events1.add(it) }
+                    viewModel.eventVmFlow.collect { events1.add(it) }
                 }
 
             val job2 =
                 launch {
-                    viewModel.mEventVm.collect { events2.add(it) }
+                    viewModel.eventVmFlow.collect { events2.add(it) }
                 }
 
             viewModel.sendEventPublic("Event1")
@@ -289,7 +288,7 @@ class BaseViewModelEventTest {
             val events = mutableListOf<String>()
             val job =
                 launch {
-                    viewModel.mEventVm.collect { events.add(it) }
+                    viewModel.eventVmFlow.collect { events.add(it) }
                 }
 
             val mockOwner =

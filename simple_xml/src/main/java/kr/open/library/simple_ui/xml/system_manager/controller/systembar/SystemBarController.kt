@@ -142,11 +142,7 @@ public class SystemBarController(
         WindowCompat.getInsetsController(window, window.decorView)
 
     private fun getWindowInsetControllerForVisibility(): WindowInsetsControllerCompat =
-        getWindowInsetController().apply {
-            systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_DEFAULT
-        }
-
-    // region State Query / 상태 조회
+        getWindowInsetController().apply { systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_DEFAULT }
 
     /**
      * Returns the window coordinates of the currently visible StatusBar area.<br>
@@ -256,10 +252,6 @@ public class SystemBarController(
         return navigationBarHelper.getNavigationBarStableState(insets)
     }
 
-    // endregion
-
-    // region Color Control / 색상 제어
-
     /**
      * Sets the StatusBar color.<br><br>
      * 상태 표시줄 색상을 설정합니다.<br>
@@ -362,10 +354,6 @@ public class SystemBarController(
         getWindowInsetController().apply { isAppearanceLightNavigationBars = isDarkIcon }
     }
 
-    // endregion
-
-    // region Visibility Control / 가시성 제어
-
     /**
      * Shows the StatusBar.<br>
      * Uses WindowInsetsController on API 30+ and FLAG_FULLSCREEN on older versions.<br><br>
@@ -462,10 +450,6 @@ public class SystemBarController(
         }
     }
 
-    // endregion
-
-    // region Reset / 초기화
-
     /**
      * Resets the StatusBar to its initial state.<br>
      * Removes custom background views on API 35+ and restores theme default color on older versions.<br><br>
@@ -521,10 +505,6 @@ public class SystemBarController(
             if (restoreVisibility) setNavigationBarVisible()
         }
     }
-
-    // endregion
-
-    // region Edge-to-Edge
 
     /**
      * Enables or disables edge-to-edge mode.<br>
@@ -589,10 +569,6 @@ public class SystemBarController(
      */
     public fun isEdgeToEdgeEnabled(): Boolean = isEdgeToEdge
 
-    // endregion
-
-    // region Lifecycle / 수명주기
-
     /**
      * Cleans up status bar overlay view (API 35+).<br>
      * Removes WindowInsets listener and removes view from decorView.<br><br>
@@ -624,10 +600,6 @@ public class SystemBarController(
         cleanupNavigationBarOverlay()
         super.onDestroy()
     }
-
-    // endregion
-
-    // region Legacy Compatibility / 레거시 호환
 
     /**
      * Converts visibility state to legacy Rect? contract.<br>
@@ -671,6 +643,4 @@ public class SystemBarController(
         SystemBarStableState.NotPresent -> Rect()
         is SystemBarStableState.Stable -> rect
     }
-
-    // endregion
 }

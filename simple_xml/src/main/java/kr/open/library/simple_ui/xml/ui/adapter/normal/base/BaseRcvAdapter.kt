@@ -1,663 +1,353 @@
 ﻿package kr.open.library.simple_ui.xml.ui.adapter.normal.base
 
+import android.annotation.SuppressLint
 import android.view.View
-import android.view.ViewGroup
-import androidx.recyclerview.widget.AdapterListUpdateCallback
-import androidx.recyclerview.widget.AsyncDifferConfig
-import androidx.recyclerview.widget.AsyncListDiffer
-import androidx.recyclerview.widget.DiffUtil
+import androidx.annotation.MainThread
 import androidx.recyclerview.widget.RecyclerView
 import kr.open.library.simple_ui.core.extensions.trycatch.requireInBounds
 import kr.open.library.simple_ui.core.logcat.Logx
-import kr.open.library.simple_ui.xml.ui.adapter.queue.AdapterOperationQueue
-import kr.open.library.simple_ui.xml.ui.adapter.viewholder.BaseRcvViewHolder
-import java.util.concurrent.Executor
+import kr.open.library.simple_ui.xml.ui.adapter.common.imp.AdapterWriteApi
+import kr.open.library.simple_ui.xml.ui.adapter.normal.headerfooter.HeaderFooterRcvAdapter
+import kr.open.library.simple_ui.xml.ui.adapter.normal.result.NormalAdapterResult
+import kr.open.library.simple_ui.xml.ui.adapter.normal.result.toNormalAdapterResult
+import kr.open.library.simple_ui.xml.ui.adapter.normal.root.RootRcvAdapter
 
 /**
- * RecyclerView base adapter backed by [AsyncListDiffer] for background DiffUtil calculation.<br><br>
- * 백그라운드 DiffUtil 계산을 위해 [AsyncListDiffer]를 사용하는 RecyclerView 기본 어댑터입니다.<br>
+ * Base RecyclerView.Adapter implementation with content item management.<br><br>
+ * content 아이템 관리를 제공하는 기본 RecyclerView.Adapter 구현입니다.<br>
+ * For header/footer section support, use [HeaderFooterRcvAdapter] instead.<br><br>
+ * header/footer 섹션이 필요하면 [HeaderFooterRcvAdapter]를 사용하세요.<br>
+ *
+ * Features:<br>
+ * 주요 기능:<br>
+ * - Immediate list mutation with notify-based UI updates.<br>
+ * - 리스트를 즉시 변경하고 notify 기반으로 UI를 갱신합니다.<br>
+ * - Item click and long-click listener support.<br>
+ * - 아이템 클릭 및 롱클릭 리스너를 지원합니다.<br>
+ * - Partial bind hook via payloads.<br>
+ * - payload 기반 부분 바인딩 훅을 지원합니다.<br>
+ * - ViewHolder cache clearing support on recycle.<br><br>
+ * - 재활용 시 ViewHolder 캐시 정리를 지원합니다.<br>
  *
  * @param ITEM Item type used by this adapter.<br><br>
- *             어댑터에 담기는 아이템 타입입니다.
- *
+ *             이 어댑터가 사용하는 아이템 타입입니다.<br>
  * @param VH ViewHolder type used by this adapter.<br><br>
- *           어댑터에서 사용하는 ViewHolder 타입입니다.
- *
- * @param testExecutor Optional executor for tests (synchronous execution in tests).<br><br>
- *                     테스트에서 동기 실행을 강제할 때 주입할 수 있는 Executor입니다.
+ *           이 어댑터가 사용하는 ViewHolder 타입입니다.<br>
  */
-public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder>(
-    private val testExecutor: Executor? = null,
-) : RecyclerView.Adapter<VH>() {
-    /**
-     * Listener for item click events.<br><br>
-     * 아이템 클릭 이벤트를 위한 리스너입니다.<br>
-     */
-    private var onItemClickListener: ((Int, ITEM, View) -> Unit)? = null
+public abstract class BaseRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder> :
+    RootRcvAdapter<ITEM, VH>(),
+    AdapterWriteApi<ITEM, NormalAdapterResult> {
+    internal open val adapterData: BaseRcvAdapterData<ITEM> = BaseRcvAdapterData()
 
     /**
-     * Listener for item long-click events.<br><br>
-     * 아이템 롱클릭 이벤트를 위한 리스너입니다.<br>
+     * Returns total adapter item count.<br><br>
+     * 전체 adapter 아이템 수를 반환합니다.<br>
      */
-    private var onItemLongClickListener: ((Int, ITEM, View) -> Unit)? = null
+    public override fun getItemCount(): Int = adapterData.getTotalSize()
 
     /**
-     * Operation Queue for handling consecutive operations safely.<br><br>
-     * 연속적인 작업을 안전하게 처리하기 위한 작업 큐입니다.<br>
+     * Returns content item at position or throws when invalid.<br><br>
+     * position의 content 아이템을 반환하고 유효하지 않으면 예외를 발생시킵니다.<br>
      */
-    private val operationQueue =
-        AdapterOperationQueue<ITEM>(
-            getCurrentList = { differ.currentList },
-            submitList = { list, callback -> differ.submitList(list, callback) },
-        )
-
-    /**
-     * Whether DiffUtil should detect moved items. Recreating the differ ensures the updated flag is respected.<br><br>
-     * DiffUtil이 이동된 아이템을 감지해야 하는지 여부입니다. differ를 재생성하여 변경된 플래그가 반영되도록 합니다.<br>
-     */
-    public var detectMoves: Boolean = false
-        set(value) {
-            if (field == value) return
-            field = value
-            recreateDiffer()
-        }
-
-    /**
-     * Custom logic for determining if items are the same.<br><br>
-     * 아이템이 같은지 판단하기 위한 커스텀 로직입니다.<br>
-     */
-    private var diffUtilItemSame: ((oldItem: ITEM, newItem: ITEM) -> Boolean)? = null
-
-    /**
-     * Custom logic for determining if item contents are the same.<br><br>
-     * 아이템 내용이 같은지 판단하기 위한 커스텀 로직입니다.<br>
-     */
-    private var diffUtilContentsSame: ((oldItem: ITEM, newItem: ITEM) -> Boolean)? = null
-
-    /**
-     * Custom logic for calculating item change payload.<br><br>
-     * 아이템 변경 payload를 계산하기 위한 커스텀 로직입니다.<br>
-     */
-    private var diffUtilChangePayload: ((oldItem: ITEM, newItem: ITEM) -> Any?)? = null
-
-    /**
-     * AsyncListDiffer helper for computing differences on a background thread.<br><br>
-     * 백그라운드 스레드에서 차이를 계산하기 위한 AsyncListDiffer 헬퍼입니다.<br>
-     */
-    private var differ: AsyncListDiffer<ITEM> =
-        AsyncListDiffer(AdapterListUpdateCallback(this), buildDifferConfig())
-
-    /**
-     * Sets custom identity comparison for DiffUtil.<br><br>
-     * DiffUtil에서 아이템 동일성 비교 로직을 설정합니다.<br>
-     *
-     * @param diffUtilItemSame Custom logic to determine if two items represent the same entity.<br><br>
-     *                         두 아이템이 같은 엔티티를 나타내는지 판단하는 커스텀 로직.
-     */
-    public fun setDiffUtilItemSame(diffUtilItemSame: (oldItem: ITEM, newItem: ITEM) -> Boolean) {
-        this.diffUtilItemSame = diffUtilItemSame
-        recreateDiffer()
-    }
-
-    /**
-     * Sets custom content comparison for DiffUtil.<br><br>
-     * DiffUtil에서 아이템 내용 비교 로직을 설정합니다.<br>
-     *
-     * @param diffUtilContentsSame Custom logic to determine if two items have the same content.<br><br>
-     *                             두 아이템의 내용이 같은지 판단하는 커스텀 로직.
-     */
-    public fun setDiffUtilContentsSame(diffUtilContentsSame: (oldItem: ITEM, newItem: ITEM) -> Boolean) {
-        this.diffUtilContentsSame = diffUtilContentsSame
-        recreateDiffer()
-    }
-
-    /**
-     * Sets custom change-payload logic for DiffUtil.<br><br>
-     * DiffUtil에서 변경 payload 생성 로직을 설정합니다.<br>
-     *
-     * @param diffUtilChangePayload Custom logic to generate change payload when items differ.<br><br>
-     *                              아이템이 다를 때 변경 payload를 생성하는 커스텀 로직.
-     */
-    public fun setDiffUtilChangePayload(diffUtilChangePayload: (oldItem: ITEM, newItem: ITEM) -> Any?) {
-        this.diffUtilChangePayload = diffUtilChangePayload
-        recreateDiffer()
-    }
-
-    /**
-     * Item identity comparison used by DiffUtil.<br><br>
-     * DiffUtil에서 사용하는 아이템 동일성 비교입니다.<br>
-     *
-     * @param oldItem The old item to compare.<br><br>
-     *                비교할 이전 아이템.
-     * @param newItem The new item to compare.<br><br>
-     *                비교할 새 아이템.
-     * @return True if items are the same, false otherwise.<br><br>
-     *         아이템이 같으면 true, 그렇지 않으면 false.<br>
-     */
-    protected open fun diffUtilAreItemsTheSame(
-        oldItem: ITEM,
-        newItem: ITEM,
-    ): Boolean = diffUtilItemSame?.invoke(oldItem, newItem) ?: (oldItem === newItem)
-
-    /**
-     * Item content comparison used by DiffUtil.<br><br>
-     * DiffUtil에서 사용하는 아이템 내용 비교입니다.<br>
-     *
-     * @param oldItem The old item to compare.<br><br>
-     *                비교할 이전 아이템.
-     * @param newItem The new item to compare.<br><br>
-     *                비교할 새 아이템.
-     * @return True if contents are the same, false otherwise.<br><br>
-     *         내용이 같으면 true, 그렇지 않으면 false.<br>
-     */
-    protected open fun diffUtilAreContentsTheSame(
-        oldItem: ITEM,
-        newItem: ITEM,
-    ): Boolean = diffUtilContentsSame?.invoke(oldItem, newItem) ?: (oldItem == newItem)
-
-    /**
-     * Provides payload when items match but contents differ.<br><br>
-     * 아이템은 같고 내용만 다를 때 payload를 제공합니다.<br>
-     *
-     * @param oldItem The old item.<br><br>
-     *                이전 아이템.
-     * @param newItem The new item.<br><br>
-     *                새 아이템.
-     * @return Change payload object, or null if none.<br><br>
-     *         변경 payload 객체, 없으면 null.<br>
-     */
-    protected open fun diffUtilGetChangePayload(
-        oldItem: ITEM,
-        newItem: ITEM,
-    ): Any? = diffUtilChangePayload?.invoke(oldItem, newItem)
-
-    /**
-     * Creates a ViewHolder and attaches click listeners once.<br><br>
-     * ViewHolder를 생성하고 클릭 리스너를 1회 바인딩합니다.<br>
-     */
-    public final override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
-        val holder = createViewHolderInternal(parent, viewType)
-        attachClickListeners(holder)
-        return holder
-    }
-
-    /**
-     * Creates a ViewHolder for the given parent and view type.<br><br>
-     * 부모 뷰와 뷰 타입에 맞는 ViewHolder를 생성합니다.<br>
-     */
-    protected abstract fun createViewHolderInternal(parent: ViewGroup, viewType: Int): VH
-
-    /**
-     * Binds data to the ViewHolder (must be implemented by subclasses).<br><br>
-     * 서브클래스가 ViewHolder에 데이터를 바인딩해야 합니다.<br>
-     *
-     * @param holder The ViewHolder to bind data to.<br><br>
-     *               데이터를 바인딩할 ViewHolder.
-     * @param position The position of the item within the adapter's data set.<br><br>
-     *                 어댑터 데이터 세트 내 아이템의 위치.
-     * @param item The item to bind.<br><br>
-     *             바인딩할 아이템.
-     */
-    protected abstract fun onBindViewHolder(
-        holder: VH,
-        position: Int,
-        item: ITEM,
-    )
-
-    /**
-     * Binds with payloads for partial updates.<br><br>
-     * 부분 갱신 payload와 함께 바인딩합니다.<br>
-     *
-     * @param holder The ViewHolder to bind data to.<br><br>
-     *               데이터를 바인딩할 ViewHolder.
-     * @param position The position of the item within the adapter's data set.<br><br>
-     *                 어댑터 데이터 세트 내 아이템의 위치.
-     * @param item The item to bind.<br><br>
-     *             바인딩할 아이템.
-     * @param payloads A non-null list of merged payloads. Can be empty list if requires full update.<br><br>
-     *                 병합된 payload의 비어있지 않은 리스트. 전체 업데이트가 필요한 경우 빈 리스트일 수 있음.
-     */
-    protected open fun onBindViewHolder(
-        holder: VH,
-        position: Int,
-        item: ITEM,
-        payloads: List<Any>,
-    ) {
-        onBindViewHolder(holder, position, item)
-    }
-
-    /**
-     * Returns the current list size.<br><br>
-     * 현재 리스트 크기를 반환합니다.<br>
-     *
-     * @return The number of items in the list.<br><br>
-     *         리스트의 아이템 개수.<br>
-     */
-    public override fun getItemCount(): Int = differ.currentList.size
-
-    /**
-     * Returns the item at the given position, or throws if invalid.<br><br>
-     * 주어진 위치의 아이템을 반환하며, 잘못된 경우 예외를 던집니다.<br>
-     *
-     * @param position The position of the item to retrieve.<br><br>
-     *                 가져올 아이템의 위치.
-     * @return The item at the specified position.<br><br>
-     *         지정된 위치의 아이템.<br>
-     * @throws IndexOutOfBoundsException if position is invalid.<br><br>
-     *                                   위치가 유효하지 않은 경우.
-     */
+    @MainThread
     public fun getItem(position: Int): ITEM {
-        requireInBounds(isPositionValid(position)) { "Invalid position: $position, size: ${differ.currentList.size}" }
-        return differ.currentList[position]
-    }
-
-    /**
-     * Returns an immutable snapshot of items.<br><br>
-     * 아이템의 불변 스냅샷을 반환합니다.<br>
-     *
-     * @return A list containing all items.<br><br>
-     *         모든 아이템을 포함하는 리스트.<br>
-     */
-    public fun getItems(): List<ITEM> = differ.currentList
-
-    /**
-     * Replaces items using AsyncListDiffer for efficient updates.<br><br>
-     * AsyncListDiffer로 아이템을 교체해 효율적으로 갱신합니다.<br>
-     *
-     * @param newItems The new list of items to set.<br><br>
-     *                 설정할 새 아이템 리스트.
-     * @param commitCallback Optional callback invoked when the list update is committed.<br><br>
-     *                       리스트 업데이트가 커밋될 때 호출되는 선택적 콜백.
-     */
-    public fun setItems(
-        newItems: List<ITEM>,
-        commitCallback: (() -> Unit)? = null,
-    ) {
-        operationQueue.clearQueueAndExecute(AdapterOperationQueue.SetItemsOp(newItems, commitCallback))
-    }
-
-    /**
-     * Appends multiple items.<br><br>
-     * 여러 아이템을 뒤에 추가합니다.<br>
-     *
-     * @param items The list of items to add.<br><br>
-     *              추가할 아이템 리스트.
-     * @param commitCallback Optional callback invoked when the operation is committed.<br><br>
-     *                       작업이 커밋될 때 호출되는 선택적 콜백.
-     * @return True if operation was enqueued, false otherwise.<br><br>
-     *         작업이 큐에 추가되면 true, 그렇지 않으면 false.<br>
-     */
-    public open fun addItems(
-        items: List<ITEM>,
-        commitCallback: (() -> Unit)? = null,
-    ): Boolean {
-        if (items.isEmpty()) {
-            Logx.d("addItems() items is empty")
-            return true
+        assertMainThread("BaseRcvAdapter.getItem")
+        requireInBounds(isPositionValid(position)) {
+            "Invalid content position: $position, contentSize: ${adapterData.contentItems.size}"
         }
-        operationQueue.enqueueOperation(AdapterOperationQueue.AddItemsOp(items, commitCallback))
-        return true
+        return adapterData.contentItems[position]
     }
 
     /**
-     * Creates a mutable copy of the current list.<br><br>
-     * 현재 리스트의 가변 사본을 만듭니다.<br>
-     *
-     * @return A mutable list containing all items.<br><br>
-     *         모든 아이템을 포함하는 가변 리스트.<br>
+     * Returns immutable snapshot of current content items.<br><br>
+     * 현재 content 아이템의 불변 스냅샷을 반환합니다.<br>
      */
-    private fun getMutableItemList(): MutableList<ITEM> = differ.currentList.toMutableList()
+    @MainThread
+    public override fun getItems(): List<ITEM> =
+        runOnMainThread("BaseRcvAdapter.getItems") { adapterData.contentItems.toList() }
 
     /**
-     * Appends a single item.<br><br>
-     * 단일 아이템을 추가합니다.<br>
-     *
-     * @param item The item to add.<br><br>
-     *             추가할 아이템.
-     * @param commitCallback Optional callback invoked when the operation is committed.<br><br>
-     *                       작업이 커밋될 때 호출되는 선택적 콜백.
-     * @return True if operation was enqueued.<br><br>
-     *         작업이 큐에 추가되면 true.<br>
+     * Returns content item at position safely, or null.<br><br>
+     * position의 content 아이템을 안전하게 조회하고 없으면 null을 반환합니다.<br>
      */
-    public open fun addItem(
-        item: ITEM,
-        commitCallback: (() -> Unit)? = null,
-    ): Boolean {
-        operationQueue.enqueueOperation(AdapterOperationQueue.AddItemOp(item, commitCallback))
-        return true
+    @MainThread
+    public override fun getItemOrNull(position: Int): ITEM? =
+        runOnMainThread("BaseRcvAdapter.getItemOrNull") { adapterData.contentItems.getOrNull(position) }
+
+    /**
+     * Returns index of target content item, or -1 when not found.<br><br>
+     * 대상 content 아이템의 인덱스를 반환하고 없으면 -1을 반환합니다.<br>
+     */
+    @MainThread
+    public override fun getItemPosition(item: ITEM): Int =
+        runOnMainThread("BaseRcvAdapter.getItemPosition") { adapterData.contentItems.indexOf(item) }
+
+    /**
+     * Returns mutable copy of current content items.<br><br>
+     * 현재 content 아이템의 가변 복사본을 반환합니다.<br>
+     * **Warning**: This is a snapshot copy. Mutations do NOT affect the adapter state.<br><br>
+     * 경고: 이 리스트는 스냅샷 복사본이므로 변경해도 adapter 상태에 반영되지 않습니다.<br>
+     */
+    @MainThread
+    public override fun getMutableItemList(): MutableList<ITEM> =
+        runOnMainThread("BaseRcvAdapter.getMutableItemList") { adapterData.contentItems.toMutableList() }
+
+    /**
+     * Replaces all content items immediately.<br><br>
+     * 전체 content 아이템을 즉시 교체합니다.<br>
+     */
+    @SuppressLint("NotifyDataSetChanged")
+    @MainThread
+    public override fun setItems(items: List<ITEM>, onResult: ((NormalAdapterResult) -> Unit)?) {
+        assertMainThread("BaseRcvAdapter.setItems")
+        adapterData.setContentItems(items)
+        notifyDataSetChanged()
+        runResultCallback(NormalAdapterResult.Applied, onResult)
     }
 
     /**
-     * Inserts an item at the given position.<br><br>
-     * 지정 위치에 아이템을 삽입합니다.<br>
-     *
-     * @param position The position at which to insert the item.<br><br>
-     *                 아이템을 삽입할 위치.
-     * @param item The item to insert.<br><br>
-     *             삽입할 아이템.
-     * @param commitCallback Optional callback invoked when the operation is committed.<br><br>
-     *                       작업이 커밋될 때 호출되는 선택적 콜백.
-     * @return True if operation was enqueued, false if position is invalid.<br><br>
-     *         작업이 큐에 추가되면 true, 위치가 잘못되었으면 false.<br>
+     * Appends a single content item immediately.<br><br>
+     * content 아이템 1개를 즉시 추가합니다.<br>
      */
-    public fun addItemAt(
-        position: Int,
-        item: ITEM,
-        commitCallback: (() -> Unit)? = null,
-    ): Boolean {
-        if (position < 0 || position > itemCount) {
-            Logx.e("Cannot add item at position $position. Valid range: 0..$itemCount")
-            return false
+    @MainThread
+    public override fun addItem(item: ITEM, onResult: ((NormalAdapterResult) -> Unit)?) {
+        assertMainThread("BaseRcvAdapter.addItem")
+        val insertPosition = adapterData.addContentItem(item)
+        notifyItemInserted(insertPosition)
+        runResultCallback(NormalAdapterResult.Applied, onResult)
+    }
+
+    /**
+     * Inserts a content item at a position immediately.<br><br>
+     * 지정한 위치에 content 아이템을 즉시 삽입합니다.<br>
+     */
+    @MainThread
+    public override fun addItemAt(position: Int, item: ITEM, onResult: ((NormalAdapterResult) -> Unit)?) {
+        val failure = commonDataLogic.validateAddItemAt(position, adapterData.contentItems.size)
+        if (failure != null) {
+            runResultCallback(failure.toNormalAdapterResult(), onResult)
+            return
         }
-        operationQueue.enqueueOperation(AdapterOperationQueue.AddItemAtOp(position, item, commitCallback))
-        return true
+        val insertStart = adapterData.addContentItemAt(position, item)
+        notifyItemInserted(insertStart)
+        runResultCallback(NormalAdapterResult.Applied, onResult)
     }
 
     /**
-     * Clears all items from the list.<br><br>
-     * 리스트의 모든 아이템을 제거합니다.<br>
-     *
-     * @param commitCallback Optional callback invoked when the operation is committed.<br><br>
-     *                       작업이 커밋될 때 호출되는 선택적 콜백.
-     * @return True if operation was enqueued.<br><br>
-     *         작업이 큐에 추가되면 true.<br>
+     * Appends multiple content items immediately.<br><br>
+     * 여러 content 아이템을 즉시 추가합니다.<br>
      */
-    public open fun removeAll(commitCallback: (() -> Unit)? = null): Boolean {
-        operationQueue.enqueueOperation(AdapterOperationQueue.ClearItemsOp(commitCallback))
-        return true
-    }
-
-    /**
-     * Removes the item at the given position.<br><br>
-     * 지정 위치의 아이템을 제거합니다.<br>
-     *
-     * @param position The position of the item to remove.<br><br>
-     *                 제거할 아이템의 위치.
-     * @param commitCallback Optional callback invoked when the operation is committed.<br><br>
-     *                       작업이 커밋될 때 호출되는 선택적 콜백.
-     * @return True if operation was enqueued, false if position is invalid.<br><br>
-     *         작업이 큐에 추가되면 true, 위치가 잘못되었으면 false.<br>
-     */
-    public open fun removeAt(
-        position: Int,
-        commitCallback: (() -> Unit)? = null,
-    ): Boolean {
-        if (position < 0 || position >= itemCount) {
-            Logx.e("Cannot remove item at position $position. Valid range: 0 until $itemCount")
-            return false
+    @MainThread
+    public override fun addItems(items: List<ITEM>, onResult: ((NormalAdapterResult) -> Unit)?) {
+        val failure = commonDataLogic.validateAddItems(items)
+        if (failure != null) {
+            runResultCallback(failure.toNormalAdapterResult(), onResult)
+            return
         }
-        operationQueue.enqueueOperation(AdapterOperationQueue.RemoveAtOp(position, commitCallback))
-        return true
+        val insertStart = adapterData.addContentItems(items)
+        notifyItemRangeInserted(insertStart, items.size)
+        runResultCallback(NormalAdapterResult.Applied, onResult)
     }
 
     /**
-     * Removes the first matching item.<br><br>
-     * 첫 번째로 일치하는 아이템을 제거합니다.<br>
-     *
-     * @param item The item to remove.<br><br>
-     *             제거할 아이템.
-     * @param commitCallback Optional callback invoked when the operation is committed.<br><br>
-     *                       작업이 커밋될 때 호출되는 선택적 콜백.
-     * @return True if operation was enqueued, false if item not found.<br><br>
-     *         작업이 큐에 추가되면 true, 아이템을 찾지 못했으면 false.<br>
+     * Inserts multiple content items at a position immediately.<br><br>
+     * 지정한 위치에 여러 content 아이템을 즉시 삽입합니다.<br>
      */
-    public open fun removeItem(
-        item: ITEM,
-        commitCallback: (() -> Unit)? = null,
-    ): Boolean {
-        if (!differ.currentList.contains(item)) {
-            Logx.e("Item not found in the list")
-            return false
+    @MainThread
+    public override fun addItemsAt(position: Int, items: List<ITEM>, onResult: ((NormalAdapterResult) -> Unit)?) {
+        val failure = commonDataLogic.validateAddItemsAt(items, position, adapterData.contentItems.size)
+        if (failure != null) {
+            runResultCallback(failure.toNormalAdapterResult(), onResult)
+            return
         }
-        operationQueue.enqueueOperation(AdapterOperationQueue.RemoveItemOp(item, commitCallback))
-        return true
+        val insertStart = adapterData.addContentItemsAt(position, items)
+        notifyItemRangeInserted(insertStart, items.size)
+        runResultCallback(NormalAdapterResult.Applied, onResult)
+    }
+
+    /**
+     * Removes the first matching content item immediately.<br><br>
+     * 첫 번째로 일치하는 content 아이템을 즉시 제거합니다.<br>
+     */
+    @MainThread
+    public override fun removeItem(item: ITEM, onResult: ((NormalAdapterResult) -> Unit)?) {
+        val failure = commonDataLogic.validateRemoveItem(item, adapterData.contentItems)
+        if (failure != null) {
+            runResultCallback(failure.toNormalAdapterResult(), onResult)
+            return
+        }
+        val removePosition = adapterData.removeContentItem(item)
+        notifyItemRemoved(removePosition)
+        runResultCallback(NormalAdapterResult.Applied, onResult)
+    }
+
+    /**
+     * Removes matching content items with best-effort semantics.<br><br>
+     * best-effort 방식으로 일치하는 content 아이템들을 제거합니다.<br>
+     *
+     * **Note**: Each removal triggers an individual `notifyItemRemoved` call.<br>
+     * For large or contiguous removals, prefer [removeRange] or [removeAll] for better performance.<br><br>
+     * **주의**: 각 제거마다 `notifyItemRemoved`가 개별 호출됩니다.<br>
+     * 대량 또는 연속 제거는 성능을 위해 [removeRange] 또는 [removeAll]을 사용하세요.<br>
+     */
+    @MainThread
+    public override fun removeItems(items: List<ITEM>, onResult: ((NormalAdapterResult) -> Unit)?) {
+        val failure = commonDataLogic.validateRemoveItems(items, adapterData.contentItems)
+        if (failure != null) {
+            runResultCallback(failure.toNormalAdapterResult(), onResult)
+            return
+        }
+        val removeSet = items.toHashSet()
+        val contentIndicesToRemove = adapterData.contentItems
+            .mapIndexedNotNull { index, currentItem -> if (currentItem in removeSet) index else null }
+            .reversed()
+        contentIndicesToRemove.forEach { contentIndex ->
+            val adapterPosition = adapterData.contentToAdapterPosition(contentIndex)
+            adapterData.removeContentAt(contentIndex)
+            notifyItemRemoved(adapterPosition)
+        }
+        runResultCallback(NormalAdapterResult.Applied, onResult)
+    }
+
+    /**
+     * Removes a contiguous content range by start index and count.<br><br>
+     * 시작 인덱스와 개수 기준으로 연속된 content 구간을 제거합니다.<br>
+     */
+    @MainThread
+    public override fun removeRange(start: Int, count: Int, onResult: ((NormalAdapterResult) -> Unit)?) {
+        val failure = commonDataLogic.validateRemoveRange(start, count, adapterData.contentItems.size)
+        if (failure != null) {
+            runResultCallback(failure.toNormalAdapterResult(), onResult)
+            return
+        }
+        val startAdapterPosition = adapterData.removeContentRange(start, start + count)
+        notifyItemRangeRemoved(startAdapterPosition, count)
+        runResultCallback(NormalAdapterResult.Applied, onResult)
+    }
+
+    /**
+     * Removes content item at position immediately.<br><br>
+     * 지정한 위치의 content 아이템을 즉시 제거합니다.<br>
+     */
+    @MainThread
+    public override fun removeAt(position: Int, onResult: ((NormalAdapterResult) -> Unit)?) {
+        val failure = commonDataLogic.validateRemoveItemAt(position, adapterData.contentItems.size)
+        if (failure != null) {
+            runResultCallback(failure.toNormalAdapterResult(), onResult)
+            return
+        }
+        val adapterPosition = adapterData.removeContentAt(position)
+        notifyItemRemoved(adapterPosition)
+        runResultCallback(NormalAdapterResult.Applied, onResult)
+    }
+
+    /**
+     * Clears all content items immediately.<br><br>
+     * 모든 content 아이템을 즉시 제거합니다.<br>
+     */
+    @MainThread
+    public override fun removeAll(onResult: ((NormalAdapterResult) -> Unit)?) {
+        assertMainThread("BaseRcvAdapter.removeAll")
+        if (adapterData.contentItems.isEmpty()) {
+            runResultCallback(NormalAdapterResult.Applied, onResult)
+            return
+        }
+        val removedCount = adapterData.removeAllContentItems()
+        notifyItemRangeRemoved(0, removedCount)
+        runResultCallback(NormalAdapterResult.Applied, onResult)
+    }
+
+    /**
+     * Moves a content item from one position to another immediately.<br><br>
+     * content 아이템을 한 위치에서 다른 위치로 즉시 이동합니다.<br>
+     */
+    @MainThread
+    public override fun moveItem(fromPosition: Int, toPosition: Int, onResult: ((NormalAdapterResult) -> Unit)?) {
+        val failure = commonDataLogic.validateMoveItem(fromPosition, toPosition, adapterData.contentItems.size)
+        if (failure != null) {
+            runResultCallback(failure.toNormalAdapterResult(), onResult)
+            return
+        }
+        if (fromPosition == toPosition) {
+            runResultCallback(NormalAdapterResult.Applied, onResult)
+            return
+        }
+        val (fromAdapterPosition, toAdapterPosition) = adapterData.moveContentItem(fromPosition, toPosition)
+        notifyItemMoved(fromAdapterPosition, toAdapterPosition)
+        runResultCallback(NormalAdapterResult.Applied, onResult)
+    }
+
+    /**
+     * Replaces content item at position immediately.<br><br>
+     * 지정한 위치의 content 아이템을 즉시 교체합니다.<br>
+     */
+    @MainThread
+    public override fun replaceItemAt(position: Int, item: ITEM, onResult: ((NormalAdapterResult) -> Unit)?) {
+        val failure = commonDataLogic.validateReplaceItemAt(position, adapterData.contentItems.size)
+        if (failure != null) {
+            runResultCallback(failure.toNormalAdapterResult(), onResult)
+            return
+        }
+        val adapterPosition = adapterData.replaceContentAt(position, item)
+        notifyItemChanged(adapterPosition)
+        runResultCallback(NormalAdapterResult.Applied, onResult)
     }
 
     /**
      * Binds holder without payloads.<br><br>
-     * payload 없이 ViewHolder를 바인딩합니다.<br>
-     *
-     * @param holder The ViewHolder to bind.<br><br>
-     *               바인딩할 ViewHolder.
-     * @param position The position of the item within the adapter's data set.<br><br>
-     *                 어댑터 데이터 세트 내 아이템의 위치.
+     * payload 없이 holder를 바인딩합니다.<br>
      */
-    override fun onBindViewHolder(
-        holder: VH,
-        position: Int,
-    ) {
-        if (!isPositionValid(position)) {
-            Logx.e("Cannot bind item, position is $position, itemcount $itemCount")
+    public override fun onBindViewHolder(holder: VH, position: Int) {
+        val item = getItemOrNull(position)
+        if (item == null) {
+            Logx.e("Cannot bind content item, contentPosition=$position, contentSize=${adapterData.contentItems.size}")
             return
         }
-
-        val item = getItem(position)
-        onBindViewHolder(holder, position, item)
+        onBindViewHolder(holder, item, position)
     }
 
     /**
      * Binds holder with payloads when provided.<br><br>
-     * payload가 있을 때 ViewHolder를 바인딩합니다.<br>
-     *
-     * @param holder The ViewHolder to bind.<br><br>
-     *               바인딩할 ViewHolder.
-     * @param position The position of the item within the adapter's data set.<br><br>
-     *                 어댑터 데이터 세트 내 아이템의 위치.
-     * @param payloads A non-null list of merged payloads.<br><br>
-     *                 병합된 payload의 비어있지 않은 리스트.
+     * payload가 제공되면 holder를 payload 기반으로 바인딩합니다.<br>
      */
-    override fun onBindViewHolder(
-        holder: VH,
-        position: Int,
-        payloads: MutableList<Any>,
-    ) {
+    public override fun onBindViewHolder(holder: VH, position: Int, payloads: MutableList<Any>) {
         if (payloads.isEmpty()) {
             onBindViewHolder(holder, position)
-        } else {
-            if (!isPositionValid(position)) {
-                Logx.e("Cannot bind item with payload, position is $position, itemcount $itemCount")
-                return
-            }
-
-            val item = getItem(position)
-            onBindViewHolder(holder, position, item, payloads)
+            return
         }
+
+        val item = getItemOrNull(position)
+        if (item == null) {
+            Logx.e("Cannot bind content item with payload, contentPosition=$position, contentSize=${adapterData.contentItems.size}")
+            return
+        }
+        onBindViewHolder(holder, item, position, payloads)
     }
 
     /**
-     * Checks if position is within current list bounds.<br><br>
-     * 위치가 현재 리스트 범위 내인지 확인합니다.<br>
-     *
-     * @param position The position to check.<br><br>
-     *                 확인할 위치.
-     * @return True if position is valid, false otherwise.<br><br>
-     *         위치가 유효하면 true, 그렇지 않으면 false.<br>
+     * Checks whether content position is valid in current content bounds.<br><br>
+     * 현재 content 범위에서 position 유효성을 확인합니다.<br>
      */
-    protected fun isPositionValid(position: Int): Boolean = position > RecyclerView.NO_POSITION && position < differ.currentList.size
+    protected fun isPositionValid(position: Int): Boolean =
+        commonDataLogic.isPositionValid(position, adapterData.contentItems.size)
 
     /**
-     * Builds DiffUtil.ItemCallback using current comparison logic.<br><br>
-     * 현재 비교 로직으로 DiffUtil.ItemCallback을 생성합니다.<br>
-     *
-     * @return A DiffUtil.ItemCallback instance.<br><br>
-     *         DiffUtil.ItemCallback 인스턴스.<br>
-     */
-    private fun createDiffCallback(): DiffUtil.ItemCallback<ITEM> =
-        object : DiffUtil.ItemCallback<ITEM>() {
-            /**
-             * DiffUtil identity check.<br><br>
-             * DiffUtil의 동일성 비교입니다.<br>
-             *
-             * @param oldItem The old item to compare.<br><br>
-             *                비교할 이전 아이템.
-             * @param newItem The new item to compare.<br><br>
-             *                비교할 새 아이템.
-             * @return True if items represent the same entity.<br><br>
-             *         아이템이 같은 엔티티를 나타내면 true.<br>
-             */
-            override fun areItemsTheSame(
-                oldItem: ITEM,
-                newItem: ITEM,
-            ): Boolean = diffUtilAreItemsTheSame(oldItem, newItem)
-
-            /**
-             * DiffUtil content equality check.<br><br>
-             * DiffUtil의 내용 비교입니다.<br>
-             *
-             * @param oldItem The old item to compare.<br><br>
-             *                비교할 이전 아이템.
-             * @param newItem The new item to compare.<br><br>
-             *                비교할 새 아이템.
-             * @return True if contents are the same.<br><br>
-             *         내용이 같으면 true.<br>
-             */
-            override fun areContentsTheSame(
-                oldItem: ITEM,
-                newItem: ITEM,
-            ): Boolean = diffUtilAreContentsTheSame(oldItem, newItem)
-
-            /**
-             * DiffUtil payload provider.<br><br>
-             * DiffUtil payload 제공자입니다.<br>
-             *
-             * @param oldItem The old item.<br><br>
-             *                이전 아이템.
-             * @param newItem The new item.<br><br>
-             *                새 아이템.
-             * @return Change payload or null.<br><br>
-             *         변경 payload 또는 null.<br>
-             */
-            override fun getChangePayload(
-                oldItem: ITEM,
-                newItem: ITEM,
-            ): Any? = diffUtilGetChangePayload(oldItem, newItem)
-        }
-
-    /**
-     * Builds AsyncDifferConfig with optional test executor and detectMoves flag.<br><br>
-     * 테스트 실행기·detectMoves 설정을 포함한 AsyncDifferConfig를 생성합니다.<br>
-     *
-     * @return An AsyncDifferConfig instance.<br><br>
-     *         AsyncDifferConfig 인스턴스.<br>
-     */
-    private fun buildDifferConfig(): AsyncDifferConfig<ITEM> =
-        AsyncDifferConfig
-            .Builder(createDiffCallback())
-            .apply {
-                // Set test executor for synchronous execution in tests
-                testExecutor?.let { executor ->
-                    try {
-                        val method =
-                            AsyncDifferConfig.Builder::class.java.getMethod(
-                                "setBackgroundThreadExecutor",
-                                Executor::class.java,
-                            )
-                        method.invoke(this, executor)
-                    } catch (_: NoSuchMethodException) {
-                        Logx.w("AsyncListDiffer", "setBackgroundThreadExecutor not available")
-                    } catch (e: ReflectiveOperationException) {
-                        Logx.w("AsyncListDiffer", "Failed to set test executor: ${e.message}")
-                    }
-                }
-
-                try {
-                    val method =
-                        AsyncDifferConfig.Builder::class.java.getMethod(
-                            "setDetectMoves",
-                            Boolean::class.javaPrimitiveType,
-                        )
-                    method.invoke(this, detectMoves)
-                } catch (_: NoSuchMethodException) {
-                    if (!detectMoves) {
-                        Logx.w(
-                            "AsyncListDiffer",
-                            "setDetectMoves not available; detectMoves flag is ignored on this version.",
-                        )
-                    }
-                } catch (e: ReflectiveOperationException) {
-                    Logx.w("AsyncListDiffer", "Failed to reflectively set detectMoves: ${e.message}")
-                }
-            }.build()
-
-    /**
-     * Recreates differ to apply updated config while keeping current list.<br><br>
-     * 현재 리스트를 유지한 채 설정을 반영하도록 differ를 재생성합니다.<br>
-     *
-     * @param commitCallback Optional callback invoked when the differ is recreated.<br><br>
-     *                       differ가 재생성될 때 호출되는 선택적 콜백.
-     */
-    private fun recreateDiffer(commitCallback: (() -> Unit)? = null) {
-        val snapshot = differ.currentList.toList()
-        differ = AsyncListDiffer(AdapterListUpdateCallback(this), buildDifferConfig())
-        differ.submitList(snapshot) { commitCallback?.invoke() }
-    }
-
-    /**
-     * Attaches click listeners once per ViewHolder creation.<br><br>
-     * ViewHolder 생성 시점에 클릭 리스너를 1회 바인딩합니다.<br>
-     */
-    private fun attachClickListeners(holder: VH) {
-        holder.itemView.setOnClickListener { view ->
-            // Current binding adapter position at click time.<br><br>클릭 시점의 바인딩 어댑터 포지션입니다.<br>
-            val adapterPosition = holder.bindingAdapterPosition
-            if (adapterPosition == RecyclerView.NO_POSITION) return@setOnClickListener
-            // Item resolved from current position at click time.<br><br>클릭 시점 위치로 조회된 아이템입니다.<br>
-            val item = getItemOrNull(adapterPosition) ?: return@setOnClickListener
-            onItemClickListener?.invoke(adapterPosition, item, view)
-        }
-
-        holder.itemView.setOnLongClickListener { view ->
-            // Optional long-click listener; return false when absent.<br><br>롱클릭 리스너가 없으면 false를 반환합니다.<br>
-            val listener = onItemLongClickListener ?: return@setOnLongClickListener false
-            // Current binding adapter position at long-click time.<br><br>롱클릭 시점의 바인딩 어댑터 포지션입니다.<br>
-            val adapterPosition = holder.bindingAdapterPosition
-            if (adapterPosition == RecyclerView.NO_POSITION) return@setOnLongClickListener false
-            // Item resolved from current position at long-click time.<br><br>롱클릭 시점 위치로 조회된 아이템입니다.<br>
-            val item = getItemOrNull(adapterPosition) ?: return@setOnLongClickListener false
-            listener.invoke(adapterPosition, item, view)
-            true
-        }
-    }
-
-    /**
-     * Safely returns the item at the position or null.<br><br>
-     * 포지션의 아이템을 안전하게 반환하거나 null을 반환합니다.<br>
-     */
-    private fun getItemOrNull(position: Int): ITEM? = differ.currentList.getOrNull(position)
-
-    /**
-     * Sets click listener for items.<br><br>
+     * Sets item click listener.<br><br>
      * 아이템 클릭 리스너를 설정합니다.<br>
-     *
-     * @param listener The click listener callback receiving position, item, and view.<br><br>
-     *                 위치, 아이템, 뷰를 받는 클릭 리스너 콜백.
      */
-    public fun setOnItemClickListener(listener: (Int, ITEM, View) -> Unit) {
-        onItemClickListener = listener
+    @MainThread
+    public override fun setOnItemClickListener(listener: (Int, ITEM, View) -> Unit) {
+        assertMainThread("BaseRcvAdapter.setOnItemClickListener")
+        clickData.onItemClickListener = listener
     }
 
     /**
-     * Sets long-click listener for items.<br><br>
+     * Sets item long-click listener.<br><br>
      * 아이템 롱클릭 리스너를 설정합니다.<br>
-     *
-     * @param listener The long-click listener callback receiving position, item, and view.<br><br>
-     *                 위치, 아이템, 뷰를 받는 롱클릭 리스너 콜백.
      */
-    public fun setOnItemLongClickListener(listener: (Int, ITEM, View) -> Unit) {
-        onItemLongClickListener = listener
-    }
-
-    /**
-     * Clears view cache when a BaseRcvViewHolder is recycled.<br><br>
-     * BaseRcvViewHolder가 재활용될 때 뷰 캐시를 비웁니다.<br>
-     *
-     * @param holder The ViewHolder being recycled.<br><br>
-     *               재활용되는 ViewHolder.
-     */
-    override fun onViewRecycled(holder: VH) {
-        super.onViewRecycled(holder)
-        if (holder is BaseRcvViewHolder) {
-            holder.clearViewCache()
-        }
+    @MainThread
+    public override fun setOnItemLongClickListener(listener: (Int, ITEM, View) -> Unit) {
+        assertMainThread("BaseRcvAdapter.setOnItemLongClickListener")
+        clickData.onItemLongClickListener = listener
     }
 }

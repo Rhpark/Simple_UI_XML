@@ -19,6 +19,30 @@ This library helps you make easy and more simple code for Android developers
 <br>
 </br>
 
+## RecyclerView Contract Highlights (v0.3.46+)
+
+- `BaseRcvAdapter`: content-only immediate list mutation + notify APIs
+- `HeaderFooterRcvAdapter`: header/content/footer section adapter with section CRUD APIs
+- `BaseRcvListAdapter`: queue-based operation processing (`setQueuePolicy`)
+- `SimpleHeaderFooterRcvAdapter` / `SimpleHeaderFooterDataBindingRcvAdapter` / `SimpleHeaderFooterViewBindingRcvAdapter`: section-enabled normal adapter variants
+- `NormalAdapterResult` / `ListAdapterResult`: mutation APIs report terminal results through `onResult` callbacks (`setItems`, `addItems`, `removeItem` ...)
+- `BaseRcvListAdapter` `onResult` is invoked once when an operation reaches terminal state (applied / dropped / failed)
+- `Bind signature`: override order is `onBindViewHolder(holder, item, position)` (same order for header/footer bind overrides)
+- `Section replace contract`: `HeaderFooterRcvAdapter.setHeaderItems` / `setFooterItems` use `notifyItemRangeChanged` when size/viewType are compatible, otherwise fallback to remove+insert
+- `Large removal note`: `BaseRcvAdapter.removeItems(...)` emits per-item `notifyItemRemoved`; for large/contiguous removals, prefer `removeRange` / `removeAll`
+> - `BaseRcvAdapter`: content 전용 즉시 리스트 변경 + notify API 반영
+> - `HeaderFooterRcvAdapter`: header/content/footer 섹션 CRUD를 지원하는 일반 어댑터
+> - `BaseRcvListAdapter`: 큐 기반 연산 처리(`setQueuePolicy`)
+> - `SimpleHeaderFooterRcvAdapter` / `SimpleHeaderFooterDataBindingRcvAdapter` / `SimpleHeaderFooterViewBindingRcvAdapter`: 섹션 지원 일반 어댑터 변형
+> - `NormalAdapterResult` / `ListAdapterResult`: 변경 API는 `onResult` 콜백을 통해 종료 결과를 전달합니다(`setItems`, `addItems`, `removeItem` 등)
+> - `BaseRcvListAdapter`의 `onResult`는 연산이 터미널 상태(반영/드롭/실패)에 도달하면 1회 호출됩니다
+> - `바인딩 시그니처`: `onBindViewHolder(holder, item, position)` 순서로 오버라이드합니다(header/footer 바인딩도 동일 순서)
+> - `섹션 교체 규약`: `HeaderFooterRcvAdapter.setHeaderItems` / `setFooterItems`는 크기/뷰타입 호환 시 `notifyItemRangeChanged`, 비호환 시 remove+insert를 사용합니다.
+> - `대량 제거 주의`: `BaseRcvAdapter.removeItems(...)`는 항목별 `notifyItemRemoved`를 호출하므로, 대량/연속 제거는 `removeRange` / `removeAll`을 권장합니다.
+
+<br>
+</br>
+
 ## Gradle
 
 #### 1. settings.gradle.kts
@@ -108,6 +132,8 @@ dependencies {
 **Project Artifacts**
 - **[API Documentation](https://rhpark.github.io/Simple_UI_XML/api)** - Dokka로 생성된 API 문서
 - **[Code Coverage Report](https://rhpark.github.io/Simple_UI_XML/coverage)** - Kover 커버리지 리포트
+- **API baseline (`simple_xml/api/simple_xml.api`)** - 공개 API 시그니처 기준 파일
+- **API validation commands** - `./gradlew :simple_xml:apiCheck`(검증), `./gradlew :simple_xml:apiDump`(의도된 변경 반영)
 
 
 <br>

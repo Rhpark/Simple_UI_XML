@@ -30,9 +30,6 @@ import kr.open.library.simpleui_xml.databinding.ActivityServiceManagerInfoBindin
 class ServiceManagerInfoActivity : BaseDataBindingActivity<ActivityServiceManagerInfoBinding>(R.layout.activity_service_manager_info) {
     private val adapter = SimpleRcvAdapter<String>(android.R.layout.test_list_item) { holder, item, position ->
         holder.findViewById<TextView>(android.R.id.text1).text = item
-    }.apply {
-        setDiffUtilItemSame { oldItem, newItem -> oldItem == newItem }
-        setDiffUtilContentsSame { oldItem, newItem -> oldItem == newItem }
     }
 
     private val batteryInfo: BatteryStateInfo by lazy { BatteryStateInfo(this) }
