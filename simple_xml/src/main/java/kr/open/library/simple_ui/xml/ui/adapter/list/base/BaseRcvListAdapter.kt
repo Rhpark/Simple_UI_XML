@@ -9,9 +9,9 @@ import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
 import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.xml.ui.adapter.common.AdapterCommonClickData
 import kr.open.library.simple_ui.xml.ui.adapter.common.AdapterCommonDataLogic
+import kr.open.library.simple_ui.xml.ui.adapter.common.imp.AdapterClickable
 import kr.open.library.simple_ui.xml.ui.adapter.common.imp.AdapterReadApi
 import kr.open.library.simple_ui.xml.ui.adapter.common.imp.AdapterWriteApi
-import kr.open.library.simple_ui.xml.ui.adapter.common.imp.AdapterClickable
 import kr.open.library.simple_ui.xml.ui.adapter.common.thread.assertAdapterMainThread
 import kr.open.library.simple_ui.xml.ui.adapter.list.base.diffutil.RcvListDiffUtilCallBack
 import kr.open.library.simple_ui.xml.ui.adapter.list.base.queue.AdapterOperationQueue

@@ -5,8 +5,8 @@ import androidx.recyclerview.widget.RecyclerView
 import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
 import kr.open.library.simple_ui.xml.ui.adapter.common.AdapterCommonClickData
 import kr.open.library.simple_ui.xml.ui.adapter.common.AdapterCommonDataLogic
-import kr.open.library.simple_ui.xml.ui.adapter.common.imp.AdapterReadApi
 import kr.open.library.simple_ui.xml.ui.adapter.common.imp.AdapterClickable
+import kr.open.library.simple_ui.xml.ui.adapter.common.imp.AdapterReadApi
 import kr.open.library.simple_ui.xml.ui.adapter.common.thread.assertAdapterMainThread
 import kr.open.library.simple_ui.xml.ui.adapter.normal.base.BaseRcvAdapter
 import kr.open.library.simple_ui.xml.ui.adapter.normal.headerfooter.HeaderFooterRcvAdapter
