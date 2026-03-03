@@ -15,11 +15,13 @@
  - 불확실한 부분이 있으면 반드시 해당 파일을 직접 읽어 확인한 뒤 결론을 낸다.
  - 코드로 확인 가능한 것을 "불명확하다"고 처리하지 않는다.
  - 분석 범위나 요청 의도가 모호한 경우 시작 전에 먼저 질문하여 방향을 확인한다.
+ - 코드/문서 수정은 검토 결과를 먼저 보고하고 사용자 승인을 받은 후 실행한다.
 
-## 서브에이전트(Task) 사용 규칙
+## SubAgent 사용 규칙
  - 분석, 탐색 등 서브에이전트에 위임한 결과는 반드시 직접 핵심 파일을 읽어 교차 검증한다.
  - 검증 없이 서브에이전트 결과를 사용자에게 그대로 전달하지 않는다.
  - 종합 분석처럼 범위가 넓고 정확도가 중요한 작업은 서브에이전트 위임 없이 직접 파일을 읽으며 수행한다.
+ - 서브에이전트 사용 시 model: "opus"를 지정하여 정확도를 높인다.
 
 ## 첫 실행 시 확인 사항
  - 세션 첫 실행 시 안드로이드 최신 문서를 항상 확인한다.
@@ -45,25 +47,13 @@
  - 코드 패턴 인덱스: docs/rules/coding_rule/CODE_PATTERNS_INDEX.md
  - 코드 패턴 상세: docs/rules/coding_rule/patterns/*.md
 
-## 코드 리뷰 절차 문서 위치 (/CodeReview 스킬 전용)
- - docs/rules/code_review/*.md
-
-### 코드 리뷰 절차 문서 목록
- - STEP 1 기능 검증: docs/rules/code_review/STEP1_FUNCTIONAL.md
- - STEP 2 로직 & 안정성: docs/rules/code_review/STEP2_LOGIC.md
- - STEP 3 아키텍처: docs/rules/code_review/STEP3_ARCHITECTURE.md
- - STEP 4 코드 품질: docs/rules/code_review/STEP4_CODE_QUALITY.md
- - STEP 5 명명 규칙: docs/rules/code_review/STEP5_NAMING.md
-
-## 코드 리팩토링 절차 문서 위치 (/Refactor 스킬 전용)
- - docs/rules/code_refactor/*.md
-
-### 코드 리팩토링 절차 문서 목록
- - STEP 1 대상 선정 & 영향 범위: docs/rules/code_refactor/STEP1_IDENTIFY.md
- - STEP 2 안전망 확인: docs/rules/code_refactor/STEP2_SAFETY.md
- - STEP 3 리팩토링 실행: docs/rules/code_refactor/STEP3_EXECUTE.md
- - STEP 4 검증: docs/rules/code_refactor/STEP4_VERIFY.md
- - STEP 5 문서 갱신: docs/rules/code_refactor/STEP5_DOCUMENT.md
+## 사용 가능한 Skills (슬래시 명령으로 호출)
+ - /CodeReview  : 코드 리뷰 (절차 문서는 Skill 내부 참조)
+ - /Refactor    : 코드 리팩토링 (절차 문서는 Skill 내부 참조)
+ - /TestCode    : 테스트 코드 작성 (Unit / Robolectric 자동 판단)
+ - /KDoc        : KDoc 주석 작성 (한·영 병기)
+ - /Readme      : README 문서 작성
+ - /Planning    : 기능 개발 계획 (PRD/SPEC/IMPLEMENTATION_PLAN 초안)
 
 ## 프로젝트/환경/배포 규칙 문서 위치
  - 인덱스: docs/rules/PROJECT_RULE_INDEX.md

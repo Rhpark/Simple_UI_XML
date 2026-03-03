@@ -24,6 +24,12 @@ import kr.open.library.simple_ui.core.system_manager.info.battery.BatteryStateCo
  * Combines real-time broadcast events with periodic checks for comprehensive battery monitoring.<br><br>
  * 배터리 브로드캐스트 리시버와 주기적 업데이트를 관리하는 내부 헬퍼 클래스입니다.<br>
  * 실시간 브로드캐스트 이벤트와 일정 간격 확인을 결합하여 포괄적인 배터리 모니터링을 제공합니다.<br>
+ *
+ * **Context 주의사항 / Context Caution:**<br>
+ * Always pass `applicationContext` to avoid memory leaks.<br>
+ * Passing an Activity Context will cause the Activity to be retained as long as the receiver is registered.<br><br>
+ * 메모리 누수를 방지하려면 반드시 `applicationContext`를 전달하세요.<br>
+ * Activity Context를 전달하면 리시버가 등록된 동안 Activity가 해제되지 않아 누수가 발생할 수 있습니다.<br>
  */
 internal class BatteryStateReceiver(
     private val context: Context,

@@ -40,12 +40,11 @@
 
 
 
- ## 주요 패키지 구조 (총 97개 파일)
+ ## 주요 패키지 구조 (총 119개 파일)
 
-  ### extensions (9개 하위 패키지)
+  ### extensions (8개 하위 패키지)
    - **bundle**: Bundle 생성/접근 간편화 (simple_core/src/main/java/kr/open/library/simple_ui/core/extensions/bundle/BundleInline.kt)
-   - **collection**: 컬렉션 조건부 처리 (simple_core/src/main/java/kr/open/library/simple_ui/core/extensions/collection/)
-   - **conditional**: SDK 버전 분기, 조건부 실행 (simple_core/src/main/java/kr/open/library/simple_ui/core/extensions/conditional/SdkVersionInline.kt)
+   - **conditional**: SDK 버전 분기, 조건부 실행, 컬렉션 조건부 처리 (simple_core/src/main/java/kr/open/library/simple_ui/core/extensions/conditional/SdkVersionInline.kt)
    - **date**: 날짜/시간 포맷팅 및 변환 (simple_core/src/main/java/kr/open/library/simple_ui/core/extensions/date/DateExtensions.kt)
    - **display**: dp/sp/px 단위 변환 (simple_core/src/main/java/kr/open/library/simple_ui/core/extensions/display/DisplayUnitExtensions.kt)
    - **round_to**: 반올림/올림/내림 헬퍼 (simple_core/src/main/java/kr/open/library/simple_ui/core/extensions/round_to/RoundToInline.kt)
@@ -139,7 +138,7 @@
   ### checkSdkVersion
    - API 레벨 분기를 간소화하는 인라인 함수
    - 코드 가독성 향상
-   - 예제: WifiController, RootActivity
+   - 예제: AlarmController, BatteryStateReceiver
 
 
   ### BaseViewModel & BaseViewModelEvent

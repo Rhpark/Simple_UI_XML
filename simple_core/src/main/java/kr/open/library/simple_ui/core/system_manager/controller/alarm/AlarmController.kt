@@ -29,11 +29,11 @@ import java.util.Calendar
 public open class AlarmController(
     context: Context,
 ) : BaseSystemService(
-        context,
-        checkSdkVersion<List<String>?>(Build.VERSION_CODES.S) {
-            listOf(SCHEDULE_EXACT_ALARM)
-        },
-    ) {
+    context,
+    checkSdkVersion<List<String>?>(Build.VERSION_CODES.S) {
+        listOf(SCHEDULE_EXACT_ALARM)
+    },
+) {
     /**
      * Lazy-initialized AlarmManager instance for scheduling and managing alarms.<br><br>
      * 알람 예약 및 관리를 위한 지연 초기화 AlarmManager 인스턴스입니다.<br>
@@ -460,11 +460,10 @@ public open class AlarmController(
      * @return True if exact alarms are allowed, false otherwise.<br><br>
      *         정확 알람 허용 시 true, 미허용 시 false입니다.<br>
      */
-    public fun canScheduleExactAlarms(): Boolean = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-        alarmManager.canScheduleExactAlarms()
-    } else {
-        true
-    }
+    public fun canScheduleExactAlarms(): Boolean = checkSdkVersion(Build.VERSION_CODES.S,
+        positiveWork = { alarmManager.canScheduleExactAlarms() },
+        negativeWork = { true }
+    )
 
     /**
      * Builds an intent to request exact alarm permission in Settings.<br><br>
@@ -473,15 +472,16 @@ public open class AlarmController(
      * @return Intent for permission request, or null if not needed.<br><br>
      *         권한 요청이 필요 없으면 null입니다.<br>
      */
-    public fun buildExactAlarmPermissionIntent(): Intent? {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return null
-        if (alarmManager.canScheduleExactAlarms()) return null
-
-        return Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {
-            data = Uri.parse("package:${context.packageName}")
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        }
-    }
+    public fun buildExactAlarmPermissionIntent(): Intent? = checkSdkVersion(Build.VERSION_CODES.S,
+        positiveWork = {
+            if (alarmManager.canScheduleExactAlarms()) return@checkSdkVersion null
+            Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {
+                data = Uri.parse("package:${context.packageName}")
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+        },
+        negativeWork = { null }
+    )
 
     /**
      * Checks exact alarm permission and logs warning when denied (API 31+).<br><br>
@@ -490,13 +490,13 @@ public open class AlarmController(
      * @return True if allowed or pre-S, false otherwise.<br><br>
      *         허용 또는 S 미만이면 true, 그 외 false입니다.<br>
      */
-    private fun ensureExactAlarmAllowedOrLog(): Boolean {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return true
-        if (alarmManager.canScheduleExactAlarms()) return true
-
-        Logx.w("Exact alarm permission denied. Request permission in Settings first.")
-        return false
-    }
+    private fun ensureExactAlarmAllowedOrLog(): Boolean = checkSdkVersion(Build.VERSION_CODES.S,
+        positiveWork = {
+            if (alarmManager.canScheduleExactAlarms()) return@checkSdkVersion true
+            Logx.w("Exact alarm permission denied. Request permission in Settings first.")
+            false
+        }, negativeWork = { true }
+    )
 
     private companion object {
         /**

@@ -22,6 +22,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withTimeoutOrNull
+import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
 import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.core.system_manager.base.BaseSystemService
 import kr.open.library.simple_ui.core.system_manager.extensions.getInputMethodManager
@@ -331,14 +332,18 @@ public open class SoftKeyboardController(
 
         when (policy) {
             SoftKeyboardResizePolicy.KEEP_CURRENT_WINDOW -> {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                    // Keep existing edge-to-edge / decorFits state on API 30+
-                    true
-                } else {
-                    @Suppress("DEPRECATION")
-                    window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
-                    true
-                }
+                checkSdkVersion(
+                    Build.VERSION_CODES.R,
+                    positiveWork = {
+                        // Keep existing edge-to-edge / decorFits state on API 30+
+                        true
+                    },
+                    negativeWork = {
+                        @Suppress("DEPRECATION")
+                        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+                        true
+                    },
+                )
             }
 
             SoftKeyboardResizePolicy.LEGACY_ADJUST_RESIZE -> {
@@ -348,14 +353,18 @@ public open class SoftKeyboardController(
             }
 
             SoftKeyboardResizePolicy.FORCE_DECOR_FITS_TRUE -> {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                    WindowCompat.setDecorFitsSystemWindows(window, true)
-                    true
-                } else {
-                    @Suppress("DEPRECATION")
-                    window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
-                    true
-                }
+                checkSdkVersion(
+                    Build.VERSION_CODES.R,
+                    positiveWork = {
+                        WindowCompat.setDecorFitsSystemWindows(window, true)
+                        true
+                    },
+                    negativeWork = {
+                        @Suppress("DEPRECATION")
+                        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+                        true
+                    },
+                )
             }
         }
     }

@@ -33,7 +33,7 @@
 
 
 
- ## 주요 패키지 구조
+ ## 주요 패키지 구조 (총 125개 파일)
 
   ### ui/activity
    - **RootActivity**: 시스템 바 제어, 권한 관리 기본 클래스 (simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/components/activity/root/RootActivity.kt)
@@ -77,7 +77,7 @@
    - **PermissionRequester**: ActivityResult 기반 권한 요청 오케스트레이터 (simple_xml/src/main/java/kr/open/library/simple_ui/xml/permissions/api/PermissionRequester.kt)
    - 일반 권한 + 특수 권한(SYSTEM_ALERT_WINDOW 등) 통합 처리
    - 큐 기반 순차 처리, 재요청 로직
-   - **register**: PermissionDelegate, PermissionRequester (simple_xml/src/main/java/kr/open/library/simple_ui/xml/permissions/register/)
+   - **register**: PermissionRequestInterface (simple_xml/src/main/java/kr/open/library/simple_ui/xml/permissions/register/PermissionRequestInterface.kt)
 
 
   ### extensions/view
@@ -186,7 +186,8 @@
 
 
   ### 시스템 바 제어
-   - RootActivity의 setStatusBarColor, setNavigationBarColor 사용
+
+   - SystemBarController 사용: `window.getSystemBarController()` 진입 권장
    - Window 확장 경로 사용 시 `window.getSystemBarController()` 진입 권장
    - 종료/재생성 시 `window.destroySystemBarControllerCache()`로 캐시 정리 권장
    - API 35 대응 Edge-to-edge 자동 처리
@@ -217,9 +218,9 @@
 
   ### RootActivity
    - 모든 Activity의 최상위 기본 클래스
-   - 시스템 바 색상/가시성 제어
-   - PermissionDelegate 통합
-   - Edge-to-edge 대응 (API 35+)
+   - PermissionRequester 통합 (requestPermissions() 공개 API)
+   - beforeOnCreated() 훅으로 super.onCreate() 이전 초기화 지원
+   - 권한 상태 Bundle 저장/복원 (onSaveInstanceState / onCreate)
 
 
   ### BaseActivity / BaseDataBindingActivity
@@ -292,7 +293,7 @@
    - HeaderFooterRcvAdapter(section 지원): (simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/adapter/normal/headerfooter/HeaderFooterRcvAdapter.kt)
    - BaseRcvListAdapter(ListAdapter 기반): (simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/adapter/list/base/BaseRcvListAdapter.kt)
    - AdapterOperationQueue(BaseRcvListAdapter 내부): (simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/adapter/list/queue/AdapterOperationQueue.kt)
-   - DiffUtil Adapter: (simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/adapter/list/diffutil/)
+   - DiffUtil 콜백: (simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/adapter/list/base/diffutil/RcvListDiffUtilCallBack.kt)
 
 
   ### 권한 요청
