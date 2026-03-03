@@ -1,11 +1,11 @@
-docs/rules/CODING_RULE.md 의 코드 작성 금지 패턴을 읽고,
+.claude/skills/CodeReview/rules/CODING.md 의 코드 작성 금지 패턴을 읽고,
 $ARGUMENTS 에 해당하는 범위 전체에서 위반 사항을 찾아 수정해줘.
 
 Task tool (subagent_type: general-purpose, model: opus) 을 사용해서 아래 작업을 수행해줘.
 
 ## SubAgent 작업 내용
 1. $ARGUMENTS 범위의 모든 .kt 파일을 탐색한다.
-2. CODING_RULE.md 금지 패턴 위반 항목을 파일별로 수집한다.
+2. CODING.md 금지 패턴 위반 항목을 파일별로 수집한다.
     - Log.d / Log.e / println 등 → Logx 교체 대상
     - try-catch 빈 catch 블록 → safeCatch 교체 대상
     - if (Build.VERSION.SDK_INT >= ...) → checkSdkVersion 교체 대상

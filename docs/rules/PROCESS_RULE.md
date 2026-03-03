@@ -27,35 +27,10 @@
 
 
 ## 버전 관리 규칙
-
-### 버전 변경 절차
- - gradle/libs.versions.toml의 appVersion 업데이트
- - [release]
-    Tag: x.x.x (appVersion과 동일)
-    Title: 릴리즈 제목
-    Describe: 상세 설명
- - CI → CD → Documentation 자동 실행
- - JitPack 자동 배포
- - [release] 태그가 있는 커밋만 릴리즈 트리거, 없다면 CI만 수행
-
-### 버전 번호 규칙
- - Major.Minor.Patch (Semantic Versioning)
- - Breaking changes: Major 증가
- - 새 기능 추가: Minor 증가
- - 버그 수정: Patch 증가
-
+ - 버전 정책/태그/증분 기준은 `docs/rules/project/VERSION_RULE.md`를 따른다.
 
 ## CI/CD 워크플로우
- - **1. Android CI** (android-ci.yml): Initialize Check, KtLint Check, Tests(Unit, Robolectric) Build 구조
- - **2. Android CD** (android-cd.yml): Release(JitPack 자동 배포), Assemble Apk,  Firebase App Distribution,
- - **3. Documentation** (documentation.yml): Dokka API 문서 + Kover Coverage 리포트 생성
- - [release] 태그가 있는 커밋만 릴리즈 트리거, 없다면 "1. Android CI"만 수행
-
-### Dokka 문서 업데이트 시점
- - [release] 커밋 시 Documentation 워크플로우가 자동 실행
- - Dokka HTML 생성 및 GitHub Pages 배포
- - 로컬 확인: ./gradlew dokkaHtml
- - 출력 위치: build/dokka/html/
+ - 파이프라인 단계/트리거/문서 배포 규칙은 `docs/rules/project/CI_CD_RULE.md`를 따른다.
 
 
 ## 문서 갱신 기준 (AGENT/RULE)

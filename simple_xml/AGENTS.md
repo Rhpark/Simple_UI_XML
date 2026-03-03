@@ -1,4 +1,4 @@
-﻿# simple_xml 모듈 개요
+# simple_xml 모듈 개요
  - **전역 규칙은 루트 AGENTS.md 참조**
  - 주석 스타일, 코딩 컨벤션, 대화 규칙 등은 루트 AGENTS.md를 따름
  - **현재 버전**: 0.4.2 (JitPack)
@@ -153,7 +153,7 @@
  ## 개발 시 주의사항
 
   ### XML ID 규칙 (필수 준수)
-   - **docs/rules/CODING_RULE.md의 "XML Id 규칙" 참조**
+   - **.claude/skills/CodeReview/rules/CODING.md의 "XML Id 규칙" 참조**
    - **camelCase 사용** (snake_case 금지)
 
 
@@ -200,7 +200,7 @@
 
 
  ## 테스트 작성 규칙
-  - **docs/rules/TEST_RULE.md 참조**
+  - **.claude/skills/CodeReview/rules/TEST.md 참조**
 
 
  ## 모듈 의존성 규칙
@@ -258,7 +258,7 @@
 
   ### simple_xml이 사용하는 simple_core 기능
    - Logx: 모든 로깅
-   - 에러 처리 규칙은 루트의 docs/rules/CODING_RULE.md를 참조
+   - 에러 처리 규칙은 루트의 .claude/skills/CodeReview/rules/CODING.md를 참조
    - checkSdkVersion: API 분기
    - PermissionExtensions: 권한 체크 기반
    - BaseViewModel: ViewModel 기반 클래스

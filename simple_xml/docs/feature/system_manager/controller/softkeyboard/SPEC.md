@@ -10,7 +10,7 @@
 - 상태: 현행(as-is)
 
 ## 전제/참조
-- 기본 규칙/환경: 루트 AGENTS.md, `docs/rules/*_RULE.md`
+- 기본 규칙/환경: 루트 AGENTS.md, `.claude/skills/CodeReview/rules/*.md`
 - 요구사항/범위: `PRD.md`
 - 사용 가이드: `docs/readme/system_manager/controller/xml/README_SOFTKEYBOARD_CONTROLLER.md`
 

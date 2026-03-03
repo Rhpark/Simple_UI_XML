@@ -116,7 +116,7 @@
 
 
  ## 테스트 작성 규칙
-  - **docs/rules/TEST_RULE.md 참조**
+  - **.claude/skills/CodeReview/rules/TEST.md 참조**
 
 
  ## 주요 클래스 역할 요약

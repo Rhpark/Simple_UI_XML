@@ -10,7 +10,7 @@
 - 상태: 현행(as-is)
 
 ## 전제/참조
-- 기본 규칙/환경은 루트 `AGENTS.md`, `docs/rules/*_RULE.md`를 따른다.
+- 기본 규칙/환경은 루트 `AGENTS.md`, `.claude/skills/CodeReview/rules/*.md`를 따른다.
 - 요구사항/범위는 `PRD.md`를 따른다.
 - 사용 가이드는 `docs/readme/system_manager/info/xml/README_DISPLAY_INFO.md`를 따른다.
 

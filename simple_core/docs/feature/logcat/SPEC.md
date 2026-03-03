@@ -1,4 +1,4 @@
-﻿# Logx SPEC
+# Logx SPEC
 
 ## 문서 정보
 - 문서명: Logx SPEC
@@ -9,7 +9,7 @@
 - 상태: 초안
 
 ## 전제/참조
-- 기본 규칙/환경은 루트 AGENTS.md에서 연결되는 *_RULE.md를 따른다.
+- 기본 규칙/환경은 루트 AGENTS.md에서 연결되는 .claude/skills/CodeReview/rules/*.md를 따른다.
 - 상세 요구는 `PRD.md`를 따른다.
 - 실제 코드 구현은 `kr.open.library.simple_ui.core.logcat` 패키지 내에서만 진행한다.
 

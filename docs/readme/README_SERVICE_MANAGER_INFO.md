@@ -883,23 +883,23 @@ Each Info requires permissions **based on features used**. Add only the permissi
 ### 🧭 Permission Policy (BaseSystemService 기준)
 - **Runtime/Special only** – BaseSystemService validates runtime/special permissions only; non-dangerous permissions are treated as granted by design.
 - **Default value fallback** – If runtime/special permission is missing or an error occurs, tryCatchSystemManager() returns a default value and logs a warning.
-- **Refresh after grant** – Call BaseSystemService.refreshPermissions() after permissions are granted to update the internal cache.
+- **Refresh after grant** – Call refreshPermissions() on the used SystemManager instance (e.g., `locationInfo.refreshPermissions()`) after permissions are granted to update the internal cache.
 - **Shared manifest permission reader** – Manifest-declared permission loading is centralized in `Context.readDeclaredManifestPermissions()` and shared by BaseSystemService and PermissionClassifier for consistent behavior.
 > - **런타임/특수 권한만 검증** – BaseSystemService는 런타임/특수 권한만 검증하며, non-dangerous 권한은 설계상 허용된 것으로 간주합니다.
 > - **기본값 반환** – 런타임/특수 권한이 없거나 오류가 발생하면 tryCatchSystemManager()가 기본값을 반환하고 경고를 기록합니다.
-> - **권한 갱신** – 권한 허용 후 BaseSystemService.refreshPermissions()를 호출해 내부 캐시를 갱신하세요.
+> - **권한 갱신** – 권한 허용 후 사용 중인 SystemManager 인스턴스에서 refreshPermissions()를 호출해 내부 캐시를 갱신하세요. (예: `locationInfo.refreshPermissions()`)
 > - **매니페스트 권한 조회 공통화** – 매니페스트 선언 권한 조회는 `Context.readDeclaredManifestPermissions()`로 일원화되어 BaseSystemService와 PermissionClassifier가 동일 동작을 사용합니다.
 
 ### ⚠️ Permission Troubleshooting Checklist (권한 점검 체크리스트)
 - **Runtime/Special only** – BaseSystemService validates runtime/special permissions only; non-dangerous permissions are treated as granted by design.
 - **Check Manifest declaration** – Verify all required permissions are added to AndroidManifest.xml.
-- **Runtime request** – Request dangerous permissions with requestPermissions() or your own ActivityResult logic.
-- **Call refreshPermissions()** – After granting permission, call BaseSystemService.refreshPermissions() and Simple UI will immediately reflect the new state.
+- **Runtime request** – Request dangerous permissions with requestPermissions().
+- **Call refreshPermissions()** – After granting permission, call refreshPermissions() on the used SystemManager instance and Simple UI will immediately reflect the new state.
 - **Check Logx** – If runtime/special permission is missing, tryCatchSystemManager() returns a default value and logs a warning to Logx.
 > - **런타임/특수 권한만 검증** – BaseSystemService는 런타임/특수 권한만 검증하며, non-dangerous 권한은 설계상 허용된 것으로 간주합니다.
 > - **Manifest 선언 확인** – 필요한 모든 권한을 `AndroidManifest.xml`에 추가했는지 확인하세요.
-> - **런타임 요청** – 위험 권한은 `requestPermissions()` 또는 자체 ActivityResult 로직으로 요청합니다.
-> - **refreshPermissions() 호출** – 권한 허용 후 `BaseSystemService.refreshPermissions()`를 호출하면 Simple UI가 즉시 새 상태를 반영합니다.
+> - **런타임 요청** – 위험 권한은 `requestPermissions()`로 요청합니다.
+> - **refreshPermissions() 호출** – 권한 허용 후 사용 중인 SystemManager 인스턴스에서 `refreshPermissions()`를 호출하면 Simple UI가 즉시 새 상태를 반영합니다.
 > - **Logx 확인** – 런타임/특수 권한이 없으면 `tryCatchSystemManager()`가 기본값을 반환하며 Logx에 경고를 남깁니다.
 
 <br>

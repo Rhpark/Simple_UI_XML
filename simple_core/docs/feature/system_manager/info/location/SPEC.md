@@ -10,7 +10,7 @@
 - 상태: 현행(as-is)
 
 ## 전제/참조
-- 기본 규칙/환경은 루트 `AGENTS.md`와 `docs/rules/*_RULE.md`를 따른다.
+- 기본 규칙/환경은 루트 `AGENTS.md`와 `.claude/skills/CodeReview/rules/*.md`를 따른다.
 - 요구사항과 범위는 `PRD.md`를 따른다.
 - 실제 구현은 `kr.open.library.simple_ui.core.system_manager.info.location` 패키지에 존재한다.
 
