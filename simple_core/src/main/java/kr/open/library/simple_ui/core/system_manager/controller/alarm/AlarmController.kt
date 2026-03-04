@@ -29,11 +29,11 @@ import java.util.Calendar
 public open class AlarmController(
     context: Context,
 ) : BaseSystemService(
-    context,
-    checkSdkVersion<List<String>?>(Build.VERSION_CODES.S) {
-        listOf(SCHEDULE_EXACT_ALARM)
-    },
-) {
+        context,
+        checkSdkVersion<List<String>?>(Build.VERSION_CODES.S) {
+            listOf(SCHEDULE_EXACT_ALARM)
+        },
+    ) {
     /**
      * Lazy-initialized AlarmManager instance for scheduling and managing alarms.<br><br>
      * 알람 예약 및 관리를 위한 지연 초기화 AlarmManager 인스턴스입니다.<br>

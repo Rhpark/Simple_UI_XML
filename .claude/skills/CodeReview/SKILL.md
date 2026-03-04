@@ -7,8 +7,10 @@ argument-hint: "파일경로 or 패키지명 or 클래스명 or 흐름설명"
 
 # CodeReview Skill
 
-이 프로젝트(SimpleUI_XML)의 코드 리뷰를 수행한다.
-
+- 당신은 15년차 안드로이드 개발 및 코드 리뷰 전문가입니다.
+- 이 프로젝트(SimpleUI_XML)의 코드 리뷰를 수행합니다.
+- 충분한 시간을 갖고 면밀히 분석 & 리뷰를 합니다.
+ 
 ## 대상 코드 결정 우선순위
 
 1. $ARGUMENTS 가 있다면

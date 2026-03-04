@@ -75,38 +75,32 @@ public open class SoftKeyboardController(
      * 윈도우에 사용자 정의 소프트 입력 모드를 설정합니다.<br>
      */
     @MainThread
-    public fun setSoftInputMode(window: Window, softInputTypes: Int): Boolean =
-        tryCatchSystemManager(false) {
-            if (!ensureMainThread("setSoftInputMode")) return@tryCatchSystemManager false
-            window.setSoftInputMode(softInputTypes)
-            true
-        }
+    public fun setSoftInputMode(window: Window, softInputTypes: Int): Boolean = tryCatchSystemManager(false) {
+        if (!ensureMainThread("setSoftInputMode")) return@tryCatchSystemManager false
+        window.setSoftInputMode(softInputTypes)
+        true
+    }
 
     /**
      * Shows the soft keyboard for input-capable views.<br><br>
      * 입력 가능한 뷰에 소프트 키보드 표시를 요청합니다. 실제 가시성 확인이 필요하면 `showAwait*`를 사용하세요.<br>
      */
     @MainThread
-    public fun show(v: View, flag: Int = InputMethodManager.SHOW_IMPLICIT): Boolean =
-        tryCatchSystemManager(false) {
-            if (!ensureMainThread("show")) return@tryCatchSystemManager false
-            if (!v.requestFocus()) {
-                Logx.e("SoftKeyboardController: View requestFocus failed")
-                return@tryCatchSystemManager false
-            }
-            requestShowInternal(v, flag)
+    public fun show(v: View, flag: Int = InputMethodManager.SHOW_IMPLICIT): Boolean = tryCatchSystemManager(false) {
+        if (!ensureMainThread("show")) return@tryCatchSystemManager false
+        if (!v.requestFocus()) {
+            Logx.e("SoftKeyboardController: View requestFocus failed")
+            return@tryCatchSystemManager false
         }
+        requestShowInternal(v, flag)
+    }
 
     /**
      * Schedules delayed keyboard show and returns queue registration status.<br><br>
      * 지연 키보드 표시를 예약하고 메시지 큐 등록 결과를 반환합니다. 실제 표시 결과는 포함하지 않습니다.<br>
      */
     @MainThread
-    public fun showDelay(
-        v: View,
-        delay: Long,
-        flag: Int = InputMethodManager.SHOW_IMPLICIT
-    ): Boolean = tryCatchSystemManager(false) {
+    public fun showDelay(v: View, delay: Long, flag: Int = InputMethodManager.SHOW_IMPLICIT): Boolean = tryCatchSystemManager(false) {
         if (!ensureMainThread("showDelay")) return@tryCatchSystemManager false
         if (delay < 0L) {
             Logx.w("SoftKeyboardController: showDelay delay must be >= 0")
@@ -183,23 +177,22 @@ public open class SoftKeyboardController(
         delayMillis: Long = 0L,
         flag: Int = InputMethodManager.SHOW_IMPLICIT,
         timeoutMillis: Long = DEFAULT_IME_VISIBILITY_TIMEOUT_MS,
-    ): Deferred<SoftKeyboardActionResult> =
-        tryCatchSystemManager(
-            defaultValue = createFailureDeferred(
-                reason = SoftKeyboardFailureReason.EXCEPTION_OCCURRED,
-                message = "showAwaitAsync failed before scheduling.",
+    ): Deferred<SoftKeyboardActionResult> = tryCatchSystemManager(
+        defaultValue = createFailureDeferred(
+            reason = SoftKeyboardFailureReason.EXCEPTION_OCCURRED,
+            message = "showAwaitAsync failed before scheduling.",
+        )
+    ) {
+        if (!ensureMainThread("showAwaitAsync")) {
+            return@tryCatchSystemManager createFailureDeferred(
+                reason = SoftKeyboardFailureReason.OFF_MAIN_THREAD,
+                message = "showAwaitAsync must be called on Main thread.",
             )
-        ) {
-            if (!ensureMainThread("showAwaitAsync")) {
-                return@tryCatchSystemManager createFailureDeferred(
-                    reason = SoftKeyboardFailureReason.OFF_MAIN_THREAD,
-                    message = "showAwaitAsync must be called on Main thread.",
-                )
-            }
-            coroutineScope.async(Dispatchers.Main.immediate) {
-                showAwait(v, delayMillis, flag, timeoutMillis)
-            }
         }
+        coroutineScope.async(Dispatchers.Main.immediate) {
+            showAwait(v, delayMillis, flag, timeoutMillis)
+        }
+    }
 
     /**
      * Hides the soft keyboard from input-capable views.<br><br>
@@ -216,15 +209,14 @@ public open class SoftKeyboardController(
      * 지연 키보드 숨김을 예약하고 메시지 큐 등록 결과를 반환합니다. 실제 숨김 결과는 포함하지 않습니다.<br>
      */
     @MainThread
-    public fun hideDelay(v: View, delay: Long, flag: Int = 0): Boolean =
-        tryCatchSystemManager(false) {
-            if (!ensureMainThread("hideDelay")) return@tryCatchSystemManager false
-            if (delay < 0L) {
-                Logx.w("SoftKeyboardController: hideDelay delay must be >= 0")
-                return@tryCatchSystemManager false
-            }
-            v.postDelayed(Runnable { hide(v, flag) }, delay)
+    public fun hideDelay(v: View, delay: Long, flag: Int = 0): Boolean = tryCatchSystemManager(false) {
+        if (!ensureMainThread("hideDelay")) return@tryCatchSystemManager false
+        if (delay < 0L) {
+            Logx.w("SoftKeyboardController: hideDelay delay must be >= 0")
+            return@tryCatchSystemManager false
         }
+        v.postDelayed(Runnable { hide(v, flag) }, delay)
+    }
 
     /**
      * Hides keyboard and waits for actual IME visibility result.<br><br>
@@ -310,13 +302,22 @@ public open class SoftKeyboardController(
     @MainThread
     public fun startStylusHandwriting(v: View): Boolean = tryCatchSystemManager(false) {
         if (!ensureMainThread("startStylusHandwriting")) return@tryCatchSystemManager false
-        if (v.requestFocus()) {
-            imm.startStylusHandwriting(v)
-            true
-        } else {
-            Logx.e("SoftKeyboardController: View requestFocus failed")
-            false
-        }
+        checkSdkVersion(
+            Build.VERSION_CODES.TIRAMISU,
+            positiveWork = {
+                if (v.requestFocus()) {
+                    imm.startStylusHandwriting(v)
+                    true
+                } else {
+                    Logx.e("SoftKeyboardController: View requestFocus failed")
+                    false
+                }
+            },
+            negativeWork = { requiredSdk ->
+                Logx.w("SoftKeyboardController: startStylusHandwriting requires API $requiredSdk+ (current=${Build.VERSION.SDK_INT})")
+                false
+            },
+        )
     }
 
     /**
@@ -381,8 +382,7 @@ public open class SoftKeyboardController(
      * - API 29-: 레거시 adjust resize 적용<br>
      */
     @MainThread
-    public fun setAdjustResize(window: Window): Boolean =
-        configureImeResize(window, SoftKeyboardResizePolicy.KEEP_CURRENT_WINDOW)
+    public fun setAdjustResize(window: Window): Boolean = configureImeResize(window, SoftKeyboardResizePolicy.KEEP_CURRENT_WINDOW)
 
     /**
      * Starts stylus handwriting mode after a delay.<br><br>
@@ -390,26 +390,29 @@ public open class SoftKeyboardController(
      */
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     @MainThread
-    public fun startStylusHandwriting(v: View, delay: Long): Boolean =
-        tryCatchSystemManager(false) {
-            if (!ensureMainThread("startStylusHandwriting(delay)")) return@tryCatchSystemManager false
-            if (delay < 0L) {
-                Logx.w("SoftKeyboardController: startStylusHandwriting delay must be >= 0")
-                return@tryCatchSystemManager false
-            }
-            v.postDelayed(Runnable { startStylusHandwriting(v) }, delay)
+    public fun startStylusHandwriting(v: View, delay: Long): Boolean = tryCatchSystemManager(false) {
+        if (!ensureMainThread("startStylusHandwriting(delay)")) return@tryCatchSystemManager false
+        if (delay < 0L) {
+            Logx.w("SoftKeyboardController: startStylusHandwriting delay must be >= 0")
+            return@tryCatchSystemManager false
         }
+        checkSdkVersion(
+            Build.VERSION_CODES.TIRAMISU,
+            positiveWork = { v.postDelayed(Runnable { startStylusHandwriting(v) }, delay) },
+            negativeWork = { requiredSdk ->
+                Logx
+                    .w("SoftKeyboardController: startStylusHandwriting(delay) requires API $requiredSdk+ (current=${Build.VERSION.SDK_INT})")
+                false
+            },
+        )
+    }
 
     /**
      * Waits IME visibility using layout callback first and fallback polling second.<br><br>
      * 레이아웃 콜백을 우선 사용하고, 폴백 폴링을 보조로 사용해 IME 가시성 변화를 대기합니다.<br>
      */
     @MainThread
-    private suspend fun awaitImeVisibility(
-        v: View,
-        expectedVisible: Boolean,
-        timeoutMillis: Long
-    ): Boolean {
+    private suspend fun awaitImeVisibility(v: View, expectedVisible: Boolean, timeoutMillis: Long): Boolean {
         if (isImeVisible(v) == expectedVisible) return true
 
         val callbackObserved = CompletableDeferred<Unit>()
@@ -493,8 +496,7 @@ public open class SoftKeyboardController(
      * 루트 윈도우 insets를 기준으로 현재 IME 가시성을 확인합니다.<br>
      */
     @MainThread
-    private fun isImeVisible(v: View): Boolean =
-        ViewCompat.getRootWindowInsets(v)?.isVisible(WindowInsetsCompat.Type.ime()) == true
+    private fun isImeVisible(v: View): Boolean = ViewCompat.getRootWindowInsets(v)?.isVisible(WindowInsetsCompat.Type.ime()) == true
 
     /**
      * Validates that the current call is running on Main thread.<br><br>
@@ -506,10 +508,7 @@ public open class SoftKeyboardController(
         return false
     }
 
-    private fun createFailureDeferred(
-        reason: SoftKeyboardFailureReason,
-        message: String? = null,
-    ): Deferred<SoftKeyboardActionResult> =
+    private fun createFailureDeferred(reason: SoftKeyboardFailureReason, message: String? = null): Deferred<SoftKeyboardActionResult> =
         CompletableDeferred(
             SoftKeyboardActionResult.Failure(
                 reason = reason,

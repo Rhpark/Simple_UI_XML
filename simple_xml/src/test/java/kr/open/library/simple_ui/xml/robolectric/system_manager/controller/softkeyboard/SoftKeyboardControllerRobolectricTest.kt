@@ -30,6 +30,7 @@ import org.mockito.Mock
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.never
 import org.mockito.Mockito.verify
+import org.mockito.Mockito.verifyNoInteractions
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import org.robolectric.RobolectricTestRunner
@@ -309,6 +310,26 @@ class SoftKeyboardControllerRobolectricTest {
 
         assertTrue(result)
         verify(mockView).postDelayed(any(Runnable::class.java), eq(100L))
+    }
+
+    @Test
+    @Config(sdk = [Build.VERSION_CODES.Q]) // API 29
+    fun `startStylusHandwriting returns false and does not call IMM on API below 33`() {
+        val result = controller.startStylusHandwriting(mockView)
+
+        assertFalse(result)
+        verify(mockView, never()).requestFocus()
+        verifyNoInteractions(mockImm)
+    }
+
+    @Test
+    @Config(sdk = [Build.VERSION_CODES.Q]) // API 29
+    fun `startStylusHandwriting with delay returns false and does not post on API below 33`() {
+        val result = controller.startStylusHandwriting(mockView, 100L)
+
+        assertFalse(result)
+        verify(mockView, never()).postDelayed(any(Runnable::class.java), anyLong())
+        verifyNoInteractions(mockImm)
     }
 
     // ========================================

@@ -1,11 +1,14 @@
 package kr.open.library.simple_ui.xml.system_manager.controller.window
 
+import android.Manifest.permission.SYSTEM_ALERT_WINDOW
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Rect
 import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
 import android.view.WindowManager.LayoutParams
+import androidx.annotation.RequiresPermission
 import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
 import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.core.system_manager.base.BaseSystemService
@@ -43,13 +46,27 @@ public open class FloatingViewController(
      * @return true when WindowManager apply/remove operation succeeds and internal reference is updated accordingly.<br><br>
      *         WindowManager 적용/제거가 성공하고 내부 참조가 그 결과에 맞게 갱신되면 true를 반환합니다.<br>
      */
+    @RequiresPermission(SYSTEM_ALERT_WINDOW)
     public fun setFloatingFixedView(floatingView: FloatingFixedView?): Boolean =
         tryCatchSystemManager(false) {
             if (floatingView == null) {
                 return removeFloatingFixedView()
             }
 
+            val current = this.floatingFixedView
+            if (current == null) {
+                if (!addView(floatingView.view, floatingView.params)) return false
+                this.floatingFixedView = floatingView
+                return true
+            }
+
             if (!addView(floatingView.view, floatingView.params)) return false
+
+            if (!removeView(current.view)) {
+                safeCatch { removeView(floatingView.view) } // rollback
+                return false
+            }
+
             this.floatingFixedView = floatingView
             return true
         }
@@ -72,55 +89,63 @@ public open class FloatingViewController(
      * @return true if WindowManager add succeeds and the config/listener state is committed.<br><br>
      *         WindowManager 추가가 성공하고 구성/리스너 상태 반영까지 완료되면 true를 반환합니다.<br>
      */
-    public fun addFloatingDragView(floatingView: FloatingDragView): Boolean =
-        tryCatchSystemManager(false) {
-            val config = FloatingDragViewConfig(floatingView)
+    @RequiresPermission(SYSTEM_ALERT_WINDOW)
+    public fun addFloatingDragView(floatingView: FloatingDragView): Boolean = tryCatchSystemManager(false) {
+        val config = FloatingDragViewConfig(floatingView)
 
-            floatingView.view.setOnTouchListener { view, event ->
-                when (event.action) {
-                    MotionEvent.ACTION_DOWN -> {
-                        config.onTouchDown(event.rawX, event.rawY)
-                        floatingView.updateCollisionState(
-                            FloatingViewTouchType.TOUCH_DOWN,
-                            getCollisionTypeWithFixedView(floatingView),
-                        )
-                        true
-                    }
+        setupTouchListener(config)
 
-                    MotionEvent.ACTION_MOVE -> {
-                        config.onTouchMove(event.rawX, event.rawY)
-                        updateView(view, floatingView.params)
-                        floatingView.updateCollisionState(
-                            FloatingViewTouchType.TOUCH_MOVE,
-                            getCollisionTypeWithFixedView(floatingView),
-                        )
-                        true
-                    }
-
-                    MotionEvent.ACTION_UP -> {
-                        floatingView.updateCollisionState(
-                            FloatingViewTouchType.TOUCH_UP,
-                            getCollisionTypeWithFixedView(floatingView),
-                        )
-                        if (!config.getIsDragging()) {
-                            floatingView.view.performClick()
-                        }
-                        config.onTouchUp()
-                        true
-                    }
-
-                    else -> false
-                }
-            }
-
-            if (!addView(config.getView(), floatingView.params)) return false
-            floatingDragViewInfoList.add(config)
-            return true
+        if (!addView(config.getView(), floatingView.params)) {
+            config.getView().setOnTouchListener(null)
+            return false
         }
+        floatingDragViewInfoList.add(config)
+        return true
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun setupTouchListener(config: FloatingDragViewConfig) {
+        config.floatingView.view.setOnTouchListener { view, event ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> onTouchDownDragView(config, event)
+
+                MotionEvent.ACTION_MOVE -> onTouchMoveDragView(config, view, event)
+
+                MotionEvent.ACTION_UP -> onTouchUpDragView(config)
+
+                else -> false
+            }
+        }
+    }
+
+    private fun onTouchDownDragView(config: FloatingDragViewConfig, event: MotionEvent): Boolean {
+        config.onTouchDown(event.rawX, event.rawY)
+        config.floatingView.updateCollisionState(FloatingViewTouchType.TOUCH_DOWN, getCollisionTypeWithFixedView(config.floatingView))
+        return true
+    }
+
+    private fun onTouchMoveDragView(config: FloatingDragViewConfig, view: View, event: MotionEvent): Boolean {
+        config.onTouchMove(event.rawX, event.rawY)
+        updateView(view, config.floatingView.params)
+        config.floatingView.updateCollisionState(FloatingViewTouchType.TOUCH_MOVE, getCollisionTypeWithFixedView(config.floatingView))
+        return true
+    }
+
+    private fun onTouchUpDragView(config: FloatingDragViewConfig): Boolean {
+        config.floatingView.updateCollisionState(
+            FloatingViewTouchType.TOUCH_UP,
+            getCollisionTypeWithFixedView(config.floatingView),
+        )
+        if (!config.getIsDragging()) {
+            config.floatingView.view.performClick()
+        }
+        config.onTouchUp()
+        return true
+    }
 
     private fun getCollisionTypeWithFixedView(floatingDragView: FloatingDragView): FloatingViewCollisionsType =
         if (isCollisionFixedView(floatingDragView)) {
-            FloatingViewCollisionsType.OCCURING
+            FloatingViewCollisionsType.OCCURRING
         } else {
             FloatingViewCollisionsType.UNCOLLISIONS
         }
@@ -139,16 +164,12 @@ public open class FloatingViewController(
      * @return true if the layout update succeeded.<br><br>
      *         레이아웃 업데이트에 성공하면 true를 반환합니다.<br>
      */
-    public fun updateView(
-        view: View,
-        params: LayoutParams,
-    ): Boolean =
-        tryCatchSystemManager(false) {
-            params.x = params.x.coerceAtLeast(0)
-            params.y = params.y.coerceAtLeast(0)
-            windowManager.updateViewLayout(view, params)
-            return true
-        }
+    public fun updateView(view: View, params: LayoutParams): Boolean = tryCatchSystemManager(false) {
+        params.x = params.x.coerceAtLeast(0)
+        params.y = params.y.coerceAtLeast(0)
+        windowManager.updateViewLayout(view, params)
+        return true
+    }
 
     /**
      * Adds a view to the window manager.<br><br>
@@ -161,14 +182,10 @@ public open class FloatingViewController(
      * @return true if the view was added without errors.<br><br>
      *         오류 없이 추가되면 true를 반환합니다.<br>
      */
-    public fun addView(
-        view: View,
-        params: LayoutParams,
-    ): Boolean =
-        tryCatchSystemManager(false) {
-            windowManager.addView(view, params)
-            return true
-        }
+    public fun addView(view: View, params: LayoutParams): Boolean = tryCatchSystemManager(false) {
+        windowManager.addView(view, params)
+        return true
+    }
 
     /**
      * Removes a draggable floating view and detaches its listeners.<br><br>
@@ -179,15 +196,14 @@ public open class FloatingViewController(
      * @return true if target is found and WindowManager remove succeeds.<br><br>
      *         대상 뷰를 찾았고 WindowManager 제거가 성공하면 true를 반환합니다.<br>
      */
-    public fun removeFloatingDragView(floatingView: FloatingDragView): Boolean =
-        tryCatchSystemManager(false) {
-            floatingDragViewInfoList.find { it.floatingView == floatingView }?.let {
-                it.getView().setOnTouchListener(null)
-                if (!removeView(it.getView())) return false
-                floatingDragViewInfoList.remove(it)
-                return true
-            } ?: return false
-        }
+    public fun removeFloatingDragView(floatingView: FloatingDragView): Boolean = tryCatchSystemManager(false) {
+        floatingDragViewInfoList.find { it.floatingView == floatingView }?.let {
+            it.getView().setOnTouchListener(null)
+            if (!removeView(it.getView())) return false
+            floatingDragViewInfoList.remove(it)
+            return true
+        } ?: return false
+    }
 
     /**
      * Removes a view from the window manager.<br><br>
@@ -198,11 +214,10 @@ public open class FloatingViewController(
      * @return true if removal succeeded without errors.<br><br>
      *         오류 없이 제거되면 true를 반환합니다.<br>
      */
-    public fun removeView(view: View): Boolean =
-        tryCatchSystemManager(false) {
-            windowManager.removeView(view)
-            return true
-        }
+    public fun removeView(view: View): Boolean = tryCatchSystemManager(false) {
+        windowManager.removeView(view)
+        return true
+    }
 
     /**
      * Removes the fixed floating view if present.<br><br>
@@ -211,14 +226,13 @@ public open class FloatingViewController(
      * @return true when WindowManager remove succeeds (or no fixed view exists) and the reference is cleared.<br><br>
      *         WindowManager 제거가 성공했거나 제거 대상이 없어서, 참조 해제가 완료되면 true를 반환합니다.<br>
      */
-    public fun removeFloatingFixedView(): Boolean =
-        tryCatchSystemManager(false) {
-            floatingFixedView?.let {
-                if (!removeView(it.view)) return false
-            }
-            floatingFixedView = null
-            return true
+    public fun removeFloatingFixedView(): Boolean = tryCatchSystemManager(false) {
+        floatingFixedView?.let {
+            if (!removeView(it.view)) return false
         }
+        floatingFixedView = null
+        return true
+    }
 
     /**
      * Removes all floating views (drag and fixed).<br>
@@ -231,15 +245,14 @@ public open class FloatingViewController(
      * @return true when all remove operations succeed; false when any single step fails.<br><br>
      *         모든 제거 작업이 성공하면 true, 하나라도 실패하면 false를 반환합니다.<br>
      */
-    public fun removeAllFloatingView(): Boolean =
-        tryCatchSystemManager(false) {
-            val configs = floatingDragViewInfoList.toList()
-            configs.forEach { config ->
-                if (!removeFloatingDragView(config.floatingView)) return false
-            }
-            if (!removeFloatingFixedView()) return false
-            return true
+    public fun removeAllFloatingView(): Boolean = tryCatchSystemManager(false) {
+        val configs = floatingDragViewInfoList.toList()
+        configs.forEach { config ->
+            if (!removeFloatingDragView(config.floatingView)) return false
         }
+        if (!removeFloatingFixedView()) return false
+        return true
+    }
 
     /**
      * Enhanced destroy method with cleanup and error handling.<br><br>
