@@ -89,7 +89,7 @@ public open class SoftKeyboardController(
     public fun show(v: View, flag: Int = InputMethodManager.SHOW_IMPLICIT): Boolean = tryCatchSystemManager(false) {
         if (!ensureMainThread("show")) return@tryCatchSystemManager false
         if (!v.requestFocus()) {
-            Logx.e("SoftKeyboardController: View requestFocus failed")
+            Logx.e("View requestFocus failed")
             return@tryCatchSystemManager false
         }
         requestShowInternal(v, flag)
@@ -103,7 +103,7 @@ public open class SoftKeyboardController(
     public fun showDelay(v: View, delay: Long, flag: Int = InputMethodManager.SHOW_IMPLICIT): Boolean = tryCatchSystemManager(false) {
         if (!ensureMainThread("showDelay")) return@tryCatchSystemManager false
         if (delay < 0L) {
-            Logx.w("SoftKeyboardController: showDelay delay must be >= 0")
+            Logx.w("showDelay delay must be >= 0")
             return@tryCatchSystemManager false
         }
         v.postDelayed(Runnable { show(v, flag) }, delay)
@@ -158,7 +158,7 @@ public open class SoftKeyboardController(
         } catch (e: CancellationException) {
             throw e
         } catch (e: RuntimeException) {
-            Logx.e("SoftKeyboardController: showAwait failed: ${e.message}")
+            Logx.e("showAwait failed: ${e.message}")
             SoftKeyboardActionResult.Failure(
                 reason = SoftKeyboardFailureReason.EXCEPTION_OCCURRED,
                 message = e.message,
@@ -212,7 +212,7 @@ public open class SoftKeyboardController(
     public fun hideDelay(v: View, delay: Long, flag: Int = 0): Boolean = tryCatchSystemManager(false) {
         if (!ensureMainThread("hideDelay")) return@tryCatchSystemManager false
         if (delay < 0L) {
-            Logx.w("SoftKeyboardController: hideDelay delay must be >= 0")
+            Logx.w("hideDelay delay must be >= 0")
             return@tryCatchSystemManager false
         }
         v.postDelayed(Runnable { hide(v, flag) }, delay)
@@ -268,7 +268,7 @@ public open class SoftKeyboardController(
         } catch (e: CancellationException) {
             throw e
         } catch (e: RuntimeException) {
-            Logx.e("SoftKeyboardController: hideAwait failed: ${e.message}")
+            Logx.e("hideAwait failed: ${e.message}")
             SoftKeyboardActionResult.Failure(
                 reason = SoftKeyboardFailureReason.EXCEPTION_OCCURRED,
                 message = e.message,
@@ -309,12 +309,12 @@ public open class SoftKeyboardController(
                     imm.startStylusHandwriting(v)
                     true
                 } else {
-                    Logx.e("SoftKeyboardController: View requestFocus failed")
+                    Logx.e("View requestFocus failed")
                     false
                 }
             },
             negativeWork = { requiredSdk ->
-                Logx.w("SoftKeyboardController: startStylusHandwriting requires API $requiredSdk+ (current=${Build.VERSION.SDK_INT})")
+                Logx.w("startStylusHandwriting requires API $requiredSdk+ (current=${Build.VERSION.SDK_INT})")
                 false
             },
         )
@@ -393,15 +393,14 @@ public open class SoftKeyboardController(
     public fun startStylusHandwriting(v: View, delay: Long): Boolean = tryCatchSystemManager(false) {
         if (!ensureMainThread("startStylusHandwriting(delay)")) return@tryCatchSystemManager false
         if (delay < 0L) {
-            Logx.w("SoftKeyboardController: startStylusHandwriting delay must be >= 0")
+            Logx.w("startStylusHandwriting delay must be >= 0")
             return@tryCatchSystemManager false
         }
         checkSdkVersion(
             Build.VERSION_CODES.TIRAMISU,
             positiveWork = { v.postDelayed(Runnable { startStylusHandwriting(v) }, delay) },
             negativeWork = { requiredSdk ->
-                Logx
-                    .w("SoftKeyboardController: startStylusHandwriting(delay) requires API $requiredSdk+ (current=${Build.VERSION.SDK_INT})")
+                Logx.w("startStylusHandwriting(delay) requires API $requiredSdk (current=${Build.VERSION.SDK_INT})")
                 false
             },
         )
@@ -475,7 +474,7 @@ public open class SoftKeyboardController(
 
         val windowToken = v.windowToken ?: v.applicationWindowToken
         if (windowToken == null && controller == null) {
-            Logx.e("SoftKeyboardController: View windowToken and WindowInsetsController are null")
+            Logx.e("View windowToken and WindowInsetsController are null")
             return HideRequestResult.WINDOW_CONTEXT_MISSING
         }
 
@@ -504,7 +503,7 @@ public open class SoftKeyboardController(
      */
     private fun ensureMainThread(methodName: String): Boolean {
         if (Looper.myLooper() == Looper.getMainLooper()) return true
-        Logx.w("SoftKeyboardController: $methodName must be called on Main thread")
+        Logx.w("$methodName must be called on Main thread")
         return false
     }
 
