@@ -10,11 +10,10 @@ import kr.open.library.simpleui_xml.recyclerview.model.SampleItem
 
 class CustomListAdapter :
     BaseRcvListAdapter<SampleItem, BaseRcvDataBindingViewHolder<ItemRcvTextviewBinding>>(
-        listDiffUtil =
-            RcvListDiffUtilCallBack(
-                itemsTheSame = { oldItem, newItem -> oldItem.id == newItem.id },
-                contentsTheSame = { oldItem, newItem -> oldItem == newItem },
-            ),
+        listDiffUtil = RcvListDiffUtilCallBack(
+            itemsTheSame = { oldItem, newItem -> oldItem.id == newItem.id },
+            contentsTheSame = { oldItem, newItem -> oldItem == newItem },
+        ),
     ) {
     override fun onBindViewHolder(
         holder: BaseRcvDataBindingViewHolder<ItemRcvTextviewBinding>,
@@ -28,8 +27,6 @@ class CustomListAdapter :
         }
     }
 
-    override fun createViewHolderInternal(
-        parent: ViewGroup,
-        viewType: Int,
-    ): BaseRcvDataBindingViewHolder<ItemRcvTextviewBinding> = BaseRcvDataBindingViewHolder(R.layout.item_rcv_textview, parent)
+    override fun createViewHolderInternal(parent: ViewGroup, viewType: Int): BaseRcvDataBindingViewHolder<ItemRcvTextviewBinding> =
+        BaseRcvDataBindingViewHolder(R.layout.item_rcv_textview, parent)
 }

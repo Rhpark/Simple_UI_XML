@@ -1,6 +1,6 @@
 ---
 name: agent-refactor
-description: Android 라이브러리(SimpleUI_XML) 코드를 직접 수정한다. 대상선정→안전망→실행→검증→문서 5단계로 진행하며, agent-review 이슈 요약을 입력으로 받으면 STEP1 분석을 생략하고 STEP2부터 진행한다. STEP1 사용자 승인 전 코드 수정 금지. 트리거: "리팩토링", "구조 개선", "중복 제거", "코드 정리"
+description: 'Android 라이브러리(SimpleUI_XML) 코드를 직접 수정한다. 대상선정→안전망→실행→검증→문서 5단계로 진행하며, agent-review 이슈 요약을 입력으로 받으면 STEP1 분석을 생략하고 STEP2부터 진행한다. STEP1 사용자 승인 전 코드 수정 금지. 트리거: 리팩토링, 구조 개선, 중복 제거, 코드 정리'
 model: opus
 color: yellow
 ---

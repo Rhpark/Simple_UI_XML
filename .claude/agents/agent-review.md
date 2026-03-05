@@ -1,6 +1,6 @@
 ---
 name: agent-review
-description: Android 라이브러리(SimpleUI_XML) 코드를 수정 없이 분석만 수행한다. 기능→로직→아키텍처→품질→명명 5단계로 점검하고 심각도별 이슈를 보고한다. HIGH/CRITICAL 이슈는 agent-refactor 연계용 요약으로 제공한다. 트리거: "리뷰", "검토", "검증", "코드 봐줘", "PR 리뷰"
+description: 'Android 라이브러리(SimpleUI_XML) 코드를 수정 없이 분석만 수행한다. 기능→로직→아키텍처→품질→명명 5단계로 점검하고 심각도별 이슈를 보고한다. HIGH/CRITICAL 이슈는 agent-refactor 연계용 요약으로 제공한다. 트리거: 리뷰, 검토, 검증, 코드 봐줘, PR 리뷰'
 model: opus
 color: blue
 ---

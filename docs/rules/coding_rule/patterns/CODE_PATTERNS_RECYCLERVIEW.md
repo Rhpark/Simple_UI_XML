@@ -2,31 +2,52 @@
 
 ## 규칙
 
-- RecyclerView Adapter 직접 구현 금지 → Simple UI Adapter 사용
+- Simple UI Adapter로 해결 가능한 경우 RecyclerView Adapter 직접 구현 금지
 - `DiffUtil.ItemCallback` 별도 클래스 생성 금지 → `RcvListDiffUtilCallBack` 사용
 - `RecyclerView.OnScrollListener` 직접 구현 금지 → `RecyclerScrollStateView` + Flow 사용
 
-## Adapter 선택 기준
+## 베이스 선택 기준
+
+| 상황 | 베이스 클래스 |
+|------|------------|
+| 동적 리스트 (DiffUtil 필요) | `BaseRcvListAdapter` |
+| 즉시 갱신 (DiffUtil 불필요) | `BaseRcvAdapter` |
+| Header/Footer 섹션 필요 | `HeaderFooterRcvAdapter` |
+| 라이브러리 미사용 또는 복잡한 ViewType | `RecyclerView.Adapter` |
+
+## Simple Adapter 선택 기준
+
+> Simple Adapter는 서브클래싱 없이 람다로 사용한다. 가능하면 우선 사용한다.
 
 | 상황 | 사용 Adapter |
 |------|------------|
-| DataBinding + DiffUtil (일반적인 경우) | `SimpleRcvDataBindingListAdapter` |
-| DataBinding 없이 DiffUtil | `SimpleRcvListAdapter` |
-| DataBinding + 즉시 notify (DiffUtil 불필요) | `SimpleBindingRcvAdapter` |
-| DataBinding 없이 즉시 notify | `SimpleRcvAdapter` |
-| Header/Footer 섹션 필요 + DataBinding | `SimpleHeaderFooterDataBindingRcvAdapter` |
-| Header/Footer 섹션 필요 | `SimpleHeaderFooterRcvAdapter` |
-| ViewBinding 사용 | `SimpleRcvViewBindingListAdapter` / `SimpleViewBindingRcvAdapter` |
+| DiffUtil + DataBinding | `SimpleRcvDataBindingListAdapter` |
+| DiffUtil + ViewBinding | `SimpleRcvViewBindingListAdapter` |
+| DiffUtil + 기본 ViewHolder | `SimpleRcvListAdapter` |
+| 즉시 notify + DataBinding | `SimpleBindingRcvAdapter` |
+| 즉시 notify + ViewBinding | `SimpleViewBindingRcvAdapter` |
+| 즉시 notify + 기본 ViewHolder | `SimpleRcvAdapter` |
+| Header/Footer + DataBinding | `SimpleHeaderFooterDataBindingRcvAdapter` |
+| Header/Footer + ViewBinding | `SimpleHeaderFooterViewBindingRcvAdapter` |
+| Header/Footer + 기본 ViewHolder | `SimpleHeaderFooterRcvAdapter` |
+
+## 커스텀 Adapter 작성 규칙
+
+Simple Adapter로 해결 불가한 경우(복잡한 다중 ViewType 등)에만 직접 구현한다.
+
+- `onCreateViewHolder`는 `RootRcvAdapter`에서 **`final`** 선언 → override 금지
+- ViewHolder 생성은 반드시 `createViewHolderInternal`을 override한다
+- `RecyclerView.Adapter` 직접 상속 시에는 `onCreateViewHolder` override 사용
 
 ## 심각도 기준
 
-- HIGH: Adapter 직접 구현 (ViewHolder, DiffCallback 수동 작성)
+- HIGH: Simple Adapter로 대체 가능한데 Adapter를 직접 구현한 경우
 - HIGH: `RecyclerView.OnScrollListener` 직접 구현
 - MEDIUM: `DiffUtil.ItemCallback` 별도 클래스 생성
 
 ## 예시
 
-### Adapter 구현
+### Simple Adapter 구현
 
 ❌ BAD
 ```kotlin
@@ -43,18 +64,46 @@ class CustomAdapter : ListAdapter<SampleItem, CustomAdapter.ViewHolder>(DiffCall
 
 ✅ GOOD
 ```kotlin
-val listDiffUtil = RcvListDiffUtilCallBack<SampleItem>(
-    itemsTheSame = { old, new -> old.id == new.id },
-    contentsTheSame = { old, new -> old == new },
-)
-
 val adapter = SimpleRcvDataBindingListAdapter<SampleItem, ItemBinding>(
     layoutRes = R.layout.item,
-    listDiffUtil = listDiffUtil,
+    listDiffUtil = RcvListDiffUtilCallBack(
+        itemsTheSame = { old, new -> old.id == new.id },
+        contentsTheSame = { old, new -> old == new },
+    ),
 ) { holder, item, position ->
     holder.binding.tvTitle.text = item.title
 }.apply {
     setOnItemClickListener { position, _, _ -> /* 클릭 처리 */ }
+}
+```
+
+---
+
+### 커스텀 Adapter 구현 (Simple Adapter 불가 시)
+
+❌ BAD — `onCreateViewHolder` override 시도 (final이므로 컴파일 오류)
+```kotlin
+class MultiTypeAdapter : BaseRcvAdapter<Item, RecyclerView.ViewHolder>() {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder { ... }
+}
+```
+
+✅ GOOD — `createViewHolderInternal` override
+```kotlin
+class MultiTypeAdapter : BaseRcvAdapter<Item, RecyclerView.ViewHolder>() {
+    override fun createViewHolderInternal(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return when (viewType) {
+            TYPE_A -> ViewHolderA(ItemABinding.inflate(LayoutInflater.from(parent.context), parent, false))
+            else   -> ViewHolderB(ItemBBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        }
+    }
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, item: Item, position: Int) {
+        when (holder) {
+            is ViewHolderA -> holder.binding.tvTitle.text = item.title
+            is ViewHolderB -> holder.binding.tvDesc.text = item.desc
+        }
+    }
 }
 ```
 
@@ -73,7 +122,6 @@ recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
 
 ✅ GOOD
 ```kotlin
-// RecyclerScrollStateView (XML에서 교체하거나 기존 RecyclerView를 RecyclerScrollStateView로 사용)
 lifecycleScope.launch {
     binding.rcvItems.sfScrollDirectionFlow.collect { direction ->
         when (direction) {

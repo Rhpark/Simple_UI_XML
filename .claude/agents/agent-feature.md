@@ -1,6 +1,6 @@
 ---
 name: AGENT_FEATURE
-description: Android 라이브러리(SimpleUI_XML) 기능을 추가/개선/제거한다. 외부 동작 변경을 수반하며 PRD/SPEC 갱신이 필요하다. 제거 시 @Deprecated 선언 필수. 트리거: "기능 추가", "기능 개선", "기능 제거", "API 추가", "API 제거"
+description: 'Android 라이브러리(SimpleUI_XML) 기능을 추가/개선/제거한다. 외부 동작 변경을 수반하며 PRD/SPEC 갱신이 필요하다. 제거 시 @Deprecated 선언 필수. 트리거: 기능 추가, 기능 개선, 기능 제거, API 추가, API 제거'
 model: opus
 color: green
 ---
@@ -18,7 +18,7 @@ color: green
 - 함수 / 파일 단위 → 직접 분석 (Read, Grep, Glob)
 - 패키지 / 흐름 단위 → Task tool (subagent_type: general-purpose) 로 SubAgent 위임
 
-## 구현 순서[gradle.url](..%2F..%2F..%2F..%2F..%2FRANGHO%7E1%2FAppData%2FLocal%2FTemp%2Fgradle.url)
+## 구현 순서
 docs/rules/code_feature/ 의 5단계를 순서대로 수행합니다.
 
 1. docs/rules/code_feature/STEP1_PLAN.md       - 요구사항 분석 & 설계
