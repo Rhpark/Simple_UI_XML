@@ -9,6 +9,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.PowerManager
 import androidx.core.content.ContextCompat
+import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
 import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
 import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.core.system_manager.controller.alarm.AlarmConstants.ACTION_SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED
@@ -340,9 +341,11 @@ public abstract class BaseAlarmReceiver : BroadcastReceiver() {
             if (alarmVo != null) {
                 createNotificationChannel(context, alarmVo.notification)
                 if (!ensureNotificationControllerInitialized()) return
-                val hasPostNotificationsPermission =
-                    Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
-                        ContextCompat.checkSelfPermission(context, POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
+                val hasPostNotificationsPermission = checkSdkVersion(Build.VERSION_CODES.TIRAMISU,
+                    positiveWork = { ContextCompat.checkSelfPermission(context, POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED },
+                    negativeWork = { true }
+                )
+
                 if (!hasPostNotificationsPermission) {
                     Logx.w("POST_NOTIFICATIONS permission is missing. Skip alarm notification for key: $key")
                     return

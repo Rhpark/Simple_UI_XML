@@ -83,10 +83,7 @@ internal class PermissionResultAggregator(
      * @param permissions Permissions that should wait for results.<br><br>
      *                    결과를 대기할 권한 목록입니다.<br>
      */
-    fun registerWaiters(
-        requestId: String,
-        permissions: List<String>,
-    ) {
+    fun registerWaiters(requestId: String, permissions: List<String>) {
         permissions.forEach { permission ->
             inFlightWaiters.getOrPut(permission) { mutableSetOf() }.add(requestId)
         }

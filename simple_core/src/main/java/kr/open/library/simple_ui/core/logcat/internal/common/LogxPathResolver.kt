@@ -36,8 +36,10 @@ internal object LogxPathResolver {
      * @param storageType Storage target.<br><br>
      *                    저장소 대상.<br>
      */
-    fun requiresPermission(storageType: LogStorageType): Boolean =
-        storageType == LogStorageType.PUBLIC_EXTERNAL && Build.VERSION.SDK_INT <= Build.VERSION_CODES.P
+    fun requiresPermission(storageType: LogStorageType): Boolean = checkSdkVersion(Build.VERSION_CODES.Q,
+        positiveWork = { false },
+        negativeWork = { storageType == LogStorageType.PUBLIC_EXTERNAL }
+    )
 
     /**
      * Checks WRITE_EXTERNAL_STORAGE permission if required.<br><br>
@@ -50,10 +52,7 @@ internal object LogxPathResolver {
      */
     fun hasWritePermission(context: Context, storageType: LogStorageType): Boolean {
         if (!requiresPermission(storageType)) return true
-        return ContextCompat.checkSelfPermission(
-            context,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-        ) == PackageManager.PERMISSION_GRANTED
+        return ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
     }
 
     /**
@@ -66,10 +65,8 @@ internal object LogxPathResolver {
      * Returns app-specific external storage log path.<br><br>
      * 앱 전용 외부 저장소 로그 경로를 반환한다.<br>
      */
-    private fun getAppExternalLogPath(context: Context): String {
-        val externalDir = context.getExternalFilesDir(LogxConstants.LOG_DIR_NAME)
-        return externalDir?.absolutePath ?: getInternalLogPath(context)
-    }
+    private fun getAppExternalLogPath(context: Context): String =
+        context.getExternalFilesDir(LogxConstants.LOG_DIR_NAME)?.absolutePath ?: getInternalLogPath(context)
 
     /**
      * Returns public external storage log path with API branching.<br><br>

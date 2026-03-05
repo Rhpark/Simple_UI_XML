@@ -138,8 +138,7 @@ public class SystemBarController(
      * @return WindowInsetsControllerCompat instance.<br><br>
      *         WindowInsetsControllerCompat 인스턴스.<br>
      */
-    private fun getWindowInsetController(): WindowInsetsControllerCompat =
-        WindowCompat.getInsetsController(window, window.decorView)
+    private fun getWindowInsetController(): WindowInsetsControllerCompat = WindowCompat.getInsetsController(window, window.decorView)
 
     private fun getWindowInsetControllerForVisibility(): WindowInsetsControllerCompat =
         getWindowInsetController().apply { systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_DEFAULT }

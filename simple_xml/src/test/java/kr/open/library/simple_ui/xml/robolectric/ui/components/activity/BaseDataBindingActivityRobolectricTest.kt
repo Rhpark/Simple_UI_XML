@@ -18,7 +18,7 @@ class BaseDataBindingActivityRobolectricTest {
         val controller = Robolectric.buildActivity(TestBaseDataBindingActivity::class.java).setup()
         val activity = controller.get()
 
-        Assert.assertNotNull(activity.findViewById<View>(R.id.test_databinding_activity_root))
+        Assert.assertNotNull(activity.findViewById<View>(R.id.testDatabindingActivityRoot))
         Assert.assertEquals(activity, activity.exposeBinding().lifecycleOwner)
     }
 

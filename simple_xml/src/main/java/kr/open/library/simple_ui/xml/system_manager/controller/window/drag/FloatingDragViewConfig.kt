@@ -16,7 +16,7 @@ import kotlin.math.abs
  * - Position calculation and updates.<br>
  */
 internal class FloatingDragViewConfig(
-    public val floatingView: FloatingDragView,
+    internal val floatingView: FloatingDragView,
 ) {
     companion object {
         /**
@@ -55,10 +55,7 @@ internal class FloatingDragViewConfig(
      * @param rawY Touch Y coordinate.<br><br>
      *             터치 Y 좌표입니다.<br>
      */
-    public fun onTouchDown(
-        rawX: Float,
-        rawY: Float,
-    ) {
+    internal fun onTouchDown(rawX: Float, rawY: Float) {
         setLocation(rawX, rawY)
     }
 
@@ -71,10 +68,7 @@ internal class FloatingDragViewConfig(
      * @param rawY Moved Y coordinate.<br><br>
      *             이동한 Y 좌표입니다.<br>
      */
-    public fun onTouchMove(
-        rawX: Float,
-        rawY: Float,
-    ) {
+    internal fun onTouchMove(rawX: Float, rawY: Float) {
         changeLocation(rawX, rawY)
     }
 
@@ -82,7 +76,7 @@ internal class FloatingDragViewConfig(
      * Handles touch up events.<br><br>
      * 터치 업 이벤트를 처리합니다.<br>
      */
-    public fun onTouchUp() {
+    internal fun onTouchUp() {
         isDragging = false
     }
 
@@ -93,7 +87,7 @@ internal class FloatingDragViewConfig(
      * @return true if dragging is in progress.<br><br>
      *         드래그 중이면 true를 반환합니다.<br>
      */
-    public fun getIsDragging(): Boolean = isDragging
+    internal fun getIsDragging(): Boolean = isDragging
 
     /**
      * Sets touch location for drag and click tracking.<br><br>
@@ -104,10 +98,7 @@ internal class FloatingDragViewConfig(
      * @param y Y coordinate.<br><br>
      *          Y 좌표입니다.<br>
      */
-    private fun setLocation(
-        x: Float,
-        y: Float,
-    ) {
+    private fun setLocation(x: Float, y: Float) {
         initDrag(x, y)
         initClick(x, y)
     }
@@ -121,10 +112,7 @@ internal class FloatingDragViewConfig(
      * @param y Initial Y coordinate.<br><br>
      *          초기 Y 좌표입니다.<br>
      */
-    private fun initDrag(
-        x: Float,
-        y: Float,
-    ) {
+    private fun initDrag(x: Float, y: Float) {
         initialTouchDownPosition.set(floatingView.params.x, floatingView.params.y)
         initialTouchDragPosition.set(x, y)
     }
@@ -138,10 +126,7 @@ internal class FloatingDragViewConfig(
      * @param y Initial Y coordinate.<br><br>
      *          초기 Y 좌표입니다.<br>
      */
-    private fun initClick(
-        x: Float,
-        y: Float,
-    ) {
+    private fun initClick(x: Float, y: Float) {
         isDragging = false
         initialClickDownPosition.set(x, y)
     }
@@ -155,10 +140,7 @@ internal class FloatingDragViewConfig(
      * @param y New Y coordinate.<br><br>
      *          변경된 Y 좌표입니다.<br>
      */
-    private fun changeLocation(
-        x: Float,
-        y: Float,
-    ) {
+    private fun changeLocation(x: Float, y: Float) {
         touchDragChangeLocation(x, y)
         clickDragChanged(x, y)
     }
@@ -172,10 +154,7 @@ internal class FloatingDragViewConfig(
      * @param y Current Y coordinate.<br><br>
      *          현재 Y 좌표입니다.<br>
      */
-    private fun touchDragChangeLocation(
-        x: Float,
-        y: Float,
-    ) {
+    private fun touchDragChangeLocation(x: Float, y: Float) {
         floatingView.params.x = initialTouchDownPosition.x + (x - initialTouchDragPosition.x).toInt()
         floatingView.params.y = initialTouchDownPosition.y + (y - initialTouchDragPosition.y).toInt()
     }
@@ -189,10 +168,7 @@ internal class FloatingDragViewConfig(
      * @param y Current Y coordinate.<br><br>
      *          현재 Y 좌표입니다.<br>
      */
-    private fun clickDragChanged(
-        x: Float,
-        y: Float,
-    ) {
+    private fun clickDragChanged(x: Float, y: Float) {
         if (abs(x - initialClickDownPosition.x) > CLICK_THRESHOLD_PIXELS ||
             abs(y - initialClickDownPosition.y) > CLICK_THRESHOLD_PIXELS
         ) {
@@ -207,5 +183,5 @@ internal class FloatingDragViewConfig(
      * @return Floating view instance.<br><br>
      *         플로팅 뷰 인스턴스입니다.<br>
      */
-    public fun getView(): View = floatingView.view
+    internal fun getView(): View = floatingView.view
 }

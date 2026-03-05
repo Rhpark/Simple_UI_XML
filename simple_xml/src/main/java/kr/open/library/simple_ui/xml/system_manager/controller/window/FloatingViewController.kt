@@ -54,6 +54,9 @@ public open class FloatingViewController(
             }
 
             val current = this.floatingFixedView
+
+            if (current === floatingView) return true
+
             if (current == null) {
                 if (!addView(floatingView.view, floatingView.params)) return false
                 this.floatingFixedView = floatingView
@@ -63,7 +66,10 @@ public open class FloatingViewController(
             if (!addView(floatingView.view, floatingView.params)) return false
 
             if (!removeView(current.view)) {
-                safeCatch { removeView(floatingView.view) } // rollback
+                Logx.w("Failed to remove previous fixed view. Start rollback for new fixed view.")
+                if (!removeView(floatingView.view)) {
+                    Logx.e("Rollback failed while replacing fixed view.")
+                }
                 return false
             }
 

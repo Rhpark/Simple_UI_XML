@@ -508,10 +508,5 @@ public open class SoftKeyboardController(
     }
 
     private fun createFailureDeferred(reason: SoftKeyboardFailureReason, message: String? = null): Deferred<SoftKeyboardActionResult> =
-        CompletableDeferred(
-            SoftKeyboardActionResult.Failure(
-                reason = reason,
-                message = message,
-            )
-        )
+        CompletableDeferred(SoftKeyboardActionResult.Failure(reason = reason, message = message))
 }

@@ -44,10 +44,9 @@ public open class FloatingDragView(
      * Internal collision state flow (mutable).<br><br>
      * 내부 충돌 상태 플로우입니다(변경 가능).<br>
      */
-    private val msfCollisionStateFlow =
-        MutableStateFlow<Pair<FloatingViewTouchType, FloatingViewCollisionsType>>(
-            FloatingViewTouchType.TOUCH_UP to FloatingViewCollisionsType.UNCOLLISIONS,
-        )
+    private val msfCollisionStateFlow = MutableStateFlow<Pair<FloatingViewTouchType, FloatingViewCollisionsType>>(
+        FloatingViewTouchType.TOUCH_UP to FloatingViewCollisionsType.UNCOLLISIONS,
+    )
 
     /**
      * External collision state flow (read-only).<br><br>
@@ -70,20 +69,16 @@ public open class FloatingDragView(
      * @return true if the state was updated successfully.<br><br>
      *         상태 업데이트에 성공하면 true를 반환합니다.<br>
      */
-    public fun updateCollisionState(
-        phase: FloatingViewTouchType,
-        type: FloatingViewCollisionsType,
-    ): Boolean =
-        safeCatch(false) {
-            Logx.d("Collision State Updated: $phase -> $type")
-            msfCollisionStateFlow.value = phase to type
+    public fun updateCollisionState(phase: FloatingViewTouchType, type: FloatingViewCollisionsType): Boolean = safeCatch(false) {
+        Logx.d("Collision State Updated: $phase -> $type")
+        msfCollisionStateFlow.value = phase to type
 
-            // 터치 단계별 콜백 호출 / Invoke callbacks based on touch phase
-            when (phase) {
-                FloatingViewTouchType.TOUCH_DOWN -> collisionsWhileTouchDown?.invoke(this, type)
-                FloatingViewTouchType.TOUCH_MOVE -> collisionsWhileDrag?.invoke(this, type)
-                FloatingViewTouchType.TOUCH_UP -> collisionsWhileTouchUp?.invoke(this, type)
-            }
-            return true
+        // 터치 단계별 콜백 호출 / Invoke callbacks based on touch phase
+        when (phase) {
+            FloatingViewTouchType.TOUCH_DOWN -> collisionsWhileTouchDown?.invoke(this, type)
+            FloatingViewTouchType.TOUCH_MOVE -> collisionsWhileDrag?.invoke(this, type)
+            FloatingViewTouchType.TOUCH_UP -> collisionsWhileTouchUp?.invoke(this, type)
         }
+        return true
+    }
 }

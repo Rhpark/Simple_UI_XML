@@ -79,9 +79,11 @@ public abstract class HeaderFooterRcvAdapter<ITEM : Any, VH : RecyclerView.ViewH
         val oldSize = oldHeaders.size
         val newSize = items.size
 
-        val canRangeChange = oldSize == newSize && oldSize > 0 && oldHeaders.indices.all { index ->
-            getHeaderItemViewType(index, oldHeaders[index]) == getHeaderItemViewType(index, items[index])
-        }
+        val canRangeChange = oldSize == newSize &&
+            oldSize > 0 &&
+            oldHeaders.indices.all { index ->
+                getHeaderItemViewType(index, oldHeaders[index]) == getHeaderItemViewType(index, items[index])
+            }
 
         when {
             oldSize == 0 && newSize == 0 -> Unit
@@ -125,9 +127,11 @@ public abstract class HeaderFooterRcvAdapter<ITEM : Any, VH : RecyclerView.ViewH
         val newSize = items.size
         val footerStart = adapterData.footerToAdapterPosition(0)
 
-        val canRangeChange = oldSize == newSize && oldSize > 0 && oldFooters.indices.all { index ->
-            getFooterItemViewType(index, oldFooters[index]) == getFooterItemViewType(index, items[index])
-        }
+        val canRangeChange = oldSize == newSize &&
+            oldSize > 0 &&
+            oldFooters.indices.all { index ->
+                getFooterItemViewType(index, oldFooters[index]) == getFooterItemViewType(index, items[index])
+            }
 
         when {
             oldSize == 0 && newSize == 0 -> Unit

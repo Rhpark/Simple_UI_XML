@@ -132,11 +132,11 @@ public abstract class RootDialogFragment :
      *              배경으로 설정할 drawable 리소스 ID.<br>
      */
     protected fun setBackgroundResource(@DrawableRes resId: Int, rootView: View? = null) {
-        config.setBackgroundColor(resId, rootView)
+        config.setBackgroundResource(resId, rootView)
     }
 
     public fun setBackgroundResource(@DrawableRes resId: Int) {
-        config.setBackgroundColor(resId)
+        config.setBackgroundResource(resId)
     }
 
     @CallSuper

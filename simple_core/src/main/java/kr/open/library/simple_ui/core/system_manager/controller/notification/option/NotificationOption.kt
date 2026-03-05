@@ -5,6 +5,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Build
 import androidx.core.app.NotificationCompat.Action
+import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
 
 /**
  * Base sealed class containing common options for all notification types.<br><br>
@@ -42,7 +43,7 @@ sealed class SimpleNotificationOptionBase(
 ) {
     init {
         clickIntent?.let {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            checkSdkVersion(Build.VERSION_CODES.S) {
                 val hasImmutable = pendingIntentFlags and PendingIntent.FLAG_IMMUTABLE != 0
                 val hasMutable = pendingIntentFlags and PendingIntent.FLAG_MUTABLE != 0
 

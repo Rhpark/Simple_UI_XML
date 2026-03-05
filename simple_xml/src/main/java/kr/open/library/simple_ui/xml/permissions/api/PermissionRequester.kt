@@ -296,17 +296,10 @@ class PermissionRequester private constructor(
      * @return `true` if the request was empty and handled, `false` otherwise.<br><br>
      *         요청이 비어 있어 처리되었으면 `true`, 아니면 `false`.<br>
      */
-    private fun handleEmptyRequest(
-        permissions: List<String>,
-        onDeniedResult: (List<PermissionDeniedItem>) -> Unit,
-    ): Boolean {
+    private fun handleEmptyRequest(permissions: List<String>, onDeniedResult: (List<PermissionDeniedItem>) -> Unit): Boolean {
         if (permissions.isEmpty()) {
             safeCatch {
-                onDeniedResult(
-                    listOf(
-                        PermissionDeniedItem(EMPTY_REQUEST_PERMISSION, PermissionDeniedType.EMPTY_REQUEST,),
-                    ),
-                )
+                onDeniedResult(listOf(PermissionDeniedItem(EMPTY_REQUEST_PERMISSION, PermissionDeniedType.EMPTY_REQUEST)))
             }
             return true
         }
@@ -379,10 +372,7 @@ class PermissionRequester private constructor(
      * Resolves a role permission pre-check.<br><br>
      * Role 권한의 사전 확인을 수행합니다.<br>
      */
-    private fun resolveRolePermission(
-        requestId: String,
-        permission: String,
-    ): PermissionDecisionType? {
+    private fun resolveRolePermission(requestId: String, permission: String): PermissionDecisionType? {
         if (!roleHandler.isRoleAvailable(permission)) {
             resultAggregator.logResult(
                 requestId = requestId,
@@ -406,10 +396,7 @@ class PermissionRequester private constructor(
      * Resolves a special permission pre-check.<br><br>
      * 특수 권한의 사전 확인을 수행합니다.<br>
      */
-    private fun resolveSpecialPermission(
-        requestId: String,
-        permission: String,
-    ): PermissionDecisionType? {
+    private fun resolveSpecialPermission(requestId: String, permission: String): PermissionDecisionType? {
         if (!classifier.isSupported(permission)) {
             resultAggregator.logResult(
                 requestId = requestId,
@@ -433,10 +420,7 @@ class PermissionRequester private constructor(
      * Resolves a runtime permission pre-check.<br><br>
      * 런타임 권한의 사전 확인을 수행합니다.<br>
      */
-    private fun resolveRuntimePermission(
-        requestId: String,
-        permission: String,
-    ): PermissionDecisionType? {
+    private fun resolveRuntimePermission(requestId: String, permission: String): PermissionDecisionType? {
         if (!classifier.isSupported(permission)) {
             resultAggregator.logResult(
                 requestId = requestId,

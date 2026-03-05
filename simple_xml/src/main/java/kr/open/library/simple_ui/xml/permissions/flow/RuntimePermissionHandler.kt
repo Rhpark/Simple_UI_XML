@@ -25,8 +25,7 @@ class RuntimePermissionHandler(
      * @return Return value: true when rationale should be shown. Log behavior: none.<br><br>
      *         반환값: 설명이 필요하면 true. 로그 동작: 없음.<br>
      */
-    fun shouldShowRationale(permission: String): Boolean =
-        host.shouldShowRequestPermissionRationale(permission)
+    fun shouldShowRationale(permission: String): Boolean = host.shouldShowRequestPermissionRationale(permission)
 
     /**
      * Returns whether [permission] was requested before.<br><br>
