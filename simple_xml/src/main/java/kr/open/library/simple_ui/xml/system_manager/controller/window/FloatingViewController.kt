@@ -151,7 +151,7 @@ public open class FloatingViewController(
 
     private fun getCollisionTypeWithFixedView(floatingDragView: FloatingDragView): FloatingViewCollisionsType =
         if (isCollisionFixedView(floatingDragView)) {
-            FloatingViewCollisionsType.OCCURRING
+            FloatingViewCollisionsType.OCCURING
         } else {
             FloatingViewCollisionsType.UNCOLLISIONS
         }

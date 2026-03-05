@@ -9,7 +9,7 @@ public enum class FloatingViewCollisionsType {
      * Collision occurring.<br><br>
      * 충돌이 발생한 상태입니다.<br>
      */
-    OCCURRING,
+    OCCURING,
 
     /**
      * No collision.<br><br>
