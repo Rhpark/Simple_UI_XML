@@ -11,7 +11,7 @@ import androidx.annotation.RequiresPermission
 import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
 import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
 import kr.open.library.simple_ui.core.logcat.Logx
-import kr.open.library.simple_ui.core.permissions.extentions.hasPermissions
+import kr.open.library.simple_ui.core.permissions.extensions.hasPermissions
 
 /**
  * Provides location/provider query utilities and best-location selection.<br><br>

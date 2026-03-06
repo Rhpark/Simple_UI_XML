@@ -12,7 +12,7 @@ import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
 import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.core.permissions.classifier.PermissionClassifier
 import kr.open.library.simple_ui.core.permissions.classifier.PermissionType
-import kr.open.library.simple_ui.core.permissions.extentions.hasPermission
+import kr.open.library.simple_ui.core.permissions.extensions.hasPermission
 import kr.open.library.simple_ui.core.permissions.handler.RolePermissionHandler
 import kr.open.library.simple_ui.core.permissions.handler.SpecialPermissionHandler
 import kr.open.library.simple_ui.core.permissions.model.PermissionDecisionType

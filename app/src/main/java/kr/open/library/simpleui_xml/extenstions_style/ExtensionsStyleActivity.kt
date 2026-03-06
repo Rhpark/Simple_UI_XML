@@ -11,7 +11,7 @@ import kr.open.library.simple_ui.core.extensions.string.isEmailValid
 import kr.open.library.simple_ui.core.extensions.string.isNumeric
 import kr.open.library.simple_ui.core.extensions.string.removeWhitespace
 import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
-import kr.open.library.simple_ui.core.permissions.extentions.hasPermission
+import kr.open.library.simple_ui.core.permissions.extensions.hasPermission
 import kr.open.library.simple_ui.xml.extensions.resource.getColorCompat
 import kr.open.library.simple_ui.xml.extensions.resource.getDrawableCompat
 import kr.open.library.simple_ui.xml.extensions.view.SnackBarOption

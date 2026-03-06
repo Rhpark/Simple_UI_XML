@@ -69,9 +69,18 @@ SKILL.md의 공통 규칙과 함께 적용합니다.
 
 - 불필요한 샘플 로직(토스트/로그 남발) 금지
 
+#### R 클래스 import 규칙
+- `R.layout.*` 또는 `R.id.*` 등 R 클래스를 참조하는 경우 반드시 명시적 import를 추가한다.
+- app 모듈의 namespace는 `app/build.gradle.kts` 의 `namespace` 값을 따른다.
+- 예) `namespace = "kr.open.library.simpleui_xml"` → `import kr.open.library.simpleui_xml.R`
+
 #### ViewModel 선언
-- `androidx.activity:activity-ktx` 사용 시: `private val vm: {ClassName}Vm by viewModels()`
-- 미사용 시: `private val vm: {ClassName}Vm by lazy { getViewModel() }`
+> **파일 생성 전 반드시 `app/build.gradle.kts`를 읽어 `activity-ktx` 포함 여부를 확인한다.**
+
+| `activity-ktx` 포함 여부 | 선언 패턴 |
+|------------------------|---------|
+| 있음 (`libs.androidx.activity` 또는 `activity-ktx` 명시) | `private val vm: {ClassName}Vm by viewModels()` |
+| 없음 | `private val vm: {ClassName}Vm by lazy { getViewModel() }` |
 
 #### 생성자 패턴
 
@@ -127,7 +136,11 @@ override fun onCreate(savedInstanceState: Bundle?) {
 override fun onEventVmCollect(binding: ActivityMyBinding) {
     lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) { // 권장
-            vm.eventVmFlow.collect { event -> when (event) { } }
+            vm.eventVmFlow.collect { event ->
+                when (event) {
+                    is {ClassName}VmEvent.Dump -> { }
+                }
+            }
         }
     }
 }
@@ -137,7 +150,11 @@ override fun onEventVmCollect(binding: ActivityMyBinding) {
 ```kotlin
 lifecycleScope.launch {
     repeatOnLifecycle(Lifecycle.State.STARTED) { // 권장
-        vm.eventVmFlow.collect { event -> when (event) { } }
+        vm.eventVmFlow.collect { event ->
+            when (event) {
+                is {ClassName}VmEvent.Dump -> { }
+            }
+        }
     }
 }
 ```

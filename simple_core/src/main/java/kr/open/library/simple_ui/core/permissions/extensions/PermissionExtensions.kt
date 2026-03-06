@@ -2,7 +2,7 @@
  * Permission inspection helpers that unify special-case checks (usage stats, overlays, alarms, etc.).<br><br>
  * 사용량 통계·오버레이·정확 알람 등 특수 권한을 한 번에 점검할 수 있는 보조 함수 모음입니다.<br>
  */
-package kr.open.library.simple_ui.core.permissions.extentions
+package kr.open.library.simple_ui.core.permissions.extensions
 
 import android.Manifest
 import android.app.AlarmManager

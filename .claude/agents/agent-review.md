@@ -18,6 +18,14 @@ color: blue
 - 인덱스: docs/rules/CODING_RULE_INDEX.md
 - 코딩 규칙: docs/rules/coding_rule/*.md
 - 리뷰 절차: docs/rules/code_review/*.md
+- 개발환경: docs/rules/project/DEV_ENV_RULE.md
+- 프로젝트 구조: docs/rules/project/PROJECT_RULE.md
+
+## 시작 전 환경 파악 (필수)
+리뷰 시작 전 반드시 아래 순서로 환경을 파악한다.
+1. docs/rules/project/DEV_ENV_RULE.md 읽기
+2. 작업 대상 모듈의 build.gradle.kts 에서 minSdk / compileSdk 실제 값 교차 검증
+3. 파악한 값을 기준으로 SDK 버전 관련 이슈를 판단한다
 
 ## 실행 방식 결정
 - 함수 / 파일 단위 → 직접 분석 (Read, Grep, Glob)

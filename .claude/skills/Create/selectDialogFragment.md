@@ -56,8 +56,12 @@ SKILL.md의 공통 규칙과 함께 적용합니다.
 - 두 API 모두 `onViewCreated` 이후에서만 호출 가능
 
 #### ViewModel 선언
-- `androidx.fragment:fragment-ktx` 사용 시: `private val vm: {ClassName}Vm by viewModels()`
-- 미사용 시: `private val vm: {ClassName}Vm by lazy { getViewModel() }`
+> **파일 생성 전 반드시 `app/build.gradle.kts`를 읽어 `fragment-ktx` 포함 여부를 확인한다.**
+
+| `fragment-ktx` 포함 여부 | 선언 패턴 |
+|------------------------|---------|
+| 있음 (`fragment-ktx` 명시) | `private val vm: {ClassName}Vm by viewModels()` |
+| 없음 | `private val vm: {ClassName}Vm by lazy { getViewModel() }` |
 
 #### 생성자 패턴
 
@@ -110,7 +114,11 @@ override fun onViewCreated(binding: DialogMyBinding, savedInstanceState: Bundle?
 override fun onEventVmCollect(binding: DialogMyBinding) {
     viewLifecycleOwner.lifecycleScope.launch {
         viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) { // 권장
-            vm.eventVmFlow.collect { event -> when (event) { } }
+            vm.eventVmFlow.collect { event ->
+                when (event) {
+                    is {ClassName}VmEvent.Dump -> { }
+                }
+            }
         }
     }
 }
@@ -120,7 +128,11 @@ override fun onEventVmCollect(binding: DialogMyBinding) {
 ```kotlin
 viewLifecycleOwner.lifecycleScope.launch {
     viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) { // 권장
-        vm.eventVmFlow.collect { event -> when (event) { } }
+        vm.eventVmFlow.collect { event ->
+            when (event) {
+                is {ClassName}VmEvent.Dump -> { }
+            }
+        }
     }
 }
 ```

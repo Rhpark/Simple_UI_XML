@@ -14,7 +14,7 @@ import android.util.SparseArray
 import androidx.annotation.RequiresPermission
 import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
 import kr.open.library.simple_ui.core.logcat.Logx
-import kr.open.library.simple_ui.core.permissions.extentions.hasPermissions
+import kr.open.library.simple_ui.core.permissions.extensions.hasPermissions
 import kr.open.library.simple_ui.core.system_manager.base.BaseSystemService
 import kr.open.library.simple_ui.core.system_manager.extensions.getEuiccManager
 import kr.open.library.simple_ui.core.system_manager.extensions.getSubscriptionManager

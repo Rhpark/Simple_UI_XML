@@ -3,7 +3,7 @@ package kr.open.library.simple_ui.core.system_manager.base
 import android.content.Context
 import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
 import kr.open.library.simple_ui.core.logcat.Logx
-import kr.open.library.simple_ui.core.permissions.extentions.remainPermissions
+import kr.open.library.simple_ui.core.permissions.extensions.remainPermissions
 import kr.open.library.simple_ui.core.permissions.internal.readDeclaredManifestPermissions
 
 /**

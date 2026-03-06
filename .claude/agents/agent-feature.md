@@ -13,6 +13,14 @@ color: green
 - 인덱스: docs/rules/CODING_RULE_INDEX.md
 - 코딩 규칙: docs/rules/coding_rule/*.md
 - 기능 구현 절차: docs/rules/code_feature/*.md
+- 개발환경: docs/rules/project/DEV_ENV_RULE.md
+- 프로젝트 구조: docs/rules/project/PROJECT_RULE.md
+
+## 시작 전 환경 파악 (필수)
+구현 시작 전 반드시 아래 순서로 환경을 파악한다.
+1. docs/rules/project/DEV_ENV_RULE.md 읽기
+2. 작업 대상 모듈의 build.gradle.kts 에서 minSdk / compileSdk 실제 값 교차 검증
+3. 파악한 값을 기준으로 SDK 버전 관련 판단을 한다
 
 ## 실행 방식 결정
 - 함수 / 파일 단위 → 직접 분석 (Read, Grep, Glob)
@@ -37,12 +45,44 @@ docs/rules/code_feature/ 의 5단계를 순서대로 수행합니다.
 | 개선 (improve) | 기존 API 동작 수정 | 하위 호환 유지 원칙, SPEC 갱신 |
 | 제거 (remove) | 기존 API/기능 삭제 | @Deprecated 선언 필수, apiDump 갱신, 마이너 버전 이상 |
 
+## 마일스톤 기반 구현
+IMPLEMENTATION_PLAN.md 에 마일스톤이 정의된 경우 반드시 마일스톤 단위로 구현한다.
+
+### 마일스톤 구현 흐름
+```
+IMPLEMENTATION_PLAN.md 의 마일스톤 목록 확인
+        ↓
+[마일스톤 N] 구현
+        ↓
+검증 (마일스톤에 명시된 검증 기준 수행)
+  - 빌드 성공 여부
+  - 해당 마일스톤 범위의 단위 테스트 / Robolectric 테스트 통과
+        ↓
+사용자에게 마일스톤 N 완료 보고 → 확인
+        ↓
+다음 마일스톤으로 진행
+```
+
+### 마일스톤 완료 보고 형식
+```
+[마일스톤 N 완료] {마일스톤 명칭}
+- 구현 파일: {파일 목록}
+- 빌드: 성공 / 실패
+- 테스트: {실행 명령} → 통과 / 실패 ({실패 항목})
+- 다음 마일스톤: {M(N+1) 명칭}
+```
+
+### 마일스톤 실패 시
+- 검증 실패 원인을 분석하고 사용자에게 보고한다.
+- 사용자 승인 없이 다음 마일스톤으로 진행하지 않는다.
+
 ## 핵심 원칙
 - 작업 전 해당 기능의 PRD/SPEC 문서(`{모듈}/docs/feature/{기능명}/`)를 먼저 확인한다.
 - 사용자 승인 전 코드 수정 금지.
 - 제거 시 @Deprecated 애노테이션 없이 즉시 삭제 금지.
 - 각 변경 후 빌드/테스트를 확인한다.
 - 리팩토링과 기능 변경을 동시에 수행하지 않는다.
+- IMPLEMENTATION_PLAN에 마일스톤이 있으면 반드시 마일스톤 단위로 구현한다.
 
 ## 결과 보고
 docs/rules/code_feature/STEP5_DOCUMENT.md 의 "최종 보고 형식"에 맞춰 보고합니다.

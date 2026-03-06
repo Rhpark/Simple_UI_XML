@@ -158,7 +158,13 @@ STEP 0에서 확정된 타입의 파일을 **반드시** 읽은 후 진행한다
 
 - 네이밍: `{ClassName}VmEvent` (예: `MainActivityVmEvent`, `MyFragmentVmEvent`)
 - `sealed interface`로 선언한다. (`sealed class` 사용 금지)
-- 내부 항목은 비워두고 확장 가능한 최소 형태로 생성한다.
+- 기본 항목으로 `data object Dump`를 반드시 포함한다.
+
+```kotlin
+sealed interface {ClassName}VmEvent {
+    data object Dump : {ClassName}VmEvent
+}
+```
 
 ---
 

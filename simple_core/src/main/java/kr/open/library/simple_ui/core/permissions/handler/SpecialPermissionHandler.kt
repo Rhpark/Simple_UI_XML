@@ -7,7 +7,7 @@ import android.net.Uri
 import android.os.Build
 import android.provider.Settings
 import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
-import kr.open.library.simple_ui.core.permissions.extentions.hasPermission
+import kr.open.library.simple_ui.core.permissions.extensions.hasPermission
 import kr.open.library.simple_ui.core.permissions.vo.PermissionConstants
 
 /**
