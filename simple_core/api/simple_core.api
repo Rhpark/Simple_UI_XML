@@ -308,7 +308,7 @@ public final class kr/open/library/simple_ui/core/permissions/classifier/Permiss
 	public static fun values ()[Lkr/open/library/simple_ui/core/permissions/classifier/PermissionType;
 }
 
-public final class kr/open/library/simple_ui/core/permissions/extentions/PermissionExtensionsKt {
+public final class kr/open/library/simple_ui/core/permissions/extensions/PermissionExtensionsKt {
 	public static final fun getPermissionProtectionLevel (Landroid/content/Context;Ljava/lang/String;)I
 	public static final fun hasAccessibilityServicePermission (Landroid/content/Context;)Z
 	public static final fun hasNotificationListenerPermission (Landroid/content/Context;)Z
@@ -2033,6 +2033,10 @@ public final class kr/open/library/simple_ui/core/system_manager/info/network/te
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lkr/open/library/simple_ui/core/system_manager/info/network/telephony/data/state/TelephonyNetworkType;
 	public static fun values ()[Lkr/open/library/simple_ui/core/system_manager/info/network/telephony/data/state/TelephonyNetworkType;
+}
+
+public final class kr/open/library/simple_ui/core/system_manager/info/wifi/WifiStatusInfo {
+	public fun <init> ()V
 }
 
 public abstract class kr/open/library/simple_ui/core/viewmodel/BaseViewModel : androidx/lifecycle/ViewModel, androidx/lifecycle/DefaultLifecycleObserver {
