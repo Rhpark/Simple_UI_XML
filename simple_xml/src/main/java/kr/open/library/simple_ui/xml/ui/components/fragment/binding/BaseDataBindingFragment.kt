@@ -2,6 +2,7 @@ package kr.open.library.simple_ui.xml.ui.components.fragment.binding
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.CallSuper
 import androidx.annotation.LayoutRes
@@ -36,12 +37,12 @@ import androidx.databinding.ViewDataBinding
  *
  * **Usage / 사용법:**<br>
  * 1. Extend this class with your Fragment and pass the layout resource ID.<br>
- * 2. The lifecycleOwner is automatically set to viewLifecycleOwner in onCreateView() - no manual setup required for LiveData observation.<br>
+ * 2. The lifecycleOwner is automatically set to viewLifecycleOwner in onViewCreated() - no manual setup required for LiveData observation.<br>
  * 3. Bind your ViewModel to the binding object in onViewCreated(binding, savedInstanceState) (binding is accessible via getBinding()).<br>
  * 4. Use XML data binding expressions to bind views to ViewModel properties.<br>
  * 5. Override onEventVmCollect(binding:BINDING) to collect ViewModel events with repeatOnLifecycle().<br><br>
  * 1. Fragment에서 이 클래스를 상속받고 레이아웃 리소스 ID를 전달하세요.<br>
- * 2. lifecycleOwner는 onCreateView()에서 viewLifecycleOwner로 자동 설정됨 - LiveData 관찰을 위한 수동 설정이 필요하지 않습니다.<br>
+ * 2. lifecycleOwner는 onViewCreated()에서 viewLifecycleOwner로 자동 설정됨 - LiveData 관찰을 위한 수동 설정이 필요하지 않습니다.<br>
  * 3. onViewCreated(binding, savedInstanceState)에서 ViewModel을 binding 객체에 바인딩하세요 (binding은 getBinding()을 통해 접근 가능).<br>
  * 4. XML 데이터 바인딩 표현식을 사용하여 뷰를 ViewModel 프로퍼티에 바인딩하세요.<br>
  * 5. repeatOnLifecycle()로 ViewModel 이벤트를 수집하려면 onEventVmCollect(binding:BINDING)를 오버라이드하세요.<br>
@@ -103,9 +104,9 @@ public abstract class BaseDataBindingFragment<BINDING : ViewDataBinding>(
         DataBindingUtil.inflate<BINDING>(inflater, layoutRes, container, isAttachToParent)
 
     /**
-     * Called immediately after onViewCreate() has returned.<br>
+     * Called immediately after onCreateView() has returned.<br>
      * Sets the binding's lifecycleOwner to viewLifecycleOwner for proper LiveData observation tied to the view lifecycle.<br><br>
-     * onViewCreate()가 반환된 직후 호출됩니다.<br>
+     * onCreateView()가 반환된 직후 호출됩니다.<br>
      * 뷰 생명주기에 연결된 적절한 LiveData 관찰을 위해 바인딩의 lifecycleOwner를 viewLifecycleOwner로 설정합니다.<br>
      *
      * **Important / 중요:**<br>
@@ -113,10 +114,15 @@ public abstract class BaseDataBindingFragment<BINDING : ViewDataBinding>(
      * - This prevents memory leaks and stale observations when Fragment's view is destroyed but Fragment instance persists (e.g., in back stack).<br><br>
      * - Fragment의 생명주기 대신 viewLifecycleOwner를 사용하면 onDestroyView()에서 LiveData 구독이 자동으로 정리됩니다.<br>
      * - 이는 Fragment의 뷰가 파괴되었지만 Fragment 인스턴스가 유지될 때(예: 백 스택) 메모리 누수와 오래된 관찰을 방지합니다.<br>
+     *
+     * @param view The View returned by onCreateView().<br><br>
+     *             onCreateView()가 반환한 View.<br>
+     * @param savedInstanceState If non-null, this fragment is being re-constructed from a previous saved state.<br><br>
+     *                           null이 아닌 경우, 이 Fragment는 이전에 저장된 상태에서 다시 구성되고 있습니다.<br>
      */
-    @CallSuper
-    override fun onCreateView(binding: BINDING, savedInstanceState: Bundle?) {
-        binding.lifecycleOwner = viewLifecycleOwner
+    final override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        getBinding().lifecycleOwner = viewLifecycleOwner
+        super.onViewCreated(view, savedInstanceState)
     }
 
     /**

@@ -88,7 +88,7 @@ abstract class ParentsBindingFragment<BINDING : ViewBinding>(
     }
 
     @CallSuper
-    final override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super<RootFragment>.onViewCreated(view, savedInstanceState)
         onViewCreated(getBinding(), savedInstanceState)
         helper.startEventVmCollect { onEventVmCollect(getBinding()) }

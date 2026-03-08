@@ -14,8 +14,10 @@ import kr.open.library.simple_ui.xml.ui.view.recyclerview.OnScrollDirectionChang
 import kr.open.library.simple_ui.xml.ui.view.recyclerview.RecyclerScrollStateView
 import kr.open.library.simple_ui.xml.ui.view.recyclerview.ScrollDirection
 import kr.open.library.simple_ui.xml.ui.view.recyclerview.ScrollEdge
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -32,7 +34,7 @@ import org.robolectric.annotation.Config
  * - Listener registration (interface and lambda)
  * - Flow accessibility
  * - Lifecycle management
- * - WeakReference listener management
+ * - Strong-reference listener management and explicit clearing
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [Build.VERSION_CODES.TIRAMISU])
@@ -370,6 +372,47 @@ class RecyclerScrollStateViewRobolectricTest {
 
         // Then - should not crash, second listener replaces first
         assertNotNull(recyclerView)
+    }
+
+    @Test
+    fun setOnScrollDirectionListener_keepsStrongReferenceUntilExplicitlyCleared() {
+        val listenerField = RecyclerScrollStateView::class.java.getDeclaredField("onScrollDirectionChangedListener")
+        listenerField.isAccessible = true
+        val listener =
+            object : OnScrollDirectionChangedListener {
+                override fun onScrollDirectionChanged(scrollDirection: ScrollDirection) {}
+            }
+
+        recyclerView.setOnScrollDirectionListener(listener)
+
+        assertEquals(OnScrollDirectionChangedListener::class.java, listenerField.type)
+        assertSame(listener, listenerField.get(recyclerView))
+
+        recyclerView.setOnScrollDirectionListener(null as OnScrollDirectionChangedListener?)
+
+        assertNull(listenerField.get(recyclerView))
+    }
+
+    @Test
+    fun setOnReachEdgeListener_keepsStrongReferenceUntilExplicitlyCleared() {
+        val listenerField = RecyclerScrollStateView::class.java.getDeclaredField("onEdgeReachedListener")
+        listenerField.isAccessible = true
+        val listener =
+            object : OnEdgeReachedListener {
+                override fun onEdgeReached(
+                    edge: ScrollEdge,
+                    isReached: Boolean,
+                ) {}
+            }
+
+        recyclerView.setOnReachEdgeListener(listener)
+
+        assertEquals(OnEdgeReachedListener::class.java, listenerField.type)
+        assertSame(listener, listenerField.get(recyclerView))
+
+        recyclerView.setOnReachEdgeListener(null as OnEdgeReachedListener?)
+
+        assertNull(listenerField.get(recyclerView))
     }
 
     // ==============================================

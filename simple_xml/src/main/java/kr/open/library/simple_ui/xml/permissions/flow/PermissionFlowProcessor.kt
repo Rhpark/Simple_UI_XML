@@ -29,25 +29,53 @@ import kotlin.coroutines.resume
  *
  * @param host Host adapter supplying Activity/Fragment capabilities.<br><br>
  *             Activity/Fragment 기능을 제공하는 호스트 어댑터입니다.<br>
- * @param classifier Permission classifier for runtime/special/role decisions.<br><br>
- *                   런타임/특수/Role 판단에 사용하는 권한 분류기입니다.<br>
+ * @param classifierProvider Permission classifier provider for runtime/special/role decisions.<br><br>
+ *                           런타임/특수/Role 판단에 사용하는 권한 분류기 provider입니다.<br>
  * @param runtimeHandler Handler for runtime permission rationale and mapping.<br><br>
  *                       런타임 권한 설명/결과 매핑 처리기입니다.<br>
- * @param specialHandler Handler for special permission checks and intents.<br><br>
- *                       특수 권한 확인/인텐트 처리기입니다.<br>
- * @param roleHandler Handler for role availability and intents.<br><br>
- *                    Role 사용 가능 여부/인텐트 처리기입니다.<br>
- * @param resultAggregator Aggregator for result updates and completion.<br><br>
- *                         결과 갱신/완료 처리를 담당하는 집계기입니다.<br>
+ * @param specialHandlerProvider Handler provider for special permission checks and intents.<br><br>
+ *                               특수 권한 확인/인텐트 처리기 provider입니다.<br>
+ * @param roleHandlerProvider Handler provider for role availability and intents.<br><br>
+ *                            Role 사용 가능 여부/인텐트 처리기 provider입니다.<br>
+ * @param resultAggregatorProvider Aggregator provider for result updates and completion.<br><br>
+ *                                 결과 갱신/완료 처리를 담당하는 집계기 provider입니다.<br>
  */
 internal class PermissionFlowProcessor(
     private val host: PermissionHostAdapter,
-    private val classifier: PermissionClassifier,
+    private val classifierProvider: () -> PermissionClassifier,
     private val runtimeHandler: RuntimePermissionHandler,
-    private val specialHandler: SpecialPermissionHandler,
-    private val roleHandler: RolePermissionHandler,
-    private val resultAggregator: PermissionResultAggregator,
+    private val specialHandlerProvider: () -> SpecialPermissionHandler,
+    private val roleHandlerProvider: () -> RolePermissionHandler,
+    private val resultAggregatorProvider: () -> PermissionResultAggregator,
 ) {
+    /**
+     * Lazily resolves the classifier to avoid early context access during requester construction.<br><br>
+     * 요청기 생성 시 조기 context 접근을 피하기 위해 분류기를 지연 조회합니다.<br>
+     */
+    private val classifier: PermissionClassifier
+        get() = classifierProvider()
+
+    /**
+     * Lazily resolves the special permission handler.<br><br>
+     * 특수 권한 처리기를 지연 조회합니다.<br>
+     */
+    private val specialHandler: SpecialPermissionHandler
+        get() = specialHandlerProvider()
+
+    /**
+     * Lazily resolves the role permission handler.<br><br>
+     * Role 권한 처리기를 지연 조회합니다.<br>
+     */
+    private val roleHandler: RolePermissionHandler
+        get() = roleHandlerProvider()
+
+    /**
+     * Lazily resolves the result aggregator.<br><br>
+     * 결과 집계기를 지연 조회합니다.<br>
+     */
+    private val resultAggregator: PermissionResultAggregator
+        get() = resultAggregatorProvider()
+
     /**
      * Snapshot of "requested before" flags for the current runtime request.<br><br>
      * 현재 런타임 요청에 대한 이전 요청 여부 스냅샷입니다.<br>
@@ -498,21 +526,15 @@ internal class PermissionFlowProcessor(
     ): Boolean {
         if (permissions.isEmpty()) return true
         val callback = onRationaleNeeded ?: return true
-        val decision = CompletableDeferred<Boolean>()
-        val dispatched = safeCatch(defaultValue = false) {
+        return awaitUserDecision { proceed, cancel ->
             callback.invoke(
                 PermissionRationaleRequest(
                     permissions = permissions,
-                    proceed = { decision.complete(true) },
-                    cancel = { decision.complete(false) },
+                    proceed = proceed,
+                    cancel = cancel,
                 ),
             )
-            true
         }
-        if (!dispatched) {
-            decision.complete(false)
-        }
-        return decision.await()
     }
 
     /**
@@ -531,21 +553,69 @@ internal class PermissionFlowProcessor(
         onNavigateToSettings: ((PermissionSettingsRequest) -> Unit)?,
     ): Boolean {
         val callback = onNavigateToSettings ?: return true
-        val decision = CompletableDeferred<Boolean>()
-        val dispatched = safeCatch(defaultValue = false) {
+        return awaitUserDecision { proceed, cancel ->
             callback.invoke(
                 PermissionSettingsRequest(
                     permission = permission,
-                    proceed = { decision.complete(true) },
-                    cancel = { decision.complete(false) },
+                    proceed = proceed,
+                    cancel = cancel,
                 ),
             )
-            true
         }
-        if (!dispatched) {
-            decision.complete(false)
+    }
+
+    /**
+     * Awaits a one-shot user decision and auto-cancels on host destroy/coroutine cancellation.<br><br>
+     * 1회성 사용자 결정을 대기하고 host 종료/코루틴 취소 시 자동으로 취소 처리합니다.<br>
+     *
+     * @param showUi Callback that exposes proceed/cancel actions to the caller.<br><br>
+     *               호출자에게 proceed/cancel 액션을 노출하는 콜백입니다.<br>
+     * @return Return value: true when proceeding, false when canceled or host destroyed.<br><br>
+     *         반환값: 진행 시 true, 취소 또는 host 종료 시 false입니다.<br>
+     */
+    private suspend fun awaitUserDecision(
+        showUi: (proceed: () -> Unit, cancel: () -> Unit) -> Unit,
+    ): Boolean {
+        val lifecycle = host.lifecycleOwner.lifecycle
+        if (lifecycle.currentState == Lifecycle.State.DESTROYED) return false
+
+        return suspendCancellableCoroutine { continuation ->
+            var consumed = false
+            lateinit var observer: DefaultLifecycleObserver
+
+            fun finish(value: Boolean) {
+                if (consumed) return
+                consumed = true
+                lifecycle.removeObserver(observer)
+                if (continuation.isActive) {
+                    continuation.resume(value)
+                }
+            }
+
+            observer = object : DefaultLifecycleObserver {
+                override fun onDestroy(owner: LifecycleOwner) {
+                    finish(false)
+                }
+            }
+
+            lifecycle.addObserver(observer)
+
+            val dispatched = safeCatch(defaultValue = false) {
+                showUi(
+                    { finish(true) },
+                    { finish(false) },
+                )
+                true
+            }
+
+            if (!dispatched) {
+                finish(false)
+            }
+
+            continuation.invokeOnCancellation {
+                lifecycle.removeObserver(observer)
+            }
         }
-        return decision.await()
     }
 
     /**
@@ -575,16 +645,19 @@ internal class PermissionFlowProcessor(
     }
 
     /**
-     * Dispatches activity result callbacks to role handlers only.<br><br>
-     * ActivityResult 콜백은 Role 처리에만 전달합니다.<br>
+     * Dispatches activity result callbacks to role and special handlers.<br><br>
+     * ActivityResult 콜백을 Role 및 특수 권한 처리기로 전달합니다.<br>
      *
-     * Special permissions are confirmed on resume to avoid premature completion.<br><br>
-     * 특수 권한은 조기 완료를 피하기 위해 onResume에서만 확정합니다.<br>
+     * Special permissions are completed immediately when ActivityResult arrives,
+     * while onResume remains as a fallback path for devices that return later.<br><br>
+     * 특수 권한은 ActivityResult가 도착하면 즉시 완료하고,
+     * onResume은 늦게 복귀하는 기기를 위한 fallback 경로로 유지합니다.<br>
      */
     private fun handleActivityResultReturn() {
         when (currentActivityAction) {
             is InFlightActivityAction.Role -> handleRolePermissionReturn()
-            is InFlightActivityAction.Special, null -> Unit
+            is InFlightActivityAction.Special -> handleSpecialPermissionReturn()
+            null -> Unit
         }
     }
 

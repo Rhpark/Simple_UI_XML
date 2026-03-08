@@ -50,10 +50,10 @@ import kr.open.library.simple_ui.xml.permissions.register.PermissionRequestInter
  *
  * **Important notes / 주의사항:**<br>
  * - Permission requests must be made only after the DialogFragment is attached (isAdded == true).<br>
- * - Calling onRequestPermissions() before attachment may throw because PermissionRequester uses requireContext().<br>
+ * - Calling onRequestPermissions() before attachment is not supported; call only after the DialogFragment is attached.<br>
  * - Use safeShow/safeDismiss instead of show/dismiss to prevent crashes from IllegalStateException.<br><br>
  * - 권한 요청은 DialogFragment가 attach된 이후(isAdded == true)에만 수행해야 합니다.<br>
- * - attach 이전에 onRequestPermissions()를 호출하면 PermissionRequester가 requireContext()를 사용해 크래시가 발생할 수 있습니다.<br>
+ * - attach 이전의 onRequestPermissions() 호출은 지원하지 않으며, DialogFragment가 attach된 뒤에만 호출해야 합니다.<br>
  * - IllegalStateException으로 인한 크래시를 방지하기 위해 show/dismiss 대신 safeShow/safeDismiss를 사용하세요.<br>
  *
  * **Features / 기능:**<br>

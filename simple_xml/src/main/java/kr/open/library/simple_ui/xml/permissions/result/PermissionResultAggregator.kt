@@ -147,7 +147,7 @@ internal class PermissionResultAggregator(
 
         if (entry.onDeniedResult != null) {
             safeCatch { entry.onDeniedResult.invoke(deniedResults) }
-        } else {
+        } else if (deniedResults.isNotEmpty()) {
             stateStore.update { snapshot ->
                 snapshot.orphanedResults.add(
                     OrphanedDeniedRequestResult(

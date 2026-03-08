@@ -15,6 +15,7 @@ color: purple
 - 사용자 승인 없이 파일 생성/수정 금지
 - 일부만 보고 전체를 작성하지 않는다
 - 거짓말 금지
+- 모호한 단어, 용어, 흐름 금지
 
 ## 기준 문서
 - 인덱스: docs/rules/CODING_RULE_INDEX.md

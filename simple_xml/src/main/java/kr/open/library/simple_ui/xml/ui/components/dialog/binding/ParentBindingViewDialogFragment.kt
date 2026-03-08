@@ -77,11 +77,7 @@ abstract class ParentBindingViewDialogFragment<BINDING : ViewBinding>(
      * @return The initialized ViewBinding instance.<br><br>
      *         초기화된 ViewBinding 인스턴스.<br>
      */
-    protected abstract fun createBinding(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        isAttachToParent: Boolean,
-    ): BINDING
+    protected abstract fun createBinding(inflater: LayoutInflater, container: ViewGroup?, isAttachToParent: Boolean): BINDING
 
     @CallSuper
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {

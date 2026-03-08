@@ -3,6 +3,8 @@
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
 import kr.open.library.simple_ui.core.logcat.Logx
@@ -30,6 +32,11 @@ import java.util.UUID
 /**
  * Coordinates runtime, special, and role permission requests through one API.<br><br>
  * 런타임/특수/Role 권한 요청을 하나의 API로 조정합니다.<br>
+ *
+ * The requester itself can be created before a Fragment is attached, but actual permission
+ * execution requires a lifecycle-ready host.<br><br>
+ * 요청기 자체는 Fragment attach 이전에도 생성할 수 있지만, 실제 권한 실행은 lifecycle 준비가 된
+ * 호스트에서만 가능합니다.<br>
  *
  * @param host Host adapter supplying Activity/Fragment capabilities.<br><br>
  *             Activity/Fragment 기능을 제공하는 호스트 어댑터입니다.<br>
@@ -89,7 +96,9 @@ class PermissionRequester private constructor(
      * Permission classifier for runtime/special/role categorization.<br><br>
      * 런타임/특수/Role 분류를 위한 권한 분류기입니다.<br>
      */
-    private val classifier: PermissionClassifier = PermissionClassifier(host.context)
+    private val classifier: PermissionClassifier by lazy(LazyThreadSafetyMode.NONE) {
+        PermissionClassifier(host.context)
+    }
 
     /**
      * Runtime permission handler for rationale and result mapping.<br><br>
@@ -101,13 +110,17 @@ class PermissionRequester private constructor(
      * Special permission handler for settings intents and checks.<br><br>
      * 특수 권한의 설정 인텐트/상태 확인 처리기입니다.<br>
      */
-    private val specialHandler: SpecialPermissionHandler = SpecialPermissionHandler(host.context)
+    private val specialHandler: SpecialPermissionHandler by lazy(LazyThreadSafetyMode.NONE) {
+        SpecialPermissionHandler(host.context)
+    }
 
     /**
      * Role permission handler for RoleManager checks and intents.<br><br>
      * RoleManager 기반 역할 권한 처리기입니다.<br>
      */
-    private val roleHandler: RolePermissionHandler = RolePermissionHandler(host.context)
+    private val roleHandler: RolePermissionHandler by lazy(LazyThreadSafetyMode.NONE) {
+        RolePermissionHandler(host.context)
+    }
 
     /**
      * Active request entries keyed by request ID.<br><br>
@@ -125,14 +138,16 @@ class PermissionRequester private constructor(
      * Aggregator for request results and persistence updates.<br><br>
      * 요청 결과와 상태 저장 업데이트를 집계하는 객체입니다.<br>
      */
-    private val resultAggregator = PermissionResultAggregator(
-        stateStore = stateStore,
-        stateSnapshot = stateSnapshot,
-        queue = queue,
-        requests = requests,
-        inFlightWaiters = inFlightWaiters,
-        classifier = classifier,
-    )
+    private val resultAggregator: PermissionResultAggregator by lazy(LazyThreadSafetyMode.NONE) {
+        PermissionResultAggregator(
+            stateStore = stateStore,
+            stateSnapshot = stateSnapshot,
+            queue = queue,
+            requests = requests,
+            inFlightWaiters = inFlightWaiters,
+            classifier = classifier,
+        )
+    }
 
     /**
      * Processor that handles runtime/special/role permission flows.<br><br>
@@ -140,26 +155,28 @@ class PermissionRequester private constructor(
      */
     private val flowProcessor = PermissionFlowProcessor(
         host = host,
-        classifier = classifier,
+        classifierProvider = { classifier },
         runtimeHandler = runtimeHandler,
-        specialHandler = specialHandler,
-        roleHandler = roleHandler,
-        resultAggregator = resultAggregator,
+        specialHandlerProvider = { specialHandler },
+        roleHandlerProvider = { roleHandler },
+        resultAggregatorProvider = { resultAggregator },
     )
 
     /**
      * Coordinator that serializes request processing and restoration.<br><br>
      * 요청 처리/복원을 직렬화하는 조정자입니다.<br>
      */
-    private val coordinator = PermissionRequestCoordinator(
-        queue = queue,
-        stateSnapshot = stateSnapshot,
-        requests = requests,
-        inFlightWaiters = inFlightWaiters,
-        scope = host.lifecycleOwner.lifecycleScope,
-        flowProcessor = flowProcessor,
-        resultAggregator = resultAggregator,
-    )
+    private val coordinator: PermissionRequestCoordinator by lazy(LazyThreadSafetyMode.NONE) {
+        PermissionRequestCoordinator(
+            queue = queue,
+            stateSnapshot = stateSnapshot,
+            requests = requests,
+            inFlightWaiters = inFlightWaiters,
+            scope = host.lifecycleOwner.lifecycleScope,
+            flowProcessor = flowProcessor,
+            resultAggregator = resultAggregator,
+        )
+    }
 
     /**
      * Flag indicating restoreState was already applied.<br><br>
@@ -180,6 +197,12 @@ class PermissionRequester private constructor(
     private var isCoordinatorStarted: Boolean = false
 
     /**
+     * Observer used when restored requests must wait for the host lifecycle to become ready.<br><br>
+     * 복원된 요청이 host lifecycle 준비를 기다려야 할 때 사용하는 옵저버입니다.<br>
+     */
+    private var pendingCoordinatorStartObserver: DefaultLifecycleObserver? = null
+
+    /**
      * Restores internal state from [savedInstanceState].<br><br>
      * [savedInstanceState]에서 내부 상태를 복원합니다.<br>
      *
@@ -197,7 +220,7 @@ class PermissionRequester private constructor(
         }
         hasRestoredState = true
         stateStore.restoreState(savedInstanceState)
-        ensureCoordinatorStarted()
+        ensureCoordinatorStartedWhenReady()
     }
 
     /**
@@ -260,12 +283,12 @@ class PermissionRequester private constructor(
         if (handleEmptyRequest(permissions, onDeniedResult)) return
 
         val normalizedPermissions = normalizePermissions(permissions)
-        val invalidPermissions = normalizedPermissions.filter { classifier.isInvalid(it) }.toSet()
-        if (handleLifecycleNotReady(normalizedPermissions, invalidPermissions, onDeniedResult)) return
+        if (handleLifecycleNotReady(normalizedPermissions, onDeniedResult)) return
 
         hasRequestStarted = true
         ensureCoordinatorStarted()
 
+        val invalidPermissions = normalizedPermissions.filter { classifier.isInvalid(it) }.toSet()
         val requestId = UUID.randomUUID().toString()
         val results = mutableMapOf<String, PermissionDecisionType>()
         val pendingPermissions = mutableListOf<String>()
@@ -312,27 +335,20 @@ class PermissionRequester private constructor(
      *
      * @param normalizedPermissions Deduplicated permission list.<br><br>
      *                              중복 제거된 권한 목록입니다.<br>
-     * @param invalidPermissions Set of permissions not declared in manifest.<br><br>
-     *                           매니페스트에 선언되지 않은 권한 집합입니다.<br>
-     * @param onDeniedResult Callback invoked with LIFECYCLE_NOT_READY or MANIFEST_UNDECLARED denied items.<br><br>
-     *                       LIFECYCLE_NOT_READY 또는 MANIFEST_UNDECLARED 거부 항목을 전달받는 콜백입니다.<br>
+     * @param onDeniedResult Callback invoked with LIFECYCLE_NOT_READY denied items.<br><br>
+     *                       LIFECYCLE_NOT_READY 거부 항목을 전달받는 콜백입니다.<br>
      * @return `true` if lifecycle was not ready and handled, `false` otherwise.<br><br>
      *         라이프사이클이 준비되지 않아 처리되었으면 `true`, 아니면 `false`.<br>
      */
     private fun handleLifecycleNotReady(
         normalizedPermissions: List<String>,
-        invalidPermissions: Set<String>,
         onDeniedResult: (List<PermissionDeniedItem>) -> Unit,
     ): Boolean {
         if (!flowProcessor.isLifecycleRequestAllowed()) {
             safeCatch {
                 onDeniedResult(
                     normalizedPermissions.map { permission ->
-                        if (invalidPermissions.contains(permission)) {
-                            PermissionDeniedItem(permission, PermissionDeniedType.MANIFEST_UNDECLARED)
-                        } else {
-                            PermissionDeniedItem(permission, PermissionDeniedType.LIFECYCLE_NOT_READY)
-                        }
+                        PermissionDeniedItem(permission, PermissionDeniedType.LIFECYCLE_NOT_READY)
                     },
                 )
             }
@@ -504,8 +520,63 @@ class PermissionRequester private constructor(
      */
     private fun ensureCoordinatorStarted() {
         if (isCoordinatorStarted) return
+        clearPendingCoordinatorStartObserver()
         coordinator.start()
         isCoordinatorStarted = true
+    }
+
+    /**
+     * Starts the coordinator immediately when lifecycle is ready, or waits until create/start.<br><br>
+     * lifecycle이 준비되면 즉시 코디네이터를 시작하고, 아니면 create/start 시점까지 대기합니다.<br>
+     */
+    private fun ensureCoordinatorStartedWhenReady() {
+        if (isCoordinatorStarted) return
+        if (flowProcessor.isLifecycleRequestAllowed()) {
+            ensureCoordinatorStarted()
+            return
+        }
+        if (pendingCoordinatorStartObserver != null) return
+
+        val lifecycle = host.lifecycleOwner.lifecycle
+        val observer = object : DefaultLifecycleObserver {
+            override fun onCreate(owner: LifecycleOwner) {
+                tryStartCoordinatorOnLifecycleReady()
+            }
+
+            override fun onStart(owner: LifecycleOwner) {
+                tryStartCoordinatorOnLifecycleReady()
+            }
+
+            override fun onDestroy(owner: LifecycleOwner) {
+                clearPendingCoordinatorStartObserver()
+            }
+        }
+
+        pendingCoordinatorStartObserver = observer
+        lifecycle.addObserver(observer)
+    }
+
+    /**
+     * Attempts to start the coordinator when the lifecycle satisfies request preconditions.<br><br>
+     * lifecycle이 요청 전제 조건을 만족할 때 코디네이터 시작을 시도합니다.<br>
+     */
+    private fun tryStartCoordinatorOnLifecycleReady() {
+        if (isCoordinatorStarted) {
+            clearPendingCoordinatorStartObserver()
+            return
+        }
+        if (!flowProcessor.isLifecycleRequestAllowed()) return
+        ensureCoordinatorStarted()
+    }
+
+    /**
+     * Clears the pending lifecycle observer used for deferred coordinator start.<br><br>
+     * 지연 코디네이터 시작에 사용하는 대기 중 lifecycle 옵저버를 정리합니다.<br>
+     */
+    private fun clearPendingCoordinatorStartObserver() {
+        val observer = pendingCoordinatorStartObserver ?: return
+        host.lifecycleOwner.lifecycle.removeObserver(observer)
+        pendingCoordinatorStartObserver = null
     }
 
     /**

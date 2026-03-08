@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.xml.R
-import java.lang.ref.WeakReference
 
 /**
  * A custom RecyclerView that provides edge reach and scroll direction detection.<br>
@@ -82,16 +81,16 @@ public open class RecyclerScrollStateView : RecyclerView {
     )
 
     /**
-     * Listener for edge reach events using WeakReference to prevent memory leaks.<br><br>
-     * 메모리 누수 방지를 위해 WeakReference를 사용하는 가장자리 도달 이벤트 리스너입니다.<br>
+     * Listener for edge reach events.<br><br>
+     * 가장자리 도달 이벤트 리스너입니다.<br>
      */
-    private var onEdgeReachedListener: WeakReference<OnEdgeReachedListener>? = null
+    private var onEdgeReachedListener: OnEdgeReachedListener? = null
 
     /**
-     * Listener for scroll direction change events using WeakReference.<br><br>
-     * WeakReference를 사용하는 스크롤 방향 변경 이벤트 리스너입니다.<br>
+     * Listener for scroll direction change events.<br><br>
+     * 스크롤 방향 변경 이벤트 리스너입니다.<br>
      */
-    private var onScrollDirectionChangedListener: WeakReference<OnScrollDirectionChangedListener>? = null
+    private var onScrollDirectionChangedListener: OnScrollDirectionChangedListener? = null
 
     /**
      * MutableSharedFlow for scroll direction events.<br>
@@ -188,7 +187,7 @@ public open class RecyclerScrollStateView : RecyclerView {
      *                  새로운 스크롤 방향.<br>
      */
     private fun notifyScrollDirectionChanged(direction: ScrollDirection) {
-        onScrollDirectionChangedListener?.get()?.onScrollDirectionChanged(direction)
+        onScrollDirectionChangedListener?.onScrollDirectionChanged(direction)
         msfScrollDirectionFlow.safeEmit(direction) {
             Logx.w("Fail emit data $direction")
         }
@@ -218,14 +217,14 @@ public open class RecyclerScrollStateView : RecyclerView {
         )
 
         if (result.topChanged) {
-            onEdgeReachedListener?.get()?.onEdgeReached(ScrollEdge.TOP, result.isAtTop)
+            onEdgeReachedListener?.onEdgeReached(ScrollEdge.TOP, result.isAtTop)
             msfEdgeReachedFlow.safeEmit(ScrollEdge.TOP to result.isAtTop) {
                 Logx.w("Failure emit Edge ${ScrollEdge.TOP}, ${result.isAtTop}")
             }
         }
 
         if (result.bottomChanged) {
-            onEdgeReachedListener?.get()?.onEdgeReached(ScrollEdge.BOTTOM, result.isAtBottom)
+            onEdgeReachedListener?.onEdgeReached(ScrollEdge.BOTTOM, result.isAtBottom)
             msfEdgeReachedFlow.safeEmit(ScrollEdge.BOTTOM to result.isAtBottom) {
                 Logx.w("Failure emit Edge ${ScrollEdge.BOTTOM}, ${result.isAtBottom}")
             }
@@ -245,14 +244,14 @@ public open class RecyclerScrollStateView : RecyclerView {
         )
 
         if (result.leftChanged) {
-            onEdgeReachedListener?.get()?.onEdgeReached(ScrollEdge.LEFT, result.isAtLeft)
+            onEdgeReachedListener?.onEdgeReached(ScrollEdge.LEFT, result.isAtLeft)
             msfEdgeReachedFlow.safeEmit(ScrollEdge.LEFT to result.isAtLeft) {
                 Logx.w("Failure emit Edge ${ScrollEdge.LEFT}, ${result.isAtLeft}")
             }
         }
 
         if (result.rightChanged) {
-            onEdgeReachedListener?.get()?.onEdgeReached(ScrollEdge.RIGHT, result.isAtRight)
+            onEdgeReachedListener?.onEdgeReached(ScrollEdge.RIGHT, result.isAtRight)
             msfEdgeReachedFlow.safeEmit(ScrollEdge.RIGHT to result.isAtRight) {
                 Logx.w("Failure emit Edge ${ScrollEdge.RIGHT}, ${result.isAtRight}")
             }
@@ -356,10 +355,10 @@ public open class RecyclerScrollStateView : RecyclerView {
      * - [ScrollDirection.UP], [ScrollDirection.DOWN], [ScrollDirection.LEFT], [ScrollDirection.RIGHT], [ScrollDirection.IDLE]<br>
      *
      * @param listener The listener to be notified of scroll direction changes.<br><br>
-     *                 스크롤 방향 변경 알림을 받을 리스너.<br>
+     *                 스크롤 방향 변경 알림을 받을 리스너. null을 전달하면 리스너를 해제합니다.<br>
      */
     public fun setOnScrollDirectionListener(listener: OnScrollDirectionChangedListener?) {
-        this.onScrollDirectionChangedListener = listener?.let { WeakReference(it) }
+        this.onScrollDirectionChangedListener = listener
     }
 
     /**
@@ -395,10 +394,10 @@ public open class RecyclerScrollStateView : RecyclerView {
      * 현재 가장자리에 도달했는지(`true`) 아닌지(`false`)를 나타내는 boolean 값을 수신합니다.<br>
      *
      * @param listener The listener to be notified of edge reach events.<br><br>
-     *                 가장자리 도달 이벤트 알림을 받을 리스너.<br>
+     *                 가장자리 도달 이벤트 알림을 받을 리스너. null을 전달하면 리스너를 해제합니다.<br>
      */
     public fun setOnReachEdgeListener(listener: OnEdgeReachedListener?) {
-        this.onEdgeReachedListener = listener?.let { WeakReference(it) }
+        this.onEdgeReachedListener = listener
     }
 
     /**

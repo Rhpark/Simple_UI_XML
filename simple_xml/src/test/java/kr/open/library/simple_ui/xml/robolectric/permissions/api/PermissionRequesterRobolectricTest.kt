@@ -1,46 +1,47 @@
-﻿package kr.open.library.simple_ui.xml.robolectric.permissions.api
+package kr.open.library.simple_ui.xml.robolectric.permissions.api
 
+import android.os.Bundle
+import android.os.Looper
 import androidx.activity.ComponentActivity
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import kr.open.library.simple_ui.core.permissions.model.PermissionDecisionType
 import kr.open.library.simple_ui.core.permissions.model.PermissionDeniedItem
 import kr.open.library.simple_ui.core.permissions.model.PermissionDeniedType
 import kr.open.library.simple_ui.xml.permissions.api.PermissionRequester
+import kr.open.library.simple_ui.xml.permissions.state.PermissionStateStore
+import kr.open.library.simple_ui.xml.permissions.state.RequestState
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.Shadows
 
 /**
- * Robolectric tests for PermissionRequester empty-request behavior.<br><br>
- * PermissionRequester의 빈 요청 처리 동작을 검증하는 Robolectric 테스트입니다.<br>
+ * Robolectric tests for PermissionRequester behavior.<br><br>
+ * PermissionRequester 동작을 검증하는 Robolectric 테스트입니다.<br>
  */
 @RunWith(RobolectricTestRunner::class)
 class PermissionRequesterRobolectricTest {
+    /**
+     * Simple fragment used to verify pre-attach requester creation.<br><br>
+     * attach 이전 요청기 생성을 검증하는 단순 Fragment입니다.<br>
+     */
+    class TestFragment : Fragment()
+
     /**
      * Verifies that an empty request returns EMPTY_REQUEST with empty permission.<br><br>
      * 빈 요청이 EMPTY_REQUEST와 빈 권한으로 반환되는지 검증합니다.<br>
      */
     @Test
     fun emptyRequestShouldReturnEmptyRequest() {
-        /* Activity controller for test lifecycle.<br><br>
-         * 테스트 라이프사이클용 Activity 컨트롤러입니다.<br>
-         */
         val activityController = Robolectric.buildActivity(ComponentActivity::class.java).create()
-
-        /* Activity instance used as requester host.<br><br>
-         * 요청 호스트로 사용하는 Activity 인스턴스입니다.<br>
-         */
         val activity = activityController.get()
-
-        /* PermissionRequester instance under test.<br><br>
-         * 테스트 대상 PermissionRequester 인스턴스입니다.<br>
-         */
         val requester = PermissionRequester(activity)
 
-        /* Captured denied result list.<br><br>
-         * 캡처한 거부 결과 목록입니다.<br>
-         */
         var results: List<PermissionDeniedItem>? = null
 
         requester.requestPermissions(
@@ -52,5 +53,100 @@ class PermissionRequesterRobolectricTest {
         assertEquals(1, results?.size)
         assertEquals("", results?.first()?.permission)
         assertEquals(PermissionDeniedType.EMPTY_REQUEST, results?.first()?.result)
+    }
+
+    /**
+     * Verifies that a fragment-bound requester can be created before attachment.<br><br>
+     * Fragment attach 이전에도 fragment 바인딩 요청기를 생성할 수 있는지 검증합니다.<br>
+     */
+    @Test
+    fun fragmentRequester_canBeCreatedBeforeAttachment() {
+        val fragment = TestFragment()
+
+        val requester = PermissionRequester(fragment)
+
+        assertNotNull(requester)
+    }
+
+    /**
+     * Verifies that restored requests are processed after the fragment becomes lifecycle-ready.<br><br>
+     * 복원된 요청이 Fragment lifecycle 준비 후 자동으로 처리되는지 검증합니다.<br>
+     */
+    @Test
+    fun restoreState_beforeFragmentAttached_processesRestoredRequestAfterAttach() {
+        val fragment = TestFragment()
+        val requester = PermissionRequester(fragment)
+        val requestId = "restored-pending-request"
+        val permission = "android.permission.CAMERA"
+        val savedState = createSavedState(
+            requestId = requestId,
+            permissions = listOf(permission),
+        )
+
+        requester.restoreState(savedState)
+
+        val activityController = Robolectric.buildActivity(FragmentActivity::class.java).setup()
+        val activity = activityController.get()
+        activity.supportFragmentManager
+            .beginTransaction()
+            .add(fragment, "permission-fragment")
+            .commitNow()
+        Shadows.shadowOf(Looper.getMainLooper()).idle()
+
+        val orphanedResults = requester.consumeOrphanedDeniedResults()
+        assertEquals(1, orphanedResults.size)
+        assertEquals(requestId, orphanedResults.first().requestId)
+        assertEquals(permission, orphanedResults
+            .first()
+            .deniedResults
+            .first()
+            .permission)
+    }
+
+    /**
+     * Verifies that fully granted restored requests do not become orphaned denied results.<br><br>
+     * 전부 승인된 복원 요청이 orphaned denied result로 저장되지 않는지 검증합니다.<br>
+     */
+    @Test
+    fun restoreState_withGrantedCompletedRequest_doesNotStoreOrphanedDeniedResult() {
+        val activityController = Robolectric.buildActivity(ComponentActivity::class.java).create()
+        val activity = activityController.get()
+        val requester = PermissionRequester(activity)
+        val requestId = "restored-granted-request"
+        val permission = "android.permission.CAMERA"
+        val savedState = createSavedState(
+            requestId = requestId,
+            permissions = listOf(permission),
+            results = mapOf(permission to PermissionDecisionType.GRANTED),
+        )
+
+        requester.restoreState(savedState)
+        activityController.start().resume()
+        Shadows.shadowOf(Looper.getMainLooper()).idle()
+
+        assertTrue(requester.consumeOrphanedDeniedResults().isEmpty())
+    }
+
+    /**
+     * Creates a saved state bundle containing a single permission request entry.<br><br>
+     * 단일 권한 요청 엔트리를 포함한 saved state 번들을 생성합니다.<br>
+     */
+    private fun createSavedState(
+        requestId: String,
+        permissions: List<String>,
+        results: Map<String, PermissionDecisionType> = emptyMap(),
+    ): Bundle {
+        val stateStore = PermissionStateStore()
+        stateStore.update { snapshot ->
+            snapshot.requestQueue.add(requestId)
+            snapshot.requestStates[requestId] = RequestState(
+                requestId = requestId,
+                permissions = permissions,
+                results = results,
+            )
+        }
+        return Bundle().also { outState ->
+            stateStore.saveState(outState)
+        }
     }
 }

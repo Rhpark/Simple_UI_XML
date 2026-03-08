@@ -730,17 +730,17 @@ lifecycleScope.launch {
 }
 ```
 
-### Memory Management (Automatic) (메모리 관리, 자동)
+### Memory Management (Listener Retention) (메모리 관리, 리스너 보관 방식)
 
-RecyclerScrollStateView uses **WeakReference** to manage listeners.
+RecyclerScrollStateView keeps listener references strongly until you replace them or clear them with `null`.
 
-- ✅ No memory leaks even if Activity/Fragment is destroyed 
-- ✅ No explicit listener removal needed 
-- ✅ Automatically managed in onAttachedToWindow/onDetachedFromWindow
-> RecyclerScrollStateView는 **WeakReference**를 사용하여 리스너를 관리합니다.
-> - ✅ Activity/Fragment가 종료되어도 메모리 누수 없음
-> - ✅ 명시적인 리스너 해제 불필요
-> - ✅ onAttachedToWindow/onDetachedFromWindow에서 자동 관리
+- ✅ Lambda and anonymous object listeners remain active reliably
+- ✅ Flow API can still be used without listener registration
+- ✅ You can explicitly clear listeners with `setOnScrollDirectionListener(null)` / `setOnReachEdgeListener(null)`
+> RecyclerScrollStateView는 리스너를 `null`로 교체하거나 해제할 때까지 **strong reference**로 보관합니다.
+> - ✅ 람다와 익명 객체 리스너가 GC로 조용히 사라지지 않습니다
+> - ✅ Flow API는 리스너 등록 없이 그대로 사용할 수 있습니다
+> - ✅ 필요하면 `setOnScrollDirectionListener(null)`, `setOnReachEdgeListener(null)`으로 명시 해제할 수 있습니다
 
 ### Threshold Value Selection Guide (threshold 값 선택 가이드)
 

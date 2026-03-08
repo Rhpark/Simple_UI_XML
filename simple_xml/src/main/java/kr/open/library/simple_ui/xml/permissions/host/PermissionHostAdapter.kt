@@ -93,10 +93,13 @@ sealed class PermissionHostAdapter {
         private val fragment: Fragment,
     ) : PermissionHostAdapter() {
         /**
-         * Context bound to the Fragment host.<br><br>
+         * Context bound to the Fragment host.<br>
+         * Resolved lazily so the requester can be created before attachment.<br><br>
          * Fragment 호스트에 바인딩된 컨텍스트입니다.<br>
+         * 요청기를 attach 이전에 생성할 수 있도록 지연 조회합니다.<br>
          */
-        override val context: Context = fragment.requireContext()
+        override val context: Context
+            get() = fragment.requireContext()
 
         /**
          * ActivityResult caller bound to the Fragment host.<br><br>

@@ -107,7 +107,7 @@ class FloatingViewControllerActivity : BaseActivity(R.layout.activity_floating_c
 
     private fun moveFloatingView(item: Pair<FloatingViewTouchType, FloatingViewCollisionsType>) {
         floatingViewController.getFloatingFixedView()?.view?.let {
-            if (item.second == FloatingViewCollisionsType.OCCURRING) {
+            if (item.second == FloatingViewCollisionsType.OCCURING) {
                 val rotationAnim = ObjectAnimator.ofFloat(it, "rotation", 0.0f, 180.0f)
                 rotationAnim.duration = 300
                 rotationAnim.start()
@@ -128,7 +128,7 @@ class FloatingViewControllerActivity : BaseActivity(R.layout.activity_floating_c
 
                     override fun onAnimationEnd(animation: Animator) {
                         floatingViewController.getFloatingFixedView()?.let { it.view.setGone() }
-                        if (item.second == FloatingViewCollisionsType.OCCURRING) {
+                        if (item.second == FloatingViewCollisionsType.OCCURING) {
                             floatingViewController.removeFloatingDragView(floatingView)
                         }
                     }
