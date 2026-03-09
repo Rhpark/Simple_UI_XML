@@ -639,6 +639,10 @@ public final class kr/open/library/simple_ui/core/system_manager/controller/alar
 	public final fun createSimple (ILjava/lang/String;Ljava/lang/String;II)Lkr/open/library/simple_ui/core/system_manager/controller/alarm/vo/AlarmVO;
 }
 
+public final class kr/open/library/simple_ui/core/system_manager/controller/dump/wifiController/DumpWifiController {
+	public fun <init> ()V
+}
+
 public final class kr/open/library/simple_ui/core/system_manager/controller/notification/NotificationDefaultChannel {
 	public static final field DEFAULT_CHANNEL_DESCRIPTION Ljava/lang/String;
 	public static final field DEFAULT_CHANNEL_ID Ljava/lang/String;
@@ -1246,7 +1250,6 @@ public class kr/open/library/simple_ui/core/system_manager/info/location/Locatio
 	public final fun calculateBearing (Landroid/location/Location;Landroid/location/Location;)F
 	public final fun calculateDistance (Landroid/location/Location;Landroid/location/Location;)F
 	public final fun getLocation ()Landroid/location/Location;
-	public final fun getLocationManager ()Landroid/location/LocationManager;
 	public final fun getSfUpdate ()Lkotlinx/coroutines/flow/SharedFlow;
 	public final fun isAnyEnabled ()Z
 	public final fun isFusedEnabled ()Z
@@ -2033,10 +2036,6 @@ public final class kr/open/library/simple_ui/core/system_manager/info/network/te
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lkr/open/library/simple_ui/core/system_manager/info/network/telephony/data/state/TelephonyNetworkType;
 	public static fun values ()[Lkr/open/library/simple_ui/core/system_manager/info/network/telephony/data/state/TelephonyNetworkType;
-}
-
-public final class kr/open/library/simple_ui/core/system_manager/info/wifi/WifiStatusInfo {
-	public fun <init> ()V
 }
 
 public abstract class kr/open/library/simple_ui/core/viewmodel/BaseViewModel : androidx/lifecycle/ViewModel, androidx/lifecycle/DefaultLifecycleObserver {
