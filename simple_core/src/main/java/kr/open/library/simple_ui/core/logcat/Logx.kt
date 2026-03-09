@@ -556,8 +556,7 @@ object Logx {
      * 메시지 없이 현재 스레드 ID를 출력한다.<br>
      */
     @JvmStatic
-    fun t() =
-        pipeline.logThread(null, null, false, false, Process.myTid().toLong())
+    fun t() = pipeline.logThread(null, null, false, false, Process.myTid().toLong())
 
     /**
      * Logs current thread id with body.<br><br>

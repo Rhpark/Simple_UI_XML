@@ -61,10 +61,7 @@ import kr.open.library.simple_ui.core.permissions.internal.readDeclaredManifestP
  * @param requiredPermissions The list of required permissions (runtime/special only).<br><br>
  *                            필요한 권한 목록입니다 (런타임/특수 권한만 검증).<br>
  */
-public abstract class BaseSystemService(
-    protected val context: Context,
-    private val requiredPermissions: List<String>? = null,
-) {
+public abstract class BaseSystemService(protected val context: Context, private val requiredPermissions: List<String>? = null) {
     private var remainPermissions = emptyList<String>()
 
     init {

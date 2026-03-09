@@ -316,15 +316,13 @@ public open class DisplayInfo(
      * Returns true if the screen is in portrait orientation.<br><br>
      * 화면이 세로 방향인 경우 true를 반환합니다.<br>
      */
-    public fun isPortrait(): Boolean =
-        context.resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT
+    public fun isPortrait(): Boolean = context.resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT
 
     /**
      * Returns true if the screen is in landscape orientation.<br><br>
      * 화면이 가로 방향인 경우 true를 반환합니다.<br>
      */
-    public fun isLandscape(): Boolean =
-        context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+    public fun isLandscape(): Boolean = context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
     /**
      * Returns true if the app is in multi-window mode.<br><br>

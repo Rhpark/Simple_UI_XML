@@ -168,7 +168,7 @@ public inline fun Context.hasUsageStatsPermission(): Boolean = safeCatch(default
  */
 public inline fun Context.hasAccessibilityServicePermission(): Boolean = safeCatch(defaultValue = false) {
     val enabledServices = Settings.Secure.getString(contentResolver, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES,)
-    enabledServices?.contains(packageName) == true
+    enabledServices?.split(":")?.any { it.split("/").firstOrNull() == packageName } == true
 }
 
 /**
@@ -180,7 +180,7 @@ public inline fun Context.hasAccessibilityServicePermission(): Boolean = safeCat
  */
 public inline fun Context.hasNotificationListenerPermission(): Boolean = safeCatch(defaultValue = false) {
     val enabledListeners = Settings.Secure.getString(contentResolver, "enabled_notification_listeners",)
-    enabledListeners?.contains(packageName) == true
+    enabledListeners?.split(":")?.any { it.split("/").firstOrNull() == packageName } == true
 }
 
 /**

@@ -15,7 +15,7 @@ color: blue
 - 추측 금지
 
 ## 기준 문서
-- 인덱스: docs/rules/CODING_RULE_INDEX.md
+- 인덱스: docs/rules/CODING_RULE_INDEX.mddi rkr 
 - 코딩 규칙: docs/rules/coding_rule/*.md
 - 리뷰 절차: docs/rules/code_review/*.md
 - 개발환경: docs/rules/project/DEV_ENV_RULE.md

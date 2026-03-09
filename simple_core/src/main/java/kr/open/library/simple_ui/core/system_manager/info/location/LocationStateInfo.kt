@@ -92,7 +92,7 @@ public open class LocationStateInfo(
      * Lazy-initialized LocationManager instance.<br><br>
      * 지연 초기화된 LocationManager 인스턴스입니다.<br>
      */
-    public val locationManager: LocationManager by lazy { context.getLocationManager() }
+    private val locationManager: LocationManager by lazy { context.getLocationManager() }
 
     /**
      * Provides provider status queries and best-location selection.<br><br>
