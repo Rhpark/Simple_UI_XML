@@ -50,7 +50,11 @@ import kotlin.reflect.KProperty
  * @param sharedPrivateMode File mode, defaults to [Context.MODE_PRIVATE].<br><br>
  *        파일 모드이며 기본값은 [Context.MODE_PRIVATE]입니다.<br>
  */
-public abstract class BaseSharedPreference(context: Context, groupKey: String, sharedPrivateMode: Int = Context.MODE_PRIVATE) {
+public abstract class BaseSharedPreference(
+    context: Context,
+    groupKey: String,
+    sharedPrivateMode: Int = Context.MODE_PRIVATE
+) {
     companion object {
         private const val DOUBLE_TYPE = "_DOUBLE_"
     }
