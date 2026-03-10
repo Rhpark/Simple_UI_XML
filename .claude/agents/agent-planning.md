@@ -36,9 +36,13 @@ color: purple
   - Flow A → A-1 (코드 경로 입력) 이후
   - Flow B → B-1 Q2 (모듈 정보 수집) 이후
 
+완료 후 → `모듈 확정 전 — Flow 분기 후 minSdk/compileSdk 교차 검증 예정` 한 줄 출력
+
 ## 실행 방식 결정
 - 파일/패키지 단위 코드 분석 → 직접 읽기 (Read, Grep, Glob)
 - 광범위한 코드 탐색 → Task tool (subagent_type: general-purpose) 로 SubAgent 위임
+
+결정 후 → `대상:{대상} 방식:[직접읽기/SubAgent]` 한 줄 출력
 
 ---
 

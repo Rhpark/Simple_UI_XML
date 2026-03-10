@@ -15,7 +15,7 @@ color: blue
 - 추측 금지
 
 ## 기준 문서
-- 인덱스: docs/rules/CODING_RULE_INDEX.mddi rkr 
+- 인덱스: docs/rules/CODING_RULE_INDEX.md
 - 코딩 규칙: docs/rules/coding_rule/*.md
 - 리뷰 절차: docs/rules/code_review/*.md
 - 개발환경: docs/rules/project/DEV_ENV_RULE.md
@@ -27,14 +27,19 @@ color: blue
 2. 작업 대상 모듈의 build.gradle.kts 에서 minSdk / compileSdk 실제 값 교차 검증
 3. 파악한 값을 기준으로 SDK 버전 관련 이슈를 판단한다
 
+완료 후 → `모듈:{모듈명} minSdk:{값} compileSdk:{값}` 한 줄 출력
+
 ## 실행 방식 결정
 - 함수 / 파일 단위 → 직접 분석 (Read, Grep, Glob)
 - 패키지 / 흐름 단위 → Task tool (subagent_type: general-purpose) 로 SubAgent 위임
+
+결정 후 → `대상:{대상} 방식:[직접분석/SubAgent]` 한 줄 출력
 
 ## 리뷰 순서
 docs/rules/code_review/ 의 5단계를 순서대로 수행합니다.
 앞 단계에서 문제가 발견되어도 모든 단계를 끝까지 수행합니다.
 각 단계의 세부 규칙 기준은 docs/rules/coding_rule/ 을 참조합니다.
+각 단계 완료 후 → `✔ STEP{N}` 출력
 
 1. docs/rules/code_review/STEP1_FUNCTIONAL.md   - 기능 검증
 2. docs/rules/code_review/STEP2_LOGIC.md        - 로직 & 안정성

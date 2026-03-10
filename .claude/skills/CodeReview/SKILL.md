@@ -17,6 +17,7 @@ argument-hint: "파일경로 or 패키지명 or 클래스명 or 흐름설명"
  - 단일 파일시 직접 처리한다.
  - 다중 파일/ 패키지/ 흐름이라면 SubAgent를 호출해 사용한다.
 2. $ARGUMENTS 가 없으면 → ide_selection 을 대상으로 한다.
+3. `ide_selection` 도 없으면 → 사용자에게 대상 파일 경로, 패키지명, 클래스명을 요청한 후 진행한다.
  
 
 ## 실행 방식 결정
@@ -24,11 +25,18 @@ argument-hint: "파일경로 or 패키지명 or 클래스명 or 흐름설명"
 - 함수 / 파일 단위 → 직접 분석 (Read, Grep, Glob)
 - 패키지 / 흐름 단위 → Task tool (subagent_type: general-purpose) 로 SubAgent 위임
 
+실행 방식 결정 후, 아래 형식으로 반드시 출력한 뒤 리뷰를 시작한다.
+```
+> 대상: {대상 파일 또는 패키지}
+> 방식: [직접 분석 / SubAgent 위임]
+```
+
 ## 리뷰 순서
 
 docs/rules/code_review/ 의 5단계를 순서대로 수행한다.
 앞 단계에서 문제가 발견되어도 모든 단계를 끝까지 수행한다.
 각 단계의 세부 규칙 기준은 docs/rules/coding_rule/ 을 참조한다.
+각 단계 완료 후 `✔ STEP{N} 완료` 를 출력한 뒤 다음 단계로 진행한다.
 
 1. docs/rules/code_review/STEP1_FUNCTIONAL.md   - 기능 검증
 2. docs/rules/code_review/STEP2_LOGIC.md        - 로직 & 안정성
@@ -46,10 +54,11 @@ docs/rules/code_review/ 의 5단계를 순서대로 수행한다.
 - 사용자 편의성(*/20)
 - 기타(*/20)
 
-심각도 기준으로 최대 총 7개를 정리한다.
+위험도 순(CRITICAL → HIGH → MEDIUM → LOW)으로 최대 총 7개를 정리한다.
 - CRITICAL: 릴리즈 전 필수 수정
 - HIGH: 머지 전 필수 수정
 - MEDIUM/LOW: 선택 보고
+- 7개 초과 시 위험도가 높은 순서대로 포함하고, 나머지는 개수만 명시한다.
 
 각 이슈에 파일/라인/근거/수정안/호출부/테스트 영향을 포함한다.
 

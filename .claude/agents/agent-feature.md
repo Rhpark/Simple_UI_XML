@@ -22,12 +22,17 @@ color: green
 2. 작업 대상 모듈의 build.gradle.kts 에서 minSdk / compileSdk 실제 값 교차 검증
 3. 파악한 값을 기준으로 SDK 버전 관련 판단을 한다
 
+완료 후 → `모듈:{모듈명} minSdk:{값} compileSdk:{값}` 한 줄 출력
+
 ## 실행 방식 결정
 - 함수 / 파일 단위 → 직접 분석 (Read, Grep, Glob)
 - 패키지 / 흐름 단위 → Task tool (subagent_type: general-purpose) 로 SubAgent 위임
 
+결정 후 → `대상:{대상} 방식:[직접분석/SubAgent]` 한 줄 출력
+
 ## 구현 순서
 docs/rules/code_feature/ 의 5단계를 순서대로 수행합니다.
+각 단계 완료 후 → `✔ STEP{N}` 출력
 
 1. docs/rules/code_feature/STEP1_PLAN.md       - 요구사항 분석 & 설계
 2. docs/rules/code_feature/STEP2_SAFETY.md     - 안전망 확인
@@ -44,6 +49,8 @@ docs/rules/code_feature/ 의 5단계를 순서대로 수행합니다.
 | 추가 (add) | 새 API/기능 작성 | PRD/SPEC 신규 작성 또는 갱신 |
 | 개선 (improve) | 기존 API 동작 수정 | 하위 호환 유지 원칙, SPEC 갱신 |
 | 제거 (remove) | 기존 API/기능 삭제 | @Deprecated 선언 필수, apiDump 갱신, 마이너 버전 이상 |
+
+확정 후 → `유형:[추가/개선/제거] 대상:{대상 기능 또는 API명}` 한 줄 출력
 
 ## 마일스톤 기반 구현
 IMPLEMENTATION_PLAN.md 에 마일스톤이 정의된 경우 반드시 마일스톤 단위로 구현한다.

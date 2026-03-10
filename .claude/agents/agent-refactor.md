@@ -22,9 +22,13 @@ color: yellow
 2. 작업 대상 모듈의 build.gradle.kts 에서 minSdk / compileSdk 실제 값 교차 검증
 3. 파악한 값을 기준으로 SDK 버전 관련 판단을 한다
 
+완료 후 → `모듈:{모듈명} minSdk:{값} compileSdk:{값}` 한 줄 출력
+
 ## 실행 방식 결정
 - 함수 / 파일 단위 → 직접 분석 (Read, Grep, Glob)
 - 패키지 / 흐름 단위 → Task tool (subagent_type: general-purpose) 로 SubAgent 위임
+
+결정 후 → `대상:{대상} 방식:[직접분석/SubAgent]` 한 줄 출력
 
 ## 진입 흐름
 
@@ -35,9 +39,12 @@ color: yellow
 | agent-review 이슈 요약이 제공된 경우 | 요약을 대상으로 설정 → STEP1에서 분석 생략 → STEP2부터 진행 |
 | 리뷰 없이 직접 요청된 경우 | STEP1부터 순서대로 진행 |
 
+결정 후 → `진입:[이슈요약기반(STEP2~)/직접요청(STEP1~)] 대상:{대상}` 한 줄 출력
+
 ## 리팩토링 순서
 docs/rules/code_refactor/ 의 5단계를 순서대로 수행합니다.
 각 단계의 세부 규칙 기준은 docs/rules/coding_rule/ 을 참조합니다.
+각 단계 완료 후 → `✔ STEP{N}` 출력
 
 1. docs/rules/code_refactor/STEP1_IDENTIFY.md  - 대상 선정 & 영향 범위 파악
 2. docs/rules/code_refactor/STEP2_SAFETY.md    - 안전망 확인
