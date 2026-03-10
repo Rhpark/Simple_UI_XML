@@ -25,8 +25,7 @@ import kr.open.library.simple_ui.xml.BuildConfig
  * @param apiName Human-readable API name used in failure message.<br><br>
  *                실패 메시지에 출력할 API 이름입니다.<br>
  */
-@PublishedApi
-internal fun assertMainThreadDebug(apiName: String) {
+inline fun assertMainThreadDebug(apiName: String) {
     if (!BuildConfig.DEBUG) return
 
     check(Looper.myLooper() == Looper.getMainLooper()) {

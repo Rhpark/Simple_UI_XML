@@ -333,6 +333,10 @@ public final class kr/open/library/simple_ui/core/permissions/handler/SpecialPer
 	public final fun isGranted (Ljava/lang/String;)Z
 }
 
+public final class kr/open/library/simple_ui/core/permissions/internal/ManifestPermissionReaderKt {
+	public static final fun readDeclaredManifestPermissions (Landroid/content/Context;)Ljava/util/Set;
+}
+
 public final class kr/open/library/simple_ui/core/permissions/model/OrphanedDeniedRequestResult {
 	public fun <init> (Ljava/lang/String;Ljava/util/List;)V
 	public final fun component1 ()Ljava/lang/String;

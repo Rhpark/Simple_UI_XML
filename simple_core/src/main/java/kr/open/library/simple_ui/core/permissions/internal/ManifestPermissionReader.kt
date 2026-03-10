@@ -13,7 +13,7 @@ import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
  * @return Returns the set of manifest-declared permissions, or an empty set if retrieval fails.<br><br>
  *         조회에 실패하면 빈 집합을 반환하고, 성공하면 매니페스트 선언 권한 집합을 반환합니다.<br>
  */
-internal fun Context.readDeclaredManifestPermissions(): Set<String> = safeCatch(defaultValue = emptySet()) {
+fun Context.readDeclaredManifestPermissions(): Set<String> = safeCatch(defaultValue = emptySet()) {
     val packageInfo = checkSdkVersion(
         Build.VERSION_CODES.TIRAMISU,
         positiveWork = {
