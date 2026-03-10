@@ -643,10 +643,6 @@ public final class kr/open/library/simple_ui/core/system_manager/controller/alar
 	public final fun createSimple (ILjava/lang/String;Ljava/lang/String;II)Lkr/open/library/simple_ui/core/system_manager/controller/alarm/vo/AlarmVO;
 }
 
-public final class kr/open/library/simple_ui/core/system_manager/controller/dump/wifiController/DumpWifiController {
-	public fun <init> ()V
-}
-
 public final class kr/open/library/simple_ui/core/system_manager/controller/notification/NotificationDefaultChannel {
 	public static final field DEFAULT_CHANNEL_DESCRIPTION Ljava/lang/String;
 	public static final field DEFAULT_CHANNEL_ID Ljava/lang/String;
