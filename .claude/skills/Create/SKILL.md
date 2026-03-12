@@ -9,13 +9,15 @@
 /Create kr.open.library.simpleui_xml.feature.MainActivity
 /Create kr.open.library.simpleui_xml.feature.MyListFragment
 /Create kr.open.library.simpleui_xml.feature.ConfirmDialogFragment
+/Create kr.open.library.simpleui_xml.feature.SettingsItemView
+/Create kr.open.library.simpleui_xml.feature.ProfileCardLayout
 
 # suffix 불명확 → 타입 질문 후 진행
 /Create kr.open.library.simpleui_xml.feature.D
 /Create kr.open.library.simpleui_xml.feature.UserCard
 ```
 
-- 지원 타입: `Activity` / `Fragment` / `DialogFragment` / `Adapter`
+- 지원 타입: `Activity` / `Fragment` / `DialogFragment` / `Adapter` / `Layout`
 
 > 원칙: **덮어쓰지 않는다.** 기존 파일이 있으면 중단하고, 충돌 내역을 명확히 안내한다.
 
@@ -35,12 +37,14 @@ FQCN의 클래스명 suffix를 확인하여 타입을 결정한다.
 | `...Fragment` | `Fragment` |
 | `...Activity` | `Activity` |
 | `...Adapter` | `Adapter` |
+| `...View` | `Layout` |
+| `...Layout` | `Layout` |
 | 불명확 | 사용자에게 1회 질문 |
 
 > `DialogFragment`는 `Fragment`보다 먼저 판단한다. (`ConfirmDialogFragment`가 Fragment로 오분류되지 않도록)
 
 > 타입이 불명확한 경우 (예: `a.b.c.D`, `a.b.c.UserCard`) 아래 질문을 1회 한다:
-> "어떤 타입으로 생성할까요? 1) Activity 2) Fragment 3) DialogFragment 4) Adapter"
+> "어떤 타입으로 생성할까요? 1) Activity 2) Fragment 3) DialogFragment 4) Adapter 5) Layout"
 
 #### 0-2. 클래스명 suffix 검증
 타입이 확정된 후, 클래스명에 해당 타입의 suffix가 없으면 suffix를 추가한 이름을 제안하고 확정한다.
@@ -50,13 +54,15 @@ FQCN의 클래스명 suffix를 확인하여 타입을 결정한다.
 | `D` | Activity | `DActivity` 로 생성 |
 | `UserCard` | Fragment | `UserCardFragment` 로 생성 |
 | `Confirm` | DialogFragment | `ConfirmDialogFragment` 로 생성 |
+| `MyCard` | Layout | suffix 강제 없음 → `MyCard` 그대로 생성 |
 
+> `Layout` 타입은 `...View` / `...Layout` 둘 다 유효한 suffix이므로 suffix가 없어도 강제로 추가하지 않는다.
 > suffix가 이미 올바른 경우(예: `MainActivity`, `MyFragment`) 그대로 사용한다.
 > suffix 추가 시 사용자에게 `"클래스명을 {제안명}으로 생성합니다."` 라고 안내하고 진행한다. (재확인 질문 불필요)
 
 타입과 클래스명 확정 후, 아래 형식으로 반드시 출력한 뒤 STEP 1로 진행한다.
 ```
-> 타입: [Activity / Fragment / DialogFragment / Adapter]
+> 타입: [Activity / Fragment / DialogFragment / Adapter / Layout]
 > 클래스명: {확정 클래스명}
 ```
 
@@ -69,11 +75,12 @@ STEP 0에서 확정된 타입의 파일을 **반드시** 읽은 후 진행한다
 | `Fragment` | `.claude/skills/Create/selectFragment.md` |
 | `DialogFragment` | `.claude/skills/Create/selectDialogFragment.md` |
 | `Adapter` | `.claude/skills/Create/selectAdapter.md` |
+| `Layout` | `.claude/skills/Create/selectLayout.md` |
 
 ### STEP 2. 대화형 질문 진행
 - **Q1**: select 파일에 정의된 베이스 클래스 선택 질문
-- **Q2**: 아래 공통 ViewModel 선택 질문 — **단, `Adapter` 타입은 예외. select 파일의 전용 Q2를 사용한다.**
-- **Q_Layout**: 아래 공통 루트 레이아웃 선택 질문 (Section 3-1 참조)
+- **Q2**: 아래 공통 ViewModel 선택 질문 — **단, `Adapter` / `Layout` 타입은 예외. select 파일의 전용 질문을 사용한다.**
+- **Q_Layout**: 아래 공통 루트 레이아웃 선택 질문 (Section 3-1 참조) — **단, `Layout` 타입은 예외. 레이아웃 유형이 Q1에서 결정되므로 적용하지 않는다.**
 - 추가 질문: select 파일에 정의된 타입별 추가 질문이 있는 경우에만
 
 ### STEP 3. 충돌 체크
