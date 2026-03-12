@@ -27,15 +27,19 @@ interface ParentBindingInterfaceForFragment<BINDING : ViewBinding> : ParentBindi
     fun onViewCreated(binding: BINDING, savedInstanceState: Bundle?) {}
 
     /**
-     * Called immediately after binding creation in onCreateView().<br>
-     * Use this hook for early initialization before onViewCreated().<br><br>
-     * onCreateView에서 바인딩 생성 직후 호출됩니다.<br>
-     * onViewCreated 이전의 초기화 로직에 사용하세요.<br>
+     * Called immediately after the binding object is created, inside onCreateView().<br>
+     * Use only for binding variable assignment (e.g. binding.vm = vm).<br>
+     * Do NOT access viewLifecycleOwner, start collectors, or call lifecycle-aware APIs here —
+     * viewLifecycleOwner is not yet available at this point.<br><br>
+     * onCreateView() 내부에서 바인딩 객체가 생성된 직후 호출됩니다.<br>
+     * 바인딩 변수 할당(예: binding.vm = vm)에만 사용하세요.<br>
+     * viewLifecycleOwner 접근, collector 시작, lifecycle-aware API 호출은 금지입니다 —
+     * 이 시점에서는 viewLifecycleOwner를 아직 사용할 수 없습니다.<br>
      *
      * @param binding The initialized ViewBinding instance.<br><br>
      *                초기화된 ViewBinding 인스턴스.<br>
      * @param savedInstanceState Saved instance state, if available.<br><br>
      *                           저장된 상태가 있다면 해당 Bundle.<br>
      */
-    fun onCreateView(binding: BINDING, savedInstanceState: Bundle?) {}
+    fun onBindingCreated(binding: BINDING, savedInstanceState: Bundle?) {}
 }

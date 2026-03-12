@@ -14,11 +14,13 @@ import kr.open.library.simpleui_xml.databinding.FragmentBaseBindingExampleBindin
 class BaseBindingFragmentExample : BaseDataBindingFragment<FragmentBaseBindingExampleBinding>(R.layout.fragment_base_binding_example) {
     private val vm: BaseBindingFragmentExampleVm by lazy { getViewModel() }
 
-    override fun onCreateView(binding: FragmentBaseBindingExampleBinding, savedInstanceState: Bundle?) {
-        super.onCreateView(binding, savedInstanceState)
+    override fun onBindingCreated(binding: FragmentBaseBindingExampleBinding, savedInstanceState: Bundle?) {
+        binding.vm = vm
+    }
+
+    override fun onViewCreated(binding: FragmentBaseBindingExampleBinding, savedInstanceState: Bundle?) {
         Logx.d("BaseBindingFragmentExample - onViewCreated() called")
 
-        binding.vm = vm
         lifecycle.addObserver(vm)
 
         // Update counter on UI - 카운터 값을 UI에 업데이트

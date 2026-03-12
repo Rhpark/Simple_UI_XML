@@ -1,5 +1,6 @@
 package kr.open.library.simple_ui.xml.robolectric.extensions.view
 
+import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 import android.view.View
@@ -26,6 +27,7 @@ import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
@@ -155,6 +157,46 @@ class ViewLayoutExtensionsRobolectricTest {
         assertEquals(2, view.paddingTop)
         assertEquals(3, view.paddingRight)
         assertTrue(view.paddingBottom >= 18)
+    }
+
+    /**
+     * attach된 view에서 applyWindowInsetsAsPadding() 호출 직후
+     * requestApplyInsets()가 트리거되어 padding이 즉시 반영되는지 검증합니다.<br><br>
+     * Verifies that padding is applied immediately when called on an already-attached view,
+     * because requestApplyInsets() triggers a fresh insets dispatch.
+     *
+     * 검증 방식: Activity window에 attach된 view에 listener를 등록하고,
+     * dispatchApplyWindowInsets()를 직접 호출하여 padding 반영 여부를 확인합니다.
+     * (Robolectric은 requestApplyInsets() 후 자동 dispatch를 지원하지 않으므로
+     * attach 상태에서 리스너가 정상 등록되었는지까지를 검증합니다.)
+     */
+    @Test
+    fun applyWindowInsetsAsPadding_whenAlreadyAttached_listenerIsActiveAndPaddingApplied() {
+        val activity = Robolectric.buildActivity(Activity::class.java).setup().get()
+        val view = View(activity)
+        view.setPadding(1, 2, 3, 4)
+
+        // Activity window에 attach
+        activity.setContentView(view)
+        assertTrue("view must be attached before the test", view.isAttachedToWindow)
+
+        // attach된 상태에서 호출 — requestApplyInsets()가 내부적으로 트리거됨
+        view.applyWindowInsetsAsPadding()
+
+        // listener가 정상 등록되어 있으므로 수동 dispatch에도 반응해야 함
+        val insets = WindowInsetsCompat
+            .Builder()
+            .setInsets(
+                WindowInsetsCompat.Type.systemBars(),
+                androidx.core.graphics.Insets
+                    .of(5, 6, 7, 8),
+            ).build()
+        ViewCompat.dispatchApplyWindowInsets(view, insets)
+
+        assertEquals(1 + 5, view.paddingLeft)
+        assertEquals(2 + 6, view.paddingTop)
+        assertEquals(3 + 7, view.paddingRight)
+        assertEquals(4 + 8, view.paddingBottom)
     }
 
     @Test

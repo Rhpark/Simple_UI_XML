@@ -82,16 +82,15 @@ override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 }
 ```
 
-**`BaseDataBindingDialogFragment`** — `onCreateView(binding, savedInstanceState)` + `onViewCreated` 오버라이드:
+**`BaseDataBindingDialogFragment`** — `onBindingCreated(binding, savedInstanceState)` + `onViewCreated(binding, savedInstanceState)` 오버라이드:
 ```kotlin
-override fun onCreateView(binding: DialogMyBinding, savedInstanceState: Bundle?) {
-    binding.vm = vm
-    lifecycle.addObserver(vm)  // BaseViewModel / BaseViewModelEvent 선택 시에만
+override fun onBindingCreated(binding: DialogMyBinding, savedInstanceState: Bundle?) {
+    binding.vm = vm  // 바인딩 변수 할당만. viewLifecycleOwner 접근 금지
     // binding.btnOk.setOnClickListener { safeDismiss() }
 }
 
-override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-    super.onViewCreated(view, savedInstanceState)
+override fun onViewCreated(binding: DialogMyBinding, savedInstanceState: Bundle?) {
+    lifecycle.addObserver(vm)  // BaseViewModel / BaseViewModelEvent 선택 시에만
     resizeDialog(0.8f, null)  // 필요 시
 }
 ```

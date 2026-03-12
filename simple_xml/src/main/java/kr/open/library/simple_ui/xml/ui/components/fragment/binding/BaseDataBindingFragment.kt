@@ -74,6 +74,7 @@ import androidx.databinding.ViewDataBinding
  *                  Fragment의 레이아웃 리소스 ID.<br>
  * @param isAttachToParent Whether to attach the inflated view to the parent container.<br><br>
  *                         인플레이션된 뷰를 부모 컨테이너에 첨부할지 여부.<br>
+ *                         Fragment에서는 특별한 경우가 아니라면 기본값 `false` 사용을 권장합니다.<br>
  *
  * @see ParentsBindingFragment For the parent class providing binding lifecycle.<br><br>
  *      바인딩 생명주기를 제공하는 부모 클래스는 ParentsBindingFragment를 참조하세요.<br>
@@ -97,6 +98,7 @@ public abstract class BaseDataBindingFragment<BINDING : ViewDataBinding>(
      *                  부모 뷰 컨테이너.<br>
      * @param isAttachToParent Whether to attach to parent.<br><br>
      *                         부모에 첨부할지 여부.<br>
+     *                         Fragment에서는 특별한 경우가 아니라면 기본값 `false` 사용을 권장합니다.<br>
      * @return The initialized DataBinding instance (lifecycleOwner will be set in onViewCreated).<br><br>
      *         초기화된 DataBinding 인스턴스 (lifecycleOwner는 onViewCreated에서 설정됨).<br>
      */

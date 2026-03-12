@@ -18,8 +18,10 @@ enum class LogStorageType {
     APP_EXTERNAL,
 
     /**
-     * Public external storage (requires permission on API 28 and below).<br><br>
-     * 공용 외부 저장소(API 28 이하에서 권한 필요).<br>
+     * Public external storage on API 28 and below; falls back to app-specific external storage (Documents) on API 29+.<br>
+     * Requires WRITE_EXTERNAL_STORAGE permission on API 28 and below.<br><br>
+     * API 28 이하에서는 공용 외부 저장소를 사용하며, API 29+에서는 앱 전용 외부 저장소(Documents 디렉터리)로 대체됩니다.<br>
+     * API 28 이하에서는 WRITE_EXTERNAL_STORAGE 권한이 필요합니다.<br>
      */
     PUBLIC_EXTERNAL,
 }

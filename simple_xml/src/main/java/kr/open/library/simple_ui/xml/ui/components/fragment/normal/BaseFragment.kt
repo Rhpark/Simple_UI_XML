@@ -37,6 +37,8 @@ import kr.open.library.simple_ui.xml.ui.components.fragment.root.RootFragment
  *
  * @param isAttachToParent Whether to attach the inflated view to the parent container.<br><br>
  *                         인플레이션된 뷰를 부모 컨테이너에 첨부할지 여부.<br>
+ *                         Fragment에서는 특별한 경우가 아니라면 기본값 `false` 사용을 권장합니다.<br>
+ *                         반환된 root view는 Fragment framework가 다시 처리하므로 `true` 사용 시 parent 중복 attach 예외가 발생할 수 있습니다.<br>
  *
  * @see RootFragment For the parent class with permission management.<br><br>
  *      권한 관리 기능이 있는 부모 클래스.<br>

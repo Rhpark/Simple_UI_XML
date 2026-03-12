@@ -31,6 +31,46 @@ public class kr/open/library/simple_ui/xml/DataBindingTriggerClass {
 	public fun <init> ()V
 }
 
+public abstract class kr/open/library/simple_ui/xml/databinding/TestDatabindingActivityBinding : androidx/databinding/ViewDataBinding {
+	public final field testDatabindingActivityRoot Landroid/widget/FrameLayout;
+	protected fun <init> (Ljava/lang/Object;Landroid/view/View;ILandroid/widget/FrameLayout;)V
+	public static fun bind (Landroid/view/View;)Lkr/open/library/simple_ui/xml/databinding/TestDatabindingActivityBinding;
+	public static fun bind (Landroid/view/View;Ljava/lang/Object;)Lkr/open/library/simple_ui/xml/databinding/TestDatabindingActivityBinding;
+	public static fun inflate (Landroid/view/LayoutInflater;)Lkr/open/library/simple_ui/xml/databinding/TestDatabindingActivityBinding;
+	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lkr/open/library/simple_ui/xml/databinding/TestDatabindingActivityBinding;
+	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;ZLjava/lang/Object;)Lkr/open/library/simple_ui/xml/databinding/TestDatabindingActivityBinding;
+	public static fun inflate (Landroid/view/LayoutInflater;Ljava/lang/Object;)Lkr/open/library/simple_ui/xml/databinding/TestDatabindingActivityBinding;
+}
+
+public class kr/open/library/simple_ui/xml/databinding/TestDatabindingActivityBindingImpl : kr/open/library/simple_ui/xml/databinding/TestDatabindingActivityBinding {
+	public fun <init> (Landroidx/databinding/DataBindingComponent;Landroid/view/View;)V
+	protected fun executeBindings ()V
+	public fun hasPendingBindings ()Z
+	public fun invalidateAll ()V
+	protected fun onFieldChange (ILjava/lang/Object;I)Z
+	public fun setVariable (ILjava/lang/Object;)Z
+}
+
+public abstract class kr/open/library/simple_ui/xml/databinding/TestDatabindingFragmentBinding : androidx/databinding/ViewDataBinding {
+	public final field testDatabindingFragmentRoot Landroid/widget/FrameLayout;
+	protected fun <init> (Ljava/lang/Object;Landroid/view/View;ILandroid/widget/FrameLayout;)V
+	public static fun bind (Landroid/view/View;)Lkr/open/library/simple_ui/xml/databinding/TestDatabindingFragmentBinding;
+	public static fun bind (Landroid/view/View;Ljava/lang/Object;)Lkr/open/library/simple_ui/xml/databinding/TestDatabindingFragmentBinding;
+	public static fun inflate (Landroid/view/LayoutInflater;)Lkr/open/library/simple_ui/xml/databinding/TestDatabindingFragmentBinding;
+	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Lkr/open/library/simple_ui/xml/databinding/TestDatabindingFragmentBinding;
+	public static fun inflate (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;ZLjava/lang/Object;)Lkr/open/library/simple_ui/xml/databinding/TestDatabindingFragmentBinding;
+	public static fun inflate (Landroid/view/LayoutInflater;Ljava/lang/Object;)Lkr/open/library/simple_ui/xml/databinding/TestDatabindingFragmentBinding;
+}
+
+public class kr/open/library/simple_ui/xml/databinding/TestDatabindingFragmentBindingImpl : kr/open/library/simple_ui/xml/databinding/TestDatabindingFragmentBinding {
+	public fun <init> (Landroidx/databinding/DataBindingComponent;Landroid/view/View;)V
+	protected fun executeBindings ()V
+	public fun hasPendingBindings ()Z
+	public fun invalidateAll ()V
+	protected fun onFieldChange (ILjava/lang/Object;I)Z
+	public fun setVariable (ILjava/lang/Object;)Z
+}
+
 public final class kr/open/library/simple_ui/xml/extensions/fragment/FragmentExtensionsKt {
 	public static final fun withContext (Landroidx/fragment/app/Fragment;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Z
 	public static synthetic fun withContext$default (Landroidx/fragment/app/Fragment;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Z
@@ -1026,12 +1066,12 @@ public final class kr/open/library/simple_ui/xml/ui/base/lifecycle/ParentBinding
 }
 
 public abstract interface class kr/open/library/simple_ui/xml/ui/base/lifecycle/ParentBindingInterfaceForFragment : kr/open/library/simple_ui/xml/ui/base/lifecycle/ParentBindingInterface {
-	public abstract fun onCreateView (Landroidx/viewbinding/ViewBinding;Landroid/os/Bundle;)V
+	public abstract fun onBindingCreated (Landroidx/viewbinding/ViewBinding;Landroid/os/Bundle;)V
 	public abstract fun onViewCreated (Landroidx/viewbinding/ViewBinding;Landroid/os/Bundle;)V
 }
 
 public final class kr/open/library/simple_ui/xml/ui/base/lifecycle/ParentBindingInterfaceForFragment$DefaultImpls {
-	public static fun onCreateView (Lkr/open/library/simple_ui/xml/ui/base/lifecycle/ParentBindingInterfaceForFragment;Landroidx/viewbinding/ViewBinding;Landroid/os/Bundle;)V
+	public static fun onBindingCreated (Lkr/open/library/simple_ui/xml/ui/base/lifecycle/ParentBindingInterfaceForFragment;Landroidx/viewbinding/ViewBinding;Landroid/os/Bundle;)V
 	public static fun onEventVmCollect (Lkr/open/library/simple_ui/xml/ui/base/lifecycle/ParentBindingInterfaceForFragment;Landroidx/viewbinding/ViewBinding;)V
 	public static fun onViewCreated (Lkr/open/library/simple_ui/xml/ui/base/lifecycle/ParentBindingInterfaceForFragment;Landroidx/viewbinding/ViewBinding;Landroid/os/Bundle;)V
 }
@@ -1101,8 +1141,8 @@ public abstract class kr/open/library/simple_ui/xml/ui/components/dialog/binding
 	public fun <init> (Z)V
 	protected abstract fun createBinding (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Landroidx/viewbinding/ViewBinding;
 	protected final fun getBinding ()Landroidx/viewbinding/ViewBinding;
+	public fun onBindingCreated (Landroidx/viewbinding/ViewBinding;Landroid/os/Bundle;)V
 	public fun onCreateView (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Landroid/os/Bundle;)Landroid/view/View;
-	public fun onCreateView (Landroidx/viewbinding/ViewBinding;Landroid/os/Bundle;)V
 	public fun onDestroyView ()V
 	public fun onEventVmCollect (Landroidx/viewbinding/ViewBinding;)V
 	public fun onViewCreated (Landroid/view/View;Landroid/os/Bundle;)V
@@ -1182,8 +1222,8 @@ public abstract class kr/open/library/simple_ui/xml/ui/components/fragment/bindi
 	public synthetic fun <init> (ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	protected abstract fun createBinding (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Landroidx/viewbinding/ViewBinding;
 	protected final fun getBinding ()Landroidx/viewbinding/ViewBinding;
+	public fun onBindingCreated (Landroidx/viewbinding/ViewBinding;Landroid/os/Bundle;)V
 	public final fun onCreateView (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Landroid/os/Bundle;)Landroid/view/View;
-	public fun onCreateView (Landroidx/viewbinding/ViewBinding;Landroid/os/Bundle;)V
 	public fun onDestroyView ()V
 	public fun onEventVmCollect (Landroidx/viewbinding/ViewBinding;)V
 	public fun onViewCreated (Landroid/view/View;Landroid/os/Bundle;)V

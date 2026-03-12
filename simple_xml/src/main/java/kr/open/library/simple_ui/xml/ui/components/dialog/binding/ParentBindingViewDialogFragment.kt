@@ -21,10 +21,12 @@ import kr.open.library.simple_ui.xml.ui.components.dialog.root.RootDialogFragmen
  *
  * **Key points:**<br>
  * - Call super.onViewCreated().<br>
- * - onEventVmCollect() is invoked once after binding initialization.<br><br>
+ * - onEventVmCollect() is invoked once after binding initialization.<br>
+ * - In DialogFragment, keeping the default `false` for isAttachToParent is recommended unless there is a verified special case.<br><br>
  * **핵심 포인트:**<br>
  * - super.onViewCreated()를 반드시 호출하세요.<br>
  * - onEventVmCollect()는 바인딩 초기화 이후 1회 호출됩니다.<br>
+ * - DialogFragment에서는 특별한 경우가 아니라면 isAttachToParent의 기본값 `false` 사용을 권장합니다.<br>
  *
  * @param BINDING The type of ViewBinding to be used.<br><br>
  *                사용할 ViewBinding 타입.<br>
@@ -74,6 +76,7 @@ abstract class ParentBindingViewDialogFragment<BINDING : ViewBinding>(
      *                  부모 컨테이너(있다면).<br>
      * @param isAttachToParent Whether to attach to the parent.<br><br>
      *                         부모에 attach할지 여부.<br>
+     *                         DialogFragment에서는 특별한 경우가 아니라면 `false` 유지가 안전합니다.<br>
      * @return The initialized ViewBinding instance.<br><br>
      *         초기화된 ViewBinding 인스턴스.<br>
      */
@@ -82,7 +85,7 @@ abstract class ParentBindingViewDialogFragment<BINDING : ViewBinding>(
     @CallSuper
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = createBinding(inflater, container, isAttachToParent)
-        onCreateView(getBinding(), savedInstanceState)
+        onBindingCreated(getBinding(), savedInstanceState)
         return getBinding().root
     }
 

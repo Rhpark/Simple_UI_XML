@@ -188,7 +188,7 @@ Only the **file-saving feature** may require permissions depending on the storag
 |:--|:--|:--:|:--:|
 | **INTERNAL** | `/data/data/[package]/files/AppLogs` |  Not required (불필요) |  Not accessible (불가) |
 | **APP_EXTERNAL** | `/Android/data/[package]/files/AppLogs` |  Not required (불필요) |  Accessible (가능) |
-| **PUBLIC_EXTERNAL** | `/Documents/AppLogs` (API 29+)<br>`/storage/emulated/0/AppLogs` (API 28-) | ⚠️ Required only on Android 9 or lower (Android 9 이하만 필요) | ✅ Easy access (쉽게 접근) |
+| **PUBLIC_EXTERNAL** | `/Android/data/[package]/files/Documents/AppLogs` (API 29+, 앱 전용 외부 저장소)<br>`/storage/emulated/0/AppLogs` (API 28-) | ⚠️ Required only on Android 9 or lower (Android 9 이하만 필요) | ⚠️ API 29+ limited / API 28- easy (API 29+ 제한적 / API 28- 쉬움) |
 
 <br>
 
@@ -236,11 +236,18 @@ Logx.initialize(applicationContext)
 Logx.setSaveEnabled(true)
 Logx.setStorageType(LogStorageType.PUBLIC_EXTERNAL)
 ```
-✅ **Pros:** Logs remain even after uninstall, easy access
+> ⚠️ **API behavior difference / API별 동작 차이:**
+>
+> - **API 29+ (Android 10+):** Falls back to app-specific external storage (`getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)`) due to scoped storage policy. Logs are removed on uninstall.
+> - **API 28 and below:** Uses true public external storage (`Environment.getExternalStorageDirectory()`). Logs persist after uninstall.
+> - API 29+에서는 Scoped Storage 정책으로 인해 앱 전용 외부 저장소(`getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)`)로 대체됩니다. 앱 삭제 시 로그도 함께 삭제됩니다.
+> - API 28 이하에서는 실제 공용 외부 저장소를 사용하므로 앱 삭제 후에도 로그가 유지됩니다.
 
-❌ **Cons:** Requires permission on Android 9 or lower
-> ✅ **장점**: 앱 삭제 후에도 로그 유지, 쉬운 접근  
-> ❌ **단점**: Android 9 이하 권한 필요
+✅ **Pros (API 28 and below):** Logs remain even after uninstall, easy access
+
+❌ **Cons:** Requires permission on Android 9 or lower; on API 29+ it is not true public storage and behaves like app-specific external storage
+> ✅ **장점 (API 28 이하)**: 앱 삭제 후에도 로그 유지, 쉬운 접근
+> ❌ **단점**: Android 9 이하 권한 필요; API 29+에서는 실제 공용 저장소가 아니며 앱 전용 외부 저장소처럼 동작
 
 <br></br>
 
@@ -302,7 +309,7 @@ class MainActivity : BaseDataBindingActivity<ActivityMainBinding>(R.layout.activ
 |:--|:--:|:--|
 | **General app logging** | `APP_EXTERNAL` | No permission + user accessible (권한 불필요 + 사용자 접근 가능) |
 | **Debugging/Development** | `APP_EXTERNAL` | No permission + fast access (권한 불필요 + 빠른 접근) |
-| **Long-term archiving** | `PUBLIC_EXTERNAL` | Stays even after uninstall (앱 삭제 후에도 유지) |
+| **Long-term archiving** | `PUBLIC_EXTERNAL` (API 28 이하 권장) | Stays even after uninstall on API 28 and below only (API 28 이하에서만 앱 삭제 후 유지) |
 | **Security sensitive** | `INTERNAL` | Users cannot access (사용자 접근 불가) |
 
 > **Bottom line:** In most scenarios, **APP_EXTERNAL (no permission needed)** is the smartest choice! ✅

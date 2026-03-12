@@ -243,7 +243,8 @@ public abstract class BaseSharedPreference(
      * @return The stored set or [defaultValue].<br><br>
      *         저장된 Set 또는 [defaultValue].<br>
      */
-    protected fun getSet(key: String, defaultValue: Set<String>?): Set<String>? = sp.getStringSet(key, defaultValue)
+    protected fun getSet(key: String, defaultValue: Set<String>?): Set<String>? =
+        sp.getStringSet(key, defaultValue)?.toSet()
 
     /**
      * Reads a `Double` by mapping to raw long bits stored with a suffix.<br><br>

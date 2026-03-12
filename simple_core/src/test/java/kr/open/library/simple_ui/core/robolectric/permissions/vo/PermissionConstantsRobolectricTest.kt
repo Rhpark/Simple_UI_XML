@@ -201,10 +201,13 @@ class PermissionConstantsRobolectricTest {
 
     @Test
     @Config(sdk = [Build.VERSION_CODES.Q]) // API 29
-    fun apiLevelRequirements_androidRPermissions_emptyOnOlderSdk() {
+    fun apiLevelRequirements_androidRPermissions_alwaysContainsPermissionsRegardlessSdk() {
+        // setOf() 상수이므로 SDK 버전에 관계없이 항상 채워져 있어야 한다.
+        // SDK 비교는 PermissionClassifier.isSupported()에서 수행한다.
         val rPermissions = PermissionConstants.ApiLevelRequirements.ANDROID_R_PERMISSIONS
 
-        assertTrue(rPermissions.isEmpty())
+        assertTrue(rPermissions.contains(Manifest.permission.MANAGE_EXTERNAL_STORAGE))
+        assertEquals(1, rPermissions.size)
     }
 
     @Test
@@ -218,10 +221,12 @@ class PermissionConstantsRobolectricTest {
 
     @Test
     @Config(sdk = [Build.VERSION_CODES.R]) // API 30
-    fun apiLevelRequirements_androidSPermissions_emptyOnOlderSdk() {
+    fun apiLevelRequirements_androidSPermissions_alwaysContainsPermissionsRegardlessSdk() {
+        // setOf() 상수이므로 SDK 버전에 관계없이 항상 채워져 있어야 한다.
         val sPermissions = PermissionConstants.ApiLevelRequirements.ANDROID_S_PERMISSIONS
 
-        assertTrue(sPermissions.isEmpty())
+        assertTrue(sPermissions.contains(Manifest.permission.SCHEDULE_EXACT_ALARM))
+        assertEquals(1, sPermissions.size)
     }
 
     @Test
@@ -235,10 +240,12 @@ class PermissionConstantsRobolectricTest {
 
     @Test
     @Config(sdk = [Build.VERSION_CODES.S]) // API 31
-    fun apiLevelRequirements_androidTiramisuPermissions_emptyOnOlderSdk() {
+    fun apiLevelRequirements_androidTiramisuPermissions_alwaysContainsPermissionsRegardlessSdk() {
+        // setOf() 상수이므로 SDK 버전에 관계없이 항상 채워져 있어야 한다.
         val tiramisuPermissions = PermissionConstants.ApiLevelRequirements.ANDROID_TIRAMISU_PERMISSIONS
 
-        assertTrue(tiramisuPermissions.isEmpty())
+        assertTrue(tiramisuPermissions.contains(Manifest.permission.POST_NOTIFICATIONS))
+        assertEquals(1, tiramisuPermissions.size)
     }
 
     // ==============================================

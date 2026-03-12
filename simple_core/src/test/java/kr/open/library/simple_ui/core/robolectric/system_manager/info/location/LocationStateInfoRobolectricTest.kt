@@ -47,7 +47,7 @@ class LocationStateInfoRobolectricTest {
         )
 
         locationStateInfo = LocationStateInfo(context)
-        locationManager = locationStateInfo.locationManager
+        locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
         shadowLocationManager = shadowOf(locationManager)
     }
 

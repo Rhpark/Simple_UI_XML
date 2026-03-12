@@ -21,10 +21,12 @@ import androidx.viewbinding.ViewBinding
  * **Design decisions / 설계 결정 이유:**<br>
  * - Uses constructor parameter for inflate function reference to enable compile-time type safety.<br>
  * - Implements final createBinding() to prevent subclasses from breaking the binding initialization contract.<br>
- * - Properly handles isAttachToParent parameter for flexible view inflation.<br><br>
+ * - Properly handles isAttachToParent parameter for flexible view inflation.<br>
+ * - In DialogFragment, keeping the default `false` for isAttachToParent is recommended unless there is a verified special case.<br><br>
  * - 컴파일 타임 타입 안전성을 위해 생성자 파라미터로 inflate 함수 참조를 사용합니다.<br>
  * - final createBinding()을 구현하여 하위 클래스가 바인딩 초기화 계약을 깨는 것을 방지합니다.<br>
  * - 유연한 뷰 인플레이션을 위해 isAttachToParent 파라미터를 적절히 처리합니다.<br>
+ * - DialogFragment에서는 특별한 경우가 아니라면 isAttachToParent의 기본값 `false` 사용을 권장합니다.<br>
  *
  * **Usage / 사용법:**<br>
  * 1. Extend this class with your DialogFragment and pass the ViewBinding inflate function reference.<br>
@@ -53,6 +55,7 @@ import androidx.viewbinding.ViewBinding
  *                ViewBinding 클래스의 inflate 함수 참조 (예: DialogFragmentHomeBinding::inflate).<br>
  * @param isAttachToParent Whether to attach the inflated view to the parent container.<br><br>
  *                         인플레이션된 뷰를 부모 컨테이너에 첨부할지 여부.<br>
+ *                         DialogFragment에서는 특별한 경우가 아니라면 기본값 `false` 사용을 권장합니다.<br>
  *
  * @see ParentBindingViewDialogFragment For the parent class providing binding lifecycle.<br><br>
  *      바인딩 생명주기를 제공하는 부모 클래스는 ParentBindingViewDialogFragment를 참조하세요.<br>
@@ -74,6 +77,7 @@ public abstract class BaseViewBindingDialogFragment<BINDING : ViewBinding>(
      *                  부모 뷰 컨테이너.<br>
      * @param isAttachToParent Whether to attach to parent.<br><br>
      *                         부모에 첨부할지 여부.<br>
+     *                         DialogFragment에서는 특별한 경우가 아니라면 기본값 `false` 사용을 권장합니다.<br>
      * @return The initialized ViewBinding instance.<br><br>
      *         초기화된 ViewBinding 인스턴스.<br>
      */

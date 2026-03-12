@@ -50,7 +50,7 @@ class ParentsBindingFragmentRobolectricTest {
             isAttachToParent: Boolean
         ): TestViewBinding = TestViewBinding(FrameLayout(inflater.context).apply { id = ROOT_ID })
 
-        override fun onCreateView(binding: TestViewBinding, savedInstanceState: Bundle?) {
+        override fun onBindingCreated(binding: TestViewBinding, savedInstanceState: Bundle?) {
             onInitCalled = true
         }
 

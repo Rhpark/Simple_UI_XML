@@ -298,6 +298,7 @@ when (state) {
 #### BaseActivity / BaseFragment
 - Lightest layer, only pass layout resource
 - BaseFragment controls attach behavior with `isAttachToParent` flag
+- In Fragment/Dialog components, keeping the default `false` is recommended unless there is a verified special case
 
 #### BaseDataBindingActivity / BaseDataBindingFragment
 - 바인딩 생명주기 자동 관리 + `getBinding()` 제공
@@ -336,7 +337,7 @@ override fun onViewCreated(binding: FragmentDetailBinding, savedInstanceState: B
         .commit()
 }
 ```
-> 필요 시 `onCreateView(binding, savedInstanceState)`를 더 이른 초기화 지점으로 사용할 수 있으며, 이때는 `super.onCreateView(...)` 호출로 lifecycleOwner 설정을 유지하세요.
+> 필요 시 `onCreateView(binding, savedInstanceState)`를 더 이른 초기화 지점으로 사용할 수 있습니다. 다만 이 시점에는 `viewLifecycleOwner`가 아직 준비되지 않았을 수 있으므로, lifecycle 의존 로직은 `onViewCreated(binding, savedInstanceState)`에서 처리하는 것을 권장합니다.
 
 ### 🪟 BaseDataBindingDialogFragment follows the BaseDataBindingFragment pattern
 DialogFragment도 `onCreateView(binding, ...)`, `onViewCreated(binding, ...)`, `onEventVmCollect(binding)`을 동일하게 override하여 Activity/Fragment와 같은 코딩 경험을 제공합니다.
@@ -422,15 +423,19 @@ abstract class BaseFragment(
 - Works identically to the third parameter of LayoutInflater.inflate(layoutRes, container, isAttachToParent).
 > - `LayoutInflater.inflate(layoutRes, container, isAttachToParent)`의 세 번째 파라미터와 동일하게 동작합니다.
 
-#### When to use `true`? (언제 true를 쓸까?)
-- When a custom ViewGroup needs to control the attach process directly/ 커스텀 ViewGroup이 attach 과정을 직접 제어해야 하는 경우
-- Special cases where the Fragment container requires attach status in advance/ Fragment 컨테이너가 attach 여부를 미리 요구하는 특수 케이스
+#### Recommended usage (권장 사용 방식)
+- In Fragment/Dialog components, keeping the default `false` is recommended unless there is a verified special case.
+- Fragment/Dialog가 반환한 root view는 framework가 다시 처리하므로, `true` 사용 시 parent 중복 attach 예외가 발생할 수 있습니다.
+- 일반적인 사용에서는 값을 변경하지 말고 기본값을 유지하세요.
+
+#### When to consider `true`? (언제 true를 검토할까?)
+- Only in rare interop scenarios where the parent attach contract has been manually verified.
+- 가능하면 Fragment/Dialog보다 custom ViewGroup 구성에서 해결하는 것을 우선 권장합니다.
 
 #### Usage example (사용 예시)
 ```kotlin
 class CustomFragment : BaseFragment(
-    layoutRes = R.layout.fragment_custom,
-    isAttachToParent = true
+    layoutRes = R.layout.fragment_custom
 )
 ```
 

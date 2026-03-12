@@ -97,6 +97,40 @@ class DateExtensionsTest {
         "2024-01-15 extra text".toDateLong("yyyy-MM-dd", Locale.US)
     }
 
+    @Test(expected = IllegalArgumentException::class)
+    fun timeDateToLong_throwsExceptionForOutOfRangeMonth() {
+        "2024-13-01".toDateLong("yyyy-MM-dd", Locale.US)
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun timeDateToLong_throwsExceptionForOutOfRangeDay() {
+        "2024-01-40".toDateLong("yyyy-MM-dd", Locale.US)
+    }
+
+    @Test
+    fun toDate_returnsNullForOutOfRangeMonth() {
+        val result = "2024-13-01".toDate("yyyy-MM-dd", Locale.US)
+        assertEquals(null, result)
+    }
+
+    @Test
+    fun toDate_returnsNullForOutOfRangeDay() {
+        val result = "2024-01-40".toDate("yyyy-MM-dd", Locale.US)
+        assertEquals(null, result)
+    }
+
+    @Test
+    fun toDate_returnsNullForTrailingGarbage() {
+        val result = "2024-01-15 garbage".toDate("yyyy-MM-dd", Locale.US)
+        assertEquals(null, result)
+    }
+
+    @Test
+    fun toDate_returnsNullForInvalidFormat() {
+        val result = "not-a-date".toDate("yyyy-MM-dd", Locale.US)
+        assertEquals(null, result)
+    }
+
     // ========== Date Time Difference Tests ==========
 
     @Test

@@ -46,7 +46,7 @@ public fun Long.toDateString(format: String, locale: Locale = Locale.getDefault(
  *                                  문자열을 파싱할 수 없거나 형식과 완전히 일치하지 않을 경우.<br>
  */
 public fun String.toDateLong(format: String, locale: Locale = Locale.getDefault()): Long {
-    val formatter = SimpleDateFormat(format, locale)
+    val formatter = SimpleDateFormat(format, locale).also { it.isLenient = false }
     val parsePosition = ParsePosition(0)
 
     val parsedDate = formatter.parse(this, parsePosition) ?: throw IllegalArgumentException("Invalid time string")
@@ -70,7 +70,11 @@ public fun String.toDateLong(format: String, locale: Locale = Locale.getDefault(
  *         파싱이 성공하면 Date 객체, 실패하면 null.<br>
  */
 public fun String.toDate(format: String, locale: Locale = Locale.getDefault()): Date? = safeCatch(null) {
-    return SimpleDateFormat(format, locale).parse(this)
+    val formatter = SimpleDateFormat(format, locale).also { it.isLenient = false }
+    val parsePosition = ParsePosition(0)
+    val parsedDate = formatter.parse(this, parsePosition) ?: return@safeCatch null
+    if (parsePosition.index != length) return@safeCatch null
+    parsedDate
 }
 
 /**

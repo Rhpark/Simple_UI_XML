@@ -69,8 +69,15 @@ internal object LogxPathResolver {
         context.getExternalFilesDir(LogxConstants.LOG_DIR_NAME)?.absolutePath ?: getInternalLogPath(context)
 
     /**
-     * Returns public external storage log path with API branching.<br><br>
-     * API 분기에 따라 공용 외부 저장소 로그 경로를 반환한다.<br>
+     * Returns the log path for [LogStorageType.PUBLIC_EXTERNAL].<br>
+     * Uses true public external storage on API 28 and below, and falls back to the app-specific
+     * external Documents directory on API 29+ due to scoped storage.<br>
+     * If the API 29+ Documents directory is unavailable, it falls back again to the app-specific
+     * external log path.<br><br>
+     * [LogStorageType.PUBLIC_EXTERNAL]용 로그 경로를 반환합니다.<br>
+     * API 28 이하에서는 실제 공용 외부 저장소를 사용하고, API 29+에서는 Scoped Storage 정책에 따라
+     * 앱 전용 외부 Documents 디렉터리로 대체됩니다.<br>
+     * API 29+에서 Documents 디렉터리를 사용할 수 없으면 앱 전용 외부 로그 경로로 한 번 더 대체됩니다.<br>
      */
     private fun getPublicExternalLogPath(context: Context): String = checkSdkVersion(
         Build.VERSION_CODES.Q,

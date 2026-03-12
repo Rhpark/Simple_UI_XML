@@ -134,6 +134,30 @@ class BaseSharedPreferenceRobolectricTest {
     }
 
     @Test
+    fun stringSetPref_mutatingReturnedSet_doesNotCorruptStoredValue() {
+        val original = setOf("a", "b", "c")
+        preference.saveStringSet("mut_tags", original)
+
+        val loaded = preference.loadStringSet("mut_tags", emptySet())
+        (loaded as? MutableSet<String>)?.add("injected")
+
+        val reloaded = preference.loadStringSet("mut_tags", emptySet())
+        assertEquals(original, reloaded)
+    }
+
+    @Test
+    fun stringSetPref_returnedSetIsIndependentCopy() {
+        val original = setOf("x", "y")
+        preference.saveStringSet("copy_tags", original)
+
+        val first = preference.loadStringSet("copy_tags", emptySet())
+        val second = preference.loadStringSet("copy_tags", emptySet())
+
+        assertFalse(first === second)
+        assertEquals(first, second)
+    }
+
+    @Test
     fun putValue_withNonStringSet_throwsException() {
         val mixedSet = setOf("valid", 1, true)
 

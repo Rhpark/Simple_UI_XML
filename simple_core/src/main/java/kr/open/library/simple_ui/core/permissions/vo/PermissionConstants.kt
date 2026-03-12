@@ -69,25 +69,19 @@ public object PermissionConstants {
          * Permissions that were introduced on Android R.<br><br>
          * Android R에서 추가된 권한 목록입니다.<br>
          */
-        val ANDROID_R_PERMISSIONS = buildSet<String> {
-            checkSdkVersion(Build.VERSION_CODES.R) { add(Manifest.permission.MANAGE_EXTERNAL_STORAGE) }
-        }
+        val ANDROID_R_PERMISSIONS: Set<String> = setOf(Manifest.permission.MANAGE_EXTERNAL_STORAGE)
 
         /**
          * Permissions that were introduced on Android S.<br><br>
          * Android S에서 추가된 권한 목록입니다.<br>
          */
-        val ANDROID_S_PERMISSIONS = buildSet<String> {
-            checkSdkVersion(Build.VERSION_CODES.S) { add(Manifest.permission.SCHEDULE_EXACT_ALARM) }
-        }
+        val ANDROID_S_PERMISSIONS: Set<String> = setOf(Manifest.permission.SCHEDULE_EXACT_ALARM)
 
         /**
          * Permissions that were introduced on Android 13 (Tiramisu).<br><br>
          * Android 13(Tiramisu)에서 추가된 권한 목록입니다.<br>
          */
-        val ANDROID_TIRAMISU_PERMISSIONS = buildSet<String> {
-            checkSdkVersion(Build.VERSION_CODES.TIRAMISU) { add(Manifest.permission.POST_NOTIFICATIONS) }
-        }
+        val ANDROID_TIRAMISU_PERMISSIONS: Set<String> = setOf(Manifest.permission.POST_NOTIFICATIONS)
     }
 
     /**

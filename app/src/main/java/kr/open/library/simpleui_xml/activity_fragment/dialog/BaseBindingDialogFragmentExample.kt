@@ -19,7 +19,7 @@ class BaseBindingDialogFragmentExample :
         Logx.d("BaseBindingDialogFragmentExample - resizeDialog(0.85f, 0.6f) called")
     }
 
-    override fun onCreateView(binding: DialogBaseBindingDialogFragmentBinding, savedInstanceState: Bundle?) {
+    override fun onBindingCreated(binding: DialogBaseBindingDialogFragmentBinding, savedInstanceState: Bundle?) {
         // Set texts via DataBinding - DataBinding으로 텍스트 설정
         binding.tvDialogTitle.text = "BaseBindingDialogFragment Example"
         binding.tvDialogContent.text =

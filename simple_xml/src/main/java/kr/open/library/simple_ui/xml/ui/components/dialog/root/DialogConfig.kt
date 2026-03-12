@@ -115,17 +115,17 @@ class DialogConfig {
 
     /**
      * Resizes the dialog based on screen size ratios.<br>
-     * Width is calculated as screen width * widthRatio.<br>
-     * Height is set to WRAP_CONTENT.<br><br>
+     * Width is calculated as screen width * widthRatio, or WRAP_CONTENT if null.<br>
+     * Height is calculated as screen height * heightRatio, or WRAP_CONTENT if null.<br><br>
      * 화면 크기 비율을 기반으로 다이얼로그 크기를 조정합니다.<br>
-     * 너비는 화면 너비 * widthRatio로 계산됩니다.<br>
-     * 높이는 WRAP_CONTENT로 설정됩니다.<br>
+     * 너비는 화면 너비 * widthRatio로 계산되며, null이면 WRAP_CONTENT입니다.<br>
+     * 높이는 화면 높이 * heightRatio로 계산되며, null이면 WRAP_CONTENT입니다.<br>
      *
-     * @param widthRatio The ratio of screen width (0.0 to 1.0).<br><br>
-     *                   화면 너비 비율 (0.0 ~ 1.0).<br>
+     * @param widthRatio The ratio of screen width (0.0 to 1.0), or null for WRAP_CONTENT.<br><br>
+     *                   화면 너비 비율 (0.0 ~ 1.0), null이면 WRAP_CONTENT.<br>
      *
-     * @param heightRatio The ratio of screen height (currently unused, height is WRAP_CONTENT).<br><br>
-     *                    화면 높이 비율 (현재 사용되지 않음, 높이는 WRAP_CONTENT).<br>
+     * @param heightRatio The ratio of screen height (0.0 to 1.0), or null for WRAP_CONTENT.<br><br>
+     *                    화면 높이 비율 (0.0 ~ 1.0), null이면 WRAP_CONTENT.<br>
      */
     public fun resizeDialog(window: Window, activity: Activity, widthRatio: Float? = null, heightRatio: Float?) {
         val displayInfo = window.context.getDisplayInfo()
@@ -135,7 +135,6 @@ class DialogConfig {
             val width = widthRatio?.let { (size.width * it).toInt() } ?: LayoutParams.WRAP_CONTENT
             val height = heightRatio?.let { (size.height * it).toInt() } ?: LayoutParams.WRAP_CONTENT
             window.setLayout(width, height)
-//            window.setLayout(width, LayoutParams.WRAP_CONTENT) // WRAP_
         }
     }
 }

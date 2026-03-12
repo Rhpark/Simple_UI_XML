@@ -164,6 +164,7 @@ object Logx {
                 error(message)
             } else {
                 Log.e(TAG, message)
+                return
             }
         }
         if (!enabled) {
@@ -193,15 +194,15 @@ object Logx {
                             error(message)
                         } else {
                             Log.e(TAG, message)
+                            return@checkSdkVersion
                         }
-                    } else {
-                        if (!appContext!!.hasPermissions(WRITE_EXTERNAL_STORAGE)) {
-                            val message = "WRITE_EXTERNAL_STORAGE permission is not granted."
-                            if (pipeline.isDevelopmentMode()) {
-                                error(message)
-                            } else {
-                                Log.e(TAG, message)
-                            }
+                    } else if (!appContext!!.hasPermissions(WRITE_EXTERNAL_STORAGE)) {
+                        val message = "WRITE_EXTERNAL_STORAGE permission is not granted."
+                        if (pipeline.isDevelopmentMode()) {
+                            error(message)
+                        } else {
+                            Log.e(TAG, message)
+                            return@checkSdkVersion
                         }
                     }
                 }

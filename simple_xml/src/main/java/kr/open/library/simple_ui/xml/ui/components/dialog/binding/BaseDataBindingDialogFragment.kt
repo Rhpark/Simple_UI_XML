@@ -85,6 +85,7 @@ import kr.open.library.simple_ui.xml.ui.components.dialog.root.RootDialogFragmen
  *
  * @param isAttachToParent Whether to attach the inflated view to the parent container.<br><br>
  *                         인플레이션된 뷰를 부모 컨테이너에 첨부할지 여부.<br>
+ *                         DialogFragment에서는 특별한 경우가 아니라면 기본값 `false` 사용을 권장합니다.<br>
  *
  * @see ParentBindingViewDialogFragment For the abstract parent class of all binding-enabled dialog fragments.<br><br>
  *      모든 바인딩 지원 DialogFragment의 추상 부모 클래스는 ParentBindingViewDialogFragment를 참조하세요.<br>
@@ -114,6 +115,7 @@ public abstract class BaseDataBindingDialogFragment<BINDING : ViewDataBinding>(
      *                  부모 뷰 컨테이너.<br>
      * @param isAttachToParent Whether to attach to parent.<br><br>
      *                         부모에 첨부할지 여부.<br>
+     *                         DialogFragment에서는 특별한 경우가 아니라면 기본값 `false` 사용을 권장합니다.<br>
      * @return The initialized DataBinding instance (lifecycleOwner will be set in onViewCreated).<br><br>
      *         초기화된 DataBinding 인스턴스 (lifecycleOwner는 onViewCreated에서 설정됨).<br>
      */

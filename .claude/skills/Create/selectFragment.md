@@ -75,11 +75,13 @@ override fun onCreateView(rootView: View, savedInstanceState: Bundle?) {
 }
 ```
 
-**`BaseDataBindingFragment`** — `onCreateView(binding, savedInstanceState)` 오버라이드:
+**`BaseDataBindingFragment`** — `onBindingCreated(binding, savedInstanceState)` + `onViewCreated(binding, savedInstanceState)` 오버라이드:
 ```kotlin
-override fun onCreateView(binding: FragmentMyBinding, savedInstanceState: Bundle?) {
-    super.onCreateView(binding, savedInstanceState)  // lifecycleOwner 자동 설정
-    binding.vm = vm
+override fun onBindingCreated(binding: FragmentMyBinding, savedInstanceState: Bundle?) {
+    binding.vm = vm  // 바인딩 변수 할당만. viewLifecycleOwner 접근 금지
+}
+
+override fun onViewCreated(binding: FragmentMyBinding, savedInstanceState: Bundle?) {
     lifecycle.addObserver(vm)  // BaseViewModel / BaseViewModelEvent 선택 시에만
 }
 ```
