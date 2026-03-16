@@ -1,7 +1,7 @@
 package kr.open.library.simple_ui.core.extensions.time
 
 /**
- * Measures execution time in milliseconds and returns both the result and elapsed duration.<br><br>
+ * Measures execution time using a monotonic time source and returns both the result and elapsed duration in milliseconds.<br><br>
  * 코드 블록을 실행한 뒤 결과와 밀리초 단위 소요 시간을 함께 돌려줍니다.<br>
  *
  * Note: Use kotlin.system.measureTimeMillis when you only need the elapsed time without the result.<br><br>
@@ -13,7 +13,10 @@ package kr.open.library.simple_ui.core.extensions.time
  * @return Pair containing the block result and elapsed milliseconds.<br><br>
  *         블록 실행 결과와 밀리초 단위 실행 시간이 들어 있는 Pair 입니다.<br>
  */
-public inline fun <T> measureTimeMillis(block: () -> T): Pair<T, Long> = measureTimeWithResult(System::currentTimeMillis, block)
+public inline fun <T> measureTimeMillis(block: () -> T): Pair<T, Long> {
+    val (result, elapsedNanos) = measureTimeWithResult(System::nanoTime, block)
+    return result to (elapsedNanos / 1_000_000L)
+}
 
 /**
  * Measures execution time in nanoseconds and returns both the result and elapsed duration.<br><br>

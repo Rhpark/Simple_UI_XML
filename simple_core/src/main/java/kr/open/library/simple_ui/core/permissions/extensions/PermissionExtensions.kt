@@ -18,17 +18,18 @@ import android.os.Process
 import android.provider.Settings
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.pm.PermissionInfoCompat
 import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
 import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
 import kr.open.library.simple_ui.core.permissions.vo.PermissionSpecialType
 
 /**
  * Evaluates whether the caller already holds [permission], including platform-specific toggles.<br>
- * Only dangerous permissions are checked via runtime, special APIs; non-dangerous (normal/signature/privileged)
- * permissions are treated as granted by design.<br><br>
+ * Dangerous permissions are checked via runtime APIs, and normal permissions are treated as granted by design.<br>
+ * Signature/privileged-style permissions are not considered granted for ordinary app processes.<br><br>
  * 필요한 플랫폼 토글 여부까지 확인하여 [permission] 권한을 보유했는지 판단합니다.<br>
- * 런타임,특수 권한(위험 권한)만 실제 검사하며, non-dangerous(일반/서명/특권) 권한은
- * 설계상 허용된 것으로 간주합니다.<br>
+ * 런타임 권한은 실제 검사하고, 일반 권한은 설계상 허용된 것으로 간주합니다.<br>
+ * 서명/특권 계열 권한은 일반 앱 프로세스에서 허용된 것으로 취급하지 않습니다.<br>
  *
  * @param permission Android permission string being evaluated.<br><br>
  *        확인할 Android 권한 문자열입니다.<br>
@@ -85,20 +86,22 @@ public inline fun Context.hasPermission(permission: String): Boolean = when (per
     }
 
     else -> {
-        // Non-dangerous permissions are treated as granted by design (runtime-only validation).
-        if (getPermissionProtectionLevel(permission) == PermissionInfo.PROTECTION_DANGEROUS) {
-            ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
-        } else {
-            true
+        when (getPermissionBaseProtectionLevel(permission)) {
+            PermissionInfo.PROTECTION_DANGEROUS ->
+                ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
+
+            PermissionInfo.PROTECTION_NORMAL -> true
+
+            else -> false
         }
     }
 }
 
 /**
  * Returns true only when every entry in [permissions] is granted.<br>
- * Non-dangerous (normal/signature/privileged) permissions are treated as granted by design.<br><br>
+ * Normal permissions are treated as granted by design.<br><br>
  * [permissions]의 모든 항목이 허용되었을 때만 true를 반환합니다.<br>
- * non-dangerous(일반/서명/특권) 권한은 설계상 허용된 것으로 간주합니다.<br>
+ * 일반 권한은 설계상 허용된 것으로 간주합니다.<br>
  *
  * @param permissions List of permission strings to verify.<br><br>
  *        확인할 권한 문자열 목록입니다.<br>
@@ -109,9 +112,9 @@ public inline fun Context.hasPermissions(vararg permissions: String): Boolean = 
 
 /**
  * Executes [doWork] only when every permission in [permissions] is granted.<br>
- * Non-dangerous (normal/signature/privileged) permissions are treated as granted by design.<br><br>
+ * Normal permissions are treated as granted by design.<br><br>
  * [permissions]에 포함된 권한이 모두 허용된 경우에만 [doWork]를 실행합니다.<br>
- * non-dangerous(일반/서명/특권) 권한은 설계상 허용된 것으로 간주합니다.<br>
+ * 일반 권한은 설계상 허용된 것으로 간주합니다.<br>
  *
  * @param permissions Permission strings to validate.<br><br>
  *        검증할 권한 문자열 목록입니다.<br>
@@ -130,11 +133,9 @@ public inline fun Context.hasPermissions(vararg permissions: String, doWork: () 
 
 /**
  * Produces a list of permissions from [permissions] that are still missing.<br>
- * Only dangerous permissions are checked; non-dangerous (normal/signature/privileged) permissions
- * are treated as granted by design.<br><br>
+ * Dangerous permissions are checked explicitly, and normal permissions are treated as granted by design.<br><br>
  * [permissions] 중 아직 허용되지 않은 권한 목록을 반환합니다.<br>
- * (런타임/특수 권한(위험 권한)만 검사하며, non-dangerous(일반/서명/특권) 권한은
- * 설계상 허용된 것으로 간주합니다.<br>
+ * 위험 권한은 실제 검사하고, 일반 권한은 설계상 허용된 것으로 간주합니다.<br>
  *
  * @param permissions Requested permission list.<br><br>
  *        요청할 권한 목록입니다.<br>
@@ -200,8 +201,8 @@ public inline fun isSpecialPermission(permission: String): Boolean {
 }
 
 /**
- * Reads the platform protection level for [permission].<br><br>
- * [permission] 권한의 플랫폼 보호 수준을 조회합니다.<br>
+ * Reads the raw platform protection value for [permission].<br><br>
+ * [permission] 권한의 원본 플랫폼 보호 수준 값을 조회합니다.<br>
  *
  * @param permission Permission string to query.<br><br>
  *        조회할 권한 문자열입니다.<br>
@@ -211,4 +212,19 @@ public inline fun isSpecialPermission(permission: String): Boolean {
 public inline fun Context.getPermissionProtectionLevel(permission: String): Int =
     safeCatch(defaultValue = PermissionInfo.PROTECTION_DANGEROUS) {
         packageManager.getPermissionInfo(permission, 0).protection
+    }
+
+/**
+ * Reads only the base protection level for [permission], excluding protection flags.<br><br>
+ * [permission] 권한의 보호 플래그를 제외한 기본 보호 수준만 조회합니다.<br>
+ *
+ * @param permission Permission string to query.<br><br>
+ *        조회할 권한 문자열입니다.<br>
+ * @return Base protection level constant, defaulting to [PermissionInfo.PROTECTION_DANGEROUS].<br><br>
+ *         기본 보호 수준 상수이며 기본값은 [PermissionInfo.PROTECTION_DANGEROUS]입니다.<br>
+ */
+public inline fun Context.getPermissionBaseProtectionLevel(permission: String): Int =
+    safeCatch(defaultValue = PermissionInfo.PROTECTION_DANGEROUS) {
+        val permissionInfo = packageManager.getPermissionInfo(permission, 0)
+        PermissionInfoCompat.getProtection(permissionInfo)
     }

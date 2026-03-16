@@ -7,6 +7,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.yield
 import kr.open.library.simple_ui.core.permissions.classifier.PermissionClassifier
 import kr.open.library.simple_ui.core.permissions.classifier.PermissionType
+import kr.open.library.simple_ui.core.permissions.classifier.RuntimePermissionRequestability
 import kr.open.library.simple_ui.core.permissions.handler.RolePermissionHandler
 import kr.open.library.simple_ui.core.permissions.handler.SpecialPermissionHandler
 import kr.open.library.simple_ui.core.permissions.model.PermissionDeniedItem
@@ -59,6 +60,7 @@ class PermissionFlowProcessorRobolectricTest {
             `when`(host.shouldShowRequestPermissionRationale(permission)).thenReturn(true)
             `when`(classifier.classify(permission)).thenReturn(PermissionType.RUNTIME)
             `when`(classifier.isSupported(permission)).thenReturn(true)
+            `when`(classifier.getRuntimeRequestability(permission)).thenReturn(RuntimePermissionRequestability.REQUESTABLE)
             val runtimeHandler = RuntimePermissionHandler(
                 host = host,
                 requestedHistory = mutableSetOf(),

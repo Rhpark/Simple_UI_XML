@@ -12,6 +12,7 @@ import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
 import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.core.permissions.classifier.PermissionClassifier
 import kr.open.library.simple_ui.core.permissions.classifier.PermissionType
+import kr.open.library.simple_ui.core.permissions.classifier.RuntimePermissionRequestability
 import kr.open.library.simple_ui.core.permissions.extensions.hasPermission
 import kr.open.library.simple_ui.core.permissions.handler.RolePermissionHandler
 import kr.open.library.simple_ui.core.permissions.handler.SpecialPermissionHandler
@@ -237,18 +238,30 @@ internal class PermissionFlowProcessor(
 
         if (entry.isRestored) {
             val restoredResults = permissions.associateWith { permission ->
-                when {
-                    !isPlatformPermissionAvailable(permission, PermissionType.RUNTIME) -> PermissionDecisionType.GRANTED
-                    host.context.hasPermission(permission) -> PermissionDecisionType.GRANTED
-                    else -> {
-                        val shouldShowRationale = runtimeHandler.shouldShowRationale(permission)
-                        val wasRequestedBefore = runtimeHandler.wasRequested(permission)
-                        runtimeHandler.mapResult(
-                            permission = permission,
-                            granted = false,
-                            shouldShowRationale = shouldShowRationale,
-                            wasRequestedBefore = wasRequestedBefore,
-                        )
+                if (!isPlatformPermissionAvailable(permission, PermissionType.RUNTIME)) {
+                    PermissionDecisionType.GRANTED
+                } else {
+                    when (classifier.getRuntimeRequestability(permission)) {
+                        RuntimePermissionRequestability.GRANTED_BY_DEFAULT ->
+                            PermissionDecisionType.GRANTED
+
+                        RuntimePermissionRequestability.NOT_SUPPORTED ->
+                            PermissionDecisionType.NOT_SUPPORTED
+
+                        RuntimePermissionRequestability.REQUESTABLE -> {
+                            if (host.context.hasPermission(permission)) {
+                                PermissionDecisionType.GRANTED
+                            } else {
+                                val shouldShowRationale = runtimeHandler.shouldShowRationale(permission)
+                                val wasRequestedBefore = runtimeHandler.wasRequested(permission)
+                                runtimeHandler.mapResult(
+                                    permission = permission,
+                                    granted = false,
+                                    shouldShowRationale = shouldShowRationale,
+                                    wasRequestedBefore = wasRequestedBefore,
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -256,7 +269,7 @@ internal class PermissionFlowProcessor(
             return
         }
 
-        val supportedPermissions = permissions.filter {
+        val platformSupportedPermissions = permissions.filter {
             isPlatformPermissionAvailable(it, PermissionType.RUNTIME)
         }
         val unsupportedPermissions = permissions.filterNot {
@@ -266,12 +279,37 @@ internal class PermissionFlowProcessor(
             resultAggregator.completeWaitersForPermissions(unsupportedPermissions, PermissionDecisionType.GRANTED)
         }
 
-        val grantedPermissions = supportedPermissions.filter { host.context.hasPermission(it) }
+        val permissionsByRequestability = platformSupportedPermissions.groupBy {
+            classifier.getRuntimeRequestability(it)
+        }
+
+        val grantedByDefaultPermissions =
+            permissionsByRequestability[RuntimePermissionRequestability.GRANTED_BY_DEFAULT].orEmpty()
+        if (grantedByDefaultPermissions.isNotEmpty()) {
+            resultAggregator.completeWaitersForPermissions(
+                grantedByDefaultPermissions,
+                PermissionDecisionType.GRANTED,
+            )
+        }
+
+        val notSupportedPermissions =
+            permissionsByRequestability[RuntimePermissionRequestability.NOT_SUPPORTED].orEmpty()
+        if (notSupportedPermissions.isNotEmpty()) {
+            resultAggregator.completeWaitersForPermissions(
+                notSupportedPermissions,
+                PermissionDecisionType.NOT_SUPPORTED,
+            )
+        }
+
+        val requestablePlatformPermissions =
+            permissionsByRequestability[RuntimePermissionRequestability.REQUESTABLE].orEmpty()
+
+        val grantedPermissions = requestablePlatformPermissions.filter { host.context.hasPermission(it) }
         if (grantedPermissions.isNotEmpty()) {
             resultAggregator.completeWaitersForPermissions(grantedPermissions, PermissionDecisionType.GRANTED)
         }
 
-        val requestablePermissions = supportedPermissions.filterNot {
+        val requestablePermissions = requestablePlatformPermissions.filterNot {
             host.context.hasPermission(it)
         }
         if (requestablePermissions.isEmpty()) return

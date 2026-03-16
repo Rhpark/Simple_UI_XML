@@ -111,6 +111,42 @@ enum class PermissionDecisionType {
 - 빈 요청은 permission 빈 문자열로 EMPTY_REQUEST를 반환한다.
 - INITIALIZED/DESTROYED 상태에서는 LIFECYCLE_NOT_READY로 결과를 반환한다.
 
+## 권한 판정 의미 정의
+- `supported`: 현재 SDK/OS에서 해당 권한 자체가 존재하고 정책상 지원되는지 여부를 뜻한다.
+- `granted`: 현재 프로세스 기준으로 이미 권한 또는 동등 토글을 보유했는지 여부를 뜻한다.
+- `runtime requestable`: 표준 런타임 권한 다이얼로그로 실제 요청 가능한지 여부를 뜻한다.
+- 위 세 의미는 서로 독립적으로 취급한다.
+
+### runtime requestability 정책
+```kotlin
+enum class RuntimePermissionRequestability {
+    REQUESTABLE,
+    GRANTED_BY_DEFAULT,
+    NOT_SUPPORTED,
+}
+```
+
+- `REQUESTABLE`
+  - dangerous 권한
+  - 런타임 다이얼로그 요청 대상
+- `GRANTED_BY_DEFAULT`
+  - normal 권한
+  - 설치 시점 승인으로 보고 별도 런타임 요청을 보내지 않는다
+- `NOT_SUPPORTED`
+  - signature, privileged, 기타 일반 앱 런타임 요청 비대상 권한
+  - 일반 앱 흐름에서는 `NOT_SUPPORTED` 결과로 처리한다
+
+### 판정 원칙
+- `isSupported() == false`
+  - 기존 정책 유지
+  - 현재 OS에 없는 권한이면 `GRANTED`로 처리한다
+- `isSupported() == true`이면서 `GRANTED_BY_DEFAULT`
+  - `GRANTED`로 처리한다
+- `isSupported() == true`이면서 `REQUESTABLE`
+  - `hasPermission()` 확인 후 필요 시 실제 요청한다
+- `isSupported() == true`이면서 `NOT_SUPPORTED`
+  - `NOT_SUPPORTED`로 처리한다
+
 ## 내부 구조(의존/비의존 분리)
 ### 쉬운 설명
 - Activity/Fragment 없이도 되는 로직은 core에, Activity/Fragment가 필요한 요청/라이프사이클 로직은 xml에 둔다.
@@ -173,6 +209,7 @@ enum class PermissionDecisionType {
 ## 패키지 역할 상세
 ### core
 - `classifier`: 권한 문자열을 런타임/특수/Role로 분류하고 지원 여부를 판단한다.
+- `classifier`: SDK 지원 여부와 runtime requestability를 함께 판단하되, 두 의미를 혼동하지 않는다.
 - `extentions`: 권한 보유 여부 등 공통 확장 함수를 제공한다.
 - `handler`: 특수 권한/Role 권한의 체크 및 인텐트 생성 규칙을 담당한다.
 - `model`: 결과/훅/복원 모델을 정의한다.
@@ -214,6 +251,9 @@ enum class PermissionDecisionType {
 
 ## 런타임 권한 처리
 - ActivityResultContracts.RequestMultiplePermissions 사용.
+- SDK 미지원 여부와 runtime requestability를 먼저 판정한 뒤 dangerous 권한만 실제 런타임 요청 대상으로 보낸다.
+- normal 권한은 `GRANTED_BY_DEFAULT`로 처리한다.
+- signature/privileged 권한은 `NOT_SUPPORTED`로 처리한다.
 - 결과 매핑 규칙:
   - granted = true → GRANTED
   - granted = false:
@@ -223,6 +263,7 @@ enum class PermissionDecisionType {
       - 요청 이력 없음 → DENIED
 - 요청 이력은 상태 저장(Bundle)에 포함한다.
 - GRANTED 결과는 내부 처리용이며 onDeniedResult에는 포함되지 않는다.
+- 복원 경로와 일반 요청 경로는 동일한 runtime requestability 정책을 사용한다.
 
 ## 특수 권한 처리(설정 화면 이동형)
 - 요청: Settings 인텐트 실행

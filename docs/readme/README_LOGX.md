@@ -166,10 +166,13 @@ Logx.setStorageType(LogStorageType.APP_EXTERNAL)
 Logx.setAppName("MyApp")
 
 // (선택) 직접 경로 지정
-// Logx.setSaveDirectory("/storage/emulated/0/MyLogs")
+// val customDir = File(applicationContext.getExternalFilesDir(null) ?: applicationContext.filesDir, "MyLogs").absolutePath
+// Logx.setSaveDirectory(customDir)
 ```
 
 **Note:** 로그 파일은 10MB를 초과하면 `_1`, `_2`로 로테이션됩니다.
+**Note:** Android 10+ custom save directories must stay inside app-internal or app-specific external storage.
+`/storage/emulated/0/...` 같은 공용 절대경로는 custom path로 직접 지원하지 않습니다.
 
 <br>
 

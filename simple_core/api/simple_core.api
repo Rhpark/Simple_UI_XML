@@ -289,6 +289,7 @@ public final class kr/open/library/simple_ui/core/permissions/classifier/Permiss
 	public static final field Companion Lkr/open/library/simple_ui/core/permissions/classifier/PermissionClassifier$Companion;
 	public fun <init> (Landroid/content/Context;)V
 	public final fun classify (Ljava/lang/String;)Lkr/open/library/simple_ui/core/permissions/classifier/PermissionType;
+	public final fun getRuntimeRequestability (Ljava/lang/String;)Lkr/open/library/simple_ui/core/permissions/classifier/RuntimePermissionRequestability;
 	public final fun isInvalid (Ljava/lang/String;)Z
 	public final fun isRole (Ljava/lang/String;)Z
 	public final fun isSpecial (Ljava/lang/String;)Z
@@ -308,7 +309,17 @@ public final class kr/open/library/simple_ui/core/permissions/classifier/Permiss
 	public static fun values ()[Lkr/open/library/simple_ui/core/permissions/classifier/PermissionType;
 }
 
+public final class kr/open/library/simple_ui/core/permissions/classifier/RuntimePermissionRequestability : java/lang/Enum {
+	public static final field GRANTED_BY_DEFAULT Lkr/open/library/simple_ui/core/permissions/classifier/RuntimePermissionRequestability;
+	public static final field NOT_SUPPORTED Lkr/open/library/simple_ui/core/permissions/classifier/RuntimePermissionRequestability;
+	public static final field REQUESTABLE Lkr/open/library/simple_ui/core/permissions/classifier/RuntimePermissionRequestability;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lkr/open/library/simple_ui/core/permissions/classifier/RuntimePermissionRequestability;
+	public static fun values ()[Lkr/open/library/simple_ui/core/permissions/classifier/RuntimePermissionRequestability;
+}
+
 public final class kr/open/library/simple_ui/core/permissions/extensions/PermissionExtensionsKt {
+	public static final fun getPermissionBaseProtectionLevel (Landroid/content/Context;Ljava/lang/String;)I
 	public static final fun getPermissionProtectionLevel (Landroid/content/Context;Ljava/lang/String;)I
 	public static final fun hasAccessibilityServicePermission (Landroid/content/Context;)Z
 	public static final fun hasNotificationListenerPermission (Landroid/content/Context;)Z

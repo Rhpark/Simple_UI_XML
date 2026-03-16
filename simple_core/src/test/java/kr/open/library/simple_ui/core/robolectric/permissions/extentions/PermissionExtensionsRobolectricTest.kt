@@ -10,6 +10,7 @@ import android.os.Build
 import android.os.PowerManager
 import androidx.core.app.NotificationManagerCompat
 import androidx.test.core.app.ApplicationProvider
+import kr.open.library.simple_ui.core.permissions.extensions.getPermissionBaseProtectionLevel
 import kr.open.library.simple_ui.core.permissions.extensions.getPermissionProtectionLevel
 import kr.open.library.simple_ui.core.permissions.extensions.hasAccessibilityServicePermission
 import kr.open.library.simple_ui.core.permissions.extensions.hasNotificationListenerPermission
@@ -90,6 +91,25 @@ class PermissionExtensionsRobolectricTest {
             }
         protectionField.setInt(unknownPermissionInfo, PermissionInfo.PROTECTION_NORMAL)
         shadowPackageManager.addPermissionInfo(unknownPermissionInfo)
+
+        val signaturePermissionInfo =
+            PermissionInfo().apply {
+                name = "com.signature.PERMISSION"
+                packageName = context.packageName
+            }
+        protectionField.setInt(signaturePermissionInfo, PermissionInfo.PROTECTION_SIGNATURE)
+        shadowPackageManager.addPermissionInfo(signaturePermissionInfo)
+
+        val signaturePrivilegedPermissionInfo =
+            PermissionInfo().apply {
+                name = "com.signature.privileged.PERMISSION"
+                packageName = context.packageName
+            }
+        protectionField.setInt(
+            signaturePrivilegedPermissionInfo,
+            PermissionInfo.PROTECTION_SIGNATURE or PermissionInfo.PROTECTION_FLAG_PRIVILEGED,
+        )
+        shadowPackageManager.addPermissionInfo(signaturePrivilegedPermissionInfo)
     }
 
     // ==============================================
@@ -595,12 +615,50 @@ class PermissionExtensionsRobolectricTest {
     }
 
     @Test
+    fun getPermissionBaseProtectionLevel_withDangerousPermission_returnsDangerous() {
+        val protectionLevel = context.getPermissionBaseProtectionLevel(Manifest.permission.CAMERA)
+
+        assertEquals(PermissionInfo.PROTECTION_DANGEROUS, protectionLevel)
+    }
+
+    @Test
+    fun getPermissionBaseProtectionLevel_withNormalPermission_returnsNormal() {
+        val protectionLevel = context.getPermissionBaseProtectionLevel("com.unknown.PERMISSION")
+
+        assertEquals(PermissionInfo.PROTECTION_NORMAL, protectionLevel)
+    }
+
+    @Test
+    fun getPermissionBaseProtectionLevel_withSignaturePrivilegedPermission_returnsSignature() {
+        val protectionLevel = context.getPermissionBaseProtectionLevel("com.signature.privileged.PERMISSION")
+
+        assertEquals(PermissionInfo.PROTECTION_SIGNATURE, protectionLevel)
+    }
+
+    @Test
     fun hasPermission_normalPermissionWithProtectionLevelCheck_whenNotDangerous_returnsTrue() {
         // Given - permission with PROTECTION_NORMAL should return true
         val normalPermission = "com.unknown.PERMISSION"
 
         // When & Then
         assertTrue(context.hasPermission(normalPermission))
+    }
+
+    @Test
+    fun hasPermission_signaturePermission_returnsFalse() {
+        assertFalse(context.hasPermission("com.signature.PERMISSION"))
+    }
+
+    @Test
+    fun hasPermission_signaturePrivilegedPermission_returnsFalse() {
+        assertFalse(context.hasPermission("com.signature.privileged.PERMISSION"))
+    }
+
+    @Test
+    fun remainPermissions_signaturePermission_returnsPermissionAsRemaining() {
+        val remaining = context.remainPermissions(listOf("com.signature.PERMISSION"))
+
+        assertEquals(listOf("com.signature.PERMISSION"), remaining)
     }
 
     @Test

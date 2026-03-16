@@ -121,13 +121,20 @@ class DialogConfig {
      * 너비는 화면 너비 * widthRatio로 계산되며, null이면 WRAP_CONTENT입니다.<br>
      * 높이는 화면 높이 * heightRatio로 계산되며, null이면 WRAP_CONTENT입니다.<br>
      *
-     * @param widthRatio The ratio of screen width (0.0 to 1.0), or null for WRAP_CONTENT.<br><br>
-     *                   화면 너비 비율 (0.0 ~ 1.0), null이면 WRAP_CONTENT.<br>
+     * @param widthRatio The ratio of screen width (0.0 to 1.0), or null for WRAP_CONTENT.
+     *                   Any non-null value outside 0.0..1.0 throws an exception.<br><br>
+     *                   화면 너비 비율 (0.0 ~ 1.0), null이면 WRAP_CONTENT입니다.
+     *                   null이 아닌 값이 0.0 ~ 1.0 범위를 벗어나면 예외가 발생합니다.<br>
      *
-     * @param heightRatio The ratio of screen height (0.0 to 1.0), or null for WRAP_CONTENT.<br><br>
-     *                    화면 높이 비율 (0.0 ~ 1.0), null이면 WRAP_CONTENT.<br>
+     * @param heightRatio The ratio of screen height (0.0 to 1.0), or null for WRAP_CONTENT.
+     *                    Any non-null value outside 0.0..1.0 throws an exception.<br><br>
+     *                    화면 높이 비율 (0.0 ~ 1.0), null이면 WRAP_CONTENT입니다.
+     *                    null이 아닌 값이 0.0 ~ 1.0 범위를 벗어나면 예외가 발생합니다.<br>
      */
     public fun resizeDialog(window: Window, activity: Activity, widthRatio: Float? = null, heightRatio: Float?) {
+        validateRatio("widthRatio", widthRatio)
+        validateRatio("heightRatio", heightRatio)
+
         val displayInfo = window.context.getDisplayInfo()
         Logx.d("Screen Size " + displayInfo.getAppWindowSize(activity))
         val screenSize = displayInfo.getAppWindowSize(activity)
@@ -135,6 +142,13 @@ class DialogConfig {
             val width = widthRatio?.let { (size.width * it).toInt() } ?: LayoutParams.WRAP_CONTENT
             val height = heightRatio?.let { (size.height * it).toInt() } ?: LayoutParams.WRAP_CONTENT
             window.setLayout(width, height)
+        }
+    }
+
+    private fun validateRatio(name: String, ratio: Float?) {
+        ratio ?: return
+        require(ratio in 0f..1f) {
+            "$name must be in 0.0..1.0 or null, but was $ratio"
         }
     }
 }

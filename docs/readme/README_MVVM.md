@@ -540,7 +540,7 @@ class InfoDialog : BaseDataBindingDialogFragment<DialogInfoBinding>(R.layout.dia
         binding.vm = vm
         lifecycle.addObserver(vm)
 
-        // 필요 시 다이얼로그 크기/배경 제어도 즉시 가능
+        // null은 WRAP_CONTENT, 비율 값은 0.0f..1.0f 범위만 허용
         resizeDialog(0.85f, 0.5f)
 
     }

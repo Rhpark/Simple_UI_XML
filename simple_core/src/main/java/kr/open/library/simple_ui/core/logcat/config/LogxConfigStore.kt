@@ -4,8 +4,8 @@ import kr.open.library.simple_ui.core.logcat.internal.common.LogxConstants
 import java.util.Collections
 
 /**
- * Central in-memory configuration store for Logx.<br><br>
- * Logx의 중앙 메모리 설정 저장소이다.<br>
+ * Logx 설정을 메모리에서 중앙 관리하는 저장소입니다.<br><br>
+ * Central in-memory configuration store for Logx.<br>
  */
 internal object LogxConfigStore {
     private val snapshotLock = Any()
@@ -21,8 +21,8 @@ internal object LogxConfigStore {
     ))
 
     /**
-     * Immutable snapshot that represents the current configuration.<br><br>
-     * 현재 설정을 표현하는 불변 스냅샷.<br>
+     * 현재 설정 상태를 나타내는 불변 스냅샷입니다.<br><br>
+     * Immutable snapshot that represents the current configuration.<br>
      */
     @Volatile
     private var snapshot: LogxConfigSnapshot = LogxConfigSnapshot(
@@ -38,11 +38,11 @@ internal object LogxConfigStore {
     )
 
     /**
-     * Sets logging enabled state.<br><br>
-     * 로그 출력 활성화 여부를 설정한다.<br>
+     * 로그 출력 활성화 여부를 설정합니다.<br><br>
+     * Sets logging enabled state.<br>
      *
-     * @param enabled Whether to enable logging.<br><br>
-     *                로그 활성화 여부.<br>
+     * @param enabled 로그 출력 활성화 여부입니다.<br><br>
+     *                Whether to enable logging.<br>
      */
     fun setLogging(enabled: Boolean) {
         synchronized(snapshotLock) {
@@ -51,17 +51,17 @@ internal object LogxConfigStore {
     }
 
     /**
-     * Returns current logging enabled state.<br><br>
-     * 현재 로그 활성화 여부를 반환한다.<br>
+     * 현재 로그 출력 활성화 여부를 반환합니다.<br><br>
+     * Returns current logging enabled state.<br>
      */
     fun isLogging(): Boolean = snapshot.isLogging
 
     /**
-     * Sets allowed log types (allowlist).<br><br>
-     * 허용할 로그 타입 목록을 설정한다.<br>
+     * 허용할 로그 타입 목록을 설정합니다.<br><br>
+     * Sets allowed log types (allowlist).<br>
      *
-     * @param types Allowed log types.<br><br>
-     *              허용할 로그 타입 목록.<br>
+     * @param types 허용할 로그 타입 집합입니다.<br><br>
+     *              Allowed log types.<br>
      */
     fun setLogTypes(types: Set<LogType>) {
         val sanitized = Collections.unmodifiableSet(types.toSet())
@@ -71,17 +71,17 @@ internal object LogxConfigStore {
     }
 
     /**
-     * Returns allowed log types.<br><br>
-     * 허용된 로그 타입 목록을 반환한다.<br>
+     * 허용된 로그 타입 집합을 반환합니다.<br><br>
+     * Returns allowed log types.<br>
      */
     fun getLogTypes(): Set<LogType> = snapshot.logTypes
 
     /**
-     * Enables or disables tag blocklist filtering.<br><br>
-     * 태그 차단 목록 필터 사용 여부를 설정한다.<br>
+     * 태그 차단 목록 필터 활성화 여부를 설정합니다.<br><br>
+     * Enables or disables tag blocklist filtering.<br>
      *
-     * @param enabled Whether to enable blocklist filtering.<br><br>
-     *                차단 목록 필터 활성화 여부.<br>
+     * @param enabled 차단 목록 필터 활성화 여부입니다.<br><br>
+     *                Whether to enable blocklist filtering.<br>
      */
     fun setLogTagBlockListEnabled(enabled: Boolean) {
         synchronized(snapshotLock) {
@@ -90,17 +90,17 @@ internal object LogxConfigStore {
     }
 
     /**
-     * Returns whether tag blocklist filtering is enabled.<br><br>
-     * 태그 차단 목록 필터 활성화 여부를 반환한다.<br>
+     * 태그 차단 목록 필터 활성화 여부를 반환합니다.<br><br>
+     * Returns whether tag blocklist filtering is enabled.<br>
      */
     fun isLogTagBlockListEnabled(): Boolean = snapshot.isLogTagBlockListEnabled
 
     /**
-     * Sets tag blocklist entries.<br><br>
-     * 태그 차단 목록을 설정한다.<br>
+     * 태그 차단 목록을 설정합니다.<br><br>
+     * Sets tag blocklist entries.<br>
      *
-     * @param tags Tags to block.<br><br>
-     *             차단할 태그 목록.<br>
+     * @param tags 차단할 태그 집합입니다.<br><br>
+     *             Tags to block.<br>
      */
     fun setLogTagBlockList(tags: Set<String>) {
         val sanitized = Collections.unmodifiableSet(tags.toSet())
@@ -110,17 +110,17 @@ internal object LogxConfigStore {
     }
 
     /**
-     * Returns current tag blocklist entries.<br><br>
-     * 현재 태그 차단 목록을 반환한다.<br>
+     * 현재 태그 차단 목록을 반환합니다.<br><br>
+     * Returns current tag blocklist entries.<br>
      */
     fun getLogTagBlockList(): Set<String> = snapshot.logTagBlockList
 
     /**
-     * Sets file logging enabled state.<br><br>
-     * 파일 저장 활성화 여부를 설정한다.<br>
+     * 파일 저장 활성화 여부를 설정합니다.<br><br>
+     * Sets file logging enabled state.<br>
      *
-     * @param enabled Whether to enable file logging.<br><br>
-     *                파일 저장 활성화 여부.<br>
+     * @param enabled 파일 저장 활성화 여부입니다.<br><br>
+     *                Whether to enable file logging.<br>
      */
     fun setSaveEnabled(enabled: Boolean) {
         synchronized(snapshotLock) {
@@ -129,17 +129,17 @@ internal object LogxConfigStore {
     }
 
     /**
-     * Returns file logging enabled state.<br><br>
-     * 파일 저장 활성화 여부를 반환한다.<br>
+     * 파일 저장 활성화 여부를 반환합니다.<br><br>
+     * Returns file logging enabled state.<br>
      */
     fun isSaveEnabled(): Boolean = snapshot.isSaveEnabled
 
     /**
-     * Sets storage type for file output.<br><br>
-     * 파일 저장소 타입을 설정한다.<br>
+     * 파일 저장소 타입을 설정합니다.<br><br>
+     * Sets storage type for file output.<br>
      *
-     * @param type Storage type to use.<br><br>
-     *             사용할 저장소 타입.<br>
+     * @param type 사용할 저장소 타입입니다.<br><br>
+     *             Storage type to use.<br>
      */
     fun setStorageType(type: LogStorageType) {
         synchronized(snapshotLock) {
@@ -148,17 +148,17 @@ internal object LogxConfigStore {
     }
 
     /**
-     * Returns current storage type.<br><br>
-     * 현재 저장소 타입을 반환한다.<br>
+     * 현재 저장소 타입을 반환합니다.<br><br>
+     * Returns current storage type.<br>
      */
     fun getStorageType(): LogStorageType = snapshot.storageType
 
     /**
-     * Sets custom save directory path.<br><br>
-     * 사용자 지정 저장 경로를 설정한다.<br>
+     * 사용자 지정 저장 디렉터리를 설정합니다.<br><br>
+     * Sets custom save directory path.<br>
      *
-     * @param path Directory path or null to use default.<br><br>
-     *             저장 경로 또는 기본 경로 사용 시 null.<br>
+     * @param path 저장 디렉터리 경로입니다. `null`이면 기본 경로를 사용합니다.<br><br>
+     *             Directory path or null to use default.<br>
      */
     fun setSaveDirectory(path: String?) {
         synchronized(snapshotLock) {
@@ -167,17 +167,17 @@ internal object LogxConfigStore {
     }
 
     /**
-     * Returns custom save directory path.<br><br>
-     * 사용자 지정 저장 경로를 반환한다.<br>
+     * 사용자 지정 저장 디렉터리 경로를 반환합니다.<br><br>
+     * Returns custom save directory path.<br>
      */
     fun getSaveDirectory(): String? = snapshot.saveDirectory
 
     /**
-     * Sets application name used in log prefix and file name.<br><br>
-     * 로그 프리픽스/파일명에 사용할 앱 이름을 설정한다.<br>
+     * 로그 접두사와 파일명에 사용할 앱 이름을 설정합니다.<br><br>
+     * Sets application name used in log prefix and file name.<br>
      *
-     * @param name Application name.<br><br>
-     *             앱 이름.<br>
+     * @param name 앱 이름입니다.<br><br>
+     *             Application name.<br>
      */
     fun setAppName(name: String) {
         synchronized(snapshotLock) {
@@ -186,17 +186,17 @@ internal object LogxConfigStore {
     }
 
     /**
-     * Returns current application name.<br><br>
-     * 현재 앱 이름을 반환한다.<br>
+     * 현재 앱 이름을 반환합니다.<br><br>
+     * Returns current application name.<br>
      */
     fun getAppName(): String = snapshot.appName
 
     /**
-     * Adds package prefixes to skip during stack trace resolution.<br><br>
-     * 스택 트레이스 해석 시 제외할 패키지 prefix를 추가한다.<br>
+     * 스택 트레이스 해석에서 제외할 패키지 접두사를 추가합니다.<br><br>
+     * Adds package prefixes to skip during stack trace resolution.<br>
      *
-     * @param packages Package prefixes to add.<br><br>
-     *                 추가할 패키지 prefix 목록.<br>
+     * @param packages 추가할 패키지 접두사 집합입니다.<br><br>
+     *                 Package prefixes to add.<br>
      */
     fun addSkipPackages(packages: Set<String>) {
         val filtered = packages.filter { it.isNotBlank() }.toSet()
@@ -209,14 +209,14 @@ internal object LogxConfigStore {
     }
 
     /**
-     * Returns current skip package prefixes.<br><br>
-     * 현재 제외 패키지 prefix 목록을 반환한다.<br>
+     * 현재 제외 패키지 접두사 목록을 반환합니다.<br><br>
+     * Returns current skip package prefixes.<br>
      */
     fun getSkipPackages(): Set<String> = snapshot.skipPackages
 
     /**
-     * Creates an immutable snapshot of current configuration.<br><br>
-     * 현재 설정의 불변 스냅샷을 생성한다.<br>
+     * 현재 설정의 불변 스냅샷을 생성해 반환합니다.<br><br>
+     * Creates an immutable snapshot of current configuration.<br>
      */
     fun snapshot(): LogxConfigSnapshot = snapshot
 }

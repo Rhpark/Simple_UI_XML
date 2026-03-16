@@ -8,6 +8,7 @@ import android.os.Environment
 import androidx.core.content.ContextCompat
 import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
 import kr.open.library.simple_ui.core.logcat.config.LogStorageType
+import java.io.File
 
 /**
  * Resolves log directory paths for different storage types.<br><br>
@@ -53,6 +54,35 @@ internal object LogxPathResolver {
     fun hasWritePermission(context: Context, storageType: LogStorageType): Boolean {
         if (!requiresPermission(storageType)) return true
         return ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+    }
+
+    /**
+     * Returns whether a custom directory path is supported for file logging on the current platform.<br><br>
+     * 현재 플랫폼에서 사용자 지정 디렉터리 경로를 파일 로그 저장용으로 지원하는지 반환합니다.<br>
+     *
+     * On Android 10+ only app-internal or app-specific external directories are supported for
+     * direct file writes without SAF/MediaStore.<br><br>
+     * Android 10+에서는 SAF/MediaStore 없이 직접 파일 쓰기를 수행할 수 있는 앱 내부 또는
+     * 앱 전용 외부 디렉터리만 지원합니다.<br>
+     *
+     * @param context Application context.<br><br>
+     *                애플리케이션 컨텍스트.<br>
+     * @param directory Candidate custom directory.<br><br>
+     *                  확인할 사용자 지정 디렉터리 후보입니다.<br>
+     */
+    fun isSupportedCustomDirectory(context: Context, directory: File): Boolean {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) return true
+
+        val candidatePath = directory.absolutePath
+        val allowedRoots = buildList {
+            add(context.filesDir.absolutePath)
+            context
+                .getExternalFilesDirs(null)
+                .mapNotNull { it?.absolutePath }
+                .forEach { add(it) }
+        }
+
+        return allowedRoots.any { root -> candidatePath == root || candidatePath.startsWith(root + File.separator) }
     }
 
     /**

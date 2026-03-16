@@ -10,6 +10,7 @@ import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
 import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.core.permissions.classifier.PermissionClassifier
 import kr.open.library.simple_ui.core.permissions.classifier.PermissionType
+import kr.open.library.simple_ui.core.permissions.classifier.RuntimePermissionRequestability
 import kr.open.library.simple_ui.core.permissions.extensions.hasPermission
 import kr.open.library.simple_ui.core.permissions.handler.RolePermissionHandler
 import kr.open.library.simple_ui.core.permissions.handler.SpecialPermissionHandler
@@ -445,15 +446,39 @@ class PermissionRequester private constructor(
             )
             return PermissionDecisionType.GRANTED
         }
-        if (host.context.hasPermission(permission)) {
-            resultAggregator.logResult(
-                requestId = requestId,
-                permission = permission,
-                result = PermissionDecisionType.GRANTED,
-            )
-            return PermissionDecisionType.GRANTED
+
+        return when (classifier.getRuntimeRequestability(permission)) {
+            RuntimePermissionRequestability.GRANTED_BY_DEFAULT -> {
+                resultAggregator.logResult(
+                    requestId = requestId,
+                    permission = permission,
+                    result = PermissionDecisionType.GRANTED,
+                )
+                PermissionDecisionType.GRANTED
+            }
+
+            RuntimePermissionRequestability.NOT_SUPPORTED -> {
+                resultAggregator.logResult(
+                    requestId = requestId,
+                    permission = permission,
+                    result = PermissionDecisionType.NOT_SUPPORTED,
+                )
+                PermissionDecisionType.NOT_SUPPORTED
+            }
+
+            RuntimePermissionRequestability.REQUESTABLE -> {
+                if (host.context.hasPermission(permission)) {
+                    resultAggregator.logResult(
+                        requestId = requestId,
+                        permission = permission,
+                        result = PermissionDecisionType.GRANTED,
+                    )
+                    PermissionDecisionType.GRANTED
+                } else {
+                    null
+                }
+            }
         }
-        return null
     }
 
     /**

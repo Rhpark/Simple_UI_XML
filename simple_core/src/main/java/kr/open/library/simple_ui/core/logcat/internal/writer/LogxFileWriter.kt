@@ -5,6 +5,7 @@ import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import kr.open.library.simple_ui.core.logcat.config.LogxConfigSnapshot
@@ -150,6 +151,20 @@ internal class LogxFileWriter {
         if (result.isFailure) {
             scope.launch { channel.send(WriterCommand.Close) }
         }
+    }
+
+    /**
+     * 채널과 코루틴 스코프를 완전히 종료합니다.
+     *
+     * Fully shuts down the channel and coroutine scope.
+     * <br><br>
+     * 채널을 닫아 writer 루프를 종료하고, 파일 세션을 닫은 뒤 scope를 cancel합니다.
+     * 테스트 teardown 또는 앱 종료 시 호출합니다.
+     */
+    fun shutdown() {
+        channel.close()
+        synchronized(fileLock) { fileSession.close() }
+        scope.cancel()
     }
 
     /**

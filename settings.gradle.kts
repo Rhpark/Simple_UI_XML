@@ -25,3 +25,4 @@ rootProject.name = "SimpleUI_XML"
 include(":app")
 include(":simple_core")
 include(":simple_xml")
+include(":simple_system_manager")

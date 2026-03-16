@@ -13,29 +13,22 @@ import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
 /**
- * Base class that exposes delegate builders and thread-safe commit utilities for SharedPreferences.<br><br>
- * SharedPreferences 위임자 생성기와 스레드 안전한 커밋 도구를 제공하는 기반 클래스입니다.<br>
+ * SharedPreferences 접근을 공통화하기 위한 기반 클래스입니다.<br><br>
+ * Base class that exposes delegate builders and thread-safe commit utilities for SharedPreferences.<br>
  *
- * **Why this class exists / 이 클래스가 필요한 이유:**<br>
- * - SharedPreferences access repeats read/write boilerplate and safety checks.<br>
- * - Thread-safe commits and type-safe delegates reduce error-prone code.<br><br>
- * - SharedPreferences 접근은 읽기/쓰기 보일러플레이트와 안전 처리 반복이 많습니다.<br>
- * - 스레드 안전 커밋과 타입 안전 위임자가 오류를 줄입니다.<br>
+ * 이 클래스는 반복되는 읽기/쓰기 보일러플레이트를 줄이고, 타입 안전한 delegate와
+ * coroutine 친화적인 commit 유틸을 한곳에 모으기 위해 만들어졌습니다.<br><br>
+ * This class exists to reduce repetitive SharedPreferences boilerplate and to centralize
+ * type-safe delegates with coroutine-friendly commit utilities.<br>
  *
- * **Design decisions / 설계 결정 이유:**<br>
- * - Delegates wrap common types and centralize default handling.<br>
- * - Mutex-based commits ensure sequential writes across coroutines.<br><br>
- * - 위임자를 통해 공통 타입 처리와 기본값 로직을 중앙화합니다.<br>
- * - 뮤텍스를 사용해 코루틴 환경에서 순차 커밋을 보장합니다.<br>
- *
- * **Usage / 사용법:**<br>
- * 1. Extend this class with a preference group key.<br>
- * 2. Define properties using provided delegates (stringPref, intPref, ...).<br><br>
+ * 사용 방법은 다음과 같습니다.<br>
  * 1. groupKey를 지정해 이 클래스를 상속합니다.<br>
- * 2. 제공된 위임자(stringPref, intPref, ...)로 프로퍼티를 정의합니다.<br>
+ * 2. stringPref, intPref 같은 제공 delegate로 프로퍼티를 정의합니다.<br><br>
+ * Usage:<br>
+ * 1. Extend this class with a preference group key.<br>
+ * 2. Define properties using provided delegates such as stringPref or intPref.<br>
  *
- * Example:<br><br>
- * 예시:<br>
+ * Example:<br>
  * ```
  * class UserPreference(ctx: Context) : BaseSharedPreference(ctx, "user") {
  *     var userName by stringPref("user_name", "")
@@ -43,12 +36,12 @@ import kotlin.reflect.KProperty
  * }
  * ```
  *
- * @param context Android context used to obtain application-level SharedPreferences.<br><br>
- *        애플리케이션 범위 SharedPreferences를 얻기 위한 콘텍스트입니다.<br>
- * @param groupKey Preference file name.<br><br>
- *        SharedPreferences 파일 이름입니다.<br>
- * @param sharedPrivateMode File mode, defaults to [Context.MODE_PRIVATE].<br><br>
- *        파일 모드이며 기본값은 [Context.MODE_PRIVATE]입니다.<br>
+ * @param context 애플리케이션 범위 SharedPreferences를 얻기 위한 Android 컨텍스트입니다.<br><br>
+ *                Android context used to obtain application-level SharedPreferences.<br>
+ * @param groupKey SharedPreferences 파일 이름입니다.<br><br>
+ *                 Preference file name.<br>
+ * @param sharedPrivateMode 파일 모드이며 기본값은 [Context.MODE_PRIVATE]입니다.<br><br>
+ *                          File mode, defaults to [Context.MODE_PRIVATE].<br>
  */
 public abstract class BaseSharedPreference(
     context: Context,

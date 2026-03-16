@@ -1,5 +1,7 @@
 package kr.open.library.simple_ui.xml.robolectric.permissions.api
 
+import android.app.Application
+import android.content.pm.PermissionInfo
 import android.os.Bundle
 import android.os.Looper
 import androidx.activity.ComponentActivity
@@ -128,6 +130,79 @@ class PermissionRequesterRobolectricTest {
     }
 
     /**
+     * Verifies that restored normal permissions are completed as granted by default without queueing.<br><br>
+     * 복원된 normal 권한이 기본 승인으로 처리되고 요청 큐에 남지 않는지 검증합니다.<br>
+     */
+    @Test
+    fun restoreState_withNormalPermission_completesAsGrantedByDefault() {
+        val permission = "com.test.NORMAL_PERMISSION"
+        registerPermission(permission, PermissionInfo.PROTECTION_NORMAL)
+
+        val activityController = Robolectric.buildActivity(ComponentActivity::class.java).create()
+        val activity = activityController.get()
+        val requester = PermissionRequester(activity)
+        val savedState = createSavedState(
+            requestId = "restored-normal-request",
+            permissions = listOf(permission),
+        )
+
+        requester.restoreState(savedState)
+        activityController.start().resume()
+        Shadows.shadowOf(Looper.getMainLooper()).idle()
+
+        assertTrue(requester.consumeOrphanedDeniedResults().isEmpty())
+
+        val outState = Bundle()
+        requester.saveState(outState)
+        val restoredStore = PermissionStateStore()
+        restoredStore.restoreState(outState)
+        assertTrue(restoredStore.getSnapshot().requestQueue.isEmpty())
+        assertTrue(restoredStore.getSnapshot().requestStates.isEmpty())
+    }
+
+    /**
+     * Verifies that restored signature-style permissions are marked as NOT_SUPPORTED.<br><br>
+     * 복원된 signature 계열 권한이 NOT_SUPPORTED로 처리되는지 검증합니다.<br>
+     */
+    @Test
+    fun restoreState_withSignaturePermission_storesNotSupportedDeniedResult() {
+        val permission = "com.test.SIGNATURE_PERMISSION"
+        registerPermission(permission, PermissionInfo.PROTECTION_SIGNATURE)
+
+        val activityController = Robolectric.buildActivity(ComponentActivity::class.java).create()
+        val activity = activityController.get()
+        val requester = PermissionRequester(activity)
+        val savedState = createSavedState(
+            requestId = "restored-signature-request",
+            permissions = listOf(permission),
+        )
+
+        requester.restoreState(savedState)
+        activityController.start().resume()
+        Shadows.shadowOf(Looper.getMainLooper()).idle()
+
+        val orphanedResults = requester.consumeOrphanedDeniedResults()
+        assertEquals(1, orphanedResults.size)
+        assertEquals(permission, orphanedResults
+            .first()
+            .deniedResults
+            .first()
+            .permission)
+        assertEquals(PermissionDeniedType.NOT_SUPPORTED, orphanedResults
+            .first()
+            .deniedResults
+            .first()
+            .result)
+
+        val outState = Bundle()
+        requester.saveState(outState)
+        val restoredStore = PermissionStateStore()
+        restoredStore.restoreState(outState)
+        assertTrue(restoredStore.getSnapshot().requestQueue.isEmpty())
+        assertTrue(restoredStore.getSnapshot().requestStates.isEmpty())
+    }
+
+    /**
      * Creates a saved state bundle containing a single permission request entry.<br><br>
      * 단일 권한 요청 엔트리를 포함한 saved state 번들을 생성합니다.<br>
      */
@@ -148,5 +223,30 @@ class PermissionRequesterRobolectricTest {
         return Bundle().also { outState ->
             stateStore.saveState(outState)
         }
+    }
+
+    /**
+     * Registers a synthetic permission in Robolectric PackageManager.<br><br>
+     * Robolectric PackageManager에 테스트용 권한을 등록합니다.<br>
+     */
+    private fun registerPermission(
+        permission: String,
+        protectionLevel: Int,
+    ) {
+        val applicationContext = androidx.test.core.app.ApplicationProvider
+            .getApplicationContext<Application>()
+        val shadowPackageManager = Shadows.shadowOf(applicationContext.packageManager)
+        val protectionField =
+            PermissionInfo::class.java.getDeclaredField("protectionLevel").apply {
+                isAccessible = true
+            }
+
+        val permissionInfo =
+            PermissionInfo().apply {
+                name = permission
+                packageName = applicationContext.packageName
+            }
+        protectionField.setInt(permissionInfo, protectionLevel)
+        shadowPackageManager.addPermissionInfo(permissionInfo)
     }
 }

@@ -19,6 +19,7 @@
   - 모델/상수/특수 타입 정의
   - 권한 분류기, Role/특수 권한 핸들러
   - 권한 보유 여부 확장 함수
+  - runtime requestability 판정
   - 큐/병합 정책
 - xml(의존)
   - PermissionRequester 공개 API 및 계약(Interface)
@@ -33,10 +34,12 @@
 1. 모델/상수 정의 (core)
    - PermissionDeniedItem/PermissionDeniedType
    - PermissionDecisionType
+   - RuntimePermissionRequestability
    - OrphanedDeniedRequestResult, Rationale/Settings 요청 모델
    - PermissionConstants / PermissionSpecialType
 2. 분류기/핸들러/확장 (core)
    - PermissionClassifier
+   - isSupported / hasPermission / runtime requestability 의미 분리
    - SpecialPermissionHandler / RolePermissionHandler
    - PermissionExtensions
 3. 큐/병합 (core)
@@ -67,23 +70,30 @@
 - MANIFEST_UNDECLARED는 거부 목록에 포함하고 나머지는 정상 처리한다.
 - NOT_SUPPORTED는 OS/Role/특권 권한 미지원으로 반환한다.
 - LIFECYCLE_NOT_READY는 Lifecycle 상태가 요청/실행에 적합하지 않을 때 반환한다.
+- SDK 미지원 권한은 기존 정책대로 `GRANTED` 처리한다.
+- normal 권한은 `GRANTED_BY_DEFAULT`로 처리하고 런타임 요청을 보내지 않는다.
+- signature/privileged 권한은 `NOT_SUPPORTED`로 처리한다.
 
 ## 테스트 범위
 ### 단위 테스트
 - PermissionQueueTest
 - PermissionSpecialTypeUnitTest
+- PermissionClassifier requestability 테스트
 
 ### Robolectric 테스트
 - PermissionRequesterRobolectricTest
 - PermissionRequestInterfaceRobolectricTest
 - PermissionConstantsRobolectricTest
 - PermissionExtensionsRobolectricTest
+- 복원 경로 requestability 일관성 테스트
 
 ## 테스트 방법(수동 시나리오)
 - 특수 권한 단일 요청: SYSTEM_ALERT_WINDOW를 OFF로 만든 뒤 요청하고, 설정 화면 복귀 후에만 onDeniedResult가 호출되는지 확인한다.
 - 런타임+특수 조합: WRITE_EXTERNAL_STORAGE는 이미 승인된 상태에서 SYSTEM_ALERT_WINDOW를 OFF로 만든 뒤 요청하고, 설정 화면 복귀 후에 결과가 확정되는지 확인한다.
 - 홈 버튼 이탈: 설정 화면에서 홈으로 나갔다가 복귀했을 때, 복귀 시점 상태 기준으로 onDeniedResult가 호출되는지 확인한다.
 - 특수 권한 허용 후 복귀: 설정에서 허용한 뒤 복귀하면 deniedResults가 비어있는지 확인한다.
+- normal 권한 요청: 런타임 다이얼로그 없이 즉시 `GRANTED` 처리되는지 확인한다.
+- signature/privileged 권한 요청: 런타임 다이얼로그 없이 `NOT_SUPPORTED`로 종료되는지 확인한다.
 - 테스트 화면 경로: app/src/main/java/kr/open/library/simpleui_xml/permission/PermissionsActivity.kt
 
 ## 리스크/체크리스트
@@ -92,3 +102,4 @@
 - 회전/프로세스 복원 시 결과 유실 방지
 - 특수 권한 설정 화면 이동 실패 처리
 - restoreState 호출 시점(요청 전 1회) 준수
+- `isSupported()`와 runtime requestability 의미 혼용 방지

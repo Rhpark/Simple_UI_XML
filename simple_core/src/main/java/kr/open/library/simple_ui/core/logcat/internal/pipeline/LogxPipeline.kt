@@ -198,7 +198,7 @@ internal open class LogxPipeline(
      */
     private fun resolveTag(inputTag: String?, tagProvided: Boolean): String? {
         if (LogxTagHelper.isValidTag(inputTag)) return inputTag
-        if (tagProvided && isDevelopmentMode()) {
+        if (tagProvided) {
             Log.e(LogxTagHelper.errorTag(inputTag), "Invalid tag input. Tag will be ignored.")
         }
         return null

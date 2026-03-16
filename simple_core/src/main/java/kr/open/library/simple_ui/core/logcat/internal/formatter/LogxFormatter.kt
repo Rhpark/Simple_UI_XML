@@ -120,20 +120,6 @@ internal object LogxFormatter {
     }
 
     /**
-     * 파일 확장자를 제거한 이름으로 정규화합니다.
-     *
-     * Normalizes a file name by removing its extension.
-     * <br><br>
-     * 파일명에서 확장자를 제거해 정규화합니다.
-     *
-     * @param fileName 파일명(확장자 포함).
-     */
-    private fun normalizeFileName(fileName: String): String {
-        val dotIndex = fileName.lastIndexOf('.')
-        return if (dotIndex > 0) fileName.substring(0, dotIndex) else fileName
-    }
-
-    /**
      * JSON 본문 라인을 생성합니다.
      *
      * Builds the JSON body lines for output.

@@ -13,9 +13,11 @@ import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
 import kr.open.library.simple_ui.core.logcat.config.LogStorageType
 import kr.open.library.simple_ui.core.logcat.config.LogType
 import kr.open.library.simple_ui.core.logcat.config.LogxConfigStore
+import kr.open.library.simple_ui.core.logcat.internal.common.LogxPathResolver
 import kr.open.library.simple_ui.core.logcat.internal.pipeline.LogxPipeline
 import kr.open.library.simple_ui.core.logcat.internal.writer.LogxFileWriter
 import kr.open.library.simple_ui.core.permissions.extensions.hasPermissions
+import java.io.File
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -24,6 +26,7 @@ import java.util.concurrent.atomic.AtomicBoolean
  */
 object Logx {
     private val TAG = this::class.java.simpleName
+    private val INVALID_APP_NAME_CHARS = setOf('/', '\\', ':', '*', '?', '"', '<', '>', '|')
 
     /**
      * Application context used for file logging and permission checks.<br><br>
@@ -79,6 +82,7 @@ object Logx {
     fun initialize(context: Context) {
         appContext = context.applicationContext
         pipeline.setDevelopmentMode(context)
+        validateStoredCustomSaveDirectory()
         registerLifecycleObserverOnce()
     }
 
@@ -215,24 +219,71 @@ object Logx {
      * Sets a custom save directory path.<br><br>
      * 사용자 지정 저장 경로를 설정한다.<br>
      *
-     * @param path Directory path.<br><br>
-     *             저장 경로.<br>
+     * @param path Absolute directory path to use for file logging.
+     *             The value must not be blank, and if the path already exists it must be a directory.<br><br>
+     *             On Android 10+ only app-internal or app-specific external directories are supported.<br><br>
+     *             파일 로그 저장에 사용할 절대 디렉터리 경로.
+     *             공백일 수 없으며, 이미 존재하는 경우 디렉터리여야 한다.<br>
+     *             Android 10+에서는 앱 내부 또는 앱 전용 외부 디렉터리만 지원한다.<br>
      */
     @JvmStatic
     fun setSaveDirectory(path: String) {
-        LogxConfigStore.setSaveDirectory(path)
+        val trimmedPath = path.trim()
+        val saveDirectory = File(trimmedPath)
+
+        val validationErrorMessage = when {
+            trimmedPath.isBlank() ->
+                "Save directory path must not be blank."
+            !saveDirectory.isAbsolute ->
+                "Save directory path must be absolute: $trimmedPath"
+            saveDirectory.exists() && !saveDirectory.isDirectory ->
+                "Save directory path points to a file: $trimmedPath"
+            else -> null
+        }
+
+        validationErrorMessage?.let { message ->
+            failOrLog(message)
+            return
+        }
+
+        val context = appContext
+        if (context != null && !LogxPathResolver.isSupportedCustomDirectory(context, saveDirectory)) {
+            failOrLog(
+                "Custom save directory is not supported on Android 10+ unless it is inside app-internal or app-specific external storage: $trimmedPath"
+            )
+            return
+        }
+
+        LogxConfigStore.setSaveDirectory(trimmedPath)
     }
 
     /**
      * Sets application name used in tags and file names.<br><br>
      * 태그/파일명에 사용할 앱 이름을 설정한다.<br>
      *
-     * @param name Application name.<br><br>
-     *             앱 이름.<br>
+     * @param name Application name used for log prefixes and file names.
+     *             The value must not be blank and must not contain file-name-invalid characters.<br><br>
+     *             로그 prefix와 파일명에 사용할 앱 이름.
+     *             공백일 수 없으며 파일명에 사용할 수 없는 문자를 포함하면 안 된다.<br>
      */
     @JvmStatic
     fun setAppName(name: String) {
-        LogxConfigStore.setAppName(name)
+        val trimmedName = name.trim()
+
+        val validationErrorMessage = when {
+            trimmedName.isBlank() ->
+                "Application name must not be blank."
+            trimmedName.any { it in INVALID_APP_NAME_CHARS || it.isISOControl() } ->
+                "Application name contains invalid file-name characters: $trimmedName"
+            else -> null
+        }
+
+        validationErrorMessage?.let { message ->
+            failOrLog(message)
+            return
+        }
+
+        LogxConfigStore.setAppName(trimmedName)
     }
 
     /**
@@ -348,6 +399,31 @@ object Logx {
      */
     @JvmStatic
     fun getAppName(): String = LogxConfigStore.getAppName()
+
+    private fun validateStoredCustomSaveDirectory() {
+        val context = appContext ?: return
+        val configuredDirectory = LogxConfigStore.getSaveDirectory() ?: return
+        val saveDirectory = File(configuredDirectory)
+        if (LogxPathResolver.isSupportedCustomDirectory(context, saveDirectory)) return
+
+        val message =
+            "Stored custom save directory is not supported on Android 10+ unless it is inside app-internal or app-specific external storage: $configuredDirectory"
+
+        if (pipeline.isDevelopmentMode()) {
+            error(message)
+        } else {
+            Log.e(TAG, message)
+            LogxConfigStore.setSaveDirectory(null)
+        }
+    }
+
+    private fun failOrLog(message: String) {
+        if (pipeline.isDevelopmentMode()) {
+            error(message)
+        } else {
+            Log.e(TAG, message)
+        }
+    }
 
     /**
      * Returns skip package prefixes used in stack trace resolution.<br><br>

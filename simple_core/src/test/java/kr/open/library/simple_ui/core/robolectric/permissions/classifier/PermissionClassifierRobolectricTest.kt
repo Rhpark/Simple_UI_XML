@@ -3,10 +3,12 @@ package kr.open.library.simple_ui.core.robolectric.permissions.classifier
 import android.Manifest
 import android.app.Application
 import android.content.Context
+import android.content.pm.PermissionInfo
 import android.os.Build
 import androidx.test.core.app.ApplicationProvider
 import kr.open.library.simple_ui.core.permissions.classifier.PermissionClassifier
 import kr.open.library.simple_ui.core.permissions.classifier.PermissionType
+import kr.open.library.simple_ui.core.permissions.classifier.RuntimePermissionRequestability
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -14,6 +16,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.Shadows
 import org.robolectric.annotation.Config
 
 /**
@@ -30,6 +33,29 @@ class PermissionClassifierRobolectricTest {
     fun setUp() {
         context = ApplicationProvider.getApplicationContext<Application>()
         classifier = PermissionClassifier(context)
+
+        val shadowPackageManager = Shadows.shadowOf(context.packageManager)
+        val protectionField =
+            PermissionInfo::class.java.getDeclaredField("protectionLevel").apply {
+                isAccessible = true
+            }
+
+        fun registerPermission(name: String, protectionLevel: Int) {
+            val permissionInfo =
+                PermissionInfo().apply {
+                    this.name = name
+                    packageName = context.packageName
+                }
+            protectionField.setInt(permissionInfo, protectionLevel)
+            shadowPackageManager.addPermissionInfo(permissionInfo)
+        }
+
+        registerPermission("com.test.NORMAL_PERMISSION", PermissionInfo.PROTECTION_NORMAL)
+        registerPermission("com.test.SIGNATURE_PERMISSION", PermissionInfo.PROTECTION_SIGNATURE)
+        registerPermission(
+            "com.test.SIGNATURE_PRIVILEGED_PERMISSION",
+            PermissionInfo.PROTECTION_SIGNATURE or PermissionInfo.PROTECTION_FLAG_PRIVILEGED,
+        )
     }
 
     // ==============================================
@@ -213,6 +239,42 @@ class PermissionClassifierRobolectricTest {
     @Test
     fun classify_runtimePermission_returnsRuntime() {
         assertEquals(PermissionType.RUNTIME, classifier.classify(Manifest.permission.CAMERA))
+    }
+
+    // ==============================================
+    // getRuntimeRequestability()
+    // ==============================================
+
+    @Test
+    fun getRuntimeRequestability_dangerousPermission_returnsRequestable() {
+        assertEquals(
+            RuntimePermissionRequestability.REQUESTABLE,
+            classifier.getRuntimeRequestability(Manifest.permission.CAMERA),
+        )
+    }
+
+    @Test
+    fun getRuntimeRequestability_normalPermission_returnsGrantedByDefault() {
+        assertEquals(
+            RuntimePermissionRequestability.GRANTED_BY_DEFAULT,
+            classifier.getRuntimeRequestability("com.test.NORMAL_PERMISSION"),
+        )
+    }
+
+    @Test
+    fun getRuntimeRequestability_signaturePermission_returnsNotSupported() {
+        assertEquals(
+            RuntimePermissionRequestability.NOT_SUPPORTED,
+            classifier.getRuntimeRequestability("com.test.SIGNATURE_PERMISSION"),
+        )
+    }
+
+    @Test
+    fun getRuntimeRequestability_signaturePrivilegedPermission_returnsNotSupported() {
+        assertEquals(
+            RuntimePermissionRequestability.NOT_SUPPORTED,
+            classifier.getRuntimeRequestability("com.test.SIGNATURE_PRIVILEGED_PERMISSION"),
+        )
     }
 
     // ==============================================
