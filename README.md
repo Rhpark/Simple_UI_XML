@@ -91,11 +91,11 @@ android {
 dependencies {
     //..
     // Version 0.3.0+ (Modular Structure)
-    implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_Core:0.4.2")  // Core functionality only
-    implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_XML:0.4.2")   // XML UI components (includes Core)
+    implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_Core:0.4.7")  // Core functionality only
+    implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_XML:0.4.7")   // XML UI components (includes Core)
 
     // Or use XML module only (it automatically includes Core as transitive dependency)
-    // implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_XML:0.4.2")
+    // implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_XML:0.4.7")
     //..
 }
 ```
