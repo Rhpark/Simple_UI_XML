@@ -48,7 +48,7 @@ class ViewAnimExtensionsRobolectricTest {
 
         view.pulse(minScale = 0.9f, maxScale = 1.1f, duration = 100L, repeatCount = 0)
 
-        val animator = view.getTag(R.id.tag_fade_animator) as? ValueAnimator
+        val animator = view.getTag(R.id.tag_pulse_animator) as? ValueAnimator
         assertNotNull(animator)
         assertTrue(animator!!.isStarted)
 
@@ -56,7 +56,7 @@ class ViewAnimExtensionsRobolectricTest {
         view.scaleY = 0.5f
         view.stopPulse()
 
-        assertNull(view.getTag(R.id.tag_fade_animator))
+        assertNull(view.getTag(R.id.tag_pulse_animator))
         assertEquals(1f, view.scaleX, 0f)
         assertEquals(1f, view.scaleY, 0f)
     }
@@ -65,10 +65,10 @@ class ViewAnimExtensionsRobolectricTest {
     fun pulseCalledTwice_replacesPreviousAnimator() {
         val view = View(context)
         view.pulse(minScale = 0.9f, maxScale = 1.1f, duration = 100L, repeatCount = 0)
-        val firstAnimator = view.getTag(R.id.tag_fade_animator) as? ValueAnimator
+        val firstAnimator = view.getTag(R.id.tag_pulse_animator) as? ValueAnimator
 
         view.pulse(minScale = 0.8f, maxScale = 1.2f, duration = 120L, repeatCount = 0)
-        val secondAnimator = view.getTag(R.id.tag_fade_animator) as? ValueAnimator
+        val secondAnimator = view.getTag(R.id.tag_pulse_animator) as? ValueAnimator
 
         assertNotNull(firstAnimator)
         assertNotNull(secondAnimator)

@@ -95,7 +95,7 @@ public abstract class RootDialogFragment :
      * Delegate for handling runtime permission requests.<br><br>
      * 런타임 권한 요청을 처리하는 델리게이트입니다.<br>
      */
-    protected lateinit var permissionRequester: PermissionRequester
+    private lateinit var permissionRequester: PermissionRequester
 
     /**
      * Sets the background color of the dialog.<br>
@@ -185,10 +185,8 @@ public abstract class RootDialogFragment :
      */
     protected fun resizeDialog(widthRatio: Float?, heightRatio: Float?) {
         dialog?.window?.let { window ->
-            try {
+            safeCatch {
                 config.resizeDialog(window, requireActivity(), widthRatio, heightRatio)
-            } catch (e: IllegalStateException) {
-                Logx.e("Error Activity is null!")
             }
         } ?: Logx.e("Error dialog window is null!")
     }

@@ -36,11 +36,7 @@ internal class AdapterCommonClickData<ITEM, VH : RecyclerView.ViewHolder> {
      * @param itemProvider Provider that returns item from mapped callback position.<br><br>
      *                    변환된 콜백 position 기준으로 아이템을 조회하는 공급자입니다.<br>
      */
-    fun attachClickListeners(
-        holder: VH,
-        positionMapper: (Int) -> Int?,
-        itemProvider: (Int) -> ITEM?,
-    ) {
+    fun attachClickListeners(holder: VH, positionMapper: (Int) -> Int?, itemProvider: (Int) -> ITEM?) {
         holder.itemView.setOnClickListener { view ->
             val listener = onItemClickListener ?: return@setOnClickListener
             val adapterPosition = holder.bindingAdapterPosition
@@ -62,11 +58,7 @@ internal class AdapterCommonClickData<ITEM, VH : RecyclerView.ViewHolder> {
      * @param itemProvider Provider that returns item from mapped callback position.<br><br>
      *                    변환된 콜백 position 기준으로 아이템을 조회하는 공급자입니다.<br>
      */
-    fun attachLongClickListeners(
-        holder: VH,
-        positionMapper: (Int) -> Int?,
-        itemProvider: (Int) -> ITEM?,
-    ) {
+    fun attachLongClickListeners(holder: VH, positionMapper: (Int) -> Int?, itemProvider: (Int) -> ITEM?) {
         holder.itemView.setOnLongClickListener { view ->
             val listener = onItemLongClickListener ?: return@setOnLongClickListener false
             val adapterPosition = holder.bindingAdapterPosition

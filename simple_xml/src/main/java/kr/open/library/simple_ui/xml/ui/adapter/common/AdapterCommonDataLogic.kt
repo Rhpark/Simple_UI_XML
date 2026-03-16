@@ -48,11 +48,7 @@ internal class AdapterCommonDataLogic<ITEM> {
      * Validates insert-many operation and executes work only when valid.<br><br>
      * 다건 삽입 연산을 검증하고 유효할 때만 작업을 수행합니다.<br>
      */
-    internal fun validateAddItemsAt(
-        itemList: List<ITEM>,
-        position: Int,
-        itemCount: Int,
-    ): AdapterMutationFailure? {
+    internal fun validateAddItemsAt(itemList: List<ITEM>, position: Int, itemCount: Int): AdapterMutationFailure? {
         assertAdapterMainThread("AdapterCommonDataLogic.validateAddItemsAt")
         return if (itemList.isEmpty()) {
             Logx.e("Cannot add empty list")
@@ -136,11 +132,7 @@ internal class AdapterCommonDataLogic<ITEM> {
      * Validates move operation and executes work only when valid.<br><br>
      * 이동 연산을 검증하고 유효할 때만 작업을 수행합니다.<br>
      */
-    internal fun validateMoveItem(
-        fromPosition: Int,
-        toPosition: Int,
-        itemCount: Int,
-    ): AdapterMutationFailure? {
+    internal fun validateMoveItem(fromPosition: Int, toPosition: Int, itemCount: Int): AdapterMutationFailure? {
         assertAdapterMainThread("AdapterCommonDataLogic.validateMoveItem")
         return if (fromPosition < 0 || fromPosition >= itemCount) {
             Logx.e("Invalid fromPosition $fromPosition. Valid range: 0 until $itemCount")

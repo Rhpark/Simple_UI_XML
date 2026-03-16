@@ -45,12 +45,7 @@ public abstract class RootRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder> :
      * payload 기반 부분 바인딩 훅입니다.<br><br>
      * 기본 구현은 전체 바인딩으로 위임합니다.<br>
      */
-    protected open fun onBindViewHolder(
-        holder: VH,
-        item: ITEM,
-        position: Int,
-        payloads: List<Any>,
-    ) {
+    protected open fun onBindViewHolder(holder: VH, item: ITEM, position: Int, payloads: List<Any>) {
         onBindViewHolder(holder, item, position)
     }
 
@@ -93,10 +88,7 @@ public abstract class RootRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder> :
     /**
      * 전달된 결과 값으로 결과 콜백을 안전하게 호출합니다.<br><br>
      */
-    protected fun <RESULT> runResultCallback(
-        result: RESULT,
-        onResult: ((RESULT) -> Unit)?,
-    ) {
+    protected fun <RESULT> runResultCallback(result: RESULT, onResult: ((RESULT) -> Unit)?) {
         safeCatch { onResult?.invoke(result) }
     }
 

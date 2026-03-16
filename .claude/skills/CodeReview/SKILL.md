@@ -36,7 +36,8 @@ argument-hint: "파일경로 or 패키지명 or 클래스명 or 흐름설명"
 docs/rules/code_review/ 의 5단계를 순서대로 수행한다.
 앞 단계에서 문제가 발견되어도 모든 단계를 끝까지 수행한다.
 각 단계의 세부 규칙 기준은 docs/rules/coding_rule/ 을 참조한다.
-각 단계 완료 후 `✔ STEP{N} 완료` 를 출력한 뒤 다음 단계로 진행한다.
+각 단계 완료 후 반드시 `✔ STEP{N} 완료` 를 출력한 뒤 다음 단계로 진행한다.
+**이 마커는 생략 불가. 마커 출력 없이 다음 단계로 넘어가지 않는다.**
 
 1. docs/rules/code_review/STEP1_FUNCTIONAL.md   - 기능 검증
 2. docs/rules/code_review/STEP2_LOGIC.md        - 로직 & 안정성
@@ -64,4 +65,14 @@ docs/rules/code_review/ 의 5단계를 순서대로 수행한다.
 
 ## 5단계 완료 후
 
-Optional.md 의 항목을 순서대로 사용자에게 문의한다.
+결과 보고 마지막에 아래 섹션을 반드시 포함한다.
+사용자와 직접 대화 중이면 항목별로 순서대로 문의하고,
+파일 저장 모드이면 아래 형식 그대로 결과 파일 끝에 추가한다.
+
+```
+---
+## 다음 단계 (선택)
+- [ ] KDoc 주석 추가 → /KDoc 실행
+- [ ] 테스트 코드 작성 → /TestCode 실행
+- [ ] 기능 문서 작성/수정 → /Planning 실행
+```

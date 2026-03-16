@@ -1,6 +1,8 @@
 ﻿package kr.open.library.simple_ui.xml.permissions.state
 
+import android.os.Build
 import android.os.Bundle
+import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
 import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
 import kr.open.library.simple_ui.core.permissions.model.OrphanedDeniedRequestResult
 import kr.open.library.simple_ui.core.permissions.model.PermissionDecisionType
@@ -100,13 +102,27 @@ internal data class PermissionStateSnapshot(
             val queue = bundle.getStringArrayList(KEY_REQUEST_QUEUE)?.toMutableList() ?: mutableListOf()
             val history = bundle.getStringArrayList(KEY_REQUEST_HISTORY)?.toMutableSet() ?: mutableSetOf()
             val requestStates = mutableMapOf<String, RequestState>()
-            bundle.getParcelableArrayList<Bundle>(KEY_REQUEST_STATES)?.forEach { requestBundle ->
+            val stateBundles = checkSdkVersion(Build.VERSION_CODES.TIRAMISU,
+                positiveWork = { bundle.getParcelableArrayList(KEY_REQUEST_STATES, Bundle::class.java) },
+                negativeWork = {
+                    @Suppress("DEPRECATION")
+                    bundle.getParcelableArrayList<Bundle>(KEY_REQUEST_STATES)
+                },
+            )
+            stateBundles?.forEach { requestBundle ->
                 requestStateFromBundle(requestBundle)?.let { state ->
                     requestStates[state.requestId] = state
                 }
             }
             val orphanedResults = mutableListOf<OrphanedDeniedRequestResult>()
-            bundle.getParcelableArrayList<Bundle>(KEY_ORPHANED_RESULTS)?.forEach { orphanBundle ->
+            val orphanBundles = checkSdkVersion(Build.VERSION_CODES.TIRAMISU,
+                positiveWork = { bundle.getParcelableArrayList(KEY_ORPHANED_RESULTS, Bundle::class.java) },
+                negativeWork = {
+                    @Suppress("DEPRECATION")
+                    bundle.getParcelableArrayList<Bundle>(KEY_ORPHANED_RESULTS)
+                },
+            )
+            orphanBundles?.forEach { orphanBundle ->
                 orphanedDeniedRequestResultFromBundle(orphanBundle)?.let { orphanedResults.add(it) }
             }
             return PermissionStateSnapshot(

@@ -4,6 +4,7 @@ import android.os.SystemClock
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.MainThread
+import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.xml.R
 import kr.open.library.simple_ui.xml.internal.thread.assertMainThreadDebug
 
@@ -41,7 +42,7 @@ import kr.open.library.simple_ui.xml.internal.thread.assertMainThreadDebug
 
 internal object ViewIds {
     val LAST_CLICK_TIME = R.id.tag_last_click_time
-    val FADE_ANIMATOR = R.id.tag_fade_animator
+    val PULSE_ANIMATOR = R.id.tag_pulse_animator
 
     /***************************
      * usefor LifeCycle*Layout
@@ -151,6 +152,8 @@ public fun View.setMargins(
         val params = layoutParams as ViewGroup.MarginLayoutParams
         params.setMargins(left, top, right, bottom)
         layoutParams = params
+    } else {
+        Logx.w("View.setMargins", "layoutParams is not MarginLayoutParams: ${layoutParams?.javaClass?.simpleName}")
     }
 }
 

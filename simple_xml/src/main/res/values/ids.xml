@@ -7,8 +7,8 @@
     <!-- View의 마지막 클릭 시간을 저장하기 위한 태그 (중복 클릭 방지용) -->
     <item name="tag_last_click_time" type="id"/>
 
-    <!-- View의 Fade 애니메이터를 저장하기 위한 태그 -->
-    <item name="tag_fade_animator" type="id"/>
+    <!-- View의 Pulse 애니메이터를 저장하기 위한 태그 -->
+    <item name="tag_pulse_animator" type="id"/>
 
     <!-- Window.getSystemBarController() 캐싱용 태그 (Window당 1개 인스턴스 보장) -->
     <item name="tag_system_bar_controller" type="id"/>

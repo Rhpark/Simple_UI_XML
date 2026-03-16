@@ -1,3 +1,10 @@
+---
+name: Create
+description: Android app 모듈에 파일 세트를 생성한다. FQCN을 입력하면 suffix로 타입(Activity/Fragment/DialogFragment/Adapter/Layout)을 자동 감지하여 Kotlin 파일과 XML 레이아웃을 함께 생성한다. "만들어줘", "생성해줘", "Activity/Fragment 추가" 등의 요청 시 사용.
+disable-model-invocation: true
+argument-hint: "FQCN (예: kr.open.library.simpleui_xml.feature.MainActivity)"
+---
+
 # Create Skill
 
 ## 0. 목표

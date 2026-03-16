@@ -11,7 +11,7 @@ class ViewIdsTest {
         val ids =
             listOf(
                 ViewIds.LAST_CLICK_TIME,
-                ViewIds.FADE_ANIMATOR,
+                ViewIds.PULSE_ANIMATOR,
                 ViewIds.TAG_OBSERVED_OWNER,
             )
 

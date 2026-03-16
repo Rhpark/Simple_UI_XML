@@ -1,5 +1,7 @@
 ﻿package kr.open.library.simple_ui.xml.ui.adapter.list.base.queue
 
+import kr.open.library.simple_ui.core.logcat.Logx
+
 /**
  * Shared operation queue engine for sequential processing.<br><br>
  * 연산을 순차 처리하기 위한 공통 큐 엔진입니다.<br>
@@ -253,9 +255,10 @@ internal class OperationQueueProcessor<OPERATION>(
     private fun reportError(message: String, cause: Throwable?) {
         try {
             onError(message, cause)
-        } catch (_: RuntimeException) {
-            // Swallow errors from error reporting to avoid breaking the queue flow.
-            // 에러 보고 중 예외는 큐 흐름을 깨지 않도록 무시합니다.
+        } catch (e: RuntimeException) {
+            // Log and suppress errors from error reporting to avoid breaking the queue flow.
+            // 에러 보고 중 예외는 로깅 후 큐 흐름을 깨지 않도록 억제합니다.
+            Logx.w("Error reporting failed: ${e.message}")
         }
     }
 }

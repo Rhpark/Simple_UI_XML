@@ -98,7 +98,7 @@ internal class PermissionFlowProcessor(
      * Flag indicating the host actually left the screen for special permission settings.<br><br>
      * 특수 권한 설정 화면으로 실제 이탈했는지 여부를 나타내는 플래그입니다.<br>
      */
-    private var didLeaveForSpecial: Boolean = false
+    private var hasLeftForSpecial: Boolean = false
 
     /**
      * Deferred completion for runtime permission requests.<br><br>
@@ -124,14 +124,14 @@ internal class PermissionFlowProcessor(
      */
     private val resumeObserver: DefaultLifecycleObserver = object : DefaultLifecycleObserver {
         override fun onResume(owner: LifecycleOwner) {
-            if (awaitingSpecialReturn && didLeaveForSpecial) {
+            if (awaitingSpecialReturn && hasLeftForSpecial) {
                 handleSpecialPermissionReturn()
             }
         }
 
         override fun onStop(owner: LifecycleOwner) {
             if (awaitingSpecialReturn) {
-                didLeaveForSpecial = true
+                hasLeftForSpecial = true
             }
         }
     }
@@ -140,21 +140,19 @@ internal class PermissionFlowProcessor(
      * ActivityResult launcher for runtime permission dialogs.<br><br>
      * 런타임 권한 다이얼로그 실행용 ActivityResult 런처입니다.<br>
      */
-    private val runtimePermissionsLauncher: ActivityResultLauncher<Array<String>> = host.activityResultCaller.registerForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions(),
-    ) { results ->
-        handleRuntimePermissionsResult(results)
-    }
+    private val runtimePermissionsLauncher: ActivityResultLauncher<Array<String>> =
+        host.activityResultCaller.registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { results ->
+            handleRuntimePermissionsResult(results)
+        }
 
     /**
      * ActivityResult launcher for settings/role intents.<br><br>
      * 설정/Role 인텐트 실행용 ActivityResult 런처입니다.<br>
      */
-    private val activityLauncher: ActivityResultLauncher<Intent> = host.activityResultCaller.registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult(),
-    ) {
-        handleActivityResultReturn()
-    }
+    private val activityLauncher: ActivityResultLauncher<Intent> =
+        host.activityResultCaller.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            handleActivityResultReturn()
+        }
 
     /**
      * Initializes lifecycle observers for special permission returns.<br><br>
@@ -240,10 +238,8 @@ internal class PermissionFlowProcessor(
         if (entry.isRestored) {
             val restoredResults = permissions.associateWith { permission ->
                 when {
-                    !isPlatformPermissionAvailable(permission, PermissionType.RUNTIME) ->
-                        PermissionDecisionType.GRANTED
-                    host.context.hasPermission(permission) ->
-                        PermissionDecisionType.GRANTED
+                    !isPlatformPermissionAvailable(permission, PermissionType.RUNTIME) -> PermissionDecisionType.GRANTED
+                    host.context.hasPermission(permission) -> PermissionDecisionType.GRANTED
                     else -> {
                         val shouldShowRationale = runtimeHandler.shouldShowRationale(permission)
                         val wasRequestedBefore = runtimeHandler.wasRequested(permission)
@@ -267,18 +263,12 @@ internal class PermissionFlowProcessor(
             isPlatformPermissionAvailable(it, PermissionType.RUNTIME)
         }
         if (unsupportedPermissions.isNotEmpty()) {
-            resultAggregator.completeWaitersForPermissions(
-                unsupportedPermissions,
-                PermissionDecisionType.GRANTED,
-            )
+            resultAggregator.completeWaitersForPermissions(unsupportedPermissions, PermissionDecisionType.GRANTED)
         }
 
         val grantedPermissions = supportedPermissions.filter { host.context.hasPermission(it) }
         if (grantedPermissions.isNotEmpty()) {
-            resultAggregator.completeWaitersForPermissions(
-                grantedPermissions,
-                PermissionDecisionType.GRANTED,
-            )
+            resultAggregator.completeWaitersForPermissions(grantedPermissions, PermissionDecisionType.GRANTED)
         }
 
         val requestablePermissions = supportedPermissions.filterNot {
@@ -288,10 +278,7 @@ internal class PermissionFlowProcessor(
 
         val readyForLaunch = awaitHostStarted()
         if (!readyForLaunch) {
-            resultAggregator.completeWaitersForPermissions(
-                requestablePermissions,
-                PermissionDecisionType.LIFECYCLE_NOT_READY,
-            )
+            resultAggregator.completeWaitersForPermissions(requestablePermissions, PermissionDecisionType.LIFECYCLE_NOT_READY)
             return
         }
 
@@ -304,10 +291,7 @@ internal class PermissionFlowProcessor(
                 onRationaleNeeded = entry.onRationaleNeeded,
             )
             if (!proceed) {
-                resultAggregator.completeWaitersForPermissions(
-                    requestablePermissions,
-                    PermissionDecisionType.DENIED,
-                )
+                resultAggregator.completeWaitersForPermissions(requestablePermissions, PermissionDecisionType.DENIED)
                 return
             }
         }
@@ -404,7 +388,7 @@ internal class PermissionFlowProcessor(
         specialCompletion = CompletableDeferred()
         currentActivityAction = InFlightActivityAction.Special(permission)
         awaitingSpecialReturn = true
-        didLeaveForSpecial = false
+        hasLeftForSpecial = false
         val launched = safeCatch(defaultValue = false) {
             activityLauncher.launch(intent)
             true
@@ -412,12 +396,9 @@ internal class PermissionFlowProcessor(
         if (!launched) {
             Logx.e("Failed to launch settings for permission=$permission")
             awaitingSpecialReturn = false
-            didLeaveForSpecial = false
+            hasLeftForSpecial = false
             currentActivityAction = null
-            resultAggregator.completeWaitersForPermissions(
-                listOf(permission),
-                PermissionDecisionType.FAILED_TO_LAUNCH_SETTINGS,
-            )
+            resultAggregator.completeWaitersForPermissions(listOf(permission), PermissionDecisionType.FAILED_TO_LAUNCH_SETTINGS)
             specialCompletion?.complete(Unit)
             specialCompletion = null
         }
@@ -435,10 +416,8 @@ internal class PermissionFlowProcessor(
     private suspend fun processRolePermission(entry: RequestEntry, permission: String) {
         if (entry.isRestored) {
             val result = when {
-                !roleHandler.isRoleAvailable(permission) ->
-                    PermissionDecisionType.NOT_SUPPORTED
-                roleHandler.isRoleHeld(permission) ->
-                    PermissionDecisionType.GRANTED
+                !roleHandler.isRoleAvailable(permission) -> PermissionDecisionType.NOT_SUPPORTED
+                roleHandler.isRoleHeld(permission) -> PermissionDecisionType.GRANTED
                 else -> PermissionDecisionType.DENIED
             }
             resultAggregator.completeWaitersForPermissions(
@@ -448,33 +427,21 @@ internal class PermissionFlowProcessor(
             return
         }
         if (!roleHandler.isRoleAvailable(permission)) {
-            resultAggregator.completeWaitersForPermissions(
-                listOf(permission),
-                PermissionDecisionType.NOT_SUPPORTED,
-            )
+            resultAggregator.completeWaitersForPermissions(listOf(permission), PermissionDecisionType.NOT_SUPPORTED)
             return
         }
         if (roleHandler.isRoleHeld(permission)) {
-            resultAggregator.completeWaitersForPermissions(
-                listOf(permission),
-                PermissionDecisionType.GRANTED,
-            )
+            resultAggregator.completeWaitersForPermissions(listOf(permission), PermissionDecisionType.GRANTED)
             return
         }
         val intent = roleHandler.createRequestIntent(permission)
         if (intent == null) {
-            resultAggregator.completeWaitersForPermissions(
-                listOf(permission),
-                PermissionDecisionType.NOT_SUPPORTED,
-            )
+            resultAggregator.completeWaitersForPermissions(listOf(permission), PermissionDecisionType.NOT_SUPPORTED)
             return
         }
         val readyForLaunch = awaitHostStarted()
         if (!readyForLaunch) {
-            resultAggregator.completeWaitersForPermissions(
-                listOf(permission),
-                PermissionDecisionType.LIFECYCLE_NOT_READY,
-            )
+            resultAggregator.completeWaitersForPermissions(listOf(permission), PermissionDecisionType.LIFECYCLE_NOT_READY)
             return
         }
         launchRolePermission(permission, intent)
@@ -500,10 +467,7 @@ internal class PermissionFlowProcessor(
         if (!launched) {
             Logx.e("Failed to launch role request for permission=$permission")
             currentActivityAction = null
-            resultAggregator.completeWaitersForPermissions(
-                listOf(permission),
-                PermissionDecisionType.FAILED_TO_LAUNCH_SETTINGS,
-            )
+            resultAggregator.completeWaitersForPermissions(listOf(permission), PermissionDecisionType.FAILED_TO_LAUNCH_SETTINGS)
             roleCompletion?.complete(Unit)
             roleCompletion = null
         }
@@ -573,9 +537,7 @@ internal class PermissionFlowProcessor(
      * @return Return value: true when proceeding, false when canceled or host destroyed.<br><br>
      *         반환값: 진행 시 true, 취소 또는 host 종료 시 false입니다.<br>
      */
-    private suspend fun awaitUserDecision(
-        showUi: (proceed: () -> Unit, cancel: () -> Unit) -> Unit,
-    ): Boolean {
+    private suspend fun awaitUserDecision(showUi: (proceed: () -> Unit, cancel: () -> Unit) -> Unit): Boolean {
         val lifecycle = host.lifecycleOwner.lifecycle
         if (lifecycle.currentState == Lifecycle.State.DESTROYED) return false
 
@@ -669,7 +631,7 @@ internal class PermissionFlowProcessor(
         val action = currentActivityAction as? InFlightActivityAction.Special ?: return
         if (!awaitingSpecialReturn) return
         awaitingSpecialReturn = false
-        didLeaveForSpecial = false
+        hasLeftForSpecial = false
         currentActivityAction = null
         val granted = specialHandler.isGranted(action.permission)
         val result = if (granted) PermissionDecisionType.GRANTED else PermissionDecisionType.DENIED

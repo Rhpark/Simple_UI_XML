@@ -100,7 +100,7 @@ public fun View.pulse(
     duration: Long = 1000L,
     repeatCount: Int = ValueAnimator.INFINITE,
 ) {
-    (getTag(ViewIds.FADE_ANIMATOR) as? ValueAnimator)?.cancel()
+    (getTag(ViewIds.PULSE_ANIMATOR) as? ValueAnimator)?.cancel()
 
     val animator = ValueAnimator.ofFloat(minScale, maxScale, minScale)
     animator.duration = duration
@@ -113,7 +113,7 @@ public fun View.pulse(
         scaleY = scale
     }
 
-    setTag(ViewIds.FADE_ANIMATOR, animator)
+    setTag(ViewIds.PULSE_ANIMATOR, animator)
     animator.start()
 }
 
@@ -122,9 +122,9 @@ public fun View.pulse(
  * 이 View의 펄스 애니메이션을 중지합니다.<br>
  */
 public fun View.stopPulse() {
-    (getTag(ViewIds.FADE_ANIMATOR) as? ValueAnimator)?.let { animator ->
+    (getTag(ViewIds.PULSE_ANIMATOR) as? ValueAnimator)?.let { animator ->
         animator.cancel()
-        setTag(ViewIds.FADE_ANIMATOR, null)
+        setTag(ViewIds.PULSE_ANIMATOR, null)
         scaleX = 1f
         scaleY = 1f
     }

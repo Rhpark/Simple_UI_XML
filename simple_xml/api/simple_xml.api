@@ -1174,14 +1174,11 @@ public final class kr/open/library/simple_ui/xml/ui/components/dialog/root/Dialo
 	public static synthetic fun setBackgroundResource$default (Lkr/open/library/simple_ui/xml/ui/components/dialog/root/DialogConfig;ILandroid/view/View;ILjava/lang/Object;)V
 	public final fun setDialogCancelable (Z)V
 	public final fun setDialogGravity (I)V
-	public final fun updateBackgroundColor (Landroid/view/View;)V
 }
 
 public abstract class kr/open/library/simple_ui/xml/ui/components/dialog/root/RootDialogFragment : androidx/fragment/app/DialogFragment, kr/open/library/simple_ui/xml/permissions/register/PermissionRequestInterface {
-	protected field permissionRequester Lkr/open/library/simple_ui/xml/permissions/api/PermissionRequester;
 	public fun <init> ()V
 	protected final fun getConfig ()Lkr/open/library/simple_ui/xml/ui/components/dialog/root/DialogConfig;
-	protected final fun getPermissionRequester ()Lkr/open/library/simple_ui/xml/permissions/api/PermissionRequester;
 	public fun onCreate (Landroid/os/Bundle;)V
 	public fun onCreateDialog (Landroid/os/Bundle;)Landroid/app/Dialog;
 	public fun onSaveInstanceState (Landroid/os/Bundle;)V
@@ -1198,7 +1195,6 @@ public abstract class kr/open/library/simple_ui/xml/ui/components/dialog/root/Ro
 	public static synthetic fun setBackgroundResource$default (Lkr/open/library/simple_ui/xml/ui/components/dialog/root/RootDialogFragment;ILandroid/view/View;ILjava/lang/Object;)V
 	public final fun setCancelableDialog (Z)V
 	public final fun setDialogGravity (I)V
-	protected final fun setPermissionRequester (Lkr/open/library/simple_ui/xml/permissions/api/PermissionRequester;)V
 }
 
 public abstract class kr/open/library/simple_ui/xml/ui/components/fragment/binding/BaseDataBindingFragment : kr/open/library/simple_ui/xml/ui/components/fragment/binding/ParentsBindingFragment {

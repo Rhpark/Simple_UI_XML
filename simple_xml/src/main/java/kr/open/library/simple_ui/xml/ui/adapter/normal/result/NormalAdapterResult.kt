@@ -11,10 +11,7 @@ public sealed interface NormalAdapterResult {
      * Folds this result into applied or rejected branches.<br><br>
      * 현재 결과를 적용 성공 또는 거절 분기로 처리합니다.<br>
      */
-    public fun fold(
-        onApplied: () -> Unit,
-        onRejected: (Rejected) -> Unit,
-    ) {
+    public fun fold(onApplied: () -> Unit, onRejected: (Rejected) -> Unit) {
         when (this) {
             is Applied -> onApplied()
             is Rejected -> onRejected(this)

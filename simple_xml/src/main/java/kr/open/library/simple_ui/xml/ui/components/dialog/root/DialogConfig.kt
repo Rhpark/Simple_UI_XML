@@ -68,7 +68,7 @@ class DialogConfig {
         rootView?.let { updateBackgroundColor(it) }
     }
 
-    public fun updateBackgroundColor(rootView: View) {
+    internal fun updateBackgroundColor(rootView: View) {
         if (backgroundColor != null) {
             rootView.setBackgroundColor(backgroundColor!!)
         } else if (backgroundResId != null) {

@@ -145,13 +145,13 @@ public open class RecyclerScrollStateView : RecyclerView {
     private fun initTypeArray(attrs: AttributeSet?) {
         attrs?.let {
             context.obtainStyledAttributes(it, R.styleable.RecyclerScrollStateView).apply {
-                getString(R.styleable.RecyclerScrollStateView_scrollDirectionThreshold).also {
-                    setScrollDirectionThreshold(it?.toInt() ?: DEFAULT_SCROLL_DIRECTION_THRESHOLD)
-                }
+                setScrollDirectionThreshold(
+                    getInt(R.styleable.RecyclerScrollStateView_scrollDirectionThreshold, DEFAULT_SCROLL_DIRECTION_THRESHOLD),
+                )
 
-                getString(R.styleable.RecyclerScrollStateView_edgeReachThreshold).also {
-                    setEdgeReachThreshold(it?.toInt() ?: DEFAULT_EDGE_REACH_THRESHOLD)
-                }
+                setEdgeReachThreshold(
+                    getInt(R.styleable.RecyclerScrollStateView_edgeReachThreshold, DEFAULT_EDGE_REACH_THRESHOLD),
+                )
                 recycle()
             }
         }
