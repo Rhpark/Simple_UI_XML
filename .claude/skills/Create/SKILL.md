@@ -151,12 +151,13 @@ STEP 0에서 확정된 타입의 파일을 **반드시** 읽은 후 진행한다
 
 > 적용 스타일 (Simple UI Style 기반):
 
-| 선택 | Activity / Fragment / DialogFragment | Adapter item |
-|------|--------------------------------------|-------------|
-| LinearLayout vertical | `style="@style/Layout.AllMatch.Vertical"` | `style="@style/Layout.MatchWrap.Vertical"` |
+| 선택                      | Activity / Fragment / DialogFragment | Adapter item |
+|-------------------------|--------------------------------------|-------------|
+| LinearLayout vertical   | `style="@style/Layout.AllMatch.Vertical"` | `style="@style/Layout.MatchWrap.Vertical"` |
 | LinearLayout horizontal | `style="@style/Layout.AllMatch.Horizontal"` | `style="@style/Layout.MatchWrap.Horizontal"` |
-| ConstraintLayout | `style="@style/Layout.AllMatch"` | `style="@style/Layout.MatchWrap"` |
-| FrameLayout | `style="@style/Layout.AllMatch"` | `style="@style/Layout.MatchWrap"` |
+| ConstraintLayout        | `style="@style/Layout.AllMatch"` | `style="@style/Layout.MatchWrap"` |
+| FrameLayout             | `style="@style/Layout.AllMatch"` | `style="@style/Layout.MatchWrap"` |
+| RelativeLayout          | `style="@style/Layout.AllMatch"` | `style="@style/Layout.MatchWrap"` |
 
 ---
 
