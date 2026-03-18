@@ -71,7 +71,7 @@ ktlint_standard_import-ordering = disabled
 [**/build/**.{kt,kts}]
 ktlint_disabled_rules = import-ordering,package-name,no-wildcard-imports, chain-wrapping
 
-[simple_core/src/main/java/kr/open/library/simple_ui/core/system_manager/info/network/telephony/data/state/TelephonyNetworkDetailType.kt]
+[simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/core/info/network/telephony/data/state/TelephonyNetworkDetailType.kt]
 ktlint_standard_enum-entry-name-case = disabled
 
 [simple_core/src/main/java/kr/open/library/simple_ui/**.kt]
@@ -84,6 +84,12 @@ ktlint_standard_package-name = disabled
 ktlint_standard_package-name = disabled
 
 [simple_xml/src/test/java/kr/open/library/simple_ui/**.kt]
+ktlint_standard_package-name = disabled
+
+[simple_system_manager/src/main/java/kr/open/library/simple_ui/**.kt]
+ktlint_standard_package-name = disabled
+
+[simple_system_manager/src/test/java/kr/open/library/simple_ui/**.kt]
 ktlint_standard_package-name = disabled
 
 [app/src/main/java/kr/open/library/simpleui_xml/**.kt]

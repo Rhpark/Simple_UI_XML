@@ -34,7 +34,7 @@ body:
     attributes:
       label: Failure summary / 실패 요약
       description: What broke? Include observable symptoms. / 어떤 현상이 발생했나요?
-      placeholder: e.g., build task :simple_ui:testDebugUnitTest failed with exit code 1...
+      placeholder: e.g., build task :simple_system_manager:testDebugUnitTest failed with exit code 1...
     validations:
       required: true
 

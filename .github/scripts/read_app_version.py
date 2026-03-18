@@ -23,6 +23,12 @@ def main() -> int:
         "simple_core/build.gradle.kts",
         r'version\s*=\s*"([^"]+)"',
     )
+    # Fallback to simple_system_manager
+    if version is None:
+        version = _read_version(
+            "simple_system_manager/build.gradle.kts",
+            r'version\s*=\s*"([^"]+)"',
+        )
     # Fallback to simple_xml
     if version is None:
         version = _read_version(

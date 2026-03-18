@@ -3,11 +3,11 @@
 import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
-import kr.open.library.simple_ui.core.system_manager.controller.alarm.vo.AlarmIdleMode
-import kr.open.library.simple_ui.core.system_manager.controller.alarm.vo.AlarmNotificationVO
-import kr.open.library.simple_ui.core.system_manager.controller.alarm.vo.AlarmScheduleVO
-import kr.open.library.simple_ui.core.system_manager.controller.alarm.vo.AlarmVO
-import kr.open.library.simple_ui.core.system_manager.extensions.getAlarmController
+import kr.open.library.simple_ui.system_manager.core.controller.alarm.vo.AlarmIdleMode
+import kr.open.library.simple_ui.system_manager.core.controller.alarm.vo.AlarmNotificationVO
+import kr.open.library.simple_ui.system_manager.core.controller.alarm.vo.AlarmScheduleVO
+import kr.open.library.simple_ui.system_manager.core.controller.alarm.vo.AlarmVO
+import kr.open.library.simple_ui.system_manager.core.extensions.getAlarmController
 import kr.open.library.simple_ui.xml.extensions.view.toastShowShort
 import kr.open.library.simple_ui.xml.ui.components.activity.normal.BaseActivity
 import kr.open.library.simpleui_xml.R

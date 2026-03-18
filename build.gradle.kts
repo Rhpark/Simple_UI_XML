@@ -48,6 +48,7 @@ tasks.register("dokkaHtmlMultiModuleCustom") {
     description = "Generate multi-module Dokka HTML documentation to docs/api"
 
     dependsOn(":simple_core:dokkaGeneratePublicationHtml")
+    dependsOn(":simple_system_manager:dokkaGeneratePublicationHtml")
     dependsOn(":simple_xml:dokkaGeneratePublicationHtml")
 
     doLast {
@@ -62,6 +63,12 @@ tasks.register("dokkaHtmlMultiModuleCustom") {
         project.copy {
             from(project.layout.projectDirectory.dir("simple_core/build/dokka/html"))
             into(outputDir.resolve("simple-core"))
+        }
+
+        // Copy simple_xml documentation
+        project.copy {
+            from(project.layout.projectDirectory.dir("simple_system_manager/build/dokka/html"))
+            into(outputDir.resolve("simple-system-manager"))
         }
 
         // Copy simple_xml documentation
@@ -109,6 +116,18 @@ tasks.register("dokkaHtmlMultiModuleCustom") {
                             <li>Base ViewModel</li>
                         </ul>
                         <a href="simple-core/index.html">View Core Documentation</a>
+                    </div>
+
+                    <div class="module">
+                        <h2>Simple UI System Manager</h2>
+                        <p>Standalone system_manager module built on top of Simple UI Core. Provides:</p>
+                        <ul>
+                            <li>System service getter/extensions</li>
+                            <li>System controllers (alarm, notification, vibrator, wifi)</li>
+                            <li>System info APIs (battery, location, network, display)</li>
+                            <li>XML-specific system UI controllers (system bar, soft keyboard, floating view)</li>
+                        </ul>
+                        <a href="simple-system-manager/index.html">View System Manager Documentation</a>
                     </div>
 
                     <div class="module">

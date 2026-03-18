@@ -166,6 +166,7 @@ firebaseAppDistribution {
 
 dependencies {
     implementation(project(":simple_core"))
+    implementation(project(":simple_system_manager"))
     implementation(project(":simple_xml"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

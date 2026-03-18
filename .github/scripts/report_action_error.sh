@@ -117,6 +117,54 @@ case "${STAGE_NAME_INPUT}" in
     ;;
 esac
 
+DETECTED_MODULES_CSV="$(python3 - "$FAILURE_MESSAGE_INPUT" "$FAILURE_LOG_INPUT" "$FAILURE_ENVIRONMENT_INPUT" "$JOB_NAME" "$WORKFLOW_NAME" <<'PY'
+import re
+import sys
+
+sources = "\n".join(arg or "" for arg in sys.argv[1:])
+patterns = {
+    "simple_core": [
+        r":simple_core:",
+        r"\bsimple_core/",
+        r"\bsimple_core\b",
+    ],
+    "simple_xml": [
+        r":simple_xml:",
+        r"\bsimple_xml/",
+        r"\bsimple_xml\b",
+    ],
+    "simple_system_manager": [
+        r":simple_system_manager:",
+        r"\bsimple_system_manager/",
+        r"\bsimple_system_manager\b",
+    ],
+    "app": [
+        r":app:",
+        r"\bapp/",
+        r"\bapp\b",
+    ],
+}
+
+detected = []
+for module, module_patterns in patterns.items():
+    if any(re.search(pattern, sources) for pattern in module_patterns):
+        detected.append(module)
+
+print(",".join(detected))
+PY
+)"
+
+if [[ -n "${DETECTED_MODULES_CSV}" ]]; then
+  IFS=',' read -r -a DETECTED_MODULES <<< "${DETECTED_MODULES_CSV}"
+  for module_name in "${DETECTED_MODULES[@]}"; do
+    if [[ -n "${module_name}" ]]; then
+      ISSUE_LABELS+=("module:${module_name}")
+    fi
+  done
+else
+  DETECTED_MODULES=()
+fi
+
 echo "[report_action_error] Stage: '${STAGE_NAME_INPUT}' -> Labels: ${ISSUE_LABELS[*]}"
 
 # 디버그용 배열 출력
@@ -168,13 +216,20 @@ print(fallback[0].strip() if fallback else "Failure detected")
 PY
 }
 TITLE_SUFFIX="$(extract_title)"
-ISSUE_TITLE="${TITLE_SUFFIX}"
+if [[ ${#DETECTED_MODULES[@]} -eq 1 ]]; then
+  ISSUE_TITLE="[${DETECTED_MODULES[0]}] ${TITLE_SUFFIX}"
+elif [[ ${#DETECTED_MODULES[@]} -gt 1 ]]; then
+  ISSUE_TITLE="[${DETECTED_MODULES_CSV}] ${TITLE_SUFFIX}"
+else
+  ISSUE_TITLE="${TITLE_SUFFIX}"
+fi
 
 export REPO ISSUE_TITLE
 ISSUE_BODY=$(cat <<EOF
 - **Failed stage**: ${STAGE_NAME_INPUT}
 - **Workflow run**: ${RUN_URL}
 - **Workflow**: ${WORKFLOW_NAME}
+- **Affected modules**: ${DETECTED_MODULES_CSV:-_Unknown_}
 - **Application Version**: ${APP_VERSION_INPUT}
 - **Job**: ${JOB_NAME}
 - **Commit**: ${SHA}

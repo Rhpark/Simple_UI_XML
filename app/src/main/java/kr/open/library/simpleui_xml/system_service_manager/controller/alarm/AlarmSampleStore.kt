@@ -1,6 +1,6 @@
 ﻿package kr.open.library.simpleui_xml.system_service_manager.controller.alarm
 
-import kr.open.library.simple_ui.core.system_manager.controller.alarm.vo.AlarmVO
+import kr.open.library.simple_ui.system_manager.core.controller.alarm.vo.AlarmVO
 
 /**
  * 예제용 알람 저장소입니다.

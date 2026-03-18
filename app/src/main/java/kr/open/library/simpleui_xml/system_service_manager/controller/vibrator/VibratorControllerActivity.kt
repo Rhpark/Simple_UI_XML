@@ -5,7 +5,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
 import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
-import kr.open.library.simple_ui.core.system_manager.extensions.getVibratorController
+import kr.open.library.simple_ui.system_manager.core.extensions.getVibratorController
 import kr.open.library.simple_ui.xml.extensions.view.toastShowShort
 import kr.open.library.simple_ui.xml.ui.components.activity.normal.BaseActivity
 import kr.open.library.simpleui_xml.R

@@ -5,8 +5,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.MainThread
 import kr.open.library.simple_ui.core.logcat.Logx
+import kr.open.library.simple_ui.core.thread.assertMainThreadDebug
 import kr.open.library.simple_ui.xml.R
-import kr.open.library.simple_ui.xml.internal.thread.assertMainThreadDebug
 
 /**
  * View extension functions for visibility, sizing, margins, padding, and click handling.<br>

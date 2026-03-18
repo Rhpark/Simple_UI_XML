@@ -6,8 +6,7 @@ import android.view.View
 import android.view.ViewGroup.LayoutParams
 import android.view.Window
 import androidx.annotation.StyleRes
-import kr.open.library.simple_ui.core.logcat.Logx
-import kr.open.library.simple_ui.xml.system_manager.extensions.getDisplayInfo
+import kr.open.library.simple_ui.xml.ui.internal.window.resolveDialogWindowSize
 
 class DialogConfig {
     /**
@@ -135,10 +134,7 @@ class DialogConfig {
         validateRatio("widthRatio", widthRatio)
         validateRatio("heightRatio", heightRatio)
 
-        val displayInfo = window.context.getDisplayInfo()
-        Logx.d("Screen Size " + displayInfo.getAppWindowSize(activity))
-        val screenSize = displayInfo.getAppWindowSize(activity)
-        screenSize?.let { size ->
+        resolveDialogWindowSize(window, activity)?.let { size ->
             val width = widthRatio?.let { (size.width * it).toInt() } ?: LayoutParams.WRAP_CONTENT
             val height = heightRatio?.let { (size.height * it).toInt() } ?: LayoutParams.WRAP_CONTENT
             window.setLayout(width, height)

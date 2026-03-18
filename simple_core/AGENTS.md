@@ -69,17 +69,9 @@
    - simple_xml의 PermissionRequester가 이 레이어를 사용
 
 
-  ### system_manager
-   - **base**: 시스템 서비스 기본 클래스 (simple_core/src/main/java/kr/open/library/simple_ui/core/system_manager/base/BaseSystemService.kt)
-   - **info**: 시스템 정보 Flow(SharedFlow/StateFlow) 제공
-     - battery: 배터리 상태 (simple_core/src/main/java/kr/open/library/simple_ui/core/system_manager/info/battery/)
-     - location: 위치 정보 (simple_core/src/main/java/kr/open/library/simple_ui/core/system_manager/info/location/)
-     - network: 네트워크/SIM/Telephony (simple_core/src/main/java/kr/open/library/simple_ui/core/system_manager/info/network/)
-   - **controller**: 시스템 제어
-     - alarm: 알람 설정 (simple_core/src/main/java/kr/open/library/simple_ui/core/system_manager/controller/alarm/)
-     - notification: 알림 관리 (simple_core/src/main/java/kr/open/library/simple_ui/core/system_manager/controller/notification/)
-     - vibrator: 진동 제어 (simple_core/src/main/java/kr/open/library/simple_ui/core/system_manager/controller/vibrator/)
-     - wifi: Wi-Fi 제어 (simple_core/src/main/java/kr/open/library/simple_ui/core/system_manager/controller/wifi/)
+  ### thread
+   - **MainThreadGuard**: 메인 스레드 강제 체크 공통 helper (simple_core/src/main/java/kr/open/library/simple_ui/core/thread/MainThreadGuard.kt)
+   - `assertMainThreadDebug`는 `simple_xml`, `simple_system_manager`가 함께 사용하는 공통 유틸
 
 
   ### viewmodel
@@ -145,3 +137,11 @@
    - 라이프사이클 인식 ViewModel
    - 이벤트 채널 기본 제공
    - simple_xml의 UI 컨트롤러에서 사용
+
+
+ ## simple_system_manager와의 관계
+
+  ### system_manager 기능 분리
+   - `simple_core`의 system_manager main/test 소스는 `simple_system_manager` 모듈로 분리됨
+   - 시스템 서비스 controller/info/base 관련 문서는 `simple_system_manager/docs/feature/system_manager/`를 우선 참조
+   - `simple_core`는 공통 유틸과 기반 기능만 유지하고, system_manager 공개 API는 더 이상 소유하지 않음

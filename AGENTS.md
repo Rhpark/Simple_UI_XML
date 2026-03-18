@@ -35,6 +35,7 @@
 
 ## 모듈별 AGENTS.md 문서
  - simple_core 모듈 가이드: simple_core/AGENTS.md
+ - simple_system_manager 모듈 가이드: simple_system_manager/AGENTS.md
  - simple_xml 모듈 가이드: simple_xml/AGENTS.md
 
 ## 코딩 규칙 문서 위치 (코드 작성 시 항상 준수)
@@ -81,17 +82,23 @@
  - simple_core: simple_core/docs/feature/<기능명>/PRD.md
  - simple_core: simple_core/docs/feature/<기능명>/SPEC.md
  - simple_core: simple_core/docs/feature/<기능명>/IMPLEMENTATION_PLAN.md
- - simple_core 기능명 종류는 logcat, permissions, system_manager, viewmodel 등이 있다.
+ - simple_core 기능명 종류는 logcat, permissions, viewmodel 등이 있다.
 
 ### simple_xml
  - simple_xml: simple_xml/docs/feature/<기능명>/AGENTS.md 
  - simple_xml: simple_xml/docs/feature/<기능명>/PRD.md 
  - simple_xml: simple_xml/docs/feature/<기능명>/SPEC.md 
  - simple_xml: simple_xml/docs/feature/<기능명>/IMPLEMENTATION_PLAN.md
- - simple_xml 기능명 종류는 permissions, system_manager, ui(하위에 adapter, components, layout) 등이 있다.
+ - simple_xml 기능명 종류는 permissions, ui(하위에 adapter, components, layout) 등이 있다.
+
+### simple_system_manager
+ - simple_system_manager: simple_system_manager/docs/feature/system_manager/<영역명>/<기능명>/AGENTS.md
+ - simple_system_manager: simple_system_manager/docs/feature/system_manager/<영역명>/<기능명>/PRD.md
+ - simple_system_manager: simple_system_manager/docs/feature/system_manager/<영역명>/<기능명>/SPEC.md
+ - simple_system_manager: simple_system_manager/docs/feature/system_manager/<영역명>/<기능명>/IMPLEMENTATION_PLAN.md
  - system_manager 하위 예시
-   - controller: softkeyboard, systembar, window
-   - info: display
+   - controller: alarm, notification, vibrator, wifi, softkeyboard, systembar, window
+   - info: battery, location, network, telephony, sim, display
 
 
 ### 예를 들어 package kr.open.library.simple_ui.core.logcat의 코드를 분석 개선, 검토 시 추가로 확인 해야 할 문서들
@@ -101,10 +108,10 @@
  - README : docs/readme/README_LOGX.md
 
 ### 예를 들어 package kr.open.library.simple_ui.xml.system_manager.controller.systembar의 코드를 분석 개선, 검토 시 추가로 확인 해야 할 문서들
- - AGENTS.md : simple_xml/docs/feature/system_manager/controller/systembar/AGENTS.md
- - PRD.md : simple_xml/docs/feature/system_manager/controller/systembar/PRD.md
- - SPEC.md : simple_xml/docs/feature/system_manager/controller/systembar/SPEC.md
- - IMPLEMENTATION_PLAN.md : simple_xml/docs/feature/system_manager/controller/systembar/IMPLEMENTATION_PLAN.md
+ - AGENTS.md : simple_system_manager/docs/feature/system_manager/controller/systembar/AGENTS.md
+ - PRD.md : simple_system_manager/docs/feature/system_manager/controller/systembar/PRD.md
+ - SPEC.md : simple_system_manager/docs/feature/system_manager/controller/systembar/SPEC.md
+ - IMPLEMENTATION_PLAN.md : simple_system_manager/docs/feature/system_manager/controller/systembar/IMPLEMENTATION_PLAN.md
  - README : docs/readme/system_manager/controller/xml/README_SYSTEMBAR_CONTROLLER.md
 
 

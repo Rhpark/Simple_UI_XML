@@ -141,9 +141,9 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
 <br></br>
 
 ## Related Documents (관련 문서)
-- PRD: `simple_xml/docs/feature/system_manager/controller/softkeyboard/PRD.md`
-- SPEC: `simple_xml/docs/feature/system_manager/controller/softkeyboard/SPEC.md`
-- IMPLEMENTATION_PLAN: `simple_xml/docs/feature/system_manager/controller/softkeyboard/IMPLEMENTATION_PLAN.md`
+- PRD: `simple_system_manager/docs/feature/system_manager/controller/softkeyboard/PRD.md`
+- SPEC: `simple_system_manager/docs/feature/system_manager/controller/softkeyboard/SPEC.md`
+- IMPLEMENTATION_PLAN: `simple_system_manager/docs/feature/system_manager/controller/softkeyboard/IMPLEMENTATION_PLAN.md`
 - Extensions index: `docs/readme/system_manager/README_SYSTEM_MANAGER_EXTENSIONS.md`
 
 <br></br>

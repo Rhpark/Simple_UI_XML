@@ -4,10 +4,10 @@ import android.os.Bundle
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.launch
+import kr.open.library.simple_ui.system_manager.xml.controller.softkeyboard.SoftKeyboardActionResult
+import kr.open.library.simple_ui.system_manager.xml.controller.softkeyboard.SoftKeyboardResizePolicy
+import kr.open.library.simple_ui.system_manager.xml.extensions.getSoftKeyboardController
 import kr.open.library.simple_ui.xml.extensions.view.toastShowShort
-import kr.open.library.simple_ui.xml.system_manager.controller.softkeyboard.SoftKeyboardActionResult
-import kr.open.library.simple_ui.xml.system_manager.controller.softkeyboard.SoftKeyboardResizePolicy
-import kr.open.library.simple_ui.xml.system_manager.extensions.getSoftKeyboardController
 import kr.open.library.simple_ui.xml.ui.components.activity.normal.BaseActivity
 import kr.open.library.simpleui_xml.R
 import kr.open.library.simpleui_xml.databinding.ActivitySoftkeyboardControllerBinding

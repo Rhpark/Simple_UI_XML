@@ -1,107 +1,58 @@
 ﻿# System Service Manager Controller vs Plain Android - Complete Comparison Guide
-**System Service Manager Controller** consists of controllers in `simple_core` and Context/Window extensions in `simple_xml`.
-This document is a quick summary for fast review, and details are split into separate docs.
 > **System Service Manager Controller vs 순수 Android - 비교 가이드**
-> **System Service Manager Controller**는 `simple_core`의 컨트롤러와 `simple_xml`의 Context/Window 확장 함수로 구성됩니다.
-> 이 문서는 **핵심만 빠르게 확인**할 수 있도록 요약했고, 상세 내용은 별도 문서로 분리했습니다.
 
-## 📦 Module Information (모듈 정보)
-- **Module**: `simple_core`, `simple_xml` (모듈)
+`simple_system_manager`는 기존 `simple_core`, `simple_xml`에 흩어져 있던 system manager controller와 확장 진입점을 한 모듈로 정리합니다.  
+이 문서는 빠른 개요용 요약 문서이며, 상세 동작은 하위 README와 feature 문서를 참조합니다.
+
+## Module Information (모듈 정보)
+- **Module**: `simple_system_manager`
 
 <br></br>
 
-## 🔎 At a Glance (한눈 비교)
+## At a Glance (한눈 비교)
 
-### simple_core (Controller)
-| 컨트롤러(Controller) | 역할 요약(Summary) | 상세 문서(Docs) |
+### Core-origin Controller
+| Controller | Summary | Docs |
 |---|---|---|
-| AlarmController | Alarm register/remove/exists (알람 등록/삭제/존재 확인) | [core/README_ALARM_CONTROLLER.md](core/README_ALARM_CONTROLLER.md) |
-| NotificationController | Notifications: show/progress/channel (알림 표시/진행률/채널 관리) | [core/README_NOTIFICATION_CONTROLLER.md](core/README_NOTIFICATION_CONTROLLER.md) |
-| VibratorController | Vibration pattern/preset/SDK branching + amplitude check (진동 패턴/프리셋/SDK 분기 + 강도 지원 확인) | [core/README_VIBRATOR_CONTROLLER.md](core/README_VIBRATOR_CONTROLLER.md) |
-| WifiController | Wi-Fi info/state/scan (Wi-Fi 정보/상태/스캔) | [core/README_WIFI_CONTROLLER.md](core/README_WIFI_CONTROLLER.md) |
+| `AlarmController` | Alarm register/remove/exists<br>알람 등록/삭제/존재 확인 | [core/README_ALARM_CONTROLLER.md](core/README_ALARM_CONTROLLER.md) |
+| `NotificationController` | Notifications: show/progress/channel<br>알림 표시/진행률/채널 관리 | [core/README_NOTIFICATION_CONTROLLER.md](core/README_NOTIFICATION_CONTROLLER.md) |
+| `VibratorController` | Vibration pattern/preset/SDK branching<br>진동 패턴/프리셋/SDK 분기 | [core/README_VIBRATOR_CONTROLLER.md](core/README_VIBRATOR_CONTROLLER.md) |
+| `WifiController` | Wi-Fi info/state/scan<br>Wi-Fi 정보/상태/스캔 | [core/README_WIFI_CONTROLLER.md](core/README_WIFI_CONTROLLER.md) |
 
-### simple_xml (Controller)
-| 컨트롤러(Controller) | 역할 요약(Summary) | 상세 문서(Docs) |
+### XML-origin Controller
+| Controller | Summary | Docs |
 |---|---|---|
-| SystemBarController | Status/navigation bar color, visibility, edge-to-edge, insets state + sealed state contract (상태/내비게이션 바 색상·가시성·edge-to-edge·insets 상태 + sealed 상태 계약) | [xml/README_SYSTEMBAR_CONTROLLER.md](xml/README_SYSTEMBAR_CONTROLLER.md) |
-| SoftKeyboardController | Keyboard request/await contract + resize policy (키보드 요청/대기 계약 + resize 정책) | [xml/README_SOFTKEYBOARD_CONTROLLER.md](xml/README_SOFTKEYBOARD_CONTROLLER.md) |
-| FloatingViewController | Floating view add/move/remove + WindowManager success-based Boolean contract (플로팅 뷰 추가/이동/제거 + WindowManager 성공 기준 Boolean 계약) | [xml/README_FLOATING_VIEW_CONTROLLER.md](xml/README_FLOATING_VIEW_CONTROLLER.md) |
+| `SystemBarController` | Status/navigation bar color, visibility, edge-to-edge, insets state<br>상태/내비게이션 바 색상, 가시성, edge-to-edge, insets 상태 | [xml/README_SYSTEMBAR_CONTROLLER.md](xml/README_SYSTEMBAR_CONTROLLER.md) |
+| `SoftKeyboardController` | Keyboard request/await contract + resize policy<br>키보드 요청/대기 계약 + resize 정책 | [xml/README_SOFTKEYBOARD_CONTROLLER.md](xml/README_SOFTKEYBOARD_CONTROLLER.md) |
+| `FloatingViewController` | Floating view add/move/remove contract<br>플로팅 뷰 추가/이동/제거 계약 | [xml/README_FLOATING_VIEW_CONTROLLER.md](xml/README_FLOATING_VIEW_CONTROLLER.md) |
 
-**Context/Window Extension Functions (컨텍스트/윈도우 확장 함수):**
-See full list / 전체 목록: [README_SYSTEM_MANAGER_EXTENSIONS.md](../README_SYSTEM_MANAGER_EXTENSIONS.md)
-
-**SystemBar 실제 진입 경로 (Window Extension Path):**
-- `window.getSystemBarController()`
-- `window.destroySystemBarControllerCache()`
-
-**SystemBar 핵심 계약 (Quick Notes):**
-- 상태 계약: `NotReady`, `NotPresent`, `Hidden`, `Visible(rect)`, `Stable(rect)`
-- `Hidden`은 `stable`이 존재하고 `visible`이 0일 때만 해당하며, 둘 다 0이면 `NotPresent`
-- API 35+ 색상 적용 시 insets 미준비면 `WindowInsetsCompat.CONSUMED` 폴백을 사용
-- 가시성 API(`setStatusBarVisible/Gone`, `setNavigationBarVisible/Gone`) 내부 controller 경로에서만 `systemBarsBehavior = BEHAVIOR_DEFAULT`를 재설정
-- 아이콘/색상 API(`setStatusBarDarkIcon`, `setNavigationBarDarkIcon`, `setStatusBarColor`, `setNavigationBarColor`)는 `systemBarsBehavior`를 변경하지 않음
+### Extension Entry Points
+- Context/Window 확장 함수 목록: [README_SYSTEM_MANAGER_EXTENSIONS.md](../README_SYSTEM_MANAGER_EXTENSIONS.md)
+- System bar 진입 경로:
+  - `window.getSystemBarController()`
+  - `window.destroySystemBarControllerCache()`
 
 <br></br>
 
-## 💡 Why It Matters (왜 중요한가)
-
-### Eliminate Repetitive Code (반복 코드 제거)
-- **System Service Acquisition:** Simplify `getSystemService()` calls with Extension functions
-- **Auto SDK Version Handling:** Automatically handle Vibrator/VibratorManager version branching internally
-- **Hide Complex Configuration:** Encapsulate Alarm Calendar calculations, Floating View Touch handling, etc.
-> - **시스템 서비스 획득**: `getSystemService()` 호출과 Extension 함수로 간단하게
-> - **SDK 버전 처리 자동화**: Vibrator/VibratorManager 버전 분기를 내부에서 자동 처리
-> - **복잡한 설정 숨김**: Alarm Calendar 계산, Floating View Touch 처리 등을 캡슐화
-
-<br></br>
-
-### Safe Error Handling (안전한 에러 처리)
-- **Automatic Exception Handling:** Controller automatically handles exceptions and returns Runtime results
-- **Return Result Values:** Return safe Boolean via `tryCatchSystemManager()`
-- **Lifecycle Integration:** Automatically cleanup all resources on `onDestroy()`
-> - **자동 예외 처리**: Controller 내부에서 자동 예외 처리 후 Runtime 결과 반환
-> - **결과 값 리턴**: `tryCatchSystemManager()` 통해 안전한 Boolean 반환
-> - **Lifecycle 연동**: `onDestroy()` 시 모든 리소스 자동 정리
-
-<br></br>
-
-### Developer-Friendly Interface (개발자 친화적 인터페이스)
-- **Unified API:** Intuitive methods like `show()`, `vibrate()`, `registerAlarmClock()`
-- **Consistent Code Style:** Unify all services with Controller pattern
-- **Type Safety:** Compile-time error checking support
-> - **통합 API 제공**: `show()`, `vibrate()`, `registerAlarmClock()` 등 직관적 메서드
-> - **일관된 코드 스타일**: Controller 패턴으로 모든 서비스 통일
-> - **타입 안전성**: Compile-time 오류 체크 지원
+## Why It Matters (왜 중요한가)
+- 반복적인 `getSystemService()` 호출과 SDK 분기 코드를 줄입니다.
+- system service 제어 로직을 controller 패턴으로 통일해 사용성을 높입니다.
+- `simple_core` 공통 유틸을 재사용하면서 system manager 공개 API는 `simple_system_manager`에 모읍니다.
 
 <br></br>
 
 ## Common Notes (공통 주의사항)
-- Android 13+ notifications require the `POST_NOTIFICATIONS` permission.
-- `NotificationChannel` is required, and `createChannel()` applies only to notifications created afterward.
-- If you used progress notifications, call `cleanup()` when the Activity/Service ends.
-- Alarm trigger path also checks `POST_NOTIFICATIONS` at runtime and safely skips notification display if missing.
-- Controller async/cleanup paths use `RuntimeException` boundaries to avoid swallowing broad checked exceptions while keeping runtime safety.
-- Notification-related source/docs should be kept in UTF-8 to prevent Korean text corruption in KDoc and generated documents.
-- VibratorController: `createPredefined()` is available from Android Q(29); pre-Q returns false and logs a warning.
-- VibratorController: `VIBRATE` is a normal permission (declare in AndroidManifest.xml; no runtime prompt).
-- VibratorController: `repeat` >= 0 repeats until `cancel()` is called.
-
-> Android 13+ 알림은 `POST_NOTIFICATIONS` 권한이 필요합니다.
-> `NotificationChannel` 전달은 필수이며, `createChannel()`은 **이후 생성되는 알림**에만 적용됩니다.
-> 진행률 알림을 사용했다면 Activity/Service 종료 시 `cleanup()` 호출을 권장합니다.
-> Alarm 트리거 경로도 런타임에서 `POST_NOTIFICATIONS`를 확인하며, 권한이 없으면 알림 표시를 안전하게 건너뜁니다.
-> Controller 비동기/정리 경로는 `RuntimeException` 경계를 사용하여, 과도한 checked 예외 삼킴을 피하면서 런타임 안전성을 유지합니다.
-> 알림 관련 소스/문서는 KDoc 및 생성 문서의 한글 깨짐 방지를 위해 UTF-8 인코딩을 유지해야 합니다.
-> VibratorController: `createPredefined()`는 Android Q(29)+에서만 지원되며, pre-Q에서는 false 반환 + 경고 로그를 출력합니다.
-> VibratorController: `VIBRATE`는 일반 권한이므로 매니페스트 선언만 필요하고 런타임 요청은 없습니다.
-> VibratorController: `repeat`가 0 이상이면 `cancel()` 호출 전까지 반복됩니다.
-> FloatingViewController: `removeAllFloatingView()`는 `first-failure-stop` 전략이며 일반 호출에서 부분 정리 상태가 남을 수 있습니다.
+- Android 13+ 알림은 `POST_NOTIFICATIONS` 권한이 필요합니다.
+- `NotificationChannel`은 필수이며 `createChannel()`은 이후 생성되는 알림에만 적용됩니다.
+- 진행률 알림을 사용했다면 Activity/Service 종료 시 `cleanup()` 호출을 권장합니다.
+- Alarm 트리거 경로도 런타임에서 `POST_NOTIFICATIONS`를 확인하며, 권한이 없으면 알림 표시를 건너뜁니다.
+- `VIBRATE`는 일반 권한이므로 매니페스트 선언만 필요하고 런타임 요청은 없습니다.
+- `removeAllFloatingView()`는 `first-failure-stop` 전략이며 일반 호출에서 부분 정리 상태가 남을 수 있습니다.
+- `window.getSystemBarController()` / `window.destroySystemBarControllerCache()`는 `@MainThread` 계약입니다.
 
 <br></br>
 
 ## Document Locations (상세 문서 위치)
-- core docs: `docs/readme/system_manager/controller/core/` (core 문서 위치)
-- xml docs: `docs/readme/system_manager/controller/xml/` (xml 문서 위치)
-- extensions doc: `docs/readme/system_manager/README_SYSTEM_MANAGER_EXTENSIONS.md` (확장 문서)
-
-
+- Core-origin docs: `docs/readme/system_manager/controller/core/`
+- XML-origin docs: `docs/readme/system_manager/controller/xml/`
+- Feature docs: `simple_system_manager/docs/feature/system_manager/controller/`

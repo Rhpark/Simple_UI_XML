@@ -104,6 +104,15 @@ jobs:
           
           echo "✅ simple_core/AGENTS.md updated"
 
+      - name: Update simple_system_manager/AGENTS.md
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          
+          sed -i "s/\*\*현재 버전\*\*: [0-9.]\+/**현재 버전**: $VERSION/g" simple_system_manager/AGENTS.md || true
+          sed -i "s/Simple_UI_System_Manager:[0-9.]\+/Simple_UI_System_Manager:$VERSION/g" simple_system_manager/AGENTS.md || true
+          
+          echo "✅ simple_system_manager/AGENTS.md updated"
+
       - name: Update PRD.md
         run: |
           VERSION="${{ steps.version.outputs.version }}"
@@ -133,7 +142,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           
-          git add README.md AGENTS.md simple_xml/AGENTS.md simple_core/AGENTS.md PRD.md
+          git add README.md AGENTS.md simple_xml/AGENTS.md simple_core/AGENTS.md simple_system_manager/AGENTS.md PRD.md
           git commit -m "docs: Update version to $VERSION [skip ci]"
           git push
           
@@ -199,8 +208,10 @@ jobs:
       - name: Copy Kover reports to docs
         run: |
           mkdir -p docs/coverage/simple_core
+          mkdir -p docs/coverage/simple_system_manager
           mkdir -p docs/coverage/simple_xml
           cp -r coverage-from-ci/simple_core/build/reports/kover/html/* docs/coverage/simple_core/ || cp -r coverage-from-ci/simple_core/* docs/coverage/simple_core/
+          cp -r coverage-from-ci/simple_system_manager/build/reports/kover/html/* docs/coverage/simple_system_manager/ || cp -r coverage-from-ci/simple_system_manager/* docs/coverage/simple_system_manager/
           cp -r coverage-from-ci/simple_xml/build/reports/kover/html/* docs/coverage/simple_xml/ || cp -r coverage-from-ci/simple_xml/* docs/coverage/simple_xml/
 
       - name: Add version banner to documentation
@@ -229,6 +240,10 @@ jobs:
           fi
           if [ ! -f "docs/coverage/simple_core/index.html" ]; then
             echo "❌ simple_core coverage not generated!"
+            exit 1
+          fi
+          if [ ! -f "docs/coverage/simple_system_manager/index.html" ]; then
+            echo "❌ simple_system_manager coverage not generated!"
             exit 1
           fi
           if [ ! -f "docs/coverage/simple_xml/index.html" ]; then
@@ -277,3 +292,4 @@ jobs:
             Runner: ${{ runner.os }}
             Event: ${{ github.event_name }}
         run: bash .github/scripts/report_action_error.sh
+

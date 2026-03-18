@@ -151,10 +151,10 @@ setEdgeToEdgeMode(), isEdgeToEdgeEnabled(), onDestroy()
 <br></br>
 
 ## Related Documents (관련 문서)
-- AGENTS: `simple_xml/docs/feature/system_manager/controller/systembar/AGENTS.md`
-- PRD: `simple_xml/docs/feature/system_manager/controller/systembar/PRD.md`
-- SPEC: `simple_xml/docs/feature/system_manager/controller/systembar/SPEC.md`
-- IMPLEMENTATION_PLAN: `simple_xml/docs/feature/system_manager/controller/systembar/IMPLEMENTATION_PLAN.md`
+- AGENTS: `simple_system_manager/docs/feature/system_manager/controller/systembar/AGENTS.md`
+- PRD: `simple_system_manager/docs/feature/system_manager/controller/systembar/PRD.md`
+- SPEC: `simple_system_manager/docs/feature/system_manager/controller/systembar/SPEC.md`
+- IMPLEMENTATION_PLAN: `simple_system_manager/docs/feature/system_manager/controller/systembar/IMPLEMENTATION_PLAN.md`
 - Extensions index: `docs/readme/system_manager/README_SYSTEM_MANAGER_EXTENSIONS.md`
 
 <br></br>

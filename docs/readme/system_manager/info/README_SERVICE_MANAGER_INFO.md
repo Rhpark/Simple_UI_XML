@@ -2,72 +2,62 @@
 > **System Service Manager Info vs 순수 Android - 비교 가이드**
 
 ## Module Information (모듈 정보)
-- **Module**: `simple_core`, `simple_xml` 
-- **Package**: `kr.open.library.simple_ui.core.system_manager.info.*`, `kr.open.library.simple_ui.xml.system_manager.info.*` 
+- **Module**: `simple_system_manager`
+- **Package**: `kr.open.library.simple_ui.core.system_manager.info.*`, `kr.open.library.simple_ui.xml.system_manager.info.*`
 
 <br></br>
 
 ## Overview (개요)
-Provides Flow/Callback-based system information collection with helper APIs.  
-> Flow/Callback 기반 시스템 정보 수집과 헬퍼 API를 제공합니다.
+Provides Flow/Callback-based system information collection helpers owned by `simple_system_manager`.  
+> `simple_system_manager`가 제공하는 Flow/Callback 기반 시스템 정보 수집 helper를 정리합니다.
 
 <br></br>
 
 ## At a Glance (한눈 비교)
-| Info (정보)                 | Module (모듈) | Doc (문서) |
-|---------------------------|---|---|
-| Battery Info              | `simple_core` | [core/README_BATTERY_INFO.md](core/README_BATTERY_INFO.md) |
-| Location Info             | `simple_core` | [core/README_LOCATION_INFO.md](core/README_LOCATION_INFO.md) |
-| SIM Info                  | `simple_core` | [core/README_SIM_INFO.md](core/README_SIM_INFO.md) |
-| Telephony Info            | `simple_core` | [core/README_TELEPHONY_INFO.md](core/README_TELEPHONY_INFO.md) |
-| Network Connectivity Info | `simple_core` | [core/README_NETWORK_INFO.md](core/README_NETWORK_INFO.md) |
-| Display Info              | `simple_xml` | [xml/README_DISPLAY_INFO.md](xml/README_DISPLAY_INFO.md) |
+| Info | Origin | Doc |
+|---|---|---|
+| Battery Info | core-origin | [core/README_BATTERY_INFO.md](core/README_BATTERY_INFO.md) |
+| Location Info | core-origin | [core/README_LOCATION_INFO.md](core/README_LOCATION_INFO.md) |
+| SIM Info | core-origin | [core/README_SIM_INFO.md](core/README_SIM_INFO.md) |
+| Telephony Info | core-origin | [core/README_TELEPHONY_INFO.md](core/README_TELEPHONY_INFO.md) |
+| Network Connectivity Info | core-origin | [core/README_NETWORK_INFO.md](core/README_NETWORK_INFO.md) |
+| Display Info | xml-origin | [xml/README_DISPLAY_INFO.md](xml/README_DISPLAY_INFO.md) |
 
 <br></br>
 
 ## Why It Matters (중요한 이유)
-- **Real-time Updates:** Collect system state in real time with Flow/Callback.
-- **Automated Configuration:** Automate complex setup such as SDK branching and resource queries.
-- **Developer-Friendly API:** Improve usability with intuitive helper methods.
-- **Lifecycle-friendly control:** Location supports explicit stop (`unRegister()`) and re-call auto reconfiguration on `registerStart(...)`.
-- **Permission-safe location snapshot:** Location internal snapshot path returns `null` safely when runtime permissions are missing.
-> - **실시간 업데이트:** Flow/Callback 기반으로 실시간 상태를 수집합니다.
-> - **설정 자동화:** SDK 분기/리소스 조회 등 복잡한 설정을 자동화합니다.
-> - **개발자 친화 API:** 직관적 헬퍼 메서드로 사용성을 개선합니다.
-> - **라이프사이클 친화 제어:** Location은 `unRegister()`로 명시적 중지가 가능하고, `registerStart(...)` 재호출 시 설정이 자동 재적용됩니다.
-> - **권한 안전 위치 스냅샷:** Location 내부 스냅샷 경로는 런타임 권한이 없을 때 예외 없이 `null`을 반환합니다.
+- Flow/Callback 기반으로 시스템 상태를 실시간 수집할 수 있습니다.
+- SDK 분기, 리소스 조회, receiver/emitter 구성 같은 반복 설정을 줄입니다.
+- 위치 정보처럼 라이프사이클과 권한 계약이 까다로운 기능을 모듈 내부에서 정리합니다.
 
 <br></br>
 
 ## Feature Docs (기능별 문서)
-### simple_core (Info)
+### Core-origin Info
 - Battery: [README_BATTERY_INFO.md](core/README_BATTERY_INFO.md)
 - Location: [README_LOCATION_INFO.md](core/README_LOCATION_INFO.md)
 - SIM: [README_SIM_INFO.md](core/README_SIM_INFO.md)
 - Telephony: [README_TELEPHONY_INFO.md](core/README_TELEPHONY_INFO.md)
 - Network Connectivity: [README_NETWORK_INFO.md](core/README_NETWORK_INFO.md)
 
-### simple_xml (Info)
+### XML-origin Info
 - Display: [README_DISPLAY_INFO.md](xml/README_DISPLAY_INFO.md)
-- Display PRD: [PRD.md](../../../../simple_xml/docs/feature/system_manager/info/display/PRD.md)
-- Display SPEC: [SPEC.md](../../../../simple_xml/docs/feature/system_manager/info/display/SPEC.md)
-- Display Plan: [IMPLEMENTATION_PLAN.md](../../../../simple_xml/docs/feature/system_manager/info/display/IMPLEMENTATION_PLAN.md)
+- Display PRD: [PRD.md](../../../../simple_system_manager/docs/feature/system_manager/info/display/PRD.md)
+- Display SPEC: [SPEC.md](../../../../simple_system_manager/docs/feature/system_manager/info/display/SPEC.md)
+- Display Plan: [IMPLEMENTATION_PLAN.md](../../../../simple_system_manager/docs/feature/system_manager/info/display/IMPLEMENTATION_PLAN.md)
 
 <br></br>
 
 ## Permission Guide (권한 가이드)
-See the permission guide for requirements and policies.  
-> 권한 요구사항과 정책은 권한 가이드를 참고하세요.
-
-- [README_PERMISSION.md](../../README_PERMISSION.md)
+- 권한 요구사항과 정책은 [README_PERMISSION.md](../../README_PERMISSION.md)를 참조하십시오.
 
 <br></br>
 
 ## Example (예제)
-System Service Manager Info example code:  
-> System Service Manager Info 예제 코드:
-
 - [ServiceManagerInfoActivity.kt](../../../../app/src/main/java/kr/open/library/simpleui_xml/system_service_manager/info/ServiceManagerInfoActivity.kt)
 
 <br></br>
 
+## Related Docs (관련 문서)
+- Info docs: `docs/readme/system_manager/info/`
+- Feature docs: `simple_system_manager/docs/feature/system_manager/info/`

@@ -95,19 +95,6 @@
    - **ResourceExtensions**: 리소스 접근 간소화 (simple_xml/src/main/java/kr/open/library/simple_ui/xml/extensions/resource/ResourceExtensions.kt)
 
 
-  ### system_manager/controller
-   - **systembar**: 상태바/내비게이션바 제어 (simple_xml/src/main/java/kr/open/library/simple_ui/xml/system_manager/controller/systembar/SystemBarController.kt)
-     - **실제 사용 경로**: Window 확장 함수 기반 진입 (simple_xml/src/main/java/kr/open/library/simple_ui/xml/system_manager/extensions/SystemServiceExtensionsXml.kt)
-       - `Window.getSystemBarController()`
-       - `Window.destroySystemBarControllerCache()`
-   - **softkeyboard**: 키보드 제어 (simple_xml/src/main/java/kr/open/library/simple_ui/xml/system_manager/controller/softkeyboard/SoftKeyboardController.kt)
-   - **window**: 플로팅 뷰 관리 (simple_xml/src/main/java/kr/open/library/simple_ui/xml/system_manager/controller/window/)
-     - drag: 드래그 가능 플로팅 뷰 (simple_xml/src/main/java/kr/open/library/simple_ui/xml/system_manager/controller/window/drag/FloatingDragView.kt)
-     - fixed: 고정 플로팅 뷰 (simple_xml/src/main/java/kr/open/library/simple_ui/xml/system_manager/controller/window/fixed/FloatingFixedView.kt)
-
-
-  ### system_manager/info
-   - **display**: 디스플레이 정보 (simple_xml/src/main/java/kr/open/library/simple_ui/xml/system_manager/info/display/DisplayInfo.kt)
 
 
 
@@ -185,13 +172,6 @@
    - 특수 권한(SYSTEM_ALERT_WINDOW 등)도 동일 인터페이스
 
 
-  ### 시스템 바 제어
-
-   - SystemBarController 사용: `window.getSystemBarController()` 진입 권장
-   - Window 확장 경로 사용 시 `window.getSystemBarController()` 진입 권장
-   - 종료/재생성 시 `window.destroySystemBarControllerCache()`로 캐시 정리 권장
-   - API 35 대응 Edge-to-edge 자동 처리
-   - 커스텀 배경 뷰 지원
 
 
   ### View 확장 함수
@@ -271,7 +251,7 @@
    - DataBinding/ViewBinding 자동화
    - 권한 요청 UI 흐름 (PermissionRequester)
    - View 확장 함수 (Toast, SnackBar, Animation 등)
-   - 키보드, 플로팅 뷰 등 UI 특화 제어
+   - 다이얼로그/윈도우 크기 계산 등 XML UI 보조 제어
 
 
   ### 금지되는 의존성
@@ -304,3 +284,15 @@
    - Toast/SnackBar: (simple_xml/src/main/java/kr/open/library/simple_ui/xml/extensions/view/)
 
 
+
+
+## simple_system_manager와의 관계
+
+  ### 분리 원칙
+   - `simple_xml`은 `simple_system_manager`를 직접 의존하지 않음
+   - system_manager 기능은 별도 모듈 `simple_system_manager`가 소유
+   - `DialogConfig` 등 `simple_xml` 내부 UI 기능은 Android 표준 API 또는 모듈 내부 helper로 처리
+
+  ### system_manager 기능이 필요할 때
+   - 상태바/소프트키보드/플로팅 뷰/display info/system service controller가 필요하면 `simple_system_manager`를 직접 의존
+   - 관련 문서는 `simple_system_manager/docs/feature/system_manager/`와 `docs/readme/system_manager/`를 우선 참조

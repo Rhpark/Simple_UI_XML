@@ -201,9 +201,9 @@ No permission is required for DisplayInfo, but see the guide for policy context.
 ## Related Docs (관련 문서)
 - Summary: [README_SERVICE_MANAGER_INFO.md](../README_SERVICE_MANAGER_INFO.md)
 - Permission Guide: [README_PERMISSION.md](../../../README_PERMISSION.md)
-- Feature PRD: [PRD.md](../../../../../simple_xml/docs/feature/system_manager/info/display/PRD.md)
-- Feature SPEC: [SPEC.md](../../../../../simple_xml/docs/feature/system_manager/info/display/SPEC.md)
-- Feature Plan: [IMPLEMENTATION_PLAN.md](../../../../../simple_xml/docs/feature/system_manager/info/display/IMPLEMENTATION_PLAN.md)
+- Feature PRD: [PRD.md](../../../../../simple_system_manager/docs/feature/system_manager/info/display/PRD.md)
+- Feature SPEC: [SPEC.md](../../../../../simple_system_manager/docs/feature/system_manager/info/display/SPEC.md)
+- Feature Plan: [IMPLEMENTATION_PLAN.md](../../../../../simple_system_manager/docs/feature/system_manager/info/display/IMPLEMENTATION_PLAN.md)
 
 <br></br>
 

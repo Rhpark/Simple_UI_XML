@@ -38,7 +38,7 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
-import kr.open.library.simple_ui.xml.internal.thread.assertMainThreadDebug
+import kr.open.library.simple_ui.core.thread.assertMainThreadDebug
 import kotlin.math.max
 
 /**

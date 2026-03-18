@@ -81,10 +81,13 @@ jobs:
           if [ -d "coverage-from-ci/simple_core" ]; then
             cp -r coverage-from-ci/simple_core coverage-relay/simple_core
           fi
+          if [ -d "coverage-from-ci/simple_system_manager" ]; then
+            cp -r coverage-from-ci/simple_system_manager coverage-relay/simple_system_manager
+          fi
           if [ -d "coverage-from-ci/simple_xml" ]; then
             cp -r coverage-from-ci/simple_xml coverage-relay/simple_xml
           fi
-          if [ ! -d "coverage-relay/simple_core" ] || [ ! -d "coverage-relay/simple_xml" ]; then
+          if [ ! -d "coverage-relay/simple_core" ] || [ ! -d "coverage-relay/simple_system_manager" ] || [ ! -d "coverage-relay/simple_xml" ]; then
             echo "::error::Coverage artifact structure is invalid."
             exit 1
           fi
@@ -96,6 +99,7 @@ jobs:
           name: coverage-report
           path: |
             coverage-relay/simple_core
+            coverage-relay/simple_system_manager
             coverage-relay/simple_xml
           retention-days: 7
 

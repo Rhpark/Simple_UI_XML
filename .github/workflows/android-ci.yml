@@ -143,7 +143,7 @@ jobs:
 
           GRADLE_VERSION=$(python3 .github/scripts/read_app_version.py || true)
           if [ -z "$GRADLE_VERSION" ]; then
-            echo "Error: Failed to read version from simple_core/build.gradle.kts or simple_xml/build.gradle.kts"
+            echo "Error: Failed to read version from simple_core/build.gradle.kts, simple_system_manager/build.gradle.kts, or simple_xml/build.gradle.kts"
             exit 1
           fi
 
@@ -303,7 +303,7 @@ jobs:
         run: bash -o pipefail -c "./gradlew apiCheck --build-cache |& tee api-check.log"
 
       - name: Run tests and generate coverage
-        run: bash -o pipefail -c "./gradlew :simple_core:koverHtmlReport :simple_xml:koverHtmlReport --build-cache |& tee test-coverage.log"
+        run: bash -o pipefail -c "./gradlew :simple_core:koverHtmlReport :simple_system_manager:koverHtmlReport :simple_xml:koverHtmlReport --build-cache |& tee test-coverage.log"
 
       - name: Capture failure snippet (Tests)
         if: failure()
@@ -327,6 +327,7 @@ jobs:
         with:
           files: |
             simple_core/build/test-results/**/*.xml
+            simple_system_manager/build/test-results/**/*.xml
             simple_xml/build/test-results/**/*.xml
           check_name: Test Results
 
@@ -337,6 +338,7 @@ jobs:
           name: test-reports
           path: |
             simple_core/build/reports/tests/
+            simple_system_manager/build/reports/tests/
             simple_xml/build/reports/tests/
           retention-days: 30
 
@@ -347,6 +349,7 @@ jobs:
           name: coverage-report
           path: |
             simple_core/build/reports/kover/html/
+            simple_system_manager/build/reports/kover/html/
             simple_xml/build/reports/kover/html/
           retention-days: 30
 

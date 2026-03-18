@@ -91,11 +91,24 @@ android {
 dependencies {
     //..
     // Version 0.3.0+ (Modular Structure)
-    implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_Core:0.4.7")  // Core functionality only
-    implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_XML:0.4.7")   // XML UI components (includes Core)
+    implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_Core:0.4.2")             // Core functionality only
+    implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_System_Manager:0.4.2")   // System Manager only (depends on Core)
+    implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_XML:0.4.2")              // XML UI components only (depends on Core)
 
-    // Or use XML module only (it automatically includes Core as transitive dependency)
-    // implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_XML:0.4.7")
+    // Examples
+    // implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_XML:0.4.2")
+    // -> simple_xml 기능만 사용하는 경우
+    //
+    // implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_System_Manager:0.4.2")
+    // -> system_manager 기능만 사용하는 경우
+    //
+    // implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_XML:0.4.2")
+    // implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_System_Manager:0.4.2")
+    // -> XML UI와 system_manager 기능을 함께 사용하는 경우
+    //
+    // implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_Core:0.4.2")
+    // implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_XML:0.4.2")
+    // -> 앱 코드에서 simple_core API를 직접 함께 사용하는 경우
     //..
 }
 ```
@@ -133,7 +146,12 @@ dependencies {
 - **[API Documentation](https://rhpark.github.io/Simple_UI_XML/api)** - Dokka로 생성된 API 문서
 - **[Code Coverage Report](https://rhpark.github.io/Simple_UI_XML/coverage)** - Kover 커버리지 리포트
 - **API baseline (`simple_xml/api/simple_xml.api`)** - 공개 API 시그니처 기준 파일
-- **API validation commands** - `./gradlew :simple_xml:apiCheck`(검증), `./gradlew :simple_xml:apiDump`(의도된 변경 반영)
+- **API baseline (`simple_core/api/simple_core.api`)** - `simple_core` 공개 API 기준 파일
+- **API baseline (`simple_system_manager/api/simple_system_manager.api`)** - `simple_system_manager` 공개 API 기준 파일
+- **API validation commands**
+  - `./gradlew :simple_core:apiCheck`
+  - `./gradlew :simple_system_manager:apiCheck`
+  - `./gradlew :simple_xml:apiCheck`
 
 
 <br>
