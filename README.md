@@ -13,7 +13,7 @@ This library helps you make easy and more simple code for Android developers
 **libraries** (v0.3.0+):
 - **simple_core**: UI-independent core functionality (usable with Compose or XML)
 - **simple_xml**: XML UI-specific components and extensions (depends on Core)
-- **simple_system_manager**: System manager controllers, info helpers, and XML-related system extensions (depends on Core)
+- **simple_system_manager**: Android system control and device information helpers (depends on Core) (depends on Core)
 **testing samples**: app module
 
 <br>
