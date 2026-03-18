@@ -46,8 +46,14 @@ We built **Simple UI XML** to give you that time back.
 </br>
 
 ## 🎯 **Target Users (타겟 사용자)**
+- Android developers who want to build XML-based screens faster (Simple_UI_XML)
+- Android developers who want to use permissions, logging, and common utilities more simply (Simple_UI_Core)
+- Android developers who want to handle system controls and device information more easily (Simple_UI_System_Manager)
 
-**XML View system** environment
+> - XML View 기반 화면을 빠르게 개발하고 싶은 안드로이드 개발자 (Simple_UI_XML)
+> - 권한, 로깅, 공통 유틸리티를 함께 간단히 쓰고 싶은 안드로이드 개발자 (Simple_UI_Core)
+> - 시스템 제어와 디바이스 정보를 손쉽게 다루고 싶은 안드로이드 개발자 (Simple_UI_System_Manager)
+
 
 <br>
 </br>
@@ -84,12 +90,20 @@ We built **Simple UI XML** to give you that time back.
 
 ## 🧩 **API Compatibility Baseline (API 호환성 베이스라인)**
 
-- Public API signatures are tracked in `simple_xml/api/simple_xml.api`.
-- Run `./gradlew :simple_xml:apiCheck` before merge/release to prevent unintended API breaks.
-- If an API change is intentional, run `./gradlew :simple_xml:apiDump` and include the updated `.api` diff.
-> - 공개 API 시그니처는 `simple_xml/api/simple_xml.api` 파일로 관리합니다.
-> - 머지/릴리즈 전 `./gradlew :simple_xml:apiCheck`를 실행해 의도치 않은 API 변경을 차단합니다.
-> - API 변경이 의도된 경우 `./gradlew :simple_xml:apiDump` 실행 후 `.api` 변경분을 함께 반영합니다.
+- Public API signatures are tracked in:
+    - `simple_core/api/simple_core.api`
+    - `simple_xml/api/simple_xml.api`
+    - `simple_system_manager/api/simple_system_manager.api`
+- Run `./gradlew :simple_core:apiCheck :simple_system_manager:apiCheck :simple_xml:apiCheck` before merge/release to prevent unintended API breaks.
+- If an API change is intentional, run the corresponding `apiDump` task and include the updated `.api` diff.
+
+> - 공개 API 시그니처는 아래 기준 파일로 관리합니다.
+    >   - `simple_core/api/simple_core.api`
+>   - `simple_xml/api/simple_xml.api`
+>   - `simple_system_manager/api/simple_system_manager.api`
+> - 머지/릴리즈 전 `./gradlew :simple_core:apiCheck :simple_system_manager:apiCheck :simple_xml:apiCheck`를 실행해 의도치 않은 API 변경을 차단합니다.
+> - API 변경이 의도된 경우 해당 모듈의 `apiDump` 실행 후 `.api` 변경분을 함께 반영합니다.
+
 
 <br>
 </br>
@@ -169,7 +183,7 @@ FIREBASE_APP_ID_RELEASE=...
   
 <br> </br>
 
-### ⚙️ **Effortless System Control (System Manager) (간단히 사용가능한 시스템 제어 (System Manager))**
+### ⚙️ **Effortless System Control (간편한 시스템 제어 )**
 
 - **Notification system**: Control alarms and notifications
 - **Network tools**: Detailed management for Wi-Fi, connectivity, and SIM info
@@ -187,38 +201,6 @@ FIREBASE_APP_ID_RELEASE=...
 <br>
 </br>
 
-### 🪟 **SystemBar Quick Example (빠른 사용 예시)**
-
-```kotlin
-import android.graphics.Color
-import kr.open.library.simple_ui.xml.system_manager.extensions.destroySystemBarControllerCache
-import kr.open.library.simple_ui.xml.system_manager.extensions.getSystemBarController
-
-fun applySystemBar(window: Window) {
-    val controller = window.getSystemBarController() // 권장 진입 경로
-
-    controller.setStatusBarColor(Color.TRANSPARENT, isDarkIcon = true)
-    controller.setNavigationBarColor(Color.BLACK, isDarkIcon = false)
-
-    controller.setStatusBarVisible()      // 여기서만 BEHAVIOR_DEFAULT 재설정
-    controller.setNavigationBarVisible()  // 여기서만 BEHAVIOR_DEFAULT 재설정
-}
-
-fun clearSystemBar(window: Window) {
-    window.destroySystemBarControllerCache() // Window 캐시 정리
-}
-```
-
-- 아이콘/색상 API(`setStatusBarDarkIcon`, `setNavigationBarDarkIcon`, `setStatusBarColor`, `setNavigationBarColor`)는 `systemBarsBehavior`를 변경하지 않습니다.
-- `window.getSystemBarController()` / `window.destroySystemBarControllerCache()`는 `@MainThread` 계약이며 Debug 빌드에서는 오프 메인스레드 호출 시 `IllegalStateException`으로 즉시 실패합니다.
-- 상세 계약(상태 모델, Hidden 기준, API 35+ 폴백)은 `README_SYSTEMBAR_CONTROLLER.md`를 참고하세요.
-- View 확장 연계: `clearTint()`는 Image tint만 제거하며 `makeGrayscale()`의 `colorFilter`는 유지됩니다.
-- View 확장 연계: `applyWindowInsetsAsPadding(bottom = true)`는 `systemBars.bottom`과 `ime.bottom` 중 큰 값을 반영합니다.
-- View 확장 연계: `bindLifecycleObserver`/`unbindLifecycleObserver`는 Observer별 독립 추적 모델입니다.
-- 상세 내용은 `README_EXTENSIONS.md`를 참고하세요.
-
-<br>
-</br>
 
 ## **Examples (예제)**
 
@@ -229,13 +211,15 @@ fun clearSystemBar(window: Window) {
 - **Recycler/Adapter example**: [README_RECYCLERVIEW.md](README_RECYCLERVIEW.md)
 - **Extensions example**: [README_EXTENSIONS.md](README_EXTENSIONS.md)
 - **Permission example**: [README_PERMISSION.md](README_PERMISSION.md)
-- **System Service Manager Info example**: [README_SERVICE_MANAGER_INFO.md](system_manager/info/README_SERVICE_MANAGER_INFO.md)
-- **System Service Manager Controller example**: [README_SERVICE_MANAGER_CONTROL.md](system_manager/controller/README_SERVICE_MANAGER_CONTROL.md)
+- **System Manager Info example**: [README_SERVICE_MANAGER_INFO.md](system_manager/info/README_SERVICE_MANAGER_INFO.md)
+- **System Manager Controller example**: [README_SERVICE_MANAGER_CONTROL.md](system_manager/controller/README_SERVICE_MANAGER_CONTROL.md)
 - **SystemBar controller detail**: [README_SYSTEMBAR_CONTROLLER.md](system_manager/controller/xml/README_SYSTEMBAR_CONTROLLER.md)
 - **Quick start** example: [README_SAMPLE.md](README_SAMPLE.md)
 
 
-> **Note:** Check [JitPack Releases](https://jitpack.io/#Rhpark/Simple_UI_XML) for the latest version.
+> **Note:** Check [JitPack Releases](https://jitpack.io/#Rhpark/Simple_UI_XML) for the latest version.  
+> **참고:** 최신 버전은 [JitPack Releases](https://jitpack.io/#Rhpark/Simple_UI_XML)에서 확인할 수 있습니다.
+
 
 <br>
 </br>

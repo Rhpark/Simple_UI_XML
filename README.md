@@ -12,33 +12,9 @@ This library helps you make easy and more simple code for Android developers
 
 **libraries** (v0.3.0+):
 - **simple_core**: UI-independent core functionality (usable with Compose or XML)
-- **simple_xml**: XML UI-specific components and extensions
-
+- **simple_xml**: XML UI-specific components and extensions (depends on Core)
+- **simple_system_manager**: System manager controllers, info helpers, and XML-related system extensions (depends on Core)
 **testing samples**: app module
-
-<br>
-</br>
-
-## RecyclerView Contract Highlights (v0.3.46+)
-
-- `BaseRcvAdapter`: content-only immediate list mutation + notify APIs
-- `HeaderFooterRcvAdapter`: header/content/footer section adapter with section CRUD APIs
-- `BaseRcvListAdapter`: queue-based operation processing (`setQueuePolicy`)
-- `SimpleHeaderFooterRcvAdapter` / `SimpleHeaderFooterDataBindingRcvAdapter` / `SimpleHeaderFooterViewBindingRcvAdapter`: section-enabled normal adapter variants
-- `NormalAdapterResult` / `ListAdapterResult`: mutation APIs report terminal results through `onResult` callbacks (`setItems`, `addItems`, `removeItem` ...)
-- `BaseRcvListAdapter` `onResult` is invoked once when an operation reaches terminal state (applied / dropped / failed)
-- `Bind signature`: override order is `onBindViewHolder(holder, item, position)` (same order for header/footer bind overrides)
-- `Section replace contract`: `HeaderFooterRcvAdapter.setHeaderItems` / `setFooterItems` use `notifyItemRangeChanged` when size/viewType are compatible, otherwise fallback to remove+insert
-- `Large removal note`: `BaseRcvAdapter.removeItems(...)` emits per-item `notifyItemRemoved`; for large/contiguous removals, prefer `removeRange` / `removeAll`
-> - `BaseRcvAdapter`: content 전용 즉시 리스트 변경 + notify API 반영
-> - `HeaderFooterRcvAdapter`: header/content/footer 섹션 CRUD를 지원하는 일반 어댑터
-> - `BaseRcvListAdapter`: 큐 기반 연산 처리(`setQueuePolicy`)
-> - `SimpleHeaderFooterRcvAdapter` / `SimpleHeaderFooterDataBindingRcvAdapter` / `SimpleHeaderFooterViewBindingRcvAdapter`: 섹션 지원 일반 어댑터 변형
-> - `NormalAdapterResult` / `ListAdapterResult`: 변경 API는 `onResult` 콜백을 통해 종료 결과를 전달합니다(`setItems`, `addItems`, `removeItem` 등)
-> - `BaseRcvListAdapter`의 `onResult`는 연산이 터미널 상태(반영/드롭/실패)에 도달하면 1회 호출됩니다
-> - `바인딩 시그니처`: `onBindViewHolder(holder, item, position)` 순서로 오버라이드합니다(header/footer 바인딩도 동일 순서)
-> - `섹션 교체 규약`: `HeaderFooterRcvAdapter.setHeaderItems` / `setFooterItems`는 크기/뷰타입 호환 시 `notifyItemRangeChanged`, 비호환 시 remove+insert를 사용합니다.
-> - `대량 제거 주의`: `BaseRcvAdapter.removeItems(...)`는 항목별 `notifyItemRemoved`를 호출하므로, 대량/연속 제거는 `removeRange` / `removeAll`을 권장합니다.
 
 <br>
 </br>
@@ -92,8 +68,8 @@ dependencies {
     //..
     // Version 0.3.0+ (Modular Structure)
     implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_Core:0.4.2")             // Core functionality only
-    implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_System_Manager:0.4.2")   // System Manager only (depends on Core)
     implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_XML:0.4.2")              // XML UI components only (depends on Core)
+    implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_System_Manager:0.4.2")   // System Manager only (depends on Core)
 
     // Examples
     // implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_XML:0.4.2")

@@ -33,7 +33,7 @@
 
 <br></br>
 
-## 💡 Why it matters:
+## 💡 Why it matters(왜 중요한가)
 
 
 - **Faster development:** Remove permission request boilerplate to focus on core logic
@@ -41,7 +41,7 @@
 - **Consistent handling:** Process normal and special permissions the same way
 - **Maintainability:** Standardized event system with BaseViewModelEvent
 - **Rapid prototyping:** Implement and test ideas immediately
-> ## 💡 왜 중요한가:
+
 > - **개발 시간 단축**: 권한 요청 보일러플레이트 제거로 핵심 로직에 집중 가능
 > - **실수 방지**: 복잡한 ActivityResultContract 등록 과정에서 발생하는 버그 예방
 > - **일관된 처리**: 일반권한과 특수권한을 동일한 방식으로 처리
@@ -206,16 +206,22 @@ class PermissionsViewModelOrigin : ViewModel() {
 }
 
 // Activity에서 구독
-private fun observeViewModel() {
-    lifecycleScope.launch {
-        viewModel.events.collect { event ->
-            when (event) {
-                is PermissionEvent.OnClickCameraPermission -> requestCamera()
-                is PermissionEvent.OnClickLocationPermission -> requestLocation()
+class PermissionsActivity : AppCompatActivity()
+{
+    //...
+    //observeViewModel 별도 호출
+    private fun observeViewModel() {
+        lifecycleScope.launch {
+            viewModel.events.collect { event ->
+                when (event) {
+                    is PermissionEvent.OnClickCameraPermission -> requestCamera()
+                    is PermissionEvent.OnClickLocationPermission -> requestLocation()
+                }
             }
         }
-    }
+    }    
 }
+
 ```
 **Problem:** Complex channel setup, manual event emission, direct resource cleanup management
 > **문제점:** 복잡한 채널 구성, 수동 이벤트 전송, 리소스 해제 직접 관리
@@ -239,27 +245,13 @@ class PermissionsActivityVm : BaseViewModelEvent<PermissionsActivityVmEvent>() {
 
 class PermissionsActivity :
     BaseDataBindingActivity<ActivityPermissionsBinding>(R.layout.activity_permissions) {
-
-    private val vm: PermissionsActivityVm by lazy { getViewModel<PermissionsActivityVm>() }
-
-    override fun onCreate(binding: ActivityPermissionsBinding, savedInstanceState: Bundle?) {
-    }
-
+    //...
     override fun onEventVmCollect(binding: ActivityPermissionsBinding) {
         lifecycleScope.launch {
             vm.eventVmFlow.collect { event ->
                 when (event) {
-                    is PermissionsActivityVmEvent.OnClickPermissionsCamera ->
-                        permissions(listOf(Manifest.permission.CAMERA))
-                    is PermissionsActivityVmEvent.OnClickPermissionsLocation ->
-                        permissions(listOf(Manifest.permission.ACCESS_FINE_LOCATION))
-                    is PermissionsActivityVmEvent.OnClickPermissionsMulti ->
-                        permissions(
-                            listOf(
-                                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                                Manifest.permission.SYSTEM_ALERT_WINDOW,
-                            ),
-                        )
+                    is PermissionsActivityVmEvent.OnClickPermissionsCamera -> requestCamera()
+                    is PermissionsActivityVmEvent.OnClickPermissionsLocation -> requestLocation()
                 }
             }
         }
@@ -337,47 +329,11 @@ private val adapter = SimpleRcvAdapter<String>(R.layout.item_rcv_textview) { hol
 // Activity에서 사용
 override fun onCreate(binding: ActivityPermissionsBinding, savedInstanceState: Bundle?) {
     binding.rcvPermission.adapter = adapter
-    // layoutManager, 기타 설정 자동!
 }
 
 // 아이템 추가도 간단
 adapter.addItem("새로운 권한 결과")
 
-// 고급 사용: Header / Content / Footer 분리 (HeaderFooterRcvAdapter 계열)
-// customSectionAdapter.setHeaderItems(listOf("요약"))
-// customSectionAdapter.setItems(permissionResults) // content 기준 API
-// customSectionAdapter.setFooterItems(listOf("총 ${permissionResults.size}건"))
-
-// ViewBinding 기반 normal 어댑터도 동일한 사용 패턴
-// val vbAdapter = SimpleViewBindingRcvAdapter<Result, ItemResultBinding>(
-//     inflate = ItemResultBinding::inflate,
-// ) { holder, item, _ -> holder.binding.tvTitle.text = item.title }
-
-// ViewBinding 기반 ListAdapter 버전
-// val vbListAdapter = SimpleRcvViewBindingListAdapter<Result, ItemResultBinding>(
-//     inflate = ItemResultBinding::inflate,
-//     listDiffUtil = RcvListDiffUtilCallBack(
-//         itemsTheSame = { old, new -> old.id == new.id },
-//         contentsTheSame = { old, new -> old == new },
-//     ),
-// ) { holder, item, _ -> holder.binding.tvTitle.text = item.title }
-// 참고: ListAdapter 버전은 header/footer 내장 섹션 API를 제공하지 않습니다.
-// 클릭 규약:
-// - 리스너는 onCreateViewHolder에서 1회 바인딩됩니다.
-// - position/item은 클릭 시점 bindingAdapterPosition 기준으로 조회됩니다.
-// - BaseRcvAdapter는 content 인덱스만 콜백으로 전달합니다.
-// - BaseRcvListAdapter는 adapter 인덱스를 그대로 콜백으로 전달합니다.
-// mutation contract:
-// - mutation APIs report terminal results through onResult callbacks
-// - invalid input is reported as Rejected.* via NormalAdapterResult / ListAdapterResult
-// - bind signature: onBindViewHolder(holder, item, position)
-// - Section replace contract: setHeaderItems/setFooterItems use notifyItemRangeChanged when size/viewType are compatible, otherwise fallback to remove+insert
-// - Large removal note: BaseRcvAdapter.removeItems(...) emits per-item notifyItemRemoved
-// - For large/contiguous removals, prefer removeRange/removeAll
-// queue controls for BaseRcvListAdapter:
-// - setQueuePolicy(maxPending, overflowPolicy)
-// - setQueueMergeKeys(mergeKeys)
-// - setQueueDebugListener(listener)
 ```
 **Result:** No ViewHolder or Adapter classes needed, just write binding logic!
 > **결과:** ViewHolder, Adapter 클래스 불필요, 바인딩 로직만 작성!
@@ -417,17 +373,14 @@ private fun handlePermissionResult(result: String) {
 ```kotlin
 // 확장함수로 한 줄 완성!
 private fun handlePermissionResult(result: String) {
-    binding.btnCameraPermission.snackBarMakeShort(
-        result,
-        SnackBarOption(actionText = "Ok")
-    ).show()
+    binding.btnCameraPermission.snackBarMakeShort(result, SnackBarOption(actionText = "Ok")).show()
 }
 
 // 더 간단한 버전
 binding.root.snackBarShowShort("권한이 허용되었습니다!")
 ```
 **Result:** No Builder pattern needed, automatic style application, done in one line!
-**결과:** Builder 패턴 불필요, 스타일 자동 적용, 한 줄로 완성!
+> **결과:** Builder 패턴 불필요, 스타일 자동 적용, 한 줄로 완성!
 </details>
 
 <br>
@@ -435,12 +388,10 @@ binding.root.snackBarShowShort("권한이 허용되었습니다!")
 
 ## 🚀 Key Point Simple UI XML
 
-### 1. 📉 Full permission management automation
+### 1. 📉 Full permission management automation(권한 관리 자동화)
 - Complex launcher registration: ActivityResultContract registration → one line requestPermissions()
 - Normal/special permission separation: 50+ lines separation logic → automatic distinction
 - Permission result handling: Individual callback implementation → unified callback provided
-
-> ### 1. **📉 권한 관리 자동화**
 > - **복잡한 launcher 등록**: ActivityResultContract 등록 → requestPermissions() 한 줄
 > - **일반/특수 권한 분리**: 50줄+ 분리 로직 → 자동 구분 처리
 > - **권한 결과 처리**: 개별 콜백 구현 → 통합 콜백 제공
@@ -448,11 +399,10 @@ binding.root.snackBarShowShort("권한이 허용되었습니다!")
 <br>
 </br>
 
-### 2. ⚡ MVVM architecture automation
+### 2. ⚡ MVVM architecture automation(MVVM 아키텍처 자동화)
 - Event system: Manual Flow channel setup → BaseViewModelEvent automatic
-- Activity initialization: Manual DataBinding setup → - - BaseDataBindingActivity automatic
+- Activity initialization: Manual DataBinding setup → BaseDataBindingActivity automatic
 - Resource management: Manual cleanup → Lifecycle integration automatic
-> ### 2. **⚡ MVVM 아키텍처 자동화**
 > - **이벤트 시스템**: Flow 채널 수동 구성 → BaseViewModelEvent 자동
 > - **Activity 초기화**: DataBinding 수동 설정 → BaseDataBindingActivity 자동
 > - **리소스 관리**: 수동 해제 → Lifecycle 연동 자동
@@ -460,11 +410,10 @@ binding.root.snackBarShowShort("권한이 허용되었습니다!")
 <br>
 </br>
 
-### 3. 🛠️ UI component simplification
+### 3. 🛠️ UI component simplification(UI 컴포넌트 간소화)
 - RecyclerView: Custom Adapter implementation → Simple* adapters (Rcv/Binding/ViewBinding) + HeaderFooterRcvAdapter / SimpleHeaderFooter* section API provided
 - SnackBar: Builder pattern → Simple with extension function
 - DataBinding: Manual setup → Automatic application
-> ### 3. **🛠️ UI 컴포넌트 간소화**
 > - **RecyclerView**: 커스텀 Adapter 구현 → Simple* 어댑터(Rcv/Binding/ViewBinding) + HeaderFooterRcvAdapter / SimpleHeaderFooter* 섹션 API 제공
 > - **SnackBar**: Builder 패턴 → 확장함수로 간단
 > - **DataBinding**: 수동 설정 → 자동 적용
@@ -472,11 +421,11 @@ binding.root.snackBarShowShort("권한이 허용되었습니다!")
 <br>
 </br>
 
-### 4. 🎯 Developer experience optimization
+### 4. 🎯 Developer experience optimization(개발자 경험 최적화)
 - Type safety: Prevent compile-time errors
 - Consistent patterns: Same code style across the entire team
 - Proven implementation: Stability verified in numerous projects
-> ### 4. **🎯 개발자 경험 최적화**
+
 > - **타입 안전성**: 컴파일 타임 오류 방지
 > - **일관된 패턴**: 팀 전체 동일한 코드 스타일
 > - **검증된 구현**: 수많은 프로젝트에서 검증된 안정성
@@ -484,7 +433,7 @@ binding.root.snackBarShowShort("권한이 허용되었습니다!")
 <br>
 </br>
 
-## 💡 개발자 후기
+## 💡 Developer Feedback(개발자 후기)
 - "No more worrying about complex registerForActivityResult!"
 - "It's so convenient to handle normal and special permissions the same way!" 
 - "The event system is standardized with BaseViewModelEvent, making the code so clean!"
@@ -497,16 +446,14 @@ binding.root.snackBarShowShort("권한이 허용되었습니다!")
 <br>
 </br>
 
-## 🎉 Conclusion: A new standard for permission management development 
-** Simple UI XML** is an innovative library that makes complex permission management simple and powerful. 
+## 🎉 Conclusion: A new standard for permission management development (결론: 권한 관리 개발의 새로운 표준)
+**Simple UI XML** is an innovative library that makes complex permission management simple and powerful.
 - ✅ Permission request automation - Complex launcher registration in one line!
--  ✅ Complete MVVM architecture - Event system and initialization automatic!
--   ✅ UI component simplification - RecyclerView and SnackBar made easy! 
+- ✅ Complete MVVM architecture - Event system and initialization automatic!
+- ✅ UI component simplification - RecyclerView and SnackBar made easy!
 
 **No more traditional complexity. Experience productive development with Simple UI! 🚀**
 
-> 🎉 결론: 권한 관리 개발의 새로운 표준
->
 > **Simple UI XML**은 복잡한 권한 관리를 **단순하고 강력하게** 만드는 혁신적인 라이브러리입니다.
 >
 >- ✅ **권한 요청 자동화** - 복잡한 launcher 등록을 한 줄로!
