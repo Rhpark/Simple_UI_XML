@@ -25,7 +25,7 @@
 |:------------------------|:----------------------------:|:--------------------------------:|
 | ViewModel events        |  Manual Flow channel setup   |  ✅ BaseViewModelEvent automatic  |
 | Activity initialization |   Manual DataBinding setup   | ✅ BaseDataBindingActivity automatic  |
-| RecyclerView Adapter    | Custom implementation needed | ✅ Simple* adapters (Rcv/Binding/ViewBinding) + HeaderFooterRcvAdapter / SimpleHeaderFooter* section API provided | 
+| RecyclerView Adapter    | Custom implementation needed | ✅ SimpleRcvAdapter-based result list |
 | SnackBar display        |    Manual Builder pattern    | ✅ Simple with extension function |
 
 **Key point:** Simple UI automates "complex permission management implementation". Development speed transforms.
@@ -314,7 +314,7 @@ private fun setupRecyclerView() {
 </details>
 
 <details>
-<summary><strong>Simple UI - SimpleRcvAdapter / SimpleViewBindingRcvAdapter 활용</strong></summary>
+<summary><strong>Simple UI - SimpleRcvAdapter 활용</strong></summary>
 
 ```kotlin
 // 간단한 어댑터 설정 - 한 줄로 완성!
@@ -337,6 +337,9 @@ adapter.addItem("새로운 권한 결과")
 ```
 **Result:** No ViewHolder or Adapter classes needed, just write binding logic!
 > **결과:** ViewHolder, Adapter 클래스 불필요, 바인딩 로직만 작성!
+
+For additional adapter options such as ViewBinding/ListAdapter/header-footer variants, see `README_RECYCLERVIEW.md`.
+> ViewBinding/ListAdapter/header-footer 같은 추가 adapter 옵션은 `README_RECYCLERVIEW.md`를 참고하세요.
 </details>
 
 <br>
@@ -411,10 +414,10 @@ binding.root.snackBarShowShort("권한이 허용되었습니다!")
 </br>
 
 ### 3. 🛠️ UI component simplification(UI 컴포넌트 간소화)
-- RecyclerView: Custom Adapter implementation → Simple* adapters (Rcv/Binding/ViewBinding) + HeaderFooterRcvAdapter / SimpleHeaderFooter* section API provided
+- RecyclerView: Custom Adapter implementation → SimpleRcvAdapter-based result list
 - SnackBar: Builder pattern → Simple with extension function
 - DataBinding: Manual setup → Automatic application
-> - **RecyclerView**: 커스텀 Adapter 구현 → Simple* 어댑터(Rcv/Binding/ViewBinding) + HeaderFooterRcvAdapter / SimpleHeaderFooter* 섹션 API 제공
+> - **RecyclerView**: 커스텀 Adapter 구현 → SimpleRcvAdapter 기반 결과 리스트 구성
 > - **SnackBar**: Builder 패턴 → 확장함수로 간단
 > - **DataBinding**: 수동 설정 → 자동 적용
 
@@ -437,11 +440,11 @@ binding.root.snackBarShowShort("권한이 허용되었습니다!")
 - "No more worrying about complex registerForActivityResult!"
 - "It's so convenient to handle normal and special permissions the same way!" 
 - "The event system is standardized with BaseViewModelEvent, making the code so clean!"
-- "RecyclerView setup is really simple thanks to SimpleRcvAdapter and SimpleViewBindingRcvAdapter!"
+- "RecyclerView result display is really simple thanks to SimpleRcvAdapter!"
 > - **"복잡한 registerForActivityResult를 더 이상 고민할 필요가 없어요!"**
 > - **"일반권한과 특수권한을 동일한 방식으로 처리할 수 있어 편해요!"**
 > - **"BaseViewModelEvent로 이벤트 시스템이 표준화되어 코드가 깔끔해졌어요!"**
-> - **"SimpleRcvAdapter, SimpleViewBindingRcvAdapter 덕분에 RecyclerView 설정이 정말 간단해졌습니다!"**
+> - **"SimpleRcvAdapter 덕분에 권한 결과 리스트 구성이 정말 간단해졌습니다!"**
 
 <br>
 </br>
@@ -477,33 +480,25 @@ binding.root.snackBarShowShort("권한이 허용되었습니다!")
 **Testable features:**
 - Identical handling method for normal vs special permissions
 - BaseViewModelEvent event system
-- Result display using SimpleRcvAdapter / SimpleViewBindingRcvAdapter / SimpleRcvViewBindingListAdapter
-- Header / Content / Footer section composition with HeaderFooterRcvAdapter
-- RecyclerView click contract: one-time listener binding + click-time position/item resolution (`BaseRcvAdapter`: content index, `BaseRcvListAdapter`: adapter index)
-- RecyclerView bind signature: override order is `onBindViewHolder(holder, item, position)` (same order for header/footer bind overrides)
-- RecyclerView mutation contract: mutation APIs report terminal results through `onResult`, and invalid input is reported as `Rejected.*`
-- Section replace contract: `setHeaderItems` / `setFooterItems` use `notifyItemRangeChanged` when size/viewType are compatible, otherwise fallback to remove+insert
-- Large removal note: `BaseRcvAdapter.removeItems(...)` emits per-item `notifyItemRemoved`; for large/contiguous removals, prefer `removeRange` / `removeAll`
-- BaseRcvListAdapter queue controls: `setQueuePolicy`, `setQueueMergeKeys`, `setQueueDebugListener`
+- Result display using `SimpleRcvAdapter`
+- RecyclerView item click feedback via `setOnItemClickListener`
+- RecyclerView result accumulation via `adapter.addItem(...)`
 - Extension function-based SnackBar display
 - BaseDataBindingActivity automatic initialization
 - requestPermissions() unified permission request
 > **테스트 가능한 기능:**
 > - 일반 권한 vs 특수 권한 동일 처리 방식
 > - BaseViewModelEvent 이벤트 시스템
-> - SimpleRcvAdapter / SimpleViewBindingRcvAdapter / SimpleRcvViewBindingListAdapter 기반 결과 표시
-> - HeaderFooterRcvAdapter 기반 Header / Content / Footer 섹션 구성
-> - RecyclerView 클릭 규약: 리스너 1회 바인딩 + 클릭 시점 position/item 조회(`BaseRcvAdapter`: content 인덱스, `BaseRcvListAdapter`: adapter 인덱스)
-> - RecyclerView 바인딩 시그니처: `onBindViewHolder(holder, item, position)` 순서로 오버라이드합니다(header/footer 바인딩도 동일 순서)
-> - RecyclerView 변경 규약: 변경 API는 `onResult`를 통해 종료 결과를 전달하며, 잘못된 입력은 `Rejected.*`로 전달됩니다.
-> - 섹션 교체 규약: `setHeaderItems` / `setFooterItems`는 크기/뷰타입 호환 시 `notifyItemRangeChanged`, 비호환 시 remove+insert를 사용합니다.
-> - 대량 제거 주의: `BaseRcvAdapter.removeItems(...)`는 항목별 `notifyItemRemoved`를 호출하므로, 대량/연속 제거는 `removeRange` / `removeAll`을 권장합니다.
-> - BaseRcvListAdapter 큐 제어: `setQueuePolicy`, `setQueueMergeKeys`, `setQueueDebugListener`
+> - `SimpleRcvAdapter` 기반 결과 표시
+> - `setOnItemClickListener`를 통한 RecyclerView 클릭 피드백
+> - `adapter.addItem(...)` 기반 결과 누적
 > - 확장함수 기반 SnackBar 표시
 > - BaseDataBindingActivity 자동 초기화
 > - requestPermissions() 통합 권한 요청
 
+For advanced adapter contracts, section APIs, and queue semantics, see `README_RECYCLERVIEW.md`.
+> 고급 adapter 계약, section API, queue 동작은 `README_RECYCLERVIEW.md`를 참고하세요.
+
 <br>
 </br>
 
-.

@@ -137,17 +137,26 @@ Simple UI ships with **three adapter families** tailored to different scenarios 
 <br>
 </br>
 
+**#6: SimpleRcvViewBindingListAdapter / SimpleViewBindingRcvAdapter**
+- ✅ Dedicated ViewBinding variants available
+- ✅ Use `inflate(...)` instead of `layoutRes`
+- ✅ Same normal/list split as DataBinding and view-based adapters
+- 📌 Choose when you want **ViewBinding convenience without DataBinding**
+
+<br>
+</br>
+
 ## 🎯 Scope: Activity-Based Multi-Adapter RecyclerView System (비교 대상: Activity 기반 다중 Adapter RecyclerView 시스템)
 
 **Features covered in the sample implementation:**
-- **Simple UI:** three library-provided adapters
+- **Simple UI:** two ready-made adapters + one custom adapter built on `BaseRcvListAdapter`
 - **Plain Android:** two traditional adapter implementations
 - Flow-based vs manual scroll-direction/edge detection
 - Dynamic add/remove/shuffle/clear operations
 - Switch adapters dynamically via RadioButtons
 - Entire flow handled in an Activity (no ViewModel)
 > **구현 예제 기능:**
-> - **Simple UI**: 3가지 라이브러리 Adapter 지원
+> - **Simple UI**: ready-made adapter 2개 + `BaseRcvListAdapter` 기반 custom adapter 1개
 > - **기본 Android**: 2가지 전통적인 Adapter 구현
 > - Flow 기반 vs 수동 스크롤 방향/Edge 감지
 > - 동적 아이템 추가/삭제/섞기/전체삭제
@@ -422,10 +431,10 @@ val adapter = SimpleRcvListAdapter<SampleItem>(
 ### 2. **⚡ Flow-Powered Advanced Scrolling (Flow 기반 고급 스크롤 기능)**
 - **Automatic direction detection:** Real-time classification into UP/DOWN/LEFT/RIGHT/IDLE
 - **Edge detection:** Real-time TOP/BOTTOM/LEFT/RIGHT reach status
-- **RecyclerScrollStateView:** Upgrade a standard RecyclerView with advanced features automatically
+- **RecyclerScrollStateView:** Use the custom RecyclerView directly when you need Flow/listener-based scroll state APIs
 > - **자동 방향 감지**: UP/DOWN/LEFT/RIGHT/IDLE 실시간 분류
 > - **Edge 감지**: TOP/BOTTOM/LEFT/RIGHT 도달 상태 실시간 제공
-> - **RecyclerScrollStateView**: 일반 RecyclerView → 고급 기능 자동 업그레이드
+> - **RecyclerScrollStateView**: Flow/리스너 기반 스크롤 상태 API가 필요할 때 전용 커스텀 RecyclerView를 직접 사용
 
 <br>
 </br>
@@ -631,15 +640,15 @@ class MyAdapter : BaseRcvListAdapter<Item, VH>(listDiffUtil = diffCallback) {
 > `BaseRcvListAdapter` + `RcvListDiffUtilCallBack` 조합을 권장합니다.
 
 **When is DiffUtil setup needed? (ListAdapter 기준)**
-- ✅ Non-data class: No equals override
+- ✅ `BaseRcvListAdapter` 계열에서는 항상 `RcvListDiffUtilCallBack`을 전달해야 합니다.
 - ✅ Complex comparison logic: When you want to compare only IDs
 - ✅ Partial updates needed: Performance optimization with payload
-- ❌ Data class + simple comparison: No setup needed (default behavior is sufficient)
+- ✅ Even for simple data classes, pass a minimal callback explicitly because the constructor requires it
 > **언제 DiffUtil 설정이 필요한가? (ListAdapter 기준)**
-> - ✅ **데이터 클래스가 아닌 경우**: equals 오버라이드 없음
+> - ✅ **ListAdapter 계열에서는 항상** `RcvListDiffUtilCallBack`을 전달해야 합니다.
 > - ✅ **복잡한 비교 로직**: ID만 비교하고 싶을 때
 > - ✅ **부분 업데이트 필요**: payload로 성능 최적화
-> - ❌ **데이터 클래스 + 간단한 비교**: 설정 불필요 (기본 동작으로 충분)
+> - ✅ **데이터 클래스 + 간단한 비교**: 생성자 요구사항이므로 최소 비교 람다는 명시적으로 전달합니다
 
 <br>
 </br>
@@ -650,6 +659,10 @@ class MyAdapter : BaseRcvListAdapter<Item, VH>(listDiffUtil = diffCallback) {
 
 RecyclerScrollStateView allows fine-tuning of **scroll direction detection** and **edge reach detection** sensitivity.
 > - RecyclerScrollStateView는 **스크롤 방향 감지**와 **Edge 도달 감지**의 민감도를 세밀하게 조절할 수 있습니다.
+
+**Prerequisite (전제 조건):**
+- These APIs are available on `RecyclerScrollStateView`, not on plain `RecyclerView`.
+> - 이 API들은 일반 `RecyclerView`가 아니라 `RecyclerScrollStateView`에서 사용할 수 있습니다.
 
 **Set via code (코드로 설정):**
 ```kotlin
@@ -759,19 +772,18 @@ RecyclerScrollStateView keeps listener references strongly until you replace the
 
 ## 🛠️ ViewHolder Advanced Features (ViewHolder 고급 기능)
 
-Simple UI provides **three ViewHolder implementations** (Simple UI는 **3가지 ViewHolder**를 제공합니다):
+Simple UI provides **three concrete ViewHolder implementations** plus the shared `RootViewHolder` base helper.
+> Simple UI는 **실사용 ViewHolder 구현 3종**과 공통 기반 helper인 `RootViewHolder`를 제공합니다.
 
 ### BaseRcvDataBindingViewHolder / BaseRcvViewBindingViewHolder (for Binding, 바인딩용)
 
 **Key features (주요 기능):**
-- `binding` property ? access the generated binding object
-- `executePendingBindings()` ? flush pending bindings immediately (DataBinding only)
-- `isValidPosition()` ? validate the adapter position safely
-- `getAdapterPositionSafe()` ? retrieve a safe adapter position
-> - `binding` 프로퍼티 - 바인딩 객체 접근
-> - `executePendingBindings()` - DataBinding 즉시 실행 (DataBinding 전용)
-> - `isValidPosition()` - 안전한 position 검증
-> - `getAdapterPositionSafe()` - 안전한 position 조회
+- `binding` property - access the generated binding object
+- `executePendingBindings()` - available inside `BaseRcvDataBindingViewHolder` subclasses (DataBinding only)
+- Position helpers such as `isValidPosition()` / `getAdapterPositionSafe()` are subclass-oriented helpers from `RootViewHolder`
+> - `binding` 프로퍼티 - 생성된 바인딩 객체 접근
+> - `executePendingBindings()` - `BaseRcvDataBindingViewHolder` 서브클래스 내부에서 사용할 수 있는 DataBinding 전용 helper
+> - `isValidPosition()`, `getAdapterPositionSafe()` - `RootViewHolder`가 제공하는 서브클래스 지향 position helper
 
 **Usage example (사용 예제):**
 ```kotlin
@@ -785,23 +797,33 @@ SimpleRcvDataBindingListAdapter<Item, ItemBinding>(
     holder.binding.apply {
         tvTitle.text = item.title
         tvDescription.text = item.description
-        executePendingBindings()  // 즉시 바인딩 실행
     }
 }
 ```
+
+**ViewBinding variant example (ViewBinding 예제):**
+```kotlin
+private val adapter = SimpleRcvViewBindingListAdapter<Item, ItemSampleBinding>(
+    inflate = ItemSampleBinding::inflate,
+    listDiffUtil = RcvListDiffUtilCallBack(
+        itemsTheSame = { oldItem, newItem -> oldItem.id == newItem.id },
+        contentsTheSame = { oldItem, newItem -> oldItem == newItem },
+    ),
+) { holder, item, position ->
+    holder.binding.tvTitle.text = item.title
+    holder.binding.tvPosition.text = "Position: $position"
+}
+```
+
 ### BaseRcvViewHolder (for traditional Views, 일반 View용)
 
 **Key features (주요 기능):**
 - `findViewById<T>(id)` — type-safe + automatically cached lookup
 - `findViewByIdOrNull<T>(id)` — null-safe + cached lookup
 - `clearViewCache()` — manually clear cached views if needed
-- `isValidPosition()` — validate the adapter position safely
-- `getAdapterPositionSafe()` — retrieve a safe adapter position
 > - `findViewById<T>(id)` - **타입 안전 + 자동 캐싱** findViewById
 > - `findViewByIdOrNull<T>(id)` - **null-safe + 자동 캐싱** findViewById
 > - `clearViewCache()` - 뷰 캐시 수동 정리
-> - `isValidPosition()` - 안전한 position 검증
-> - `getAdapterPositionSafe()` - 안전한 position 조회
 
 **View caching system (성능 최적화!):**
 
@@ -845,12 +867,12 @@ class MyAdapter : BaseRcvAdapter<Item, BaseRcvViewHolder>() {
 ```
 
 **Caching benefits (캐싱의 장점):**
-- ? **Performance gains:** avoid repeated `findViewById` calls
-- ? **Manual cleanup:** call `clearViewCache()` in `onViewRecycled()` when needed
-- ? **Type safety:** generics handle casting for you
-> - ? **성능 향상**: findViewById 반복 호출 방지
-> - ? **수동 정리**: 필요 시 onViewRecycled()에서 clearViewCache() 호출
-> - ? **타입 안전**: 제네릭으로 타입 캐스팅 자동
+- ✅ **Performance gains:** avoid repeated `findViewById` calls
+- ✅ **Manual cleanup:** call `clearViewCache()` in `onViewRecycled()` when needed
+- ✅ **Type safety:** generics handle casting for you
+> - ✅ **성능 향상**: findViewById 반복 호출 방지
+> - ✅ **수동 정리**: 필요 시 onViewRecycled()에서 clearViewCache() 호출
+> - ✅ **타입 안전**: 제네릭으로 타입 캐스팅 자동
 
 **onViewRecycled에서 캐시 정리 예시:**
 ```kotlin
@@ -892,7 +914,5 @@ override fun onViewRecycled(holder: VH) {
 
 <br>
 </br>
-
-.
 
 

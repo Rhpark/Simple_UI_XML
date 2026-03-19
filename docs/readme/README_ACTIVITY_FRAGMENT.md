@@ -71,31 +71,39 @@ To use Simple UI's Activity/Fragment base classes, you need to verify the minima
 ```kotlin
 android {
     buildFeatures {
-//        viewBinding = true // ViewBinding만 사용할 경우
-        dataBinding = true   // BaseDataBindingActivity / BaseDataBindingFragment 사용 시 필수
+        viewBinding = true // BaseViewBindingActivity / Fragment / DialogFragment 사용 시
+        dataBinding = true // BaseDataBindingActivity / Fragment / DialogFragment 사용 시
     }
 }
 ```
+
+> - `BaseViewBindingActivity`, `BaseViewBindingFragment`, `BaseViewBindingDialogFragment`를 사용할 때는 `viewBinding = true`가 필요합니다.
+> - `BaseDataBindingActivity`, `BaseDataBindingFragment`, `BaseDataBindingDialogFragment`를 사용할 때는 `dataBinding = true`가 필요합니다.
+> - DataBinding을 사용하는 레이아웃은 반드시 `<layout>` 루트 태그를 포함해야 합니다.
 
 
 ### 🔍 How to verify the setup (설정 검증 방법)
 1. **Sync Gradle:** Run Gradle Sync after making changes.
 2. **Rebuild project:** Go to `Build > Rebuild` to regenerate annotation output and generate binding classes.
-3. **Check generated binding class:** Verify that `ActivityMainBinding` etc. are generated in the `build/generated/...`  path.
+3. **Check generated binding class:** Verify that `ActivityMainBinding`, `FragmentMainBinding` 등이 `build/generated/...` 경로에 생성되는지 확인합니다.
 
 ### ⚠️ Common pitfalls (자주 발생하는 문제)
 
-#### 1. DataBinding not enabled (DataBinding 비활성화)
-   - Symptom: BaseDataBindingActivity throws `UninitializedPropertyAccessException`
-   - Solution: Make sure to add the `dataBinding = true` option and Sync.
+#### 1. ViewBinding/DataBinding not enabled (ViewBinding/DataBinding 비활성화)
+   - Symptom: `ActivitySomethingBinding`, `FragmentSomethingBinding` 같은 Binding 클래스가 생성되지 않음
+   - Solution: 사용하는 베이스 클래스에 맞게 `viewBinding = true` 또는 `dataBinding = true`를 활성화하고 Sync.
 
 #### 2. Missing `<layout>` tag in the layout file (레이아웃에 `<layout>` 태그 누락)
-   - Symptom: `ActivitySomethingBinding` class is not generated
+   - Symptom: DataBinding 기반의 `ActivitySomethingBinding` class is not generated
    - Solution: Wrap the root tag with `<layout>` and place `<data>` + actual view tree inside it.
 
 #### 3. Gradle sync not executed (Gradle Sync 미실행)
    - Symptom: ViewBinding/DataBinding settings are not applied
    - Solution: Click `Sync Now` immediately after changing settings to build the new Binding classes.
+
+#### 4. DataBinding-only setup applied to ViewBinding screen (ViewBinding 화면에 DataBinding 전용 설정만 적용)
+   - Symptom: BaseDataBindingActivity throws `UninitializedPropertyAccessException`
+   - Solution: Make sure to add the `dataBinding = true` option and Sync.
 
 <br></br>
 
@@ -127,10 +135,56 @@ android {
 
 <br></br>
 
-## 🧱 Tier 2: BaseDataBindingActivity / BaseDataBindingFragment (DataBinding 기반)
+## 🧱 Tier 2: BaseViewBindingActivity / BaseViewBindingFragment / BaseViewBindingDialogFragment (ViewBinding 기반)
+
+### Key features (주요 기능)
+- `ActivityMainBinding::inflate` 같은 inflate 함수 참조만 전달하면 binding 초기화가 자동으로 완료됩니다.
+- `getBinding()`으로 타입 안전한 View 접근이 가능합니다.
+- `onCreate(binding, ...)`, `onBindingCreated(binding, ...)`, `onViewCreated(binding, ...)`, `onEventVmCollect(binding)` 훅을 일관되게 사용할 수 있습니다.
+- Fragment/Dialog는 `isAttachToParent` 기본값 `false`를 유지하는 구성이 안전합니다.
+
+### When to use (언제 사용?)
+- XML 화면이지만 DataBinding 표현식은 사용하지 않을 때
+- `findViewById()` 없이 타입 안전한 View 접근만 필요할 때
+- Activity / Fragment / DialogFragment에 동일한 binding 패턴을 적용하고 싶을 때
+
+### ViewBinding Quick Example
+```kotlin
+class SampleActivity :
+    BaseViewBindingActivity<ActivitySampleBinding>(ActivitySampleBinding::inflate) {
+
+    override fun onCreate(binding: ActivitySampleBinding, savedInstanceState: Bundle?) {
+        binding.tvTitle.text = "Hello ViewBinding"
+    }
+}
+```
+
+```kotlin
+class SampleFragment :
+    BaseViewBindingFragment<FragmentSampleBinding>(FragmentSampleBinding::inflate) {
+
+    override fun onBindingCreated(binding: FragmentSampleBinding, savedInstanceState: Bundle?) {
+        binding.tvTitle.text = "Hello Fragment ViewBinding"
+    }
+}
+```
+
+```kotlin
+class SampleDialog :
+    BaseViewBindingDialogFragment<DialogSampleBinding>(DialogSampleBinding::inflate) {
+
+    override fun onBindingCreated(binding: DialogSampleBinding, savedInstanceState: Bundle?) {
+        binding.tvDialogTitle.text = "Hello Dialog ViewBinding"
+    }
+}
+```
+
+<br></br>
+
+## 🧱 Tier 3: BaseDataBindingActivity / BaseDataBindingFragment / BaseDataBindingDialogFragment (DataBinding 기반)
 
 ### Key features(주요 기능)
-- `onCreate(binding, savedInstanceState)` / `onCreateView(binding, savedInstanceState)`에서 binding 제공, 필요 시 `getBinding()` 사용
+- `onCreate(binding, savedInstanceState)` / `onBindingCreated(binding, savedInstanceState)` / `onViewCreated(binding, savedInstanceState)`에서 binding 제공, 필요 시 `getBinding()` 사용
 - Activity는 `binding.lifecycleOwner = this`, Fragment는 `binding.lifecycleOwner = viewLifecycleOwner` 자동 설정
 - ViewModelProvider + SavedState 지원 (`getViewModel<T>()`)
 - UI 이벤트 수집 훅 `onEventVmCollect(binding)` 제공 (바인딩 초기화 후 자동 호출)
@@ -157,8 +211,8 @@ android {
 | SavedState | 별도 Bundle 처리 | ViewModelProvider가 자동 처리 |
 
 ### MVVM Pattern Tip
-BaseDataBindingActivity/Fragment는 바인딩을 생성해 주므로 `onCreate(binding, savedInstanceState)`(Activity) 또는 `onViewCreated(binding, savedInstanceState)`(Fragment)에서 ViewModel을 연결하면 됩니다. `onEventVmCollect(binding)`는 바인딩 초기화 이후 자동 호출됩니다(Activity: `onCreate(binding, ...)`, Fragment: `onViewCreated(binding, ...)`), 그래서 1회성 이벤트를 안전하게 수집할 수 있습니다.
-> BaseDataBindingActivity/Fragment는 바인딩을 생성해 주므로 `onCreate(binding, savedInstanceState)`(Activity) 또는 `onViewCreated(binding, savedInstanceState)`(Fragment)에서 ViewModel을 연결하면 됩니다. `onEventVmCollect(binding)`는 바인딩 초기화 이후 자동 호출됩니다(Activity: `onCreate(binding, ...)`, Fragment: `onViewCreated(binding, ...)`), 그래서 1회성 이벤트를 안전하게 수집할 수 있습니다.
+BaseDataBinding 계열은 Activity에서는 `onCreate(binding, savedInstanceState)`, Fragment/Dialog에서는 `onBindingCreated(binding, savedInstanceState)`에서 binding 변수 연결을 먼저 수행하고, lifecycle 의존 초기화는 `onViewCreated(binding, savedInstanceState)`에서 처리하는 패턴을 권장합니다. `onEventVmCollect(binding)`는 바인딩 초기화 이후 자동 호출되므로 1회성 이벤트를 안전하게 수집할 수 있습니다.
+> BaseDataBinding 계열은 Activity에서는 `onCreate(binding, savedInstanceState)`, Fragment/Dialog에서는 `onBindingCreated(binding, savedInstanceState)`에서 binding 변수 연결을 먼저 수행하고, lifecycle 의존 초기화는 `onViewCreated(binding, savedInstanceState)`에서 처리하는 패턴을 권장합니다. `onEventVmCollect(binding)`는 바인딩 초기화 이후 자동 호출되므로 1회성 이벤트를 안전하게 수집할 수 있습니다.
 
 <br></br>
 
@@ -219,8 +273,8 @@ window.destroySystemBarControllerCache() // 종료 시 캐시 정리
 ```kotlin
 import android.graphics.Color
 import android.os.Bundle
-import kr.open.library.simple_ui.xml.system_manager.extensions.destroySystemBarControllerCache
-import kr.open.library.simple_ui.xml.system_manager.extensions.getSystemBarController
+import kr.open.library.simple_ui.system_manager.xml.extensions.destroySystemBarControllerCache
+import kr.open.library.simple_ui.system_manager.xml.extensions.getSystemBarController
 
 class SampleActivity :
     BaseDataBindingActivity<ActivitySampleBinding>(R.layout.activity_sample) {
@@ -243,7 +297,7 @@ class SampleActivity :
 ### Fragment Example (Fragment 예시)
 ```kotlin
 import android.os.Bundle
-import kr.open.library.simple_ui.xml.system_manager.extensions.getSystemBarController
+import kr.open.library.simple_ui.system_manager.xml.extensions.getSystemBarController
 
 class SampleFragment :
     BaseDataBindingFragment<FragmentSampleBinding>(R.layout.fragment_sample) {
@@ -258,7 +312,7 @@ class SampleFragment :
 
 ### State Query Example (상태 조회 예시)
 ```kotlin
-import kr.open.library.simple_ui.xml.system_manager.controller.systembar.model.SystemBarVisibleState
+import kr.open.library.simple_ui.system_manager.xml.controller.systembar.model.SystemBarVisibleState
 
 val state = requireActivity().window.getSystemBarController().getStatusBarVisibleState()
 when (state) {
@@ -285,7 +339,7 @@ when (state) {
 - View 확장 연계 주의: `bindLifecycleObserver`/`unbindLifecycleObserver`는 Observer별 독립 추적 모델입니다.
 - 샘플 Activity/Fragment 텍스트는 하드코딩 대신 `@string/...` 리소스 기반으로 관리하는 것을 권장합니다.
 - 동적 텍스트는 `getString(R.string.some_format, value)` 포맷 문자열 패턴을 사용하세요. (`BaseActivityExample`의 시스템바 높이 표기 참조)
-- 상세 내용은 `docs/readme/README_EXTENSIONS.md`를 참고하세요.
+- 상세 내용은 `docs/readme/system_manager/controller/xml/README_SYSTEMBAR_CONTROLLER.md`와 `docs/readme/README_EXTENSIONS.md`를 참고하세요.
 
 <br></br>
 
@@ -304,6 +358,11 @@ when (state) {
 - 바인딩 생명주기 자동 관리 + `getBinding()` 제공
 - `getViewModel()`, `onEventVmCollect(binding)` 제공
 - Extends same pattern to `BaseDataBindingDialogFragment`
+
+#### BaseViewBindingActivity / BaseViewBindingFragment
+- inflate 함수 참조만으로 binding 생성
+- `getBinding()` 기반 타입 안전한 View 접근
+- Extends same pattern to `BaseViewBindingDialogFragment`
 <br></br>
 
 ## ⚙️ Advanced Features – Initialization Callbacks (고급 초기화 콜백)
@@ -327,9 +386,18 @@ override fun onCreate(binding: ActivityMainBinding, savedInstanceState: Bundle?)
 }
 ```
 
+### BaseDataBindingFragment - `onBindingCreated(binding: BINDING, savedInstanceState: Bundle?)`
+- **Call timing:** `onCreateView()` 내부에서 binding 객체 생성 직후
+- **Use case:** `binding.vm = vm` 같은 binding 변수 연결
+```kotlin
+override fun onBindingCreated(binding: FragmentDetailBinding, savedInstanceState: Bundle?) {
+    binding.vm = viewModel
+}
+```
+
 ### BaseDataBindingFragment - `onViewCreated(binding: BINDING, savedInstanceState: Bundle?)`
 - **Call timing:** View 생성 완료 직후
-- **Use case:** childFragmentManager 트랜잭션, UI 초기화
+- **Use case:** childFragmentManager 트랜잭션, lifecycle 의존 UI 초기화
 ```kotlin
 override fun onViewCreated(binding: FragmentDetailBinding, savedInstanceState: Bundle?) {
     childFragmentManager.beginTransaction()
@@ -337,11 +405,11 @@ override fun onViewCreated(binding: FragmentDetailBinding, savedInstanceState: B
         .commit()
 }
 ```
-> 필요 시 `onCreateView(binding, savedInstanceState)`를 더 이른 초기화 지점으로 사용할 수 있습니다. 다만 이 시점에는 `viewLifecycleOwner`가 아직 준비되지 않았을 수 있으므로, lifecycle 의존 로직은 `onViewCreated(binding, savedInstanceState)`에서 처리하는 것을 권장합니다.
+> Fragment/Dialog에서는 `onBindingCreated(binding, savedInstanceState)`를 더 이른 초기화 지점으로 사용할 수 있습니다. 다만 이 시점에는 `viewLifecycleOwner`가 아직 준비되지 않았을 수 있으므로, lifecycle 의존 로직은 `onViewCreated(binding, savedInstanceState)`에서 처리하는 것을 권장합니다.
 
 ### 🪟 BaseDataBindingDialogFragment follows the BaseDataBindingFragment pattern
-DialogFragment도 `onCreateView(binding, ...)`, `onViewCreated(binding, ...)`, `onEventVmCollect(binding)`을 동일하게 override하여 Activity/Fragment와 같은 코딩 경험을 제공합니다.
-> DialogFragment도 `onCreateView(binding, ...)`, `onViewCreated(binding, ...)`, `onEventVmCollect(binding)`을 동일하게 override하여 Activity/Fragment와 같은 코딩 경험을 제공합니다.
+DialogFragment도 `onBindingCreated(binding, ...)`, `onViewCreated(binding, ...)`, `onEventVmCollect(binding)`을 동일하게 override하여 Activity/Fragment와 같은 코딩 경험을 제공합니다.
+> DialogFragment도 `onBindingCreated(binding, ...)`, `onViewCreated(binding, ...)`, `onEventVmCollect(binding)`을 동일하게 override하여 Activity/Fragment와 같은 코딩 경험을 제공합니다.
 
 <br></br>
 
@@ -355,7 +423,7 @@ DialogFragment도 `onCreateView(binding, ...)`, `onViewCreated(binding, ...)`, `
 
 ### Fragment
 1. `onCreate()` – RootFragment 권한 delegate 준비
-2. `onCreateView()` – Binding 생성 + `onCreateView(binding, savedInstanceState)` 호출
+2. `onCreateView()` – Binding 생성 + `onBindingCreated(binding, savedInstanceState)` 호출
 3. `onViewCreated()` – `onViewCreated(binding, savedInstanceState)` 호출
 4. `onEventVmCollect(binding)` – Automatically called after `onViewCreated(binding, ...)` completes / `onViewCreated(binding)` 이후 자동 호출
 5. `onDestroyView()` – Binding/리소스 자동 정리
@@ -393,8 +461,10 @@ Simple UI Activity/Fragment base classes set a new standard for Android UI devel
 |Requirements	|Recommended Base Class|
 |:--|:--|
 |Lightest Activity/Fragment, no ViewBinding	|  `BaseActivity`, `BaseFragment` |
+|ViewBinding only	|  `BaseViewBindingActivity`, `BaseViewBindingFragment` |
 |DataBinding + MVVM	|  `BaseDataBindingActivity`, `BaseDataBindingFragment`|
-|DialogFragment + Binding|	`BaseDataBindingDialogFragment`|
+|DialogFragment + ViewBinding|	`BaseViewBindingDialogFragment`|
+|DialogFragment + DataBinding|	`BaseDataBindingDialogFragment`|
 |permission requests|	 `RootActivity`, `RootFragment`|
 
 
@@ -403,6 +473,11 @@ Simple UI Activity/Fragment base classes set a new standard for Android UI devel
 - Quick demo screens/빠른 데모 화면
 - When not using DataBinding syntax in XML/XML에서 DataBinding 문법을 사용하지 않는 경우
 - When mixing with custom view libraries/커스텀 뷰 라이브러리와 혼용할 때
+
+#### Choose BaseViewBindingActivity / BaseViewBindingFragment
+- When you want type-safe view access without DataBinding expressions / DataBinding 표현식 없이 타입 안전한 View 접근만 필요한 경우
+- When you want a lighter binding setup than DataBinding / DataBinding보다 가벼운 binding 구성이 필요한 경우
+- When you want the same binding lifecycle pattern in Activity / Fragment / Dialog / Activity / Fragment / Dialog에서 같은 binding 패턴을 유지하고 싶은 경우
 
 
 #### Choose BaseDataBindingActivity / BaseDataBindingFragment

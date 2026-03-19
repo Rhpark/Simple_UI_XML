@@ -46,12 +46,12 @@ We built **Simple UI XML** to give you that time back.
 </br>
 
 ## 🎯 **Target Users (타겟 사용자)**
-- Android developers who want to build XML-based screens faster (Simple_UI_XML)
 - Android developers who want to use permissions, logging, and common utilities more simply (Simple_UI_Core)
+- Android developers who want to build XML-based screens faster (Simple_UI_XML)
 - Android developers who want to handle system controls and device information more easily (Simple_UI_System_Manager)
 
-> - XML View 기반 화면을 빠르게 개발하고 싶은 안드로이드 개발자 (Simple_UI_XML)
 > - 권한, 로깅, 공통 유틸리티를 함께 간단히 쓰고 싶은 안드로이드 개발자 (Simple_UI_Core)
+> - XML View 기반 화면을 빠르게 개발하고 싶은 안드로이드 개발자 (Simple_UI_XML)
 > - 시스템 제어와 디바이스 정보를 손쉽게 다루고 싶은 안드로이드 개발자 (Simple_UI_System_Manager)
 
 
@@ -98,7 +98,7 @@ We built **Simple UI XML** to give you that time back.
 - If an API change is intentional, run the corresponding `apiDump` task and include the updated `.api` diff.
 
 > - 공개 API 시그니처는 아래 기준 파일로 관리합니다.
-    >   - `simple_core/api/simple_core.api`
+>   - `simple_core/api/simple_core.api`
 >   - `simple_xml/api/simple_xml.api`
 >   - `simple_system_manager/api/simple_system_manager.api`
 > - 머지/릴리즈 전 `./gradlew :simple_core:apiCheck :simple_system_manager:apiCheck :simple_xml:apiCheck`를 실행해 의도치 않은 API 변경을 차단합니다.

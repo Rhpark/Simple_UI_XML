@@ -771,17 +771,17 @@ val userId = intent.extras?.getValue("user_id", -1) ?: -1
 
 ## 📣 Real User Testimonials (실제 사용 후기)
 
-> 💬 **"I was so tired of checking lastClickTime for double-click bugs. Now it's just one setOnDebouncedClickListener(). Amazing!"**
->
-> 💬 **"TextView styling chaining is a killer feature. bold().underline() makes code so readable!"**
->
-> 💬 **"3.14159.roundTo(2) — This is Kotlin at its best! No more Math.round() mistakes."**
->
-> 💬 **"I hated typing if (Build.VERSION.SDK_INT >= ...) every time. checkSdkVersion() cleaned everything up."**
->
-> 💬 **"One-line animations like fadeIn(), shake(), pulse() made UX improvements lightning fast!"**
->
-> 💬 **"Bundle.getValue<T>() type safety definitely reduced runtime bugs."**
+💬 **"I was so tired of checking lastClickTime for double-click bugs. Now it's just one setOnDebouncedClickListener(). Amazing!"**
+
+💬 **"TextView styling chaining is a killer feature. bold().underline() makes code so readable!"**
+
+💬 **"3.14159.roundTo(2) — This is Kotlin at its best! No more Math.round() mistakes."**
+
+💬 **"I hated typing if (Build.VERSION.SDK_INT >= ...) every time. checkSdkVersion() cleaned everything up."**
+
+💬 **"One-line animations like fadeIn(), shake(), pulse() made UX improvements lightning fast!"**
+
+💬 **"Bundle.getValue<T>() type safety definitely reduced runtime bugs."**
 
 
 > 💬 **"중복 클릭 버그 때문에 매번 lastClickTime 체크하던 게 너무 귀찮았는데, setOnDebouncedClickListener() 하나로 끝나니 감동..."**
