@@ -1,11 +1,11 @@
-# SoftKeyboard Controller Implementation Plan (As-Is)
+﻿# SoftKeyboard Controller Implementation Plan (As-Is)
 
 ## 문서 정보
 - 문서명: SoftKeyboard Controller Implementation Plan
 - 작성일: 2026-02-07
 - 수정일: 2026-02-07
-- 대상 모듈: simple_xml
-- 패키지: kr.open.library.simple_ui.xml.system_manager.controller.softkeyboard
+- 대상 모듈: simple_system_manager
+- 패키지: kr.open.library.simple_ui.system_manager.xml.controller.softkeyboard
 - 상태: 현행(as-is)
 
 ## 목표
@@ -146,3 +146,4 @@
 - `KEEP_CURRENT_WINDOW`의 no-op 특성을 팀 내 공유한다.
 - timeout/폴링 값의 UX·성능 영향도를 호출 화면 기준으로 점검한다.
 - 문서(PRD/SPEC/PLAN/README) 용어를 항상 동일하게 유지한다.
+

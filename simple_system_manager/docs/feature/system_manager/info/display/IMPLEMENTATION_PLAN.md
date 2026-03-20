@@ -1,11 +1,11 @@
-# Display Info Implementation Plan (As-Is)
+﻿# Display Info Implementation Plan (As-Is)
 
 ## 문서 정보
 - 문서명: Display Info Implementation Plan
 - 작성일: 2026-02-08
 - 수정일: 2026-02-08
-- 대상 모듈: simple_xml
-- 패키지: kr.open.library.simple_ui.xml.system_manager.info.display
+- 대상 모듈: simple_system_manager
+- 패키지: kr.open.library.simple_ui.system_manager.xml.display
 - 상태: 현행(as-is)
 
 ## 목표
@@ -135,3 +135,4 @@
 - `null`과 0 반환 의미를 호출부 로직에서 분리해서 처리할 것
 - `activity.window.decorView` 경로 메서드는 메인 스레드에서 호출할 것
 - README/PRD/SPEC/PLAN의 반환 계약 문구를 동일하게 유지할 것
+

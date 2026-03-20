@@ -2,8 +2,8 @@
 > **NotificationController vs 순수 Android - 비교 가이드**
 
 ## Module Information (모듈 정보)
-- **Module**: `simple_core` (UI-independent core module / UI 비의존 코어 모듈)
-- **Package**: `kr.open.library.simple_ui.core.system_manager.controller.notification`
+- **Module**: `simple_system_manager` (system manager 전용 모듈 / system_manager 전용 모듈)
+- **Package**: `kr.open.library.simple_ui.system_manager.core.controller.notification`
 
 <br></br>
 
@@ -197,10 +197,10 @@ private fun showBigTextNotification() {
 ## Documentation Notes (문서 관리 메모)
 - Source KDoc follows the bilingual style: English first, then `<br><br>`, then Korean, and ending with `<br>`.
 - Keep source/doc files in UTF-8 to prevent broken Korean characters in KDoc and generated docs.
-- Internal reference: `simple_system_manager/src/main/java/kr/open/library/simple_ui/core/system_manager/controller/notification/internal/SimpleNotificationBuilder.kt`
+- Internal reference: `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/core/controller/notification/internal/SimpleNotificationBuilder.kt`
 > 소스 KDoc은 영문 설명 뒤 `<br><br>`, 국문 설명 뒤 `<br>`를 유지하는 한·영 병기 규칙을 따릅니다.
 > KDoc/문서의 한글 깨짐을 방지하려면 소스/문서 파일 인코딩을 UTF-8로 유지해야 합니다.
-> 내부 구현 참고 파일: `simple_system_manager/src/main/java/kr/open/library/simple_ui/core/system_manager/controller/notification/internal/SimpleNotificationBuilder.kt`
+> 내부 구현 참고 파일: `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/core/controller/notification/internal/SimpleNotificationBuilder.kt`
 
 <br></br>
 
@@ -209,5 +209,6 @@ private fun showBigTextNotification() {
   See full list / 전체 목록: [README_SYSTEM_MANAGER_EXTENSIONS.md](../../README_SYSTEM_MANAGER_EXTENSIONS.md)
 
 <br></br>
+
 
 

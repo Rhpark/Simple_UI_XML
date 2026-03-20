@@ -3,12 +3,12 @@
 - 이 모듈은 `simple_core`에만 의존하며, `system_manager` 기능을 독립적으로 제공합니다.
 
 ## 모듈 정의
-- `kr.open.library.simple_ui.core.system_manager.*`
-- `kr.open.library.simple_ui.xml.system_manager.*`
+- `kr.open.library.simple_ui.system_manager.core.*`
+- `kr.open.library.simple_ui.system_manager.xml.*`
 - 위 두 패키지를 같은 모듈에서 함께 소유합니다.
 
 ## 핵심 원칙
-- source package는 유지하고 모듈만 `simple_system_manager`로 분리합니다.
+- `system_manager` 관련 source package와 테스트 패키지는 모두 `simple_system_manager` 기준으로 정리합니다.
 - `simple_xml`은 이 모듈을 의존하지 않습니다.
 - system_manager 기능이 필요한 앱/소비자는 `simple_system_manager`를 직접 의존합니다.
 - `simple_core`에는 공통 유틸만 남기고 `system_manager` main/test 소스는 이 모듈이 소유합니다.

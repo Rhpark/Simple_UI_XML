@@ -75,12 +75,14 @@ SKILL.md의 공통 원칙(모듈 고정, 패키지 자동 생성, 결과 보고 
 - 네이밍: `Adapter` suffix 제거 후 `Item` suffix 추가
   - 예) `UserAdapter` → `UserItem`, `FooBarListAdapter` → `FooBarListItem`
 - `data class`로 선언한다.
-- 필드는 비워두고 최소 구조만 생성한다. (호출 측에서 채움)
+- 요청한 필드 정보가 없으면 아래 DumpItem 패턴으로 생성한다. (실제 필드는 호출 측에서 수정)
 - 생성 위치: Adapter와 동일 패키지
 
 ```kotlin
 data class UserItem(
-    // 필드 추가 필요
+    val id: Long,
+    val title: String,
+    val number: Int,
 )
 ```
 
@@ -100,6 +102,7 @@ data class UserItem(
 ## Simple 어댑터 사용 패턴 (Q2 = 1~3)
 
 > 클래스 파일 미생성. item layout XML만 생성하고, 사용 측 스니펫을 제공한다.
+> 데이터 업데이트: `adapter.setItems(items)` 사용. (`submitList()` 직접 호출 금지 — 큐를 우회함)
 
 ### SimpleRcvListAdapter (Q1=BaseRcvListAdapter, Q2=1)
 ```kotlin

@@ -1,11 +1,11 @@
-# SystemBar Controller SPEC
+﻿# SystemBar Controller SPEC
 
 ## 문서 정보
 - 문서명: SystemBar Controller SPEC
 - 작성일: 2026-02-09
 - 수정일: 2026-02-10
-- 대상 모듈: simple_xml
-- 패키지: kr.open.library.simple_ui.xml.system_manager.controller.systembar
+- 대상 모듈: simple_system_manager
+- 패키지: kr.open.library.simple_ui.system_manager.xml.controller.systembar
 - 수준: 구현 재현 가능 수준(Implementation-ready)
 - 상태: 현행(as-is)
 
@@ -13,7 +13,7 @@
 - 요구사항: `PRD.md`
 - 기능 인덱스: `AGENTS.md`
 - 사용자 가이드: `docs/readme/system_manager/controller/xml/README_SYSTEMBAR_CONTROLLER.md`
-- 실제 진입 경로: `simple_system_manager/src/main/java/kr/open/library/simple_ui/xml/system_manager/extensions/SystemServiceExtensionsXml.kt`
+- 실제 진입 경로: `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/xml/extensions/SystemServiceExtensionsXml.kt`
 
 ## 아키텍처 개요
 
@@ -235,7 +235,7 @@ public sealed interface SystemBarStableState {
 
 ## 테스트 명세(현행)
 - 테스트 파일
-  - `simple_system_manager/src/test/java/kr/open/library/simple_ui/xml/robolectric/system_manager/controller/systembar/internal/helper/SystemBarHelperStateRobolectricTest.kt`
+  - `simple_system_manager/src/test/java/kr/open/library/simple_ui/system_manager/robolectric/xml/controller/systembar/internal/helper/SystemBarHelperStateRobolectricTest.kt`
 - 케이스 수
   - `@Test` 기준 11개
 - 검증 축
@@ -261,3 +261,4 @@ public sealed interface SystemBarStableState {
 - legacy 매핑 계약
   - 코드: `SystemBarController.kt`의 `toLegacyRectOrNull()`
   - 문서: PRD/SPEC/PLAN
+

@@ -2,8 +2,8 @@
 > **VibratorController vs 순수 Android - 비교 가이드**
 
 ## Module Information (모듈 정보)
-- **Module**: `simple_core` (UI-independent core module / UI 비의존 코어 모듈)
-- **Package**: `kr.open.library.simple_ui.core.system_manager.controller.vibrator` 
+- **Module**: `simple_system_manager` (system manager 전용 모듈 / system_manager 전용 모듈)
+- **Package**: `kr.open.library.simple_ui.system_manager.core.controller.vibrator` 
 
 <br></br>
 
@@ -154,5 +154,6 @@ private fun checkAmplitudeSupport() {
   See full list / 전체 목록: [README_SYSTEM_MANAGER_EXTENSIONS.md](../../README_SYSTEM_MANAGER_EXTENSIONS.md)
 
 <br></br>
+
 
 

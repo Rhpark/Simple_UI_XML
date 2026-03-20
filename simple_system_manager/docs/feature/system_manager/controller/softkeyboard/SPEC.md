@@ -1,11 +1,11 @@
-# SoftKeyboard Controller SPEC
+﻿# SoftKeyboard Controller SPEC
 
 ## 문서 정보
 - 문서명: SoftKeyboard Controller SPEC
 - 작성일: 2026-02-07
 - 수정일: 2026-02-07
-- 대상 모듈: simple_xml
-- 패키지: kr.open.library.simple_ui.xml.system_manager.controller.softkeyboard
+- 대상 모듈: simple_system_manager
+- 패키지: kr.open.library.simple_ui.system_manager.xml.controller.softkeyboard
 - 수준: 구현 재현 가능 수준(Implementation-ready)
 - 상태: 현행(as-is)
 
@@ -191,3 +191,4 @@ public open class SoftKeyboardController(context: Context) : BaseSystemService(c
 - Robolectric만으로 제조사 IME별 실제 동작을 완전 재현할 수 없다.
 - `KEEP_CURRENT_WINDOW`는 API 30+에서 설정 변경 없이 성공을 반환한다.
 - `Context.getSoftKeyboardController()`는 호출마다 새 인스턴스를 생성한다.
+

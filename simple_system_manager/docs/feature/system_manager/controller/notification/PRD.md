@@ -1,7 +1,7 @@
-# 알림 컨트롤러(PRD)
+﻿# 알림 컨트롤러(PRD)
 
 ## 문서 목적
-`kr.open.library.simple_ui.core.system_manager.controller.notification` 패키지의 **요구사항과 제품 목표**를 정의합니다.  
+`kr.open.library.simple_ui.system_manager.core.controller.notification` 패키지의 **요구사항과 제품 목표**를 정의합니다.  
 현행 코드 동작을 기준으로 작성하며, 기능 범위와 제약을 명확히 합니다.
 
 ## 배경 / 문제 정의
@@ -80,10 +80,11 @@
 - 진행률 알림 유휴 시 자동 정리 동작 확인
 
 ## 관련 파일
-- `simple_system_manager/src/main/java/kr/open/library/simple_ui/core/system_manager/controller/notification/SimpleNotificationController.kt`
-- `simple_system_manager/src/main/java/kr/open/library/simple_ui/core/system_manager/controller/notification/internal/SimpleNotificationBuilder.kt`
-- `simple_system_manager/src/main/java/kr/open/library/simple_ui/core/system_manager/controller/notification/option/NotificationOption.kt`
-- `simple_system_manager/src/main/java/kr/open/library/simple_ui/core/system_manager/controller/notification/SimpleNotificationConstants.kt`
+- `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/core/controller/notification/SimpleNotificationController.kt`
+- `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/core/controller/notification/internal/SimpleNotificationBuilder.kt`
+- `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/core/controller/notification/option/NotificationOption.kt`
+- `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/core/controller/notification/SimpleNotificationConstants.kt`
 
 ## 테스트 파일
-- `simple_system_manager/src/test/java/kr/open/library/simple_ui/core/robolectric/system_manager/controller/notification/SimpleNotificationControllerRobolectricTest.kt`
+- `simple_system_manager/src/test/java/kr/open/library/simple_ui/system_manager/robolectric/core/controller/notification/SimpleNotificationControllerRobolectricTest.kt`
+

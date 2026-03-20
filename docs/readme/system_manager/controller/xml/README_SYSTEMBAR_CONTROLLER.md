@@ -2,8 +2,8 @@
 > **SystemBarController vs 순수 Android - 비교 가이드**
 
 ## Module Information (모듈 정보)
-- **Module**: `simple_xml` (UI-dependent module / UI 의존 모듈)
-- **Package**: `kr.open.library.simple_ui.xml.system_manager.controller.systembar`
+- **Module**: `simple_system_manager` (system manager 전용 모듈 / system_manager 전용 모듈)
+- **Package**: `kr.open.library.simple_ui.system_manager.xml.controller.systembar`
 - **Primary Entry Path**: `window.getSystemBarController()` (Window 확장 함수 기반 진입)
 
 <br></br>
@@ -20,8 +20,8 @@ This guide reflects the current implementation contract aligned with PRD/SPEC.
 ## Recommended Entry Path (권장 진입 경로)
 ```kotlin
 import android.graphics.Color
-import kr.open.library.simple_ui.xml.system_manager.extensions.destroySystemBarControllerCache
-import kr.open.library.simple_ui.xml.system_manager.extensions.getSystemBarController
+import kr.open.library.simple_ui.system_manager.xml.extensions.destroySystemBarControllerCache
+import kr.open.library.simple_ui.system_manager.xml.extensions.getSystemBarController
 
 val controller = window.getSystemBarController()
 
@@ -142,7 +142,7 @@ setEdgeToEdgeMode(), isEdgeToEdgeEnabled(), onDestroy()
 
 ## Test Command & Limitations (테스트 명령/한계)
 ```bash
-./gradlew :simple_xml:testRobolectric --tests "*SystemBarHelperStateRobolectricTest"
+./gradlew :simple_system_manager:testRobolectric --tests "*SystemBarHelperStateRobolectricTest"
 ```
 
 - 검증 축: `NotReady`, `NotPresent`, `Visible`, `Stable`, navigation 위치(bottom/left/right)
@@ -158,3 +158,4 @@ setEdgeToEdgeMode(), isEdgeToEdgeEnabled(), onDestroy()
 - Extensions index: `docs/readme/system_manager/README_SYSTEM_MANAGER_EXTENSIONS.md`
 
 <br></br>
+

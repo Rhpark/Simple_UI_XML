@@ -1,18 +1,18 @@
-# Battery Info SPEC
+﻿# Battery Info SPEC
 
 ## 문서 정보
 - 문서명: Battery Info SPEC
 - 작성일: 2026-02-01
 - 수정일: 2026-02-01
-- 대상 모듈: simple_core
-- 패키지: kr.open.library.simple_ui.core.system_manager.info.battery
+- 대상 모듈: simple_system_manager
+- 패키지: kr.open.library.simple_ui.system_manager.core.info.battery
 - 수준: 구현 재현 가능 수준(Implementation-ready)
 - 상태: 현행(as-is)
 
 ## 전제/참조
 - 기본 규칙/환경은 루트 AGENTS.md에서 연결되는 .claude/skills/CodeReview/rules/*.md를 따른다.
 - 상세 요구와 범위는 `PRD.md`를 따른다.
-- 실제 구현은 `kr.open.library.simple_ui.core.system_manager.info.battery` 패키지에 존재한다.
+- 실제 구현은 `kr.open.library.simple_ui.system_manager.core.info.battery` 패키지에 존재한다.
 
 ## 모듈 구조 및 책임
 
@@ -129,3 +129,4 @@ public open class BatteryStateInfo(context: Context) : BaseSystemService(context
   - `BatteryStateInfoRobolectricTest`
   - `BatteryStateReceiverRobolectricTest`
   - `BatteryPropertyReaderRobolectricTest`
+

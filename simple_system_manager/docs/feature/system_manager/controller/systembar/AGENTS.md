@@ -1,4 +1,4 @@
-# SystemBar Feature AGENT
+﻿# SystemBar Feature AGENT
 
 ## 역할
 - 이 문서는 `system_manager/controller/systembar` 기능 문서의 인덱스입니다.
@@ -17,16 +17,16 @@
 
 ## 관련 코드 범위
 - 컨트롤러
-  - `simple_system_manager/src/main/java/kr/open/library/simple_ui/xml/system_manager/controller/systembar/SystemBarController.kt`
+  - `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/xml/controller/systembar/SystemBarController.kt`
 - 상태 모델
-  - `simple_system_manager/src/main/java/kr/open/library/simple_ui/xml/system_manager/controller/systembar/model/SystemBarState.kt`
+  - `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/xml/controller/systembar/model/SystemBarState.kt`
 - 내부 헬퍼
-  - `simple_system_manager/src/main/java/kr/open/library/simple_ui/xml/system_manager/controller/systembar/internal/helper/StatusBarHelper.kt`
-  - `simple_system_manager/src/main/java/kr/open/library/simple_ui/xml/system_manager/controller/systembar/internal/helper/NavigationBarHelper.kt`
-  - `simple_system_manager/src/main/java/kr/open/library/simple_ui/xml/system_manager/controller/systembar/internal/helper/base/SystemBarHelperBase.kt`
+  - `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/xml/controller/systembar/internal/helper/StatusBarHelper.kt`
+  - `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/xml/controller/systembar/internal/helper/NavigationBarHelper.kt`
+  - `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/xml/controller/systembar/internal/helper/base/SystemBarHelperBase.kt`
 - 확장 함수/캐시 태그
-  - `simple_system_manager/src/main/java/kr/open/library/simple_ui/xml/system_manager/extensions/SystemServiceExtensionsXml.kt`
+  - `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/xml/extensions/SystemServiceExtensionsXml.kt`
   - `simple_xml/src/main/res/values/ids.xml`
 
 ## 테스트 확인 경로
-- `simple_system_manager/src/test/java/kr/open/library/simple_ui/xml/robolectric/system_manager/controller/systembar/internal/helper/SystemBarHelperStateRobolectricTest.kt`
+- `simple_system_manager/src/test/java/kr/open/library/simple_ui/system_manager/robolectric/xml/controller/systembar/internal/helper/SystemBarHelperStateRobolectricTest.kt`

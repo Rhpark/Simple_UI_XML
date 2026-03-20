@@ -1,18 +1,18 @@
-# Location Info SPEC
+﻿# Location Info SPEC
 
 ## 문서 정보
 - 문서명: Location Info SPEC
 - 작성일: 2026-02-06
 - 수정일: 2026-02-06
-- 대상 모듈: simple_core
-- 패키지: kr.open.library.simple_ui.core.system_manager.info.location
+- 대상 모듈: simple_system_manager
+- 패키지: kr.open.library.simple_ui.system_manager.core.info.location
 - 수준: 구현 재현 가능 수준(Implementation-ready)
 - 상태: 현행(as-is)
 
 ## 전제/참조
 - 기본 규칙/환경은 루트 `AGENTS.md`와 `.claude/skills/CodeReview/rules/*.md`를 따른다.
 - 요구사항과 범위는 `PRD.md`를 따른다.
-- 실제 구현은 `kr.open.library.simple_ui.core.system_manager.info.location` 패키지에 존재한다.
+- 실제 구현은 `kr.open.library.simple_ui.system_manager.core.info.location` 패키지에 존재한다.
 
 ## 모듈 구조 및 책임
 
@@ -193,3 +193,4 @@ public open class LocationStateInfo(context: Context) :
   - `LocationStateReceiverRobolectricTest` (helper/internal 경로 모두)
 - 저장소(Robolectric)
   - `LocationSharedPreferenceTest`
+

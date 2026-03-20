@@ -141,27 +141,27 @@ FIREBASE_APP_ID_RELEASE=...
 
 ### 📱 **Accelerate UI Development (UI 개발 가속화)**
 
-- **Base classes**: RootActivity, BaseActivity, BaseDataBindingActivity
-- **Fragment**: RootFragment, BaseFragment, BaseDataBindingFragment, RootDialogFragment, BaseDialogFragment, BaseDataBindingDialogFragment
+- **Base classes**: RootActivity, BaseActivity, BaseDataBindingActivity, BaseViewBindingActivity
+- **Fragment**: RootFragment, BaseFragment, BaseDataBindingFragment, BaseViewBindingFragment, RootDialogFragment, BaseDialogFragment, BaseDataBindingDialogFragment, BaseViewBindingDialogFragment
 - **RecyclerView**: content-only normal adapters (`SimpleRcvAdapter`, `SimpleBindingRcvAdapter`, `SimpleViewBindingRcvAdapter`), section normal adapters (`SimpleHeaderFooterRcvAdapter`, `SimpleHeaderFooterDataBindingRcvAdapter`, `SimpleHeaderFooterViewBindingRcvAdapter`, `HeaderFooterRcvAdapter`), list adapters (`SimpleRcvListAdapter`, `SimpleRcvDataBindingListAdapter`, `SimpleRcvViewBindingListAdapter`), DiffUtil(ListAdapter) + RecyclerScrollStateView
 - **RecyclerView click contract**: listeners are attached once in `onCreateViewHolder`, and position/item are resolved at click time (`BaseRcvAdapter`: content index only, `BaseRcvListAdapter`: adapter index)
 - **RecyclerView bind signature**: override order is `onBindViewHolder(holder, item, position)` (same order for header/footer bind overrides)
 - **RecyclerView mutation contract**: mutation APIs (`setItems`, `addItems`, `removeItem` ...) use `onResult` callbacks and report `NormalAdapterResult` / `ListAdapterResult`
 - **Section replace contract**: `HeaderFooterRcvAdapter.setHeaderItems` / `setFooterItems` use `notifyItemRangeChanged` when size/viewType are compatible, otherwise fallback to remove+insert
 - **Large removal note**: `BaseRcvAdapter.removeItems(...)` emits per-item `notifyItemRemoved`; for large/contiguous removals, prefer `removeRange` / `removeAll`
-- **ListAdapter queue controls**: `BaseRcvListAdapter` provides `setQueuePolicy`, `setQueueMergeKeys`, `setQueueDebugListener`
+- **ListAdapter queue controls**: `BaseRcvListAdapter` provides `setQueuePolicy`
 - **Custom layouts**: Layout components with lifecycle awareness
 - **XML style system**: Comprehensive UI style library (style.xml)
 - **MVVM support**: Fully compatible with ViewModel and DataBinding
-> - **기본 클래스**: RootActivity, BaseActivity, BaseDataBindingActivity
-> - **Fragment**: RootFragment, BaseFragment, BaseDataBindingFragment, RootDialogFragment, BaseDialogFragment, BaseDataBindingDialogFragment
+> - **기본 클래스**: RootActivity, BaseActivity, BaseDataBindingActivity, BaseViewBindingActivity
+> - **Fragment**: RootFragment, BaseFragment, BaseDataBindingFragment, BaseViewBindingFragment, RootDialogFragment, BaseDialogFragment, BaseDataBindingDialogFragment, BaseViewBindingDialogFragment
 > - **RecyclerView**: content 전용 normal 어댑터(`SimpleRcvAdapter`, `SimpleBindingRcvAdapter`, `SimpleViewBindingRcvAdapter`), 섹션 normal 어댑터(`SimpleHeaderFooterRcvAdapter`, `SimpleHeaderFooterDataBindingRcvAdapter`, `SimpleHeaderFooterViewBindingRcvAdapter`, `HeaderFooterRcvAdapter`), list 어댑터(`SimpleRcvListAdapter`, `SimpleRcvDataBindingListAdapter`, `SimpleRcvViewBindingListAdapter`), DiffUtil(ListAdapter) + RecyclerScrollStateView
 > - **RecyclerView 클릭 규약**: 리스너는 `onCreateViewHolder`에서 1회 연결되고, position/item은 클릭 시점에 조회됩니다(`BaseRcvAdapter`: content 인덱스만 전달, `BaseRcvListAdapter`: adapter 인덱스 전달)
 > - **RecyclerView 바인딩 시그니처**: `onBindViewHolder(holder, item, position)` 순서로 오버라이드합니다(header/footer 바인딩도 동일 순서)
 > - **RecyclerView 변경 규약**: 변경 API(`setItems`, `addItems`, `removeItem` 등)는 `onResult` 콜백을 통해 `NormalAdapterResult` / `ListAdapterResult`를 전달합니다.
 > - **섹션 교체 규약**: `HeaderFooterRcvAdapter.setHeaderItems` / `setFooterItems`는 크기/뷰타입 호환 시 `notifyItemRangeChanged`를 사용하고, 아니면 remove+insert로 반영합니다.
 > - **대량 제거 주의**: `BaseRcvAdapter`의 `removeItems(...)`는 항목별 `notifyItemRemoved`를 호출하므로, 대량/연속 제거는 `removeRange` / `removeAll`을 권장합니다.
-> - **ListAdapter 큐 제어**: `BaseRcvListAdapter`에서 `setQueuePolicy`, `setQueueMergeKeys`, `setQueueDebugListener`를 제공합니다.
+> - **ListAdapter 큐 제어**: `BaseRcvListAdapter`에서 `setQueuePolicy`를 제공합니다.
 > - **커스텀 레이아웃**: Lifecycle 지원하는 Layout 컴포넌트들
 > - **XML 스타일 시스템**: 포괄적인 UI 스타일 라이브러리 (style.xml)
 > - **MVVM 지원**: ViewModel, DataBinding 호환 지원
@@ -183,7 +183,7 @@ FIREBASE_APP_ID_RELEASE=...
   
 <br> </br>
 
-### ⚙️ **Effortless System Control (간편한 시스템 제어 )**
+### ⚙️ **Effortless System Control (간편한 시스템 제어)**
 
 - **Notification system**: Control alarms and notifications
 - **Network tools**: Detailed management for Wi-Fi, connectivity, and SIM info

@@ -176,7 +176,7 @@ enum class RuntimePermissionRequestability {
 ### core (UI 비의존)
 - classifier
   - PermissionClassifier.kt
-- extentions
+- extensions
   - PermissionExtensions.kt
 - handler
   - SpecialPermissionHandler.kt
@@ -210,7 +210,7 @@ enum class RuntimePermissionRequestability {
 ### core
 - `classifier`: 권한 문자열을 런타임/특수/Role로 분류하고 지원 여부를 판단한다.
 - `classifier`: SDK 지원 여부와 runtime requestability를 함께 판단하되, 두 의미를 혼동하지 않는다.
-- `extentions`: 권한 보유 여부 등 공통 확장 함수를 제공한다.
+- `extensions`: 권한 보유 여부 등 공통 확장 함수를 제공한다.
 - `handler`: 특수 권한/Role 권한의 체크 및 인텐트 생성 규칙을 담당한다.
 - `model`: 결과/훅/복원 모델을 정의한다.
 - `queue`: 요청 큐 및 중복 병합 정책을 담당한다.

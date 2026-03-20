@@ -1,11 +1,11 @@
-# Battery Info PRD
+﻿# Battery Info PRD
 
 ## 문서 정보
 - 문서명: Battery Info PRD
 - 작성일: 2026-02-01
 - 수정일: 2026-02-01
-- 대상 모듈: simple_core
-- 패키지: kr.open.library.simple_ui.core.system_manager.info.battery
+- 대상 모듈: simple_system_manager
+- 패키지: kr.open.library.simple_ui.system_manager.core.info.battery
 - 상태: 현행(as-is)
 
 ## 배경/문제 정의
@@ -85,20 +85,22 @@
   - Robolectric: BatteryStateReceiverRobolectricTest(27개), BatteryStateInfoRobolectricTest, BatteryPropertyReaderRobolectricTest
 
 ## 관련 파일
-- `simple_system_manager/src/main/java/kr/open/library/simple_ui/core/system_manager/info/battery/BatteryStateInfo.kt`
-- `simple_system_manager/src/main/java/kr/open/library/simple_ui/core/system_manager/info/battery/BatteryStateConstants.kt`
-- `simple_system_manager/src/main/java/kr/open/library/simple_ui/core/system_manager/info/battery/BatteryStateEvent.kt`
-- `simple_system_manager/src/main/java/kr/open/library/simple_ui/core/system_manager/info/battery/internal/helper/BatteryStateReceiver.kt`
-- `simple_system_manager/src/main/java/kr/open/library/simple_ui/core/system_manager/info/battery/internal/helper/BatteryStateEmitter.kt`
-- `simple_system_manager/src/main/java/kr/open/library/simple_ui/core/system_manager/info/battery/internal/helper/BatteryPropertyReader.kt`
-- `simple_system_manager/src/main/java/kr/open/library/simple_ui/core/system_manager/info/battery/internal/helper/power/PowerProfile.kt`
-- `simple_system_manager/src/main/java/kr/open/library/simple_ui/core/system_manager/info/battery/internal/helper/power/PowerProfileVO.kt`
-- `simple_system_manager/src/main/java/kr/open/library/simple_ui/core/system_manager/info/battery/internal/model/BatteryStateData.kt`
-- `simple_system_manager/src/main/java/kr/open/library/simple_ui/core/system_manager/extensions/SystemServiceExtensions.kt`
+- `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/core/info/battery/BatteryStateInfo.kt`
+- `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/core/info/battery/BatteryStateConstants.kt`
+- `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/core/info/battery/BatteryStateEvent.kt`
+- `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/core/info/battery/internal/helper/BatteryStateReceiver.kt`
+- `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/core/info/battery/internal/helper/BatteryStateEmitter.kt`
+- `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/core/info/battery/internal/helper/BatteryPropertyReader.kt`
+- `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/core/info/battery/internal/helper/power/PowerProfile.kt`
+- `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/core/info/battery/internal/helper/power/PowerProfileVO.kt`
+- `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/core/info/battery/internal/model/BatteryStateData.kt`
+- `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/core/extensions/SystemServiceExtensions.kt`
 
 ## 테스트
-- `simple_system_manager/src/test/java/kr/open/library/simple_ui/core/unit/system_manager/info/battery/BatteryPropertyReaderEventUnitTest.kt`
-- `simple_system_manager/src/test/java/kr/open/library/simple_ui/core/unit/system_manager/info/battery/BatteryStateEmitterUnitTest.kt`
-- `simple_system_manager/src/test/java/kr/open/library/simple_ui/core/robolectric/system_manager/info/battery/BatteryStateInfoRobolectricTest.kt`
-- `simple_system_manager/src/test/java/kr/open/library/simple_ui/core/robolectric/system_manager/info/battery/BatteryStateReceiverRobolectricTest.kt`
-- `simple_system_manager/src/test/java/kr/open/library/simple_ui/core/robolectric/system_manager/info/battery/BatteryPropertyReaderRobolectricTest.kt`
+- `simple_system_manager/src/test/java/kr/open/library/simple_ui/system_manager/unit/core/info/battery/BatteryStateConstantsUnitTest.kt`
+- `simple_system_manager/src/test/java/kr/open/library/simple_ui/system_manager/unit/core/info/battery/BatteryStateEventUnitTest.kt`
+- `simple_system_manager/src/test/java/kr/open/library/simple_ui/system_manager/unit/core/info/battery/BatteryStateEmitterUnitTest.kt`
+- `simple_system_manager/src/test/java/kr/open/library/simple_ui/system_manager/robolectric/core/info/battery/BatteryStateInfoRobolectricTest.kt`
+- `simple_system_manager/src/test/java/kr/open/library/simple_ui/system_manager/robolectric/core/info/battery/BatteryStateReceiverRobolectricTest.kt`
+- `simple_system_manager/src/test/java/kr/open/library/simple_ui/system_manager/robolectric/core/info/battery/BatteryPropertyReaderRobolectricTest.kt`
+

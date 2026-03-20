@@ -1,11 +1,11 @@
-# SoftKeyboard Controller PRD
+﻿# SoftKeyboard Controller PRD
 
 ## 문서 정보
 - 문서명: SoftKeyboard Controller PRD
 - 작성일: 2026-02-07
 - 수정일: 2026-02-07
-- 대상 모듈: simple_xml
-- 패키지: kr.open.library.simple_ui.xml.system_manager.controller.softkeyboard
+- 대상 모듈: simple_system_manager
+- 패키지: kr.open.library.simple_ui.system_manager.xml.controller.softkeyboard
 - 상태: 현행(as-is)
 
 ## 배경/문제 정의
@@ -114,14 +114,15 @@
 - 호출부가 “요청 결과”와 “실제 결과”를 구분해 사용할 수 있다.
 
 ## 관련 파일
-- `simple_system_manager/src/main/java/kr/open/library/simple_ui/xml/system_manager/controller/softkeyboard/SoftKeyboardController.kt`
-- `simple_system_manager/src/main/java/kr/open/library/simple_ui/xml/system_manager/controller/softkeyboard/SoftKeyboardActionResult.kt`
-- `simple_system_manager/src/main/java/kr/open/library/simple_ui/xml/system_manager/controller/softkeyboard/SoftKeyboardResizePolicy.kt`
-- `simple_system_manager/src/main/java/kr/open/library/simple_ui/xml/system_manager/extensions/SystemServiceExtensionsXml.kt`
+- `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/xml/controller/softkeyboard/SoftKeyboardController.kt`
+- `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/xml/controller/softkeyboard/SoftKeyboardActionResult.kt`
+- `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/xml/controller/softkeyboard/SoftKeyboardResizePolicy.kt`
+- `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/xml/extensions/SystemServiceExtensionsXml.kt`
 - `docs/readme/system_manager/controller/xml/README_SOFTKEYBOARD_CONTROLLER.md`
 - `app/src/main/java/kr/open/library/simpleui_xml/system_service_manager/controller/softkeyboard/SoftKeyboardControllerActivity.kt`
 
 ## 테스트
-- `simple_system_manager/src/test/java/kr/open/library/simple_ui/xml/robolectric/system_manager/controller/softkeyboard/SoftKeyboardControllerRobolectricTest.kt`
-- `simple_system_manager/src/test/java/kr/open/library/simple_ui/xml/unit/system_manager/controller/softkeyboard/SoftKeyboardActionResultTest.kt`
-- `simple_system_manager/src/test/java/kr/open/library/simple_ui/xml/unit/system_manager/controller/softkeyboard/SoftKeyboardResizePolicyTest.kt`
+- `simple_system_manager/src/test/java/kr/open/library/simple_ui/system_manager/robolectric/xml/controller/softkeyboard/SoftKeyboardControllerRobolectricTest.kt`
+- `simple_system_manager/src/test/java/kr/open/library/simple_ui/system_manager/unit/xml/controller/softkeyboard/SoftKeyboardActionResultTest.kt`
+- `simple_system_manager/src/test/java/kr/open/library/simple_ui/system_manager/unit/xml/controller/softkeyboard/SoftKeyboardResizePolicyTest.kt`
+

@@ -1,11 +1,11 @@
-# Location Info PRD
+﻿# Location Info PRD
 
 ## 문서 정보
 - 문서명: Location Info PRD
 - 작성일: 2026-02-06
 - 수정일: 2026-02-06
-- 대상 모듈: simple_core
-- 패키지: kr.open.library.simple_ui.core.system_manager.info.location
+- 대상 모듈: simple_system_manager
+- 패키지: kr.open.library.simple_ui.system_manager.core.info.location
 - 상태: 현행(as-is)
 
 ## 배경/문제 정의
@@ -104,30 +104,31 @@
 - 주요 흐름(파라미터 검증, 리시버 등록, 저전력 모드, 품질 판단, emitter 동작)이 테스트로 검증된다.
 
 ## 관련 파일
-- `simple_system_manager/src/main/java/kr/open/library/simple_ui/core/system_manager/info/location/LocationStateInfo.kt`
-- `simple_system_manager/src/main/java/kr/open/library/simple_ui/core/system_manager/info/location/LocationStateConstants.kt`
-- `simple_system_manager/src/main/java/kr/open/library/simple_ui/core/system_manager/info/location/LocationStateEvent.kt`
-- `simple_system_manager/src/main/java/kr/open/library/simple_ui/core/system_manager/info/location/LocationSharedPreference.kt`
-- `simple_system_manager/src/main/java/kr/open/library/simple_ui/core/system_manager/info/location/internal/helper/LocationQueryHelper.kt`
-- `simple_system_manager/src/main/java/kr/open/library/simple_ui/core/system_manager/info/location/internal/helper/LocationStateReceiver.kt`
-- `simple_system_manager/src/main/java/kr/open/library/simple_ui/core/system_manager/info/location/internal/helper/LocationStateEmitter.kt`
-- `simple_system_manager/src/main/java/kr/open/library/simple_ui/core/system_manager/info/location/internal/helper/LocationUpdateManager.kt`
-- `simple_system_manager/src/main/java/kr/open/library/simple_ui/core/system_manager/info/location/internal/helper/LocationQuality.kt`
-- `simple_system_manager/src/main/java/kr/open/library/simple_ui/core/system_manager/info/location/internal/helper/LocationCalculator.kt`
-- `simple_system_manager/src/main/java/kr/open/library/simple_ui/core/system_manager/info/location/internal/model/LocationStateData.kt`
-- `simple_system_manager/src/main/java/kr/open/library/simple_ui/core/system_manager/extensions/SystemServiceExtensions.kt`
+- `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/core/info/location/LocationStateInfo.kt`
+- `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/core/info/location/LocationStateConstants.kt`
+- `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/core/info/location/LocationStateEvent.kt`
+- `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/core/info/location/LocationSharedPreference.kt`
+- `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/core/info/location/internal/helper/LocationQueryHelper.kt`
+- `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/core/info/location/internal/helper/LocationStateReceiver.kt`
+- `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/core/info/location/internal/helper/LocationStateEmitter.kt`
+- `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/core/info/location/internal/helper/LocationUpdateManager.kt`
+- `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/core/info/location/internal/helper/LocationQuality.kt`
+- `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/core/info/location/internal/helper/LocationCalculator.kt`
+- `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/core/info/location/internal/model/LocationStateData.kt`
+- `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/core/extensions/SystemServiceExtensions.kt`
 
 ## 테스트
 - Unit
-  - `simple_system_manager/src/test/java/kr/open/library/simple_ui/core/unit/system_manager/info/location/LocationStateConstantsUnitTest.kt`
-  - `simple_system_manager/src/test/java/kr/open/library/simple_ui/core/unit/system_manager/info/location/LocationStateEventUnitTest.kt`
-  - `simple_system_manager/src/test/java/kr/open/library/simple_ui/core/unit/system_manager/info/location/internal/LocationStateEmitterUnitTest.kt`
+- `simple_system_manager/src/test/java/kr/open/library/simple_ui/system_manager/unit/core/info/location/LocationStateConstantsUnitTest.kt`
+- `simple_system_manager/src/test/java/kr/open/library/simple_ui/system_manager/unit/core/info/location/LocationStateEventUnitTest.kt`
+- `simple_system_manager/src/test/java/kr/open/library/simple_ui/system_manager/unit/core/info/location/internal/LocationStateEmitterUnitTest.kt`
 - Robolectric
-  - `simple_system_manager/src/test/java/kr/open/library/simple_ui/core/robolectric/system_manager/info/location/LocationStateInfoRobolectricTest.kt`
-  - `simple_system_manager/src/test/java/kr/open/library/simple_ui/core/robolectric/system_manager/info/location/LocationSharedPreferenceTest.kt`
-  - `simple_system_manager/src/test/java/kr/open/library/simple_ui/core/robolectric/system_manager/info/location/internal/LocationStateReceiverRobolectricTest.kt`
-  - `simple_system_manager/src/test/java/kr/open/library/simple_ui/core/robolectric/system_manager/info/location/internal/helper/LocationQueryHelperRobolectricTest.kt`
-  - `simple_system_manager/src/test/java/kr/open/library/simple_ui/core/robolectric/system_manager/info/location/internal/helper/LocationQualityRobolectricTest.kt`
-  - `simple_system_manager/src/test/java/kr/open/library/simple_ui/core/robolectric/system_manager/info/location/internal/helper/LocationCalculatorRobolectricTest.kt`
-  - `simple_system_manager/src/test/java/kr/open/library/simple_ui/core/robolectric/system_manager/info/location/internal/helper/LocationUpdateManagerRobolectricTest.kt`
-  - `simple_system_manager/src/test/java/kr/open/library/simple_ui/core/robolectric/system_manager/info/location/internal/helper/LocationStateReceiverRobolectricTest.kt`
+  - `simple_system_manager/src/test/java/kr/open/library/simple_ui/system_manager/robolectric/core/info/location/LocationStateInfoRobolectricTest.kt`
+  - `simple_system_manager/src/test/java/kr/open/library/simple_ui/system_manager/robolectric/core/info/location/LocationSharedPreferenceTest.kt`
+  - `simple_system_manager/src/test/java/kr/open/library/simple_ui/system_manager/robolectric/core/info/location/internal/LocationStateReceiverRobolectricTest.kt`
+  - `simple_system_manager/src/test/java/kr/open/library/simple_ui/system_manager/robolectric/core/info/location/internal/helper/LocationQueryHelperRobolectricTest.kt`
+  - `simple_system_manager/src/test/java/kr/open/library/simple_ui/system_manager/robolectric/core/info/location/internal/helper/LocationQualityRobolectricTest.kt`
+  - `simple_system_manager/src/test/java/kr/open/library/simple_ui/system_manager/robolectric/core/info/location/internal/helper/LocationCalculatorRobolectricTest.kt`
+  - `simple_system_manager/src/test/java/kr/open/library/simple_ui/system_manager/robolectric/core/info/location/internal/helper/LocationUpdateManagerRobolectricTest.kt`
+  - `simple_system_manager/src/test/java/kr/open/library/simple_ui/system_manager/robolectric/core/info/location/internal/helper/LocationStateReceiverRobolectricTest.kt`
+

@@ -1,11 +1,11 @@
-# Display Info SPEC
+﻿# Display Info SPEC
 
 ## 문서 정보
 - 문서명: Display Info SPEC
 - 작성일: 2026-02-08
 - 수정일: 2026-02-08
-- 대상 모듈: simple_xml
-- 패키지: kr.open.library.simple_ui.xml.system_manager.info.display
+- 대상 모듈: simple_system_manager
+- 패키지: kr.open.library.simple_ui.system_manager.xml.display
 - 수준: 구현 재현 가능 수준(Implementation-ready)
 - 상태: 현행(as-is)
 
@@ -205,3 +205,4 @@ public fun Context.getDisplayInfo(): DisplayInfo
 - API 28~29의 일부 값은 리소스 기반 추정치로 측정 정밀도가 기기별로 다를 수 있다.
 - 초기 레이아웃 시점에는 insets 미도달로 `null`이 반환될 수 있다.
 - `getPhysicalScreenSize()`의 `(0,0)`은 점유 영역 없음이 아닌 예외 fallback 의미일 수 있다.
+

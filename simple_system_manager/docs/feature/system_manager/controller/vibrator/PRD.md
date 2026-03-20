@@ -1,11 +1,11 @@
-# Vibrator Controller PRD
+﻿# Vibrator Controller PRD
 
 ## 문서 정보
 - 문서명: Vibrator Controller PRD
 - 작성일: 2026-01-30
 - 수정일: 2026-01-31
-- 대상 모듈: simple_core
-- 패키지: kr.open.library.simple_ui.core.system_manager.controller.vibrator
+- 대상 모듈: simple_system_manager
+- 패키지: kr.open.library.simple_ui.system_manager.core.controller.vibrator
 - 상태: 현행(as-is)
 
 ## 배경/문제 정의
@@ -82,12 +82,13 @@
 - 진동/강도 지원 여부를 API로 확인 가능
 
 ## 관련 파일
-- `simple_system_manager/src/main/java/kr/open/library/simple_ui/core/system_manager/controller/vibrator/VibratorController.kt`
-- `simple_system_manager/src/main/java/kr/open/library/simple_ui/core/system_manager/base/BaseSystemService.kt`
-- `simple_system_manager/src/main/java/kr/open/library/simple_ui/core/system_manager/extensions/SystemServiceExtensions.kt`
+- `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/core/controller/vibrator/VibratorController.kt`
+- `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/core/base/BaseSystemService.kt`
+- `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/core/extensions/SystemServiceExtensions.kt`
 - `app/src/main/java/kr/open/library/simpleui_xml/system_service_manager/controller/vibrator/VibratorControllerActivity.kt` (샘플 앱)
 - `app/src/main/res/layout/activity_vibrator_controller.xml` (샘플 레이아웃)
 
 ## 테스트
-- `simple_system_manager/src/test/java/kr/open/library/simple_ui/core/robolectric/system_manager/controller/vibrator/VibratorControllerRobolectricTest.kt`
+- `simple_system_manager/src/test/java/kr/open/library/simple_ui/system_manager/robolectric/core/controller/vibrator/VibratorControllerRobolectricTest.kt`
   - Robolectric 환경에서 권한 보호 수준을 위험 권한으로 가정하여 권한 미부여 시나리오를 검증합니다.
+

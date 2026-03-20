@@ -1,4 +1,4 @@
-# 알림 컨트롤러(IMPLEMENTATION PLAN)
+﻿# 알림 컨트롤러(IMPLEMENTATION PLAN)
 
 ## 문서 목적
 알림 컨트롤러의 **구현 단계와 검증 항목**을 정의합니다.  
@@ -6,7 +6,7 @@
 
 ## 범위
 대상 패키지:  
-`kr.open.library.simple_ui.core.system_manager.controller.notification`
+`kr.open.library.simple_ui.system_manager.core.controller.notification`
 
 포함 클래스:
 - `SimpleNotificationController`
@@ -80,4 +80,5 @@
 - `simple_system_manager/docs/feature/system_manager/controller/notification/SPEC.md`
 
 테스트 파일:
-- `simple_system_manager/src/test/java/kr/open/library/simple_ui/core/robolectric/system_manager/controller/notification/SimpleNotificationControllerRobolectricTest.kt`
+- `simple_system_manager/src/test/java/kr/open/library/simple_ui/system_manager/robolectric/core/controller/notification/SimpleNotificationControllerRobolectricTest.kt`
+

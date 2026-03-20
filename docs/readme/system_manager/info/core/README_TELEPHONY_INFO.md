@@ -2,8 +2,8 @@
 > **Telephony Info vs 순수 Android - 비교 가이드**
 
 ## Module Information (모듈 정보)
-- **Module**: `simple_core` (UI-independent core module / UI 비의존 코어 모듈)
-- **Package**: `kr.open.library.simple_ui.core.system_manager.info.network.telephony`
+- **Module**: `simple_system_manager` (system manager module / system manager 전용 모듈)
+- **Package**: `kr.open.library.simple_ui.system_manager.core.info.network.telephony`
 
 <br></br>
 
@@ -27,8 +27,8 @@ Provides telephony helpers, network type parsing, and real-time callbacks with A
 - **Service State:** `currentServiceState` StateFlow + `getCurrentServiceState()` latest value (StateFlow + 최신 값 getter)
 - **Multi-SIM:** `getActiveSimCount()`, `getActiveSubscriptionInfoList()` - Multi-SIM support (멀티 SIM 지원)
 - **TelephonyManager Query:** `getTelephonyManagerFromUSim(slotIndex)` - Return TelephonyManager for specific SIM slot (특정 SIM 슬롯의 TelephonyManager 반환)
-- **Permission fallback:** Returns safe defaults/empty lists and logs warnings when permission is missing; call `refreshPermissions()` after grant.
-  - 권한이 없으면 안전한 기본값/빈 리스트를 반환하며 로그에 경고가 남습니다. 권한을 허용했다면 `refreshPermissions()`를 호출해 상태를 갱신하세요.
+- **Permission fallback:** Returns safe defaults/empty lists and logs warnings when permission is missing. Request the required permissions through the Simple UI permission flow before querying telephony APIs.
+  - 권한이 없으면 안전한 기본값/빈 리스트를 반환하며 로그에 경고가 남습니다. Telephony API 호출 전에 Simple UI 권한 요청 흐름으로 필요한 권한을 먼저 확보하세요.
 - **Real-time Callback (Basic):** `registerCallback(handler, onSignalStrength, onServiceState, onNetworkState)` - Callback + StateFlow updates (콜백 + StateFlow 자동 업데이트)
 - **Unregister Callback:** `unregisterCallback()` - Unregister registered callback (등록된 콜백 해제)
 - **Auto API Compatibility:** Automatic branching between TelephonyCallback (API 31+) vs PhoneStateListener (TelephonyCallback (API 31+) vs PhoneStateListener 자동 분기)

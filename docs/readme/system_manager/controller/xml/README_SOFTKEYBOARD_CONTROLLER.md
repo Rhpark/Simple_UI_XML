@@ -2,8 +2,8 @@
 > **SoftKeyboardController vs 순수 Android - 비교 가이드**
 
 ## Module Information (모듈 정보)
-- **Module**: `simple_xml` (UI-dependent module / UI 의존 모듈)
-- **Package**: `kr.open.library.simple_ui.xml.system_manager.controller.softkeyboard`
+- **Module**: `simple_system_manager` (system manager 전용 모듈 / system_manager 전용 모듈)
+- **Package**: `kr.open.library.simple_ui.system_manager.xml.controller.softkeyboard`
 - **Entry API**: `Context.getSoftKeyboardController()`
 
 <br></br>
@@ -19,7 +19,7 @@ This guide reflects the current implementation contract.
 
 ## Quick Start (빠른 시작)
 ```kotlin
-import kr.open.library.simple_ui.xml.system_manager.extensions.getSoftKeyboardController
+import kr.open.library.simple_ui.system_manager.xml.extensions.getSoftKeyboardController
 
 val controller = context.getSoftKeyboardController()
 
@@ -48,7 +48,7 @@ val hideScheduled = controller.hideDelay(editText, delay = 300L)
 ## Actual Visibility APIs (실제 가시성 API)
 ```kotlin
 import kotlinx.coroutines.launch
-import kr.open.library.simple_ui.xml.system_manager.controller.softkeyboard.SoftKeyboardActionResult
+import kr.open.library.simple_ui.system_manager.xml.controller.softkeyboard.SoftKeyboardActionResult
 
 lifecycleScope.launch {
     when (val result = controller.showAwait(editText, timeoutMillis = 700L)) {
@@ -89,7 +89,7 @@ val hideDeferred = controller.hideAwaitAsync(
 
 ## Resize Policy (Resize 정책)
 ```kotlin
-import kr.open.library.simple_ui.xml.system_manager.controller.softkeyboard.SoftKeyboardResizePolicy
+import kr.open.library.simple_ui.system_manager.xml.controller.softkeyboard.SoftKeyboardResizePolicy
 
 // Safe default
 controller.setAdjustResize(window)
@@ -133,7 +133,7 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
 
 ## Test Command & Limitations (테스트 명령/한계)
 ```bash
-./gradlew :simple_xml:testRobolectric --tests "*SoftKeyboardControllerRobolectricTest"
+./gradlew :simple_system_manager:testRobolectric --tests "*SoftKeyboardControllerRobolectricTest"
 ```
 
 - Robolectric은 IME 동작을 100% 재현하지 못하므로, 실제 단말 확인이 필요한 시나리오가 존재합니다.
@@ -147,3 +147,4 @@ if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
 - Extensions index: `docs/readme/system_manager/README_SYSTEM_MANAGER_EXTENSIONS.md`
 
 <br></br>
+

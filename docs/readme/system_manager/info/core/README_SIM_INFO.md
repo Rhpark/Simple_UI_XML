@@ -2,8 +2,8 @@
 > **SIM Info vs 순수 Android - 비교 가이드**
 
 ## Module Information (모듈 정보)
-- **Module**: `simple_core` (UI-independent core module / UI 비의존 코어 모듈)
-- **Package**: `kr.open.library.simple_ui.core.system_manager.info.network.sim`
+- **Module**: `simple_system_manager` (system manager module / system manager 전용 모듈)
+- **Package**: `kr.open.library.simple_ui.system_manager.core.info.network.sim`
 
 <br></br>
 
@@ -17,8 +17,8 @@ Provides SIM information helpers and multi-SIM utilities with safe permission fa
 - **Basic Info:** `isDualSim()`, `isSingleSim()`, `isMultiSim()` - Check SIM type (SIM 타입 확인)
 - **Active SIM:** `getActiveSimCount()`, `getActiveSimSlotIndexList()` - Active SIM information (활성화된 SIM 정보)
 - **Read Permission:** `isCanReadSimInfo()` - Check if SIM info can be read (permission and initialization status) (SIM 정보 읽기 가능 여부 확인 (권한 및 초기화 상태))
-- **Permission fallback:** Returns empty list/null and logs a warning when permission is missing; call `refreshPermissions()` after grant.
-  - 권한이 없으면 빈 리스트/null을 반환하고 로그에 경고가 남습니다. 권한 허용 후 `refreshPermissions()` 호출을 권장합니다.
+- **Permission fallback:** Returns empty list/null and logs a warning when permission is missing. Request permissions through the Simple UI permission flow before querying SIM APIs.
+  - 권한이 없으면 빈 리스트/null을 반환하고 로그에 경고가 남습니다. SIM API 호출 전에 Simple UI 권한 요청 흐름으로 필요한 권한을 먼저 확보하세요.
 - **Subscription Info:** `getActiveSubscriptionInfoList()` - Query all subscription info (모든 구독 정보 조회)
 - **Subscription ID:**
   - `getSubIdFromDefaultUSim()` - Query default SIM subscription ID (기본 SIM의 구독 ID 조회)

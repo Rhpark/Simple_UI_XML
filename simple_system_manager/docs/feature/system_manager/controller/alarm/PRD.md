@@ -1,10 +1,10 @@
-# Alarm Controller PRD
+﻿# Alarm Controller PRD
 
 ## 문서 정보
 - 문서명: Alarm Controller PRD
 - 작성일: 2026-01-30
-- 대상 모듈: simple_core
-- 패키지: kr.open.library.simple_ui.core.system_manager.controller.alarm
+- 대상 모듈: simple_system_manager
+- 패키지: kr.open.library.simple_ui.system_manager.core.controller.alarm
 - 상태: 현행(as-is)
 
 ## 배경/문제 정의
@@ -81,11 +81,12 @@
 - PendingIntent 충돌 없이 여러 알람을 안정적으로 등록할 수 있다.
 
 ## 관련 파일
-- `simple_system_manager/src/main/java/kr/open/library/simple_ui/core/system_manager/controller/alarm/AlarmController.kt`
-- `simple_system_manager/src/main/java/kr/open/library/simple_ui/core/system_manager/controller/alarm/AlarmConstants.kt`
-- `simple_system_manager/src/main/java/kr/open/library/simple_ui/core/system_manager/controller/alarm/receiver/BaseAlarmReceiver.kt`
-- `simple_system_manager/src/main/java/kr/open/library/simple_ui/core/system_manager/controller/alarm/vo/AlarmVO.kt` (AlarmVO, AlarmScheduleVO, AlarmDateVO, AlarmNotificationVO, AlarmIdleMode, RegisterType 포함)
+- `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/core/controller/alarm/AlarmController.kt`
+- `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/core/controller/alarm/AlarmConstants.kt`
+- `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/core/controller/alarm/receiver/BaseAlarmReceiver.kt`
+- `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO.kt` (AlarmVO, AlarmScheduleVO, AlarmDateVO, AlarmNotificationVO, AlarmIdleMode, RegisterType 포함)
 
 ## 테스트
-- `simple_system_manager/src/test/java/kr/open/library/simple_ui/core/unit/system_manager/controller/alarm/vo/AlarmVoUnitTest.kt`
-- `simple_system_manager/src/test/java/kr/open/library/simple_ui/core/robolectric/system_manager/controller/alarm/AlarmControllerRobolectricTest.kt`
+- `simple_system_manager/src/test/java/kr/open/library/simple_ui/system_manager/unit/core/controller/alarm/vo/AlarmVoUnitTest.kt`
+- `simple_system_manager/src/test/java/kr/open/library/simple_ui/system_manager/robolectric/core/controller/alarm/AlarmControllerRobolectricTest.kt`
+

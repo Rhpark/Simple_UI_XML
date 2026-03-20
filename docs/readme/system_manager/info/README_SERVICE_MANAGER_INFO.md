@@ -1,9 +1,9 @@
-﻿# System Service Manager Info vs Plain Android - Complete Comparison Guide
-> **System Service Manager Info vs 순수 Android - 비교 가이드**
+﻿# System Manager Info vs Plain Android - Complete Comparison Guide
+> **System Manager Info vs 순수 Android - 비교 가이드**
 
 ## Module Information (모듈 정보)
 - **Module**: `simple_system_manager`
-- **Package**: `kr.open.library.simple_ui.core.system_manager.info.*`, `kr.open.library.simple_ui.xml.system_manager.info.*`
+- **Package**: `kr.open.library.simple_ui.system_manager.core.info.*`, `kr.open.library.simple_ui.system_manager.xml.*`
 
 <br></br>
 
@@ -61,3 +61,6 @@ Provides Flow/Callback-based system information collection helpers owned by `sim
 ## Related Docs (관련 문서)
 - Info docs: `docs/readme/system_manager/info/`
 - Feature docs: `simple_system_manager/docs/feature/system_manager/info/`
+
+
+

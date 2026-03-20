@@ -1,7 +1,7 @@
-# 알림 컨트롤러(SPEC)
+﻿# 알림 컨트롤러(SPEC)
 
 ## 문서 목적
-`kr.open.library.simple_ui.core.system_manager.controller.notification` 패키지의 **API 동작과 세부 스펙**을 정의합니다.  
+`kr.open.library.simple_ui.system_manager.core.controller.notification` 패키지의 **API 동작과 세부 스펙**을 정의합니다.  
 현행 코드 기준으로 작성합니다.
 
 ## 패키지 구성
@@ -171,4 +171,5 @@ enum class SimpleNotificationType { ACTIVITY, SERVICE, BROADCAST }
 - `createChannel()`로 채널을 변경해도 **이후 생성되는 알림에만 적용**됨
 
 ## 테스트 파일
-- `simple_system_manager/src/test/java/kr/open/library/simple_ui/core/robolectric/system_manager/controller/notification/SimpleNotificationControllerRobolectricTest.kt`
+- `simple_system_manager/src/test/java/kr/open/library/simple_ui/system_manager/robolectric/core/controller/notification/SimpleNotificationControllerRobolectricTest.kt`
+

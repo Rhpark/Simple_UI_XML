@@ -26,7 +26,7 @@
 | Show thread ID                                |    △(manual handling)    |                              ✅                               |
 | Show JSON print                               |   △(manual formatting)   |                              ✅                               |
 | File Save archive                             | △(custom implementation) |                              ✅                               |
-| Setter-based configuration/filter |            ❌             |                              ✅                               |
+| Setter-based configuration + caller-skip helper |            ❌             |                              ✅                               |
 
 
 **Key point:** Logx automatically attaches the metadata you care about, dramatically accelerating debugging.
@@ -800,7 +800,7 @@ Only when you use the **file saving feature** might additional permissions be re
 class MainActivity : BaseDataBindingActivity<ActivityMainBinding>(R.layout.activity_main) {
     override fun onCreate(binding: ActivityMainBinding, savedInstanceState: Bundle?) {
         // PUBLIC_EXTERNAL 사용 시 권한 확인 (Android 9 이하만)
-        checkSdkVersion(Build.VERSION_CODES.P,
+        checkSdkVersion(Build.VERSION_CODES.Q,
             positiveWork = {
                 // Android 10+ 권한 불필요
                 setupLogxWithPublicStorage()
@@ -838,4 +838,3 @@ class MainActivity : BaseDataBindingActivity<ActivityMainBinding>(R.layout.activ
 
 
 .
-

@@ -2,8 +2,8 @@
 > **Display Info vs 순수 Android - 비교 가이드**
 
 ## Module Information (모듈 정보)
-- **Module**: `simple_xml` (UI-dependent module / UI 의존 모듈)
-- **Package**: `kr.open.library.simple_ui.xml.system_manager.info.display`
+- **Module**: `simple_system_manager` (system manager module / system manager 전용 모듈)
+- **Package**: `kr.open.library.simple_ui.system_manager.xml.display`
 
 <br></br>
 

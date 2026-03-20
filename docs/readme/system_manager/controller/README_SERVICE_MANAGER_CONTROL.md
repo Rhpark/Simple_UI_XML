@@ -1,5 +1,5 @@
-﻿# System Service Manager Controller vs Plain Android - Complete Comparison Guide
-> **System Service Manager Controller vs 순수 Android - 비교 가이드**
+﻿# System Manager Controller vs Plain Android - Complete Comparison Guide
+> **System Manager Controller vs 순수 Android - 비교 가이드**
 
 `simple_system_manager`는 기존 `simple_core`, `simple_xml`에 흩어져 있던 system manager controller와 확장 진입점을 한 모듈로 정리합니다.  
 이 문서는 빠른 개요용 요약 문서이며, 상세 동작은 하위 README와 feature 문서를 참조합니다.
@@ -56,3 +56,5 @@
 - Core-origin docs: `docs/readme/system_manager/controller/core/`
 - XML-origin docs: `docs/readme/system_manager/controller/xml/`
 - Feature docs: `simple_system_manager/docs/feature/system_manager/controller/`
+
+

@@ -1,12 +1,12 @@
-# Vibrator Controller SPEC
+﻿# Vibrator Controller SPEC
 
 ## 문서 정보
 
 - 문서명: Vibrator Controller SPEC
 - 작성일: 2026-01-30
 - 수정일: 2026-01-31
-- 대상 모듈: simple_core
-- 패키지: kr.open.library.simple_ui.core.system_manager.controller.vibrator
+- 대상 모듈: simple_system_manager
+- 패키지: kr.open.library.simple_ui.system_manager.core.controller.vibrator
 - 수준: 구현 재현 가능 수준(Implementation-ready)
 - 상태: 현행(as-is)
 
@@ -14,7 +14,7 @@
 
 - 기본 규칙/환경은 루트 AGENTS.md에서 연결되는 .claude/skills/CodeReview/rules/*.md를 따른다.
 - 상세 요구와 범위는 `PRD.md`를 따른다.
-- 실제 구현은 `kr.open.library.simple_ui.core.system_manager.controller.vibrator` 패키지에서 완료되어 있다.
+- 실제 구현은 `kr.open.library.simple_ui.system_manager.core.controller.vibrator` 패키지에서 완료되어 있다.
 
 ## 모듈 구조 및 책임
 
@@ -133,3 +133,4 @@ public open class VibratorController(
   - `hasVibrator()` SDK 분기 및 권한 무관 동작 검증
   - `createPredefined()` pre-Q 안전 반환 검증
   - Robolectric 환경에서 권한 보호 수준을 위험 권한으로 가정하여 권한 미부여 시나리오를 검증
+

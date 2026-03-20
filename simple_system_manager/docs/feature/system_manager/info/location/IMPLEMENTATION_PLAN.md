@@ -1,11 +1,11 @@
-# Location Info Implementation Plan (As-Is)
+﻿# Location Info Implementation Plan (As-Is)
 
 ## 문서 정보
 - 문서명: Location Info Implementation Plan
 - 작성일: 2026-02-06
 - 수정일: 2026-02-06
-- 대상 모듈: simple_core
-- 패키지: kr.open.library.simple_ui.core.system_manager.info.location
+- 대상 모듈: simple_system_manager
+- 패키지: kr.open.library.simple_ui.system_manager.core.info.location
 - 상태: 현행(as-is)
 
 ## 목표
@@ -131,3 +131,4 @@
 - 저전력 모드(`-1`)는 폴링만 비활성화하며 listener는 유지됨
 - `sfUpdate`는 이벤트 스트림이므로 스냅샷/전역 순서를 가정하지 말 것
 - `CoroutineScope`에 Job이 없으면 자동 정리가 보장되지 않으므로 수동 해제 필요
+

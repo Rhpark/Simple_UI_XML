@@ -10,11 +10,11 @@ This library helps you make easy and more simple code for Android developers
 
 ## Project Structure
 
-**libraries** 
+**libraries**
 - **simple_core**: UI-independent core functionality (usable with Compose or XML)
 - **simple_xml**: XML UI-specific components and extensions (depends on Core)
-- **simple_system_manager**: Android system control and device information helpers (depends on Core) (depends on Core)
-**testing samples**: app module
+- **simple_system_manager**: Android system control and device information helpers (depends on Core)
+- **testing samples**: `app` module
 
 <br>
 </br>
@@ -67,23 +67,23 @@ android {
 dependencies {
     //..
     // Version 0.3.0+ (Modular Structure)
-    implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_Core:0.4.2")             // Core functionality only
-    implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_XML:0.4.2")              // XML UI components only (depends on Core)
-    implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_System_Manager:0.4.2")   // System Manager only (depends on Core)
+    implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_Core:0.4.7")             // Core functionality only
+    implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_XML:0.4.7")              // XML UI components only (depends on Core)
+    implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_System_Manager:0.4.7")   // System Manager only (depends on Core)
 
     // Examples
-    // implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_XML:0.4.2")
+    // implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_XML:0.4.7")
     // -> simple_xml 기능만 사용하는 경우
     //
-    // implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_System_Manager:0.4.2")
+    // implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_System_Manager:0.4.7")
     // -> system_manager 기능만 사용하는 경우
     //
-    // implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_XML:0.4.2")
-    // implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_System_Manager:0.4.2")
+    // implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_XML:0.4.7")
+    // implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_System_Manager:0.4.7")
     // -> XML UI와 system_manager 기능을 함께 사용하는 경우
     //
-    // implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_Core:0.4.2")
-    // implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_XML:0.4.2")
+    // implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_Core:0.4.7")
+    // implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_XML:0.4.7")
     // -> 앱 코드에서 simple_core API를 직접 함께 사용하는 경우
     //..
 }
@@ -109,8 +109,8 @@ dependencies {
 - **[SystemBar Controller Guide](docs/readme/system_manager/controller/xml/README_SYSTEMBAR_CONTROLLER.md)** - 상태 모델, 가시성/색상 정책, `@MainThread` 계약
 - **[SoftKeyboard Controller Guide](docs/readme/system_manager/controller/xml/README_SOFTKEYBOARD_CONTROLLER.md)** - IME 제어/반환 계약
 - **[FloatingView Controller Guide](docs/readme/system_manager/controller/xml/README_FLOATING_VIEW_CONTROLLER.md)** - 플로팅 뷰 제어
-- **[Service Manager Control Index](docs/readme/system_manager/controller/README_SERVICE_MANAGER_CONTROL.md)** - Controller 문서 인덱스
-- **[Service Manager Info Index](docs/readme/system_manager/info/README_SERVICE_MANAGER_INFO.md)** - Info 문서 인덱스
+- **[System Manager Control Index](docs/readme/system_manager/controller/README_SERVICE_MANAGER_CONTROL.md)** - Controller 문서 인덱스
+- **[System Manager Info Index](docs/readme/system_manager/info/README_SERVICE_MANAGER_INFO.md)** - Info 문서 인덱스
 - **[Display Info Guide](docs/readme/system_manager/info/xml/README_DISPLAY_INFO.md)** - 디스플레이 정보
 - **[Location Info Guide](docs/readme/system_manager/info/core/README_LOCATION_INFO.md)** - 위치 정보
 - **[Battery Info Guide](docs/readme/system_manager/info/core/README_BATTERY_INFO.md)** - 배터리 정보
@@ -143,5 +143,7 @@ dependencies {
 </br>
 
 .
+
+
 
 

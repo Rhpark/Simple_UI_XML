@@ -1,12 +1,12 @@
-# Vibrator Controller Implementation Plan (As-Is)
+﻿# Vibrator Controller Implementation Plan (As-Is)
 
 ## 문서 정보
 
 - 문서명: Vibrator Controller Implementation Plan
 - 작성일: 2026-01-30
 - 수정일: 2026-01-31
-- 대상 모듈: simple_core
-- 패키지: kr.open.library.simple_ui.core.system_manager.controller.vibrator
+- 대상 모듈: simple_system_manager
+- 패키지: kr.open.library.simple_ui.system_manager.core.controller.vibrator
 - 상태: 현행(as-is)
 
 ## 목표
@@ -99,9 +99,10 @@
 
 ## 관련 파일
 
-- `simple_system_manager/src/main/java/kr/open/library/simple_ui/core/system_manager/controller/vibrator/VibratorController.kt`
-- `simple_system_manager/src/main/java/kr/open/library/simple_ui/core/system_manager/base/BaseSystemService.kt`
-- `simple_system_manager/src/main/java/kr/open/library/simple_ui/core/system_manager/extensions/SystemServiceExtensions.kt`
-- `simple_system_manager/src/test/java/kr/open/library/simple_ui/core/robolectric/system_manager/controller/vibrator/VibratorControllerRobolectricTest.kt`
+- `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/core/controller/vibrator/VibratorController.kt`
+- `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/core/base/BaseSystemService.kt`
+- `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/core/extensions/SystemServiceExtensions.kt`
+- `simple_system_manager/src/test/java/kr/open/library/simple_ui/system_manager/robolectric/core/controller/vibrator/VibratorControllerRobolectricTest.kt`
 - `app/src/main/java/kr/open/library/simpleui_xml/system_service_manager/controller/vibrator/VibratorControllerActivity.kt` (샘플 앱)
 - `app/src/main/res/layout/activity_vibrator_controller.xml` (샘플 레이아웃)
+

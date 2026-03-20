@@ -1,17 +1,17 @@
-# Alarm Controller SPEC
+﻿# Alarm Controller SPEC
 
 ## 문서 정보
 - 문서명: Alarm Controller SPEC
 - 작성일: 2026-01-30
-- 대상 모듈: simple_core
-- 패키지: kr.open.library.simple_ui.core.system_manager.controller.alarm
+- 대상 모듈: simple_system_manager
+- 패키지: kr.open.library.simple_ui.system_manager.core.controller.alarm
 - 수준: 구현 재현 가능 수준(Implementation-ready)
 - 상태: 현행(as-is)
 
 ## 전제/참조
 - 기본 규칙/환경은 루트 AGENTS.md에서 연결되는 .claude/skills/CodeReview/rules/*.md를 따른다.
 - 상세 요구와 범위는 `PRD.md`를 따른다.
-- 실제 구현은 `kr.open.library.simple_ui.core.system_manager.controller.alarm` 패키지 및 하위 패키지에서 완료되어 있다.
+- 실제 구현은 `kr.open.library.simple_ui.system_manager.core.controller.alarm` 패키지 및 하위 패키지에서 완료되어 있다.
 
 ## 모듈 구조 및 책임
 - `controller/alarm`
@@ -278,3 +278,4 @@ abstract class BaseAlarmReceiver : BroadcastReceiver() {
   - `AlarmVoUnitTest`: VO 유효성/팩토리/기본값 검증
 - Robolectric 테스트
   - `AlarmControllerRobolectricTest`: 알람 등록/해제 동작 검증
+

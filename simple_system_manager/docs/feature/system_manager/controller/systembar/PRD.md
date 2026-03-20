@@ -1,18 +1,18 @@
-# SystemBar Controller PRD
+﻿# SystemBar Controller PRD
 
 ## 문서 정보
 - 문서명: SystemBar Controller PRD
 - 작성일: 2026-02-09
 - 수정일: 2026-02-10
-- 대상 모듈: simple_xml
-- 패키지: kr.open.library.simple_ui.xml.system_manager.controller.systembar
+- 대상 모듈: simple_system_manager
+- 패키지: kr.open.library.simple_ui.system_manager.xml.controller.systembar
 - 상태: 현행(as-is)
 - 기준 코드:
-  - `simple_system_manager/src/main/java/kr/open/library/simple_ui/xml/system_manager/controller/systembar/SystemBarController.kt`
-  - `simple_system_manager/src/main/java/kr/open/library/simple_ui/xml/system_manager/controller/systembar/model/SystemBarState.kt`
-  - `simple_system_manager/src/main/java/kr/open/library/simple_ui/xml/system_manager/controller/systembar/internal/helper/StatusBarHelper.kt`
-  - `simple_system_manager/src/main/java/kr/open/library/simple_ui/xml/system_manager/controller/systembar/internal/helper/NavigationBarHelper.kt`
-  - `simple_system_manager/src/main/java/kr/open/library/simple_ui/xml/system_manager/extensions/SystemServiceExtensionsXml.kt`
+  - `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/xml/controller/systembar/SystemBarController.kt`
+  - `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/xml/controller/systembar/model/SystemBarState.kt`
+  - `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/xml/controller/systembar/internal/helper/StatusBarHelper.kt`
+  - `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/xml/controller/systembar/internal/helper/NavigationBarHelper.kt`
+  - `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/xml/extensions/SystemServiceExtensionsXml.kt`
 
 ## 배경/문제 정의
 - 시스템 바 제어는 API 레벨, 내비게이션 모드(버튼/제스처), 화면 회전, 멀티윈도우 상태에 따라 분기 비용이 큽니다.
@@ -120,7 +120,7 @@
 - 기능 정합성
   - 상태 API와 legacy API 매핑 결과가 코드 계약과 일치한다.
 - 회귀 안정성
-  - `:simple_xml:testDebugUnitTest` 통과
+  - `:simple_system_manager:testDebugUnitTest` 통과
   - systembar 관련 Robolectric 테스트 통과
 
 ## 수용 기준 (Acceptance Criteria)
@@ -144,15 +144,16 @@
 
 ## 관련 파일
 - 코드
-  - `simple_system_manager/src/main/java/kr/open/library/simple_ui/xml/system_manager/controller/systembar/SystemBarController.kt`
-  - `simple_system_manager/src/main/java/kr/open/library/simple_ui/xml/system_manager/controller/systembar/model/SystemBarState.kt`
-  - `simple_system_manager/src/main/java/kr/open/library/simple_ui/xml/system_manager/controller/systembar/internal/helper/StatusBarHelper.kt`
-  - `simple_system_manager/src/main/java/kr/open/library/simple_ui/xml/system_manager/controller/systembar/internal/helper/NavigationBarHelper.kt`
-  - `simple_system_manager/src/main/java/kr/open/library/simple_ui/xml/system_manager/extensions/SystemServiceExtensionsXml.kt`
+  - `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/xml/controller/systembar/SystemBarController.kt`
+  - `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/xml/controller/systembar/model/SystemBarState.kt`
+  - `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/xml/controller/systembar/internal/helper/StatusBarHelper.kt`
+  - `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/xml/controller/systembar/internal/helper/NavigationBarHelper.kt`
+  - `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/xml/extensions/SystemServiceExtensionsXml.kt`
 - 문서
   - `simple_system_manager/docs/feature/system_manager/controller/systembar/SPEC.md`
   - `simple_system_manager/docs/feature/system_manager/controller/systembar/IMPLEMENTATION_PLAN.md`
   - `docs/readme/system_manager/controller/xml/README_SYSTEMBAR_CONTROLLER.md`
 
 ## 테스트
-- `simple_system_manager/src/test/java/kr/open/library/simple_ui/xml/robolectric/system_manager/controller/systembar/internal/helper/SystemBarHelperStateRobolectricTest.kt`
+- `simple_system_manager/src/test/java/kr/open/library/simple_ui/system_manager/robolectric/xml/controller/systembar/internal/helper/SystemBarHelperStateRobolectricTest.kt`
+

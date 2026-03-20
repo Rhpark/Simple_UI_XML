@@ -1,13 +1,13 @@
-# Wifi Refactor Plan (Phase 1)
+﻿# Wifi Refactor Plan (Phase 1)
 
 ## 문서 정보
 - 문서명: Wifi Refactor Plan (Phase 1)
 - 작성일: 2026-03-09
 - 수정일: 2026-03-09
-- 대상 모듈: simple_core
-- 현재 패키지: `kr.open.library.simple_ui.core.system_manager.controller.wifi`
-- 1차 목표 패키지: `kr.open.library.simple_ui.core.system_manager.info.wifi`
-- 임시 작업 패키지: `kr.open.library.simple_ui.core.system_manager.controller.dump.wifiController`
+- 대상 모듈: simple_system_manager
+- 현재 패키지: `kr.open.library.simple_ui.system_manager.core.controller.wifi`
+- 1차 목표 패키지: `kr.open.library.simple_ui.system_manager.core.info.wifi`
+- 임시 작업 패키지: `kr.open.library.simple_ui.system_manager.core.controller.dump.wifiController`
 - 상태: 계획(draft)
 
 ## 문서 목적
@@ -17,7 +17,7 @@
 
 ## 개발 환경 기준
 - 기준 문서: `docs/rules/project/DEV_ENV_RULE.md`
-- 모듈 실제 값: `simple_core/build.gradle.kts`
+- 모듈 실제 값: `simple_system_manager/build.gradle.kts`
 - 확인 결과
   - `compileSdk = 35`
   - `minSdk = 28`
@@ -50,7 +50,7 @@
 
 ### 포함
 - 신규 클래스 추가
-  - `kr.open.library.simple_ui.core.system_manager.info.wifi.WifiStatusInfo`
+  - `kr.open.library.simple_ui.system_manager.core.info.wifi.WifiStatusInfo`
 - 신규 확장 함수 추가
   - `Context.getWifiStatusInfo()`
 - 읽기/조회 메서드 분리 대상
@@ -95,7 +95,7 @@
 
 ### Step 1. dump 패키지에서 설계 검증
 - 현재 임시 파일
-  - `simple_system_manager/src/main/java/kr/open/library/simple_ui/core/system_manager/controller/dump/wifiController/DumpWifiController.kt`
+  - `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/core/controller/dump/wifiController/DumpWifiController.kt`
 - 이 공간에서 `WifiStatusInfo` 초안과 내부 위임 구조를 먼저 검토합니다.
 - `dump` 패키지는 임시 검증용이며 최종 공개 API 경로로 사용하지 않습니다.
 
@@ -186,8 +186,8 @@
 
 ## 검증 계획
 - 컴파일
-  - `.\gradlew.bat :simple_core:compileDebugKotlin`
-  - `.\gradlew.bat :simple_core:compileDebugUnitTestKotlin`
+  - `.\gradlew.bat :simple_system_manager:compileDebugKotlin`
+  - `.\gradlew.bat :simple_system_manager:compileDebugUnitTestKotlin`
 - 테스트
   - `WifiStatusInfo` 관련 Robolectric 테스트 선택 실행
   - 기존 `WifiController` 관련 테스트 중 조회 흐름 영향 범위 선택 실행
@@ -196,17 +196,20 @@
   - 한글 깨짐 문자 여부 확인
 
 ## 관련 파일
-- `simple_system_manager/src/main/java/kr/open/library/simple_ui/core/system_manager/controller/wifi/WifiController.kt`
-- `simple_system_manager/src/main/java/kr/open/library/simple_ui/core/system_manager/controller/wifi/WifiNetworkDetails.kt`
-- `simple_system_manager/src/main/java/kr/open/library/simple_ui/core/system_manager/controller/wifi/internal/WifiConnectionInfoProvider.kt`
-- `simple_system_manager/src/main/java/kr/open/library/simple_ui/core/system_manager/controller/wifi/internal/WifiCapabilityChecker.kt`
-- `simple_system_manager/src/main/java/kr/open/library/simple_ui/core/system_manager/controller/wifi/internal/WifiOperationGuard.kt`
-- `simple_system_manager/src/main/java/kr/open/library/simple_ui/core/system_manager/info/network/connectivity/NetworkConnectivityInfo.kt`
-- `simple_system_manager/src/main/java/kr/open/library/simple_ui/core/system_manager/extensions/SystemServiceExtensions.kt`
-- `simple_system_manager/src/main/java/kr/open/library/simple_ui/core/system_manager/controller/dump/wifiController/DumpWifiController.kt`
+- `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/core/controller/wifi/WifiController.kt`
+- `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/core/controller/wifi/WifiNetworkDetails.kt`
+- `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/core/controller/wifi/internal/WifiConnectionInfoProvider.kt`
+- `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/core/controller/wifi/internal/WifiCapabilityChecker.kt`
+- `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/core/controller/wifi/internal/WifiOperationGuard.kt`
+- `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/core/info/network/connectivity/NetworkConnectivityInfo.kt`
+- `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/core/extensions/SystemServiceExtensions.kt`
+- `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/core/controller/dump/wifiController/DumpWifiController.kt`
 - `docs/readme/system_manager/controller/core/README_WIFI_CONTROLLER.md`
 
 ## 메모
 - 본 문서는 1차 리팩토링 계획서입니다.
 - `WifiScanner`, `WifiLegacyController`, `WifiAccessManager` 같은 후속 구조 분리는 본 문서 범위에 포함하지 않습니다.
 - 후속 단계에서 최종 상위 facade 또는 controller 구조는 다시 결정합니다.
+
+
+

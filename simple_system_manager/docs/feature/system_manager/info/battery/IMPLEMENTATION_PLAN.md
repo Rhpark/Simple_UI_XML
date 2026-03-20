@@ -4,8 +4,8 @@
 - 문서명: Battery Info Implementation Plan
 - 작성일: 2026-02-01
 - 수정일: 2026-02-01
-- 대상 모듈: simple_core
-- 패키지: kr.open.library.simple_ui.core.system_manager.info.battery
+- 대상 모듈: simple_system_manager
+- 패키지: kr.open.library.simple_ui.system_manager.core.info.battery
 - 상태: 현행(as-is)
 
 ## 목표
@@ -112,3 +112,4 @@
 - PowerProfile 실패 시 총 용량은 오류 값 반환 가능
 - `CoroutineScope`에 Job이 없으면 자동 정리가 보장되지 않음 — 반드시 `unRegister()`를 직접 호출할 것
 - Job이 있는 스코프(`lifecycleScope`/`viewModelScope`) 사용을 강력 권장
+

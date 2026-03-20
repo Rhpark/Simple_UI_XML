@@ -47,8 +47,8 @@
 ### RecyclerView
 | Category                       |              Plain Android               |              Simple UI               |
 |:-------------------------------|:----------------------------------------:|:------------------------------------:|
-| Scroll direction detection     | Implement `OnScrollListener` (50+ lines) |   ✅ Flow-based automatic detection   |
-| Edge reach detection           |   Manually call `canScrollVertically`    |   ✅ Flow-based automatic detection   |
+| Scroll direction detection     | Implement `OnScrollListener` (50+ lines) | ✅ `RecyclerScrollStateView`-based Flow detection |
+| Edge reach detection           |   Manually call `canScrollVertically`    | ✅ `RecyclerScrollStateView`-based Flow detection |
 | Advanced RecyclerView features |        Build everything yourself         | ✅ `RecyclerScrollStateView` provided |
 | Developer experience           |            Heavy boilerplate             |     ✅ Streamlined library calls      |
 
@@ -258,7 +258,7 @@ private val simpleAdapter = SimpleBindingRcvAdapter<SampleItem, ItemRcvTextviewB
     }
 }
 ```
-**Result:** ViewHolders and DiffCallbacks are handled automatically; just write your binding logic!
+**Result:** ViewHolder boilerplate is reduced; just pass DiffUtil and write your binding logic!
 > **결과:** 별도 보일러플레이트 없이 DiffUtil.ItemCallback을 어댑터에 전달하고, 클릭은 `setOnItemClickListener`로 안전하게 연결합니다.
 </details>
 

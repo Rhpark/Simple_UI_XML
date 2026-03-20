@@ -3,7 +3,7 @@
 
 ## Module Information (모듈 정보)
 - **Module**: `simple_system_manager` (system manager 전용 모듈)
-- **Package**: `kr.open.library.simple_ui.xml.system_manager.extensions`
+- **Package**: `kr.open.library.simple_ui.system_manager.xml.extensions`
 
 <br></br>
 

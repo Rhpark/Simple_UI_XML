@@ -241,6 +241,10 @@ class PermissionsActivityVm : BaseViewModelEvent<PermissionsActivityVmEvent>() {
     fun onClickPermissionLocation() = sendEventVm(PermissionsActivityVmEvent.OnClickPermissionsLocation)
 
     fun onClickPermissionMulti() = sendEventVm(PermissionsActivityVmEvent.OnClickPermissionsMulti)
+
+    fun onClickPermissionSpecialOnly() = sendEventVm(PermissionsActivityVmEvent.OnClickPermissionsSpecialOnly)
+
+    fun onClickPermissionSpecialMulti() = sendEventVm(PermissionsActivityVmEvent.OnClickPermissionsSpecialMulti)
 }
 
 class PermissionsActivity :
@@ -250,8 +254,31 @@ class PermissionsActivity :
         lifecycleScope.launch {
             vm.eventVmFlow.collect { event ->
                 when (event) {
-                    is PermissionsActivityVmEvent.OnClickPermissionsCamera -> requestCamera()
-                    is PermissionsActivityVmEvent.OnClickPermissionsLocation -> requestLocation()
+                    is PermissionsActivityVmEvent.OnClickPermissionsCamera -> {
+                        permissions(listOf(Manifest.permission.CAMERA))
+                    }
+                    is PermissionsActivityVmEvent.OnClickPermissionsLocation -> {
+                        permissions(listOf(Manifest.permission.ACCESS_FINE_LOCATION))
+                    }
+                    is PermissionsActivityVmEvent.OnClickPermissionsMulti -> {
+                        permissions(
+                            listOf(
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                Manifest.permission.SYSTEM_ALERT_WINDOW,
+                            ),
+                        )
+                    }
+                    is PermissionsActivityVmEvent.OnClickPermissionsSpecialOnly -> {
+                        permissions(listOf(Manifest.permission.SYSTEM_ALERT_WINDOW))
+                    }
+                    is PermissionsActivityVmEvent.OnClickPermissionsSpecialMulti -> {
+                        permissions(
+                            listOf(
+                                Manifest.permission.SYSTEM_ALERT_WINDOW,
+                                Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
+                            ),
+                        )
+                    }
                 }
             }
         }

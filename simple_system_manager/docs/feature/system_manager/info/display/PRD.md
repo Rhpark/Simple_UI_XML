@@ -1,11 +1,11 @@
-# Display Info PRD
+﻿# Display Info PRD
 
 ## 문서 정보
 - 문서명: Display Info PRD
 - 작성일: 2026-02-08
 - 수정일: 2026-02-08
-- 대상 모듈: simple_xml
-- 패키지: kr.open.library.simple_ui.xml.system_manager.info.display
+- 대상 모듈: simple_system_manager
+- 패키지: kr.open.library.simple_ui.system_manager.xml.display
 - 상태: 현행(as-is)
 
 ## 배경/문제 정의
@@ -96,18 +96,17 @@
 - README와 PRD/SPEC/PLAN의 용어가 정합하게 유지된다.
 
 ## 관련 파일
-- `simple_system_manager/src/main/java/kr/open/library/simple_ui/xml/system_manager/info/display/DisplayInfo.kt`
-- `simple_system_manager/src/main/java/kr/open/library/simple_ui/xml/system_manager/info/display/DisplayInfoSize.kt`
-- `simple_system_manager/src/main/java/kr/open/library/simple_ui/xml/system_manager/info/display/DisplayInfoBarInsets.kt`
-- `simple_system_manager/src/main/java/kr/open/library/simple_ui/xml/system_manager/extensions/SystemServiceExtensionsXml.kt`
-- `simple_system_manager/src/main/java/kr/open/library/simple_ui/xml/system_manager/extensions/display/DisplayUnitExtensions.kt`
+- `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/xml/display/DisplayInfo.kt`
+- `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/xml/display/DisplayInfoSize.kt`
+- `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/xml/display/DisplayInfoBarInsets.kt`
+- `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/xml/extensions/SystemServiceExtensionsXml.kt`
 - `docs/readme/system_manager/info/xml/README_DISPLAY_INFO.md`
 
 ## 테스트
 - Unit
-  - `simple_system_manager/src/test/java/kr/open/library/simple_ui/xml/unit/system_manager/info/display/DisplayInfoSizeTest.kt` (12)
-  - `simple_system_manager/src/test/java/kr/open/library/simple_ui/xml/unit/system_manager/info/display/DisplayInfoBarInsetsTest.kt` (26)
+  - `simple_system_manager/src/test/java/kr/open/library/simple_ui/system_manager/unit/xml/info/display/DisplayInfoSizeTest.kt` (12)
+  - `simple_system_manager/src/test/java/kr/open/library/simple_ui/system_manager/unit/xml/info/display/DisplayInfoBarInsetsTest.kt` (26)
 - Robolectric
-  - `simple_system_manager/src/test/java/kr/open/library/simple_ui/xml/robolectric/system_manager/info/display/DisplayInfoRobolectricTest.kt` (41)
-  - `simple_system_manager/src/test/java/kr/open/library/simple_ui/xml/robolectric/presenter/extensions/display/DisplayUnitExtensionsRobolectricTest.kt` (36)
-  - `simple_system_manager/src/test/java/kr/open/library/simple_ui/xml/robolectric/system_manager/extensions/SystemServiceExtensionsTest.kt` (생성 확장 포함)
+  - `simple_system_manager/src/test/java/kr/open/library/simple_ui/system_manager/robolectric/xml/info/display/DisplayInfoRobolectricTest.kt` (41)
+  - `simple_system_manager/src/test/java/kr/open/library/simple_ui/system_manager/robolectric/xml/extensions/SystemServiceExtensionsTest.kt` (생성 확장 포함)
+

@@ -4,8 +4,8 @@
 - 문서명: SystemBar Controller Implementation Plan
 - 작성일: 2026-02-09
 - 수정일: 2026-02-10
-- 대상 모듈: simple_xml
-- 패키지: kr.open.library.simple_ui.xml.system_manager.controller.systembar
+- 대상 모듈: simple_system_manager
+- 패키지: kr.open.library.simple_ui.system_manager.xml.controller.systembar
 - 상태: 현행(as-is)
 
 ## 목적
@@ -122,8 +122,8 @@
 ## 테스트/검증 계획
 
 ### 로컬 검증 명령
-- `./gradlew :simple_xml:testRobolectric --tests "*SystemBarHelperStateRobolectricTest"`
-- `./gradlew :simple_xml:testRobolectric`
+- `./gradlew :simple_system_manager:testRobolectric --tests "*SystemBarHelperStateRobolectricTest"`
+- `./gradlew :simple_system_manager:testRobolectric`
 
 ### 검증 항목
 - 상태 계약
@@ -135,7 +135,7 @@
 - 테스트 환경 한계 인지
   - Robolectric 제약으로 Hidden/Navigation Stable 일부 시나리오는 완전 재현되지 않음을 전제로 해석
 - 회귀
-  - simple_xml 전체 unit/robolectric 회귀
+- simple_system_manager 전체 unit/robolectric 회귀
 
 ## 오류 처리/로그 정책
 - `SystemBarController`의 insets 획득은 `tryCatchSystemManager(default = null)`로 보호한다.
@@ -163,3 +163,4 @@
 - 문서 기준으로 구현 재현이 가능해야 함
 - 요구사항 -> 명세 -> 구현 단계 -> 테스트 증적이 추적 가능해야 함
 - 상태 의미(미준비/미존재/숨김/표시)가 호출부에서 오해 없이 해석 가능해야 함
+
