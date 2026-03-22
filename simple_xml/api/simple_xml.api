@@ -286,7 +286,8 @@ public final class kr/open/library/simple_ui/xml/permissions/api/PermissionReque
 
 public final class kr/open/library/simple_ui/xml/permissions/flow/RuntimePermissionHandler {
 	public fun <init> (Lkr/open/library/simple_ui/xml/permissions/host/PermissionHostAdapter;Ljava/util/Set;)V
-	public final fun mapResult (Ljava/lang/String;ZZZ)Lkr/open/library/simple_ui/core/permissions/model/PermissionDecisionType;
+	public final fun mapResult (Ljava/lang/String;ZZZZ)Lkr/open/library/simple_ui/core/permissions/model/PermissionDecisionType;
+	public static synthetic fun mapResult$default (Lkr/open/library/simple_ui/xml/permissions/flow/RuntimePermissionHandler;Ljava/lang/String;ZZZZILjava/lang/Object;)Lkr/open/library/simple_ui/core/permissions/model/PermissionDecisionType;
 	public final fun markRequested (Ljava/util/List;)V
 	public final fun shouldShowRationale (Ljava/lang/String;)Z
 	public final fun wasRequested (Ljava/lang/String;)Z
@@ -817,6 +818,7 @@ public abstract class kr/open/library/simple_ui/xml/ui/components/activity/norma
 public abstract class kr/open/library/simple_ui/xml/ui/components/activity/root/RootActivity : androidx/appcompat/app/AppCompatActivity, kr/open/library/simple_ui/xml/permissions/register/PermissionRequestInterface {
 	public fun <init> ()V
 	protected fun beforeOnCreated (Landroid/os/Bundle;)V
+	public final fun consumeOrphanedDeniedResults ()Ljava/util/List;
 	protected fun onCreate (Landroid/os/Bundle;)V
 	public fun onCreate (Landroid/os/Bundle;Landroid/os/PersistableBundle;)V
 	protected fun onSaveInstanceState (Landroid/os/Bundle;)V
@@ -880,6 +882,7 @@ public final class kr/open/library/simple_ui/xml/ui/components/dialog/root/Dialo
 
 public abstract class kr/open/library/simple_ui/xml/ui/components/dialog/root/RootDialogFragment : androidx/fragment/app/DialogFragment, kr/open/library/simple_ui/xml/permissions/register/PermissionRequestInterface {
 	public fun <init> ()V
+	public final fun consumeOrphanedDeniedResults ()Ljava/util/List;
 	protected final fun getConfig ()Lkr/open/library/simple_ui/xml/ui/components/dialog/root/DialogConfig;
 	public fun onCreate (Landroid/os/Bundle;)V
 	public fun onCreateDialog (Landroid/os/Bundle;)Landroid/app/Dialog;
@@ -939,6 +942,7 @@ public abstract class kr/open/library/simple_ui/xml/ui/components/fragment/norma
 
 public abstract class kr/open/library/simple_ui/xml/ui/components/fragment/root/RootFragment : androidx/fragment/app/Fragment, kr/open/library/simple_ui/xml/permissions/register/PermissionRequestInterface {
 	public fun <init> ()V
+	public final fun consumeOrphanedDeniedResults ()Ljava/util/List;
 	public fun onCreate (Landroid/os/Bundle;)V
 	public fun onSaveInstanceState (Landroid/os/Bundle;)V
 	public final fun requestPermissions (Ljava/util/List;Lkotlin/jvm/functions/Function1;)V
