@@ -1,4 +1,4 @@
-﻿package kr.open.library.simple_ui.core.permissions.model
+package kr.open.library.simple_ui.core.permissions.model
 
 /**
  * Represents a denied permission entry returned to callers.<br><br>
@@ -131,35 +131,93 @@ data class OrphanedDeniedRequestResult(
 )
 
 /**
- * Carries rationale UI callbacks for runtime permission requests.<br><br>
- * 런타임 권한 요청 설명 UI 콜백을 전달합니다.<br>
- *
- * @param permissions The permissions that need rationale UI.<br><br>
- *                    설명 UI가 필요한 권한 목록입니다.<br>
- * @param proceed Continues the permission request flow.<br><br>
- *                권한 요청 흐름을 계속 진행합니다.<br>
- * @param cancel Cancels the permission request flow.<br><br>
- *               권한 요청 흐름을 취소합니다.<br>
+ * Defines how deferred rationale/settings decisions are auto-cancelled by lifecycle changes.<br><br>
+ * defer된 설명/설정 이동 결정이 라이프사이클 변화로 어떻게 자동 취소되는지 정의합니다.<br>
  */
-data class PermissionRationaleRequest(
-    val permissions: List<String>,
-    val proceed: () -> Unit,
-    val cancel: () -> Unit,
-)
+enum class PermissionDeferredPolicy {
+    /**
+     * Cancels the deferred decision when the host moves to `onStop`.<br><br>
+     * 호스트가 `onStop`으로 이동하면 defer된 결정을 취소합니다.<br>
+     */
+    CANCEL_ON_STOP,
+
+    /**
+     * Keeps the deferred decision across `onStop` and cancels only on `onDestroy`.<br><br>
+     * `onStop` 동안에는 defer된 결정을 유지하고 `onDestroy`에서만 취소합니다.<br>
+     */
+    CANCEL_ON_DESTROY,
+}
 
 /**
- * Carries navigation callbacks for special permission settings flows.<br><br>
- * 특수 권한 설정 화면 이동 콜백을 전달합니다.<br>
- *
- * @param permission The permission that requires settings navigation.<br><br>
- *                   설정 이동이 필요한 권한입니다.<br>
- * @param proceed Continues to the settings screen.<br><br>
- *                설정 화면 이동을 진행합니다.<br>
- * @param cancel Cancels the settings navigation.<br><br>
- *               설정 화면 이동을 취소합니다.<br>
+ * Carries rationale UI actions for runtime permission requests.<br><br>
+ * The callback must call `proceed()`, `cancel()`, or `defer(policy)` before returning; otherwise the flow is auto-cancelled.<br>
+ * 콜백은 반환되기 전에 `proceed()`, `cancel()`, `defer(policy)` 중 하나를 호출해야 하며, 아무 액션 없이 반환되면 흐름은 자동 취소됩니다.<br>
+ * 런타임 권한 요청 설명 UI에 필요한 액션을 전달합니다.<br>
  */
-data class PermissionSettingsRequest(
-    val permission: String,
-    val proceed: () -> Unit,
-    val cancel: () -> Unit,
-)
+interface PermissionRationaleRequest {
+    /**
+     * Permissions that need rationale UI.<br><br>
+     * 설명 UI가 필요한 권한 목록입니다.<br>
+     */
+    val permissions: List<String>
+
+    /**
+     * Continues the permission request flow.<br><br>
+     * 권한 요청 흐름을 계속 진행합니다.<br>
+     */
+    fun proceed()
+
+    /**
+     * Cancels the permission request flow.<br><br>
+     * 권한 요청 흐름을 취소합니다.<br>
+     */
+    fun cancel()
+
+    /**
+     * Marks that the decision will complete asynchronously later.<br><br>
+     * The default policy is `CANCEL_ON_STOP`; use `CANCEL_ON_DESTROY` when the deferred UI must survive `onStop` and cancel only on host destruction.<br>
+     * 기본 정책은 `CANCEL_ON_STOP`이며, `onStop`을 지나도 유지하고 host 종료 시에만 취소해야 하면 `CANCEL_ON_DESTROY`를 사용합니다.<br>
+     * 결정이 이후 비동기로 완료될 예정임을 표시합니다.<br>
+     *
+     * @param policy Lifecycle auto-cancel policy for the deferred decision.<br><br>
+     *               defer된 결정에 적용할 라이프사이클 자동 취소 정책입니다.<br>
+     */
+    fun defer(policy: PermissionDeferredPolicy = PermissionDeferredPolicy.CANCEL_ON_STOP)
+}
+
+/**
+ * Carries settings navigation actions for special permission flows.<br><br>
+ * The callback must call `proceed()`, `cancel()`, or `defer(policy)` before returning; otherwise the flow is auto-cancelled.<br>
+ * 콜백은 반환되기 전에 `proceed()`, `cancel()`, `defer(policy)` 중 하나를 호출해야 하며, 아무 액션 없이 반환되면 흐름은 자동 취소됩니다.<br>
+ * 특수 권한 설정 화면 이동 흐름에 필요한 액션을 전달합니다.<br>
+ */
+interface PermissionSettingsRequest {
+    /**
+     * Permission that requires settings navigation.<br><br>
+     * 설정 이동이 필요한 권한입니다.<br>
+     */
+    val permission: String
+
+    /**
+     * Continues to the settings screen.<br><br>
+     * 설정 화면 이동을 진행합니다.<br>
+     */
+    fun proceed()
+
+    /**
+     * Cancels the settings navigation flow.<br><br>
+     * 설정 화면 이동 흐름을 취소합니다.<br>
+     */
+    fun cancel()
+
+    /**
+     * Marks that the decision will complete asynchronously later.<br><br>
+     * The default policy is `CANCEL_ON_STOP`; use `CANCEL_ON_DESTROY` when the deferred UI must survive `onStop` and cancel only on host destruction.<br>
+     * 기본 정책은 `CANCEL_ON_STOP`이며, `onStop`을 지나도 유지하고 host 종료 시에만 취소해야 하면 `CANCEL_ON_DESTROY`를 사용합니다.<br>
+     * 결정이 이후 비동기로 완료될 예정임을 표시합니다.<br>
+     *
+     * @param policy Lifecycle auto-cancel policy for the deferred decision.<br><br>
+     *               defer된 결정에 적용할 라이프사이클 자동 취소 정책입니다.<br>
+     */
+    fun defer(policy: PermissionDeferredPolicy = PermissionDeferredPolicy.CANCEL_ON_STOP)
+}

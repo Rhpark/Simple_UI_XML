@@ -1,9 +1,10 @@
-﻿package kr.open.library.simple_ui.xml.ui.components.activity.root
+package kr.open.library.simple_ui.xml.ui.components.activity.root
 
 import android.os.Bundle
 import android.os.PersistableBundle
 import androidx.annotation.CallSuper
 import androidx.appcompat.app.AppCompatActivity
+import kr.open.library.simple_ui.core.permissions.model.OrphanedDeniedRequestResult
 import kr.open.library.simple_ui.core.permissions.model.PermissionDeniedItem
 import kr.open.library.simple_ui.core.permissions.model.PermissionRationaleRequest
 import kr.open.library.simple_ui.core.permissions.model.PermissionSettingsRequest
@@ -69,8 +70,12 @@ abstract class RootActivity :
      * @param onDeniedResult Callback invoked with denied items.<br><br>
      *                       거부 항목을 전달받는 콜백입니다.<br>
      * @param onRationaleNeeded Callback for rationale UI when needed.<br><br>
+     *                          Call `proceed()`, `cancel()`, or `defer(policy)` inside the callback. Returning without an action auto-cancels the flow.<br>
+     *                          콜백 안에서 `proceed()`, `cancel()`, `defer(policy)` 중 하나를 호출해야 하며, 아무 액션 없이 반환되면 흐름은 자동 취소됩니다.<br>
      *                          필요 시 rationale UI를 제공하는 콜백입니다.<br>
      * @param onNavigateToSettings Callback for settings navigation when needed.<br><br>
+     *                             Call `proceed()`, `cancel()`, or `defer(policy)` inside the callback. Returning without an action auto-cancels the flow.<br>
+     *                             콜백 안에서 `proceed()`, `cancel()`, `defer(policy)` 중 하나를 호출해야 하며, 아무 액션 없이 반환되면 흐름은 자동 취소됩니다.<br>
      *                             필요 시 설정 이동을 안내하는 콜백입니다.<br>
      */
     @CallSuper
@@ -84,6 +89,22 @@ abstract class RootActivity :
             "PermissionRequester is not initialized. Please call super.onCreate() first."
         }
         permissionRequester.requestPermissions(permissions, onDeniedResult, onRationaleNeeded, onNavigateToSettings)
+    }
+
+    /**
+     * Returns and clears denied results that lost their callbacks after process restore.<br>
+     * Call this in [onCreate] to handle results from requests that were interrupted by process kill.<br><br>
+     * 프로세스 복원 후 콜백을 잃은 거부 결과를 반환하고 비웁니다.<br>
+     * 프로세스 킬로 중단된 요청의 결과를 처리하려면 [onCreate]에서 호출하세요.<br>
+     *
+     * @return Return value: list of orphaned denied request results. Log behavior: none.<br><br>
+     *         반환값: orphaned 거부 요청 결과 목록. 로그 동작: 없음.<br>
+     */
+    fun consumeOrphanedDeniedResults(): List<OrphanedDeniedRequestResult> {
+        check(::permissionRequester.isInitialized) {
+            "PermissionRequester is not initialized. Please call super.onCreate() first."
+        }
+        return permissionRequester.consumeOrphanedDeniedResults()
     }
 
     /**
@@ -106,10 +127,6 @@ abstract class RootActivity :
      *                    요청할 권한 목록입니다.<br>
      * @param onDeniedResult Callback invoked with denied items.<br><br>
      *                       거부 항목을 전달받는 콜백입니다.<br>
-     * @param onRationaleNeeded Callback for rationale UI when needed.<br><br>
-     *                          필요 시 rationale UI를 제공하는 콜백입니다.<br>
-     * @param onNavigateToSettings Callback for settings navigation when needed.<br><br>
-     *                             필요 시 설정 이동을 안내하는 콜백입니다.<br>
      */
     @CallSuper
     final override fun requestPermissions(permissions: List<String>, onDeniedResult: (List<PermissionDeniedItem>) -> Unit) {

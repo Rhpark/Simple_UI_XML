@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -Command \"[Console]::OutputEncoding = [System.Text.Encoding]::UTF8; Write-Output ('{\\\"hookSpecificOutput\\\": {\\\"hookEventName\\\": \\\"UserPromptSubmit\\\", \\\"additionalContext\\\": \\\"[세션 시작 필수 규칙] 아직 CLAUDE.md와 AGENTS.md를 읽지 않았다면 지금 즉시 읽으세요. 연결된 모든 문서도 읽은 후 첫 응답에 읽은 문서 목록을 공유하세요.\\\"}}')\"",
+            "once": true,
+            "statusMessage": "세션 규칙 로드 중..."
+          }
+        ]
+      }
+    ]
+  }
+}

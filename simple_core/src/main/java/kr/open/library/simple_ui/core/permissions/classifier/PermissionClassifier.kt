@@ -167,6 +167,14 @@ class PermissionClassifier(
      *                  Permission string to inspect.<br>
      * @return 현재 SDK에서 지원하면 `true`를 반환합니다. 이 메서드는 로그를 남기지 않습니다.<br><br>
      *         Return value: true when supported. Log behavior: none.<br>
+     *
+     * **Note / 주의:** The `else → true` branch means any permission not listed in
+     * [PermissionConstants.ApiLevelRequirements] is treated as universally supported.
+     * When a new Android version introduces new API-level-gated permissions, add them to the
+     * corresponding set in [PermissionConstants.ApiLevelRequirements] and add a matching branch here.<br><br>
+     * `else → true` 분기로 인해 [PermissionConstants.ApiLevelRequirements]에 없는 권한은
+     * 모든 API 레벨에서 지원되는 것으로 처리됩니다.
+     * 신규 Android 버전에서 API 레벨 제한 권한이 추가되면 해당 집합과 분기를 반드시 추가하세요.<br>
      */
     fun isSupported(permission: String): Boolean = when {
         permission == Manifest.permission.MANAGE_MEDIA -> false
@@ -176,6 +184,8 @@ class PermissionClassifier(
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
         PermissionConstants.ApiLevelRequirements.ANDROID_TIRAMISU_PERMISSIONS.contains(permission) ->
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+        PermissionConstants.ApiLevelRequirements.ANDROID_U_PERMISSIONS.contains(permission) ->
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE
         else -> true
     }
 

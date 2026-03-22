@@ -1,7 +1,8 @@
-﻿package kr.open.library.simple_ui.xml.permissions.api
+package kr.open.library.simple_ui.xml.permissions.api
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.annotation.MainThread
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
@@ -46,21 +47,27 @@ class PermissionRequester private constructor(
     private val host: PermissionHostAdapter,
 ) {
     /**
-     * Creates a requester bound to an Activity host.<br><br>
+     * Creates a requester bound to an Activity host.<br>
+     * Must be called on the **main thread**.<br><br>
      * Activity 호스트에 바인딩된 요청기를 생성합니다.<br>
+     * **메인 스레드**에서만 호출해야 합니다.<br>
      *
      * @param activity Activity host used for permission requests.<br><br>
      *                 권한 요청에 사용되는 Activity 호스트입니다.<br>
      */
+    @MainThread
     constructor(activity: ComponentActivity) : this(PermissionHostAdapter.ActivityHost(activity))
 
     /**
-     * Creates a requester bound to a Fragment host.<br><br>
+     * Creates a requester bound to a Fragment host.<br>
+     * Must be called on the **main thread**.<br><br>
      * Fragment 호스트에 바인딩된 요청기를 생성합니다.<br>
+     * **메인 스레드**에서만 호출해야 합니다.<br>
      *
      * @param fragment Fragment host used for permission requests.<br><br>
      *                 권한 요청에 사용되는 Fragment 호스트입니다.<br>
      */
+    @MainThread
     constructor(fragment: Fragment) : this(PermissionHostAdapter.FragmentHost(fragment))
 
     /**
@@ -204,12 +211,15 @@ class PermissionRequester private constructor(
     private var pendingCoordinatorStartObserver: DefaultLifecycleObserver? = null
 
     /**
-     * Restores internal state from [savedInstanceState].<br><br>
+     * Restores internal state from [savedInstanceState].<br>
+     * Must be called on the **main thread**.<br><br>
      * [savedInstanceState]에서 내부 상태를 복원합니다.<br>
+     * **메인 스레드**에서만 호출해야 합니다.<br>
      *
      * @param savedInstanceState Bundle containing saved state or null.<br><br>
      *                           저장된 상태를 담은 Bundle 또는 null입니다.<br>
      */
+    @MainThread
     fun restoreState(savedInstanceState: Bundle?) {
         if (hasRequestStarted) {
             Logx.w("PermissionRequester: restoreState ignored because requests already started.")
@@ -225,29 +235,39 @@ class PermissionRequester private constructor(
     }
 
     /**
-     * Saves internal state into [outState].<br><br>
+     * Saves internal state into [outState].<br>
+     * Must be called on the **main thread**.<br><br>
      * [outState]에 내부 상태를 저장합니다.<br>
+     * **메인 스레드**에서만 호출해야 합니다.<br>
      *
      * @param outState Bundle that receives the saved state.<br><br>
      *                 저장 상태를 기록할 Bundle입니다.<br>
      */
+    @MainThread
     fun saveState(outState: Bundle) {
         stateStore.saveState(outState)
     }
 
     /**
-     * Requests a single permission and returns denied results via callback.<br><br>
+     * Requests a single permission and returns denied results via callback.<br>
+     * Must be called on the **main thread**.<br><br>
      * 단일 권한을 요청하고 거부 결과를 콜백으로 반환합니다.<br>
+     * **메인 스레드**에서만 호출해야 합니다.<br>
      *
      * @param permission Permission string to request.<br><br>
      *                  요청할 권한 문자열입니다.<br>
      * @param onDeniedResult Callback invoked with denied items.<br><br>
      *                       거부 항목을 전달받는 콜백입니다.<br>
      * @param onRationaleNeeded Callback for rationale UI when needed.<br><br>
+     *                          Call `proceed()`, `cancel()`, or `defer(policy)` inside the callback. Returning without an action auto-cancels the flow.<br>
+     *                          콜백 안에서 `proceed()`, `cancel()`, `defer(policy)` 중 하나를 호출해야 하며, 아무 액션 없이 반환되면 흐름은 자동 취소됩니다.<br>
      *                          필요 시 설명 UI를 제공하는 콜백입니다.<br>
      * @param onNavigateToSettings Callback for settings navigation when needed.<br><br>
+     *                             Call `proceed()`, `cancel()`, or `defer(policy)` inside the callback. Returning without an action auto-cancels the flow.<br>
+     *                             콜백 안에서 `proceed()`, `cancel()`, `defer(policy)` 중 하나를 호출해야 하며, 아무 액션 없이 반환되면 흐름은 자동 취소됩니다.<br>
      *                             필요 시 설정 이동을 안내하는 콜백입니다.<br>
      */
+    @MainThread
     fun requestPermission(
         permission: String,
         onDeniedResult: (List<PermissionDeniedItem>) -> Unit,
@@ -263,18 +283,27 @@ class PermissionRequester private constructor(
     }
 
     /**
-     * Requests multiple permissions and returns denied results via callback.<br><br>
+     * Requests multiple permissions and returns denied results via callback.<br>
+     * The rationale/settings callbacks may switch to asynchronous UI by calling `defer(policy)`, and the default deferred policy is `CANCEL_ON_STOP`.<br>
+     * rationale/settings 콜백은 `defer(policy)`를 호출해 비동기 UI로 전환할 수 있으며, 기본 defer 정책은 `CANCEL_ON_STOP`입니다.<br>
+     * Must be called on the **main thread**.<br><br>
      * 여러 권한을 요청하고 거부 결과를 콜백으로 반환합니다.<br>
+     * **메인 스레드**에서만 호출해야 합니다.<br>
      *
      * @param permissions Permissions to request.<br><br>
      *                    요청할 권한 목록입니다.<br>
      * @param onDeniedResult Callback invoked with denied items.<br><br>
      *                       거부 항목을 전달받는 콜백입니다.<br>
      * @param onRationaleNeeded Callback for rationale UI when needed.<br><br>
+     *                          Call `proceed()`, `cancel()`, or `defer(policy)` inside the callback. Returning without an action auto-cancels the flow.<br>
+     *                          콜백 안에서 `proceed()`, `cancel()`, `defer(policy)` 중 하나를 호출해야 하며, 아무 액션 없이 반환되면 흐름은 자동 취소됩니다.<br>
      *                          필요 시 설명 UI를 제공하는 콜백입니다.<br>
      * @param onNavigateToSettings Callback for settings navigation when needed.<br><br>
+     *                             Call `proceed()`, `cancel()`, or `defer(policy)` inside the callback. Returning without an action auto-cancels the flow.<br>
+     *                             콜백 안에서 `proceed()`, `cancel()`, `defer(policy)` 중 하나를 호출해야 하며, 아무 액션 없이 반환되면 흐름은 자동 취소됩니다.<br>
      *                             필요 시 설정 이동을 안내하는 콜백입니다.<br>
      */
+    @MainThread
     fun requestPermissions(
         permissions: List<String>,
         onDeniedResult: (List<PermissionDeniedItem>) -> Unit,

@@ -63,6 +63,15 @@ public object PermissionConstants {
     /**
      * Groups permissions that only exist from specific API levels upward.<br><br>
      * 특정 API 레벨 이상에서만 존재하는 권한을 묶어둔 영역입니다.<br>
+     *
+     * **Structural limitation / 구조적 한계:**<br>
+     * These sets are maintained manually. Permissions not listed here fall through to `else → true`
+     * in [PermissionClassifier.isSupported], which treats them as universally supported.
+     * When a new Android version introduces new dangerous permissions, the corresponding set
+     * must be added here and a matching branch must be added to [PermissionClassifier.isSupported].<br><br>
+     * 이 집합들은 수동으로 관리됩니다. 여기에 없는 권한은 [PermissionClassifier.isSupported]의
+     * `else → true` 분기로 흘러 모든 API 레벨에서 지원되는 것처럼 처리됩니다.
+     * 새 Android 버전에서 신규 dangerous 권한이 추가되면 해당 집합과 분기를 반드시 추가해야 합니다.<br>
      */
     object ApiLevelRequirements {
         /**
@@ -82,6 +91,12 @@ public object PermissionConstants {
          * Android 13(Tiramisu)에서 추가된 권한 목록입니다.<br>
          */
         val ANDROID_TIRAMISU_PERMISSIONS: Set<String> = setOf(Manifest.permission.POST_NOTIFICATIONS)
+
+        /**
+         * Permissions that were introduced on Android 14 (U).<br><br>
+         * Android 14(U)에서 추가된 권한 목록입니다.<br>
+         */
+        val ANDROID_U_PERMISSIONS: Set<String> = setOf(Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED)
     }
 
     /**

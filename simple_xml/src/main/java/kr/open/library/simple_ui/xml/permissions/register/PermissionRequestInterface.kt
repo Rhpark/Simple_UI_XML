@@ -1,4 +1,4 @@
-﻿package kr.open.library.simple_ui.xml.permissions.register
+package kr.open.library.simple_ui.xml.permissions.register
 
 import kr.open.library.simple_ui.core.permissions.model.PermissionDeniedItem
 import kr.open.library.simple_ui.core.permissions.model.PermissionRationaleRequest
@@ -18,8 +18,12 @@ interface PermissionRequestInterface {
      * @param onDeniedResult Callback invoked with denied items.<br><br>
      *                       거부 항목을 전달받는 콜백입니다.<br>
      * @param onRationaleNeeded Callback for rationale UI when needed.<br><br>
+     *                          Call `proceed()`, `cancel()`, or `defer(policy)` inside the callback; returning without an action auto-cancels the flow.<br>
+     *                          콜백 안에서 `proceed()`, `cancel()`, `defer(policy)` 중 하나를 호출해야 하며, 아무 액션 없이 반환되면 흐름은 자동 취소됩니다.<br>
      *                          필요 시 rationale UI를 제공하는 콜백입니다.<br>
      * @param onNavigateToSettings Callback for settings navigation when needed.<br><br>
+     *                             Call `proceed()`, `cancel()`, or `defer(policy)` inside the callback; returning without an action auto-cancels the flow.<br>
+     *                             콜백 안에서 `proceed()`, `cancel()`, `defer(policy)` 중 하나를 호출해야 하며, 아무 액션 없이 반환되면 흐름은 자동 취소됩니다.<br>
      *                             필요 시 설정 이동을 안내하는 콜백입니다.<br>
      */
     fun requestPermissions(

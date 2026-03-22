@@ -1,4 +1,4 @@
-﻿package kr.open.library.simple_ui.xml.permissions.flow
+package kr.open.library.simple_ui.xml.permissions.flow
 
 import android.content.Intent
 import androidx.activity.result.ActivityResultLauncher
@@ -17,6 +17,7 @@ import kr.open.library.simple_ui.core.permissions.extensions.hasPermission
 import kr.open.library.simple_ui.core.permissions.handler.RolePermissionHandler
 import kr.open.library.simple_ui.core.permissions.handler.SpecialPermissionHandler
 import kr.open.library.simple_ui.core.permissions.model.PermissionDecisionType
+import kr.open.library.simple_ui.core.permissions.model.PermissionDeferredPolicy
 import kr.open.library.simple_ui.core.permissions.model.PermissionRationaleRequest
 import kr.open.library.simple_ui.core.permissions.model.PermissionSettingsRequest
 import kr.open.library.simple_ui.xml.permissions.coordinator.RequestEntry
@@ -259,6 +260,7 @@ internal class PermissionFlowProcessor(
                                     granted = false,
                                     shouldShowRationale = shouldShowRationale,
                                     wasRequestedBefore = wasRequestedBefore,
+                                    isRestored = true,
                                 )
                             }
                         }
@@ -528,13 +530,23 @@ internal class PermissionFlowProcessor(
     ): Boolean {
         if (permissions.isEmpty()) return true
         val callback = onRationaleNeeded ?: return true
-        return awaitUserDecision { proceed, cancel ->
+        return awaitUserDecision { onProceed, onCancel, onDefer ->
             callback.invoke(
-                PermissionRationaleRequest(
-                    permissions = permissions,
-                    proceed = proceed,
-                    cancel = cancel,
-                ),
+                object : PermissionRationaleRequest {
+                    override val permissions: List<String> = permissions
+
+                    override fun proceed() {
+                        onProceed()
+                    }
+
+                    override fun cancel() {
+                        onCancel()
+                    }
+
+                    override fun defer(policy: PermissionDeferredPolicy) {
+                        onDefer(policy)
+                    }
+                },
             )
         }
     }
@@ -555,13 +567,23 @@ internal class PermissionFlowProcessor(
         onNavigateToSettings: ((PermissionSettingsRequest) -> Unit)?,
     ): Boolean {
         val callback = onNavigateToSettings ?: return true
-        return awaitUserDecision { proceed, cancel ->
+        return awaitUserDecision { onProceed, onCancel, onDefer ->
             callback.invoke(
-                PermissionSettingsRequest(
-                    permission = permission,
-                    proceed = proceed,
-                    cancel = cancel,
-                ),
+                object : PermissionSettingsRequest {
+                    override val permission: String = permission
+
+                    override fun proceed() {
+                        onProceed()
+                    }
+
+                    override fun cancel() {
+                        onCancel()
+                    }
+
+                    override fun defer(policy: PermissionDeferredPolicy) {
+                        onDefer(policy)
+                    }
+                },
             )
         }
     }
@@ -570,22 +592,28 @@ internal class PermissionFlowProcessor(
      * Awaits a one-shot user decision and auto-cancels on host destroy/coroutine cancellation.<br><br>
      * 1회성 사용자 결정을 대기하고 host 종료/코루틴 취소 시 자동으로 취소 처리합니다.<br>
      *
-     * @param showUi Callback that exposes proceed/cancel actions to the caller.<br><br>
-     *               호출자에게 proceed/cancel 액션을 노출하는 콜백입니다.<br>
+     * @param showUi Callback that exposes decision actions to the caller.<br><br>
+     *               호출자에게 결정 액션을 노출하는 콜백입니다.<br>
      * @return Return value: true when proceeding, false when canceled or host destroyed.<br><br>
      *         반환값: 진행 시 true, 취소 또는 host 종료 시 false입니다.<br>
      */
-    private suspend fun awaitUserDecision(showUi: (proceed: () -> Unit, cancel: () -> Unit) -> Unit): Boolean {
+    private suspend fun awaitUserDecision(
+        showUi: (
+            proceed: () -> Unit,
+            cancel: () -> Unit,
+            defer: (PermissionDeferredPolicy) -> Unit,
+        ) -> Unit,
+    ): Boolean {
         val lifecycle = host.lifecycleOwner.lifecycle
         if (lifecycle.currentState == Lifecycle.State.DESTROYED) return false
 
         return suspendCancellableCoroutine { continuation ->
-            var consumed = false
+            var state = PermissionDecisionState.ACTIVE
             lateinit var observer: DefaultLifecycleObserver
 
             fun finish(value: Boolean) {
-                if (consumed) return
-                consumed = true
+                if (state == PermissionDecisionState.FINISHED) return
+                state = PermissionDecisionState.FINISHED
                 lifecycle.removeObserver(observer)
                 if (continuation.isActive) {
                     continuation.resume(value)
@@ -593,6 +621,12 @@ internal class PermissionFlowProcessor(
             }
 
             observer = object : DefaultLifecycleObserver {
+                override fun onStop(owner: LifecycleOwner) {
+                    if (state == PermissionDecisionState.DEFERRED_CANCEL_ON_STOP) {
+                        finish(false)
+                    }
+                }
+
                 override fun onDestroy(owner: LifecycleOwner) {
                     finish(false)
                 }
@@ -604,11 +638,24 @@ internal class PermissionFlowProcessor(
                 showUi(
                     { finish(true) },
                     { finish(false) },
+                    { policy ->
+                        if (state != PermissionDecisionState.FINISHED) {
+                            state = when (policy) {
+                                PermissionDeferredPolicy.CANCEL_ON_STOP ->
+                                    PermissionDecisionState.DEFERRED_CANCEL_ON_STOP
+
+                                PermissionDeferredPolicy.CANCEL_ON_DESTROY ->
+                                    PermissionDecisionState.DEFERRED_CANCEL_ON_DESTROY
+                            }
+                        }
+                    },
                 )
                 true
             }
 
             if (!dispatched) {
+                finish(false)
+            } else if (state == PermissionDecisionState.ACTIVE) {
                 finish(false)
             }
 
@@ -616,6 +663,13 @@ internal class PermissionFlowProcessor(
                 lifecycle.removeObserver(observer)
             }
         }
+    }
+
+    private enum class PermissionDecisionState {
+        ACTIVE,
+        DEFERRED_CANCEL_ON_STOP,
+        DEFERRED_CANCEL_ON_DESTROY,
+        FINISHED,
     }
 
     /**

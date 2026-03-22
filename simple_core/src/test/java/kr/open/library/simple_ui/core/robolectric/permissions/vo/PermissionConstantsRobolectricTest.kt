@@ -248,6 +248,28 @@ class PermissionConstantsRobolectricTest {
         assertEquals(1, tiramisuPermissions.size)
     }
 
+    @Test
+    @Config(sdk = [Build.VERSION_CODES.TIRAMISU]) // API 33
+    fun apiLevelRequirements_androidUPermissions_containsExpectedPermissions() {
+        // Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED 상수는 API 34에서 추가되어
+        // API 33 stub에 없으므로 문자열 리터럴로 직접 참조합니다.
+        val uPermissions = PermissionConstants.ApiLevelRequirements.ANDROID_U_PERMISSIONS
+
+        assertTrue(uPermissions.contains("android.permission.READ_MEDIA_VISUAL_USER_SELECTED"))
+        assertEquals(1, uPermissions.size)
+    }
+
+    @Test
+    @Config(sdk = [Build.VERSION_CODES.TIRAMISU]) // API 33
+    fun apiLevelRequirements_androidUPermissions_alwaysContainsPermissionsRegardlessSdk() {
+        // setOf() 상수이므로 SDK 버전에 관계없이 항상 채워져 있어야 한다.
+        // SDK 비교는 PermissionClassifier.isSupported()에서 수행한다.
+        val uPermissions = PermissionConstants.ApiLevelRequirements.ANDROID_U_PERMISSIONS
+
+        assertTrue(uPermissions.contains("android.permission.READ_MEDIA_VISUAL_USER_SELECTED"))
+        assertEquals(1, uPermissions.size)
+    }
+
     // ==============================================
     // Integration Tests
     // ==============================================

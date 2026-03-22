@@ -8,6 +8,7 @@ import android.Manifest
 import android.app.AlarmManager
 import android.app.AppOpsManager
 import android.app.NotificationManager
+import android.content.ComponentName
 import android.content.Context
 import android.content.pm.PackageManager
 import android.content.pm.PermissionInfo
@@ -173,6 +174,30 @@ public inline fun Context.hasAccessibilityServicePermission(): Boolean = safeCat
 }
 
 /**
+ * Checks whether a specific accessibility service component is enabled.<br><br>
+ * 특정 접근성 서비스 컴포넌트가 활성화되어 있는지 확인합니다.<br>
+ *
+ * **Note / 주의:** This overload is a standalone utility and is **not** connected to the
+ * `PermissionRequester` flow. The internal special-permission grant check (`SpecialPermissionHandler`)
+ * still uses the package-level overload [hasAccessibilityServicePermission].
+ * Use this overload directly when component-level precision is needed outside the permission flow.<br><br>
+ * 이 오버로드는 독립 유틸리티이며 `PermissionRequester` 흐름과 **연결되지 않습니다**.
+ * 내부 특수 권한 허용 판정(`SpecialPermissionHandler`)은 여전히 패키지 단위 오버로드를 사용합니다.
+ * 권한 흐름 외부에서 컴포넌트 단위 정밀 확인이 필요한 경우 이 오버로드를 직접 사용하세요.<br>
+ *
+ * @param componentName The ComponentName of the accessibility service to check.<br><br>
+ *        확인할 접근성 서비스의 ComponentName입니다.<br>
+ * @return true when the exact component appears in enabled accessibility services.<br><br>
+ *         정확한 컴포넌트가 접근성 서비스 활성 목록에 있으면 true입니다.<br>
+ */
+public inline fun Context.hasAccessibilityServicePermission(componentName: ComponentName): Boolean = safeCatch(defaultValue = false) {
+    val enabledServices = Settings.Secure.getString(contentResolver, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES)
+    enabledServices?.split(":")?.any {
+        ComponentName.unflattenFromString(it) == componentName
+    } == true
+}
+
+/**
  * Checks whether the app is listed as a notification listener.<br><br>
  * 앱이 알림 리스너로 등록되어 있는지 확인합니다.<br>
  *
@@ -182,6 +207,30 @@ public inline fun Context.hasAccessibilityServicePermission(): Boolean = safeCat
 public inline fun Context.hasNotificationListenerPermission(): Boolean = safeCatch(defaultValue = false) {
     val enabledListeners = Settings.Secure.getString(contentResolver, "enabled_notification_listeners",)
     enabledListeners?.split(":")?.any { it.split("/").firstOrNull() == packageName } == true
+}
+
+/**
+ * Checks whether a specific notification listener component is enabled.<br><br>
+ * 특정 알림 리스너 컴포넌트가 활성화되어 있는지 확인합니다.<br>
+ *
+ * **Note / 주의:** This overload is a standalone utility and is **not** connected to the
+ * `PermissionRequester` flow. The internal special-permission grant check (`SpecialPermissionHandler`)
+ * still uses the package-level overload [hasNotificationListenerPermission].
+ * Use this overload directly when component-level precision is needed outside the permission flow.<br><br>
+ * 이 오버로드는 독립 유틸리티이며 `PermissionRequester` 흐름과 **연결되지 않습니다**.
+ * 내부 특수 권한 허용 판정(`SpecialPermissionHandler`)은 여전히 패키지 단위 오버로드를 사용합니다.
+ * 권한 흐름 외부에서 컴포넌트 단위 정밀 확인이 필요한 경우 이 오버로드를 직접 사용하세요.<br>
+ *
+ * @param componentName The ComponentName of the notification listener service to check.<br><br>
+ *        확인할 알림 리스너 서비스의 ComponentName입니다.<br>
+ * @return true when the exact component appears in the enabled listener list.<br><br>
+ *         정확한 컴포넌트가 활성 알림 리스너 목록에 있으면 true입니다.<br>
+ */
+public inline fun Context.hasNotificationListenerPermission(componentName: ComponentName): Boolean = safeCatch(defaultValue = false) {
+    val enabledListeners = Settings.Secure.getString(contentResolver, "enabled_notification_listeners")
+    enabledListeners?.split(":")?.any {
+        ComponentName.unflattenFromString(it) == componentName
+    } == true
 }
 
 /**
@@ -206,8 +255,8 @@ public inline fun isSpecialPermission(permission: String): Boolean {
  *
  * @param permission Permission string to query.<br><br>
  *        조회할 권한 문자열입니다.<br>
- * @return Protection level constant, defaulting to [PermissionInfo.PROTECTION_DANGEROUS].<br><br>
- *         보호 수준 상수이며 기본값은 [PermissionInfo.PROTECTION_DANGEROUS]입니다.<br>
+ * @return Protection level constant, defaulting to [PermissionInfo.PROTECTION_DANGEROUS] on lookup failure.<br><br>
+ *         보호 수준 상수이며 조회 실패 시 기본값은 [PermissionInfo.PROTECTION_DANGEROUS]입니다.<br>
  */
 public inline fun Context.getPermissionProtectionLevel(permission: String): Int =
     safeCatch(defaultValue = PermissionInfo.PROTECTION_DANGEROUS) {
@@ -220,8 +269,8 @@ public inline fun Context.getPermissionProtectionLevel(permission: String): Int 
  *
  * @param permission Permission string to query.<br><br>
  *        조회할 권한 문자열입니다.<br>
- * @return Base protection level constant, defaulting to [PermissionInfo.PROTECTION_DANGEROUS].<br><br>
- *         기본 보호 수준 상수이며 기본값은 [PermissionInfo.PROTECTION_DANGEROUS]입니다.<br>
+ * @return Base protection level constant, defaulting to [PermissionInfo.PROTECTION_DANGEROUS] on lookup failure.<br><br>
+ *         기본 보호 수준 상수이며 조회 실패 시 기본값은 [PermissionInfo.PROTECTION_DANGEROUS]입니다.<br>
  */
 public inline fun Context.getPermissionBaseProtectionLevel(permission: String): Int =
     safeCatch(defaultValue = PermissionInfo.PROTECTION_DANGEROUS) {

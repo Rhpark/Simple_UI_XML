@@ -56,6 +56,9 @@ class PermissionClassifierRobolectricTest {
             "com.test.SIGNATURE_PRIVILEGED_PERMISSION",
             PermissionInfo.PROTECTION_SIGNATURE or PermissionInfo.PROTECTION_FLAG_PRIVILEGED,
         )
+        // Robolectric은 CAMERA를 PROTECTION_NORMAL로 기본 제공하므로
+        // getRuntimeRequestability() 테스트가 REQUESTABLE을 기대하려면 명시적으로 등록해야 합니다.
+        registerPermission(Manifest.permission.CAMERA, PermissionInfo.PROTECTION_DANGEROUS)
     }
 
     // ==============================================
@@ -208,6 +211,46 @@ class PermissionClassifierRobolectricTest {
     @Config(sdk = [Build.VERSION_CODES.P])
     fun isSupported_manageMedia_returnsFalse_onApi28() {
         assertFalse(classifier.isSupported(Manifest.permission.MANAGE_MEDIA))
+    }
+
+    // ==============================================
+    // isSupported() — API 33 (Tiramisu): U 권한 미지원
+    // ==============================================
+
+    @Test
+    @Config(sdk = [Build.VERSION_CODES.TIRAMISU]) // API 33
+    fun isSupported_androidU_permission_returnsFalse_onApi33() {
+        // Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED 상수는 API 34에서 추가되어
+        // API 33 stub에 없으므로 문자열 리터럴로 직접 참조합니다.
+        assertFalse(classifier.isSupported("android.permission.READ_MEDIA_VISUAL_USER_SELECTED"))
+    }
+
+    // ==============================================
+    // isSupported() — API 34 (U): U 권한 지원
+    // ==============================================
+
+    @Test
+    @Config(sdk = [Build.VERSION_CODES.UPSIDE_DOWN_CAKE]) // API 34
+    fun isSupported_androidU_permission_returnsTrue_onApi34() {
+        assertTrue(classifier.isSupported("android.permission.READ_MEDIA_VISUAL_USER_SELECTED"))
+    }
+
+    @Test
+    @Config(sdk = [Build.VERSION_CODES.UPSIDE_DOWN_CAKE]) // API 34
+    fun isSupported_androidR_permission_returnsTrue_onApi34() {
+        assertTrue(classifier.isSupported(Manifest.permission.MANAGE_EXTERNAL_STORAGE))
+    }
+
+    @Test
+    @Config(sdk = [Build.VERSION_CODES.UPSIDE_DOWN_CAKE]) // API 34
+    fun isSupported_androidS_permission_returnsTrue_onApi34() {
+        assertTrue(classifier.isSupported(Manifest.permission.SCHEDULE_EXACT_ALARM))
+    }
+
+    @Test
+    @Config(sdk = [Build.VERSION_CODES.UPSIDE_DOWN_CAKE]) // API 34
+    fun isSupported_androidTiramisu_permission_returnsTrue_onApi34() {
+        assertTrue(classifier.isSupported(Manifest.permission.POST_NOTIFICATIONS))
     }
 
     // ==============================================

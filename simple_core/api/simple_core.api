@@ -322,7 +322,9 @@ public final class kr/open/library/simple_ui/core/permissions/extensions/Permiss
 	public static final fun getPermissionBaseProtectionLevel (Landroid/content/Context;Ljava/lang/String;)I
 	public static final fun getPermissionProtectionLevel (Landroid/content/Context;Ljava/lang/String;)I
 	public static final fun hasAccessibilityServicePermission (Landroid/content/Context;)Z
+	public static final fun hasAccessibilityServicePermission (Landroid/content/Context;Landroid/content/ComponentName;)Z
 	public static final fun hasNotificationListenerPermission (Landroid/content/Context;)Z
+	public static final fun hasNotificationListenerPermission (Landroid/content/Context;Landroid/content/ComponentName;)Z
 	public static final fun hasPermission (Landroid/content/Context;Ljava/lang/String;)Z
 	public static final fun hasPermissions (Landroid/content/Context;[Ljava/lang/String;)Z
 	public static final fun hasPermissions (Landroid/content/Context;[Ljava/lang/String;Lkotlin/jvm/functions/Function0;)Z
@@ -375,6 +377,14 @@ public final class kr/open/library/simple_ui/core/permissions/model/PermissionDe
 	public static fun values ()[Lkr/open/library/simple_ui/core/permissions/model/PermissionDecisionType;
 }
 
+public final class kr/open/library/simple_ui/core/permissions/model/PermissionDeferredPolicy : java/lang/Enum {
+	public static final field CANCEL_ON_DESTROY Lkr/open/library/simple_ui/core/permissions/model/PermissionDeferredPolicy;
+	public static final field CANCEL_ON_STOP Lkr/open/library/simple_ui/core/permissions/model/PermissionDeferredPolicy;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lkr/open/library/simple_ui/core/permissions/model/PermissionDeferredPolicy;
+	public static fun values ()[Lkr/open/library/simple_ui/core/permissions/model/PermissionDeferredPolicy;
+}
+
 public final class kr/open/library/simple_ui/core/permissions/model/PermissionDeniedItem {
 	public fun <init> (Ljava/lang/String;Lkr/open/library/simple_ui/core/permissions/model/PermissionDeniedType;)V
 	public final fun component1 ()Ljava/lang/String;
@@ -401,34 +411,26 @@ public final class kr/open/library/simple_ui/core/permissions/model/PermissionDe
 	public static fun values ()[Lkr/open/library/simple_ui/core/permissions/model/PermissionDeniedType;
 }
 
-public final class kr/open/library/simple_ui/core/permissions/model/PermissionRationaleRequest {
-	public fun <init> (Ljava/util/List;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;)V
-	public final fun component1 ()Ljava/util/List;
-	public final fun component2 ()Lkotlin/jvm/functions/Function0;
-	public final fun component3 ()Lkotlin/jvm/functions/Function0;
-	public final fun copy (Ljava/util/List;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;)Lkr/open/library/simple_ui/core/permissions/model/PermissionRationaleRequest;
-	public static synthetic fun copy$default (Lkr/open/library/simple_ui/core/permissions/model/PermissionRationaleRequest;Ljava/util/List;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)Lkr/open/library/simple_ui/core/permissions/model/PermissionRationaleRequest;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getCancel ()Lkotlin/jvm/functions/Function0;
-	public final fun getPermissions ()Ljava/util/List;
-	public final fun getProceed ()Lkotlin/jvm/functions/Function0;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
+public abstract interface class kr/open/library/simple_ui/core/permissions/model/PermissionRationaleRequest {
+	public abstract fun cancel ()V
+	public abstract fun defer (Lkr/open/library/simple_ui/core/permissions/model/PermissionDeferredPolicy;)V
+	public abstract fun getPermissions ()Ljava/util/List;
+	public abstract fun proceed ()V
 }
 
-public final class kr/open/library/simple_ui/core/permissions/model/PermissionSettingsRequest {
-	public fun <init> (Ljava/lang/String;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;)V
-	public final fun component1 ()Ljava/lang/String;
-	public final fun component2 ()Lkotlin/jvm/functions/Function0;
-	public final fun component3 ()Lkotlin/jvm/functions/Function0;
-	public final fun copy (Ljava/lang/String;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;)Lkr/open/library/simple_ui/core/permissions/model/PermissionSettingsRequest;
-	public static synthetic fun copy$default (Lkr/open/library/simple_ui/core/permissions/model/PermissionSettingsRequest;Ljava/lang/String;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)Lkr/open/library/simple_ui/core/permissions/model/PermissionSettingsRequest;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getCancel ()Lkotlin/jvm/functions/Function0;
-	public final fun getPermission ()Ljava/lang/String;
-	public final fun getProceed ()Lkotlin/jvm/functions/Function0;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
+public final class kr/open/library/simple_ui/core/permissions/model/PermissionRationaleRequest$DefaultImpls {
+	public static synthetic fun defer$default (Lkr/open/library/simple_ui/core/permissions/model/PermissionRationaleRequest;Lkr/open/library/simple_ui/core/permissions/model/PermissionDeferredPolicy;ILjava/lang/Object;)V
+}
+
+public abstract interface class kr/open/library/simple_ui/core/permissions/model/PermissionSettingsRequest {
+	public abstract fun cancel ()V
+	public abstract fun defer (Lkr/open/library/simple_ui/core/permissions/model/PermissionDeferredPolicy;)V
+	public abstract fun getPermission ()Ljava/lang/String;
+	public abstract fun proceed ()V
+}
+
+public final class kr/open/library/simple_ui/core/permissions/model/PermissionSettingsRequest$DefaultImpls {
+	public static synthetic fun defer$default (Lkr/open/library/simple_ui/core/permissions/model/PermissionSettingsRequest;Lkr/open/library/simple_ui/core/permissions/model/PermissionDeferredPolicy;ILjava/lang/Object;)V
 }
 
 public final class kr/open/library/simple_ui/core/permissions/queue/PermissionQueue {
@@ -452,6 +454,7 @@ public final class kr/open/library/simple_ui/core/permissions/vo/PermissionConst
 	public final fun getANDROID_R_PERMISSIONS ()Ljava/util/Set;
 	public final fun getANDROID_S_PERMISSIONS ()Ljava/util/Set;
 	public final fun getANDROID_TIRAMISU_PERMISSIONS ()Ljava/util/Set;
+	public final fun getANDROID_U_PERMISSIONS ()Ljava/util/Set;
 }
 
 public final class kr/open/library/simple_ui/core/permissions/vo/PermissionConstants$Defaults {

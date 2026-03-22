@@ -14,6 +14,7 @@ import kr.open.library.simple_ui.xml.permissions.api.PermissionRequester
 import kr.open.library.simple_ui.xml.permissions.state.PermissionStateStore
 import kr.open.library.simple_ui.xml.permissions.state.RequestState
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -200,6 +201,67 @@ class PermissionRequesterRobolectricTest {
         restoredStore.restoreState(outState)
         assertTrue(restoredStore.getSnapshot().requestQueue.isEmpty())
         assertTrue(restoredStore.getSnapshot().requestStates.isEmpty())
+    }
+
+    /**
+     * 다이얼로그 표시 중 프로세스가 킬된 후 복원 시,
+     * 사용자가 응답하지 않은 요청이 PERMANENTLY_DENIED로 오판되는지 검증합니다.<br><br>
+     * Verifies whether a permission request interrupted mid-dialog is misjudged
+     * as PERMANENTLY_DENIED after process kill and restore.<br>
+     *
+     * 재현 조건 / Reproduction conditions:<br>
+     * - markRequested() 이후 상태가 Bundle에 저장됨 (requestedHistory에 권한 포함)<br>
+     * - 복원 시 hasPermission=false, shouldShowRationale=false<br>
+     * - wasRequestedBefore=true + shouldShowRationale=false → PERMANENTLY_DENIED 판정 가능성<br><br>
+     * - requestedHistory contains the permission (as if markRequested() was called)<br>
+     * - On restore: hasPermission=false, shouldShowRationale=false<br>
+     * - wasRequestedBefore=true + shouldShowRationale=false → risk of PERMANENTLY_DENIED misjudgment<br>
+     */
+    @Test
+    fun restoreState_afterMarkRequested_doesNotMisjudgeAsPermanentlyDenied() {
+        // Given: CAMERA 권한 미부여 상태 (shouldShowRationale=false, hasPermission=false)
+        val permission = "android.permission.CAMERA"
+        registerPermission(permission, PermissionInfo.PROTECTION_DANGEROUS)
+
+        val activityController = Robolectric.buildActivity(ComponentActivity::class.java).create()
+        val activity = activityController.get()
+
+        // "markRequested() 이후, 사용자 응답 전" 상태를 직접 구성
+        // Construct state as if: markRequested() called, but no user response yet
+        val requestId = "in-dialog-request"
+        val stateStore = PermissionStateStore()
+        stateStore.update { snapshot ->
+            snapshot.requestQueue.add(requestId)
+            snapshot.requestStates[requestId] = RequestState(
+                requestId = requestId,
+                permissions = listOf(permission),
+                results = emptyMap(),
+            )
+            snapshot.requestedHistory.add(permission) // markRequested() 이후 상태
+        }
+        val savedState = Bundle().also { stateStore.saveState(it) }
+
+        // When: 복원 / Restore
+        val restoredRequester = PermissionRequester(activity)
+        restoredRequester.restoreState(savedState)
+        activityController.start().resume()
+        Shadows.shadowOf(Looper.getMainLooper()).idle()
+
+        // Then: PERMANENTLY_DENIED로 오판되지 않아야 함
+        // This assert failing means a real misjudgment bug exists
+        val orphaned = restoredRequester.consumeOrphanedDeniedResults()
+        assertEquals(1, orphaned.size)
+        val result = orphaned
+            .first()
+            .deniedResults
+            .first()
+            .result
+        assertNotEquals(
+            "다이얼로그 중 킬된 요청이 PERMANENTLY_DENIED로 오판됨 / " +
+                "In-dialog-killed request was misjudged as PERMANENTLY_DENIED",
+            PermissionDeniedType.PERMANENTLY_DENIED,
+            result,
+        )
     }
 
     /**

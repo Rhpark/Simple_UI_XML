@@ -111,6 +111,7 @@ Simple UI provides `PermissionRequester` through Activity, Fragment, and Dialog 
 - `onDeniedResult`
 - `onRationaleNeeded`
 - `onNavigateToSettings`
+- `defer(policy)` for asynchronous rationale/settings UI
 - `restoreState(savedInstanceState)`
 - `saveState(outState)`
 
@@ -120,6 +121,7 @@ Simple UI provides `PermissionRequester` through Activity, Fragment, and Dialog 
 > - `onDeniedResult`
 > - `onRationaleNeeded`
 > - `onNavigateToSettings`
+> - rationale/settings UI의 비동기 전환을 위한 `defer(policy)`
 > - `restoreState(savedInstanceState)`
 > - `saveState(outState)`
 
@@ -138,12 +140,16 @@ requestPermissions(
         }
     },
     onRationaleNeeded = { request ->
-        // Show your rationale UI, then continue or cancel.
+        // Synchronous choice
         request.proceed()
     },
     onNavigateToSettings = { request ->
-        // Navigate to the settings screen when your UI is ready.
-        request.proceed()
+        // Asynchronous UI example
+        request.defer() // default: CANCEL_ON_STOP
+        showSettingsGuideDialog(
+            onContinue = { request.proceed() },
+            onCancel = { request.cancel() },
+        )
     },
 )
 ```
@@ -160,15 +166,48 @@ requestPermissions(
 
 <br></br>
 
+**After process restore — consuming orphaned denied results (프로세스 복원 후 — orphaned 거부 결과 처리):**
+
+If a permission request was in progress when the process was killed, the denied result cannot be delivered
+via the original callback (lambdas are not serializable). Call `consumeOrphanedDeniedResults()` in `onCreate`
+to retrieve these results.
+
+> 프로세스가 종료된 시점에 권한 요청이 진행 중이었다면, 원래 콜백(람다)은 직렬화할 수 없으므로
+> 결과를 전달받을 수 없습니다. `onCreate`에서 `consumeOrphanedDeniedResults()`를 호출해 해당 결과를 처리하세요.
+
+```kotlin
+// Activity / Fragment / DialogFragment 모두 동일한 방식으로 사용
+override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+
+    val orphaned = consumeOrphanedDeniedResults()
+    if (orphaned.isNotEmpty()) {
+        // 복원된 거부 결과 처리 (예: 설정 안내 UI 표시)
+        // Handle restored denied results (e.g., show settings guidance UI)
+        orphaned.forEach { result ->
+            result.deniedResults.forEach { item ->
+                // item.permission, item.result 로 분기 처리
+            }
+        }
+    }
+}
+```
+
+<br></br>
+
 ## Lifecycle and Host Rules (생명주기 및 호스트 규칙)
 
 - Activity permission requests must be made after `super.onCreate()`.
 - Fragment/Dialog permission requests must be made only after the host is attached (`isAdded == true`).
 - `PermissionRequester` supports state restore/save for configuration changes and process recovery flows.
+- If a rationale/settings callback returns without calling `proceed()`, `cancel()`, or `defer(policy)`, the flow is auto-cancelled.
+- `defer()` uses `CANCEL_ON_STOP` by default, and `CANCEL_ON_DESTROY` can be used when the deferred UI must survive `onStop`.
 
 > - Activity 권한 요청은 반드시 `super.onCreate()` 이후에 호출해야 합니다.
 > - Fragment/Dialog 권한 요청은 반드시 host attach 이후(`isAdded == true`)에 호출해야 합니다.
 > - `PermissionRequester`는 구성 변경 및 프로세스 복원 흐름을 위해 상태 저장/복원을 지원합니다.
+> - rationale/settings 콜백이 `proceed()`, `cancel()`, `defer(policy)` 없이 반환되면 흐름은 자동 취소됩니다.
+> - `defer()`의 기본 정책은 `CANCEL_ON_STOP`이며, `onStop` 이후에도 유지가 필요하면 `CANCEL_ON_DESTROY`를 사용할 수 있습니다.
 
 <br></br>
 
@@ -298,6 +337,8 @@ See feature doc: [README_NETWORK_INFO.md](system_manager/info/core/README_NETWOR
 - Make sure permission requests are called at the correct lifecycle timing.
 - Check denied result types such as `MANIFEST_UNDECLARED`, `EMPTY_REQUEST`, and `LIFECYCLE_NOT_READY`.
 - Use `onRationaleNeeded` and `onNavigateToSettings` when the flow requires explanation or settings navigation.
+- In those callbacks, always finish the decision with `proceed()`, `cancel()`, or `defer(policy)`.
+- Use `defer(CANCEL_ON_DESTROY)` only when the deferred UI must survive `onStop`; otherwise keep the default `CANCEL_ON_STOP`.
 - Use `simple_core` helpers such as `hasPermission()` and `remainPermissions()` when you need pre-check logic.
 
 > - `AndroidManifest.xml`에 권한이 선언되어 있는지 확인하세요.
@@ -305,6 +346,8 @@ See feature doc: [README_NETWORK_INFO.md](system_manager/info/core/README_NETWOR
 > - 권한 요청이 올바른 생명주기 시점에서 호출되는지 확인하세요.
 > - `MANIFEST_UNDECLARED`, `EMPTY_REQUEST`, `LIFECYCLE_NOT_READY` 같은 결과 유형을 확인하세요.
 > - 설명 UI나 설정 이동이 필요한 경우 `onRationaleNeeded`, `onNavigateToSettings`를 사용하세요.
+> - 해당 콜백에서는 반드시 `proceed()`, `cancel()`, `defer(policy)` 중 하나로 결정을 마무리하세요.
+> - `defer(CANCEL_ON_DESTROY)`는 `onStop` 이후에도 유지가 필요할 때만 사용하고, 그 외에는 기본값 `CANCEL_ON_STOP`을 유지하세요.
 > - 사전 점검이 필요하면 `hasPermission()`, `remainPermissions()` 같은 `simple_core` 헬퍼를 활용하세요.
 
 <br></br>

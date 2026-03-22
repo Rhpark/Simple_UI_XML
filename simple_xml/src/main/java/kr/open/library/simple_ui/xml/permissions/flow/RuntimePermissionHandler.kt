@@ -69,10 +69,11 @@ class RuntimePermissionHandler(
         granted: Boolean,
         shouldShowRationale: Boolean,
         wasRequestedBefore: Boolean,
+        isRestored: Boolean = false,
     ): PermissionDecisionType = when {
         granted -> PermissionDecisionType.GRANTED
         shouldShowRationale -> PermissionDecisionType.DENIED
-        wasRequestedBefore -> PermissionDecisionType.PERMANENTLY_DENIED
+        wasRequestedBefore && !isRestored -> PermissionDecisionType.PERMANENTLY_DENIED
         else -> PermissionDecisionType.DENIED
     }
 }

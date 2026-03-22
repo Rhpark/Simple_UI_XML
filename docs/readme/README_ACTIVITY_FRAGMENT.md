@@ -131,7 +131,6 @@ android {
 |:--|:--|:--|
 | `onCreateView` | 수동 inflate + container attach 여부 판단 | `return inflater.inflate(layoutRes, container, false)`만 작성 |
 | Permission request | `registerForActivityResult` 필요 | `requestPermissions()` 상속 |
-| Insets 처리 | ViewCompat 로직 | RootFragment가 이미 로직 보유 |
 
 <br></br>
 

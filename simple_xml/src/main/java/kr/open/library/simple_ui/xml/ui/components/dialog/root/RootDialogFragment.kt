@@ -1,4 +1,4 @@
-﻿package kr.open.library.simple_ui.xml.ui.components.dialog.root
+package kr.open.library.simple_ui.xml.ui.components.dialog.root
 
 import android.app.Dialog
 import android.graphics.Color
@@ -14,6 +14,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
 import kr.open.library.simple_ui.core.logcat.Logx
+import kr.open.library.simple_ui.core.permissions.model.OrphanedDeniedRequestResult
 import kr.open.library.simple_ui.core.permissions.model.PermissionDeniedItem
 import kr.open.library.simple_ui.core.permissions.model.PermissionRationaleRequest
 import kr.open.library.simple_ui.core.permissions.model.PermissionSettingsRequest
@@ -147,26 +148,32 @@ public abstract class RootDialogFragment :
     }
 
     @CallSuper
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = super.onCreateDialog(savedInstanceState).apply {
-        window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        // DialogFragment.setCancelable()을 먼저 호출하여 mCancelable 필드를 갱신합니다.
+        // super.onCreateDialog() 내부에서 mCancelable 기준으로 Dialog를 설정하므로,
+        // Dialog.setCancelable()을 직접 호출하면 super 호출 후 덮어써져 무효화됩니다.
         setCancelable(config.dialogCancelable)
+        return super.onCreateDialog(savedInstanceState).apply {
+            window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        // Apply animation if set
-        config.animationStyle?.let { style ->
-            window?.attributes?.windowAnimations = style
-        }
+            // Apply animation if set
+            config.animationStyle?.let { style ->
+                window?.attributes?.windowAnimations = style
+            }
 
-        // Apply gravity if not center
-        if (config.dialogGravity != Gravity.CENTER) {
-            window?.setGravity(config.dialogGravity)
+            // Apply gravity if not center
+            if (config.dialogGravity != Gravity.CENTER) {
+                window?.setGravity(config.dialogGravity)
+            }
         }
     }
 
     @CallSuper
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        permissionRequester.saveState(outState)
+        if (::permissionRequester.isInitialized) {
+            permissionRequester.saveState(outState)
+        }
     }
 
     /**
@@ -234,7 +241,9 @@ public abstract class RootDialogFragment :
      */
     public fun setCancelableDialog(cancelable: Boolean) {
         config.dialogCancelable = cancelable
-        dialog?.setCancelable(cancelable)
+        // DialogFragment.setCancelable()을 사용하여 mCancelable 필드와 Dialog를 동시에 갱신합니다.
+        // dialog?.setCancelable()은 Dialog 객체만 갱신하여 구성 변경 시 상태가 유실됩니다.
+        setCancelable(cancelable)
     }
 
     /**
@@ -272,8 +281,12 @@ public abstract class RootDialogFragment :
      * @param onDeniedResult Callback invoked with denied items.<br><br>
      *                       거부 항목을 전달받는 콜백입니다.<br>
      * @param onRationaleNeeded Callback for rationale UI when needed.<br><br>
+     *                          Call `proceed()`, `cancel()`, or `defer(policy)` inside the callback; returning without an action auto-cancels the flow.<br>
+     *                          콜백 안에서 `proceed()`, `cancel()`, `defer(policy)` 중 하나를 호출해야 하며, 아무 액션 없이 반환되면 흐름은 자동 취소됩니다.<br>
      *                          필요 시 rationale UI를 제공하는 콜백입니다.<br>
      * @param onNavigateToSettings Callback for settings navigation when needed.<br><br>
+     *                             Call `proceed()`, `cancel()`, or `defer(policy)` inside the callback; returning without an action auto-cancels the flow.<br>
+     *                             콜백 안에서 `proceed()`, `cancel()`, `defer(policy)` 중 하나를 호출해야 하며, 아무 액션 없이 반환되면 흐름은 자동 취소됩니다.<br>
      *                             필요 시 설정 이동을 안내하는 콜백입니다.<br>
      */
     @CallSuper
@@ -304,5 +317,21 @@ public abstract class RootDialogFragment :
         check(::permissionRequester.isInitialized) { "permissionRequester is not initialized. Please call super.onCreate() first." }
         check(isAdded) { "Permission request must be called after Fragment is attached (isAdded == true)." }
         permissionRequester.requestPermissions(permissions, onDeniedResult, null, null)
+    }
+
+    /**
+     * Returns and clears denied results that lost their callbacks after process restore.<br>
+     * Call this in [onCreate] to handle results from requests that were interrupted by process kill.<br><br>
+     * 프로세스 복원 후 콜백을 잃은 거부 결과를 반환하고 비웁니다.<br>
+     * 프로세스 킬로 중단된 요청의 결과를 처리하려면 [onCreate]에서 호출하세요.<br>
+     *
+     * @return Return value: list of orphaned denied request results. Log behavior: none.<br><br>
+     *         반환값: orphaned 거부 요청 결과 목록. 로그 동작: 없음.<br>
+     */
+    fun consumeOrphanedDeniedResults(): List<OrphanedDeniedRequestResult> {
+        check(::permissionRequester.isInitialized) {
+            "PermissionRequester is not initialized. Please call super.onCreate() first."
+        }
+        return permissionRequester.consumeOrphanedDeniedResults()
     }
 }
