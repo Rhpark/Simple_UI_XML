@@ -67,23 +67,23 @@ android {
 dependencies {
     //..
     // Version 0.3.0+ (Modular Structure)
-    implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_Core:0.4.7")             // Core functionality only
-    implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_XML:0.4.7")              // XML UI components only (depends on Core)
+    implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_Core:0.4.8")             // Core functionality only
+    implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_XML:0.4.8")              // XML UI components only (depends on Core)
     implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_System_Manager:0.4.7")   // System Manager only (depends on Core)
 
     // Examples
-    // implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_XML:0.4.7")
+    // implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_XML:0.4.8")
     // -> simple_xml 기능만 사용하는 경우
     //
     // implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_System_Manager:0.4.7")
     // -> system_manager 기능만 사용하는 경우
     //
-    // implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_XML:0.4.7")
+    // implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_XML:0.4.8")
     // implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_System_Manager:0.4.7")
     // -> XML UI와 system_manager 기능을 함께 사용하는 경우
     //
-    // implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_Core:0.4.7")
-    // implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_XML:0.4.7")
+    // implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_Core:0.4.8")
+    // implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_XML:0.4.8")
     // -> 앱 코드에서 simple_core API를 직접 함께 사용하는 경우
     //..
 }
