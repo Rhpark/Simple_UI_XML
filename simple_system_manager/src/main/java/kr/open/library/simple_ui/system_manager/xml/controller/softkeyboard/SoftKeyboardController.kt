@@ -45,7 +45,7 @@ import kr.open.library.simple_ui.system_manager.core.extensions.getInputMethodMa
  */
 public open class SoftKeyboardController(
     context: Context,
-) : kr.open.library.simple_ui.system_manager.core.base.BaseSystemService(context, null) {
+) : BaseSystemService(context, null) {
     public companion object {
         public const val DEFAULT_IME_VISIBILITY_TIMEOUT_MS: Long = 700L
         private const val IME_FALLBACK_POLL_INTERVAL_MS: Long = 50L

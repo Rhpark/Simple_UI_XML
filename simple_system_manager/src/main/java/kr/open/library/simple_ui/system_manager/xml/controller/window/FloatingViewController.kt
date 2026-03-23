@@ -31,7 +31,7 @@ import kr.open.library.simple_ui.system_manager.xml.controller.window.vo.Floatin
  */
 public open class FloatingViewController(
     context: Context,
-) : kr.open.library.simple_ui.system_manager.core.base.BaseSystemService(context, listOf(android.Manifest.permission.SYSTEM_ALERT_WINDOW)) {
+) : BaseSystemService(context, listOf(android.Manifest.permission.SYSTEM_ALERT_WINDOW)) {
     public val windowManager: WindowManager by lazy { context.getWindowManager() }
 
     private var floatingDragViewInfoList: MutableList<FloatingDragViewConfig> = mutableListOf()

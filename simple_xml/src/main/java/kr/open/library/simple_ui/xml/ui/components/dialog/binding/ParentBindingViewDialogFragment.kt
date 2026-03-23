@@ -31,10 +31,17 @@ import kr.open.library.simple_ui.xml.ui.components.dialog.root.RootDialogFragmen
  * @param BINDING The type of ViewBinding to be used.<br><br>
  *                사용할 ViewBinding 타입.<br>
  */
-abstract class ParentBindingViewDialogFragment<BINDING : ViewBinding>(
-    private val isAttachToParent: Boolean,
-) : RootDialogFragment(),
+abstract class ParentBindingViewDialogFragment<BINDING : ViewBinding> :
+    RootDialogFragment,
     ParentBindingInterfaceForFragment<BINDING> {
+    private val isAttachToParent: Boolean
+
+    constructor() : this(false)
+
+    constructor(isAttachToParent: Boolean) : super() {
+        this.isAttachToParent = isAttachToParent
+    }
+
     /**
      * Holds the ViewBinding instance for this DialogFragment.<br><br>
      * 이 DialogFragment의 ViewBinding 인스턴스를 보관합니다.<br>

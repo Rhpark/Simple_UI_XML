@@ -52,7 +52,7 @@ import kr.open.library.simple_ui.system_manager.core.extensions.getWifiManager
  */
 public open class WifiController(
     context: Context,
-) : kr.open.library.simple_ui.system_manager.core.base.BaseSystemService(
+) : BaseSystemService(
         context,
         listOf(ACCESS_WIFI_STATE, CHANGE_WIFI_STATE, ACCESS_FINE_LOCATION, ACCESS_NETWORK_STATE),
     ) {

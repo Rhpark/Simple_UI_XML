@@ -87,7 +87,7 @@ public open class SimpleNotificationController(
      *     .apply { description = DEFAULT_CHANNEL_DESCRIPTION }<br>
      */
     private var notificationChannel: NotificationChannel
-) : kr.open.library.simple_ui.system_manager.core.base.BaseSystemService(
+) : BaseSystemService(
         context.applicationContext,
         checkSdkVersion(Build.VERSION_CODES.TIRAMISU,
             positiveWork = { listOf(POST_NOTIFICATIONS) },

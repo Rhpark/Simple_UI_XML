@@ -77,7 +77,7 @@ import java.util.concurrent.Executor
  */
 public class TelephonyCallbackManager(
     context: Context,
-) : kr.open.library.simple_ui.system_manager.core.base.BaseSystemService(context, listOf(READ_PHONE_STATE, ACCESS_FINE_LOCATION)) {
+) : BaseSystemService(context, listOf(READ_PHONE_STATE, ACCESS_FINE_LOCATION)) {
     // =================================================
     // Core Components
     // =================================================

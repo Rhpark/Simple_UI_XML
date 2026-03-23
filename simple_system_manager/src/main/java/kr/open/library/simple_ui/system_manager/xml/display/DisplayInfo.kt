@@ -70,7 +70,7 @@ import kr.open.library.simple_ui.system_manager.core.extensions.getWindowManager
  */
 public open class DisplayInfo(
     context: Context
-) : kr.open.library.simple_ui.system_manager.core.base.BaseSystemService(context, null) {
+) : BaseSystemService(context, null) {
     private companion object {
         const val STATUS_BAR_RES = "status_bar_height"
         const val NAV_BAR_RES = "navigation_bar_height"

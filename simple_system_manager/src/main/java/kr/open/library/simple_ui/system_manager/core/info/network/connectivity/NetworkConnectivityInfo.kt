@@ -83,7 +83,7 @@ import java.net.Inet4Address
  */
 public class NetworkConnectivityInfo(
     context: Context,
-) : kr.open.library.simple_ui.system_manager.core.base.BaseSystemService(
+) : BaseSystemService(
         context,
         listOf(ACCESS_NETWORK_STATE, ACCESS_WIFI_STATE)
     ) {

@@ -87,7 +87,7 @@ import kr.open.library.simple_ui.system_manager.core.info.location.internal.mode
  */
 public open class LocationStateInfo(
     context: Context,
-) : kr.open.library.simple_ui.system_manager.core.base.BaseSystemService(context, listOf(ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION)) {
+) : BaseSystemService(context, listOf(ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION)) {
     /**
      * Lazy-initialized LocationManager instance.<br><br>
      * 지연 초기화된 LocationManager 인스턴스입니다.<br>

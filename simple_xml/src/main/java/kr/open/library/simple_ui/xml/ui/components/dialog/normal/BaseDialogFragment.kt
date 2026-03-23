@@ -83,10 +83,18 @@ import kr.open.library.simple_ui.xml.ui.components.dialog.root.RootDialogFragmen
  * @see BaseDataBindingDialogFragment For DataBinding-enabled DialogFragment.<br><br>
  *      DataBinding을 사용하는 DialogFragment는 BaseDataBindingDialogFragment를 참조하세요.<br>
  */
-public abstract class BaseDialogFragment(
-    @LayoutRes private val layoutRes: Int,
-    private val isAttachToParent: Boolean = false,
-) : RootDialogFragment() {
+public abstract class BaseDialogFragment : RootDialogFragment {
+    @LayoutRes
+    private val layoutRes: Int
+    private val isAttachToParent: Boolean
+
+    constructor(layoutRes: Int) : this(layoutRes, false)
+
+    constructor(layoutRes: Int, isAttachToParent: Boolean) : super() {
+        this.layoutRes = layoutRes
+        this.isAttachToParent = isAttachToParent
+    }
+
     /**
      * Internal backing field for rootView.<br><br>
      * rootView의 내부 백킹 필드입니다.<br>

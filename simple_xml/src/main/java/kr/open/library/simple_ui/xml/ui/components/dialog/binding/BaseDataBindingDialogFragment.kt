@@ -99,10 +99,18 @@ import kr.open.library.simple_ui.xml.ui.components.dialog.root.RootDialogFragmen
  * @see BaseViewBindingDialogFragment For ViewBinding-enabled DialogFragment.<br><br>
  *      ViewBinding을 사용하는 DialogFragment는 BaseViewBindingDialogFragment를 참조하세요.<br>
  */
-public abstract class BaseDataBindingDialogFragment<BINDING : ViewDataBinding>(
-    @LayoutRes private val layoutRes: Int,
-    isAttachToParent: Boolean = false,
-) : ParentBindingViewDialogFragment<BINDING>(isAttachToParent) {
+public abstract class BaseDataBindingDialogFragment<BINDING : ViewDataBinding> : ParentBindingViewDialogFragment<BINDING> {
+    @LayoutRes
+    private val layoutRes: Int
+
+    constructor(layoutRes: Int) : super() {
+        this.layoutRes = layoutRes
+    }
+
+    constructor(layoutRes: Int, isAttachToParent: Boolean) : super(isAttachToParent) {
+        this.layoutRes = layoutRes
+    }
+
     /**
      * Creates the DataBinding instance using DataBindingUtil.<br>
      * Note: lifecycleOwner is set later in onViewCreated() to viewLifecycleOwner for proper view lifecycle binding.<br><br>

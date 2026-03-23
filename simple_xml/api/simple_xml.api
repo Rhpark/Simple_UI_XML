@@ -827,8 +827,8 @@ public abstract class kr/open/library/simple_ui/xml/ui/components/activity/root/
 }
 
 public abstract class kr/open/library/simple_ui/xml/ui/components/dialog/binding/BaseDataBindingDialogFragment : kr/open/library/simple_ui/xml/ui/components/dialog/binding/ParentBindingViewDialogFragment {
+	public fun <init> (I)V
 	public fun <init> (IZ)V
-	public synthetic fun <init> (IZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	protected final fun createBinding (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Landroidx/databinding/ViewDataBinding;
 	public synthetic fun createBinding (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Landroidx/viewbinding/ViewBinding;
 	public fun onDestroyView ()V
@@ -836,12 +836,13 @@ public abstract class kr/open/library/simple_ui/xml/ui/components/dialog/binding
 }
 
 public abstract class kr/open/library/simple_ui/xml/ui/components/dialog/binding/BaseViewBindingDialogFragment : kr/open/library/simple_ui/xml/ui/components/dialog/binding/ParentBindingViewDialogFragment {
+	public fun <init> (Lkotlin/jvm/functions/Function3;)V
 	public fun <init> (Lkotlin/jvm/functions/Function3;Z)V
-	public synthetic fun <init> (Lkotlin/jvm/functions/Function3;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	protected final fun createBinding (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Landroidx/viewbinding/ViewBinding;
 }
 
 public abstract class kr/open/library/simple_ui/xml/ui/components/dialog/binding/ParentBindingViewDialogFragment : kr/open/library/simple_ui/xml/ui/components/dialog/root/RootDialogFragment, kr/open/library/simple_ui/xml/ui/base/lifecycle/ParentBindingInterfaceForFragment {
+	public fun <init> ()V
 	public fun <init> (Z)V
 	protected abstract fun createBinding (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Landroidx/viewbinding/ViewBinding;
 	protected final fun getBinding ()Landroidx/viewbinding/ViewBinding;
@@ -854,8 +855,8 @@ public abstract class kr/open/library/simple_ui/xml/ui/components/dialog/binding
 }
 
 public abstract class kr/open/library/simple_ui/xml/ui/components/dialog/normal/BaseDialogFragment : kr/open/library/simple_ui/xml/ui/components/dialog/root/RootDialogFragment {
+	public fun <init> (I)V
 	public fun <init> (IZ)V
-	public synthetic fun <init> (IZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	protected final fun getRootView ()Landroid/view/View;
 	public fun onCreateView (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Landroid/os/Bundle;)Landroid/view/View;
 	public fun onDestroyView ()V
@@ -903,8 +904,8 @@ public abstract class kr/open/library/simple_ui/xml/ui/components/dialog/root/Ro
 }
 
 public abstract class kr/open/library/simple_ui/xml/ui/components/fragment/binding/BaseDataBindingFragment : kr/open/library/simple_ui/xml/ui/components/fragment/binding/ParentsBindingFragment {
+	public fun <init> (I)V
 	public fun <init> (IZ)V
-	public synthetic fun <init> (IZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	protected final fun createBinding (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Landroidx/databinding/ViewDataBinding;
 	public synthetic fun createBinding (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Landroidx/viewbinding/ViewBinding;
 	public fun onDestroyView ()V
@@ -912,15 +913,14 @@ public abstract class kr/open/library/simple_ui/xml/ui/components/fragment/bindi
 }
 
 public abstract class kr/open/library/simple_ui/xml/ui/components/fragment/binding/BaseViewBindingFragment : kr/open/library/simple_ui/xml/ui/components/fragment/binding/ParentsBindingFragment {
+	public fun <init> (Lkotlin/jvm/functions/Function3;)V
 	public fun <init> (Lkotlin/jvm/functions/Function3;Z)V
-	public synthetic fun <init> (Lkotlin/jvm/functions/Function3;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	protected final fun createBinding (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Landroidx/viewbinding/ViewBinding;
 }
 
 public abstract class kr/open/library/simple_ui/xml/ui/components/fragment/binding/ParentsBindingFragment : kr/open/library/simple_ui/xml/ui/components/fragment/root/RootFragment, kr/open/library/simple_ui/xml/ui/base/lifecycle/ParentBindingInterfaceForFragment {
 	public fun <init> ()V
 	public fun <init> (Z)V
-	public synthetic fun <init> (ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	protected abstract fun createBinding (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Z)Landroidx/viewbinding/ViewBinding;
 	protected final fun getBinding ()Landroidx/viewbinding/ViewBinding;
 	public fun onBindingCreated (Landroidx/viewbinding/ViewBinding;Landroid/os/Bundle;)V
@@ -932,8 +932,8 @@ public abstract class kr/open/library/simple_ui/xml/ui/components/fragment/bindi
 }
 
 public abstract class kr/open/library/simple_ui/xml/ui/components/fragment/normal/BaseFragment : kr/open/library/simple_ui/xml/ui/components/fragment/root/RootFragment {
+	public fun <init> (I)V
 	public fun <init> (IZ)V
-	public synthetic fun <init> (IZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	protected final fun getRootView ()Landroid/view/View;
 	public final fun onCreateView (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Landroid/os/Bundle;)Landroid/view/View;
 	protected abstract fun onCreateView (Landroid/view/View;Landroid/os/Bundle;)V

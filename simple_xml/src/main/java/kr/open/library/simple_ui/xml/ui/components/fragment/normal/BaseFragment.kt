@@ -49,11 +49,17 @@ import kr.open.library.simple_ui.xml.ui.components.fragment.root.RootFragment
  * @see BaseDataBindingFragment For DataBinding-enabled Fragment.<br><br>
  *      DataBinding을 사용하는 Fragment.<br>
  */
-abstract class BaseFragment(
-    @LayoutRes private val layoutRes: Int,
-    private val isAttachToParent: Boolean = false,
-) : RootFragment() {
+abstract class BaseFragment : RootFragment {
+    @LayoutRes
+    private val layoutRes: Int
+    private val isAttachToParent: Boolean
     private var rootView: View? = null
+
+    constructor(layoutRes: Int) : this(layoutRes, false)
+    constructor(layoutRes: Int, isAttachToParent: Boolean) {
+        this.layoutRes = layoutRes
+        this.isAttachToParent = isAttachToParent
+    }
 
     /**
      * Returns the root view of the fragment's layout.<br><br>

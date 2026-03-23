@@ -27,8 +27,8 @@ import java.util.Calendar
  *                애플리케이션 컨텍스트입니다.<br>
  */
 public open class AlarmController(
-    context: Context,
-) : kr.open.library.simple_ui.system_manager.core.base.BaseSystemService(
+    context: Context
+) : BaseSystemService(
         context,
         checkSdkVersion<List<String>?>(Build.VERSION_CODES.S) {
             listOf(SCHEDULE_EXACT_ALARM)

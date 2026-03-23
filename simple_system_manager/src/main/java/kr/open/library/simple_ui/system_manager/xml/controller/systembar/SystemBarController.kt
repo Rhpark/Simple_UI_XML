@@ -93,7 +93,7 @@ import kr.open.library.simple_ui.system_manager.xml.controller.systembar.model.S
  */
 public class SystemBarController(
     private val window: Window,
-) : kr.open.library.simple_ui.system_manager.core.base.BaseSystemService(window.context, null) {
+) : BaseSystemService(window.context, null) {
     /**
      * Helper instance for managing StatusBar operations.<br>
      * Lazily initialized when first accessed.<br><br>

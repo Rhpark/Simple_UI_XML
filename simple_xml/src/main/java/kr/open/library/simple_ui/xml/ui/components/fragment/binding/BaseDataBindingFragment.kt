@@ -82,10 +82,18 @@ import androidx.databinding.ViewDataBinding
  * @see BaseViewBindingFragment For ViewBinding-enabled Fragment.<br><br>
  *      ViewBinding을 사용하는 Fragment는 BaseViewBindingFragment를 참조하세요.<br>
  */
-public abstract class BaseDataBindingFragment<BINDING : ViewDataBinding>(
-    @LayoutRes private val layoutRes: Int,
-    isAttachToParent: Boolean = false,
-) : ParentsBindingFragment<BINDING>(isAttachToParent) {
+public abstract class BaseDataBindingFragment<BINDING : ViewDataBinding> : ParentsBindingFragment<BINDING> {
+    @LayoutRes
+    private val layoutRes: Int
+
+    constructor(layoutRes: Int) : super() {
+        this.layoutRes = layoutRes
+    }
+
+    constructor(layoutRes: Int, isAttachToParent: Boolean) : super(isAttachToParent) {
+        this.layoutRes = layoutRes
+    }
+
     /**
      * Creates the DataBinding instance using DataBindingUtil.<br>
      * Note: lifecycleOwner is set later in onViewCreated() to viewLifecycleOwner for proper view lifecycle binding.<br><br>

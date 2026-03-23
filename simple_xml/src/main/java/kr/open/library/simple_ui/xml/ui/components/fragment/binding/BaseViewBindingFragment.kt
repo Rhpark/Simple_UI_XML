@@ -63,10 +63,17 @@ import androidx.viewbinding.ViewBinding
  * @see BaseDataBindingFragment For DataBinding-enabled Fragment.<br><br>
  *      DataBinding을 사용하는 Fragment는 BaseDataBindingFragment를 참조하세요.<br>
  */
-public abstract class BaseViewBindingFragment<BINDING : ViewBinding>(
-    private val inflate: (LayoutInflater, ViewGroup?, Boolean) -> BINDING,
-    isAttachToParent: Boolean = false
-) : ParentsBindingFragment<BINDING>(isAttachToParent) {
+public abstract class BaseViewBindingFragment<BINDING : ViewBinding> : ParentsBindingFragment<BINDING> {
+    private val inflate: (LayoutInflater, ViewGroup?, Boolean) -> BINDING
+
+    constructor(inflate: (LayoutInflater, ViewGroup?, Boolean) -> BINDING) : super() {
+        this.inflate = inflate
+    }
+
+    constructor(inflate: (LayoutInflater, ViewGroup?, Boolean) -> BINDING, isAttachToParent: Boolean) : super(isAttachToParent) {
+        this.inflate = inflate
+    }
+
     /**
      * Creates the ViewBinding instance using the provided inflate function.<br><br>
      * 제공된 inflate 함수를 사용하여 ViewBinding 인스턴스를 생성합니다.<br>

@@ -67,7 +67,7 @@ import kr.open.library.simple_ui.system_manager.core.extensions.getVibratorManag
  */
 public open class VibratorController(
     context: Context,
-) : kr.open.library.simple_ui.system_manager.core.base.BaseSystemService(context, listOf(VIBRATE)) {
+) : BaseSystemService(context, listOf(VIBRATE)) {
     /**
      * Legacy vibrator instance for SDK versions below 31 (Android 12).<br><br>
      * SDK 31 미만 (안드로이드 12 이하) 버전용 레거시 진동 인스턴스입니다.<br>

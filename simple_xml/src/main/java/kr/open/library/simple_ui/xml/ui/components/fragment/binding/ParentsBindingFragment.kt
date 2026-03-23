@@ -33,15 +33,21 @@ import kr.open.library.simple_ui.xml.ui.components.fragment.root.RootFragment
  *                         레이아웃을 부모 컨테이너에 attach할지 여부.<br>
  *                         Fragment에서는 특별한 경우가 아니라면 `false` 유지가 안전합니다.<br>
  */
-abstract class ParentsBindingFragment<BINDING : ViewBinding>(
-    private val isAttachToParent: Boolean = false,
-) : RootFragment(),
+abstract class ParentsBindingFragment<BINDING : ViewBinding> :
+    RootFragment,
     ParentBindingInterfaceForFragment<BINDING> {
     /**
      * Holds the ViewBinding instance for this Fragment.<br><br>
      * 이 Fragment의 ViewBinding 인스턴스를 보관합니다.<br>
      */
     private var binding: BINDING? = null
+
+    private val isAttachToParent: Boolean
+
+    constructor() : this(false)
+    constructor(isAttachToParent: Boolean) {
+        this.isAttachToParent = isAttachToParent
+    }
 
     /**
      * Returns the initialized binding instance.<br>

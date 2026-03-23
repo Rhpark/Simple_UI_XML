@@ -63,7 +63,7 @@ import kr.open.library.simple_ui.system_manager.core.info.battery.internal.model
  */
 public open class BatteryStateInfo(
     context: Context
-) : kr.open.library.simple_ui.system_manager.core.base.BaseSystemService(context) {
+) : BaseSystemService(context) {
     /**
      * Helper that queries battery properties from BatteryManager and manages StateFlow caching.<br>
      * Provides battery property access methods and maintains reactive flows for battery metrics.<br><br>
