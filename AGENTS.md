@@ -50,12 +50,13 @@
  - 코드 패턴 상세: docs/rules/coding_rule/patterns/*.md
 
 ## 사용 가능한 Skills (슬래시 명령으로 호출)
- - /CodeReview  : 코드 리뷰 (절차 문서는 Skill 내부 참조)
- - /Refactor    : 코드 리팩토링 (절차 문서는 Skill 내부 참조)
- - /TestCode    : 테스트 코드 작성 (Unit / Robolectric 자동 판단)
- - /KDoc        : KDoc 주석 작성 (한·영 병기)
- - /Readme      : README 문서 작성
- - /Planning    : 기능 개발 계획 (PRD/SPEC/IMPLEMENTATION_PLAN 초안)
+ - /CodeReview    : 코드 리뷰 (절차 문서는 Skill 내부 참조)
+ - /Refactor      : 코드 리팩토링 (절차 문서는 Skill 내부 참조)
+ - /TestCode      : 테스트 코드 작성 (Unit / Robolectric 자동 판단)
+ - /KDoc          : KDoc 주석 작성 (한·영 병기)
+ - /Readme        : README 문서 작성
+ - /Planning      : 기능 개발 계획 (PRD/SPEC/IMPLEMENTATION_PLAN 초안)
+ - /CheckQuality  : 정적 분석 일괄 실행 (ktlintCheck → lintDebug → apiDump)
 
 ## 프로젝트/환경/배포 규칙 문서 위치
  - 인덱스: docs/rules/PROJECT_RULE_INDEX.md

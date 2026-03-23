@@ -72,7 +72,7 @@ class RootDialogFragmentRobolectricTest {
         assertTrue(fragment.isCancelable)
     }
 
-    private class TestRootDialogFragment : RootDialogFragment() {
+    class TestRootDialogFragment : RootDialogFragment() {
         fun getBackgroundResIdForTest(): Int? = config.getBackgroundResId()
 
         fun getBackgroundColorForTest(): Int? = config.getBackgroundColor()
