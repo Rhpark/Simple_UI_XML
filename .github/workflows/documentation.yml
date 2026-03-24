@@ -72,6 +72,7 @@ jobs:
           # Line 69-71, 74: implementation dependencies
           sed -i "s/Simple_UI_Core:[0-9.]\+/Simple_UI_Core:$VERSION/g" README.md
           sed -i "s/Simple_UI_XML:[0-9.]\+/Simple_UI_XML:$VERSION/g" README.md
+          sed -i "s/Simple_UI_System_Manager:[0-9.]\+/Simple_UI_System_Manager:$VERSION/g" README.md
           
           echo "✅ README.md updated"
 

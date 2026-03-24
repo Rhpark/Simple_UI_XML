@@ -107,7 +107,8 @@ abstract class ParentsBindingActivity<BINDING : ViewBinding> :
      * @return The ViewModel instance of type T.<br><br>
      *         T 타입의 ViewModel 인스턴스.<br>
      */
-    protected inline fun <reified T : ViewModel> getViewModel(): T = ViewModelProvider(this)[T::class.java]
+    protected inline fun <reified T : ViewModel> getViewModel(): T =
+        ViewModelProvider(this, defaultViewModelProviderFactory)[T::class.java]
 
     /**
      * Obtains a ViewModel of the specified type using ViewModelProvider with a custom factory.<br><br>

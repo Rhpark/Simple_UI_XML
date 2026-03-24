@@ -126,7 +126,8 @@ abstract class ParentsBindingFragment<BINDING : ViewBinding> :
      * @return The ViewModel instance of type T.<br><br>
      *         T 타입의 ViewModel 인스턴스.<br>
      */
-    protected inline fun <reified T : ViewModel> getViewModel(): T = ViewModelProvider(this)[T::class.java]
+    protected inline fun <reified T : ViewModel> getViewModel(): T =
+        ViewModelProvider(this, defaultViewModelProviderFactory)[T::class.java]
 
     /**
      * Obtains a ViewModel of the specified type using ViewModelProvider with a custom factory.<br><br>
@@ -141,4 +142,38 @@ abstract class ParentsBindingFragment<BINDING : ViewBinding> :
      */
     protected inline fun <reified T : ViewModel> getViewModel(factory: ViewModelProvider.Factory): T =
         ViewModelProvider(this, factory)[T::class.java]
+
+    /**
+     * Obtains a ViewModel scoped to the parent Activity.<br>
+     * Use this to share a ViewModel between Fragments and their host Activity.<br><br>
+     * 부모 Activity 스코프의 ViewModel을 가져옵니다.<br>
+     * Fragment와 호스트 Activity 간 ViewModel을 공유할 때 사용하세요.<br>
+     *
+     * @param T The type of the ViewModel to obtain.<br><br>
+     *          가져올 ViewModel 타입.<br>
+     * @return The ViewModel instance of type T scoped to the parent Activity.<br><br>
+     *         부모 Activity 스코프의 T 타입 ViewModel 인스턴스.<br>
+     *
+     * @throws IllegalStateException If the Fragment is not attached to an Activity.<br><br>
+     *                               Fragment가 Activity에 attach되지 않은 경우 예외가 발생합니다.<br>
+     */
+    protected inline fun <reified T : ViewModel> getActivityViewModel(): T =
+        ViewModelProvider(requireActivity(), requireActivity().defaultViewModelProviderFactory)[T::class.java]
+
+    /**
+     * Obtains a ViewModel scoped to the parent Activity with a custom factory.<br><br>
+     * 커스텀 Factory로 부모 Activity 스코프의 ViewModel을 가져옵니다.<br>
+     *
+     * @param T The type of the ViewModel to obtain.<br><br>
+     *          가져올 ViewModel 타입.<br>
+     * @param factory The Factory to use for creating the ViewModel instance.<br><br>
+     *                ViewModel 생성에 사용할 Factory.<br>
+     * @return The ViewModel instance of type T scoped to the parent Activity.<br><br>
+     *         부모 Activity 스코프의 T 타입 ViewModel 인스턴스.<br>
+     *
+     * @throws IllegalStateException If the Fragment is not attached to an Activity.<br><br>
+     *                               Fragment가 Activity에 attach되지 않은 경우 예외가 발생합니다.<br>
+     */
+    protected inline fun <reified T : ViewModel> getActivityViewModel(factory: ViewModelProvider.Factory): T =
+        ViewModelProvider(requireActivity(), factory)[T::class.java]
 }

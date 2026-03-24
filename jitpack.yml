@@ -3,4 +3,5 @@ jdk:
 
 install:
   - ./gradlew :simple_core:assembleRelease :simple_core:publishToMavenLocal
+  - ./gradlew :simple_system_manager:assembleRelease :simple_system_manager:publishToMavenLocal
   - ./gradlew :simple_xml:assembleRelease :simple_xml:publishToMavenLocal
