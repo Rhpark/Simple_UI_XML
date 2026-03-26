@@ -49,7 +49,6 @@ mavenPublishing {
     }
 }
 
-
 publishing {
     publications {
         register("release", MavenPublication::class) {
