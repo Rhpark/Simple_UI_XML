@@ -6,7 +6,49 @@ plugins {
     id("maven-publish")
     id("org.jetbrains.kotlinx.kover") version "0.9.3" // UnitTest
     id("org.jetbrains.dokka") version "2.1.0" // Dokka - Document
+    id("com.vanniktech.maven.publish") version "0.32.0" // maven Publish
 }
+
+group = libs.versions.githubGroup.get()
+version = libs.versions.appVersion.get()
+mavenPublishing {
+    publishToMavenCentral()
+    signAllPublications()
+
+    coordinates(
+        libs.versions.githubGroup.get(),
+        libs.versions.mavenArtifactIdCore.get(),
+        libs.versions.appVersion.get()
+    )
+
+    pom {
+        name.set(libs.versions.mavenArtifactIdCore.get())
+        description.set("Android core utilities for permissions, logging, extensions, and ViewModel helpers.")
+        url.set(libs.versions.githubUrl.get())
+
+        licenses {
+            license {
+                name.set("The Apache License, Version 2.0")
+                url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
+            }
+        }
+
+        developers {
+            developer {
+                id.set(libs.versions.githubId.get())
+                name.set("RH Park")
+                email.set(libs.versions.email.get())
+            }
+        }
+
+        scm {
+            url.set(libs.versions.githubUrl.get())
+            connection.set(libs.versions.githubScmConnection.get())
+            developerConnection.set(libs.versions.githubScmDeveloperConnection.get())
+        }
+    }
+}
+
 
 publishing {
     publications {

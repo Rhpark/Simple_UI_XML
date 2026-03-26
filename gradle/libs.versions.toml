@@ -14,7 +14,16 @@ constraintlayout = "2.2.1"
 recyclerview = "1.3.2"
 #lifecycle = "2.10.0"
 lifecycle = "2.9.3"
-appVersion = "0.4.9"
+appVersion = "0.4.10"
+githubGroup = "io.github.rhpark"
+mavenArtifactIdCore = "dash-droid-core"
+mavenArtifactIdXML = "dash-droid-xml"
+mavenArtifactIdSystemManager = "dash-droid-system-manager"
+githubId = "Rhpark"
+email = "cli7942lic@gmail.com"
+githubUrl = "https://github.com/Rhpark/Simple_UI_XML"
+githubScmConnection = "scm:git:git://github.com/Rhpark/Simple_UI_XML.git"
+githubScmDeveloperConnection = "scm:git:ssh://git@github.com:Rhpark/Simple_UI_XML.git"
 
 [libraries]
 # Core Android.
