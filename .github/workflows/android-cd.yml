@@ -214,7 +214,7 @@ jobs:
           ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.SIGNING_IN_MEMORY_KEY }}
           ORG_GRADLE_PROJECT_signingInMemoryKeyId: ${{ secrets.SIGNING_IN_MEMORY_KEY_ID }}
           ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_IN_MEMORY_KEY_PASSWORD }}
-        run: bash -o pipefail -c "./gradlew :simple_core:publishAndReleaseToMavenCentral :simple_xml:publishAndReleaseToMavenCentral :simple_system_manager:publishAndReleaseToMavenCentral --stacktrace --build-cache |& tee publish-maven-central.log"
+        run: bash -o pipefail -c "./gradlew --no-configuration-cache :simple_core:publishAndReleaseToMavenCentral :simple_xml:publishAndReleaseToMavenCentral :simple_system_manager:publishAndReleaseToMavenCentral --stacktrace --build-cache |& tee publish-maven-central.log"
 
       - name: Capture failure snippet (Publish Maven Central)
         if: failure()
