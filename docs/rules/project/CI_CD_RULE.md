@@ -7,7 +7,8 @@
    - Tests(Unit, Robolectric)
    - Build
  - **2. Android CD** (`android-cd.yml`)
-   - Release(JitPack 자동 배포)
+   - Release(GitHub Release 생성)
+   - Publish Maven Central
    - Assemble Apk
    - Firebase App Distribution
  - **3. Documentation** (`documentation.yml`)

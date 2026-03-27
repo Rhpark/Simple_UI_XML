@@ -21,7 +21,7 @@ This library helps you make easy and more simple code for Android developers
 
 ## Gradle
 
-#### 1. settings.gradle.kts
+#### 1. Recommended: Maven Central
 ```kotlin
 pluginManagement {
     repositories {
@@ -30,7 +30,6 @@ pluginManagement {
         }
         mavenCentral()
         gradlePluginPortal()
-        maven { url = uri("https://jitpack.io") } // JitPack 추가
     }
 }
 dependencyResolutionManagement {
@@ -38,7 +37,6 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven { url = uri("https://jitpack.io") } // JitPack 추가
     }
 }
 ```
@@ -66,28 +64,56 @@ android {
 //..
 dependencies {
     //..
-    // Version 0.3.0+ (Modular Structure)
-    implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_Core:0.4.9")             // Core functionality only
-    implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_XML:0.4.9")              // XML UI components only (depends on Core)
-    implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_System_Manager:0.4.9")   // System Manager only (depends on Core)
+    implementation("io.github.rhpark:dash-droid-core:0.4.10")             // Core functionality only
+    implementation("io.github.rhpark:dash-droid-xml:0.4.10")              // XML UI components only (depends on Core)
+    implementation("io.github.rhpark:dash-droid-system-manager:0.4.10")   // System Manager only (depends on Core)
 
     // Examples
-    // implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_XML:0.4.9")
+    // implementation("io.github.rhpark:dash-droid-xml:0.4.10")
     // -> simple_xml 기능만 사용하는 경우
     //
-    // implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_System_Manager:0.4.9")
+    // implementation("io.github.rhpark:dash-droid-system-manager:0.4.10")
     // -> system_manager 기능만 사용하는 경우
     //
-    // implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_XML:0.4.9")
-    // implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_System_Manager:0.4.9")
+    // implementation("io.github.rhpark:dash-droid-xml:0.4.10")
+    // implementation("io.github.rhpark:dash-droid-system-manager:0.4.10")
     // -> XML UI와 system_manager 기능을 함께 사용하는 경우
     //
-    // implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_Core:0.4.9")
-    // implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_XML:0.4.9")
+    // implementation("io.github.rhpark:dash-droid-core:0.4.10")
+    // implementation("io.github.rhpark:dash-droid-xml:0.4.10")
     // -> 앱 코드에서 simple_core API를 직접 함께 사용하는 경우
     //..
 }
 ```
+
+#### 3. Compatibility: JitPack
+```kotlin
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+        maven { url = uri("https://jitpack.io") }
+    }
+}
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+        maven { url = uri("https://jitpack.io") }
+    }
+}
+
+dependencies {
+    implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_Core:0.4.10")
+    implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_XML:0.4.10")
+    implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_System_Manager:0.4.10")
+}
+```
+
+> Maven Central 좌표를 권장합니다. JitPack 좌표는 기존 프로젝트 호환용으로만 유지됩니다.
 
 <br>
 </br>
@@ -141,9 +167,5 @@ dependencies {
 
 <br>
 </br>
-
-.
-
-
 
 
