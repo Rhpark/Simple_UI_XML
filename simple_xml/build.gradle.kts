@@ -1,5 +1,6 @@
 import org.gradle.api.tasks.testing.Test
 import com.vanniktech.maven.publish.MavenPublishBaseExtension
+import com.vanniktech.maven.publish.SonatypeHost
 
 plugins {
     alias(libs.plugins.android.library)
@@ -35,7 +36,7 @@ if (enableJitpackPublication) {
     apply(plugin = "com.vanniktech.maven.publish")
 
     extensions.configure<MavenPublishBaseExtension> {
-        publishToMavenCentral()
+        publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
         signAllPublications()
 
         coordinates(
