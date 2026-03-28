@@ -1,4 +1,5 @@
 import org.gradle.api.tasks.testing.Test
+import com.vanniktech.maven.publish.MavenPublishBaseExtension
 
 plugins {
     alias(libs.plugins.android.library)
@@ -6,58 +7,67 @@ plugins {
     id("maven-publish")
     id("org.jetbrains.kotlinx.kover") version "0.9.3"
     id("org.jetbrains.dokka") version "2.1.0"
-    id("com.vanniktech.maven.publish") version "0.32.0" // maven Publish
+    id("com.vanniktech.maven.publish") version "0.32.0" apply false // Maven Central Publish
 }
 
 group = libs.versions.githubGroup.get()
 version = libs.versions.appVersion.get()
-mavenPublishing {
-    publishToMavenCentral()
-    signAllPublications()
+val enableJitpackPublication = providers.gradleProperty("enableJitpackPublication")
+    .orElse(providers.environmentVariable("JITPACK"))
+    .map { it.equals("true", ignoreCase = true) }
+    .getOrElse(false)
 
-    coordinates(
-        libs.versions.githubGroup.get(),
-        libs.versions.mavenArtifactIdSystemManager.get(),
-        libs.versions.appVersion.get()
-    )
+if (enableJitpackPublication) {
+    publishing {
+        publications {
+            register("release", MavenPublication::class) {
+                groupId = "com.github.Rhpark"
+                artifactId = "Simple_UI_System_Manager"
+                version = libs.versions.appVersion.get()
 
-    pom {
-        name.set(libs.versions.mavenArtifactIdSystemManager.get())
-        description.set("Android system manager helpers for device information and system controllers.")
-        url.set(libs.versions.githubUrl.get())
-
-        licenses {
-            license {
-                name.set("The Apache License, Version 2.0")
-                url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
+                afterEvaluate {
+                    from(components.findByName("release"))
+                }
             }
-        }
-
-        developers {
-            developer {
-                id.set(libs.versions.githubId.get())
-                name.set("RH Park")
-                email.set(libs.versions.email.get())
-            }
-        }
-
-        scm {
-            url.set(libs.versions.githubUrl.get())
-            connection.set(libs.versions.githubScmConnection.get())
-            developerConnection.set(libs.versions.githubScmDeveloperConnection.get())
         }
     }
-}
+} else {
+    apply(plugin = "com.vanniktech.maven.publish")
 
-publishing {
-    publications {
-        register("release", MavenPublication::class) {
-            groupId = "com.github.Rhpark"
-            artifactId = "Simple_UI_System_Manager"
-            version = libs.versions.appVersion.get()
+    extensions.configure<MavenPublishBaseExtension> {
+        publishToMavenCentral()
+        signAllPublications()
 
-            afterEvaluate {
-                from(components.findByName("release"))
+        coordinates(
+            libs.versions.githubGroup.get(),
+            libs.versions.mavenArtifactIdSystemManager.get(),
+            libs.versions.appVersion.get()
+        )
+
+        pom {
+            name.set(libs.versions.mavenArtifactIdSystemManager.get())
+            description.set("Android system manager helpers for device information and system controllers.")
+            url.set(libs.versions.githubUrl.get())
+
+            licenses {
+                license {
+                    name.set("The Apache License, Version 2.0")
+                    url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
+                }
+            }
+
+            developers {
+                developer {
+                    id.set(libs.versions.githubId.get())
+                    name.set("RH Park")
+                    email.set(libs.versions.email.get())
+                }
+            }
+
+            scm {
+                url.set(libs.versions.githubUrl.get())
+                connection.set(libs.versions.githubScmConnection.get())
+                developerConnection.set(libs.versions.githubScmDeveloperConnection.get())
             }
         }
     }

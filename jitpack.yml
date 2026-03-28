@@ -2,6 +2,6 @@ jdk:
   - openjdk17
 
 install:
-  - ./gradlew :simple_core:assembleRelease :simple_core:publishToMavenLocal
-  - ./gradlew :simple_system_manager:assembleRelease :simple_system_manager:publishToMavenLocal
-  - ./gradlew :simple_xml:assembleRelease :simple_xml:publishToMavenLocal
+  - ./gradlew -PenableJitpackPublication=true :simple_core:assembleRelease :simple_core:publishToMavenLocal
+  - ./gradlew -PenableJitpackPublication=true :simple_system_manager:assembleRelease :simple_system_manager:publishToMavenLocal
+  - ./gradlew -PenableJitpackPublication=true :simple_xml:assembleRelease :simple_xml:publishToMavenLocal
