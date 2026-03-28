@@ -1,8 +1,8 @@
 # simple_core 모듈 개요
  - **전역 규칙은 루트 AGENTS.md 참조**  
  - 주석 스타일, 코딩 컨벤션, 대화 규칙 등은 루트 AGENTS.md를 따름
- - **현재 버전**: 0.4.9 (JitPack)
- - **Maven 좌표**: `com.github.Rhpark:Simple_UI_Core:0.4.9`
+ - **현재 버전**: 0.4.15 (JitPack)
+ - **Maven 좌표**: `com.github.Rhpark:Simple_UI_Core:0.4.15`
 
 
 

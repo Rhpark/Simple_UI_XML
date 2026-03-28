@@ -107,9 +107,9 @@ dependencyResolutionManagement {
 }
 
 dependencies {
-    implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_Core:0.4.10")
-    implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_XML:0.4.10")
-    implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_System_Manager:0.4.10")
+    implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_Core:0.4.15")
+    implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_XML:0.4.15")
+    implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_System_Manager:0.4.15")
 }
 ```
 
