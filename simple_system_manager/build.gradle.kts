@@ -12,7 +12,8 @@ plugins {
 
 group = libs.versions.githubGroup.get()
 version = libs.versions.appVersion.get()
-val enableJitpackPublication = providers.gradleProperty("enableJitpackPublication")
+val enableJitpackPublication = providers
+    .gradleProperty("enableJitpackPublication")
     .orElse(providers.environmentVariable("JITPACK"))
     .map { it.equals("true", ignoreCase = true) }
     .getOrElse(false)
