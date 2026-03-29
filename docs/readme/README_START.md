@@ -217,8 +217,10 @@ FIREBASE_APP_ID_RELEASE=...
 - **Quick start** example: [README_SAMPLE.md](README_SAMPLE.md)
 
 
-> **Note:** Check [JitPack Releases](https://jitpack.io/#Rhpark/Simple_UI_XML) for the latest version.  
-> **참고:** 최신 버전은 [JitPack Releases](https://jitpack.io/#Rhpark/Simple_UI_XML)에서 확인할 수 있습니다.
+> **Note:** Check [Maven Central](https://central.sonatype.com/search?q=io.github.rhpark) for the latest version.
+> JitPack is maintained for legacy compatibility only.
+> **참고:** 최신 버전은 [Maven Central](https://central.sonatype.com/search?q=io.github.rhpark)에서 확인할 수 있습니다.
+> JitPack은 기존 프로젝트 호환용으로만 유지됩니다.
 
 
 <br>

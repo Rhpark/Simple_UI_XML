@@ -1,10 +1,14 @@
-﻿[![](https://jitpack.io/v/rhpark/Simple_UI_XML.svg)](https://jitpack.io/#rhpark/Simple_UI_XML)
+﻿[![Maven Central](https://img.shields.io/maven-central/v/io.github.rhpark/dash-droid-core)](https://central.sonatype.com/search?q=io.github.rhpark)
+[![](https://jitpack.io/v/rhpark/Simple_UI_XML.svg)](https://jitpack.io/#rhpark/Simple_UI_XML)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![API](https://img.shields.io/badge/API-28%2B-brightgreen.svg?style=flat)](https://developer.android.com/studio/releases/platforms#9.0)
 
 This library helps you make easy and more simple code for Android developers
 
 > **안드로이드 개발자를 위해 좀 더 간단히 확인 할 수 있거나, 좀 더 간단히 만들 수 있거나.**
+>
+> **권장 배포 채널: Maven Central**  
+> `io.github.rhpark:dash-droid-*`
 
 <br></br>
 
@@ -19,7 +23,7 @@ This library helps you make easy and more simple code for Android developers
 <br>
 </br>
 
-## Gradle
+## Installation
 
 #### 1. Recommended: Maven Central
 ```kotlin
@@ -44,7 +48,7 @@ dependencyResolutionManagement {
 <br>
 </br>
 
-#### 2. build.gradle.kts (Module level) 
+#### 2. build.gradle.kts (Module level)
 ```kotlin
 android {
     //..
@@ -64,29 +68,49 @@ android {
 //..
 dependencies {
     //..
-    implementation("io.github.rhpark:dash-droid-core:0.4.10")             // Core functionality only
-    implementation("io.github.rhpark:dash-droid-xml:0.4.10")              // XML UI components only (depends on Core)
-    implementation("io.github.rhpark:dash-droid-system-manager:0.4.10")   // System Manager only (depends on Core)
+    implementation("io.github.rhpark:dash-droid-core:0.4.15")             // Core functionality only
+    implementation("io.github.rhpark:dash-droid-xml:0.4.15")              // XML UI components only (depends on Core)
+    implementation("io.github.rhpark:dash-droid-system-manager:0.4.15")   // System Manager only (depends on Core)
 
     // Examples
-    // implementation("io.github.rhpark:dash-droid-xml:0.4.10")
+    // implementation("io.github.rhpark:dash-droid-xml:0.4.15")
     // -> simple_xml 기능만 사용하는 경우
     //
-    // implementation("io.github.rhpark:dash-droid-system-manager:0.4.10")
+    // implementation("io.github.rhpark:dash-droid-system-manager:0.4.15")
     // -> system_manager 기능만 사용하는 경우
     //
-    // implementation("io.github.rhpark:dash-droid-xml:0.4.10")
-    // implementation("io.github.rhpark:dash-droid-system-manager:0.4.10")
+    // implementation("io.github.rhpark:dash-droid-xml:0.4.15")
+    // implementation("io.github.rhpark:dash-droid-system-manager:0.4.15")
     // -> XML UI와 system_manager 기능을 함께 사용하는 경우
     //
-    // implementation("io.github.rhpark:dash-droid-core:0.4.10")
-    // implementation("io.github.rhpark:dash-droid-xml:0.4.10")
+    // implementation("io.github.rhpark:dash-droid-core:0.4.15")
+    // implementation("io.github.rhpark:dash-droid-xml:0.4.15")
     // -> 앱 코드에서 simple_core API를 직접 함께 사용하는 경우
     //..
 }
 ```
 
-#### 3. Compatibility: JitPack
+#### 3. build.gradle (Groovy)
+```groovy
+dependencies {
+    implementation "io.github.rhpark:dash-droid-core:0.4.15"
+    implementation "io.github.rhpark:dash-droid-xml:0.4.15"
+    implementation "io.github.rhpark:dash-droid-system-manager:0.4.15"
+}
+```
+
+#### 4. Which module should I use?
+- `dash-droid-core`
+  - 로그, 공통 확장 함수, 권한 모델, ViewModel 등 UI 비의존 코어 기능만 사용할 때
+- `dash-droid-xml`
+  - XML 기반 Activity/Fragment/Base UI, PermissionRequester, View 확장 함수가 필요할 때
+- `dash-droid-system-manager`
+  - 시스템 바, 키보드, 시스템 컨트롤러, 디바이스 정보 API가 필요할 때
+
+> `dash-droid-xml`과 `dash-droid-system-manager`는 내부적으로 `dash-droid-core`를 사용합니다.  
+> 앱 코드에서 `simple_core` API를 직접 호출하지 않는다면 `dash-droid-core`를 별도로 추가하지 않아도 됩니다.
+
+#### 5. Compatibility: JitPack
 ```kotlin
 pluginManagement {
     repositories {
@@ -113,7 +137,8 @@ dependencies {
 }
 ```
 
-> Maven Central 좌표를 권장합니다. JitPack 좌표는 기존 프로젝트 호환용으로만 유지됩니다.
+> Maven Central 좌표를 권장합니다. JitPack 좌표는 기존 프로젝트 호환용으로만 유지됩니다.  
+> JitPack 사용 시에는 `https://jitpack.io` 저장소 추가가 필요합니다.
 
 <br>
 </br>
