@@ -355,12 +355,15 @@ when (state) {
 
 #### BaseDataBindingActivity / BaseDataBindingFragment
 - 바인딩 생명주기 자동 관리 + `getBinding()` 제공
-- `getViewModel()`, `onEventVmCollect(binding)` 제공
+- `getViewModel()`, `getViewModel(factory)`, `onEventVmCollect(binding)` 제공
+- Fragment/DialogFragment는 `getActivityViewModel()`, `getActivityViewModel(factory)`로 Activity 스코프 ViewModel 공유 가능
 - Extends same pattern to `BaseDataBindingDialogFragment`
 
 #### BaseViewBindingActivity / BaseViewBindingFragment
 - inflate 함수 참조만으로 binding 생성
 - `getBinding()` 기반 타입 안전한 View 접근
+- `getViewModel()`, `getViewModel(factory)` 제공
+- Fragment/DialogFragment는 `getActivityViewModel()`, `getActivityViewModel(factory)`로 Activity 스코프 ViewModel 공유 가능
 - Extends same pattern to `BaseViewBindingDialogFragment`
 <br></br>
 
@@ -528,9 +531,60 @@ class SampleActivity :
     }
 }
 ```
-- SavedStateHandle까지 자동 연결되어 Configuration 변화에도 안전합니다.
+
+- `defaultViewModelProviderFactory`를 사용하므로 SavedStateHandle 및 Hilt 주입 모두 자동 지원됩니다.
+> - Uses `defaultViewModelProviderFactory`, so SavedStateHandle and Hilt injection are both supported automatically.
+
+### `getViewModel(factory)` - Custom Factory ViewModel Creation (커스텀 Factory ViewModel 생성)
+
+```kotlin
+class SampleFragment :
+    BaseDataBindingFragment<FragmentSampleBinding>(R.layout.fragment_sample) {
+
+    private val vm: SampleViewModel by lazy {
+        getViewModel(SampleViewModel.Factory(extraParam))
+    }
+}
+```
+
+- 커스텀 Factory가 필요할 때 사용합니다. 일반적으로 Hilt/SavedStateHandle 환경에서는 `getViewModel()`만으로 충분합니다.
+> - Use when a custom Factory is required. In Hilt/SavedStateHandle environments, `getViewModel()` is typically sufficient.
+
+### `getActivityViewModel()` - Shared Activity-Scoped ViewModel (Activity 스코프 ViewModel 공유)
+
+Fragment 또는 DialogFragment에서 **호스트 Activity와 동일한 ViewModel 인스턴스**를 공유할 때 사용합니다.
+> Use this in a Fragment or DialogFragment to share **the same ViewModel instance** as the host Activity.
+
+```kotlin
+class HomeFragment :
+    BaseDataBindingFragment<FragmentHomeBinding>(R.layout.fragment_home) {
+
+    // Activity 스코프 ViewModel을 Fragment에서 공유
+    private val activityVm: MainViewModel by lazy { getActivityViewModel() }
+
+    override fun onViewCreated(binding: FragmentHomeBinding, savedInstanceState: Bundle?) {
+        binding.vm = activityVm
+    }
+}
+```
+
+```kotlin
+class ConfirmDialog :
+    BaseDataBindingDialogFragment<DialogConfirmBinding>(R.layout.dialog_confirm) {
+
+    // DialogFragment에서도 Activity 스코프 ViewModel 공유 가능
+    private val activityVm: MainViewModel by lazy { getActivityViewModel() }
+}
+```
+
+- `getActivityViewModel(factory)`로 커스텀 Factory도 지원합니다.
+- Fragment가 Activity에 attach되지 않은 상태에서 호출하면 `IllegalStateException`이 발생합니다.
+
+> - `getActivityViewModel(factory)` is also available for custom Factory scenarios.
+> - Throws `IllegalStateException` if called before the Fragment is attached to an Activity.
 
 ### `onEventVmCollect(binding)` - ViewModel Event Subscription (ViewModel 이벤트 수집)
+
 - Note: **BaseDataBindingActivity**와 **BaseDataBindingFragment**는 바인딩 초기화 이후 `onEventVmCollect(binding)`를 자동 호출합니다 (Activity: `onCreate(binding, ...)`, Fragment: `onViewCreated(binding, ...)`). 이 메서드만 override해서 ViewModel 이벤트를 수집하면 됩니다.
 > - 주의: **BaseDataBindingActivity**와 **BaseDataBindingFragment**는 바인딩 초기화 이후 `onEventVmCollect(binding)`를 자동 호출합니다 (Activity: `onCreate(binding, ...)`, Fragment: `onViewCreated(binding, ...)`). 이 메서드만 override해서 ViewModel 이벤트를 수집하면 됩니다.
 

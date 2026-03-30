@@ -15,17 +15,23 @@ This library helps you make easy and more simple code for Android developers
 ## Project Structure
 
 **libraries**
+
 - **simple_core**: UI-independent core functionality (usable with Compose or XML)
 - **simple_xml**: XML UI-specific components and extensions (depends on Core)
 - **simple_system_manager**: Android system control and device information helpers (depends on Core)
 - **testing samples**: `app` module
 
+> - **simple_core**: UI 비의존 코어 기능 (Compose, XML 모두 사용 가능)
+> - **simple_xml**: XML UI 전용 컴포넌트 및 확장 (Core 의존)
+> - **simple_system_manager**: Android 시스템 제어 및 디바이스 정보 헬퍼 (Core 의존)
+> - **testing samples**: 테스트 샘플: `app` 모듈
+
 <br>
 </br>
 
-## Installation
+## Maven Central:Recommended (Maven Central:권장)
 
-#### 1. Recommended: Maven Central
+### 1. setting.gradle
 ```kotlin
 pluginManagement {
     repositories {
@@ -48,7 +54,7 @@ dependencyResolutionManagement {
 <br>
 </br>
 
-#### 2. build.gradle.kts (Module level)
+### 2. build.gradle.kts (Module level)
 ```kotlin
 android {
     //..
@@ -90,7 +96,7 @@ dependencies {
 }
 ```
 
-#### 3. build.gradle (Groovy)
+### 3. build.gradle (Groovy)
 ```groovy
 dependencies {
     implementation "io.github.rhpark:dash-droid-core:0.4.15"
@@ -99,18 +105,31 @@ dependencies {
 }
 ```
 
-#### 4. Which module should I use?
+### 4. Which module should I use? (어떤 모듈을 사용해야 하나요?)
 - `dash-droid-core`
-  - 로그, 공통 확장 함수, 권한 모델, ViewModel 등 UI 비의존 코어 기능만 사용할 때
+  - Use when you only need UI-independent core features: logging, common extensions, permission models, ViewModel helpers
 - `dash-droid-xml`
-  - XML 기반 Activity/Fragment/Base UI, PermissionRequester, View 확장 함수가 필요할 때
+  - Use when you need XML-based Activity/Fragment/Base UI, PermissionRequester, or View extension functions
 - `dash-droid-system-manager`
-  - 시스템 바, 키보드, 시스템 컨트롤러, 디바이스 정보 API가 필요할 때
+  - Use when you need SystemBar, keyboard, system controllers, or device info APIs
 
-> `dash-droid-xml`과 `dash-droid-system-manager`는 내부적으로 `dash-droid-core`를 사용합니다.  
+> - `dash-droid-core`
+>   - 로그, 공통 확장 함수, 권한 모델, ViewModel 등 UI 비의존 코어 기능만 사용할 때
+> - `dash-droid-xml`
+>   - XML 기반 Activity/Fragment/Base UI, PermissionRequester, View 확장 함수가 필요할 때
+> - `dash-droid-system-manager`
+>   - 시스템 바, 키보드, 시스템 컨트롤러, 디바이스 정보 API가 필요할 때
+
+`dash-droid-xml` and `dash-droid-system-manager` use `dash-droid-core` internally.
+If you don't call `simple_core` APIs directly in your app code, you don't need to add `dash-droid-core` separately.
+
+> `dash-droid-xml`과 `dash-droid-system-manager`는 내부적으로 `dash-droid-core`를 사용합니다.
 > 앱 코드에서 `simple_core` API를 직접 호출하지 않는다면 `dash-droid-core`를 별도로 추가하지 않아도 됩니다.
 
-#### 5. Compatibility: JitPack
+<br></br>
+
+## JitPack:Compatibility
+
 ```kotlin
 pluginManagement {
     repositories {
@@ -175,7 +194,7 @@ dependencies {
 - **API baseline (`simple_xml/api/simple_xml.api`)** - 공개 API 시그니처 기준 파일
 - **API baseline (`simple_core/api/simple_core.api`)** - `simple_core` 공개 API 기준 파일
 - **API baseline (`simple_system_manager/api/simple_system_manager.api`)** - `simple_system_manager` 공개 API 기준 파일
-- **API validation commands**
+- **API validation commands (API 검증 명령)**
   - `./gradlew :simple_core:apiCheck`
   - `./gradlew :simple_system_manager:apiCheck`
   - `./gradlew :simple_xml:apiCheck`

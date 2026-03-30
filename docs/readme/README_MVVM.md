@@ -148,6 +148,37 @@ android {
 
 3. Collect one-off ViewModel events in `onEventVmCollect(binding)` as needed
 
+### ViewModel Helper APIs (ViewModel 헬퍼 API)
+
+| API | 적용 대상 | 설명 |
+| :--- | :--- | :--- |
+| `getViewModel<T>()` | Activity / Fragment / DialogFragment | `defaultViewModelProviderFactory` 사용 — SavedStateHandle·Hilt 자동 지원 |
+| `getViewModel<T>(factory)` | Activity / Fragment / DialogFragment | 커스텀 Factory를 직접 지정할 때 사용 |
+| `getActivityViewModel<T>()` | Fragment / DialogFragment only | 호스트 Activity 스코프 ViewModel 공유 — `defaultViewModelProviderFactory` 사용 |
+| `getActivityViewModel<T>(factory)` | Fragment / DialogFragment only | 커스텀 Factory로 Activity 스코프 ViewModel 공유 |
+
+> | API | Scope | Description |
+> | :--- | :--- | :--- |
+> | `getViewModel<T>()` | Activity / Fragment / DialogFragment | Uses `defaultViewModelProviderFactory` — SavedStateHandle & Hilt supported |
+> | `getViewModel<T>(factory)` | Activity / Fragment / DialogFragment | Use when a custom Factory is needed |
+> | `getActivityViewModel<T>()` | Fragment / DialogFragment only | Share ViewModel with host Activity — uses `defaultViewModelProviderFactory` |
+> | `getActivityViewModel<T>(factory)` | Fragment / DialogFragment only | Share ViewModel with host Activity using a custom Factory |
+
+**`getActivityViewModel()` 사용 예시 (Fragment에서 Activity ViewModel 공유)**
+> **`getActivityViewModel()` example (sharing Activity ViewModel from Fragment)**
+
+```kotlin
+class HomeFragment : BaseDataBindingFragment<FragmentHomeBinding>(R.layout.fragment_home) {
+
+    // Activity 스코프 ViewModel — MainActivity와 동일한 인스턴스
+    private val activityVm: MainViewModel by lazy { getActivityViewModel() }
+
+    override fun onViewCreated(binding: FragmentHomeBinding, savedInstanceState: Bundle?) {
+        binding.vm = activityVm
+    }
+}
+```
+
 <br></br>
 
 ## 🎯 Activity/Fragment Development with MVVM (MVVM 기반 Activity/Fragment 개발)
