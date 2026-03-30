@@ -6,9 +6,6 @@
 This library helps you make easy and more simple code for Android developers
 
 > **안드로이드 개발자를 위해 좀 더 간단히 확인 할 수 있거나, 좀 더 간단히 만들 수 있거나.**
->
-> **권장 배포 채널: Maven Central**  
-> `io.github.rhpark:dash-droid-*`
 
 <br></br>
 
@@ -29,7 +26,7 @@ This library helps you make easy and more simple code for Android developers
 <br>
 </br>
 
-## Maven Central:Recommended (Maven Central:권장)
+## Maven Central(Recommended)
 
 ### 1. setting.gradle
 ```kotlin
@@ -113,15 +110,16 @@ dependencies {
 - `dash-droid-system-manager`
   - Use when you need SystemBar, keyboard, system controllers, or device info APIs
 
+`dash-droid-xml` and `dash-droid-system-manager` use `dash-droid-core` internally.
+If you don't call `simple_core` APIs directly in your app code, you don't need to add `dash-droid-core` separately.
+
+
 > - `dash-droid-core`
 >   - 로그, 공통 확장 함수, 권한 모델, ViewModel 등 UI 비의존 코어 기능만 사용할 때
 > - `dash-droid-xml`
 >   - XML 기반 Activity/Fragment/Base UI, PermissionRequester, View 확장 함수가 필요할 때
 > - `dash-droid-system-manager`
 >   - 시스템 바, 키보드, 시스템 컨트롤러, 디바이스 정보 API가 필요할 때
-
-`dash-droid-xml` and `dash-droid-system-manager` use `dash-droid-core` internally.
-If you don't call `simple_core` APIs directly in your app code, you don't need to add `dash-droid-core` separately.
 
 > `dash-droid-xml`과 `dash-droid-system-manager`는 내부적으로 `dash-droid-core`를 사용합니다.
 > 앱 코드에서 `simple_core` API를 직접 호출하지 않는다면 `dash-droid-core`를 별도로 추가하지 않아도 됩니다.
