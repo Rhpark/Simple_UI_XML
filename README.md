@@ -120,7 +120,6 @@ If you don't call `simple_core` APIs directly in your app code, you don't need t
 >   - XML 기반 Activity/Fragment/Base UI, PermissionRequester, View 확장 함수가 필요할 때
 > - `dash-droid-system-manager`
 >   - 시스템 바, 키보드, 시스템 컨트롤러, 디바이스 정보 API가 필요할 때
-
 > `dash-droid-xml`과 `dash-droid-system-manager`는 내부적으로 `dash-droid-core`를 사용합니다.
 > 앱 코드에서 `simple_core` API를 직접 호출하지 않는다면 `dash-droid-core`를 별도로 추가하지 않아도 됩니다.
 
