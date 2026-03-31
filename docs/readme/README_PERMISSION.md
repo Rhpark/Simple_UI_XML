@@ -43,7 +43,7 @@ This document explains the permission-related architecture of Simple UI, coverin
 
 ## simple_core Permission Helpers (simple_core 권한 헬퍼)
 
-**Main APIs (주요 API):**
+**Main APIs**
 - `hasPermission(permission)`
 - `hasPermissions(vararg permissions)`
 - `hasPermissions(vararg permissions) { doWork }`
@@ -67,7 +67,7 @@ This document explains the permission-related architecture of Simple UI, coverin
 > - `getPermissionBaseProtectionLevel(permission)`
 > - `readDeclaredManifestPermissions()`
 
-**Behavior summary (동작 요약):**
+**Behavior summary**
 - Dangerous permissions are checked through runtime APIs.
 - Normal permissions are treated as granted by design when declared in the manifest.
 - Special app access permissions such as overlay, usage stats, notification listener, and accessibility are handled through dedicated checks.
@@ -105,7 +105,7 @@ Simple UI provides `PermissionRequester` through Activity, Fragment, and Dialog 
 
 > Simple UI는 Activity, Fragment, Dialog의 base class를 통해 `PermissionRequester`를 제공합니다.
 
-**Key capabilities (핵심 기능):**
+**Key Points**
 - `requestPermission(...)`
 - `requestPermissions(...)`
 - `onDeniedResult`
@@ -125,7 +125,7 @@ Simple UI provides `PermissionRequester` through Activity, Fragment, and Dialog 
 > - `restoreState(savedInstanceState)`
 > - `saveState(outState)`
 
-**Request example (요청 예시):**
+**Request example**
 ```kotlin
 requestPermissions(
     permissions = listOf(
@@ -154,7 +154,7 @@ requestPermissions(
 )
 ```
 
-**What the base classes already do for you (base class가 자동으로 처리하는 것):**
+**What the base classes already do for you**
 - `RootActivity`, `RootFragment`, `RootDialogFragment` create `PermissionRequester` internally.
 - They automatically call `restoreState(savedInstanceState)` / `saveState(outState)`.
 - You call `requestPermissions(...)` directly from the screen class without manually wiring ActivityResult registration.
@@ -166,12 +166,13 @@ requestPermissions(
 
 <br></br>
 
-**After process restore — consuming orphaned denied results (프로세스 복원 후 — orphaned 거부 결과 처리):**
+**After process restore — consuming orphaned denied results **
 
 If a permission request was in progress when the process was killed, the denied result cannot be delivered
 via the original callback (lambdas are not serializable). Call `consumeOrphanedDeniedResults()` in `onCreate`
 to retrieve these results.
 
+> **프로세스 복원 후 — orphaned 거부 결과 처리**
 > 프로세스가 종료된 시점에 권한 요청이 진행 중이었다면, 원래 콜백(람다)은 직렬화할 수 없으므로
 > 결과를 전달받을 수 없습니다. `onCreate`에서 `consumeOrphanedDeniedResults()`를 호출해 해당 결과를 처리하세요.
 
@@ -217,7 +218,7 @@ Simple UI can return more than a simple granted/denied result.
 
 > Simple UI는 단순 granted/denied를 넘는 결과를 반환할 수 있습니다.
 
-**Important result types (중요 결과 유형):**
+**Important result types**
 - `DENIED`
 - `PERMANENTLY_DENIED`
 - `MANIFEST_UNDECLARED`
@@ -235,7 +236,7 @@ Simple UI can return more than a simple granted/denied result.
 > - `FAILED_TO_LAUNCH_SETTINGS`
 > - `LIFECYCLE_NOT_READY`
 
-**Why this matters (왜 중요한가):**
+**Why this matters**
 - You can distinguish invalid input from a user denial.
 - You can detect lifecycle misuse without guessing.
 - You can handle unsupported permissions and settings-launch failures explicitly.

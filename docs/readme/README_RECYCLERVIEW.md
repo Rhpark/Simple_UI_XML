@@ -22,8 +22,8 @@
 ### Adapter Code Example (adapter code 예시)
 ![adapter.png](../../example_gif/adapter.png)
 
-**"Wrap complex RecyclerView logic in just a few lines!"** Feel the difference Simple UI brings compared to traditional RecyclerView development.
-> **"복잡한 RecyclerView 구현을 단 몇 줄로 끝내자!"** 기존 RecyclerView 개발 대비 Simple UI가 주는 체감 차이를 한눈에 확인하세요.
+**"Review a RecyclerView guide example with reduced setup code."** Compare the setup flow against a traditional RecyclerView implementation.
+> **"설정 코드를 줄인 RecyclerView 가이드 예제를 확인해 보자!"** 기존 RecyclerView 구현과 설정 흐름을 비교해 보세요.
 
 <br>
 </br>
@@ -52,8 +52,8 @@
 | Advanced RecyclerView features |        Build everything yourself         | ✅ `RecyclerScrollStateView` provided |
 | Developer experience           |            Heavy boilerplate             |     ✅ Streamlined library calls      |
 
-**Key takeaway:** Simple UI **automates complex RecyclerView implementations** and dramatically boosts development speed.
-> **핵심:** Simple UI는 "복잡한 RecyclerView 구현"을 **자동화**합니다. 개발 속도가 달라집니다.
+**Key takeaway:** Simple UI wraps repeated RecyclerView setup patterns and reduces adapter boilerplate in the guide examples.
+> **핵심:** Simple UI는 반복되는 RecyclerView 설정 패턴을 감싸고, 가이드 예제 기준으로 Adapter 보일러플레이트를 줄입니다.
 
 <br>
 </br>
@@ -417,13 +417,13 @@ val adapter = SimpleRcvListAdapter<SampleItem>(
 
 ## 🚀 Core Advantages of Simple UI RecyclerView/Adapter (Simple UI RecyclerView/Adapter의 핵심 장점)
 
-### 1. **📉 Dramatic Productivity Gains (압도적인 생산성 향상)**
+### 1. **📉 Reduced Boilerplate in the Guide Example (가이드 예제 기준 보일러플레이트 감소)**
 - **Adapter implementation:** CustomListAdapter (50 lines) and CustomAdapter (74 lines) → reduced to around 10 lines with library calls
 - **DiffUtil handling:** Separate class creation → simplified inline lambdas
-- **Development time:** 2 hours → under 1 hour (**≈60% reduction**)
+- **Development flow:** The guide example reduces repeated setup steps and keeps adapter code focused on item logic
 > - **Adapter 구현**: CustomListAdapter - 50줄, CustomAdapter - 74줄의 복잡한 구현 → 라이브러리 호출로 완성 - 10여줄
 > - **DiffUtil 처리**: 별도 클래스 생성 → 인라인 람다로 간단 처리
-> - **개발 시간**: 2시간 → 1시간 미만 **60% 단축**
+> - **개발 흐름**: 가이드 예제 기준으로 반복 설정 단계를 줄이고, Adapter 코드가 아이템 로직 중심으로 유지됩니다.
 
 <br>
 </br>
@@ -450,37 +450,35 @@ val adapter = SimpleRcvListAdapter<SampleItem>(
 <br>
 </br>
 
-## 💡 Developer Feedback (개발자 후기)
+## 💡 What the Guide Highlights (가이드에서 드러나는 개선점)
 
-- **"Being able to compare different Adapters right away makes choosing the best one so much easier!"**
-- **"Receiving scroll events via Flow freed me from the OnScrollListener nightmare!"**
-- **"No need to write DiffUtil classes—performance optimizations come out of the box!"**
-- **"With the unified API, I treat every adapter the same and keep the code clean!"**
-> - **"다양한 Adapter를 바로 비교할 수 있어서 최적 선택이 쉬워요!"**
-> - **"Flow로 스크롤 이벤트 받으니 OnScrollListener 지옥에서 해방!"**
-> - **"DiffUtil 클래스 만들 필요 없이 바로 성능 최적화!"**
-> - **"통합 API로 모든 Adapter를 동일하게 다룰 수 있어 코드가 깔끔해졌어요!"**
+- **Different adapter options can be compared with the same API family.**
+- **Flow-based scroll events replace repeated `OnScrollListener` setup in the guide examples.**
+- **ListAdapter variants include DiffUtil handling without a separate callback class per screen.**
+- **Unified adapter APIs keep setup patterns more consistent across screens.**
+> - **같은 API 계열 안에서 다양한 Adapter 선택지를 비교할 수 있습니다.**
+> - **가이드 예제 기준으로 Flow 기반 스크롤 이벤트가 반복적인 `OnScrollListener` 설정을 줄여 줍니다.**
+> - **ListAdapter 계열은 화면마다 별도 DiffUtil 클래스를 두지 않고도 처리 흐름을 가져갈 수 있습니다.**
+> - **통합된 Adapter API로 화면 간 설정 패턴을 더 일정하게 유지할 수 있습니다.**
 
 <br>
 </br>
 
-## 🎉 Conclusion: A New Standard for RecyclerView Development (결론: RecyclerView 개발의 새로운 표준)
+## 🎉 Conclusion: What This RecyclerView Guide Demonstrates (결론: 이 RecyclerView 가이드가 보여주는 것)
 
-**Simple UI RecyclerView/Adapter** is the innovative library that makes complex RecyclerView work **simple and powerful**.
+**Simple UI RecyclerView/Adapter** focuses on reducing repeated adapter and scroll-state setup while keeping usage patterns consistent across adapter variants.
 
-✅ **Flow-powered automation** — handle advanced scroll detection with ease  
-✅ **Library-provided adapters** — focus on core logic, not boilerplate  
-✅ **Unified API** — manage diverse adapters in a consistent way  
+✅ **Flow-based scroll APIs** — organize advanced scroll-state handling with provided components  
+✅ **Library-provided adapters** — reduce repeated adapter scaffolding and keep code closer to item logic  
+✅ **Unified API** — manage different adapter variants with a more consistent usage pattern  
 
-Leave the traditional complexity behind.  
-**Experience productive development with Simple UI!** 🚀
+This guide is intended to show how the library simplifies common RecyclerView setup paths.
 
-> **Simple UI RecyclerView/Adapter**는 복잡한 RecyclerView 개발을 **단순하고 강력하게** 만드는 혁신적인 라이브러리입니다.
-> ✅ **Flow 기반 자동화** - 복잡한 스크롤 감지를 Flow로 간단하게!  
-> ✅ **라이브러리 기반 Adapter** - 보일러플레이트 없이 핵심 로직에 집중!  
-> ✅ **통합 API** - 다양한 Adapter를 일관된 방식으로 관리!
-> **전통적인 복잡함은 이제 그만.**  
-> **Simple UI와 함께 생산적인 개발을 경험하세요!** 🚀
+> **Simple UI RecyclerView/Adapter**는 반복되는 Adapter 구성과 스크롤 상태 설정을 줄이고, Adapter 변형 간 사용 패턴을 맞추는 데 초점을 둡니다.
+> ✅ **Flow 기반 스크롤 API** - 제공 컴포넌트로 고급 스크롤 상태 처리를 정리합니다.  
+> ✅ **라이브러리 제공 Adapter** - 반복적인 Adapter 뼈대를 줄이고 아이템 로직 중심으로 코드를 유지합니다.  
+> ✅ **통합 API** - 다양한 Adapter 변형을 더 일관된 방식으로 다룹니다.
+> 이 가이드는 라이브러리가 공통 RecyclerView 설정 경로를 어떻게 단순화하는지 보여주기 위한 문서입니다.
 
 <br>
 </br>

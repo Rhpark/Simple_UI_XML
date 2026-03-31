@@ -19,11 +19,11 @@ Simple UI's Activity/Fragment base classes are productivity tools that eliminate
 ### BaseActivity Quick Setup (BaseActivity 빠른 설정)
 ![baseActivity.gif](../../example_gif/baseActivity.gif)
 
-> **“Complete Activity / Fragment initialization in just three lines!”**  
-> Simple UI는 순정 Android 대비 초기화 시간을 압축합니다.
+> **“See Activity / Fragment initialization condensed into a 3-line guide example.”**  
+> Simple UI는 Base 클래스 기준의 초기화 흐름을 더 간결하게 보여줍니다.
 
-Complete Activity/Fragment initialization in just 3 lines!" – See how much faster Simple UI is compared to vanilla Android
-> **“Activity/Fragment 초기화를 단 3줄로 끝냅니다!”** – 순정 Android 대비 Simple UI가 얼마나 빠른지 바로 확인해 보세요.
+See a 3-line initialization flow in the guide example, based on the provided Base classes.
+> **“가이드 예제 기준으로 Activity/Fragment 초기화 흐름을 3줄 수준으로 정리했습니다.”** – 제공하는 Base 클래스를 사용할 때의 초기화 흐름을 비교해 보세요.
 
 <br></br>
 
@@ -546,18 +546,18 @@ DialogFragment supports the same `onBindingCreated(binding, ...)`, `onViewCreate
 <br></br>
 
 ## 🗣️ Developer Reviews (사용자 후기)
-- "Every time I create a new screen, I just copy-paste the BaseDataBindingActivity template and I'm done—it's more than twice as fast."
-- "Permission requests are the same across the entire team, making reviews much easier."
-- "Being able to manage even DialogFragments with the same pattern has made maintenance easier than I ever imagined."
-> - "새 화면을 만들 때마다 BaseDataBindingActivity 템플릿을 복붙하면 끝이라 작업 속도가 2배 이상 빨라졌습니다."
-> - "권한 요청 코드가 팀 전체에서 동일하니 리뷰가 쉬워졌어요."
-> - "DialogFragment까지 동일한 패턴으로 관리할 수 있어 유지보수가 상상 이상으로 편해졌습니다."
+- "The base-class template keeps new screen setup consistent."
+- "Permission request handling follows the same flow across screens."
+- "DialogFragment screens can also follow the same lifecycle and setup pattern."
+> - "Base 클래스 템플릿으로 새 화면 설정 흐름을 일정하게 유지할 수 있습니다."
+> - "권한 요청 처리 흐름을 화면 전반에서 같은 방식으로 가져갈 수 있습니다."
+> - "DialogFragment 화면도 동일한 생명주기/설정 패턴으로 정리할 수 있습니다."
 
 <br></br>
 
-## ✅ Conclusion: A New Standard (결론)
-Simple UI Activity/Fragment base classes set a new standard for Android UI development by formalizing repetitive setup tasks. Once configured, all screens move to the same rhythm, boosting team-wide productivity.
-> Simple UI Activity/Fragment 베이스 클래스는 **반복되는 세팅 작업을 공식화**함으로써 안드로이드 UI 개발의 새로운 표준을 제시합니다. 한 번 세팅하면 모든 화면이 동일한 리듬으로 움직이며, 팀 전체 생산성을 끌어올립니다.
+## ✅ Conclusion: What This Guide Demonstrates (결론: 이 가이드가 보여주는 것)
+Simple UI Activity/Fragment base classes are designed to reduce repeated setup work and keep screen initialization, permission handling, and lifecycle hooks aligned across screens.
+> Simple UI Activity/Fragment 베이스 클래스는 반복되는 설정 작업을 줄이고, 화면 초기화·권한 처리·생명주기 훅의 사용 방식을 화면 전반에서 맞추도록 설계되었습니다.
 
 <br></br>
 

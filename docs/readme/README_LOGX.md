@@ -9,9 +9,9 @@
 
 ### Logx Output Preview
 ![logx.gif](../../example_gif/logx.gif)
-**"Premium logging done in a single line."** See at a glance how Logx feels compared to the classic `Log` API.
+**"Review a single-line logging example with richer metadata."** Compare how Logx output differs from the classic `Log` API.
 
-> **“단 한 줄로 끝내는 고급 로깅.”** 기존 `Log` 대비 Logx가 주는 체감 차이를 한눈에 확인하세요.
+> **“더 풍부한 메타정보를 한 줄 호출 예제로 확인해 보세요.”** 기존 `Log` 출력과 Logx 출력을 비교해 보세요.
 
 <br>
 </br>
@@ -29,7 +29,7 @@
 | Setter-based configuration + caller-skip helper |            ❌             |                              ✅                               |
 
 
-**Key point:** Logx automatically attaches the metadata you care about, dramatically accelerating debugging.
+**Key point:** Logx automatically attaches the metadata you care about, making debugging context easier to inspect.
 
 > **핵심:** Logx는 “알고 싶은 메타정보”를 **자동**으로 붙여 줍니다. 디버깅 속도가 달라집니다.
 
@@ -91,8 +91,8 @@ AppName[tag] : (FileName:LineNumber).Method - Message
 - Standard Android Log: `D/TAG: message`
 - **Logx**: `AppName[tag] : (File:Line).Method - message`
 
-**Debugging becomes radically easier!** Instantly see which file, line, and method produced the log.
-> **디버깅이 혁신적으로 쉬워집니다!** 어느 파일의 몇 번째 줄, 어떤 메서드에서 호출했는지 한눈에 확인 가능!
+**Debugging context becomes easier to inspect.** You can immediately see which file, line, and method produced the log.
+> **디버깅 맥락을 더 쉽게 확인할 수 있습니다.** 어느 파일의 몇 번째 줄, 어떤 메서드에서 호출했는지 바로 파악할 수 있습니다.
 
 <br>
 </br>
@@ -107,6 +107,13 @@ AppName[tag] : (FileName:LineNumber).Method - Message
 - Setter-based configuration
 - Advanced filtering
 - Optional TAG usage
+> - 부모 메서드 추적 (스택 정보)
+> - 스레드 ID 자동 표시
+> - JSON 자동 포맷팅
+> - 파일 자동 저장
+> - Setter 기반 설정
+> - 고급 필터링
+> - 선택적 TAG 사용
 
 <br></br>
 
@@ -705,31 +712,29 @@ private fun setupLogging() {
 <br>
 </br>
 
-## Developer Feedback (개발자들의 후기)
+## What the Guide Highlights (가이드에서 드러나는 개선점)
 
-- **"Parent method tracing lets us grasp complex call chains at a glance!"**
-- **"JSON logging was never this easy!"**
-- **"One line of configuration and every log is backed up automatically!"**
-- **"The setters let us unify the team’s logging rules in minutes!"**
+- **Parent method tracing** helps inspect complex call chains more directly.
+- **JSON logging helpers** reduce repeated formatting code.
+- **File-saving configuration** can be enabled with a small number of setup calls.
+- **Setter-based options** help align logging rules across screens.
 
-> - **"Parent Method 추적으로 복잡한 호출 관계도 한 눈에 파악!"**
-> - **"JSON 로깅이 이렇게 간단할 줄 몰랐어!"**
-> - **"파일 저장 설정 한 줄로 모든 로그 자동 백업!"**
-> - **"setter 설정으로 팀 전체 로깅 규칙을 통일했어!"**
+> - **Parent Method 추적**으로 복잡한 호출 관계를 더 직접적으로 확인할 수 있습니다.
+> - **JSON 로깅 헬퍼**로 반복적인 포맷팅 코드를 줄일 수 있습니다.
+> - **파일 저장 설정**은 적은 수의 초기 설정 호출로 활성화할 수 있습니다.
+> - **setter 기반 옵션**으로 화면 전반의 로깅 규칙을 맞추기 쉽습니다.
 
 <br>
 </br>
 
-## Conclusion: A New Standard for Logging (로깅의 새로운 표준)
+## Conclusion: What Logx Adds over Android Log (결론: Logx가 Android Log에 더해 주는 것)
 
-**Simple UI Logx** completely transforms traditional logging.  
-It **shortens complex logging code**, **dramatically improves developer productivity**, and delivers an **intuitive logging experience**.
+**Simple UI Logx** focuses on reducing repeated logging code while adding richer runtime context such as file, line, method, thread, and JSON formatting helpers.
 
->**Simple UI Logx**는 기존 로깅 작업을 더 단순하게 만듭니다.
->**복잡한 로깅 코드를 단축**시키고, **개발 생산성을 크게 향상**시키며 **직관적인 로깅 경험**을 제공합니다.
+> **Simple UI Logx**는 반복되는 로깅 코드를 줄이면서 파일, 라인, 메서드, 스레드, JSON 포맷팅 같은 실행 맥락 정보를 더해 주는 데 초점을 둡니다.
 
 
-Start now! ✨
+Start with the sample when needed. ✨
 
 
 ## Example Path
