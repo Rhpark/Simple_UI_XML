@@ -149,14 +149,14 @@ Simple UI ships with **three adapter families** tailored to different scenarios 
 ## 🎯 Scope: Activity-Based Multi-Adapter RecyclerView System (비교 대상: Activity 기반 다중 Adapter RecyclerView 시스템)
 
 **Features covered in the sample implementation:**
-- **Simple UI:** two ready-made adapters + one custom adapter built on `BaseRcvListAdapter`
+- **Simple UI:** two DataBinding ready-made adapters + one custom adapter + three ViewBinding ready-made adapters
 - **Plain Android:** two traditional adapter implementations
 - Flow-based vs manual scroll-direction/edge detection
 - Dynamic add/remove/shuffle/clear operations
 - Switch adapters dynamically via RadioButtons
 - Entire flow handled in an Activity (no ViewModel)
 > **구현 예제 기능:**
-> - **Simple UI**: ready-made adapter 2개 + `BaseRcvListAdapter` 기반 custom adapter 1개
+> - **Simple UI**: DataBinding ready-made adapter 2개 + custom adapter 1개 + ViewBinding ready-made adapter 3개
 > - **기본 Android**: 2가지 전통적인 Adapter 구현
 > - Flow 기반 vs 수동 스크롤 방향/Edge 감지
 > - 동적 아이템 추가/삭제/섞기/전체삭제
@@ -891,19 +891,20 @@ override fun onViewRecycled(holder: VH) {
 **Live sample code (라이브 예제 코드):**
 > - Simple UI sample: `app/src/main/java/kr/open/library/simpleui_xml/recyclerview/new_/`
 > - Plain Android sample: `app/src/main/java/kr/open/library/simpleui_xml/recyclerview/origin/`
+> - `RecyclerViewActivity`에서 `SimpleRcvViewBindingListAdapter`, `SimpleViewBindingRcvAdapter`, `SimpleHeaderFooterViewBindingRcvAdapter`도 바로 전환해 볼 수 있습니다.
 > - Run the app to see the implementations in action!
 
 <br>
 </br>
 
 **Features you can test (테스트 가능한 기능):**
-- Compare three Simple UI adapters vs two traditional adapters
+- Compare six Simple UI adapters vs two traditional adapters
 - Flow-based, real-time scroll-direction/edge detection
 - Switch adapters dynamically via RadioButtons
 - Add/remove/shuffle/clear items on the fly
 - Evaluate automatic DiffUtil performance
 - Validate unified API consistency
-> - 3가지 Simple UI Adapter vs 2가지 전통 Adapter 비교
+> - 6가지 Simple UI Adapter vs 2가지 전통 Adapter 비교
 > - Flow 기반 실시간 스크롤 방향/Edge 감지
 > - RadioButton으로 동적 Adapter 전환
 > - 실시간 아이템 추가/삭제/섞기/전체삭제

@@ -24,26 +24,38 @@
             android:text="Adapter Mode" />
 
         <RadioGroup
-            style="@style/RadioGroup.MatchWrap.Horizontal">
+            android:id="@+id/rGroupAdapterMode"
+            style="@style/RadioGroup.MatchWrap.Vertical">
 
             <RadioButton
                 android:id="@+id/rBtnChangeSimpleListAdapter"
-                style="@style/RadioButton.WeightWrap.Checked"
-                android:layout_marginEnd="4dp"
-                android:text="SimpleList" />
+                style="@style/RadioButton.MatchWrap.Checked"
+                android:text="SimpleList (DataBinding)" />
 
             <RadioButton
                 android:id="@+id/rBtnChangeSimpleAdapter"
-                style="@style/RadioButton.WeightWrap.Unchecked"
-                android:layout_marginStart="4dp"
-                android:layout_marginEnd="4dp"
-                android:text="Simple" />
+                style="@style/RadioButton.MatchWrap.Unchecked"
+                android:text="Simple (DataBinding)" />
 
             <RadioButton
                 android:id="@+id/rBtnChangeCustomLIstAdapter"
-                style="@style/RadioButton.WeightWrap.Unchecked"
-                android:layout_marginStart="4dp"
-                android:text="Custom" />
+                style="@style/RadioButton.MatchWrap.Unchecked"
+                android:text="Custom (DataBinding)" />
+
+            <RadioButton
+                android:id="@+id/rBtnChangeSimpleViewBindingListAdapter"
+                style="@style/RadioButton.MatchWrap.Unchecked"
+                android:text="SimpleList (ViewBinding)" />
+
+            <RadioButton
+                android:id="@+id/rBtnChangeSimpleViewBindingAdapter"
+                style="@style/RadioButton.MatchWrap.Unchecked"
+                android:text="Simple (ViewBinding)" />
+
+            <RadioButton
+                android:id="@+id/rBtnChangeSimpleHeaderFooterViewBindingAdapter"
+                style="@style/RadioButton.MatchWrap.Unchecked"
+                android:text="HeaderFooter (ViewBinding)" />
 
         </RadioGroup>
 
