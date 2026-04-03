@@ -1,8 +1,8 @@
 package kr.open.library.simpleui_xml.recyclerview.new_
 
 import android.os.Bundle
-import androidx.recyclerview.widget.RecyclerView
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.launch
 import kr.open.library.simple_ui.xml.ui.adapter.list.base.diffutil.RcvListDiffUtilCallBack
 import kr.open.library.simple_ui.xml.ui.adapter.list.simple.SimpleRcvDataBindingListAdapter
@@ -226,7 +226,8 @@ class RecyclerViewActivity : BaseDataBindingActivity<ActivityRecyclerviewBinding
             AdapterMode.SIMPLE_LIST -> simpleListAdapter.setItems(simpleListAdapter.getItems().shuffled())
             AdapterMode.SIMPLE -> simpleAdapter.setItems(simpleAdapter.getItems().shuffled())
             AdapterMode.CUSTOM_LIST -> customListAdapter.setItems(customListAdapter.getItems().shuffled())
-            AdapterMode.SIMPLE_VIEW_BINDING_LIST -> simpleViewBindingListAdapter.setItems(simpleViewBindingListAdapter.getItems().shuffled())
+            AdapterMode.SIMPLE_VIEW_BINDING_LIST -> simpleViewBindingListAdapter
+                .setItems(simpleViewBindingListAdapter.getItems().shuffled())
             AdapterMode.SIMPLE_VIEW_BINDING -> simpleViewBindingAdapter.setItems(simpleViewBindingAdapter.getItems().shuffled())
             AdapterMode.SIMPLE_HEADER_FOOTER_VIEW_BINDING -> {
                 applyViewBindingHeaderFooterItems(
