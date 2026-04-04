@@ -70,6 +70,7 @@ class PermissionsActivity : BaseDataBindingActivity<ActivityPermissionsBinding>(
                         permissions(
                             listOf(
                                 Manifest.permission.SYSTEM_ALERT_WINDOW,
+                                Manifest.permission.POST_NOTIFICATIONS,
                                 Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
                             ),
                         )
