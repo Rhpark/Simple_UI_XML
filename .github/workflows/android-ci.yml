@@ -300,7 +300,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: API compatibility check
-        run: bash -o pipefail -c "./gradlew apiCheck --build-cache |& tee api-check.log"
+        run: bash -o pipefail -c "./gradlew apiCheck --stacktrace --info --build-cache --no-daemon --no-parallel --no-configuration-cache -Pkotlin.compiler.execution.strategy=in-process |& tee api-check.log"
 
       - name: Run tests and generate coverage
         run: bash -o pipefail -c "./gradlew :simple_core:koverHtmlReport :simple_system_manager:koverHtmlReport :simple_xml:koverHtmlReport --build-cache |& tee test-coverage.log"
@@ -411,7 +411,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Assemble
-        run: bash -o pipefail -c "./gradlew assemble --stacktrace --build-cache |& tee build-assemble.log"
+        run: bash -o pipefail -c "./gradlew assemble --stacktrace --info --build-cache --no-daemon --no-parallel --no-configuration-cache -Pkotlin.compiler.execution.strategy=in-process |& tee build-assemble.log"
 
       - name: Capture failure snippet (assemble)
         if: failure()
@@ -430,7 +430,7 @@ jobs:
           } >> "$GITHUB_ENV"
 
       - name: Android Lint (blocking)
-        run: bash -o pipefail -c "./gradlew lint --build-cache |& tee build-lint.log"
+        run: bash -o pipefail -c "./gradlew lint --info --build-cache --no-daemon --no-parallel --no-configuration-cache -Pkotlin.compiler.execution.strategy=in-process |& tee build-lint.log"
 
       - name: Capture failure snippet (lint)
         if: failure()
