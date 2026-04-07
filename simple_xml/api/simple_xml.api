@@ -570,45 +570,6 @@ public abstract class kr/open/library/simple_ui/xml/ui/adapter/normal/base/BaseR
 	public fun setOnItemLongClickListener (Lkotlin/jvm/functions/Function3;)V
 }
 
-public abstract class kr/open/library/simple_ui/xml/ui/adapter/normal/headerfooter/HeaderFooterRcvAdapter : kr/open/library/simple_ui/xml/ui/adapter/normal/base/BaseRcvAdapter {
-	public fun <init> ()V
-	public final fun addFooterItem (Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)V
-	public static synthetic fun addFooterItem$default (Lkr/open/library/simple_ui/xml/ui/adapter/normal/headerfooter/HeaderFooterRcvAdapter;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
-	public final fun addFooterItemAt (ILjava/lang/Object;Lkotlin/jvm/functions/Function1;)V
-	public static synthetic fun addFooterItemAt$default (Lkr/open/library/simple_ui/xml/ui/adapter/normal/headerfooter/HeaderFooterRcvAdapter;ILjava/lang/Object;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
-	public final fun addFooterItems (Ljava/util/List;Lkotlin/jvm/functions/Function1;)V
-	public static synthetic fun addFooterItems$default (Lkr/open/library/simple_ui/xml/ui/adapter/normal/headerfooter/HeaderFooterRcvAdapter;Ljava/util/List;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
-	public final fun addHeaderItem (Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)V
-	public static synthetic fun addHeaderItem$default (Lkr/open/library/simple_ui/xml/ui/adapter/normal/headerfooter/HeaderFooterRcvAdapter;Ljava/lang/Object;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
-	public final fun addHeaderItemAt (ILjava/lang/Object;Lkotlin/jvm/functions/Function1;)V
-	public static synthetic fun addHeaderItemAt$default (Lkr/open/library/simple_ui/xml/ui/adapter/normal/headerfooter/HeaderFooterRcvAdapter;ILjava/lang/Object;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
-	public final fun addHeaderItems (Ljava/util/List;Lkotlin/jvm/functions/Function1;)V
-	public static synthetic fun addHeaderItems$default (Lkr/open/library/simple_ui/xml/ui/adapter/normal/headerfooter/HeaderFooterRcvAdapter;Ljava/util/List;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
-	protected final fun bindClickListeners (Landroidx/recyclerview/widget/RecyclerView$ViewHolder;)V
-	public final fun clearFooterItems (Lkotlin/jvm/functions/Function1;)V
-	public static synthetic fun clearFooterItems$default (Lkr/open/library/simple_ui/xml/ui/adapter/normal/headerfooter/HeaderFooterRcvAdapter;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
-	public final fun clearHeaderItems (Lkotlin/jvm/functions/Function1;)V
-	public static synthetic fun clearHeaderItems$default (Lkr/open/library/simple_ui/xml/ui/adapter/normal/headerfooter/HeaderFooterRcvAdapter;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
-	public synthetic fun getAdapterData$simple_xml_release ()Lkr/open/library/simple_ui/xml/ui/adapter/normal/base/BaseRcvAdapterData;
-	public final fun getAllItems ()Ljava/util/List;
-	protected fun getFooterItemViewType (ILjava/lang/Object;)I
-	public final fun getFooterItems ()Ljava/util/List;
-	protected fun getHeaderItemViewType (ILjava/lang/Object;)I
-	public final fun getHeaderItems ()Ljava/util/List;
-	public fun getItemViewType (I)I
-	protected fun onBindFooterViewHolder (Landroidx/recyclerview/widget/RecyclerView$ViewHolder;Ljava/lang/Object;I)V
-	protected fun onBindFooterViewHolder (Landroidx/recyclerview/widget/RecyclerView$ViewHolder;Ljava/lang/Object;ILjava/util/List;)V
-	protected fun onBindHeaderViewHolder (Landroidx/recyclerview/widget/RecyclerView$ViewHolder;Ljava/lang/Object;I)V
-	protected fun onBindHeaderViewHolder (Landroidx/recyclerview/widget/RecyclerView$ViewHolder;Ljava/lang/Object;ILjava/util/List;)V
-	public fun onBindViewHolder (Landroidx/recyclerview/widget/RecyclerView$ViewHolder;I)V
-	public fun onBindViewHolder (Landroidx/recyclerview/widget/RecyclerView$ViewHolder;ILjava/util/List;)V
-	public fun removeAll (Lkotlin/jvm/functions/Function1;)V
-	public final fun setFooterItems (Ljava/util/List;Lkotlin/jvm/functions/Function1;)V
-	public static synthetic fun setFooterItems$default (Lkr/open/library/simple_ui/xml/ui/adapter/normal/headerfooter/HeaderFooterRcvAdapter;Ljava/util/List;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
-	public final fun setHeaderItems (Ljava/util/List;Lkotlin/jvm/functions/Function1;)V
-	public static synthetic fun setHeaderItems$default (Lkr/open/library/simple_ui/xml/ui/adapter/normal/headerfooter/HeaderFooterRcvAdapter;Ljava/util/List;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
-}
-
 public abstract interface class kr/open/library/simple_ui/xml/ui/adapter/normal/result/NormalAdapterResult {
 	public abstract fun fold (Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;)V
 }
@@ -677,38 +638,6 @@ public abstract class kr/open/library/simple_ui/xml/ui/adapter/normal/root/RootR
 	protected final fun runResultCallback (Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)V
 }
 
-public class kr/open/library/simple_ui/xml/ui/adapter/normal/simple/SimpleBindingRcvAdapter : kr/open/library/simple_ui/xml/ui/adapter/normal/base/BaseRcvAdapter {
-	public fun <init> (ILkotlin/jvm/functions/Function3;)V
-	public synthetic fun createViewHolderInternal (Landroid/view/ViewGroup;I)Landroidx/recyclerview/widget/RecyclerView$ViewHolder;
-	protected fun createViewHolderInternal (Landroid/view/ViewGroup;I)Lkr/open/library/simple_ui/xml/ui/adapter/viewholder/BaseRcvDataBindingViewHolder;
-	public synthetic fun onBindViewHolder (Landroidx/recyclerview/widget/RecyclerView$ViewHolder;Ljava/lang/Object;I)V
-	protected fun onBindViewHolder (Lkr/open/library/simple_ui/xml/ui/adapter/viewholder/BaseRcvDataBindingViewHolder;Ljava/lang/Object;I)V
-}
-
-public class kr/open/library/simple_ui/xml/ui/adapter/normal/simple/SimpleHeaderFooterDataBindingRcvAdapter : kr/open/library/simple_ui/xml/ui/adapter/normal/headerfooter/HeaderFooterRcvAdapter {
-	public fun <init> (ILkotlin/jvm/functions/Function3;)V
-	public synthetic fun createViewHolderInternal (Landroid/view/ViewGroup;I)Landroidx/recyclerview/widget/RecyclerView$ViewHolder;
-	protected fun createViewHolderInternal (Landroid/view/ViewGroup;I)Lkr/open/library/simple_ui/xml/ui/adapter/viewholder/BaseRcvDataBindingViewHolder;
-	public synthetic fun onBindViewHolder (Landroidx/recyclerview/widget/RecyclerView$ViewHolder;Ljava/lang/Object;I)V
-	protected fun onBindViewHolder (Lkr/open/library/simple_ui/xml/ui/adapter/viewholder/BaseRcvDataBindingViewHolder;Ljava/lang/Object;I)V
-}
-
-public class kr/open/library/simple_ui/xml/ui/adapter/normal/simple/SimpleHeaderFooterRcvAdapter : kr/open/library/simple_ui/xml/ui/adapter/normal/headerfooter/HeaderFooterRcvAdapter {
-	public fun <init> (ILkotlin/jvm/functions/Function3;)V
-	public synthetic fun createViewHolderInternal (Landroid/view/ViewGroup;I)Landroidx/recyclerview/widget/RecyclerView$ViewHolder;
-	protected fun createViewHolderInternal (Landroid/view/ViewGroup;I)Lkr/open/library/simple_ui/xml/ui/adapter/viewholder/BaseRcvViewHolder;
-	public synthetic fun onBindViewHolder (Landroidx/recyclerview/widget/RecyclerView$ViewHolder;Ljava/lang/Object;I)V
-	protected fun onBindViewHolder (Lkr/open/library/simple_ui/xml/ui/adapter/viewholder/BaseRcvViewHolder;Ljava/lang/Object;I)V
-}
-
-public class kr/open/library/simple_ui/xml/ui/adapter/normal/simple/SimpleHeaderFooterViewBindingRcvAdapter : kr/open/library/simple_ui/xml/ui/adapter/normal/headerfooter/HeaderFooterRcvAdapter {
-	public fun <init> (Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;)V
-	public synthetic fun createViewHolderInternal (Landroid/view/ViewGroup;I)Landroidx/recyclerview/widget/RecyclerView$ViewHolder;
-	protected fun createViewHolderInternal (Landroid/view/ViewGroup;I)Lkr/open/library/simple_ui/xml/ui/adapter/viewholder/BaseRcvViewBindingViewHolder;
-	public synthetic fun onBindViewHolder (Landroidx/recyclerview/widget/RecyclerView$ViewHolder;Ljava/lang/Object;I)V
-	protected fun onBindViewHolder (Lkr/open/library/simple_ui/xml/ui/adapter/viewholder/BaseRcvViewBindingViewHolder;Ljava/lang/Object;I)V
-}
-
 public class kr/open/library/simple_ui/xml/ui/adapter/normal/simple/SimpleRcvAdapter : kr/open/library/simple_ui/xml/ui/adapter/normal/base/BaseRcvAdapter {
 	public fun <init> (ILkotlin/jvm/functions/Function3;)V
 	public synthetic fun createViewHolderInternal (Landroid/view/ViewGroup;I)Landroidx/recyclerview/widget/RecyclerView$ViewHolder;
@@ -717,7 +646,15 @@ public class kr/open/library/simple_ui/xml/ui/adapter/normal/simple/SimpleRcvAda
 	protected fun onBindViewHolder (Lkr/open/library/simple_ui/xml/ui/adapter/viewholder/BaseRcvViewHolder;Ljava/lang/Object;I)V
 }
 
-public class kr/open/library/simple_ui/xml/ui/adapter/normal/simple/SimpleViewBindingRcvAdapter : kr/open/library/simple_ui/xml/ui/adapter/normal/base/BaseRcvAdapter {
+public class kr/open/library/simple_ui/xml/ui/adapter/normal/simple/SimpleRcvDataBindingAdapter : kr/open/library/simple_ui/xml/ui/adapter/normal/base/BaseRcvAdapter {
+	public fun <init> (ILkotlin/jvm/functions/Function3;)V
+	public synthetic fun createViewHolderInternal (Landroid/view/ViewGroup;I)Landroidx/recyclerview/widget/RecyclerView$ViewHolder;
+	protected fun createViewHolderInternal (Landroid/view/ViewGroup;I)Lkr/open/library/simple_ui/xml/ui/adapter/viewholder/BaseRcvDataBindingViewHolder;
+	public synthetic fun onBindViewHolder (Landroidx/recyclerview/widget/RecyclerView$ViewHolder;Ljava/lang/Object;I)V
+	protected fun onBindViewHolder (Lkr/open/library/simple_ui/xml/ui/adapter/viewholder/BaseRcvDataBindingViewHolder;Ljava/lang/Object;I)V
+}
+
+public class kr/open/library/simple_ui/xml/ui/adapter/normal/simple/SimpleRcvViewBindingAdapter : kr/open/library/simple_ui/xml/ui/adapter/normal/base/BaseRcvAdapter {
 	public fun <init> (Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;)V
 	public synthetic fun createViewHolderInternal (Landroid/view/ViewGroup;I)Landroidx/recyclerview/widget/RecyclerView$ViewHolder;
 	protected fun createViewHolderInternal (Landroid/view/ViewGroup;I)Lkr/open/library/simple_ui/xml/ui/adapter/viewholder/BaseRcvViewBindingViewHolder;

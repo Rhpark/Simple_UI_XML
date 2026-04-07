@@ -205,7 +205,8 @@ class RecyclerViewActivity : BaseDataBindingActivity<ActivityRecyclerviewBinding
             AdapterMode.SIMPLE_VIEW_BINDING_LIST -> simpleViewBindingListAdapter.addItem(getItem(simpleViewBindingListAdapter.itemCount))
             AdapterMode.SIMPLE_VIEW_BINDING -> simpleViewBindingAdapter.addItem(getItem(simpleViewBindingAdapter.itemCount))
             AdapterMode.SIMPLE_HEADER_FOOTER_VIEW_BINDING -> {
-                val currentItems = sealedHeaderFooterAdapter.getItems()
+                val currentItems = sealedHeaderFooterAdapter
+                    .getItems()
                     .filterIsInstance<RcvItem.Content>()
                     .map { it.item }
                 sealedHeaderFooterAdapter.setItems(buildSealedItems(currentItems + getItem(currentItems.size)))
@@ -227,7 +228,8 @@ class RecyclerViewActivity : BaseDataBindingActivity<ActivityRecyclerviewBinding
             AdapterMode.SIMPLE_VIEW_BINDING_LIST -> simpleViewBindingListAdapter.removeAt(position)
             AdapterMode.SIMPLE_VIEW_BINDING -> simpleViewBindingAdapter.removeAt(position)
             AdapterMode.SIMPLE_HEADER_FOOTER_VIEW_BINDING -> {
-                val currentItems = sealedHeaderFooterAdapter.getItems()
+                val currentItems = sealedHeaderFooterAdapter
+                    .getItems()
                     .filterIsInstance<RcvItem.Content>()
                     .map { it.item }
                     .toMutableList()
@@ -257,10 +259,12 @@ class RecyclerViewActivity : BaseDataBindingActivity<ActivityRecyclerviewBinding
             AdapterMode.SIMPLE_LIST -> simpleListAdapter.setItems(simpleListAdapter.getItems().shuffled())
             AdapterMode.SIMPLE -> simpleAdapter.setItems(simpleAdapter.getItems().shuffled())
             AdapterMode.CUSTOM_LIST -> customListAdapter.setItems(customListAdapter.getItems().shuffled())
-            AdapterMode.SIMPLE_VIEW_BINDING_LIST -> simpleViewBindingListAdapter.setItems(simpleViewBindingListAdapter.getItems().shuffled())
+            AdapterMode.SIMPLE_VIEW_BINDING_LIST -> simpleViewBindingListAdapter
+                .setItems(simpleViewBindingListAdapter.getItems().shuffled())
             AdapterMode.SIMPLE_VIEW_BINDING -> simpleViewBindingAdapter.setItems(simpleViewBindingAdapter.getItems().shuffled())
             AdapterMode.SIMPLE_HEADER_FOOTER_VIEW_BINDING -> {
-                val currentItems = sealedHeaderFooterAdapter.getItems()
+                val currentItems = sealedHeaderFooterAdapter
+                    .getItems()
                     .filterIsInstance<RcvItem.Content>()
                     .map { it.item }
                 sealedHeaderFooterAdapter.setItems(buildSealedItems(currentItems.shuffled()))

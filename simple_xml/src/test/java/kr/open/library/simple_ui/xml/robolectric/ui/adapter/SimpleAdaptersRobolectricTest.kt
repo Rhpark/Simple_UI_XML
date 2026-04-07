@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.databinding.ViewDataBinding
+import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ApplicationProvider
 import androidx.viewbinding.ViewBinding
 import kr.open.library.simple_ui.xml.ui.adapter.list.base.diffutil.RcvListDiffUtilCallBack
@@ -13,8 +14,8 @@ import kr.open.library.simple_ui.xml.ui.adapter.list.simple.SimpleRcvDataBinding
 import kr.open.library.simple_ui.xml.ui.adapter.list.simple.SimpleRcvListAdapter
 import kr.open.library.simple_ui.xml.ui.adapter.list.simple.SimpleRcvViewBindingListAdapter
 import kr.open.library.simple_ui.xml.ui.adapter.normal.base.BaseRcvAdapter
-import kr.open.library.simple_ui.xml.ui.adapter.normal.simple.SimpleRcvDataBindingAdapter
 import kr.open.library.simple_ui.xml.ui.adapter.normal.simple.SimpleRcvAdapter
+import kr.open.library.simple_ui.xml.ui.adapter.normal.simple.SimpleRcvDataBindingAdapter
 import kr.open.library.simple_ui.xml.ui.adapter.normal.simple.SimpleRcvViewBindingAdapter
 import kr.open.library.simple_ui.xml.ui.adapter.viewholder.BaseRcvDataBindingViewHolder
 import kr.open.library.simple_ui.xml.ui.adapter.viewholder.BaseRcvViewBindingViewHolder
@@ -33,9 +34,17 @@ class SimpleAdaptersRobolectricTest {
 
     // sealed interface — Header/Content/Footer를 단일 ITEM 타입으로 표현
     private sealed interface SealedItem {
-        data class Header(val title: String) : SealedItem
-        data class Content(val value: String) : SealedItem
-        data class Footer(val count: Int) : SealedItem
+        data class Header(
+            val title: String
+        ) : SealedItem
+
+        data class Content(
+            val value: String
+        ) : SealedItem
+
+        data class Footer(
+            val count: Int
+        ) : SealedItem
     }
 
     @Before
