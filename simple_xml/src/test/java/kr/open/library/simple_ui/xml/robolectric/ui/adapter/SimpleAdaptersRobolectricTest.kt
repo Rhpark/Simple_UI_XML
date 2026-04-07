@@ -2,6 +2,7 @@ package kr.open.library.simple_ui.xml.robolectric.ui.adapter
 
 import android.os.Looper
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.databinding.ViewDataBinding
@@ -11,12 +12,10 @@ import kr.open.library.simple_ui.xml.ui.adapter.list.base.diffutil.RcvListDiffUt
 import kr.open.library.simple_ui.xml.ui.adapter.list.simple.SimpleRcvDataBindingListAdapter
 import kr.open.library.simple_ui.xml.ui.adapter.list.simple.SimpleRcvListAdapter
 import kr.open.library.simple_ui.xml.ui.adapter.list.simple.SimpleRcvViewBindingListAdapter
-import kr.open.library.simple_ui.xml.ui.adapter.normal.simple.SimpleBindingRcvAdapter
-import kr.open.library.simple_ui.xml.ui.adapter.normal.simple.SimpleHeaderFooterDataBindingRcvAdapter
-import kr.open.library.simple_ui.xml.ui.adapter.normal.simple.SimpleHeaderFooterRcvAdapter
-import kr.open.library.simple_ui.xml.ui.adapter.normal.simple.SimpleHeaderFooterViewBindingRcvAdapter
+import kr.open.library.simple_ui.xml.ui.adapter.normal.base.BaseRcvAdapter
+import kr.open.library.simple_ui.xml.ui.adapter.normal.simple.SimpleRcvDataBindingAdapter
 import kr.open.library.simple_ui.xml.ui.adapter.normal.simple.SimpleRcvAdapter
-import kr.open.library.simple_ui.xml.ui.adapter.normal.simple.SimpleViewBindingRcvAdapter
+import kr.open.library.simple_ui.xml.ui.adapter.normal.simple.SimpleRcvViewBindingAdapter
 import kr.open.library.simple_ui.xml.ui.adapter.viewholder.BaseRcvDataBindingViewHolder
 import kr.open.library.simple_ui.xml.ui.adapter.viewholder.BaseRcvViewBindingViewHolder
 import kr.open.library.simple_ui.xml.ui.adapter.viewholder.BaseRcvViewHolder
@@ -31,6 +30,13 @@ import org.robolectric.Shadows
 @RunWith(RobolectricTestRunner::class)
 class SimpleAdaptersRobolectricTest {
     private lateinit var parent: FrameLayout
+
+    // sealed interface — Header/Content/Footer를 단일 ITEM 타입으로 표현
+    private sealed interface SealedItem {
+        data class Header(val title: String) : SealedItem
+        data class Content(val value: String) : SealedItem
+        data class Footer(val count: Int) : SealedItem
+    }
 
     @Before
     fun setUp() {
@@ -107,7 +113,7 @@ class SimpleAdaptersRobolectricTest {
     fun simpleBindingRcvAdapter_invokesOnBindLambda() {
         var capturedItem: String? = null
         val adapter =
-            SimpleBindingRcvAdapter<String, ViewDataBinding>(
+            SimpleRcvDataBindingAdapter<String, ViewDataBinding>(
                 android.R.layout.simple_list_item_1,
             ) { _, item: String, _ ->
                 capturedItem = item
@@ -157,7 +163,7 @@ class SimpleAdaptersRobolectricTest {
     fun simpleViewBindingRcvAdapter_invokesOnBindLambda() {
         var capturedItem: String? = null
         val adapter =
-            SimpleViewBindingRcvAdapter<String, TestSimpleViewBinding>(
+            SimpleRcvViewBindingAdapter<String, TestSimpleViewBinding>(
                 inflate = { inflater, parent, attachToParent ->
                     TestSimpleViewBinding.inflate(inflater, parent, attachToParent)
                 },
@@ -170,59 +176,87 @@ class SimpleAdaptersRobolectricTest {
         assertEquals("epsilon", capturedItem)
     }
 
+    // sealed interface 기반 Header/Content/Footer — BaseRcvAdapter 단독으로 처리
     @Test
-    fun simpleHeaderFooterRcvAdapter_supportsHeaderFooterSectionCount() {
-        val adapter =
-            SimpleHeaderFooterRcvAdapter<String>(android.R.layout.simple_list_item_1) { _, _, _ -> }
+    fun sealedInterfaceAdapter_supportsHeaderContentFooterInSingleList() {
+        val adapter = object : BaseRcvAdapter<SealedItem, RecyclerView.ViewHolder>() {
+            override fun getContentItemViewType(position: Int, item: SealedItem): Int = when (item) {
+                is SealedItem.Header -> 0
+                is SealedItem.Content -> 1
+                is SealedItem.Footer -> 2
+            }
 
-        adapter.setHeaderItems(listOf("H1", "H2"))
-        adapter.setItems(listOf("C1", "C2", "C3"))
-        adapter.setFooterItems(listOf("F1"))
+            override fun createViewHolderInternal(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
+                object : RecyclerView.ViewHolder(View(parent.context)) {}
 
-        assertEquals(6, adapter.itemCount)
-        assertEquals(listOf("C1", "C2", "C3"), adapter.getItems())
-        assertEquals(listOf("H1", "H2"), adapter.getHeaderItems())
-        assertEquals(listOf("F1"), adapter.getFooterItems())
-        assertEquals("C1", adapter.getItem(0))
-        assertEquals("C3", adapter.getItem(2))
+            override fun onBindViewHolder(holder: RecyclerView.ViewHolder, item: SealedItem, position: Int) {}
+        }
+
+        adapter.setItems(
+            listOf(
+                SealedItem.Header("헤더"),
+                SealedItem.Content("C1"),
+                SealedItem.Content("C2"),
+                SealedItem.Content("C3"),
+                SealedItem.Footer(3),
+            ),
+        )
+
+        assertEquals(5, adapter.itemCount)
+        assertEquals(SealedItem.Header("헤더"), adapter.getItemOrNull(0))
+        assertEquals(SealedItem.Content("C1"), adapter.getItemOrNull(1))
+        assertEquals(SealedItem.Content("C3"), adapter.getItemOrNull(3))
+        assertEquals(SealedItem.Footer(3), adapter.getItemOrNull(4))
     }
 
     @Test
-    fun simpleHeaderFooterDataBindingRcvAdapter_supportsHeaderFooterSectionCount() {
-        val adapter =
-            SimpleHeaderFooterDataBindingRcvAdapter<String, ViewDataBinding>(
-                android.R.layout.simple_list_item_1,
-            ) { _, _, _ -> }
+    fun sealedInterfaceAdapter_viewTypeDispatchedByItemType() {
+        val adapter = object : BaseRcvAdapter<SealedItem, RecyclerView.ViewHolder>() {
+            override fun getContentItemViewType(position: Int, item: SealedItem): Int = when (item) {
+                is SealedItem.Header -> 0
+                is SealedItem.Content -> 1
+                is SealedItem.Footer -> 2
+            }
 
-        adapter.setHeaderItems(listOf("H1", "H2"))
-        adapter.setItems(listOf("C1", "C2", "C3"))
-        adapter.setFooterItems(listOf("F1"))
+            override fun createViewHolderInternal(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
+                object : RecyclerView.ViewHolder(View(parent.context)) {}
 
-        assertEquals(6, adapter.itemCount)
-        assertEquals(listOf("C1", "C2", "C3"), adapter.getItems())
-        assertEquals(listOf("H1", "H2"), adapter.getHeaderItems())
-        assertEquals(listOf("F1"), adapter.getFooterItems())
+            override fun onBindViewHolder(holder: RecyclerView.ViewHolder, item: SealedItem, position: Int) {}
+        }
+
+        adapter.setItems(
+            listOf(
+                SealedItem.Header("H"),
+                SealedItem.Content("C"),
+                SealedItem.Footer(1),
+            ),
+        )
+
+        assertEquals(0, adapter.getItemViewType(0))
+        assertEquals(1, adapter.getItemViewType(1))
+        assertEquals(2, adapter.getItemViewType(2))
     }
 
     @Test
-    fun simpleHeaderFooterViewBindingRcvAdapter_supportsHeaderFooterSectionCount() {
-        val adapter =
-            SimpleHeaderFooterViewBindingRcvAdapter<String, TestSimpleViewBinding>(
-                inflate = { inflater, parent, attachToParent ->
-                    TestSimpleViewBinding.inflate(inflater, parent, attachToParent)
-                },
-            ) { _, _, _ -> }
+    fun sealedInterfaceAdapter_removeContentItemOnly() {
+        val adapter = object : BaseRcvAdapter<SealedItem, RecyclerView.ViewHolder>() {
+            override fun createViewHolderInternal(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
+                object : RecyclerView.ViewHolder(View(parent.context)) {}
 
-        adapter.setHeaderItems(listOf("H1", "H2"))
-        adapter.setItems(listOf("C1", "C2", "C3"))
-        adapter.setFooterItems(listOf("F1"))
+            override fun onBindViewHolder(holder: RecyclerView.ViewHolder, item: SealedItem, position: Int) {}
+        }
 
-        assertEquals(6, adapter.itemCount)
-        assertEquals(listOf("C1", "C2", "C3"), adapter.getItems())
-        assertEquals(listOf("H1", "H2"), adapter.getHeaderItems())
-        assertEquals(listOf("F1"), adapter.getFooterItems())
-        assertEquals("C1", adapter.getItem(0))
-        assertEquals("C3", adapter.getItem(2))
+        val items = listOf(
+            SealedItem.Header("H"),
+            SealedItem.Content("C1"),
+            SealedItem.Content("C2"),
+            SealedItem.Footer(2),
+        )
+        adapter.setItems(items)
+        adapter.removeAt(1) // C1 제거
+
+        assertEquals(3, adapter.itemCount)
+        assertEquals(SealedItem.Content("C2"), adapter.getItemOrNull(1))
     }
 
     private fun invokeSimpleAdapterBind(
@@ -242,12 +276,12 @@ class SimpleAdaptersRobolectricTest {
     }
 
     private fun invokeBindingAdapterBind(
-        adapter: SimpleBindingRcvAdapter<String, ViewDataBinding>,
+        adapter: SimpleRcvDataBindingAdapter<String, ViewDataBinding>,
         holder: BaseRcvDataBindingViewHolder<ViewDataBinding>,
         item: String,
     ) {
         val method =
-            SimpleBindingRcvAdapter::class.java.getDeclaredMethod(
+            SimpleRcvDataBindingAdapter::class.java.getDeclaredMethod(
                 "onBindViewHolder",
                 BaseRcvDataBindingViewHolder::class.java,
                 Any::class.java,
@@ -258,12 +292,12 @@ class SimpleAdaptersRobolectricTest {
     }
 
     private fun invokeViewBindingAdapterBind(
-        adapter: SimpleViewBindingRcvAdapter<String, TestSimpleViewBinding>,
+        adapter: SimpleRcvViewBindingAdapter<String, TestSimpleViewBinding>,
         holder: BaseRcvViewBindingViewHolder<TestSimpleViewBinding>,
         item: String,
     ) {
         val method =
-            SimpleViewBindingRcvAdapter::class.java.getDeclaredMethod(
+            SimpleRcvViewBindingAdapter::class.java.getDeclaredMethod(
                 "onBindViewHolder",
                 BaseRcvViewBindingViewHolder::class.java,
                 Any::class.java,

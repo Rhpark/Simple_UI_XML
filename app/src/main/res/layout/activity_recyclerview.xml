@@ -55,7 +55,7 @@
             <RadioButton
                 android:id="@+id/rBtnChangeSimpleHeaderFooterViewBindingAdapter"
                 style="@style/RadioButton.MatchWrap.Unchecked"
-                android:text="HeaderFooter (ViewBinding)" />
+                android:text="Sealed Header/Content/Footer" />
 
         </RadioGroup>
 

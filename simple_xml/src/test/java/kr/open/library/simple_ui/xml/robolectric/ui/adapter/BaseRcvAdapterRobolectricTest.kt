@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ApplicationProvider
 import kr.open.library.simple_ui.xml.ui.adapter.normal.base.BaseRcvAdapter
-import kr.open.library.simple_ui.xml.ui.adapter.normal.headerfooter.HeaderFooterRcvAdapter
 import kr.open.library.simple_ui.xml.ui.adapter.normal.result.NormalAdapterResult
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -85,41 +84,6 @@ class BaseRcvAdapterRobolectricTest {
         ) {
             lastPayloads = payloads
         }
-    }
-
-    private class SectionTrackingAdapter : HeaderFooterRcvAdapter<TestItem, TestViewHolder>() {
-        val bindEvents = mutableListOf<String>()
-        var lastClick: Pair<Int, TestItem>? = null
-
-        override fun createViewHolderInternal(parent: ViewGroup, viewType: Int): TestViewHolder =
-            TestViewHolder(View(parent.context))
-
-        override fun onBindViewHolder(holder: TestViewHolder, item: TestItem, position: Int) {
-            bindEvents.add("content:$position:${item.id}")
-        }
-
-        override fun onBindHeaderViewHolder(holder: TestViewHolder, item: TestItem, position: Int) {
-            bindEvents.add("header:$position:${item.id}")
-        }
-
-        override fun onBindFooterViewHolder(holder: TestViewHolder, item: TestItem, position: Int) {
-            bindEvents.add("footer:$position:${item.id}")
-        }
-    }
-
-    private class SectionViewTypeAdapter : HeaderFooterRcvAdapter<TestItem, TestViewHolder>() {
-        override fun createViewHolderInternal(parent: ViewGroup, viewType: Int): TestViewHolder =
-            TestViewHolder(View(parent.context))
-
-        override fun onBindViewHolder(holder: TestViewHolder, item: TestItem, position: Int) {
-            // no-op
-        }
-
-        override fun getHeaderItemViewType(position: Int, item: TestItem): Int = 101
-
-        override fun getContentItemViewType(position: Int, item: TestItem): Int = 202
-
-        override fun getFooterItemViewType(position: Int, item: TestItem): Int = 303
     }
 
     // Test ViewHolder
@@ -724,115 +688,6 @@ class BaseRcvAdapterRobolectricTest {
     }
 
     // ==============================================
-    // Section (Header/Content/Footer) Tests
-    // ==============================================
-
-    @Test
-    fun headerFooter_withContent_preservesContentApis() {
-        val sectionAdapter = SectionTrackingAdapter()
-
-        val header1 = TestItem(-1, "Header 1")
-        val header2 = TestItem(-2, "Header 2")
-        val content1 = TestItem(1, "Content 1")
-        val content2 = TestItem(2, "Content 2")
-        val footer1 = TestItem(9, "Footer 1")
-
-        sectionAdapter.setHeaderItems(listOf(header1, header2))
-        sectionAdapter.setItems(listOf(content1, content2))
-        sectionAdapter.setFooterItems(listOf(footer1))
-
-        assertEquals(5, sectionAdapter.itemCount)
-        assertEquals(listOf(header1, header2), sectionAdapter.getHeaderItems())
-        assertEquals(listOf(content1, content2), sectionAdapter.getItems())
-        assertEquals(listOf(footer1), sectionAdapter.getFooterItems())
-        assertEquals(content1, sectionAdapter.getItem(0))
-        assertEquals(content2, sectionAdapter.getItem(1))
-        assertEquals(0, sectionAdapter.getItemPosition(content1))
-        assertEquals(-1, sectionAdapter.getItemPosition(header1))
-    }
-
-    @Test
-    fun onBindViewHolder_routesToSectionSpecificHooks() {
-        val sectionAdapter = SectionTrackingAdapter()
-        sectionAdapter.setHeaderItems(listOf(TestItem(-1, "Header")))
-        sectionAdapter.setItems(listOf(TestItem(1, "Content")))
-        sectionAdapter.setFooterItems(listOf(TestItem(9, "Footer")))
-
-        val holder = sectionAdapter.onCreateViewHolder(FrameLayout(context), 0)
-        sectionAdapter.onBindViewHolder(holder, 0)
-        sectionAdapter.onBindViewHolder(holder, 1)
-        sectionAdapter.onBindViewHolder(holder, 2)
-
-        assertEquals(
-            listOf(
-                "header:0:-1",
-                "content:0:1",
-                "footer:0:9",
-            ),
-            sectionAdapter.bindEvents,
-        )
-    }
-
-    @Test
-    fun getItemViewType_returnsSectionSpecificValues() {
-        val sectionAdapter = SectionViewTypeAdapter()
-        sectionAdapter.setHeaderItems(listOf(TestItem(-1, "Header")))
-        sectionAdapter.setItems(listOf(TestItem(1, "Content")))
-        sectionAdapter.setFooterItems(listOf(TestItem(9, "Footer")))
-
-        assertEquals(101, sectionAdapter.getItemViewType(0))
-        assertEquals(202, sectionAdapter.getItemViewType(1))
-        assertEquals(303, sectionAdapter.getItemViewType(2))
-    }
-
-    @Test
-    fun contentClickListener_ignoresHeaderFooter_andUsesContentIndex() {
-        val sectionAdapter = SectionTrackingAdapter()
-        sectionAdapter.setHeaderItems(listOf(TestItem(-1, "Header")))
-        sectionAdapter.setItems(
-            listOf(
-                TestItem(1, "Content 1"),
-                TestItem(2, "Content 2"),
-            ),
-        )
-        sectionAdapter.setFooterItems(listOf(TestItem(9, "Footer")))
-
-        var captured: Pair<Int, TestItem>? = null
-        sectionAdapter.setOnItemClickListener { position, item, _ ->
-            captured = position to item
-        }
-
-        val recyclerView =
-            RecyclerView(context).apply {
-                layoutManager = LinearLayoutManager(context)
-                adapter = sectionAdapter
-                measure(
-                    View.MeasureSpec.makeMeasureSpec(500, View.MeasureSpec.EXACTLY),
-                    View.MeasureSpec.makeMeasureSpec(500, View.MeasureSpec.EXACTLY),
-                )
-                layout(0, 0, 500, 500)
-            }
-        shadowOf(Looper.getMainLooper()).idle()
-
-        val headerHolder = recyclerView.findViewHolderForAdapterPosition(0)
-        checkNotNull(headerHolder)
-        headerHolder.itemView.performClick()
-        assertEquals(null, captured)
-
-        val contentHolder = recyclerView.findViewHolderForAdapterPosition(2)
-        checkNotNull(contentHolder)
-        contentHolder.itemView.performClick()
-        assertEquals(1, captured?.first)
-        assertEquals(TestItem(2, "Content 2"), captured?.second)
-
-        val footerHolder = recyclerView.findViewHolderForAdapterPosition(3)
-        checkNotNull(footerHolder)
-        footerHolder.itemView.performClick()
-        assertEquals(1, captured?.first)
-        assertEquals(TestItem(2, "Content 2"), captured?.second)
-    }
-
-    // ==============================================
     // Real-world Scenario Tests
     // ==============================================
 
@@ -1161,87 +1016,6 @@ class BaseRcvAdapterRobolectricTest {
         assertEquals(2, adapter.itemCount)
     }
 
-    // ==============================================
-    // setHeaderItems / setFooterItems change scenarios
-    // ==============================================
-
-    @Test
-    fun setHeaderItems_fromEmptyToItems_addsHeaders() {
-        val sectionAdapter = SectionTrackingAdapter()
-        sectionAdapter.setItems(listOf(TestItem(1, "C1")))
-        assertEquals(1, sectionAdapter.itemCount)
-
-        // When
-        sectionAdapter.setHeaderItems(listOf(TestItem(-1, "H1"), TestItem(-2, "H2")))
-        shadowOf(Looper.getMainLooper()).idle()
-
-        // Then
-        assertEquals(3, sectionAdapter.itemCount)
-        assertEquals(listOf(TestItem(-1, "H1"), TestItem(-2, "H2")), sectionAdapter.getHeaderItems())
-    }
-
-    @Test
-    fun setHeaderItems_fromItemsToEmpty_removesHeaders() {
-        val sectionAdapter = SectionTrackingAdapter()
-        sectionAdapter.setHeaderItems(listOf(TestItem(-1, "H1")))
-        sectionAdapter.setItems(listOf(TestItem(1, "C1")))
-        assertEquals(2, sectionAdapter.itemCount)
-
-        // When
-        sectionAdapter.setHeaderItems(emptyList())
-        shadowOf(Looper.getMainLooper()).idle()
-
-        // Then
-        assertEquals(1, sectionAdapter.itemCount)
-        assertTrue(sectionAdapter.getHeaderItems().isEmpty())
-    }
-
-    @Test
-    fun setHeaderItems_sameSizeReplace_updatesInPlace() {
-        val sectionAdapter = SectionTrackingAdapter()
-        sectionAdapter.setHeaderItems(listOf(TestItem(-1, "H1"), TestItem(-2, "H2")))
-        sectionAdapter.setItems(listOf(TestItem(1, "C1")))
-
-        // When - replace with same size
-        sectionAdapter.setHeaderItems(listOf(TestItem(-3, "H3"), TestItem(-4, "H4")))
-        shadowOf(Looper.getMainLooper()).idle()
-
-        // Then
-        assertEquals(listOf(TestItem(-3, "H3"), TestItem(-4, "H4")), sectionAdapter.getHeaderItems())
-        assertEquals(3, sectionAdapter.itemCount)
-    }
-
-    @Test
-    fun setFooterItems_fromEmptyToItems_addsFooters() {
-        val sectionAdapter = SectionTrackingAdapter()
-        sectionAdapter.setItems(listOf(TestItem(1, "C1")))
-        assertEquals(1, sectionAdapter.itemCount)
-
-        // When
-        sectionAdapter.setFooterItems(listOf(TestItem(9, "F1")))
-        shadowOf(Looper.getMainLooper()).idle()
-
-        // Then
-        assertEquals(2, sectionAdapter.itemCount)
-        assertEquals(listOf(TestItem(9, "F1")), sectionAdapter.getFooterItems())
-    }
-
-    @Test
-    fun setFooterItems_fromItemsToEmpty_removesFooters() {
-        val sectionAdapter = SectionTrackingAdapter()
-        sectionAdapter.setItems(listOf(TestItem(1, "C1")))
-        sectionAdapter.setFooterItems(listOf(TestItem(9, "F1")))
-        assertEquals(2, sectionAdapter.itemCount)
-
-        // When
-        sectionAdapter.setFooterItems(emptyList())
-        shadowOf(Looper.getMainLooper()).idle()
-
-        // Then
-        assertEquals(1, sectionAdapter.itemCount)
-        assertTrue(sectionAdapter.getFooterItems().isEmpty())
-    }
-
     /**
      * Integration note:
      *
@@ -1257,7 +1031,6 @@ class BaseRcvAdapterRobolectricTest {
      * This Robolectric test focuses on:
      * - API correctness (methods don't crash)
      * - Data manipulation (add/remove/replace/range/items)
-     * - Header/Footer section change scenarios
      * - Listener invocation mechanics
      */
 }

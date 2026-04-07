@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.RecyclerView
 import kr.open.library.simple_ui.core.extensions.trycatch.requireInBounds
 import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.xml.ui.adapter.common.imp.AdapterWriteApi
-import kr.open.library.simple_ui.xml.ui.adapter.normal.headerfooter.HeaderFooterRcvAdapter
 import kr.open.library.simple_ui.xml.ui.adapter.normal.result.NormalAdapterResult
 import kr.open.library.simple_ui.xml.ui.adapter.normal.result.toNormalAdapterResult
 import kr.open.library.simple_ui.xml.ui.adapter.normal.root.RootRcvAdapter
@@ -15,8 +14,8 @@ import kr.open.library.simple_ui.xml.ui.adapter.normal.root.RootRcvAdapter
 /**
  * Base RecyclerView.Adapter implementation with content item management.<br><br>
  * content 아이템 관리를 제공하는 기본 RecyclerView.Adapter 구현입니다.<br>
- * For header/footer section support, use [HeaderFooterRcvAdapter] instead.<br><br>
- * header/footer 섹션이 필요하면 [HeaderFooterRcvAdapter]를 사용하세요.<br>
+ * For Header/Footer support, use a sealed interface as the ITEM type and dispatch by type in onBindViewHolder.<br><br>
+ * Header/Footer가 필요하면 ITEM을 sealed interface로 정의하고 onBindViewHolder에서 타입별로 분기하세요.<br>
  *
  * Features:<br>
  * 주요 기능:<br>

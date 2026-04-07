@@ -1,15 +1,18 @@
 package kr.open.library.simpleui_xml.recyclerview.new_
 
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.launch
 import kr.open.library.simple_ui.xml.ui.adapter.list.base.diffutil.RcvListDiffUtilCallBack
 import kr.open.library.simple_ui.xml.ui.adapter.list.simple.SimpleRcvDataBindingListAdapter
 import kr.open.library.simple_ui.xml.ui.adapter.list.simple.SimpleRcvViewBindingListAdapter
-import kr.open.library.simple_ui.xml.ui.adapter.normal.simple.SimpleBindingRcvAdapter
-import kr.open.library.simple_ui.xml.ui.adapter.normal.simple.SimpleHeaderFooterViewBindingRcvAdapter
-import kr.open.library.simple_ui.xml.ui.adapter.normal.simple.SimpleViewBindingRcvAdapter
+import kr.open.library.simple_ui.xml.ui.adapter.normal.base.BaseRcvAdapter
+import kr.open.library.simple_ui.xml.ui.adapter.normal.simple.SimpleRcvDataBindingAdapter
+import kr.open.library.simple_ui.xml.ui.adapter.normal.simple.SimpleRcvViewBindingAdapter
+import kr.open.library.simple_ui.xml.ui.adapter.viewholder.BaseRcvViewBindingViewHolder
 import kr.open.library.simple_ui.xml.ui.components.activity.binding.BaseDataBindingActivity
 import kr.open.library.simple_ui.xml.ui.view.recyclerview.ScrollDirection
 import kr.open.library.simple_ui.xml.ui.view.recyclerview.ScrollEdge
@@ -17,6 +20,7 @@ import kr.open.library.simpleui_xml.R
 import kr.open.library.simpleui_xml.databinding.ActivityRecyclerviewBinding
 import kr.open.library.simpleui_xml.databinding.ItemRcvTextviewBinding
 import kr.open.library.simpleui_xml.databinding.ItemRcvTextviewViewBinding
+import kr.open.library.simpleui_xml.recyclerview.model.RcvItem
 import kr.open.library.simpleui_xml.recyclerview.model.SampleItem
 import kr.open.library.simpleui_xml.recyclerview.new_.adapter.CustomListAdapter
 
@@ -49,7 +53,7 @@ class RecyclerViewActivity : BaseDataBindingActivity<ActivityRecyclerviewBinding
         setOnItemClickListener { position, _, _ -> currentRemoveAtAdapter(position) }
     }
 
-    private val simpleAdapter = SimpleBindingRcvAdapter<SampleItem, ItemRcvTextviewBinding>(
+    private val simpleAdapter = SimpleRcvDataBindingAdapter<SampleItem, ItemRcvTextviewBinding>(
         R.layout.item_rcv_textview,
     ) { holder, item, position ->
         holder.binding.apply {
@@ -79,7 +83,7 @@ class RecyclerViewActivity : BaseDataBindingActivity<ActivityRecyclerviewBinding
         }
 
     private val simpleViewBindingAdapter =
-        SimpleViewBindingRcvAdapter<SampleItem, ItemRcvTextviewViewBinding>(
+        SimpleRcvViewBindingAdapter<SampleItem, ItemRcvTextviewViewBinding>(
             inflate = ItemRcvTextviewViewBinding::inflate,
         ) { holder, item, position ->
             bindViewBindingItem(
@@ -93,23 +97,52 @@ class RecyclerViewActivity : BaseDataBindingActivity<ActivityRecyclerviewBinding
             setOnItemClickListener { position, _, _ -> currentRemoveAtAdapter(position) }
         }
 
-    private val simpleHeaderFooterViewBindingAdapter =
-        SimpleHeaderFooterViewBindingRcvAdapter<SampleItem, ItemRcvTextviewViewBinding>(
-            inflate = ItemRcvTextviewViewBinding::inflate,
-        ) { holder, item, position ->
-            bindViewBindingItem(
-                binding = holder.binding,
-                item = item,
-                position = position,
-                badgePrefix = "VB H/F",
-            )
-        }.apply {
-            setOnItemClickListener { position, _, _ -> currentRemoveAtAdapter(position) }
-            applyViewBindingHeaderFooterItems(
-                adapter = this,
-                items = SampleItem.createSampleData(),
-            )
+    // sealed interface 기반 Header/Content/Footer 어댑터
+    // RcvItem.Header, RcvItem.Content, RcvItem.Footer를 단일 리스트로 관리
+    private val sealedHeaderFooterAdapter = object : BaseRcvAdapter<RcvItem, RecyclerView.ViewHolder>() {
+        override fun getContentItemViewType(position: Int, item: RcvItem): Int = when (item) {
+            is RcvItem.Header -> VIEW_TYPE_HEADER
+            is RcvItem.Content -> VIEW_TYPE_CONTENT
+            is RcvItem.Footer -> VIEW_TYPE_FOOTER
         }
+
+        override fun createViewHolderInternal(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+            val inflater = LayoutInflater.from(parent.context)
+            return when (viewType) {
+                VIEW_TYPE_HEADER, VIEW_TYPE_FOOTER ->
+                    BaseRcvViewBindingViewHolder(ItemRcvTextviewViewBinding.inflate(inflater, parent, false))
+                else ->
+                    BaseRcvViewBindingViewHolder(ItemRcvTextviewViewBinding.inflate(inflater, parent, false))
+            }
+        }
+
+        override fun onBindViewHolder(holder: RecyclerView.ViewHolder, item: RcvItem, position: Int) {
+            @Suppress("UNCHECKED_CAST")
+            val binding = (holder as BaseRcvViewBindingViewHolder<ItemRcvTextviewViewBinding>).binding
+            when (item) {
+                is RcvItem.Header -> {
+                    binding.tvTitle.text = item.title
+                    binding.tvDescription.text = item.description
+                    binding.tvPosition.text = "[ HEADER ]"
+                }
+                is RcvItem.Content -> {
+                    binding.tvTitle.text = item.item.title
+                    binding.tvDescription.text = item.item.description
+                    binding.tvPosition.text = "SEALED H/F : $position"
+                }
+                is RcvItem.Footer -> {
+                    binding.tvTitle.text = "Footer"
+                    binding.tvDescription.text = "현재 content 수: ${item.contentCount}"
+                    binding.tvPosition.text = "[ FOOTER ]"
+                }
+            }
+        }
+    }.apply {
+        setOnItemClickListener { position, item, _ ->
+            if (item is RcvItem.Content) currentRemoveAtAdapter(position)
+        }
+        setItems(buildSealedItems(SampleItem.createSampleData()))
+    }
 
     private val customListAdapter = CustomListAdapter()
         .apply {
@@ -172,11 +205,10 @@ class RecyclerViewActivity : BaseDataBindingActivity<ActivityRecyclerviewBinding
             AdapterMode.SIMPLE_VIEW_BINDING_LIST -> simpleViewBindingListAdapter.addItem(getItem(simpleViewBindingListAdapter.itemCount))
             AdapterMode.SIMPLE_VIEW_BINDING -> simpleViewBindingAdapter.addItem(getItem(simpleViewBindingAdapter.itemCount))
             AdapterMode.SIMPLE_HEADER_FOOTER_VIEW_BINDING -> {
-                val currentItems = simpleHeaderFooterViewBindingAdapter.getItems()
-                applyViewBindingHeaderFooterItems(
-                    adapter = simpleHeaderFooterViewBindingAdapter,
-                    items = currentItems + getItem(currentItems.size),
-                )
+                val currentItems = sealedHeaderFooterAdapter.getItems()
+                    .filterIsInstance<RcvItem.Content>()
+                    .map { it.item }
+                sealedHeaderFooterAdapter.setItems(buildSealedItems(currentItems + getItem(currentItems.size)))
             }
         }
     }
@@ -195,13 +227,15 @@ class RecyclerViewActivity : BaseDataBindingActivity<ActivityRecyclerviewBinding
             AdapterMode.SIMPLE_VIEW_BINDING_LIST -> simpleViewBindingListAdapter.removeAt(position)
             AdapterMode.SIMPLE_VIEW_BINDING -> simpleViewBindingAdapter.removeAt(position)
             AdapterMode.SIMPLE_HEADER_FOOTER_VIEW_BINDING -> {
-                val currentItems = simpleHeaderFooterViewBindingAdapter.getItems().toMutableList()
-                if (position in currentItems.indices) {
-                    currentItems.removeAt(position)
-                    applyViewBindingHeaderFooterItems(
-                        adapter = simpleHeaderFooterViewBindingAdapter,
-                        items = currentItems,
-                    )
+                val currentItems = sealedHeaderFooterAdapter.getItems()
+                    .filterIsInstance<RcvItem.Content>()
+                    .map { it.item }
+                    .toMutableList()
+                // position에서 header offset(1) 제거
+                val contentPosition = position - 1
+                if (contentPosition in currentItems.indices) {
+                    currentItems.removeAt(contentPosition)
+                    sealedHeaderFooterAdapter.setItems(buildSealedItems(currentItems))
                 }
             }
         }
@@ -214,10 +248,7 @@ class RecyclerViewActivity : BaseDataBindingActivity<ActivityRecyclerviewBinding
             AdapterMode.CUSTOM_LIST -> customListAdapter.removeAll()
             AdapterMode.SIMPLE_VIEW_BINDING_LIST -> simpleViewBindingListAdapter.removeAll()
             AdapterMode.SIMPLE_VIEW_BINDING -> simpleViewBindingAdapter.removeAll()
-            AdapterMode.SIMPLE_HEADER_FOOTER_VIEW_BINDING -> applyViewBindingHeaderFooterItems(
-                adapter = simpleHeaderFooterViewBindingAdapter,
-                items = emptyList(),
-            )
+            AdapterMode.SIMPLE_HEADER_FOOTER_VIEW_BINDING -> sealedHeaderFooterAdapter.setItems(buildSealedItems(emptyList()))
         }
     }
 
@@ -226,14 +257,13 @@ class RecyclerViewActivity : BaseDataBindingActivity<ActivityRecyclerviewBinding
             AdapterMode.SIMPLE_LIST -> simpleListAdapter.setItems(simpleListAdapter.getItems().shuffled())
             AdapterMode.SIMPLE -> simpleAdapter.setItems(simpleAdapter.getItems().shuffled())
             AdapterMode.CUSTOM_LIST -> customListAdapter.setItems(customListAdapter.getItems().shuffled())
-            AdapterMode.SIMPLE_VIEW_BINDING_LIST -> simpleViewBindingListAdapter
-                .setItems(simpleViewBindingListAdapter.getItems().shuffled())
+            AdapterMode.SIMPLE_VIEW_BINDING_LIST -> simpleViewBindingListAdapter.setItems(simpleViewBindingListAdapter.getItems().shuffled())
             AdapterMode.SIMPLE_VIEW_BINDING -> simpleViewBindingAdapter.setItems(simpleViewBindingAdapter.getItems().shuffled())
             AdapterMode.SIMPLE_HEADER_FOOTER_VIEW_BINDING -> {
-                applyViewBindingHeaderFooterItems(
-                    adapter = simpleHeaderFooterViewBindingAdapter,
-                    items = simpleHeaderFooterViewBindingAdapter.getItems().shuffled(),
-                )
+                val currentItems = sealedHeaderFooterAdapter.getItems()
+                    .filterIsInstance<RcvItem.Content>()
+                    .map { it.item }
+                sealedHeaderFooterAdapter.setItems(buildSealedItems(currentItems.shuffled()))
             }
         }
     }
@@ -255,7 +285,7 @@ class RecyclerViewActivity : BaseDataBindingActivity<ActivityRecyclerviewBinding
         AdapterMode.CUSTOM_LIST -> customListAdapter
         AdapterMode.SIMPLE_VIEW_BINDING_LIST -> simpleViewBindingListAdapter
         AdapterMode.SIMPLE_VIEW_BINDING -> simpleViewBindingAdapter
-        AdapterMode.SIMPLE_HEADER_FOOTER_VIEW_BINDING -> simpleHeaderFooterViewBindingAdapter
+        AdapterMode.SIMPLE_HEADER_FOOTER_VIEW_BINDING -> sealedHeaderFooterAdapter
     }
 
     private fun bindViewBindingItem(
@@ -269,30 +299,16 @@ class RecyclerViewActivity : BaseDataBindingActivity<ActivityRecyclerviewBinding
         binding.tvPosition.text = "$badgePrefix : $position"
     }
 
-    private fun applyViewBindingHeaderFooterItems(
-        adapter: SimpleHeaderFooterViewBindingRcvAdapter<SampleItem, ItemRcvTextviewViewBinding>,
-        items: List<SampleItem>,
-    ) {
-        adapter.setHeaderItems(createViewBindingHeaderItems())
-        adapter.setItems(items)
-        adapter.setFooterItems(createViewBindingFooterItems(items.size))
+    // Header 1개 + Content 목록 + Footer 1개를 단일 sealed interface 리스트로 조립
+    private fun buildSealedItems(contentItems: List<SampleItem>): List<RcvItem> = buildList {
+        add(RcvItem.Header(title = "Header", description = "sealed interface 기반 Header/Content/Footer 예제"))
+        contentItems.forEach { add(RcvItem.Content(it)) }
+        add(RcvItem.Footer(contentCount = contentItems.size))
     }
 
-    private fun createViewBindingHeaderItems(): List<SampleItem> =
-        listOf(
-            SampleItem(
-                id = -1,
-                title = "ViewBinding Header",
-                description = "SimpleHeaderFooterViewBindingRcvAdapter 예제입니다",
-            ),
-        )
-
-    private fun createViewBindingFooterItems(contentCount: Int): List<SampleItem> =
-        listOf(
-            SampleItem(
-                id = -2,
-                title = "ViewBinding Footer",
-                description = "현재 content item 수: $contentCount",
-            ),
-        )
+    companion object {
+        private const val VIEW_TYPE_HEADER = 0
+        private const val VIEW_TYPE_CONTENT = 1
+        private const val VIEW_TYPE_FOOTER = 2
+    }
 }

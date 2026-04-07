@@ -9,13 +9,12 @@ import kr.open.library.simple_ui.xml.ui.adapter.common.imp.AdapterClickable
 import kr.open.library.simple_ui.xml.ui.adapter.common.imp.AdapterReadApi
 import kr.open.library.simple_ui.xml.ui.adapter.common.thread.assertAdapterMainThread
 import kr.open.library.simple_ui.xml.ui.adapter.normal.base.BaseRcvAdapter
-import kr.open.library.simple_ui.xml.ui.adapter.normal.headerfooter.HeaderFooterRcvAdapter
 import kr.open.library.simple_ui.xml.ui.adapter.viewholder.BaseRcvViewHolder
 
 /**
  * Common infrastructure base for all RecyclerView adapters in this library.<br><br>
  * 이 라이브러리의 모든 RecyclerView adapter가 공통으로 사용하는 기반 클래스입니다.<br>
- * [BaseRcvAdapter]와 [HeaderFooterRcvAdapter]가 이 클래스를 상속합니다.<br>
+ * [BaseRcvAdapter]가 이 클래스를 상속합니다.<br>
  *
  * @param ITEM adapter가 다루는 아이템 타입입니다.<br><br>
  * @param VH adapter가 다루는 ViewHolder 타입입니다.<br>
