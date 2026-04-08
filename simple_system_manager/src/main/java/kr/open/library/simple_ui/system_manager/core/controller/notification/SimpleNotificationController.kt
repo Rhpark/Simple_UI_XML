@@ -11,6 +11,7 @@ import androidx.core.app.NotificationCompat
 import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
 import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.system_manager.core.base.BaseSystemService
+import kr.open.library.simple_ui.system_manager.core.base.SystemResult
 import kr.open.library.simple_ui.system_manager.core.controller.notification.internal.SimpleNotificationBuilder
 import kr.open.library.simple_ui.system_manager.core.controller.notification.option.BigPictureNotificationOption
 import kr.open.library.simple_ui.system_manager.core.controller.notification.option.BigTextNotificationOption
@@ -118,12 +119,14 @@ public open class SimpleNotificationController(
      *               알림 구성 옵션.<br>
      * @param showType Action type when notification is clicked (Activity, Service, Broadcast).<br><br>
      *                 알림 클릭 시 동작 유형 (Activity, Service, Broadcast).<br>
-     * @return `true` if notification was shown successfully, `false` otherwise.<br><br>
-     *         알림 표시 성공 시 `true`, 그렇지 않으면 `false`.<br>
+     * @return [SystemResult.Success] if notification was shown successfully,
+     *         [SystemResult.PermissionDenied] if permission is missing, [SystemResult.Failure] on error.<br><br>
+     *         알림 표시 성공 시 [SystemResult.Success],
+     *         권한 없음 시 [SystemResult.PermissionDenied], 오류 시 [SystemResult.Failure].<br>
      */
     @RequiresPermission(POST_NOTIFICATIONS)
-    public fun showNotification(option: SimpleNotificationOptionBase, showType: SimpleNotificationType): Boolean =
-        tryCatchSystemManager(false) {
+    public fun showNotification(option: SimpleNotificationOptionBase, showType: SimpleNotificationType): SystemResult<Unit> =
+        tryCatchSystemManagerResult {
             when (option) {
                 is DefaultNotificationOption -> {
                     showNotification(option.notificationId, builder.getBuilder(notificationChannel, option, showType))
@@ -138,7 +141,7 @@ public open class SimpleNotificationController(
                     showNotification(option.notificationId, builder.getProgressBuilder(notificationChannel, option, showType))
                 }
             }
-            true
+            SystemResult.Success(Unit)
         }
 
     /**
@@ -175,11 +178,15 @@ public open class SimpleNotificationController(
      *                       고유 알림 식별자.
      * @param build Pre-built Notification object.<br><br>
      *              미리 빌드된 알림 객체.<br>
+     * @return [SystemResult.Success] if notification was shown successfully,
+     *         [SystemResult.PermissionDenied] if permission is missing, [SystemResult.Failure] on error.<br><br>
+     *         알림 표시 성공 시 [SystemResult.Success],
+     *         권한 없음 시 [SystemResult.PermissionDenied], 오류 시 [SystemResult.Failure].<br>
      */
     @RequiresPermission(POST_NOTIFICATIONS)
-    public fun notify(notificationId: Int, build: Notification) = tryCatchSystemManager(false) {
+    public fun notify(notificationId: Int, build: Notification): SystemResult<Unit> = tryCatchSystemManagerResult {
         notificationManager.notify(notificationId, build)
-        true
+        SystemResult.Success(Unit)
     }
 
     /**
@@ -190,28 +197,32 @@ public open class SimpleNotificationController(
      *                       고유 알림 식별자.
      * @param progressPercent Progress percentage (0-100).<br><br>
      *                        진행률 (0-100).
-     * @return `true` if update was applied, `false` if unchanged or not found.<br><br>
-     *         업데이트가 반영되면 `true`, 변경 없음/대상 없음이면 `false`.<br>
+     * @return [SystemResult.Success] with `true` if update was applied,
+     *         [SystemResult.Success] with `false` if unchanged or not found,
+     *         [SystemResult.PermissionDenied] if permission is missing, [SystemResult.Failure] on error.<br><br>
+     *         업데이트가 반영되면 [SystemResult.Success](`true`),
+     *         변경 없음/대상 없음이면 [SystemResult.Success](`false`),
+     *         권한 없음 시 [SystemResult.PermissionDenied], 오류 시 [SystemResult.Failure].<br>
      */
     @RequiresPermission(POST_NOTIFICATIONS)
-    public fun updateProgress(notificationId: Int, progressPercent: Int): Boolean = tryCatchSystemManager(false) {
+    public fun updateProgress(notificationId: Int, progressPercent: Int): SystemResult<Boolean> = tryCatchSystemManagerResult {
         // 진행률 범위 검증
         if (progressPercent !in 0..100) {
             Logx.w("Invalid progress: $progressPercent (must be 0 ~ 100)")
-            return false
+            return@tryCatchSystemManagerResult SystemResult.Failure(null)
         }
-        return when (val result = builder.updateProgress(notificationId, progressPercent)) {
+        when (val result = builder.updateProgress(notificationId, progressPercent)) {
             is SimpleNotificationBuilder.ProgressUpdateResult.Updated -> {
                 showNotification(notificationId, result.info.builder)
-                true
+                SystemResult.Success(true)
             }
             SimpleNotificationBuilder.ProgressUpdateResult.NoChange -> {
                 Logx.d("Progress unchanged for ID: $notificationId")
-                false
+                SystemResult.Success(false)
             }
             SimpleNotificationBuilder.ProgressUpdateResult.NotFound -> {
                 Logx.w("Progress notification not found for ID: $notificationId")
-                false
+                SystemResult.Success(false)
             }
         }
     }
@@ -224,18 +235,20 @@ public open class SimpleNotificationController(
      *                       고유 알림 식별자.
      * @param completedContent Completion message (optional).<br><br>
      *                         완료 메시지 (선택사항).
-     * @return `true` if completion was successful, `false` otherwise.<br><br>
-     *         완료 처리 성공 시 `true`, 그렇지 않으면 `false`.<br>
+     * @return [SystemResult.Success] if completion was successful,
+     *         [SystemResult.PermissionDenied] if permission is missing, [SystemResult.Failure] on error.<br><br>
+     *         완료 처리 성공 시 [SystemResult.Success],
+     *         권한 없음 시 [SystemResult.PermissionDenied], 오류 시 [SystemResult.Failure].<br>
      */
     @RequiresPermission(POST_NOTIFICATIONS)
-    public fun completeProgress(notificationId: Int, completedContent: String? = null): Boolean = tryCatchSystemManager(false) {
+    public fun completeProgress(notificationId: Int, completedContent: String? = null): SystemResult<Unit> = tryCatchSystemManagerResult {
         val result = builder.completeProgress(notificationId, completedContent)
         result?.builder?.let {
             showNotification(notificationId, it)
-            return true
+            return@tryCatchSystemManagerResult SystemResult.Success(Unit)
         }
         Logx.w("Progress notification not found for ID: $notificationId")
-        return false
+        SystemResult.Failure(null)
     }
 
     /**
@@ -246,14 +259,16 @@ public open class SimpleNotificationController(
      *            알림 태그 (선택사항).
      * @param notificationId Unique notification identifier.<br><br>
      *                       고유 알림 식별자.
-     * @return `true` if cancellation was successful, `false` otherwise.<br><br>
-     *         취소 성공 시 `true`, 그렇지 않으면 `false`.<br>
+     * @return [SystemResult.Success] if cancellation was successful,
+     *         [SystemResult.PermissionDenied] if permission is missing, [SystemResult.Failure] on error.<br><br>
+     *         취소 성공 시 [SystemResult.Success],
+     *         권한 없음 시 [SystemResult.PermissionDenied], 오류 시 [SystemResult.Failure].<br>
      */
-    public fun cancelNotification(tag: String? = null, notificationId: Int): Boolean = tryCatchSystemManager(false) {
+    public fun cancelNotification(tag: String? = null, notificationId: Int): SystemResult<Unit> = tryCatchSystemManagerResult {
         tag?.let { notificationManager.cancel(tag, notificationId) }
             ?: notificationManager.cancel(notificationId)
         builder.cancelNotification(notificationId) // 진행률 빌더도 함께 제거
-        return true
+        SystemResult.Success(Unit)
     }
 
     /**

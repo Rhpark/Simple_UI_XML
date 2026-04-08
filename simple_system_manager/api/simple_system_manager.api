@@ -16,6 +16,46 @@ public abstract class kr/open/library/simple_ui/system_manager/core/base/BaseSys
 	public fun onDestroy ()V
 	public final fun refreshPermissions ()V
 	protected final fun tryCatchSystemManager (Ljava/lang/Object;Lkotlin/jvm/functions/Function0;)Ljava/lang/Object;
+	protected final fun tryCatchSystemManagerResult (Lkotlin/jvm/functions/Function0;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+}
+
+public abstract interface class kr/open/library/simple_ui/system_manager/core/base/SystemResult {
+}
+
+public final class kr/open/library/simple_ui/system_manager/core/base/SystemResult$Failure : kr/open/library/simple_ui/system_manager/core/base/SystemResult {
+	public fun <init> (Ljava/lang/Throwable;)V
+	public final fun component1 ()Ljava/lang/Throwable;
+	public final fun copy (Ljava/lang/Throwable;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult$Failure;
+	public static synthetic fun copy$default (Lkr/open/library/simple_ui/system_manager/core/base/SystemResult$Failure;Ljava/lang/Throwable;ILjava/lang/Object;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult$Failure;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCause ()Ljava/lang/Throwable;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class kr/open/library/simple_ui/system_manager/core/base/SystemResult$PermissionDenied : kr/open/library/simple_ui/system_manager/core/base/SystemResult {
+	public static final field INSTANCE Lkr/open/library/simple_ui/system_manager/core/base/SystemResult$PermissionDenied;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class kr/open/library/simple_ui/system_manager/core/base/SystemResult$PolicyRestricted : kr/open/library/simple_ui/system_manager/core/base/SystemResult {
+	public static final field INSTANCE Lkr/open/library/simple_ui/system_manager/core/base/SystemResult$PolicyRestricted;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class kr/open/library/simple_ui/system_manager/core/base/SystemResult$Success : kr/open/library/simple_ui/system_manager/core/base/SystemResult {
+	public fun <init> (Ljava/lang/Object;)V
+	public final fun component1 ()Ljava/lang/Object;
+	public final fun copy (Ljava/lang/Object;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult$Success;
+	public static synthetic fun copy$default (Lkr/open/library/simple_ui/system_manager/core/base/SystemResult$Success;Ljava/lang/Object;ILjava/lang/Object;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult$Success;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()Ljava/lang/Object;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class kr/open/library/simple_ui/system_manager/core/controller/alarm/AlarmConstants {
@@ -35,26 +75,26 @@ public class kr/open/library/simple_ui/system_manager/core/controller/alarm/Alar
 	public final fun exists (ILjava/lang/Class;Ljava/lang/String;)Z
 	public static synthetic fun exists$default (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/AlarmController;ILjava/lang/Class;Ljava/lang/String;ILjava/lang/Object;)Z
 	public final fun getAlarmManager ()Landroid/app/AlarmManager;
-	public final fun registerAlarmAndAllowWhileIdle (Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;Ljava/lang/String;)Z
-	public static synthetic fun registerAlarmAndAllowWhileIdle$default (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/AlarmController;Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;Ljava/lang/String;ILjava/lang/Object;)Z
-	public final fun registerAlarmClock (Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;Ljava/lang/String;)Z
-	public static synthetic fun registerAlarmClock$default (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/AlarmController;Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;Ljava/lang/String;ILjava/lang/Object;)Z
-	public final fun registerAlarmExactAndAllowWhileIdle (Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;Ljava/lang/String;)Z
-	public static synthetic fun registerAlarmExactAndAllowWhileIdle$default (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/AlarmController;Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;Ljava/lang/String;ILjava/lang/Object;)Z
-	public final fun registerBySchedule (Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;Ljava/lang/String;)Z
-	public static synthetic fun registerBySchedule$default (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/AlarmController;Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;Ljava/lang/String;ILjava/lang/Object;)Z
-	public final fun registerRepeating (Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;JLjava/lang/String;I)Z
-	public static synthetic fun registerRepeating$default (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/AlarmController;Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;JLjava/lang/String;IILjava/lang/Object;)Z
-	public final fun remove (ILjava/lang/Class;Ljava/lang/String;)Z
-	public static synthetic fun remove$default (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/AlarmController;ILjava/lang/Class;Ljava/lang/String;ILjava/lang/Object;)Z
-	public final fun updateAlarmClock (Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;Ljava/lang/String;)Z
-	public static synthetic fun updateAlarmClock$default (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/AlarmController;Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;Ljava/lang/String;ILjava/lang/Object;)Z
-	public final fun updateAllowWhileIdle (Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;Ljava/lang/String;)Z
-	public static synthetic fun updateAllowWhileIdle$default (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/AlarmController;Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;Ljava/lang/String;ILjava/lang/Object;)Z
-	public final fun updateExactAndAllowWhileIdle (Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;Ljava/lang/String;)Z
-	public static synthetic fun updateExactAndAllowWhileIdle$default (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/AlarmController;Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;Ljava/lang/String;ILjava/lang/Object;)Z
-	public final fun updateRepeating (Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;JLjava/lang/String;I)Z
-	public static synthetic fun updateRepeating$default (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/AlarmController;Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;JLjava/lang/String;IILjava/lang/Object;)Z
+	public final fun registerAlarmAndAllowWhileIdle (Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;Ljava/lang/String;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public static synthetic fun registerAlarmAndAllowWhileIdle$default (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/AlarmController;Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;Ljava/lang/String;ILjava/lang/Object;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public final fun registerAlarmClock (Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;Ljava/lang/String;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public static synthetic fun registerAlarmClock$default (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/AlarmController;Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;Ljava/lang/String;ILjava/lang/Object;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public final fun registerAlarmExactAndAllowWhileIdle (Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;Ljava/lang/String;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public static synthetic fun registerAlarmExactAndAllowWhileIdle$default (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/AlarmController;Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;Ljava/lang/String;ILjava/lang/Object;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public final fun registerBySchedule (Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;Ljava/lang/String;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public static synthetic fun registerBySchedule$default (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/AlarmController;Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;Ljava/lang/String;ILjava/lang/Object;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public final fun registerRepeating (Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;JLjava/lang/String;I)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public static synthetic fun registerRepeating$default (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/AlarmController;Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;JLjava/lang/String;IILjava/lang/Object;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public final fun remove (ILjava/lang/Class;Ljava/lang/String;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public static synthetic fun remove$default (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/AlarmController;ILjava/lang/Class;Ljava/lang/String;ILjava/lang/Object;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public final fun updateAlarmClock (Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;Ljava/lang/String;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public static synthetic fun updateAlarmClock$default (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/AlarmController;Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;Ljava/lang/String;ILjava/lang/Object;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public final fun updateAllowWhileIdle (Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;Ljava/lang/String;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public static synthetic fun updateAllowWhileIdle$default (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/AlarmController;Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;Ljava/lang/String;ILjava/lang/Object;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public final fun updateExactAndAllowWhileIdle (Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;Ljava/lang/String;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public static synthetic fun updateExactAndAllowWhileIdle$default (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/AlarmController;Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;Ljava/lang/String;ILjava/lang/Object;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public final fun updateRepeating (Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;JLjava/lang/String;I)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public static synthetic fun updateRepeating$default (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/AlarmController;Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;JLjava/lang/String;IILjava/lang/Object;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
 }
 
 public abstract class kr/open/library/simple_ui/system_manager/core/controller/alarm/receiver/BaseAlarmReceiver : android/content/BroadcastReceiver {
@@ -193,16 +233,16 @@ public final class kr/open/library/simple_ui/system_manager/core/controller/noti
 public class kr/open/library/simple_ui/system_manager/core/controller/notification/SimpleNotificationController : kr/open/library/simple_ui/system_manager/core/base/BaseSystemService {
 	public fun <init> (Landroid/content/Context;Landroid/app/NotificationChannel;)V
 	public final fun cancelAll ()V
-	public final fun cancelNotification (Ljava/lang/String;I)Z
-	public static synthetic fun cancelNotification$default (Lkr/open/library/simple_ui/system_manager/core/controller/notification/SimpleNotificationController;Ljava/lang/String;IILjava/lang/Object;)Z
+	public final fun cancelNotification (Ljava/lang/String;I)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public static synthetic fun cancelNotification$default (Lkr/open/library/simple_ui/system_manager/core/controller/notification/SimpleNotificationController;Ljava/lang/String;IILjava/lang/Object;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
 	public final fun cleanup ()V
-	public final fun completeProgress (ILjava/lang/String;)Z
-	public static synthetic fun completeProgress$default (Lkr/open/library/simple_ui/system_manager/core/controller/notification/SimpleNotificationController;ILjava/lang/String;ILjava/lang/Object;)Z
+	public final fun completeProgress (ILjava/lang/String;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public static synthetic fun completeProgress$default (Lkr/open/library/simple_ui/system_manager/core/controller/notification/SimpleNotificationController;ILjava/lang/String;ILjava/lang/Object;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
 	public final fun createChannel (Landroid/app/NotificationChannel;)V
 	public final fun getNotificationManager ()Landroid/app/NotificationManager;
-	public final fun notify (ILandroid/app/Notification;)Z
-	public final fun showNotification (Lkr/open/library/simple_ui/system_manager/core/controller/notification/option/SimpleNotificationOptionBase;Lkr/open/library/simple_ui/system_manager/core/controller/notification/SimpleNotificationType;)Z
-	public final fun updateProgress (II)Z
+	public final fun notify (ILandroid/app/Notification;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public final fun showNotification (Lkr/open/library/simple_ui/system_manager/core/controller/notification/option/SimpleNotificationOptionBase;Lkr/open/library/simple_ui/system_manager/core/controller/notification/SimpleNotificationType;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public final fun updateProgress (II)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
 }
 
 public final class kr/open/library/simple_ui/system_manager/core/controller/notification/SimpleNotificationType : java/lang/Enum {
@@ -363,24 +403,24 @@ public final class kr/open/library/simple_ui/system_manager/core/controller/noti
 
 public class kr/open/library/simple_ui/system_manager/core/controller/vibrator/VibratorController : kr/open/library/simple_ui/system_manager/core/base/BaseSystemService {
 	public fun <init> (Landroid/content/Context;)V
-	public final fun cancel ()Z
-	public final fun createOneShot (JI)Z
-	public static synthetic fun createOneShot$default (Lkr/open/library/simple_ui/system_manager/core/controller/vibrator/VibratorController;JIILjava/lang/Object;)Z
-	public final fun createPredefined (I)Z
-	public final fun createWaveform ([J[II)Z
-	public static synthetic fun createWaveform$default (Lkr/open/library/simple_ui/system_manager/core/controller/vibrator/VibratorController;[J[IIILjava/lang/Object;)Z
+	public final fun cancel ()Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public final fun createOneShot (JI)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public static synthetic fun createOneShot$default (Lkr/open/library/simple_ui/system_manager/core/controller/vibrator/VibratorController;JIILjava/lang/Object;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public final fun createPredefined (I)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public final fun createWaveform ([J[II)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public static synthetic fun createWaveform$default (Lkr/open/library/simple_ui/system_manager/core/controller/vibrator/VibratorController;[J[IIILjava/lang/Object;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
 	public final fun hasAmplitudeControl ()Z
 	public final fun hasVibrator ()Z
-	public final fun vibrate (J)Z
-	public final fun vibratePattern ([JI)Z
-	public static synthetic fun vibratePattern$default (Lkr/open/library/simple_ui/system_manager/core/controller/vibrator/VibratorController;[JIILjava/lang/Object;)Z
+	public final fun vibrate (J)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public final fun vibratePattern ([JI)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public static synthetic fun vibratePattern$default (Lkr/open/library/simple_ui/system_manager/core/controller/vibrator/VibratorController;[JIILjava/lang/Object;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
 }
 
 public class kr/open/library/simple_ui/system_manager/core/controller/wifi/WifiController : kr/open/library/simple_ui/system_manager/core/base/BaseSystemService {
 	public fun <init> (Landroid/content/Context;)V
 	public final fun calculateSignalLevel (II)I
 	public final fun compareSignalLevel (II)I
-	public final fun disconnect ()Z
+	public final fun disconnect ()Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
 	public final fun getConfiguredNetworks ()Ljava/util/List;
 	public final fun getConnectionInfo ()Landroid/net/wifi/WifiInfo;
 	public final fun getConnectivityManager ()Landroid/net/ConnectivityManager;
@@ -400,10 +440,10 @@ public class kr/open/library/simple_ui/system_manager/core/controller/wifi/WifiC
 	public final fun isWifiEnabled ()Z
 	public final fun isWpa3SaeSupported ()Z
 	public fun onDestroy ()V
-	public final fun reassociate ()Z
-	public final fun reconnect ()Z
-	public final fun setWifiEnabled (Z)Z
-	public final fun startScan ()Z
+	public final fun reassociate ()Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public final fun reconnect ()Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public final fun setWifiEnabled (Z)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public final fun startScan ()Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
 }
 
 public final class kr/open/library/simple_ui/system_manager/core/controller/wifi/WifiNetworkDetails {
@@ -1613,29 +1653,29 @@ public class kr/open/library/simple_ui/system_manager/xml/controller/softkeyboar
 	public static final field Companion Lkr/open/library/simple_ui/system_manager/xml/controller/softkeyboard/SoftKeyboardController$Companion;
 	public static final field DEFAULT_IME_VISIBILITY_TIMEOUT_MS J
 	public fun <init> (Landroid/content/Context;)V
-	public final fun configureImeResize (Landroid/view/Window;Lkr/open/library/simple_ui/system_manager/xml/controller/softkeyboard/SoftKeyboardResizePolicy;)Z
-	public static synthetic fun configureImeResize$default (Lkr/open/library/simple_ui/system_manager/xml/controller/softkeyboard/SoftKeyboardController;Landroid/view/Window;Lkr/open/library/simple_ui/system_manager/xml/controller/softkeyboard/SoftKeyboardResizePolicy;ILjava/lang/Object;)Z
-	public final fun hide (Landroid/view/View;I)Z
-	public static synthetic fun hide$default (Lkr/open/library/simple_ui/system_manager/xml/controller/softkeyboard/SoftKeyboardController;Landroid/view/View;IILjava/lang/Object;)Z
+	public final fun configureImeResize (Landroid/view/Window;Lkr/open/library/simple_ui/system_manager/xml/controller/softkeyboard/SoftKeyboardResizePolicy;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public static synthetic fun configureImeResize$default (Lkr/open/library/simple_ui/system_manager/xml/controller/softkeyboard/SoftKeyboardController;Landroid/view/Window;Lkr/open/library/simple_ui/system_manager/xml/controller/softkeyboard/SoftKeyboardResizePolicy;ILjava/lang/Object;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public final fun hide (Landroid/view/View;I)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public static synthetic fun hide$default (Lkr/open/library/simple_ui/system_manager/xml/controller/softkeyboard/SoftKeyboardController;Landroid/view/View;IILjava/lang/Object;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
 	public final fun hideAwait (Landroid/view/View;JIJLkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static synthetic fun hideAwait$default (Lkr/open/library/simple_ui/system_manager/xml/controller/softkeyboard/SoftKeyboardController;Landroid/view/View;JIJLkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 	public final fun hideAwaitAsync (Landroid/view/View;Lkotlinx/coroutines/CoroutineScope;JIJ)Lkotlinx/coroutines/Deferred;
 	public static synthetic fun hideAwaitAsync$default (Lkr/open/library/simple_ui/system_manager/xml/controller/softkeyboard/SoftKeyboardController;Landroid/view/View;Lkotlinx/coroutines/CoroutineScope;JIJILjava/lang/Object;)Lkotlinx/coroutines/Deferred;
-	public final fun hideDelay (Landroid/view/View;JI)Z
-	public static synthetic fun hideDelay$default (Lkr/open/library/simple_ui/system_manager/xml/controller/softkeyboard/SoftKeyboardController;Landroid/view/View;JIILjava/lang/Object;)Z
-	public final fun setAdjustPan (Landroid/view/Window;)Z
-	public final fun setAdjustResize (Landroid/view/Window;)Z
-	public final fun setSoftInputMode (Landroid/view/Window;I)Z
-	public final fun show (Landroid/view/View;I)Z
-	public static synthetic fun show$default (Lkr/open/library/simple_ui/system_manager/xml/controller/softkeyboard/SoftKeyboardController;Landroid/view/View;IILjava/lang/Object;)Z
+	public final fun hideDelay (Landroid/view/View;JI)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public static synthetic fun hideDelay$default (Lkr/open/library/simple_ui/system_manager/xml/controller/softkeyboard/SoftKeyboardController;Landroid/view/View;JIILjava/lang/Object;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public final fun setAdjustPan (Landroid/view/Window;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public final fun setAdjustResize (Landroid/view/Window;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public final fun setSoftInputMode (Landroid/view/Window;I)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public final fun show (Landroid/view/View;I)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public static synthetic fun show$default (Lkr/open/library/simple_ui/system_manager/xml/controller/softkeyboard/SoftKeyboardController;Landroid/view/View;IILjava/lang/Object;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
 	public final fun showAwait (Landroid/view/View;JIJLkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static synthetic fun showAwait$default (Lkr/open/library/simple_ui/system_manager/xml/controller/softkeyboard/SoftKeyboardController;Landroid/view/View;JIJLkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 	public final fun showAwaitAsync (Landroid/view/View;Lkotlinx/coroutines/CoroutineScope;JIJ)Lkotlinx/coroutines/Deferred;
 	public static synthetic fun showAwaitAsync$default (Lkr/open/library/simple_ui/system_manager/xml/controller/softkeyboard/SoftKeyboardController;Landroid/view/View;Lkotlinx/coroutines/CoroutineScope;JIJILjava/lang/Object;)Lkotlinx/coroutines/Deferred;
-	public final fun showDelay (Landroid/view/View;JI)Z
-	public static synthetic fun showDelay$default (Lkr/open/library/simple_ui/system_manager/xml/controller/softkeyboard/SoftKeyboardController;Landroid/view/View;JIILjava/lang/Object;)Z
-	public final fun startStylusHandwriting (Landroid/view/View;)Z
-	public final fun startStylusHandwriting (Landroid/view/View;J)Z
+	public final fun showDelay (Landroid/view/View;JI)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public static synthetic fun showDelay$default (Lkr/open/library/simple_ui/system_manager/xml/controller/softkeyboard/SoftKeyboardController;Landroid/view/View;JIILjava/lang/Object;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public final fun startStylusHandwriting (Landroid/view/View;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public final fun startStylusHandwriting (Landroid/view/View;J)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
 }
 
 public final class kr/open/library/simple_ui/system_manager/xml/controller/softkeyboard/SoftKeyboardController$Companion {
@@ -1756,17 +1796,17 @@ public final class kr/open/library/simple_ui/system_manager/xml/controller/syste
 
 public class kr/open/library/simple_ui/system_manager/xml/controller/window/FloatingViewController : kr/open/library/simple_ui/system_manager/core/base/BaseSystemService {
 	public fun <init> (Landroid/content/Context;)V
-	public final fun addFloatingDragView (Lkr/open/library/simple_ui/system_manager/xml/controller/window/drag/FloatingDragView;)Z
-	public final fun addView (Landroid/view/View;Landroid/view/WindowManager$LayoutParams;)Z
+	public final fun addFloatingDragView (Lkr/open/library/simple_ui/system_manager/xml/controller/window/drag/FloatingDragView;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public final fun addView (Landroid/view/View;Landroid/view/WindowManager$LayoutParams;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
 	public final fun getFloatingFixedView ()Lkr/open/library/simple_ui/system_manager/xml/controller/window/fixed/FloatingFixedView;
 	public final fun getWindowManager ()Landroid/view/WindowManager;
 	public fun onDestroy ()V
-	public final fun removeAllFloatingView ()Z
-	public final fun removeFloatingDragView (Lkr/open/library/simple_ui/system_manager/xml/controller/window/drag/FloatingDragView;)Z
-	public final fun removeFloatingFixedView ()Z
-	public final fun removeView (Landroid/view/View;)Z
-	public final fun setFloatingFixedView (Lkr/open/library/simple_ui/system_manager/xml/controller/window/fixed/FloatingFixedView;)Z
-	public final fun updateView (Landroid/view/View;Landroid/view/WindowManager$LayoutParams;)Z
+	public final fun removeAllFloatingView ()Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public final fun removeFloatingDragView (Lkr/open/library/simple_ui/system_manager/xml/controller/window/drag/FloatingDragView;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public final fun removeFloatingFixedView ()Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public final fun removeView (Landroid/view/View;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public final fun setFloatingFixedView (Lkr/open/library/simple_ui/system_manager/xml/controller/window/fixed/FloatingFixedView;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public final fun updateView (Landroid/view/View;Landroid/view/WindowManager$LayoutParams;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
 }
 
 public class kr/open/library/simple_ui/system_manager/xml/controller/window/drag/FloatingDragView : kr/open/library/simple_ui/system_manager/xml/controller/window/fixed/FloatingFixedView {

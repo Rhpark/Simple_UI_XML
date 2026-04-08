@@ -9,6 +9,7 @@ import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
+import kr.open.library.simple_ui.system_manager.core.base.SystemResult
 import kr.open.library.simple_ui.system_manager.core.extensions.getWifiController
 import kr.open.library.simple_ui.xml.extensions.view.toastShowShort
 import kr.open.library.simple_ui.xml.ui.components.activity.binding.BaseDataBindingActivity
@@ -115,7 +116,7 @@ class WifiControllerActivity : BaseDataBindingActivity<ActivityWifiControllerBin
             if (deniedPermissions.isEmpty()) {
                 val scanStarted = getWifiController().startScan()
 
-                if (scanStarted) {
+                if (scanStarted is SystemResult.Success) {
                     val results = getWifiController().getScanResults()
 
                     if (results.isNotEmpty()) {

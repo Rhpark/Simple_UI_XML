@@ -14,6 +14,7 @@ import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
 import kr.open.library.simple_ui.core.extensions.trycatch.throwMinSdkVersion
 import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.system_manager.core.base.BaseSystemService
+import kr.open.library.simple_ui.system_manager.core.base.SystemResult
 import kr.open.library.simple_ui.system_manager.core.extensions.getVibrator
 import kr.open.library.simple_ui.system_manager.core.extensions.getVibratorManager
 
@@ -105,18 +106,23 @@ public open class VibratorController(
      * @param amplitude Amplitude value (DEFAULT_AMPLITUDE(-1) or 1..255).<br><br>
      *               강도 값 (DEFAULT_AMPLITUDE(-1) 또는 1..255).
      *
-     * @return `true` if vibration was triggered successfully, `false` otherwise.<br><br>
-     *         진동 실행 성공 시 `true`, 그렇지 않으면 `false`.
+     * @return [SystemResult.Success] if vibration was triggered successfully,
+     *         [SystemResult.PermissionDenied] if permission is missing, [SystemResult.Failure] on error or invalid params.<br><br>
+     *         진동 실행 성공 시 [SystemResult.Success],
+     *         권한 없음 시 [SystemResult.PermissionDenied], 오류 또는 유효하지 않은 파라미터 시 [SystemResult.Failure].
      */
     @RequiresPermission(VIBRATE)
-    public fun createOneShot(timer: Long, amplitude: Int = VibrationEffect.DEFAULT_AMPLITUDE): Boolean = tryCatchSystemManager(false) {
+    public fun createOneShot(
+        timer: Long,
+        amplitude: Int = VibrationEffect.DEFAULT_AMPLITUDE,
+    ): SystemResult<Unit> = tryCatchSystemManagerResult {
         if (timer <= 0L) {
             Logx.e("timer > 0L, timer $timer")
-            return false
+            return@tryCatchSystemManagerResult SystemResult.Failure(null)
         }
         if (amplitude != VibrationEffect.DEFAULT_AMPLITUDE && amplitude !in 1..255) {
             Logx.e("amplitude must be 1..255 or DEFAULT_AMPLITUDE(-1). amplitude=$amplitude")
-            return false
+            return@tryCatchSystemManagerResult SystemResult.Failure(null)
         }
 
         val oneShot = VibrationEffect.createOneShot(timer, amplitude)
@@ -124,7 +130,7 @@ public open class VibratorController(
             positiveWork = { vibratorManager.vibrate(CombinedVibration.createParallel(oneShot)) },
             negativeWork = { vibrator.vibrate(oneShot) },
         )
-        return true
+        SystemResult.Success(Unit)
     }
 
     /**
@@ -134,14 +140,16 @@ public open class VibratorController(
      * @param milliseconds Vibration duration in milliseconds.<br><br>
      *                     진동 지속 시간 (밀리초).
      *
-     * @return `true` if vibration was triggered successfully, `false` otherwise.<br><br>
-     *         진동 실행 성공 시 `true`, 그렇지 않으면 `false`.<br>
+     * @return [SystemResult.Success] if vibration was triggered successfully,
+     *         [SystemResult.PermissionDenied] if permission is missing, [SystemResult.Failure] on error or invalid params.<br><br>
+     *         진동 실행 성공 시 [SystemResult.Success],
+     *         권한 없음 시 [SystemResult.PermissionDenied], 오류 또는 유효하지 않은 파라미터 시 [SystemResult.Failure].<br>
      */
     @RequiresPermission(VIBRATE)
-    public fun vibrate(milliseconds: Long): Boolean {
+    public fun vibrate(milliseconds: Long): SystemResult<Unit> {
         if (milliseconds <= 0L) {
             Logx.e("milliseconds > 0L, milliseconds $milliseconds")
-            return false
+            return SystemResult.Failure(null)
         }
 
         return createOneShot(milliseconds)
@@ -156,12 +164,14 @@ public open class VibratorController(
      * @param vibrationEffectClick Predefined effect constant (e.g., VibrationEffect.EFFECT_CLICK).<br><br>
      *                             미리 정의된 효과 상수 (예: VibrationEffect.EFFECT_CLICK).
      *
-     * @return `true` if vibration was triggered successfully, `false` otherwise.<br><br>
-     *         진동 실행 성공 시 `true`, 그렇지 않으면 `false`.<br>
+     * @return [SystemResult.Success] if vibration was triggered successfully,
+     *         [SystemResult.PermissionDenied] if permission is missing, [SystemResult.Failure] on error.<br><br>
+     *         진동 실행 성공 시 [SystemResult.Success],
+     *         권한 없음 시 [SystemResult.PermissionDenied], 오류 시 [SystemResult.Failure].<br>
      */
     @RequiresPermission(VIBRATE)
     @RequiresApi(Build.VERSION_CODES.Q)
-    public fun createPredefined(vibrationEffectClick: Int): Boolean = tryCatchSystemManager(false) {
+    public fun createPredefined(vibrationEffectClick: Int): SystemResult<Unit> = tryCatchSystemManagerResult {
         checkSdkVersion(Build.VERSION_CODES.Q,
             positiveWork = {
                 val predefinedEffect = VibrationEffect.createPredefined(vibrationEffectClick)
@@ -169,11 +179,11 @@ public open class VibratorController(
                     positiveWork = { vibratorManager.vibrate(CombinedVibration.createParallel(predefinedEffect)) },
                     negativeWork = { vibrator.vibrate(predefinedEffect) },
                 )
-                true
+                SystemResult.Success(Unit)
             },
             negativeWork = {
                 Logx.e("createPredefined는 Android Q(29) 이상에서만 지원됩니다. currentSdk=${Build.VERSION.SDK_INT}")
-                false
+                SystemResult.Failure(null)
             },
         )
     }
@@ -204,35 +214,36 @@ public open class VibratorController(
      * @param repeat Index to start repeating from, -1 for no repeat.<br><br>
      *               반복 시작 인덱스, -1은 반복 없음.
      *
-     * @return `true` if vibration was triggered successfully, `false` otherwise.<br><br>
-     *         진동 실행 성공 시 `true`, 그렇지 않으면 `false`.<br>
+     * @return [SystemResult.Success] if vibration was triggered successfully,
+     *         [SystemResult.PermissionDenied] if permission is missing, [SystemResult.Failure] on error or invalid params.<br><br>
+     *         진동 실행 성공 시 [SystemResult.Success],
+     *         권한 없음 시 [SystemResult.PermissionDenied], 오류 또는 유효하지 않은 파라미터 시 [SystemResult.Failure].<br>
      */
     @RequiresPermission(VIBRATE)
     public fun createWaveform(
         times: LongArray,
         amplitudes: IntArray,
         repeat: Int = -1,
-    ): Boolean = tryCatchSystemManager(false) {
-        // 배열 검증 추가
+    ): SystemResult<Unit> = tryCatchSystemManagerResult {
         if (times.isEmpty() || amplitudes.isEmpty()) {
             Logx.e("times or amplitudes array is empty, times: ${times.size}, amplitudes: ${amplitudes.size}")
-            return false
+            return@tryCatchSystemManagerResult SystemResult.Failure(null)
         }
         if (times.size != amplitudes.size) {
             Logx.e("times and amplitudes array size must be same, times: ${times.size}, amplitudes: ${amplitudes.size}")
-            return false
+            return@tryCatchSystemManagerResult SystemResult.Failure(null)
         }
         if (times.any { it < 0L }) {
             Logx.e("times must be >= 0. times=${times.contentToString()}")
-            return false
+            return@tryCatchSystemManagerResult SystemResult.Failure(null)
         }
         if (amplitudes.any { it != VibrationEffect.DEFAULT_AMPLITUDE && it !in 0..255 }) {
             Logx.e("amplitudes must be 0..255 or DEFAULT_AMPLITUDE(-1). amplitudes=${amplitudes.contentToString()}")
-            return false
+            return@tryCatchSystemManagerResult SystemResult.Failure(null)
         }
         if (repeat != -1 && repeat !in times.indices) {
             Logx.e("repeat must be between 0 and ${times.size - 1}, repeat: $repeat")
-            return false
+            return@tryCatchSystemManagerResult SystemResult.Failure(null)
         }
 
         val waveformEffect = VibrationEffect.createWaveform(times, amplitudes, repeat)
@@ -240,7 +251,7 @@ public open class VibratorController(
             positiveWork = { vibratorManager.vibrate(CombinedVibration.createParallel(waveformEffect)) },
             negativeWork = { vibrator.vibrate(waveformEffect) },
         )
-        return true
+        SystemResult.Success(Unit)
     }
 
     /**
@@ -253,23 +264,24 @@ public open class VibratorController(
      * @param repeat Repeat start index, -1 for no repeat.<br><br>
      *               반복 시작 인덱스, -1은 반복 없음.
      *
-     * @return `true` if vibration was triggered successfully, `false` otherwise.<br><br>
-     *         진동 실행 성공 시 `true`, 그렇지 않으면 `false`.<br>
+     * @return [SystemResult.Success] if vibration was triggered successfully,
+     *         [SystemResult.PermissionDenied] if permission is missing, [SystemResult.Failure] on error or invalid params.<br><br>
+     *         진동 실행 성공 시 [SystemResult.Success],
+     *         권한 없음 시 [SystemResult.PermissionDenied], 오류 또는 유효하지 않은 파라미터 시 [SystemResult.Failure].<br>
      */
     @RequiresPermission(VIBRATE)
-    public fun vibratePattern(pattern: LongArray, repeat: Int = -1): Boolean = tryCatchSystemManager(false) {
-        // 배열 검증 추가
+    public fun vibratePattern(pattern: LongArray, repeat: Int = -1): SystemResult<Unit> = tryCatchSystemManagerResult {
         if (pattern.isEmpty()) {
             Logx.e("vibratePattern: pattern is empty.")
-            return false
+            return@tryCatchSystemManagerResult SystemResult.Failure(null)
         }
         if (pattern.any { it < 0L }) {
             Logx.e("vibratePattern: pattern must be >= 0. pattern=${pattern.contentToString()}")
-            return false
+            return@tryCatchSystemManagerResult SystemResult.Failure(null)
         }
         if (repeat != -1 && repeat !in pattern.indices) {
             Logx.e("vibratePattern: repeat must be -1 or within 0..${pattern.size - 1}. repeat=$repeat")
-            return false
+            return@tryCatchSystemManagerResult SystemResult.Failure(null)
         }
 
         val waveformEffect = VibrationEffect.createWaveform(pattern, repeat)
@@ -277,7 +289,7 @@ public open class VibratorController(
             positiveWork = { vibratorManager.vibrate(CombinedVibration.createParallel(waveformEffect)) },
             negativeWork = { vibrator.vibrate(waveformEffect) },
         )
-        return true
+        SystemResult.Success(Unit)
     }
 
     /**
@@ -286,16 +298,18 @@ public open class VibratorController(
      * 진행 중인 모든 진동을 즉시 취소합니다.<br>
      * 레거시 Vibrator와 최신 VibratorManager API 모두에서 작동합니다.<br>
      *
-     * @return `true` if cancellation was successful, `false` otherwise.<br><br>
-     *         취소 성공 시 `true`, 그렇지 않으면 `false`.<br>
+     * @return [SystemResult.Success] if cancellation was successful,
+     *         [SystemResult.PermissionDenied] if permission is missing, [SystemResult.Failure] on error.<br><br>
+     *         취소 성공 시 [SystemResult.Success],
+     *         권한 없음 시 [SystemResult.PermissionDenied], 오류 시 [SystemResult.Failure].<br>
      */
     @RequiresPermission(VIBRATE)
-    public fun cancel(): Boolean = tryCatchSystemManager(false) {
+    public fun cancel(): SystemResult<Unit> = tryCatchSystemManagerResult {
         checkSdkVersion(Build.VERSION_CODES.S,
             positiveWork = { vibratorManager.cancel() },
             negativeWork = { vibrator.cancel() },
         )
-        return true
+        SystemResult.Success(Unit)
     }
 
     /**

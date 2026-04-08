@@ -631,6 +631,7 @@ public abstract class kr/open/library/simple_ui/xml/ui/adapter/normal/root/RootR
 	protected fun bindClickListeners (Landroidx/recyclerview/widget/RecyclerView$ViewHolder;)V
 	protected abstract fun createViewHolderInternal (Landroid/view/ViewGroup;I)Landroidx/recyclerview/widget/RecyclerView$ViewHolder;
 	protected fun getContentItemViewType (ILjava/lang/Object;)I
+	public fun getItemViewType (I)I
 	protected abstract fun onBindViewHolder (Landroidx/recyclerview/widget/RecyclerView$ViewHolder;Ljava/lang/Object;I)V
 	protected fun onBindViewHolder (Landroidx/recyclerview/widget/RecyclerView$ViewHolder;Ljava/lang/Object;ILjava/util/List;)V
 	public final fun onCreateViewHolder (Landroid/view/ViewGroup;I)Landroidx/recyclerview/widget/RecyclerView$ViewHolder;

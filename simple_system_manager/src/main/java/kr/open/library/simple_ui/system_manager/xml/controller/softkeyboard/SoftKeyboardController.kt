@@ -25,6 +25,7 @@ import kotlinx.coroutines.withTimeoutOrNull
 import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
 import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.system_manager.core.base.BaseSystemService
+import kr.open.library.simple_ui.system_manager.core.base.SystemResult
 import kr.open.library.simple_ui.system_manager.core.extensions.getInputMethodManager
 
 /**
@@ -62,51 +63,67 @@ public open class SoftKeyboardController(
     /**
      * Sets window soft input mode to adjust pan.<br><br>
      * 윈도우 소프트 입력 모드를 adjust pan으로 설정합니다.<br>
+     *
+     * @return [SystemResult.Success] if set successfully, [SystemResult.Failure] on error.<br><br>
+     *         설정 성공 시 [SystemResult.Success], 오류 시 [SystemResult.Failure].<br>
      */
     @MainThread
-    public fun setAdjustPan(window: Window): Boolean = tryCatchSystemManager(false) {
-        if (!ensureMainThread("setAdjustPan")) return@tryCatchSystemManager false
+    public fun setAdjustPan(window: Window): SystemResult<Unit> = tryCatchSystemManagerResult {
+        if (!ensureMainThread("setAdjustPan")) return@tryCatchSystemManagerResult SystemResult.Failure(null)
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
-        true
+        SystemResult.Success(Unit)
     }
 
     /**
      * Sets custom soft input mode for the window.<br><br>
      * 윈도우에 사용자 정의 소프트 입력 모드를 설정합니다.<br>
+     *
+     * @return [SystemResult.Success] if set successfully, [SystemResult.Failure] on error.<br><br>
+     *         설정 성공 시 [SystemResult.Success], 오류 시 [SystemResult.Failure].<br>
      */
     @MainThread
-    public fun setSoftInputMode(window: Window, softInputTypes: Int): Boolean = tryCatchSystemManager(false) {
-        if (!ensureMainThread("setSoftInputMode")) return@tryCatchSystemManager false
+    public fun setSoftInputMode(window: Window, softInputTypes: Int): SystemResult<Unit> = tryCatchSystemManagerResult {
+        if (!ensureMainThread("setSoftInputMode")) return@tryCatchSystemManagerResult SystemResult.Failure(null)
         window.setSoftInputMode(softInputTypes)
-        true
+        SystemResult.Success(Unit)
     }
 
     /**
      * Shows the soft keyboard for input-capable views.<br><br>
      * 입력 가능한 뷰에 소프트 키보드 표시를 요청합니다. 실제 가시성 확인이 필요하면 `showAwait*`를 사용하세요.<br>
+     *
+     * @return [SystemResult.Success] if request was issued, [SystemResult.Failure] on error.<br><br>
+     *         요청 전달 성공 시 [SystemResult.Success], 오류 시 [SystemResult.Failure].<br>
      */
     @MainThread
-    public fun show(v: View, flag: Int = InputMethodManager.SHOW_IMPLICIT): Boolean = tryCatchSystemManager(false) {
-        if (!ensureMainThread("show")) return@tryCatchSystemManager false
+    public fun show(v: View, flag: Int = InputMethodManager.SHOW_IMPLICIT): SystemResult<Unit> = tryCatchSystemManagerResult {
+        if (!ensureMainThread("show")) return@tryCatchSystemManagerResult SystemResult.Failure(null)
         if (!v.requestFocus()) {
             Logx.e("View requestFocus failed")
-            return@tryCatchSystemManager false
+            return@tryCatchSystemManagerResult SystemResult.Failure(null)
         }
-        requestShowInternal(v, flag)
+        if (requestShowInternal(v, flag)) SystemResult.Success(Unit) else SystemResult.Failure(null)
     }
 
     /**
      * Schedules delayed keyboard show and returns queue registration status.<br><br>
      * 지연 키보드 표시를 예약하고 메시지 큐 등록 결과를 반환합니다. 실제 표시 결과는 포함하지 않습니다.<br>
+     *
+     * @return [SystemResult.Success] if scheduled successfully, [SystemResult.Failure] on error.<br><br>
+     *         예약 성공 시 [SystemResult.Success], 오류 시 [SystemResult.Failure].<br>
      */
     @MainThread
-    public fun showDelay(v: View, delay: Long, flag: Int = InputMethodManager.SHOW_IMPLICIT): Boolean = tryCatchSystemManager(false) {
-        if (!ensureMainThread("showDelay")) return@tryCatchSystemManager false
+    public fun showDelay(
+        v: View,
+        delay: Long,
+        flag: Int = InputMethodManager.SHOW_IMPLICIT,
+    ): SystemResult<Unit> = tryCatchSystemManagerResult {
+        if (!ensureMainThread("showDelay")) return@tryCatchSystemManagerResult SystemResult.Failure(null)
         if (delay < 0L) {
             Logx.w("showDelay delay must be >= 0")
-            return@tryCatchSystemManager false
+            return@tryCatchSystemManagerResult SystemResult.Failure(null)
         }
-        v.postDelayed(Runnable { show(v, flag) }, delay)
+        if (v.postDelayed(Runnable { show(v, flag) }, delay)) SystemResult.Success(Unit) else SystemResult.Failure(null)
     }
 
     /**
@@ -197,25 +214,31 @@ public open class SoftKeyboardController(
     /**
      * Hides the soft keyboard from input-capable views.<br><br>
      * 입력 가능한 뷰에서 소프트 키보드 숨김을 요청합니다. 실제 가시성 확인이 필요하면 `hideAwait*`를 사용하세요.<br>
+     *
+     * @return [SystemResult.Success] if request was issued, [SystemResult.Failure] on error.<br><br>
+     *         요청 전달 성공 시 [SystemResult.Success], 오류 시 [SystemResult.Failure].<br>
      */
     @MainThread
-    public fun hide(v: View, flag: Int = 0): Boolean = tryCatchSystemManager(false) {
-        if (!ensureMainThread("hide")) return@tryCatchSystemManager false
-        requestHideInternal(v, flag) == HideRequestResult.REQUEST_ISSUED
+    public fun hide(v: View, flag: Int = 0): SystemResult<Unit> = tryCatchSystemManagerResult {
+        if (!ensureMainThread("hide")) return@tryCatchSystemManagerResult SystemResult.Failure(null)
+        if (requestHideInternal(v, flag) == HideRequestResult.REQUEST_ISSUED) SystemResult.Success(Unit) else SystemResult.Failure(null)
     }
 
     /**
      * Schedules delayed keyboard hide and returns queue registration status.<br><br>
      * 지연 키보드 숨김을 예약하고 메시지 큐 등록 결과를 반환합니다. 실제 숨김 결과는 포함하지 않습니다.<br>
+     *
+     * @return [SystemResult.Success] if scheduled successfully, [SystemResult.Failure] on error.<br><br>
+     *         예약 성공 시 [SystemResult.Success], 오류 시 [SystemResult.Failure].<br>
      */
     @MainThread
-    public fun hideDelay(v: View, delay: Long, flag: Int = 0): Boolean = tryCatchSystemManager(false) {
-        if (!ensureMainThread("hideDelay")) return@tryCatchSystemManager false
+    public fun hideDelay(v: View, delay: Long, flag: Int = 0): SystemResult<Unit> = tryCatchSystemManagerResult {
+        if (!ensureMainThread("hideDelay")) return@tryCatchSystemManagerResult SystemResult.Failure(null)
         if (delay < 0L) {
             Logx.w("hideDelay delay must be >= 0")
-            return@tryCatchSystemManager false
+            return@tryCatchSystemManagerResult SystemResult.Failure(null)
         }
-        v.postDelayed(Runnable { hide(v, flag) }, delay)
+        if (v.postDelayed(Runnable { hide(v, flag) }, delay)) SystemResult.Success(Unit) else SystemResult.Failure(null)
     }
 
     /**
@@ -297,25 +320,28 @@ public open class SoftKeyboardController(
     /**
      * Starts stylus handwriting mode for the given view.<br><br>
      * 지정된 뷰에 대해 스타일러스 필기 모드를 시작합니다.<br>
+     *
+     * @return [SystemResult.Success] if started successfully, [SystemResult.Failure] on error.<br><br>
+     *         시작 성공 시 [SystemResult.Success], 오류 시 [SystemResult.Failure].<br>
      */
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     @MainThread
-    public fun startStylusHandwriting(v: View): Boolean = tryCatchSystemManager(false) {
-        if (!ensureMainThread("startStylusHandwriting")) return@tryCatchSystemManager false
+    public fun startStylusHandwriting(v: View): SystemResult<Unit> = tryCatchSystemManagerResult {
+        if (!ensureMainThread("startStylusHandwriting")) return@tryCatchSystemManagerResult SystemResult.Failure(null)
         checkSdkVersion(
             Build.VERSION_CODES.TIRAMISU,
             positiveWork = {
                 if (v.requestFocus()) {
                     imm.startStylusHandwriting(v)
-                    true
+                    SystemResult.Success(Unit)
                 } else {
                     Logx.e("View requestFocus failed")
-                    false
+                    SystemResult.Failure(null)
                 }
             },
             negativeWork = { requiredSdk ->
                 Logx.w("startStylusHandwriting requires API $requiredSdk+ (current=${Build.VERSION.SDK_INT})")
-                false
+                SystemResult.Failure(null)
             },
         )
     }
@@ -323,13 +349,16 @@ public open class SoftKeyboardController(
     /**
      * Configures resize behavior with explicit policy.<br><br>
      * 명시적 정책으로 키보드 resize 동작을 설정합니다.<br>
+     *
+     * @return [SystemResult.Success] if configured successfully, [SystemResult.Failure] on error.<br><br>
+     *         설정 성공 시 [SystemResult.Success], 오류 시 [SystemResult.Failure].<br>
      */
     @MainThread
     public fun configureImeResize(
         window: Window,
         policy: SoftKeyboardResizePolicy = SoftKeyboardResizePolicy.KEEP_CURRENT_WINDOW,
-    ): Boolean = tryCatchSystemManager(false) {
-        if (!ensureMainThread("configureImeResize")) return@tryCatchSystemManager false
+    ): SystemResult<Unit> = tryCatchSystemManagerResult {
+        if (!ensureMainThread("configureImeResize")) return@tryCatchSystemManagerResult SystemResult.Failure(null)
 
         when (policy) {
             SoftKeyboardResizePolicy.KEEP_CURRENT_WINDOW -> {
@@ -337,12 +366,12 @@ public open class SoftKeyboardController(
                     Build.VERSION_CODES.R,
                     positiveWork = {
                         // Keep existing edge-to-edge / decorFits state on API 30+
-                        true
+                        SystemResult.Success(Unit)
                     },
                     negativeWork = {
                         @Suppress("DEPRECATION")
                         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
-                        true
+                        SystemResult.Success(Unit)
                     },
                 )
             }
@@ -350,7 +379,7 @@ public open class SoftKeyboardController(
             SoftKeyboardResizePolicy.LEGACY_ADJUST_RESIZE -> {
                 @Suppress("DEPRECATION")
                 window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
-                true
+                SystemResult.Success(Unit)
             }
 
             SoftKeyboardResizePolicy.FORCE_DECOR_FITS_TRUE -> {
@@ -358,12 +387,12 @@ public open class SoftKeyboardController(
                     Build.VERSION_CODES.R,
                     positiveWork = {
                         WindowCompat.setDecorFitsSystemWindows(window, true)
-                        true
+                        SystemResult.Success(Unit)
                     },
                     negativeWork = {
                         @Suppress("DEPRECATION")
                         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
-                        true
+                        SystemResult.Success(Unit)
                     },
                 )
             }
@@ -382,28 +411,33 @@ public open class SoftKeyboardController(
      * - API 29-: 레거시 adjust resize 적용<br>
      */
     @MainThread
-    public fun setAdjustResize(window: Window): Boolean = configureImeResize(window,
+    public fun setAdjustResize(window: Window): SystemResult<Unit> = configureImeResize(window,
         SoftKeyboardResizePolicy.KEEP_CURRENT_WINDOW
     )
 
     /**
      * Starts stylus handwriting mode after a delay.<br><br>
      * 지연 시간 후 스타일러스 필기 모드를 시작합니다.<br>
+     *
+     * @return [SystemResult.Success] if scheduled successfully, [SystemResult.Failure] on error.<br><br>
+     *         예약 성공 시 [SystemResult.Success], 오류 시 [SystemResult.Failure].<br>
      */
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     @MainThread
-    public fun startStylusHandwriting(v: View, delay: Long): Boolean = tryCatchSystemManager(false) {
-        if (!ensureMainThread("startStylusHandwriting(delay)")) return@tryCatchSystemManager false
+    public fun startStylusHandwriting(v: View, delay: Long): SystemResult<Unit> = tryCatchSystemManagerResult {
+        if (!ensureMainThread("startStylusHandwriting(delay)")) return@tryCatchSystemManagerResult SystemResult.Failure(null)
         if (delay < 0L) {
             Logx.w("startStylusHandwriting delay must be >= 0")
-            return@tryCatchSystemManager false
+            return@tryCatchSystemManagerResult SystemResult.Failure(null)
         }
         checkSdkVersion(
             Build.VERSION_CODES.TIRAMISU,
-            positiveWork = { v.postDelayed(Runnable { startStylusHandwriting(v) }, delay) },
+            positiveWork = {
+                if (v.postDelayed(Runnable { startStylusHandwriting(v) }, delay)) SystemResult.Success(Unit) else SystemResult.Failure(null)
+            },
             negativeWork = { requiredSdk ->
                 Logx.w("startStylusHandwriting(delay) requires API $requiredSdk (current=${Build.VERSION.SDK_INT})")
-                false
+                SystemResult.Failure(null)
             },
         )
     }

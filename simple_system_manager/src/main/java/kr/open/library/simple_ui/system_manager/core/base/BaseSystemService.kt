@@ -163,6 +163,39 @@ public abstract class BaseSystemService(
     }
 
     /**
+     * Safe execution with cause-distinguishing result type.<br>
+     * Returns [SystemResult.PermissionDenied] when required runtime/special permissions are missing.<br>
+     * Returns [SystemResult.Failure] when an exception occurs during execution.<br>
+     * Returns the value returned by [block] (typically [SystemResult.Success] or [SystemResult.PolicyRestricted]) on success.<br><br>
+     *
+     * 원인을 구분하는 결과 타입을 반환하는 안전한 실행 메서드입니다.<br>
+     * 필수 런타임/특수 권한이 누락된 경우 [SystemResult.PermissionDenied]를 반환합니다.<br>
+     * 실행 중 예외가 발생하면 [SystemResult.Failure]를 반환합니다.<br>
+     * 성공 시 [block]이 반환하는 값(보통 [SystemResult.Success] 또는 [SystemResult.PolicyRestricted])을 반환합니다.<br>
+     *
+     * @param T The type of the success value.<br><br>
+     *          성공 값의 타입입니다.<br>
+     * @param block The operation to execute. Must return a [SystemResult].<br><br>
+     *              실행할 작업입니다. [SystemResult]를 반환해야 합니다.<br>
+     * @return [SystemResult] representing the outcome with cause information.<br><br>
+     *         원인 정보를 포함한 [SystemResult]를 반환합니다.<br>
+     */
+    protected inline fun <T> tryCatchSystemManagerResult(block: () -> SystemResult<T>): SystemResult<T> {
+        val deniedPermissions = getDeniedPermissionList()
+        if (deniedPermissions.isNotEmpty()) {
+            Logx.w("${this::class.simpleName}: Missing runtime/special permissions!!! - $deniedPermissions")
+            return SystemResult.PermissionDenied
+        }
+        return safeCatch(
+            block = block,
+            onCatch = { e ->
+                Logx.e("${this::class.simpleName}: Error occurred : ${e.message}")
+                SystemResult.Failure(e)
+            },
+        )
+    }
+
+    /**
      * Refreshes the permission status. Call this after requesting permissions.<br><br>
      * 권한 상태를 새로고침합니다. 권한 요청 후 이를 호출하세요.<br>
      */

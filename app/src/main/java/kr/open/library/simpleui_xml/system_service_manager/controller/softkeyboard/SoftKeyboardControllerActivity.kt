@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.launch
+import kr.open.library.simple_ui.system_manager.core.base.SystemResult
 import kr.open.library.simple_ui.system_manager.xml.controller.softkeyboard.SoftKeyboardActionResult
 import kr.open.library.simple_ui.system_manager.xml.controller.softkeyboard.SoftKeyboardResizePolicy
 import kr.open.library.simple_ui.system_manager.xml.extensions.getSoftKeyboardController
@@ -40,13 +41,13 @@ class SoftKeyboardControllerActivity : BaseActivity(R.layout.activity_softkeyboa
             btnShow.setOnClickListener {
                 edtTest.isFocusable = true
                 val success = softKeyboardController.show(edtTest)
-                toastShowShort(if (success) "키보드 표시 요청 성공" else "키보드 표시 요청 실패")
+                toastShowShort(if (success is SystemResult.Success) "키보드 표시 요청 성공" else "키보드 표시 요청 실패")
             }
 
             // Basic hide - 기본 숨김
             btnHide.setOnClickListener {
                 val success = softKeyboardController.hide(edtTest)
-                toastShowShort(if (success) "키보드 숨김 요청 성공" else "키보드 숨김 요청 실패")
+                toastShowShort(if (success is SystemResult.Success) "키보드 숨김 요청 성공" else "키보드 숨김 요청 실패")
             }
 
             // Delayed show with actual result - 실제 결과를 받는 지연 표시
@@ -94,7 +95,7 @@ class SoftKeyboardControllerActivity : BaseActivity(R.layout.activity_softkeyboa
                     window = window,
                     policy = SoftKeyboardResizePolicy.KEEP_CURRENT_WINDOW,
                 )
-                toastShowShort(if (success) "Resize 정책 적용 성공" else "Resize 정책 적용 실패")
+                toastShowShort(if (success is SystemResult.Success) "Resize 정책 적용 성공" else "Resize 정책 적용 실패")
             }
         }
     }

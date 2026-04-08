@@ -12,6 +12,7 @@ import androidx.annotation.RequiresPermission
 import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
 import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.system_manager.core.base.BaseSystemService
+import kr.open.library.simple_ui.system_manager.core.base.SystemResult
 import kr.open.library.simple_ui.system_manager.core.extensions.getWindowManager
 import kr.open.library.simple_ui.system_manager.xml.controller.window.drag.FloatingDragView
 import kr.open.library.simple_ui.system_manager.xml.controller.window.drag.FloatingDragViewConfig
@@ -43,38 +44,43 @@ public open class FloatingViewController(
      *
      * @param floatingView Fixed floating view to set, or null to remove.<br><br>
      *                     설정할 고정 플로팅 뷰이며 null이면 제거합니다.<br>
-     * @return true when WindowManager apply/remove operation succeeds and internal reference is updated accordingly.<br><br>
-     *         WindowManager 적용/제거가 성공하고 내부 참조가 그 결과에 맞게 갱신되면 true를 반환합니다.<br>
+     * @return [SystemResult.Success] when WindowManager apply/remove operation succeeds and internal reference is updated accordingly,
+     *         [SystemResult.PermissionDenied] if permission is missing, [SystemResult.Failure] on error.<br><br>
+     *         WindowManager 적용/제거가 성공하고 내부 참조가 갱신되면 [SystemResult.Success],
+     *         권한 없음 시 [SystemResult.PermissionDenied], 오류 시 [SystemResult.Failure]입니다.<br>
      */
     @RequiresPermission(SYSTEM_ALERT_WINDOW)
-    public fun setFloatingFixedView(floatingView: FloatingFixedView?): Boolean =
-        tryCatchSystemManager(false) {
+    public fun setFloatingFixedView(floatingView: FloatingFixedView?): SystemResult<Unit> =
+        tryCatchSystemManagerResult {
             if (floatingView == null) {
-                return removeFloatingFixedView()
+                return@tryCatchSystemManagerResult removeFloatingFixedView()
             }
 
             val current = this.floatingFixedView
 
-            if (current === floatingView) return true
+            if (current === floatingView) return@tryCatchSystemManagerResult SystemResult.Success(Unit)
 
             if (current == null) {
-                if (!addView(floatingView.view, floatingView.params)) return false
+                val addResult = addView(floatingView.view, floatingView.params)
+                if (addResult !is SystemResult.Success) return@tryCatchSystemManagerResult addResult
                 this.floatingFixedView = floatingView
-                return true
+                return@tryCatchSystemManagerResult SystemResult.Success(Unit)
             }
 
-            if (!addView(floatingView.view, floatingView.params)) return false
+            val addResult = addView(floatingView.view, floatingView.params)
+            if (addResult !is SystemResult.Success) return@tryCatchSystemManagerResult addResult
 
-            if (!removeView(current.view)) {
+            val removeResult = removeView(current.view)
+            if (removeResult !is SystemResult.Success) {
                 Logx.w("Failed to remove previous fixed view. Start rollback for new fixed view.")
-                if (!removeView(floatingView.view)) {
+                if (removeView(floatingView.view) !is SystemResult.Success) {
                     Logx.e("Rollback failed while replacing fixed view.")
                 }
-                return false
+                return@tryCatchSystemManagerResult SystemResult.Failure(null)
             }
 
             this.floatingFixedView = floatingView
-            return true
+            SystemResult.Success(Unit)
         }
 
     /**
@@ -92,21 +98,24 @@ public open class FloatingViewController(
      *
      * @param floatingView Draggable floating view to add.<br><br>
      *                     추가할 드래그 플로팅 뷰입니다.<br>
-     * @return true if WindowManager add succeeds and the config/listener state is committed.<br><br>
-     *         WindowManager 추가가 성공하고 구성/리스너 상태 반영까지 완료되면 true를 반환합니다.<br>
+     * @return [SystemResult.Success] if WindowManager add succeeds and the config/listener state is committed,
+     *         [SystemResult.PermissionDenied] if permission is missing, [SystemResult.Failure] on error.<br><br>
+     *         WindowManager 추가 성공 시 [SystemResult.Success],
+     *         권한 없음 시 [SystemResult.PermissionDenied], 오류 시 [SystemResult.Failure]입니다.<br>
      */
     @RequiresPermission(SYSTEM_ALERT_WINDOW)
-    public fun addFloatingDragView(floatingView: FloatingDragView): Boolean = tryCatchSystemManager(false) {
+    public fun addFloatingDragView(floatingView: FloatingDragView): SystemResult<Unit> = tryCatchSystemManagerResult {
         val config = FloatingDragViewConfig(floatingView)
 
         setupTouchListener(config)
 
-        if (!addView(config.getView(), floatingView.params)) {
+        val addResult = addView(config.getView(), floatingView.params)
+        if (addResult !is SystemResult.Success) {
             config.getView().setOnTouchListener(null)
-            return false
+            return@tryCatchSystemManagerResult addResult
         }
         floatingDragViewInfoList.add(config)
-        return true
+        SystemResult.Success(Unit)
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -167,14 +176,16 @@ public open class FloatingViewController(
      *             업데이트할 뷰입니다.<br>
      * @param params New layout parameters to apply.<br><br>
      *               적용할 새 레이아웃 파라미터입니다.<br>
-     * @return true if the layout update succeeded.<br><br>
-     *         레이아웃 업데이트에 성공하면 true를 반환합니다.<br>
+     * @return [SystemResult.Success] if the layout update succeeded,
+     *         [SystemResult.PermissionDenied] if permission is missing, [SystemResult.Failure] on error.<br><br>
+     *         레이아웃 업데이트 성공 시 [SystemResult.Success],
+     *         권한 없음 시 [SystemResult.PermissionDenied], 오류 시 [SystemResult.Failure]입니다.<br>
      */
-    public fun updateView(view: View, params: LayoutParams): Boolean = tryCatchSystemManager(false) {
+    public fun updateView(view: View, params: LayoutParams): SystemResult<Unit> = tryCatchSystemManagerResult {
         params.x = params.x.coerceAtLeast(0)
         params.y = params.y.coerceAtLeast(0)
         windowManager.updateViewLayout(view, params)
-        return true
+        SystemResult.Success(Unit)
     }
 
     /**
@@ -185,12 +196,14 @@ public open class FloatingViewController(
      *             추가할 뷰입니다.<br>
      * @param params Layout parameters for the view.<br><br>
      *               적용할 레이아웃 파라미터입니다.<br>
-     * @return true if the view was added without errors.<br><br>
-     *         오류 없이 추가되면 true를 반환합니다.<br>
+     * @return [SystemResult.Success] if the view was added without errors,
+     *         [SystemResult.PermissionDenied] if permission is missing, [SystemResult.Failure] on error.<br><br>
+     *         오류 없이 추가 성공 시 [SystemResult.Success],
+     *         권한 없음 시 [SystemResult.PermissionDenied], 오류 시 [SystemResult.Failure]입니다.<br>
      */
-    public fun addView(view: View, params: LayoutParams): Boolean = tryCatchSystemManager(false) {
+    public fun addView(view: View, params: LayoutParams): SystemResult<Unit> = tryCatchSystemManagerResult {
         windowManager.addView(view, params)
-        return true
+        SystemResult.Success(Unit)
     }
 
     /**
@@ -199,16 +212,19 @@ public open class FloatingViewController(
      *
      * @param floatingView Draggable floating view to remove.<br><br>
      *                     제거할 드래그 플로팅 뷰입니다.<br>
-     * @return true if target is found and WindowManager remove succeeds.<br><br>
-     *         대상 뷰를 찾았고 WindowManager 제거가 성공하면 true를 반환합니다.<br>
+     * @return [SystemResult.Success] if target is found and WindowManager remove succeeds,
+     *         [SystemResult.PermissionDenied] if permission is missing, [SystemResult.Failure] on error or not found.<br><br>
+     *         대상을 찾아 제거 성공 시 [SystemResult.Success],
+     *         권한 없음 시 [SystemResult.PermissionDenied], 오류 또는 대상 없음 시 [SystemResult.Failure]입니다.<br>
      */
-    public fun removeFloatingDragView(floatingView: FloatingDragView): Boolean = tryCatchSystemManager(false) {
-        floatingDragViewInfoList.find { it.floatingView == floatingView }?.let {
-            it.getView().setOnTouchListener(null)
-            if (!removeView(it.getView())) return false
-            floatingDragViewInfoList.remove(it)
-            return true
-        } ?: return false
+    public fun removeFloatingDragView(floatingView: FloatingDragView): SystemResult<Unit> = tryCatchSystemManagerResult {
+        val config = floatingDragViewInfoList.find { it.floatingView == floatingView }
+            ?: return@tryCatchSystemManagerResult SystemResult.Failure(null)
+        config.getView().setOnTouchListener(null)
+        val removeResult = removeView(config.getView())
+        if (removeResult !is SystemResult.Success) return@tryCatchSystemManagerResult removeResult
+        floatingDragViewInfoList.remove(config)
+        SystemResult.Success(Unit)
     }
 
     /**
@@ -217,27 +233,32 @@ public open class FloatingViewController(
      *
      * @param view View to remove.<br><br>
      *             제거할 뷰입니다.<br>
-     * @return true if removal succeeded without errors.<br><br>
-     *         오류 없이 제거되면 true를 반환합니다.<br>
+     * @return [SystemResult.Success] if removal succeeded without errors,
+     *         [SystemResult.PermissionDenied] if permission is missing, [SystemResult.Failure] on error.<br><br>
+     *         오류 없이 제거 성공 시 [SystemResult.Success],
+     *         권한 없음 시 [SystemResult.PermissionDenied], 오류 시 [SystemResult.Failure]입니다.<br>
      */
-    public fun removeView(view: View): Boolean = tryCatchSystemManager(false) {
+    public fun removeView(view: View): SystemResult<Unit> = tryCatchSystemManagerResult {
         windowManager.removeView(view)
-        return true
+        SystemResult.Success(Unit)
     }
 
     /**
      * Removes the fixed floating view if present.<br><br>
      * 고정 플로팅 뷰가 있으면 제거합니다.<br>
      *
-     * @return true when WindowManager remove succeeds (or no fixed view exists) and the reference is cleared.<br><br>
-     *         WindowManager 제거가 성공했거나 제거 대상이 없어서, 참조 해제가 완료되면 true를 반환합니다.<br>
+     * @return [SystemResult.Success] when WindowManager remove succeeds (or no fixed view exists) and the reference is cleared,
+     *         [SystemResult.PermissionDenied] if permission is missing, [SystemResult.Failure] on error.<br><br>
+     *         WindowManager 제거 성공 또는 제거 대상 없음 시 [SystemResult.Success],
+     *         권한 없음 시 [SystemResult.PermissionDenied], 오류 시 [SystemResult.Failure]입니다.<br>
      */
-    public fun removeFloatingFixedView(): Boolean = tryCatchSystemManager(false) {
+    public fun removeFloatingFixedView(): SystemResult<Unit> = tryCatchSystemManagerResult {
         floatingFixedView?.let {
-            if (!removeView(it.view)) return false
+            val removeResult = removeView(it.view)
+            if (removeResult !is SystemResult.Success) return@tryCatchSystemManagerResult removeResult
         }
         floatingFixedView = null
-        return true
+        SystemResult.Success(Unit)
     }
 
     /**
@@ -248,16 +269,20 @@ public open class FloatingViewController(
      * first-failure-stop 전략을 사용하며, 첫 실패 지점에서 즉시 false를 반환합니다.<br>
      * 이 경우 이미 제거된 항목은 제거된 상태로 유지되고, 남은 항목은 그대로 남는 부분 정리 상태가 될 수 있습니다.<br>
      *
-     * @return true when all remove operations succeed; false when any single step fails.<br><br>
-     *         모든 제거 작업이 성공하면 true, 하나라도 실패하면 false를 반환합니다.<br>
+     * @return [SystemResult.Success] when all remove operations succeed,
+     *         [SystemResult.PermissionDenied] if permission is missing, [SystemResult.Failure] when any single step fails.<br><br>
+     *         모든 제거 작업 성공 시 [SystemResult.Success],
+     *         권한 없음 시 [SystemResult.PermissionDenied], 하나라도 실패 시 [SystemResult.Failure]입니다.<br>
      */
-    public fun removeAllFloatingView(): Boolean = tryCatchSystemManager(false) {
+    public fun removeAllFloatingView(): SystemResult<Unit> = tryCatchSystemManagerResult {
         val configs = floatingDragViewInfoList.toList()
-        configs.forEach { config ->
-            if (!removeFloatingDragView(config.floatingView)) return false
+        for (config in configs) {
+            val result = removeFloatingDragView(config.floatingView)
+            if (result !is SystemResult.Success) return@tryCatchSystemManagerResult result
         }
-        if (!removeFloatingFixedView()) return false
-        return true
+        val fixedResult = removeFloatingFixedView()
+        if (fixedResult !is SystemResult.Success) return@tryCatchSystemManagerResult fixedResult
+        SystemResult.Success(Unit)
     }
 
     /**

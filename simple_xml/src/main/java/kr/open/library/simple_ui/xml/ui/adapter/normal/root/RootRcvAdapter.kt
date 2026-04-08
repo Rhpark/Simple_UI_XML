@@ -94,6 +94,11 @@ public abstract class RootRcvAdapter<ITEM : Any, VH : RecyclerView.ViewHolder> :
     /**
      * content 섹션 viewType 훅입니다.<br><br>
      */
+    public override fun getItemViewType(position: Int): Int {
+        val item = getItemOrNull(position) ?: return super.getItemViewType(position)
+        return getContentItemViewType(position, item)
+    }
+
     protected open fun getContentItemViewType(position: Int, item: ITEM): Int =
         super.getItemViewType(position)
 

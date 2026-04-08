@@ -3,6 +3,7 @@
 import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
+import kr.open.library.simple_ui.system_manager.core.base.SystemResult
 import kr.open.library.simple_ui.system_manager.core.controller.alarm.vo.AlarmIdleMode
 import kr.open.library.simple_ui.system_manager.core.controller.alarm.vo.AlarmNotificationVO
 import kr.open.library.simple_ui.system_manager.core.controller.alarm.vo.AlarmScheduleVO
@@ -105,7 +106,8 @@ class AlarmControllerActivity : BaseActivity(R.layout.activity_alarm_controller)
 
     private fun remove() {
         val key = getAlarmKeyOrNull() ?: return
-        val removed = alarmController.remove(key, AlarmReceiver::class.java)
+        val removeResult = alarmController.remove(key, AlarmReceiver::class.java)
+        val removed = removeResult is SystemResult.Success && (removeResult as SystemResult.Success<Boolean>).value
         val storeRemoved = AlarmSampleStore.remove(key)
 
         showResult(
@@ -148,13 +150,14 @@ class AlarmControllerActivity : BaseActivity(R.layout.activity_alarm_controller)
     private fun registerOrUpdate(
         key: Int,
         alarmVo: AlarmVO,
-        updateAction: () -> Boolean,
+        updateAction: () -> SystemResult<Unit>,
         successLabel: String,
     ) {
         val wasStored = AlarmSampleStore.exists(key)
         val result = updateAction()
+        val success = result is SystemResult.Success
 
-        if (result) {
+        if (success) {
             AlarmSampleStore.put(alarmVo)
         } else if (wasStored) {
             AlarmSampleStore.remove(key)
@@ -163,7 +166,7 @@ class AlarmControllerActivity : BaseActivity(R.layout.activity_alarm_controller)
         val actionLabel = if (wasStored) "갱신" else "등록"
         val timeText = formatTime(alarmVo.schedule.hour, alarmVo.schedule.minute, alarmVo.schedule.second)
         showResult(
-            title = "$successLabel $actionLabel ${if (result) "성공" else "실패"}",
+            title = "$successLabel $actionLabel ${if (success) "성공" else "실패"}",
             detail = "key=$key, 시간=$timeText, 모드=${alarmVo.schedule.idleMode}",
         )
     }

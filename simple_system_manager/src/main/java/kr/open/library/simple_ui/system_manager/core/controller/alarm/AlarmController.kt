@@ -12,6 +12,7 @@ import androidx.annotation.RequiresPermission
 import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
 import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.system_manager.core.base.BaseSystemService
+import kr.open.library.simple_ui.system_manager.core.base.SystemResult
 import kr.open.library.simple_ui.system_manager.core.controller.alarm.vo.AlarmIdleMode
 import kr.open.library.simple_ui.system_manager.core.controller.alarm.vo.AlarmVO
 import kr.open.library.simple_ui.system_manager.core.extensions.getAlarmManager
@@ -50,20 +51,27 @@ public open class AlarmController(
      *                스케줄과 알림 메타데이터를 포함한 알람 데이터입니다.<br>
      * @param namespace Optional namespace to avoid requestCode collisions.<br><br>
      *                  requestCode 충돌 방지를 위한 선택 네임스페이스입니다.<br>
-     * @return Boolean true if alarm was registered successfully, false otherwise.<br><br>
-     *         알람 등록 성공 시 true, 실패 시 false입니다.<br>
+     * @return [SystemResult.Success] if alarm was registered successfully,
+     *         [SystemResult.PermissionDenied] if permission is missing, [SystemResult.Failure] on error.<br><br>
+     *         알람 등록 성공 시 [SystemResult.Success],
+     *         권한 없음 시 [SystemResult.PermissionDenied], 오류 시 [SystemResult.Failure]입니다.<br>
      */
     @RequiresPermission(SCHEDULE_EXACT_ALARM, conditional = true)
-    public fun registerAlarmClock(receiver: Class<*>, alarmVo: AlarmVO, namespace: String? = null): Boolean = tryCatchSystemManager(false) {
-        if (!ensureExactAlarmAllowedOrLog()) return@tryCatchSystemManager false
+    public fun registerAlarmClock(
+        receiver: Class<*>,
+        alarmVo: AlarmVO,
+        namespace: String? = null,
+    ): SystemResult<Unit> = tryCatchSystemManagerResult {
+        if (!ensureExactAlarmAllowedOrLog()) return@tryCatchSystemManagerResult SystemResult.Failure(null)
 
         val calendar = getCalendar(alarmVo)
-        val pendingIntent = getAlarmPendingIntent(receiver, alarmVo.key, namespace) ?: return@tryCatchSystemManager false
+        val pendingIntent = getAlarmPendingIntent(receiver, alarmVo.key, namespace)
+            ?: return@tryCatchSystemManagerResult SystemResult.Failure(null)
 
         val alarmClockInfo = AlarmManager.AlarmClockInfo(calendar.timeInMillis, pendingIntent)
         alarmManager.setAlarmClock(alarmClockInfo, pendingIntent)
         Logx.d("Alarm clock registered for key: ${alarmVo.key} at ${calendar.time}")
-        return true
+        SystemResult.Success(Unit)
     }
 
     /**
@@ -76,20 +84,23 @@ public open class AlarmController(
      *                스케줄과 알림 메타데이터를 포함한 알람 데이터입니다.<br>
      * @param namespace Optional namespace to avoid requestCode collisions.<br><br>
      *                  requestCode 충돌 방지를 위한 선택 네임스페이스입니다.<br>
-     * @return Boolean true if alarm was registered successfully, false otherwise.<br><br>
-     *         알람 등록 성공 시 true, 실패 시 false입니다.<br>
+     * @return [SystemResult.Success] if alarm was registered successfully,
+     *         [SystemResult.PermissionDenied] if permission is missing, [SystemResult.Failure] on error.<br><br>
+     *         알람 등록 성공 시 [SystemResult.Success],
+     *         권한 없음 시 [SystemResult.PermissionDenied], 오류 시 [SystemResult.Failure]입니다.<br>
      */
     @RequiresPermission(SCHEDULE_EXACT_ALARM, conditional = true)
-    public fun registerAlarmExactAndAllowWhileIdle(receiver: Class<*>, alarmVo: AlarmVO, namespace: String? = null): Boolean =
-        tryCatchSystemManager(false) {
-            if (!ensureExactAlarmAllowedOrLog()) return@tryCatchSystemManager false
+    public fun registerAlarmExactAndAllowWhileIdle(receiver: Class<*>, alarmVo: AlarmVO, namespace: String? = null): SystemResult<Unit> =
+        tryCatchSystemManagerResult {
+            if (!ensureExactAlarmAllowedOrLog()) return@tryCatchSystemManagerResult SystemResult.Failure(null)
 
             val calendar = getCalendar(alarmVo)
-            val pendingIntent = getAlarmPendingIntent(receiver, alarmVo.key, namespace) ?: return@tryCatchSystemManager false
+            val pendingIntent = getAlarmPendingIntent(receiver, alarmVo.key, namespace)
+                ?: return@tryCatchSystemManagerResult SystemResult.Failure(null)
 
             alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
             Logx.d("Exact alarm registered for key: ${alarmVo.key} at ${calendar.time}")
-            return true
+            SystemResult.Success(Unit)
         }
 
     /**
@@ -102,17 +113,20 @@ public open class AlarmController(
      *                스케줄과 알림 메타데이터를 포함한 알람 데이터입니다.<br>
      * @param namespace Optional namespace to avoid requestCode collisions.<br><br>
      *                  requestCode 충돌 방지를 위한 선택 네임스페이스입니다.<br>
-     * @return Boolean true if alarm was registered successfully, false otherwise.<br><br>
-     *         알람 등록 성공 시 true, 실패 시 false입니다.<br>
+     * @return [SystemResult.Success] if alarm was registered successfully,
+     *         [SystemResult.PermissionDenied] if permission is missing, [SystemResult.Failure] on error.<br><br>
+     *         알람 등록 성공 시 [SystemResult.Success],
+     *         권한 없음 시 [SystemResult.PermissionDenied], 오류 시 [SystemResult.Failure]입니다.<br>
      */
-    public fun registerAlarmAndAllowWhileIdle(receiver: Class<*>, alarmVo: AlarmVO, namespace: String? = null): Boolean =
-        tryCatchSystemManager(false) {
+    public fun registerAlarmAndAllowWhileIdle(receiver: Class<*>, alarmVo: AlarmVO, namespace: String? = null): SystemResult<Unit> =
+        tryCatchSystemManagerResult {
             val calendar = getCalendar(alarmVo)
-            val pendingIntent = getAlarmPendingIntent(receiver, alarmVo.key, namespace) ?: return@tryCatchSystemManager false
+            val pendingIntent = getAlarmPendingIntent(receiver, alarmVo.key, namespace)
+                ?: return@tryCatchSystemManagerResult SystemResult.Failure(null)
 
             alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
             Logx.d("Idle-allowed alarm registered for key: ${alarmVo.key} at ${calendar.time}")
-            return true
+            SystemResult.Success(Unit)
         }
 
     /**
@@ -130,8 +144,10 @@ public open class AlarmController(
      *                  requestCode 충돌 방지를 위한 선택 네임스페이스입니다.<br>
      * @param type Alarm type such as RTC_WAKEUP or ELAPSED_REALTIME_WAKEUP.<br><br>
      *             RTC_WAKEUP 또는 ELAPSED_REALTIME_WAKEUP 등 알람 타입입니다.<br>
-     * @return Boolean true if alarm was registered successfully, false otherwise.<br><br>
-     *         알람 등록 성공 시 true, 실패 시 false입니다.<br>
+     * @return [SystemResult.Success] if alarm was registered successfully,
+     *         [SystemResult.PermissionDenied] if permission is missing, [SystemResult.Failure] on error.<br><br>
+     *         알람 등록 성공 시 [SystemResult.Success],
+     *         권한 없음 시 [SystemResult.PermissionDenied], 오류 시 [SystemResult.Failure]입니다.<br>
      */
     public fun registerRepeating(
         receiver: Class<*>,
@@ -139,15 +155,15 @@ public open class AlarmController(
         intervalMillis: Long,
         namespace: String? = null,
         type: Int = AlarmManager.RTC_WAKEUP,
-    ): Boolean = tryCatchSystemManager(false) {
+    ): SystemResult<Unit> = tryCatchSystemManagerResult {
         val safeInterval = resolveRepeatingInterval(intervalMillis)
         val calendar = getCalendar(alarmVo)
         val pendingIntent = getAlarmPendingIntent(receiver, alarmVo.key, namespace)
-            ?: return@tryCatchSystemManager false
+            ?: return@tryCatchSystemManagerResult SystemResult.Failure(null)
 
         alarmManager.setRepeating(type, calendar.timeInMillis, safeInterval, pendingIntent)
         Logx.d("Repeating alarm registered for key: ${alarmVo.key} at ${calendar.time}, interval: $safeInterval")
-        return true
+        SystemResult.Success(Unit)
     }
 
     /**
@@ -161,14 +177,16 @@ public open class AlarmController(
      *                스케줄과 알림 메타데이터를 포함한 알람 데이터입니다.<br>
      * @param namespace Optional namespace to avoid requestCode collisions.<br><br>
      *                  requestCode 충돌 방지를 위한 선택 네임스페이스입니다.<br>
-     * @return Boolean true if alarm was registered successfully, false otherwise.<br><br>
-     *         알람 등록 성공 시 true, 실패 시 false입니다.<br>
+     * @return [SystemResult.Success] if alarm was registered successfully,
+     *         [SystemResult.PermissionDenied] if permission is missing, [SystemResult.Failure] on error.<br><br>
+     *         알람 등록 성공 시 [SystemResult.Success],
+     *         권한 없음 시 [SystemResult.PermissionDenied], 오류 시 [SystemResult.Failure]입니다.<br>
      */
     public fun registerBySchedule(
         receiver: Class<*>,
         alarmVo: AlarmVO,
         namespace: String? = null,
-    ): Boolean = when (alarmVo.schedule.idleMode) {
+    ): SystemResult<Unit> = when (alarmVo.schedule.idleMode) {
         AlarmIdleMode.NONE -> registerAlarmClock(receiver, alarmVo, namespace)
         AlarmIdleMode.INEXACT -> registerAlarmAndAllowWhileIdle(receiver, alarmVo, namespace)
         AlarmIdleMode.EXACT -> registerAlarmExactAndAllowWhileIdle(receiver, alarmVo, namespace)
@@ -184,14 +202,16 @@ public open class AlarmController(
      *                스케줄과 알림 메타데이터를 포함한 알람 데이터입니다.<br>
      * @param namespace Optional namespace to avoid requestCode collisions.<br><br>
      *                  requestCode 충돌 방지를 위한 선택 네임스페이스입니다.<br>
-     * @return Boolean true if alarm was updated successfully, false otherwise.<br><br>
-     *         알람 업데이트 성공 시 true, 실패 시 false입니다.<br>
+     * @return [SystemResult.Success] if alarm was updated successfully,
+     *         [SystemResult.PermissionDenied] if permission is missing, [SystemResult.Failure] on error.<br><br>
+     *         알람 업데이트 성공 시 [SystemResult.Success],
+     *         권한 없음 시 [SystemResult.PermissionDenied], 오류 시 [SystemResult.Failure]입니다.<br>
      */
     public fun updateAlarmClock(
         receiver: Class<*>,
         alarmVo: AlarmVO,
         namespace: String? = null,
-    ): Boolean = updateInternal(alarmVo.key, receiver, namespace) {
+    ): SystemResult<Unit> = updateInternal(alarmVo.key, receiver, namespace) {
         registerAlarmClock(receiver, alarmVo, namespace)
     }
 
@@ -205,14 +225,16 @@ public open class AlarmController(
      *                스케줄과 알림 메타데이터를 포함한 알람 데이터입니다.<br>
      * @param namespace Optional namespace to avoid requestCode collisions.<br><br>
      *                  requestCode 충돌 방지를 위한 선택 네임스페이스입니다.<br>
-     * @return Boolean true if alarm was updated successfully, false otherwise.<br><br>
-     *         알람 업데이트 성공 시 true, 실패 시 false입니다.<br>
+     * @return [SystemResult.Success] if alarm was updated successfully,
+     *         [SystemResult.PermissionDenied] if permission is missing, [SystemResult.Failure] on error.<br><br>
+     *         알람 업데이트 성공 시 [SystemResult.Success],
+     *         권한 없음 시 [SystemResult.PermissionDenied], 오류 시 [SystemResult.Failure]입니다.<br>
      */
     public fun updateExactAndAllowWhileIdle(
         receiver: Class<*>,
         alarmVo: AlarmVO,
         namespace: String? = null,
-    ): Boolean = updateInternal(alarmVo.key, receiver, namespace) {
+    ): SystemResult<Unit> = updateInternal(alarmVo.key, receiver, namespace) {
         registerAlarmExactAndAllowWhileIdle(receiver, alarmVo, namespace)
     }
 
@@ -226,14 +248,16 @@ public open class AlarmController(
      *                스케줄과 알림 메타데이터를 포함한 알람 데이터입니다.<br>
      * @param namespace Optional namespace to avoid requestCode collisions.<br><br>
      *                  requestCode 충돌 방지를 위한 선택 네임스페이스입니다.<br>
-     * @return Boolean true if alarm was updated successfully, false otherwise.<br><br>
-     *         알람 업데이트 성공 시 true, 실패 시 false입니다.<br>
+     * @return [SystemResult.Success] if alarm was updated successfully,
+     *         [SystemResult.PermissionDenied] if permission is missing, [SystemResult.Failure] on error.<br><br>
+     *         알람 업데이트 성공 시 [SystemResult.Success],
+     *         권한 없음 시 [SystemResult.PermissionDenied], 오류 시 [SystemResult.Failure]입니다.<br>
      */
     public fun updateAllowWhileIdle(
         receiver: Class<*>,
         alarmVo: AlarmVO,
         namespace: String? = null,
-    ): Boolean = updateInternal(alarmVo.key, receiver, namespace) {
+    ): SystemResult<Unit> = updateInternal(alarmVo.key, receiver, namespace) {
         registerAlarmAndAllowWhileIdle(receiver, alarmVo, namespace)
     }
 
@@ -251,8 +275,10 @@ public open class AlarmController(
      *                  requestCode 충돌 방지를 위한 선택 네임스페이스입니다.<br>
      * @param type Alarm type such as RTC_WAKEUP or ELAPSED_REALTIME_WAKEUP.<br><br>
      *             RTC_WAKEUP 또는 ELAPSED_REALTIME_WAKEUP 등 알람 타입입니다.<br>
-     * @return Boolean true if alarm was updated successfully, false otherwise.<br><br>
-     *         알람 업데이트 성공 시 true, 실패 시 false입니다.<br>
+     * @return [SystemResult.Success] if alarm was updated successfully,
+     *         [SystemResult.PermissionDenied] if permission is missing, [SystemResult.Failure] on error.<br><br>
+     *         알람 업데이트 성공 시 [SystemResult.Success],
+     *         권한 없음 시 [SystemResult.PermissionDenied], 오류 시 [SystemResult.Failure]입니다.<br>
      */
     public fun updateRepeating(
         receiver: Class<*>,
@@ -260,7 +286,7 @@ public open class AlarmController(
         intervalMillis: Long,
         namespace: String? = null,
         type: Int = AlarmManager.RTC_WAKEUP,
-    ): Boolean = updateInternal(alarmVo.key, receiver, namespace) {
+    ): SystemResult<Unit> = updateInternal(alarmVo.key, receiver, namespace) {
         registerRepeating(receiver, alarmVo, intervalMillis, namespace, type)
     }
 
@@ -334,19 +360,21 @@ public open class AlarmController(
      *                  requestCode 충돌 방지를 위한 선택 네임스페이스입니다.<br>
      * @param registerBlock Registration function to execute.<br><br>
      *                      실제 등록을 수행하는 함수입니다.<br>
-     * @return Boolean true if update succeeded, false otherwise.<br><br>
-     *         업데이트 성공 시 true, 실패 시 false입니다.<br>
+     * @return [SystemResult.Success] if update succeeded,
+     *         [SystemResult.PermissionDenied] if permission is missing, [SystemResult.Failure] on error.<br><br>
+     *         업데이트 성공 시 [SystemResult.Success],
+     *         권한 없음 시 [SystemResult.PermissionDenied], 오류 시 [SystemResult.Failure]입니다.<br>
      */
     private inline fun updateInternal(
         key: Int,
         receiver: Class<*>,
         namespace: String?,
-        registerBlock: () -> Boolean,
-    ): Boolean = tryCatchSystemManager(false) {
+        registerBlock: () -> SystemResult<Unit>,
+    ): SystemResult<Unit> = tryCatchSystemManagerResult {
         if (exists(key, receiver, namespace)) {
             remove(key, receiver, namespace)
         }
-        return@tryCatchSystemManager registerBlock()
+        registerBlock()
     }
 
     /**
@@ -402,10 +430,14 @@ public open class AlarmController(
      *                 알람 생성에 사용된 BroadcastReceiver 클래스입니다.<br>
      * @param namespace Optional namespace to avoid requestCode collisions.<br><br>
      *                  requestCode 충돌 방지를 위한 선택 네임스페이스입니다.<br>
-     * @return Boolean true if alarm was found and cancelled, false if not found.<br><br>
-     *         알람을 찾아 취소했으면 true, 찾지 못하면 false입니다.<br>
+     * @return [SystemResult.Success] with `true` if alarm was found and cancelled,
+     *         [SystemResult.Success] with `false` if alarm was not found,
+     *         [SystemResult.PermissionDenied] if permission is missing, [SystemResult.Failure] on error.<br><br>
+     *         알람을 찾아 취소했으면 [SystemResult.Success](`true`),
+     *         알람을 찾지 못했으면 [SystemResult.Success](`false`),
+     *         권한 없음 시 [SystemResult.PermissionDenied], 오류 시 [SystemResult.Failure]입니다.<br>
      */
-    public fun remove(key: Int, receiver: Class<*>, namespace: String? = null): Boolean = tryCatchSystemManager(false) {
+    public fun remove(key: Int, receiver: Class<*>, namespace: String? = null): SystemResult<Boolean> = tryCatchSystemManagerResult {
         val intent = Intent(context, receiver).apply {
             putExtra(AlarmConstants.ALARM_KEY, key)
         }
@@ -416,14 +448,14 @@ public open class AlarmController(
             PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE,
         )
 
-        return if (pendingIntent != null) {
+        if (pendingIntent != null) {
             alarmManager.cancel(pendingIntent)
             pendingIntent.cancel()
             Logx.d("Alarm with key $key cancelled successfully")
-            true
+            SystemResult.Success(true)
         } else {
             Logx.w("No alarm found with key $key")
-            false
+            SystemResult.Success(false)
         }
     }
 

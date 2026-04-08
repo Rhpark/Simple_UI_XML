@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat
 import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
 import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
 import kr.open.library.simple_ui.core.logcat.Logx
+import kr.open.library.simple_ui.system_manager.core.base.SystemResult
 import kr.open.library.simple_ui.system_manager.core.controller.alarm.AlarmConstants.ACTION_SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED
 import kr.open.library.simple_ui.system_manager.core.controller.alarm.AlarmConstants.ALARM_KEY
 import kr.open.library.simple_ui.system_manager.core.controller.alarm.AlarmConstants.ALARM_KEY_DEFAULT_VALUE
@@ -352,7 +353,7 @@ public abstract class BaseAlarmReceiver : BroadcastReceiver() {
                 }
                 val option = buildNotificationOption(context, alarmVo)
                 val shown = showAlarmNotification(option, alarmVo)
-                if (shown) {
+                if (shown is SystemResult.Success) {
                     Logx.d("Alarm notification shown for key: $key")
                 } else {
                     Logx.w("Failed to show alarm notification for key: $key")
@@ -382,7 +383,7 @@ public abstract class BaseAlarmReceiver : BroadcastReceiver() {
      * 호출부에서 런타임 권한 검증 후 알람 알림을 표시합니다.<br>
      */
     @SuppressLint("MissingPermission")
-    private fun showAlarmNotification(option: SimpleNotificationOptionBase, alarmVo: AlarmVO): Boolean =
+    private fun showAlarmNotification(option: SimpleNotificationOptionBase, alarmVo: AlarmVO): SystemResult<Unit> =
         notificationController.showNotification(option, resolveNotificationShowType(alarmVo))
 
     /**
@@ -395,10 +396,13 @@ public abstract class BaseAlarmReceiver : BroadcastReceiver() {
      *                        알람 컨트롤러 인스턴스입니다.<br>
      * @param alarmVo The alarm data to register.<br><br>
      *                등록할 알람 데이터입니다.<br>
-     * @return `true` if registration succeeded, `false` otherwise.<br><br>
-     *         등록 성공 시 true, 실패 시 false입니다.<br>
+     * @return [SystemResult.Success] if registration succeeded, [SystemResult.Failure] otherwise.<br><br>
+     *         등록 성공 시 [SystemResult.Success], 실패 시 [SystemResult.Failure]입니다.<br>
      */
-    private fun registerAlarm(alarmController: AlarmController, alarmVo: AlarmVO): Boolean = when (resolveRegisterType(alarmVo)) {
+    private fun registerAlarm(
+        alarmController: AlarmController,
+        alarmVo: AlarmVO,
+    ): SystemResult<Unit> = when (resolveRegisterType(alarmVo)) {
         RegisterType.ALARM_AND_ALLOW_WHILE_IDLE ->
             alarmController.registerAlarmAndAllowWhileIdle(classType, alarmVo, resolveAlarmNamespace(alarmVo))
 

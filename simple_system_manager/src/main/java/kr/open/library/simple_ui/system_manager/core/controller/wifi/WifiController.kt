@@ -17,6 +17,7 @@ import androidx.annotation.RequiresPermission
 import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
 import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.system_manager.core.base.BaseSystemService
+import kr.open.library.simple_ui.system_manager.core.base.SystemResult
 import kr.open.library.simple_ui.system_manager.core.controller.wifi.internal.WifiCapabilityChecker
 import kr.open.library.simple_ui.system_manager.core.controller.wifi.internal.WifiConnectionInfoProvider
 import kr.open.library.simple_ui.system_manager.core.controller.wifi.internal.WifiOperationGuard
@@ -112,27 +113,29 @@ public open class WifiController(
 
     /**
      * Enables or disables WiFi.<br>
-     * Note: Deprecated on Android Q (API 29+), user must enable manually.<br><br>
+     * Note: Deprecated on Android Q (API 29+), returns [SystemResult.PolicyRestricted] on API 29+.<br><br>
      * WiFi를 활성화 또는 비활성화합니다.<br>
-     * 참고: Android Q (API 29+)에서 더 이상 사용되지 않으며, 사용자가 수동으로 활성화해야 합니다.<br>
+     * 참고: Android Q (API 29+)에서 더 이상 사용되지 않으며, API 29+에서는 [SystemResult.PolicyRestricted]를 반환합니다.<br>
      *
      * @param enabled `true` to enable WiFi, `false` to disable.<br><br>
      *                WiFi를 활성화하려면 `true`, 비활성화하려면 `false`.
-     * @return `true` if operation succeeded, `false` otherwise or on API 29+.<br><br>
-     *         작업 성공 시 `true`, 실패 또는 API 29+ 에서 `false`.<br>
+     * @return [SystemResult.Success] if operation succeeded, [SystemResult.PolicyRestricted] on API 29+,
+     *         [SystemResult.PermissionDenied] if permission is missing, [SystemResult.Failure] on error.<br><br>
+     *         성공 시 [SystemResult.Success], API 29+에서 [SystemResult.PolicyRestricted],
+     *         권한 없음 시 [SystemResult.PermissionDenied], 오류 시 [SystemResult.Failure].<br>
      */
     @RequiresPermission(CHANGE_WIFI_STATE)
-    public fun setWifiEnabled(enabled: Boolean): Boolean = tryCatchSystemManager(false) {
-        return checkSdkVersion(Build.VERSION_CODES.Q,
-            positiveWork = {
-                Logx.w("WiFi control deprecated on API 29+, user must enable manually")
-                false
-            },
-            negativeWork = {
-                @Suppress("DEPRECATION")
-                wifiManager.setWifiEnabled(enabled)
-            },
-        )
+    public fun setWifiEnabled(enabled: Boolean): SystemResult<Unit> = tryCatchSystemManagerResult {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            Logx.w("WiFi control deprecated on API 29+, user must enable manually")
+            return@tryCatchSystemManagerResult SystemResult.PolicyRestricted
+        }
+        @Suppress("DEPRECATION")
+        return@tryCatchSystemManagerResult if (wifiManager.setWifiEnabled(enabled)) {
+            SystemResult.Success(Unit)
+        } else {
+            SystemResult.Failure(null)
+        }
     }
 
     /**
@@ -161,13 +164,19 @@ public open class WifiController(
      * Starts WiFi network scanning.<br><br>
      * WiFi 네트워크 스캔을 시작합니다.<br>
      *
-     * @return `true` if scan was initiated successfully, `false` otherwise.<br><br>
-     *         스캔이 성공적으로 시작되면 `true`, 그렇지 않으면 `false`.<br>
+     * @return [SystemResult.Success] if scan was initiated successfully,
+     *         [SystemResult.PermissionDenied] if permission is missing, [SystemResult.Failure] on error.<br><br>
+     *         스캔이 성공적으로 시작되면 [SystemResult.Success],
+     *         권한 없음 시 [SystemResult.PermissionDenied], 오류 시 [SystemResult.Failure].<br>
      */
     @RequiresPermission(CHANGE_WIFI_STATE)
-    public fun startScan(): Boolean = tryCatchSystemManager(false) {
+    public fun startScan(): SystemResult<Unit> = tryCatchSystemManagerResult {
         @Suppress("DEPRECATION")
-        return wifiManager.startScan()
+        return@tryCatchSystemManagerResult if (wifiManager.startScan()) {
+            SystemResult.Success(Unit)
+        } else {
+            SystemResult.Failure(null)
+        }
     }
 
     /**
@@ -297,31 +306,43 @@ public open class WifiController(
      * Attempts to reconnect to WiFi.<br><br>
      * WiFi 재연결을 시도합니다.<br>
      *
-     * @return `true` if reconnect was initiated successfully, `false` otherwise.<br><br>
-     *         재연결이 성공적으로 시작되면 `true`, 그렇지 않으면 `false`.<br>
+     * @return [SystemResult.Success] if reconnect was initiated successfully,
+     *         [SystemResult.PermissionDenied] if permission is missing, [SystemResult.Failure] on error.<br><br>
+     *         재연결이 성공적으로 시작되면 [SystemResult.Success],
+     *         권한 없음 시 [SystemResult.PermissionDenied], 오류 시 [SystemResult.Failure].<br>
      */
     @RequiresPermission(CHANGE_WIFI_STATE)
-    public fun reconnect(): Boolean = tryCatchSystemManager(false) { return wifiManager.reconnect() }
+    public fun reconnect(): SystemResult<Unit> = tryCatchSystemManagerResult {
+        if (wifiManager.reconnect()) SystemResult.Success(Unit) else SystemResult.Failure(null)
+    }
 
     /**
      * Attempts to reassociate with WiFi access point.<br><br>
      * WiFi 액세스 포인트와 재협상을 시도합니다.<br>
      *
-     * @return `true` if reassociate was initiated successfully, `false` otherwise.<br><br>
-     *         재협상이 성공적으로 시작되면 `true`, 그렇지 않으면 `false`.<br>
+     * @return [SystemResult.Success] if reassociate was initiated successfully,
+     *         [SystemResult.PermissionDenied] if permission is missing, [SystemResult.Failure] on error.<br><br>
+     *         재협상이 성공적으로 시작되면 [SystemResult.Success],
+     *         권한 없음 시 [SystemResult.PermissionDenied], 오류 시 [SystemResult.Failure].<br>
      */
     @RequiresPermission(CHANGE_WIFI_STATE)
-    public fun reassociate(): Boolean = tryCatchSystemManager(false) { return wifiManager.reassociate() }
+    public fun reassociate(): SystemResult<Unit> = tryCatchSystemManagerResult {
+        if (wifiManager.reassociate()) SystemResult.Success(Unit) else SystemResult.Failure(null)
+    }
 
     /**
      * Disconnects from current WiFi network.<br><br>
      * 현재 WiFi 네트워크로부터 연결을 해제합니다.<br>
      *
-     * @return `true` if disconnect was initiated successfully, `false` otherwise.<br><br>
-     *         연결 해제가 성공적으로 시작되면 `true`, 그렇지 않으면 `false`.<br>
+     * @return [SystemResult.Success] if disconnect was initiated successfully,
+     *         [SystemResult.PermissionDenied] if permission is missing, [SystemResult.Failure] on error.<br><br>
+     *         연결 해제가 성공적으로 시작되면 [SystemResult.Success],
+     *         권한 없음 시 [SystemResult.PermissionDenied], 오류 시 [SystemResult.Failure].<br>
      */
     @RequiresPermission(CHANGE_WIFI_STATE)
-    public fun disconnect(): Boolean = tryCatchSystemManager(false) { return wifiManager.disconnect() }
+    public fun disconnect(): SystemResult<Unit> = tryCatchSystemManagerResult {
+        if (wifiManager.disconnect()) SystemResult.Success(Unit) else SystemResult.Failure(null)
+    }
 
     /**
      * Gets the SSID of currently connected WiFi network.<br><br>
