@@ -6,7 +6,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.onFailure
 import kotlinx.coroutines.launch
 import kr.open.library.simple_ui.core.logcat.config.LogxConfigSnapshot
 import java.io.IOException
@@ -99,7 +101,7 @@ internal class LogxFileWriter {
      * <br><br>
      * writer 명령을 전달하는 채널입니다.
      */
-    private val channel = Channel<WriterCommand>(Channel.BUFFERED)
+    private val channel = Channel<WriterCommand>(1024, onBufferOverflow = BufferOverflow.DROP_OLDEST)
 
     init {
         // writer 전용 코루틴에서 명령을 순차 처리합니다.
@@ -132,10 +134,8 @@ internal class LogxFileWriter {
      */
     fun writeLines(context: Context, config: LogxConfigSnapshot, lines: List<String>, errorTag: String) {
         if (lines.isEmpty()) return
-        val command = WriterCommand.WriteLines(context, config, lines, errorTag)
-        val result = channel.trySend(command)
-        if (result.isFailure) {
-            scope.launch { channel.send(command) }
+        channel.trySend(WriterCommand.WriteLines(context, config, lines, errorTag)).onFailure {
+            Log.e(errorTag, "writeLines Failed to enqueue file log lines.")
         }
     }
 
@@ -147,9 +147,9 @@ internal class LogxFileWriter {
      * writer 세션을 닫도록 요청합니다.
      */
     fun requestClose() {
-        val result = channel.trySend(WriterCommand.Close)
-        if (result.isFailure) {
-            scope.launch { channel.send(WriterCommand.Close) }
+        channel.trySend(WriterCommand.Close).onFailure {
+            synchronized(fileLock) { fileSession.close() }
+            Log.e("LogxFileWriter", "requestClose Failed. WriterCommand.Close")
         }
     }
 

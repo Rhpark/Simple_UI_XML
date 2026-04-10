@@ -9,7 +9,6 @@ import kr.open.library.simple_ui.core.logcat.config.LogxConfigSnapshot
 import kr.open.library.simple_ui.core.logcat.config.LogxConfigStore
 import kr.open.library.simple_ui.core.logcat.internal.common.LogxTagHelper
 import kr.open.library.simple_ui.core.logcat.internal.extractor.LogStackTraceExtractor
-import kr.open.library.simple_ui.core.logcat.internal.filter.LogxFilter
 import kr.open.library.simple_ui.core.logcat.internal.formatter.FormattedJson
 import kr.open.library.simple_ui.core.logcat.internal.formatter.LogxFileLineBuilder
 import kr.open.library.simple_ui.core.logcat.internal.formatter.LogxFormatter
@@ -27,7 +26,6 @@ import java.util.concurrent.atomic.AtomicBoolean
  * @param contextProvider 파일 저장에 필요한 컨텍스트 제공자.
  * @param fileWriter 파일 로그 작성자.
  * @param configStore 설정 스토어.
- * @param filter 로그 허용 여부 필터.
  * @param formatter 로그 포맷터.
  * @param consoleWriter Logcat 출력기.
  * @param fileLineBuilder 파일 라인 빌더.
@@ -36,7 +34,6 @@ internal open class LogxPipeline(
     private val contextProvider: () -> Context?,
     private val fileWriter: LogxFileWriter,
     private val configStore: LogxConfigStore = LogxConfigStore,
-    private val filter: LogxFilter = LogxFilter,
     private val formatter: LogxFormatter = LogxFormatter,
     private val consoleWriter: LogxConsoleWriter = LogxConsoleWriter,
     private val fileLineBuilder: LogxFileLineBuilder = LogxFileLineBuilder(),
@@ -57,11 +54,11 @@ internal open class LogxPipeline(
      */
     private val warnedNoContext = AtomicBoolean(false)
 
-    public fun setDevelopmentMode(context: Context) {
+    fun setDevelopmentMode(context: Context) {
         developmentMode = ((context.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) != 0)
     }
 
-    public fun isDevelopmentMode(): Boolean = developmentMode
+    fun isDevelopmentMode(): Boolean = developmentMode
 
     /**
      * 일반 로그(d/i/w/e/v 등)를 처리합니다.
@@ -77,12 +74,10 @@ internal open class LogxPipeline(
      * @param tagProvided 태그가 제공되었는지 여부.
      */
     open fun logStandard(type: LogType, inputTag: String?, msg: Any?, hasMessage: Boolean, tagProvided: Boolean) {
-        val config = configStore.snapshot()
-        if (!config.isLogging) return
-        if (!config.logTypes.contains(type)) return
-
         val tag = resolveTag(inputTag, tagProvided)
-        if (!filter.isAllowed(type, tag, config)) return
+        val config = configStore.snapshot()
+
+        if (!isAllowed(type, tag, config)) return
 
         val frame = LogStackTraceExtractor.extract(config.skipPackages).current
         val prefix = LogxTagHelper.buildPrefix(config.appName, tag)
@@ -92,6 +87,25 @@ internal open class LogxPipeline(
         writeFileLinesIfEnabled(config, inputTag) {
             fileLineBuilder.buildLines(type, prefix, listOf(payload))
         }
+    }
+
+    /**
+     * 입력된 타입/태그/설정값을 기준으로 로그 출력 허용 여부를 반환합니다.
+     *
+     * Returns whether the log entry is allowed under the current config.
+     * <br><br>
+     * 현재 설정 기준으로 로그 출력을 허용할지 반환합니다.
+     *
+     * @param type 로그 타입.
+     * @param tag 로그 태그(없을 수 있음).
+     * @param config 현재 스냅샷 설정.
+     */
+    fun isAllowed(type: LogType, tag: String?, config: LogxConfigSnapshot): Boolean {
+        if (!config.isLogging) return false
+        if (!config.logTypes.contains(type)) return false
+        if (!config.isLogTagBlockListEnabled) return true
+        if (!LogxTagHelper.isValidTag(tag)) return true
+        return !config.logTagBlockList.contains(tag)
     }
 
     /**
@@ -107,12 +121,10 @@ internal open class LogxPipeline(
      * @param tagProvided 태그가 제공되었는지 여부.
      */
     open fun logParent(inputTag: String?, msg: Any?, hasMessage: Boolean, tagProvided: Boolean) {
-        val config = configStore.snapshot()
-        if (!config.isLogging) return
-        if (!config.logTypes.contains(LogType.PARENT)) return
-
         val tag = resolveTag(inputTag, tagProvided)
-        if (!filter.isAllowed(LogType.PARENT, tag, config)) return
+        val config = configStore.snapshot()
+
+        if (!isAllowed(LogType.PARENT, tag, config)) return
 
         val frames = LogStackTraceExtractor.extract(config.skipPackages)
         val prefix = LogxTagHelper.buildPrefix(config.appName, tag)
@@ -138,12 +150,10 @@ internal open class LogxPipeline(
      * @param threadId 출력할 스레드 ID.
      */
     open fun logThread(inputTag: String?, msg: Any?, hasMessage: Boolean, tagProvided: Boolean, threadId: Long) {
-        val config = configStore.snapshot()
-        if (!config.isLogging) return
-        if (!config.logTypes.contains(LogType.THREAD)) return
-
         val tag = resolveTag(inputTag, tagProvided)
-        if (!filter.isAllowed(LogType.THREAD, tag, config)) return
+        val config = configStore.snapshot()
+
+        if (!isAllowed(LogType.THREAD, tag, config)) return
 
         val frame = LogStackTraceExtractor.extract(config.skipPackages).current
         val prefix = LogxTagHelper.buildPrefix(config.appName, tag)
@@ -167,12 +177,10 @@ internal open class LogxPipeline(
      * @param tagProvided 태그가 제공되었는지 여부.
      */
     open fun logJson(inputTag: String?, json: String, tagProvided: Boolean) {
-        val config = configStore.snapshot()
-        if (!config.isLogging) return
-        if (!config.logTypes.contains(LogType.JSON)) return
-
         val tag = resolveTag(inputTag, tagProvided)
-        if (!filter.isAllowed(LogType.JSON, tag, config)) return
+        val config = configStore.snapshot()
+
+        if (!isAllowed(LogType.JSON, tag, config)) return
 
         val frame = LogStackTraceExtractor.extract(config.skipPackages).current
         val prefix = LogxTagHelper.buildPrefix(config.appName, tag)

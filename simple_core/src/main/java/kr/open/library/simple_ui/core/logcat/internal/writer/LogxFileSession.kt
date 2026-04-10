@@ -115,8 +115,11 @@ internal class LogxFileSession {
     }
 
     private fun closeWriter() {
-        safeCatch {
-            writer?.close()
+        writer?.let {
+            safeCatch {
+                it.flush()
+                it.close()
+            }
         }
         writer = null
     }

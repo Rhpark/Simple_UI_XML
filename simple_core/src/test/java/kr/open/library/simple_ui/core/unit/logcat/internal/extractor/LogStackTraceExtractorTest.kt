@@ -7,7 +7,7 @@ import org.junit.Test
 class LogStackTraceExtractorTest {
     @Test
     fun extractReturnsCurrentFrame() {
-        val frames = LogStackTraceExtractor(emptySet()).extract()
+        val frames = LogStackTraceExtractor.extract(emptySet())
 
         assertTrue(frames.current.fileName.isNotBlank())
         assertTrue(frames.current.methodName.isNotBlank())

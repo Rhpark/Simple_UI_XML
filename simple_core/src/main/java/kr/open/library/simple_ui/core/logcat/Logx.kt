@@ -9,7 +9,6 @@ import androidx.annotation.RestrictTo
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
-import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
 import kr.open.library.simple_ui.core.logcat.config.LogStorageType
 import kr.open.library.simple_ui.core.logcat.config.LogType
 import kr.open.library.simple_ui.core.logcat.config.LogxConfigStore
@@ -186,33 +185,41 @@ object Logx {
      */
     @JvmStatic
     fun setStorageType(type: LogStorageType) {
-        checkSdkVersion(Build.VERSION_CODES.Q,
-            positiveWork = { LogxConfigStore.setStorageType(type) },
-            negativeWork = {
-                if (type == LogStorageType.PUBLIC_EXTERNAL) {
-                    if (appContext == null) {
-                        val message =
-                            "Logx.initialize(context) must be called before setting PUBLIC_EXTERNAL. " +
-                                "Call Logx.initialize(applicationContext) in Application.onCreate()."
-                        if (pipeline.isDevelopmentMode()) {
-                            error(message)
-                        } else {
-                            Log.e(TAG, message)
-                            return@checkSdkVersion
-                        }
-                    } else if (!appContext!!.hasPermissions(WRITE_EXTERNAL_STORAGE)) {
-                        val message = "WRITE_EXTERNAL_STORAGE permission is not granted."
-                        if (pipeline.isDevelopmentMode()) {
-                            error(message)
-                        } else {
-                            Log.e(TAG, message)
-                            return@checkSdkVersion
-                        }
-                    }
-                }
-                LogxConfigStore.setStorageType(type)
-            }
-        )
+        // Android Q(API 29) 이상은 Scoped Storage 정책으로 WRITE_EXTERNAL_STORAGE 권한이 불필요하다.
+        // Android Q (API 29) and above uses Scoped Storage, so no WRITE_EXTERNAL_STORAGE permission is needed.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            LogxConfigStore.setStorageType(type)
+            return
+        }
+        // Q 미만에서 PUBLIC_EXTERNAL 설정 시 context 및 권한을 검증한다.
+        // On API levels below Q, validate context and permission before allowing PUBLIC_EXTERNAL.
+        if (type == LogStorageType.PUBLIC_EXTERNAL && !validatePublicExternalOnLegacy()) return
+        LogxConfigStore.setStorageType(type)
+    }
+
+    /**
+     * Android Q 미만에서 PUBLIC_EXTERNAL 저장소 설정에 필요한 사전 조건을 검증합니다.
+     *
+     * Validates prerequisites for PUBLIC_EXTERNAL storage on API levels below Q.
+     * <br><br>
+     * context 초기화 여부와 WRITE_EXTERNAL_STORAGE 권한 보유 여부를 순서대로 확인합니다.
+     *
+     * @return 모든 조건을 충족하면 true, 하나라도 실패하면 false.
+     *         Returns true when all conditions are met, false otherwise.
+     */
+    private fun validatePublicExternalOnLegacy(): Boolean {
+        if (appContext == null) {
+            failOrLog(
+                "Logx.initialize(context) must be called before setting PUBLIC_EXTERNAL. " +
+                    "Call Logx.initialize(applicationContext) in Application.onCreate()."
+            )
+            return false
+        }
+        if (!appContext!!.hasPermissions(WRITE_EXTERNAL_STORAGE)) {
+            failOrLog("WRITE_EXTERNAL_STORAGE permission is not granted.")
+            return false
+        }
+        return true
     }
 
     /**
