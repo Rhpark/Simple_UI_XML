@@ -178,6 +178,65 @@ internal class RecyclerScrollStateCalculator(
     }
 
     /**
+     * Internal result of scroll accumulation resolution.<br><br>
+     * 스크롤 누적 해석의 내부 결과입니다.<br>
+     *
+     * @property directionResult Public-facing scroll direction update result.<br><br>
+     *                           외부에 반환할 스크롤 방향 업데이트 결과입니다.<br>
+     * @property newAccumulated Updated accumulation value after processing the delta.<br><br>
+     *                          델타 처리 후 갱신된 누적값입니다.<br>
+     */
+    private data class ScrollAccumulationResult(
+        val directionResult: ScrollDirectionUpdateResult,
+        val newAccumulated: Int,
+    )
+
+    /**
+     * Resolves scroll direction from a delta and current accumulation.<br><br>
+     * 델타와 현재 누적값으로 스크롤 방향을 결정합니다.<br>
+     *
+     * @param delta Scroll delta value for this frame.<br><br>
+     *              이번 프레임의 스크롤 델타값입니다.<br>
+     * @param accumulated Current accumulated scroll value.<br><br>
+     *                    현재 누적된 스크롤값입니다.<br>
+     * @param positiveDir Direction when accumulated delta is positive.<br><br>
+     *                    누적값이 양수일 때의 방향입니다.<br>
+     * @param negativeDir Direction when accumulated delta is negative.<br><br>
+     *                    누적값이 음수일 때의 방향입니다.<br>
+     * @return Internal accumulation result with updated direction and new accumulation value.<br><br>
+     *         갱신된 방향과 새 누적값을 담은 내부 누적 결과입니다.<br>
+     */
+    private fun resolveScrollDirection(
+        delta: Int,
+        accumulated: Int,
+        positiveDir: ScrollDirection,
+        negativeDir: ScrollDirection,
+    ): ScrollAccumulationResult {
+        val newAccumulated = accumulated + delta
+        if (abs(newAccumulated) >= scrollDirectionThreshold) {
+            val newDirection = if (newAccumulated > 0) positiveDir else negativeDir
+            val directionChanged = newDirection != currentScrollDirection
+            if (directionChanged) {
+                currentScrollDirection = newDirection
+            }
+            return ScrollAccumulationResult(
+                directionResult = ScrollDirectionUpdateResult(
+                    directionChanged = directionChanged,
+                    newDirection = newDirection,
+                ),
+                newAccumulated = 0,
+            )
+        }
+        return ScrollAccumulationResult(
+            directionResult = ScrollDirectionUpdateResult(
+                directionChanged = false,
+                newDirection = currentScrollDirection,
+            ),
+            newAccumulated = newAccumulated,
+        )
+    }
+
+    /**
      * Updates vertical scroll direction and returns the changes.<br><br>
      * 수직 스크롤 방향을 업데이트하고 변경사항을 반환합니다.<br>
      *
@@ -188,27 +247,9 @@ internal class RecyclerScrollStateCalculator(
      *         스크롤 방향 업데이트 결과.<br>
      */
     fun updateVerticalScrollDirection(dy: Int): ScrollDirectionUpdateResult {
-        accumulatedDy += dy
-
-        if (abs(accumulatedDy) >= scrollDirectionThreshold) {
-            val newDirection = if (accumulatedDy > 0) ScrollDirection.DOWN else ScrollDirection.UP
-            val directionChanged = newDirection != currentScrollDirection
-
-            if (directionChanged) {
-                currentScrollDirection = newDirection
-            }
-            accumulatedDy = 0
-
-            return ScrollDirectionUpdateResult(
-                directionChanged = directionChanged,
-                newDirection = newDirection,
-            )
-        }
-
-        return ScrollDirectionUpdateResult(
-            directionChanged = false,
-            newDirection = currentScrollDirection,
-        )
+        val result = resolveScrollDirection(dy, accumulatedDy, ScrollDirection.DOWN, ScrollDirection.UP)
+        accumulatedDy = result.newAccumulated
+        return result.directionResult
     }
 
     /**
@@ -222,27 +263,9 @@ internal class RecyclerScrollStateCalculator(
      *         스크롤 방향 업데이트 결과.<br>
      */
     fun updateHorizontalScrollDirection(dx: Int): ScrollDirectionUpdateResult {
-        accumulatedDx += dx
-
-        if (abs(accumulatedDx) >= scrollDirectionThreshold) {
-            val newDirection = if (accumulatedDx > 0) ScrollDirection.RIGHT else ScrollDirection.LEFT
-            val directionChanged = newDirection != currentScrollDirection
-
-            if (directionChanged) {
-                currentScrollDirection = newDirection
-            }
-            accumulatedDx = 0
-
-            return ScrollDirectionUpdateResult(
-                directionChanged = directionChanged,
-                newDirection = newDirection,
-            )
-        }
-
-        return ScrollDirectionUpdateResult(
-            directionChanged = false,
-            newDirection = currentScrollDirection,
-        )
+        val result = resolveScrollDirection(dx, accumulatedDx, ScrollDirection.RIGHT, ScrollDirection.LEFT)
+        accumulatedDx = result.newAccumulated
+        return result.directionResult
     }
 
     /**
