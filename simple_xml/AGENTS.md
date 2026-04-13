@@ -6,6 +6,12 @@
 
 
 
+ ## 기능별 전용 규칙
+
+  - ui/adapter (행동 규칙 포함): simple_xml/docs/feature/ui/adapter/AGENTS.md
+  - permissions (리팩터링 계획): simple_xml/docs/feature/permissions/
+
+
  ## 모듈 정의
   - **Android XML UI 전용 레이어**
   - XML 기반 레이아웃 시스템에 특화된 UI 컴포넌트 및 헬퍼 제공

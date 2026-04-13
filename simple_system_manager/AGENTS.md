@@ -22,6 +22,12 @@
   - [README_SERVICE_MANAGER_CONTROL.md](/d:/Android%20Project/SimpleUI_XML/docs/readme/system_manager/controller/README_SERVICE_MANAGER_CONTROL.md)
   - [README_SERVICE_MANAGER_INFO.md](/d:/Android%20Project/SimpleUI_XML/docs/readme/system_manager/info/README_SERVICE_MANAGER_INFO.md)
 
+## 기능별 전용 규칙
+
+- 기능 문서 위치 패턴: `simple_system_manager/docs/feature/system_manager/<controller|info>/<기능명>/`
+  - 각 기능별 PRD.md / SPEC.md / IMPLEMENTATION_PLAN.md 포함
+- systembar (행동 규칙 포함): simple_system_manager/docs/feature/system_manager/controller/systembar/AGENTS.md
+
 ## 검증 원칙
 - 작은 그룹으로 수정하고 즉시 검증합니다.
 - 검증 실패 상태에서 다음 단계로 진행하지 않습니다.

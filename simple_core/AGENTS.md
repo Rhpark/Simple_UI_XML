@@ -7,8 +7,11 @@
 
 
  ## 기능별 전용 규칙
-  - 기능별 상세 규칙은 `simple_core/docs/feature/<기능명>/AGENTS.md`에 위치한다.
-  - permissions: simple_core/docs/feature/permissions/AGENTS.md
+
+- permissions (행동 규칙 포함): simple_core/docs/feature/permissions/AGENTS.md
+- logcat
+  - 사용법: docs/readme/README_LOGX.md
+  - 설계 문서: simple_core/docs/feature/logcat/ (PRD.md / SPEC.md / IMPLEMENTATION_PLAN.md)
 
 
 
@@ -58,8 +61,6 @@
    - **config**: 로그 설정 관리 (simple_core/src/main/java/kr/open/library/simple_ui/core/logcat/config/)
    - **internal**: 파일 저장/필터링/포맷팅 구현체 (simple_core/src/main/java/kr/open/library/simple_ui/core/logcat/internal/)
    - 파일 저장, 포매터, 필터, 스택트레이스 지원
-   - 참고 문서
-     - simple_core/docs/feature/logcat/*.md
 
 
   ### permissions
