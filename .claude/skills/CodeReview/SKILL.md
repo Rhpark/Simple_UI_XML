@@ -42,6 +42,14 @@ docs/rules/code_review/ 의 5단계를 순서대로 수행한다.
 1. docs/rules/code_review/STEP1_FUNCTIONAL.md   - 기능 검증
 2. docs/rules/code_review/STEP2_LOGIC.md        - 로직 & 안정성
 3. docs/rules/code_review/STEP3_ARCHITECTURE.md - 아키텍처
+   완료 후 하네스 점검 (아래 경로에 문서가 있는 경우):
+   - `{모듈}/docs/feature/{기능명}/PRD.md` 읽기
+   - `{모듈}/docs/feature/{기능명}/SPEC.md` 읽기
+   - [ ] PRD 금지 패턴을 위반하는 코드가 없는가 (위반 시 CRITICAL)
+   - [ ] PRD 경계 조건을 벗어난 구현이 없는가 (위반 시 HIGH)
+   - [ ] SPEC 판단 기준과 다른 위치에 코드가 배치되지 않았는가 (위반 시 MEDIUM)
+   문서가 없는 경우 → 하네스 점검 생략, CODE_ARCHITECTURE.md 기준으로만 판단
+   미충족 항목은 이슈로 등록한다
 4. docs/rules/code_review/STEP4_CODE_QUALITY.md - 코드 품질
 5. docs/rules/code_review/STEP5_NAMING.md       - 명명 규칙
 
