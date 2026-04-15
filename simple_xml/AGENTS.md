@@ -55,19 +55,8 @@
 
 
   ### ui/adapter
-   - **common**: 공통 클릭/데이터 검증/스레드 가드/읽기 API/결과 타입 (simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/adapter/common/)
-   - **list**: ListAdapter 기반 비동기 업데이트 계층 (simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/adapter/list/)
-     - base: `BaseRcvListAdapter`
-     - queue: `AdapterOperationQueue`, `OperationQueueProcessor`, `QueuePolicy`
-     - result: `ListAdapterResult`
-     - simple: `SimpleRcvListAdapter`, `SimpleRcvDataBindingListAdapter`, `SimpleRcvViewBindingListAdapter`
-   - **normal**: RecyclerView.Adapter 기반 즉시 반영 계층 (simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/adapter/normal/)
-     - root: `RootRcvAdapter`
-     - base: `BaseRcvAdapter` (content 전용)
-     - headerfooter: `HeaderFooterRcvAdapter` (Header / Content / Footer 섹션 지원)
-     - result: `NormalAdapterResult`
-     - simple: `SimpleRcvAdapter`, `SimpleBindingRcvAdapter`, `SimpleViewBindingRcvAdapter`, `SimpleHeaderFooter...`
-   - **viewholder**: ViewHolder 기본 구현 (simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/adapter/viewholder/)
+
+   - 세부 구조 및 코드 범위: simple_xml/docs/feature/ui/adapter/AGENTS.md 참조
 
 
   ### ui/view
@@ -164,12 +153,8 @@
 
 
   ### RecyclerView Adapter
-   - 단순 content 즉시 반영은 normal 패키지(`BaseRcvAdapter`, `SimpleRcvAdapter` 계열) 사용
-   - Header / Content / Footer 섹션이 필요하면 `HeaderFooterRcvAdapter`, `SimpleHeaderFooter...` 계열 사용
-   - 빈번하거나 대량의 리스트 변경은 list 패키지(`BaseRcvListAdapter`) 사용
-   - list 패키지 어댑터는 `AdapterOperationQueue`를 내부 사용
-   - DiffUtil 사용 시 list 패키지의 어댑터 활용
-   - ViewHolder는 viewholder 패키지 기본 클래스 참고
+
+   - 어댑터 선택 기준 및 사용 원칙: simple_xml/docs/feature/ui/adapter/AGENTS.md 참조
 
 
   ### 권한 요청
@@ -274,12 +259,8 @@
 
 
   ### Adapter 작성
-   - RootRcvAdapter(공통 normal 기반): (simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/adapter/normal/root/RootRcvAdapter.kt)
-   - BaseRcvAdapter(일반 content 전용): (simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/adapter/normal/base/BaseRcvAdapter.kt)
-   - HeaderFooterRcvAdapter(section 지원): (simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/adapter/normal/headerfooter/HeaderFooterRcvAdapter.kt)
-   - BaseRcvListAdapter(ListAdapter 기반): (simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/adapter/list/base/BaseRcvListAdapter.kt)
-   - AdapterOperationQueue(BaseRcvListAdapter 내부): (simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/adapter/list/queue/AdapterOperationQueue.kt)
-   - DiffUtil 콜백: (simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/adapter/list/base/diffutil/RcvListDiffUtilCallBack.kt)
+
+   - 코드 경로 및 예제: simple_xml/docs/feature/ui/adapter/AGENTS.md 참조
 
 
   ### 권한 요청

@@ -102,7 +102,30 @@ requester.requestPermissions(
 - 콜백은 복원되지 않으므로 orphaned 결과는 `consumeOrphanedDeniedResults()`로 회수한다.
 - 프로세스 복원 후 자동 재진입은 하지 않는다.
 
+## 금지 패턴
+
+- Activity/Fragment/Lifecycle을 core 패키지에 두지 않는다
+- 전역 싱글턴 인스턴스를 허용하지 않는다 (Activity/Fragment 단위 유지)
+- UI(다이얼로그/토스트/스낵바)를 권한 모듈 내부에서 직접 제공하지 않는다
+- 결과를 예외(Exception)로 반환하지 않는다 — `PermissionDeniedType` 사용
+
+## 판단 기준
+
+- Activity/Fragment 없이 동작 가능한 로직 → core
+- ActivityResult / Lifecycle 의존 로직 → xml
+- 권한 분류 / 결과 모델 / 특수 권한 매핑 → core
+- 요청 큐 / UI 훅 / 상태 보존 → xml
+
+## 경계 조건
+
+- 책임지는 범위: 권한 체크 / 결과 모델 / 요청 흐름 / 상태 보존
+- 책임지지 않는 범위:
+  - 설명 UI 렌더링 (onRationaleNeeded 훅으로만 제공)
+  - 설정 화면 이동 UI (onNavigateToSettings 훅으로만 제공)
+  - 권한 거부 후 비즈니스 로직 처리
+
 ## 문서 연계
+
 - PRD: `simple_core/docs/feature/permissions/PRD.md`
 - SPEC: `simple_core/docs/feature/permissions/SPEC.md`
 - Implementation Plan: `simple_core/docs/feature/permissions/IMPLEMENTATION_PLAN.md`

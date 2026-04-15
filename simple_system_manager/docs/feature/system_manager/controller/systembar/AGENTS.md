@@ -29,4 +29,25 @@
   - `simple_xml/src/main/res/values/ids.xml`
 
 ## 테스트 확인 경로
+
 - `simple_system_manager/src/test/java/kr/open/library/simple_ui/system_manager/robolectric/xml/controller/systembar/internal/helper/SystemBarHelperStateRobolectricTest.kt`
+
+## 금지 패턴
+
+- `SystemBarController`를 전역 싱글턴으로 사용하지 않는다 — Window 단위로 캐시 관리
+- `SystemBarController(window)`를 직접 생성하지 않는다 — `Window.getSystemBarController()` 사용
+- View / Activity를 `system_manager.core.*` 패키지에 두지 않는다
+
+## 판단 기준
+
+- 상태바 / 내비게이션바 색상 · 가시성 제어 → `SystemBarController`
+- Window 단위 캐시 관리 → `Window.getSystemBarController()` / `Window.destroySystemBarControllerCache()`
+- 인셋 / 화면 크기 조회 → `DisplayInfo`
+
+## 경계 조건
+
+- 책임지는 범위: 상태바 · 내비게이션바 색상 / 가시성 / Edge-to-edge 설정
+- 책임지지 않는 범위:
+  - 소프트키보드 제어 (`SoftKeyboardController` 담당)
+  - 플로팅 뷰 제어 (`FloatingViewController` 담당)
+  - 권한 요청 흐름

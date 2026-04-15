@@ -87,10 +87,10 @@
  ## 개발 시 주의사항
 
   ### 권한 처리
-   - 시스템 서비스 래퍼 작성 시 BaseSystemService 상속 필수
-   - requiredPermissions 생성자 파라미터로 필요 권한 명시
-   - tryCatchSystemManager로 안전한 기본값 반환 패턴 유지
+
+   - Activity/Fragment 없이 동작 가능한 권한 체크 로직만 core에 위치한다
    - @RequiresPermission 어노테이션 명시
+   - 시스템 서비스 래퍼(BaseSystemService, tryCatchSystemManager)는 simple_system_manager 모듈에 위치 → simple_system_manager/AGENTS.md 참조
 
   ### 테스트 용이성
    - 모든 시스템 서비스는 인터페이스 또는 추상 클래스 기반
@@ -98,6 +98,29 @@
    - 부작용(side effect) 최소화
 
 
+
+ ## 금지 패턴
+
+- Activity / Fragment / View 등 UI 컴포넌트를 core에 두지 않는다
+- simple_xml / simple_system_manager 모듈을 역방향 의존하지 않는다
+- 전역 싱글턴 인스턴스를 허용하지 않는다 (Context는 생성자 주입)
+- UI(Toast / Dialog / Snackbar)를 core에서 직접 제공하지 않는다
+
+ ## 판단 기준
+
+- Activity/Fragment 없이 동작 가능한 로직 → core
+- Activity/Fragment 또는 ActivityResult 필요 → simple_xml
+- 시스템 서비스 controller/info → simple_system_manager
+- SDK 버전 분기가 필요한 경우 → `checkSdkVersion` / `@RequiresApi` 사용
+
+ ## 경계 조건
+
+- 책임지는 범위: 비즈니스 로직 / 데이터 처리 / 시스템 서비스 추상화 / 공통 유틸
+- 책임지지 않는 범위:
+  - UI 렌더링 및 사용자 인터랙션
+  - RecyclerView / Adapter / ViewHolder
+  - ActivityResult 기반 권한 요청 흐름
+  - 시스템 바 / 소프트키보드 / 플로팅 뷰 제어
 
  ## 모듈 의존성 규칙
 
