@@ -42,13 +42,15 @@
    - `createChannel()`로 채널 교체 가능
 3. **진행률 관리**
    - `showNotification()`으로 진행률 알림 생성
-   - `updateProgress()`로 진행률 업데이트
-   - `completeProgress()`로 완료 처리
-   - 유휴 30분 경과 시 자동 정리
+   - `updateProgress()`로 진행률 업데이트, 반영 불가 시 `SystemResult.Success(false)` 반환
+   - `completeProgress()`로 완료 처리, 대상이 없으면 no-op 성공 처리
+   - 유휴 30분 경과 시 내부 상태와 실제 알림을 함께 자동 정리
 4. **직접 알림 표출**
    - `notify(notificationId, Notification)`로 완전 커스텀 알림 표출 가능
+   - 같은 ID가 기존 진행률 알림에 사용된 경우, 저장된 진행률 상태를 먼저 정리
 5. **안전한 실행**
-   - `showNotification`/`updateProgress`/`completeProgress`/`notify`는 `tryCatchSystemManager()` 래핑으로 권한 미허용·예외 발생 시 안전한 기본값(`false`) 반환 및 자동 로깅
+   - `showNotification`/`updateProgress`/`completeProgress`/`notify`는 `tryCatchSystemManagerResult()` 래핑으로 권한 미허용·예외를 `SystemResult`로 반환하고 자동 로깅
+   - `cancelNotification`은 `POST_NOTIFICATIONS` 권한 게이트 없이 동작하며, 예외만 `safeCatch`로 실패 처리
    - `createChannel`/`cancelAll`/`cleanup`은 예외 래핑 없이 직접 호출되므로 **호출부에서 예외 처리 책임**을 가짐
 
 ## 비기능 요구사항
@@ -69,7 +71,7 @@
 - **알림 채널 불변성**: 채널 ID가 동일한 경우 중요도 등은 변경 불가(플랫폼 제약).
 - **Android 13+ 권한**: 권한 미부여 시 알림 표시 실패.
 - **PendingIntent 플래그**: Android 12+에서 `FLAG_IMMUTABLE` 또는 `FLAG_MUTABLE` 필수.
-- **스케줄러 자원**: 정리 스케줄러는 **최초 진행률 알림 생성 시에만** 활성화되며, 진행률 알림이 없으면 스케줄러도 생성되지 않음. 활성화 후에는 5분 주기로 유휴 30분 초과 항목을 자동 제거하고, 맵이 비면 스케줄러가 자동 종료됨.
+- **스케줄러 자원**: 정리 스케줄러는 **최초 진행률 알림 생성 시에만** 활성화되며, 진행률 알림이 없으면 스케줄러도 생성되지 않음. 활성화 후에는 5분 주기로 유휴 30분 초과 항목의 내부 상태를 제거하고 실제 알림도 취소하며, 맵이 비면 스케줄러가 자동 종료됨.
 - **리소스 정리 책임**: Activity/Service 종료 시 반드시 `cleanup()` 호출 필요. 미호출 시 `ScheduledExecutorService` 스레드가 해제되지 않아 **리소스 누수 발생**. 진행률 알림을 사용하지 않았더라도 `cleanup()` 호출은 안전함(no-op).
 - **채널 전환 범위**: `createChannel()`은 이후 생성되는 알림에만 적용됨.
 - **액션 구성**: `actions`는 호출자가 `NotificationCompat.Action`을 직접 구성해야 함.
@@ -77,7 +79,7 @@
 ## 성공 기준(품질 지표)
 - 기본/진행률 알림이 정상 표시됨
 - 권한 미허용/예외 상황에서 앱 크래시 없음
-- 진행률 알림 유휴 시 자동 정리 동작 확인
+- 진행률 알림 유휴 시 내부 상태와 실제 알림이 함께 자동 정리되는지 확인
 
 ## 관련 파일
 - `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/core/controller/notification/SimpleNotificationController.kt`

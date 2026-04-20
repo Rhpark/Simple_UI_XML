@@ -19,8 +19,8 @@ Simplifies notification display, progress updates, and channel management.
 | Channel creation / registration   | Manual creation + SDK branching    | Auto registration via `NotificationChannel` injection   | Channel switch applies to future notifications only<br>채널 전환은 이후 알림에만 적용 |
 | Click PendingIntent               | Manual creation + flag management  | `clickIntent` + `pendingIntentFlags`                    | Android 12+ flags required<br>Android 12+ 플래그 필수 |
 | Progress management               | Manual builder reference retention | Internal cache + auto cleanup after 30 min idle         | Lower leak risk<br>리소스 누수 위험 감소 |
-| Permission / exception handling   | Handled by caller                  | `tryCatchSystemManager()` returns `false` on failure    | Android 13+ permission required<br>Android 13+ 권한 필요 |
-| Update result                     | Always notify                      | `false` when same value or target missing               | Avoid redundant updates<br>불필요한 업데이트 방지 |
+| Permission / exception handling   | Handled by caller                  | Returns `SystemResult` (`Success`/`PermissionDenied`/`Failure`); `cancelNotification()` needs no permission | Android 13+ POST_NOTIFICATIONS required for notify/update/complete<br>Android 13+ 알림 표시·업데이트·완료에 권한 필요 |
+| Update result                     | Always notify                      | `Success(false)` when same value or target missing      | Avoid redundant updates<br>불필요한 업데이트 방지 |
 | Cleanup responsibility            | Manual handling                    | `cleanup()` recommended                                 | Release resources on end<br>종료 시 리소스 정리 |
 
 <br></br>
@@ -182,13 +182,15 @@ private fun showBigTextNotification() {
 - Android 13+ requires the `POST_NOTIFICATIONS` permission.
 - `pendingIntentFlags` applies only to the primary click (`clickIntent`).
 - Callers must build `NotificationCompat.Action` themselves for `actions`.
-- `updateProgress()` returns `false` when value is unchanged or target is missing.
+- `updateProgress()` returns `SystemResult.Success(false)` when value is unchanged or target is missing.
+- `cancelNotification()` does not require `POST_NOTIFICATIONS` — it works regardless of permission state.
 - After using progress notifications, call `cleanup()` when the Activity/Service ends.
 - `createChannel()` applies only to notifications created afterward.
 > Android 13+에서는 `POST_NOTIFICATIONS` 권한이 필요합니다.
 > `pendingIntentFlags`는 기본 클릭(`clickIntent`)에만 적용됩니다.
 > `actions`는 호출자가 `NotificationCompat.Action`을 직접 구성해야 합니다.
-> `updateProgress()`는 값이 동일하거나 대상이 없으면 `false`를 반환합니다.
+> `updateProgress()`는 값이 동일하거나 대상이 없으면 `SystemResult.Success(false)`를 반환합니다.
+> `cancelNotification()`은 `POST_NOTIFICATIONS` 권한 없이도 동작합니다.
 > 진행률 알림 사용 후 Activity/Service 종료 시 `cleanup()` 호출을 권장합니다.
 > `createChannel()`은 이후 생성되는 알림에만 적용됩니다.
 

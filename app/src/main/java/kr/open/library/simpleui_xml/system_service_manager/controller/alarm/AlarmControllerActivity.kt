@@ -4,10 +4,10 @@ import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
 import kr.open.library.simple_ui.system_manager.core.base.SystemResult
+import kr.open.library.simple_ui.system_manager.core.controller.alarm.vo.AlarmData
 import kr.open.library.simple_ui.system_manager.core.controller.alarm.vo.AlarmIdleMode
-import kr.open.library.simple_ui.system_manager.core.controller.alarm.vo.AlarmNotificationVO
-import kr.open.library.simple_ui.system_manager.core.controller.alarm.vo.AlarmScheduleVO
-import kr.open.library.simple_ui.system_manager.core.controller.alarm.vo.AlarmVO
+import kr.open.library.simple_ui.system_manager.core.controller.alarm.vo.AlarmNotificationData
+import kr.open.library.simple_ui.system_manager.core.controller.alarm.vo.AlarmScheduleData
 import kr.open.library.simple_ui.system_manager.core.extensions.getAlarmController
 import kr.open.library.simple_ui.xml.extensions.view.toastShowShort
 import kr.open.library.simple_ui.xml.ui.components.activity.normal.BaseActivity
@@ -64,7 +64,7 @@ class AlarmControllerActivity : BaseActivity(R.layout.activity_alarm_controller)
 
         registerOrUpdate(
             key = key,
-            alarmVo = alarmVo,
+            alarmData = alarmVo,
             updateAction = { alarmController.updateAlarmClock(AlarmReceiver::class.java, alarmVo) },
             successLabel = "알람 시계",
         )
@@ -81,7 +81,7 @@ class AlarmControllerActivity : BaseActivity(R.layout.activity_alarm_controller)
 
         registerOrUpdate(
             key = key,
-            alarmVo = alarmVo,
+            alarmData = alarmVo,
             updateAction = { alarmController.updateExactAndAllowWhileIdle(AlarmReceiver::class.java, alarmVo) },
             successLabel = "정확 알람",
         )
@@ -98,7 +98,7 @@ class AlarmControllerActivity : BaseActivity(R.layout.activity_alarm_controller)
 
         registerOrUpdate(
             key = key,
-            alarmVo = alarmVo,
+            alarmData = alarmVo,
             updateAction = { alarmController.updateAllowWhileIdle(AlarmReceiver::class.java, alarmVo) },
             successLabel = "유휴 허용 알람",
         )
@@ -149,7 +149,7 @@ class AlarmControllerActivity : BaseActivity(R.layout.activity_alarm_controller)
 
     private fun registerOrUpdate(
         key: Int,
-        alarmVo: AlarmVO,
+        alarmData: AlarmData,
         updateAction: () -> SystemResult<Unit>,
         successLabel: String,
     ) {
@@ -158,16 +158,16 @@ class AlarmControllerActivity : BaseActivity(R.layout.activity_alarm_controller)
         val success = result is SystemResult.Success
 
         if (success) {
-            AlarmSampleStore.put(alarmVo)
+            AlarmSampleStore.put(alarmData)
         } else if (wasStored) {
             AlarmSampleStore.remove(key)
         }
 
         val actionLabel = if (wasStored) "갱신" else "등록"
-        val timeText = formatTime(alarmVo.schedule.hour, alarmVo.schedule.minute, alarmVo.schedule.second)
+        val timeText = formatTime(alarmData.schedule.hour, alarmData.schedule.minute, alarmData.schedule.second)
         showResult(
             title = "$successLabel $actionLabel ${if (success) "성공" else "실패"}",
-            detail = "key=$key, 시간=$timeText, 모드=${alarmVo.schedule.idleMode}",
+            detail = "key=$key, 시간=$timeText, 모드=${alarmData.schedule.idleMode}",
         )
     }
 
@@ -176,19 +176,19 @@ class AlarmControllerActivity : BaseActivity(R.layout.activity_alarm_controller)
         idleMode: AlarmIdleMode,
         title: String,
         message: String,
-    ): AlarmVO {
+    ): AlarmData {
         val hour = binding.timePicker.hour
         val minute = binding.timePicker.minute
 
-        return AlarmVO(
+        return AlarmData(
             key = key,
-            schedule = AlarmScheduleVO(
+            schedule = AlarmScheduleData(
                 hour = hour,
                 minute = minute,
                 second = 0,
                 idleMode = idleMode,
             ),
-            notification = AlarmNotificationVO(
+            notification = AlarmNotificationData(
                 title = title,
                 message = message,
                 soundUri = null,

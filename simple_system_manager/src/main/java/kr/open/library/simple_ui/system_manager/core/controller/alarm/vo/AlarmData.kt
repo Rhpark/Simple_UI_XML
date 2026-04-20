@@ -18,7 +18,7 @@ import java.util.Locale
  * @throws IllegalArgumentException If the date is invalid (e.g., 2026-02-31).<br><br>
  *                                 유효하지 않은 날짜인 경우 예외가 발생합니다.<br>
  */
-public data class AlarmDateVO(
+public data class AlarmDateData(
     public val year: Int,
     public val month: Int, // 1~12
     public val day: Int,
@@ -60,12 +60,12 @@ public data class AlarmDateVO(
  * @param date Optional fixed date; if set and in the past, registration throws.<br><br>
  *             고정 날짜이며 과거인 경우 등록 시 예외가 발생합니다.<br>
  */
-public data class AlarmScheduleVO(
+public data class AlarmScheduleData(
     public val hour: Int,
     public val minute: Int,
     public val second: Int = 0,
     public val idleMode: AlarmIdleMode = AlarmIdleMode.NONE,
-    public val date: AlarmDateVO? = null,
+    public val date: AlarmDateData? = null,
 ) {
     init {
         require(hour in 0..23) { "Hour must be between 0-23, got: $hour" }
@@ -113,7 +113,7 @@ public enum class AlarmIdleMode {
  * @param soundUri Optional custom sound URI.<br><br>
  *                 커스텀 사운드 URI입니다.<br>
  */
-public data class AlarmNotificationVO(
+public data class AlarmNotificationData(
     public val title: String,
     public val message: String,
     public val vibrationPattern: List<Long>? = null,
@@ -144,16 +144,21 @@ public data class AlarmNotificationVO(
  *                     알림(UI) 전달 정보입니다.<br>
  * @param isActive Whether the alarm is currently active.<br><br>
  *                 알람 활성 상태 여부입니다.<br>
- * @param acquireTime Maximum WakeLock acquire time in milliseconds.<br><br>
- *                    WakeLock 최대 획득 시간(밀리초)입니다.<br>
+ * @param acquireTime Deprecated. This value is not applied per alarm at runtime;
+ *                    use BaseAlarmReceiver.powerManagerAcquireTime for actual WakeLock policy.<br><br>
+ *                    Deprecated 파라미터입니다. 런타임에서 알람별로 반영되지 않으며,
+ *                    실제 WakeLock 정책은 BaseAlarmReceiver.powerManagerAcquireTime을 사용합니다.<br>
  * @throws IllegalArgumentException If key/acquireTime is invalid.<br><br>
  *                                 key/acquireTime 값이 유효하지 않으면 예외가 발생합니다.<br>
  */
-public data class AlarmVO(
+public data class AlarmData(
     public val key: Int,
-    public val schedule: AlarmScheduleVO,
-    public val notification: AlarmNotificationVO,
+    public val schedule: AlarmScheduleData,
+    public val notification: AlarmNotificationData,
     public val isActive: Boolean = true,
+    @Deprecated(
+        message = "현재 WakeLock은 Receiver 단위 정책만 지원합니다. BaseAlarmReceiver.powerManagerAcquireTime을 사용해 주세요."
+    )
     public val acquireTime: Long = AlarmConstants.DEFAULT_ACQUIRE_TIME_MS,
 ) {
     init {
@@ -170,7 +175,7 @@ public data class AlarmVO(
      * @return A copy with the specified active state.<br><br>
      *         변경된 활성 상태를 가진 복사본입니다.<br>
      */
-    public fun withActiveState(active: Boolean): AlarmVO = copy(isActive = active)
+    public fun withActiveState(active: Boolean): AlarmData = copy(isActive = active)
 
     /**
      * Creates a copy of this alarm with modified time.<br><br>
@@ -186,7 +191,7 @@ public data class AlarmVO(
      * @return A copy with the specified time.<br><br>
      *         변경된 시간 값을 가진 복사본입니다.<br>
      */
-    public fun withTime(hour: Int, minute: Int, second: Int = schedule.second): AlarmVO =
+    public fun withTime(hour: Int, minute: Int, second: Int = schedule.second): AlarmData =
         copy(schedule = schedule.copy(hour = hour, minute = minute, second = second))
 
     /**
@@ -239,8 +244,8 @@ public data class AlarmVO(
          *             시(0-23) 값입니다.<br>
          * @param minute Minute of hour (0-59).<br><br>
          *               분(0-59) 값입니다.<br>
-         * @return A simple AlarmVO instance.<br><br>
-         *         간단한 AlarmVO 인스턴스입니다.<br>
+         * @return A simple AlarmData instance.<br><br>
+         *         간단한 AlarmData 인스턴스입니다.<br>
          */
         public fun createSimple(
             key: Int,
@@ -248,10 +253,10 @@ public data class AlarmVO(
             message: String,
             hour: Int,
             minute: Int
-        ): AlarmVO = AlarmVO(
+        ): AlarmData = AlarmData(
             key = key,
-            schedule = AlarmScheduleVO(hour = hour, minute = minute),
-            notification = AlarmNotificationVO(title = title, message = message),
+            schedule = AlarmScheduleData(hour = hour, minute = minute),
+            notification = AlarmNotificationData(title = title, message = message),
         )
 
         /**
@@ -270,8 +275,8 @@ public data class AlarmVO(
          *               분(0-59) 값입니다.<br>
          * @param second Second of minute (0-59), defaults to 0.<br><br>
          *               초(0-59) 값이며 기본값은 0입니다.<br>
-         * @return An idle-allowed AlarmVO instance.<br><br>
-         *         유휴 모드 허용 AlarmVO 인스턴스입니다.<br>
+         * @return An idle-allowed AlarmData instance.<br><br>
+         *         유휴 모드 허용 AlarmData 인스턴스입니다.<br>
          */
         public fun createIdleAllowed(
             key: Int,
@@ -280,15 +285,15 @@ public data class AlarmVO(
             hour: Int,
             minute: Int,
             second: Int = 0,
-        ): AlarmVO = AlarmVO(
+        ): AlarmData = AlarmData(
             key = key,
-            schedule = AlarmScheduleVO(
+            schedule = AlarmScheduleData(
                 hour = hour,
                 minute = minute,
                 second = second,
                 idleMode = AlarmIdleMode.INEXACT
             ),
-            notification = AlarmNotificationVO(title = title, message = message),
+            notification = AlarmNotificationData(title = title, message = message),
         )
 
         /**
@@ -307,8 +312,8 @@ public data class AlarmVO(
          *               분(0-59) 값입니다.<br>
          * @param second Second of minute (0-59), defaults to 0.<br><br>
          *               초(0-59) 값이며 기본값은 0입니다.<br>
-         * @return An exact idle-allowed AlarmVO instance.<br><br>
-         *         정확 유휴 모드 알람용 AlarmVO 인스턴스입니다.<br>
+         * @return An exact idle-allowed AlarmData instance.<br><br>
+         *         정확 유휴 모드 알람용 AlarmData 인스턴스입니다.<br>
          */
         public fun createExactIdleAllowed(
             key: Int,
@@ -317,15 +322,15 @@ public data class AlarmVO(
             hour: Int,
             minute: Int,
             second: Int = 0,
-        ): AlarmVO = AlarmVO(
+        ): AlarmData = AlarmData(
             key = key,
-            schedule = AlarmScheduleVO(
+            schedule = AlarmScheduleData(
                 hour = hour,
                 minute = minute,
                 second = second,
                 idleMode = AlarmIdleMode.EXACT
             ),
-            notification = AlarmNotificationVO(title = title, message = message),
+            notification = AlarmNotificationData(title = title, message = message),
         )
 
         /**
@@ -346,26 +351,26 @@ public data class AlarmVO(
          *               분(0-59) 값입니다.<br>
          * @param second Second of minute (0-59), defaults to 0.<br><br>
          *               초(0-59) 값이며 기본값은 0입니다.<br>
-         * @return An AlarmVO instance scheduled for a specific date.<br><br>
-         *         특정 날짜 알람용 AlarmVO 인스턴스입니다.<br>
+         * @return An AlarmData instance scheduled for a specific date.<br><br>
+         *         특정 날짜 알람용 AlarmData 인스턴스입니다.<br>
          */
         public fun createOnDate(
             key: Int,
             title: String,
             message: String,
-            date: AlarmDateVO,
+            date: AlarmDateData,
             hour: Int,
             minute: Int,
             second: Int = 0,
-        ): AlarmVO = AlarmVO(
+        ): AlarmData = AlarmData(
             key = key,
-            schedule = AlarmScheduleVO(
+            schedule = AlarmScheduleData(
                 hour = hour,
                 minute = minute,
                 second = second,
                 date = date,
             ),
-            notification = AlarmNotificationVO(title = title, message = message),
+            notification = AlarmNotificationData(title = title, message = message),
         )
     }
 }

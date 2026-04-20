@@ -19,9 +19,9 @@ import kr.open.library.simple_ui.system_manager.core.controller.alarm.AlarmConst
 import kr.open.library.simple_ui.system_manager.core.controller.alarm.AlarmConstants.WAKELOCK_TAG
 import kr.open.library.simple_ui.system_manager.core.controller.alarm.AlarmConstants.WAKELOCK_TIMEOUT_MS
 import kr.open.library.simple_ui.system_manager.core.controller.alarm.AlarmController
+import kr.open.library.simple_ui.system_manager.core.controller.alarm.vo.AlarmData
 import kr.open.library.simple_ui.system_manager.core.controller.alarm.vo.AlarmIdleMode
-import kr.open.library.simple_ui.system_manager.core.controller.alarm.vo.AlarmNotificationVO
-import kr.open.library.simple_ui.system_manager.core.controller.alarm.vo.AlarmVO
+import kr.open.library.simple_ui.system_manager.core.controller.alarm.vo.AlarmNotificationData
 import kr.open.library.simple_ui.system_manager.core.controller.notification.SimpleNotificationController
 import kr.open.library.simple_ui.system_manager.core.controller.notification.SimpleNotificationType
 import kr.open.library.simple_ui.system_manager.core.controller.notification.option.SimpleNotificationOptionBase
@@ -51,13 +51,13 @@ public abstract class BaseAlarmReceiver : BroadcastReceiver() {
      * 알람 데이터에 따른 등록 타입을 결정합니다.<br>
      * AlarmIdleMode에 따라 AlarmController 등록 API가 결정됩니다.<br>
      *
-     * @param alarmVo The alarm data to resolve type for.<br><br>
+     * @param alarmData The alarm data to resolve type for.<br><br>
      *                등록 타입 결정을 위한 알람 데이터입니다.<br>
      * @return The resolved registration type.<br><br>
      *         결정된 알람 등록 타입입니다.<br>
      */
-    protected open fun resolveRegisterType(alarmVo: AlarmVO): RegisterType =
-        when (alarmVo.schedule.idleMode) {
+    protected open fun resolveRegisterType(alarmData: AlarmData): RegisterType =
+        when (alarmData.schedule.idleMode) {
             AlarmIdleMode.NONE -> RegisterType.ALARM_CLOCK
             AlarmIdleMode.INEXACT -> RegisterType.ALARM_AND_ALLOW_WHILE_IDLE
             AlarmIdleMode.EXACT -> RegisterType.ALARM_EXACT_AND_ALLOW_WHILE_IDLE
@@ -75,12 +75,12 @@ public abstract class BaseAlarmReceiver : BroadcastReceiver() {
      * PendingIntent requestCode 충돌 방지를 위한 네임스페이스를 반환합니다.<br>
      * null이면 기본 전략(receiver.name)을 사용합니다.<br>
      *
-     * @param alarmVo The alarm data to resolve namespace for.<br><br>
+     * @param alarmData The alarm data to resolve namespace for.<br><br>
      *                네임스페이스 결정을 위한 알람 데이터입니다.<br>
      * @return Optional namespace string, or null to use the default strategy.<br><br>
      *         네임스페이스 문자열이며, null이면 기본 전략을 사용합니다.<br>
      */
-    protected open fun resolveAlarmNamespace(alarmVo: AlarmVO): String? = null
+    protected open fun resolveAlarmNamespace(alarmData: AlarmData): String? = null
 
     /**
      * Creates a notification channel for alarm notifications.<br>
@@ -96,24 +96,24 @@ public abstract class BaseAlarmReceiver : BroadcastReceiver() {
      */
     protected abstract fun createNotificationChannel(
         context: Context,
-        notification: AlarmNotificationVO,
+        notification: AlarmNotificationData,
     )
 
     /**
      * Builds a notification option for the triggered alarm.<br><br>
      * 트리거된 알람의 알림 표시 옵션을 생성합니다.<br>
-     * AlarmNotificationVO 기반으로 옵션을 구성하는 것을 권장합니다.<br>
+     * AlarmNotificationData 기반으로 옵션을 구성하는 것을 권장합니다.<br>
      *
      * @param context The application context.<br><br>
      *                애플리케이션 컨텍스트입니다.<br>
-     * @param alarmVo The alarm data.<br><br>
+     * @param alarmData The alarm data.<br><br>
      *                알람 데이터입니다.<br>
      * @return Notification option for SimpleNotificationController.<br><br>
      *         SimpleNotificationController에 전달할 옵션입니다.<br>
      */
     protected abstract fun buildNotificationOption(
         context: Context,
-        alarmVo: AlarmVO,
+        alarmData: AlarmData,
     ): SimpleNotificationOptionBase
 
     /**
@@ -121,12 +121,12 @@ public abstract class BaseAlarmReceiver : BroadcastReceiver() {
      * 알림 표시 타입을 결정합니다.<br>
      * SimpleNotificationController.showNotification에 전달됩니다.<br>
      *
-     * @param alarmVo The alarm data.<br><br>
+     * @param alarmData The alarm data.<br><br>
      *                알람 데이터입니다.<br>
      * @return Notification display type.<br><br>
      *         알림 표시 타입입니다.<br>
      */
-    protected open fun resolveNotificationShowType(alarmVo: AlarmVO): SimpleNotificationType =
+    protected open fun resolveNotificationShowType(alarmData: AlarmData): SimpleNotificationType =
         SimpleNotificationType.BROADCAST
 
     /**
@@ -141,7 +141,7 @@ public abstract class BaseAlarmReceiver : BroadcastReceiver() {
      * @return List of all stored alarms.<br><br>
      *         저장된 알람 목록입니다.<br>
      */
-    protected abstract fun loadAllAlarmVoList(context: Context): List<AlarmVO>
+    protected abstract fun loadAllAlarmDataList(context: Context): List<AlarmData>
 
     /**
      * Loads a specific alarm by its key from the intent extras.<br><br>
@@ -157,11 +157,11 @@ public abstract class BaseAlarmReceiver : BroadcastReceiver() {
      * @return The alarm data, or null if not found.<br><br>
      *         알람 데이터이며, 찾지 못하면 null입니다.<br>
      */
-    protected abstract fun loadAlarmVoList(
+    protected abstract fun loadAlarmData(
         context: Context,
         intent: Intent,
         key: Int,
-    ): AlarmVO?
+    ): AlarmData?
 
     /**
      * The maximum time to hold the WakeLock (in milliseconds).<br>
@@ -216,6 +216,7 @@ public abstract class BaseAlarmReceiver : BroadcastReceiver() {
             processAlarmIntent(context, intent)
         } catch (e: RuntimeException) {
             Logx.e("Unexpected error in alarm processing: ${e.message}")
+            processAlarmIntent(context, intent)
         } finally {
             // Always release WakeLock in finally block
             wakeLock?.let { wl ->
@@ -277,7 +278,7 @@ public abstract class BaseAlarmReceiver : BroadcastReceiver() {
      */
     private fun handleReschedule(context: Context, alarmController: AlarmController, action: String?) {
         try {
-            val allAlarms = loadAllAlarmVoList(context)
+            val allAlarms = loadAllAlarmDataList(context)
             Logx.d("Re-registering ${allAlarms.size} alarms due to action: $action")
 
             allAlarms.forEach { alarmVo ->
@@ -338,7 +339,7 @@ public abstract class BaseAlarmReceiver : BroadcastReceiver() {
                 return
             }
 
-            val alarmVo = loadAlarmVoList(context, intent, key)
+            val alarmVo = loadAlarmData(context, intent, key)
             if (alarmVo != null) {
                 createNotificationChannel(context, alarmVo.notification)
                 if (!ensureNotificationControllerInitialized()) return
@@ -383,8 +384,8 @@ public abstract class BaseAlarmReceiver : BroadcastReceiver() {
      * 호출부에서 런타임 권한 검증 후 알람 알림을 표시합니다.<br>
      */
     @SuppressLint("MissingPermission")
-    private fun showAlarmNotification(option: SimpleNotificationOptionBase, alarmVo: AlarmVO): SystemResult<Unit> =
-        notificationController.showNotification(option, resolveNotificationShowType(alarmVo))
+    private fun showAlarmNotification(option: SimpleNotificationOptionBase, alarmData: AlarmData): SystemResult<Unit> =
+        notificationController.showNotification(option, resolveNotificationShowType(alarmData))
 
     /**
      * Registers an alarm using the resolved registration type.<br>
@@ -394,23 +395,23 @@ public abstract class BaseAlarmReceiver : BroadcastReceiver() {
      *
      * @param alarmController The alarm controller instance.<br><br>
      *                        알람 컨트롤러 인스턴스입니다.<br>
-     * @param alarmVo The alarm data to register.<br><br>
+     * @param alarmData The alarm data to register.<br><br>
      *                등록할 알람 데이터입니다.<br>
      * @return [SystemResult.Success] if registration succeeded, [SystemResult.Failure] otherwise.<br><br>
      *         등록 성공 시 [SystemResult.Success], 실패 시 [SystemResult.Failure]입니다.<br>
      */
     private fun registerAlarm(
         alarmController: AlarmController,
-        alarmVo: AlarmVO,
-    ): SystemResult<Unit> = when (resolveRegisterType(alarmVo)) {
+        alarmData: AlarmData,
+    ): SystemResult<Unit> = when (resolveRegisterType(alarmData)) {
         RegisterType.ALARM_AND_ALLOW_WHILE_IDLE ->
-            alarmController.registerAlarmAndAllowWhileIdle(classType, alarmVo, resolveAlarmNamespace(alarmVo))
+            alarmController.registerAlarmAndAllowWhileIdle(classType, alarmData, resolveAlarmNamespace(alarmData))
 
         RegisterType.ALARM_CLOCK ->
-            alarmController.registerAlarmClock(classType, alarmVo, resolveAlarmNamespace(alarmVo))
+            alarmController.registerAlarmClock(classType, alarmData, resolveAlarmNamespace(alarmData))
 
         RegisterType.ALARM_EXACT_AND_ALLOW_WHILE_IDLE ->
-            alarmController.registerAlarmExactAndAllowWhileIdle(classType, alarmVo, resolveAlarmNamespace(alarmVo))
+            alarmController.registerAlarmExactAndAllowWhileIdle(classType, alarmData, resolveAlarmNamespace(alarmData))
     }
 
     /**

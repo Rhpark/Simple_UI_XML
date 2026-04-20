@@ -8,8 +8,8 @@ import android.media.AudioAttributes
 import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.system_manager.core.controller.alarm.AlarmConstants
 import kr.open.library.simple_ui.system_manager.core.controller.alarm.receiver.BaseAlarmReceiver
-import kr.open.library.simple_ui.system_manager.core.controller.alarm.vo.AlarmNotificationVO
-import kr.open.library.simple_ui.system_manager.core.controller.alarm.vo.AlarmVO
+import kr.open.library.simple_ui.system_manager.core.controller.alarm.vo.AlarmData
+import kr.open.library.simple_ui.system_manager.core.controller.alarm.vo.AlarmNotificationData
 import kr.open.library.simple_ui.system_manager.core.controller.notification.option.DefaultNotificationOption
 import kr.open.library.simple_ui.system_manager.core.controller.notification.option.SimpleNotificationOptionBase
 import kr.open.library.simple_ui.system_manager.core.extensions.getNotificationController
@@ -37,13 +37,13 @@ public class AlarmReceiver : BaseAlarmReceiver() {
 
     override val powerManagerAcquireTime: Long get() = 5000L
 
-    override fun loadAllAlarmVoList(context: Context): List<AlarmVO> = AlarmSampleStore.getAll()
+    override fun loadAllAlarmDataList(context: Context): List<AlarmData> = AlarmSampleStore.getAll()
 
-    override fun loadAlarmVoList(
+    override fun loadAlarmData(
         context: Context,
         intent: Intent,
         key: Int,
-    ): AlarmVO? {
+    ): AlarmData? {
         Logx.d("알람 키: $key")
         if (key == AlarmConstants.ALARM_KEY_DEFAULT_VALUE) {
             Logx.e("잘못된 알람 키입니다. key=$key")
@@ -60,7 +60,7 @@ public class AlarmReceiver : BaseAlarmReceiver() {
 
     override fun createNotificationChannel(
         context: Context,
-        notification: AlarmNotificationVO,
+        notification: AlarmNotificationData,
     ) {
         Logx.d()
         notificationController = context.getNotificationController(
@@ -86,13 +86,13 @@ public class AlarmReceiver : BaseAlarmReceiver() {
 
     override fun buildNotificationOption(
         context: Context,
-        alarmVo: AlarmVO,
+        alarmData: AlarmData,
     ): SimpleNotificationOptionBase {
         Logx.d()
         return DefaultNotificationOption(
-            notificationId = alarmVo.key,
-            title = alarmVo.notification.title,
-            content = alarmVo.notification.message,
+            notificationId = alarmData.key,
+            title = alarmData.notification.title,
+            content = alarmData.notification.message,
             isAutoCancel = false,
             smallIcon = R.drawable.ic_launcher_foreground,
         )

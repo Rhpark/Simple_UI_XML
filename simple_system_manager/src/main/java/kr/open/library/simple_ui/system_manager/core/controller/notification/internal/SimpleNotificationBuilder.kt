@@ -2,6 +2,7 @@ package kr.open.library.simple_ui.system_manager.core.controller.notification.in
 
 import android.Manifest.permission.POST_NOTIFICATIONS
 import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import androidx.annotation.RequiresPermission
@@ -45,7 +46,8 @@ import java.util.concurrent.TimeUnit
  *                애플리케이션 컨텍스트.<br>
  */
 internal class SimpleNotificationBuilder(
-    private val context: Context
+    private val context: Context,
+    private val notificationManager: NotificationManager,
 ) {
     internal sealed class ProgressUpdateResult {
         data class Updated(
@@ -163,7 +165,7 @@ internal class SimpleNotificationBuilder(
 
     /**
      * Starts a scheduler that periodically cleans up stale progress notifications.<br>
-     * Removes progress notification builders that haven't been updated for 30 minutes.<br><br>
+     * Removes progress notification builders that haven't been updated for 30 minutes and cancels the actual notifications.<br><br>
      * 오래된 진행률 알림을 주기적으로 정리하는 스케줄러를 시작합니다.<br>
      * 30분 동안 업데이트되지 않은 진행률 알림 빌더를 제거해 메모리 누수를 방지합니다.<br>
      */
@@ -183,10 +185,10 @@ internal class SimpleNotificationBuilder(
 
                         staleNotifications.forEach { notificationId ->
                             progressBuilders.remove(notificationId)
-                            stopProgressCleanupSchedulerIfIdle()
+                            notificationManager.cancel(notificationId)
                             Logx.d("Removed stale progress notification: $notificationId")
                         }
-
+                        stopProgressCleanupSchedulerIfIdle()
                         if (staleNotifications.isNotEmpty()) {
                             Logx.d("Cleaned up ${staleNotifications.size} stale progress notifications")
                         }
@@ -317,7 +319,7 @@ internal class SimpleNotificationBuilder(
             info.builder.setOngoing(false)
             info.builder.setAutoCancel(true)
             completedContent?.let { info.builder.setContentText(it) }
-            val data: ProgressNotificationInfo? = progressBuilders.get(notificationId)
+            val data: ProgressNotificationInfo = info
             progressBuilders.remove(notificationId) // 빌더 제거로 메모리 정리
             stopProgressCleanupSchedulerIfIdle()
             return data

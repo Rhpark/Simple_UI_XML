@@ -11,8 +11,8 @@
 Provides simple APIs for alarm register/remove/existence checks.  
 > 알람 등록/삭제/존재 확인을 간단한 API로 제공합니다.
 
-- Android 13+ notification trigger path checks `POST_NOTIFICATIONS` first and safely skips when missing.
-> Android 13+에서 알림 트리거 시 `POST_NOTIFICATIONS` 권한을 먼저 확인하고, 권한이 없으면 크래시 없이 스킵합니다.
+- Exact alarm APIs (`registerAlarmClock`, `registerAlarmExactAndAllowWhileIdle`) require `SCHEDULE_EXACT_ALARM` on API 31+. Inexact APIs work without this permission.
+> Exact 알람 API는 API 31+에서 `SCHEDULE_EXACT_ALARM` 권한이 필요합니다. Inexact API(`registerAlarmAndAllowWhileIdle`, `registerRepeating`)는 권한 없이도 동작합니다.
 
 <br></br>
 
@@ -76,6 +76,7 @@ private fun registerAlarm(hour: Int, minute: Int) {
         PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
     )
 
+    // ⚠️ showIntent == triggerIntent: tapping "next alarm" in status bar fires the broadcast
     val alarmClockInfo = AlarmManager.AlarmClockInfo(calendar.timeInMillis, pendingIntent)
     alarmManager.setAlarmClock(alarmClockInfo, pendingIntent)
 }
@@ -105,39 +106,48 @@ private fun removeAlarm(key: Int) {
 
 ## Simple UI Approach (Simple UI 방식)
 ```kotlin
-// Simple Alarm registration - One line (간단한 Alarm 등록 - 한 줄)
+// AlarmClock registration with result handling (AlarmClock 등록 + 결과 처리)
 private fun registerAlarm(hour: Int, minute: Int) {
-    val AlarmVO = AlarmVO(
+    val alarmData = AlarmData.createSimple(
         key = 1,
         title = "Alarm Title",
         message = "Alarm Message",
         hour = hour,
-        minute = minute,
-        second = 0
+        minute = minute
     )
-    getAlarmController().registerAlarmClock(AlarmReceiver::class.java, AlarmVO)
+    when (val result = alarmController.registerAlarmClock(AlarmReceiver::class.java, alarmData)) {
+        is SystemResult.Success -> { /* 등록 성공 */ }
+        is SystemResult.PermissionDenied -> { /* SCHEDULE_EXACT_ALARM 권한 없음 → 설정 유도 */ }
+        is SystemResult.Failure -> { /* 오류 처리 */ }
+        else -> Unit
+    }
 }
 
-// Exact Alarm (Idle 모드에서도 실행)
+// Exact Alarm - fires even in Idle mode (Idle 모드에서도 실행되는 Exact 알람)
 private fun registerExactAlarm(hour: Int, minute: Int) {
-    val AlarmVO = AlarmVO(
+    val alarmData = AlarmData.createExactIdleAllowed(
         key = 2,
         title = "Exact Alarm",
         message = "Exact Alarm Message",
         hour = hour,
         minute = minute
     )
-    getAlarmController().registerAlarmExactAndAllowWhileIdle(AlarmReceiver::class.java, AlarmVO)
+    when (val result = alarmController.registerAlarmExactAndAllowWhileIdle(AlarmReceiver::class.java, alarmData)) {
+        is SystemResult.Success -> { /* 등록 성공 */ }
+        is SystemResult.PermissionDenied -> { /* SCHEDULE_EXACT_ALARM 권한 없음 → 설정 유도 */ }
+        is SystemResult.Failure -> { /* 오류 처리 */ }
+        else -> Unit
+    }
 }
 
 // Alarm removal - One line (알람 삭제 - 한 줄)
 private fun removeAlarm(key: Int) {
-    getAlarmController().remove(key, AlarmReceiver::class.java)
+    alarmController.remove(key, AlarmReceiver::class.java)
 }
 
 // Check Alarm exists - One line (알람 존재 확인 - 한 줄)
 private fun checkAlarmExists(key: Int): Boolean {
-    return getAlarmController().exists(key, AlarmReceiver::class.java)
+    return alarmController.exists(key, AlarmReceiver::class.java)
 }
 ```
 

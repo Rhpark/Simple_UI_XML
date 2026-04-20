@@ -13,8 +13,8 @@ import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
 import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.system_manager.core.base.BaseSystemService
 import kr.open.library.simple_ui.system_manager.core.base.SystemResult
+import kr.open.library.simple_ui.system_manager.core.controller.alarm.vo.AlarmData
 import kr.open.library.simple_ui.system_manager.core.controller.alarm.vo.AlarmIdleMode
-import kr.open.library.simple_ui.system_manager.core.controller.alarm.vo.AlarmVO
 import kr.open.library.simple_ui.system_manager.core.extensions.getAlarmManager
 import java.util.Calendar
 
@@ -29,12 +29,7 @@ import java.util.Calendar
  */
 public open class AlarmController(
     context: Context
-) : BaseSystemService(
-        context,
-        checkSdkVersion<List<String>?>(Build.VERSION_CODES.S) {
-            listOf(SCHEDULE_EXACT_ALARM)
-        },
-    ) {
+) : BaseSystemService(context) {
     /**
      * Lazy-initialized AlarmManager instance for scheduling and managing alarms.<br><br>
      * 알람 예약 및 관리를 위한 지연 초기화 AlarmManager 인스턴스입니다.<br>
@@ -47,7 +42,7 @@ public open class AlarmController(
      *
      * @param receiver The BroadcastReceiver class to handle the alarm.<br><br>
      *                 알람을 처리할 BroadcastReceiver 클래스입니다.<br>
-     * @param alarmVo The alarm data containing schedule and notification metadata.<br><br>
+     * @param alarmData The alarm data containing schedule and notification metadata.<br><br>
      *                스케줄과 알림 메타데이터를 포함한 알람 데이터입니다.<br>
      * @param namespace Optional namespace to avoid requestCode collisions.<br><br>
      *                  requestCode 충돌 방지를 위한 선택 네임스페이스입니다.<br>
@@ -59,19 +54,25 @@ public open class AlarmController(
     @RequiresPermission(SCHEDULE_EXACT_ALARM, conditional = true)
     public fun registerAlarmClock(
         receiver: Class<*>,
-        alarmVo: AlarmVO,
+        alarmData: AlarmData,
         namespace: String? = null,
-    ): SystemResult<Unit> = tryCatchSystemManagerResult {
-        if (!ensureExactAlarmAllowedOrLog()) return@tryCatchSystemManagerResult SystemResult.Failure(null)
+    ): SystemResult<Unit> {
+        if (!canScheduleExactAlarms()) {
+            Logx.w("Exact alarm permission denied. Request permission in Settings first.")
+            return SystemResult.PermissionDenied
+        }
+        return tryCatchSystemManagerResult {
+            val calendar = getCalendar(alarmData)
+            val triggerPendingIntent = getAlarmPendingIntent(receiver, alarmData.key, namespace)
+                ?: return@tryCatchSystemManagerResult SystemResult.Failure(null)
+            val showPendingIntent = getAlarmClockShowPendingIntent(alarmData.key, namespace)
+                ?: return@tryCatchSystemManagerResult SystemResult.Failure(null)
 
-        val calendar = getCalendar(alarmVo)
-        val pendingIntent = getAlarmPendingIntent(receiver, alarmVo.key, namespace)
-            ?: return@tryCatchSystemManagerResult SystemResult.Failure(null)
-
-        val alarmClockInfo = AlarmManager.AlarmClockInfo(calendar.timeInMillis, pendingIntent)
-        alarmManager.setAlarmClock(alarmClockInfo, pendingIntent)
-        Logx.d("Alarm clock registered for key: ${alarmVo.key} at ${calendar.time}")
-        SystemResult.Success(Unit)
+            val alarmClockInfo = AlarmManager.AlarmClockInfo(calendar.timeInMillis, showPendingIntent)
+            alarmManager.setAlarmClock(alarmClockInfo, triggerPendingIntent)
+            Logx.d("Alarm clock registered for key: ${alarmData.key} at ${calendar.time}")
+            SystemResult.Success(Unit)
+        }
     }
 
     /**
@@ -80,7 +81,7 @@ public open class AlarmController(
      *
      * @param receiver The BroadcastReceiver class to handle the alarm.<br><br>
      *                 알람을 처리할 BroadcastReceiver 클래스입니다.<br>
-     * @param alarmVo The alarm data containing schedule and notification metadata.<br><br>
+     * @param alarmData The alarm data containing schedule and notification metadata.<br><br>
      *                스케줄과 알림 메타데이터를 포함한 알람 데이터입니다.<br>
      * @param namespace Optional namespace to avoid requestCode collisions.<br><br>
      *                  requestCode 충돌 방지를 위한 선택 네임스페이스입니다.<br>
@@ -90,18 +91,25 @@ public open class AlarmController(
      *         권한 없음 시 [SystemResult.PermissionDenied], 오류 시 [SystemResult.Failure]입니다.<br>
      */
     @RequiresPermission(SCHEDULE_EXACT_ALARM, conditional = true)
-    public fun registerAlarmExactAndAllowWhileIdle(receiver: Class<*>, alarmVo: AlarmVO, namespace: String? = null): SystemResult<Unit> =
-        tryCatchSystemManagerResult {
-            if (!ensureExactAlarmAllowedOrLog()) return@tryCatchSystemManagerResult SystemResult.Failure(null)
-
-            val calendar = getCalendar(alarmVo)
-            val pendingIntent = getAlarmPendingIntent(receiver, alarmVo.key, namespace)
+    public fun registerAlarmExactAndAllowWhileIdle(
+        receiver: Class<*>,
+        alarmData: AlarmData,
+        namespace: String? = null
+    ): SystemResult<Unit> {
+        if (!canScheduleExactAlarms()) {
+            Logx.w("Exact alarm permission denied. Request permission in Settings first.")
+            return SystemResult.PermissionDenied
+        }
+        return tryCatchSystemManagerResult {
+            val calendar = getCalendar(alarmData)
+            val pendingIntent = getAlarmPendingIntent(receiver, alarmData.key, namespace)
                 ?: return@tryCatchSystemManagerResult SystemResult.Failure(null)
 
             alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
-            Logx.d("Exact alarm registered for key: ${alarmVo.key} at ${calendar.time}")
+            Logx.d("Exact alarm registered for key: ${alarmData.key} at ${calendar.time}")
             SystemResult.Success(Unit)
         }
+    }
 
     /**
      * Registers an alarm that can fire while the device is in idle mode (less precise than exact).<br><br>
@@ -109,7 +117,7 @@ public open class AlarmController(
      *
      * @param receiver The BroadcastReceiver class to handle the alarm.<br><br>
      *                 알람을 처리할 BroadcastReceiver 클래스입니다.<br>
-     * @param alarmVo The alarm data containing schedule and notification metadata.<br><br>
+     * @param alarmData The alarm data containing schedule and notification metadata.<br><br>
      *                스케줄과 알림 메타데이터를 포함한 알람 데이터입니다.<br>
      * @param namespace Optional namespace to avoid requestCode collisions.<br><br>
      *                  requestCode 충돌 방지를 위한 선택 네임스페이스입니다.<br>
@@ -118,14 +126,14 @@ public open class AlarmController(
      *         알람 등록 성공 시 [SystemResult.Success],
      *         권한 없음 시 [SystemResult.PermissionDenied], 오류 시 [SystemResult.Failure]입니다.<br>
      */
-    public fun registerAlarmAndAllowWhileIdle(receiver: Class<*>, alarmVo: AlarmVO, namespace: String? = null): SystemResult<Unit> =
+    public fun registerAlarmAndAllowWhileIdle(receiver: Class<*>, alarmData: AlarmData, namespace: String? = null): SystemResult<Unit> =
         tryCatchSystemManagerResult {
-            val calendar = getCalendar(alarmVo)
-            val pendingIntent = getAlarmPendingIntent(receiver, alarmVo.key, namespace)
+            val calendar = getCalendar(alarmData)
+            val pendingIntent = getAlarmPendingIntent(receiver, alarmData.key, namespace)
                 ?: return@tryCatchSystemManagerResult SystemResult.Failure(null)
 
             alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
-            Logx.d("Idle-allowed alarm registered for key: ${alarmVo.key} at ${calendar.time}")
+            Logx.d("Idle-allowed alarm registered for key: ${alarmData.key} at ${calendar.time}")
             SystemResult.Success(Unit)
         }
 
@@ -136,7 +144,7 @@ public open class AlarmController(
      *
      * @param receiver The BroadcastReceiver class to handle the alarm.<br><br>
      *                 알람을 처리할 BroadcastReceiver 클래스입니다.<br>
-     * @param alarmVo The alarm data containing schedule and notification metadata.<br><br>
+     * @param alarmData The alarm data containing schedule and notification metadata.<br><br>
      *                스케줄과 알림 메타데이터를 포함한 알람 데이터입니다.<br>
      * @param intervalMillis Repeat interval in milliseconds (minimum 60,000ms).<br><br>
      *                      반복 주기(밀리초)이며 최소 60,000ms입니다.<br>
@@ -151,29 +159,29 @@ public open class AlarmController(
      */
     public fun registerRepeating(
         receiver: Class<*>,
-        alarmVo: AlarmVO,
+        alarmData: AlarmData,
         intervalMillis: Long,
         namespace: String? = null,
         type: Int = AlarmManager.RTC_WAKEUP,
     ): SystemResult<Unit> = tryCatchSystemManagerResult {
         val safeInterval = resolveRepeatingInterval(intervalMillis)
-        val calendar = getCalendar(alarmVo)
-        val pendingIntent = getAlarmPendingIntent(receiver, alarmVo.key, namespace)
+        val calendar = getCalendar(alarmData)
+        val pendingIntent = getAlarmPendingIntent(receiver, alarmData.key, namespace)
             ?: return@tryCatchSystemManagerResult SystemResult.Failure(null)
 
         alarmManager.setRepeating(type, calendar.timeInMillis, safeInterval, pendingIntent)
-        Logx.d("Repeating alarm registered for key: ${alarmVo.key} at ${calendar.time}, interval: $safeInterval")
+        Logx.d("Repeating alarm registered for key: ${alarmData.key} at ${calendar.time}, interval: $safeInterval")
         SystemResult.Success(Unit)
     }
 
     /**
-     * Registers an alarm based on AlarmScheduleVO.idleMode.<br><br>
-     * AlarmScheduleVO.idleMode 값을 기준으로 알람 등록 API를 자동 선택합니다.<br>
+     * Registers an alarm based on AlarmScheduleData.idleMode.<br><br>
+     * AlarmScheduleData.idleMode 값을 기준으로 알람 등록 API를 자동 선택합니다.<br>
      * NONE은 알람 시계(상태바 표시) 타입을 사용합니다.<br>
      *
      * @param receiver The BroadcastReceiver class to handle the alarm.<br><br>
      *                 알람을 처리할 BroadcastReceiver 클래스입니다.<br>
-     * @param alarmVo The alarm data containing schedule and notification metadata.<br><br>
+     * @param alarmData The alarm data containing schedule and notification metadata.<br><br>
      *                스케줄과 알림 메타데이터를 포함한 알람 데이터입니다.<br>
      * @param namespace Optional namespace to avoid requestCode collisions.<br><br>
      *                  requestCode 충돌 방지를 위한 선택 네임스페이스입니다.<br>
@@ -184,12 +192,12 @@ public open class AlarmController(
      */
     public fun registerBySchedule(
         receiver: Class<*>,
-        alarmVo: AlarmVO,
+        alarmData: AlarmData,
         namespace: String? = null,
-    ): SystemResult<Unit> = when (alarmVo.schedule.idleMode) {
-        AlarmIdleMode.NONE -> registerAlarmClock(receiver, alarmVo, namespace)
-        AlarmIdleMode.INEXACT -> registerAlarmAndAllowWhileIdle(receiver, alarmVo, namespace)
-        AlarmIdleMode.EXACT -> registerAlarmExactAndAllowWhileIdle(receiver, alarmVo, namespace)
+    ): SystemResult<Unit> = when (alarmData.schedule.idleMode) {
+        AlarmIdleMode.NONE -> registerAlarmClock(receiver, alarmData, namespace)
+        AlarmIdleMode.INEXACT -> registerAlarmAndAllowWhileIdle(receiver, alarmData, namespace)
+        AlarmIdleMode.EXACT -> registerAlarmExactAndAllowWhileIdle(receiver, alarmData, namespace)
     }
 
     /**
@@ -198,7 +206,7 @@ public open class AlarmController(
      *
      * @param receiver The BroadcastReceiver class to handle the alarm.<br><br>
      *                 알람을 처리할 BroadcastReceiver 클래스입니다.<br>
-     * @param alarmVo The alarm data containing schedule and notification metadata.<br><br>
+     * @param alarmData The alarm data containing schedule and notification metadata.<br><br>
      *                스케줄과 알림 메타데이터를 포함한 알람 데이터입니다.<br>
      * @param namespace Optional namespace to avoid requestCode collisions.<br><br>
      *                  requestCode 충돌 방지를 위한 선택 네임스페이스입니다.<br>
@@ -209,10 +217,10 @@ public open class AlarmController(
      */
     public fun updateAlarmClock(
         receiver: Class<*>,
-        alarmVo: AlarmVO,
+        alarmData: AlarmData,
         namespace: String? = null,
-    ): SystemResult<Unit> = updateInternal(alarmVo.key, receiver, namespace) {
-        registerAlarmClock(receiver, alarmVo, namespace)
+    ): SystemResult<Unit> = updateInternal(alarmData.key, receiver, namespace) {
+        registerAlarmClock(receiver, alarmData, namespace)
     }
 
     /**
@@ -221,7 +229,7 @@ public open class AlarmController(
      *
      * @param receiver The BroadcastReceiver class to handle the alarm.<br><br>
      *                 알람을 처리할 BroadcastReceiver 클래스입니다.<br>
-     * @param alarmVo The alarm data containing schedule and notification metadata.<br><br>
+     * @param alarmData The alarm data containing schedule and notification metadata.<br><br>
      *                스케줄과 알림 메타데이터를 포함한 알람 데이터입니다.<br>
      * @param namespace Optional namespace to avoid requestCode collisions.<br><br>
      *                  requestCode 충돌 방지를 위한 선택 네임스페이스입니다.<br>
@@ -232,10 +240,10 @@ public open class AlarmController(
      */
     public fun updateExactAndAllowWhileIdle(
         receiver: Class<*>,
-        alarmVo: AlarmVO,
+        alarmData: AlarmData,
         namespace: String? = null,
-    ): SystemResult<Unit> = updateInternal(alarmVo.key, receiver, namespace) {
-        registerAlarmExactAndAllowWhileIdle(receiver, alarmVo, namespace)
+    ): SystemResult<Unit> = updateInternal(alarmData.key, receiver, namespace) {
+        registerAlarmExactAndAllowWhileIdle(receiver, alarmData, namespace)
     }
 
     /**
@@ -244,7 +252,7 @@ public open class AlarmController(
      *
      * @param receiver The BroadcastReceiver class to handle the alarm.<br><br>
      *                 알람을 처리할 BroadcastReceiver 클래스입니다.<br>
-     * @param alarmVo The alarm data containing schedule and notification metadata.<br><br>
+     * @param alarmData The alarm data containing schedule and notification metadata.<br><br>
      *                스케줄과 알림 메타데이터를 포함한 알람 데이터입니다.<br>
      * @param namespace Optional namespace to avoid requestCode collisions.<br><br>
      *                  requestCode 충돌 방지를 위한 선택 네임스페이스입니다.<br>
@@ -255,10 +263,10 @@ public open class AlarmController(
      */
     public fun updateAllowWhileIdle(
         receiver: Class<*>,
-        alarmVo: AlarmVO,
+        alarmData: AlarmData,
         namespace: String? = null,
-    ): SystemResult<Unit> = updateInternal(alarmVo.key, receiver, namespace) {
-        registerAlarmAndAllowWhileIdle(receiver, alarmVo, namespace)
+    ): SystemResult<Unit> = updateInternal(alarmData.key, receiver, namespace) {
+        registerAlarmAndAllowWhileIdle(receiver, alarmData, namespace)
     }
 
     /**
@@ -267,7 +275,7 @@ public open class AlarmController(
      *
      * @param receiver The BroadcastReceiver class to handle the alarm.<br><br>
      *                 알람을 처리할 BroadcastReceiver 클래스입니다.<br>
-     * @param alarmVo The alarm data containing schedule and notification metadata.<br><br>
+     * @param alarmData The alarm data containing schedule and notification metadata.<br><br>
      *                스케줄과 알림 메타데이터를 포함한 알람 데이터입니다.<br>
      * @param intervalMillis Repeat interval in milliseconds (minimum 60,000ms).<br><br>
      *                      반복 주기(밀리초)이며 최소 60,000ms입니다.<br>
@@ -282,12 +290,12 @@ public open class AlarmController(
      */
     public fun updateRepeating(
         receiver: Class<*>,
-        alarmVo: AlarmVO,
+        alarmData: AlarmData,
         intervalMillis: Long,
         namespace: String? = null,
         type: Int = AlarmManager.RTC_WAKEUP,
-    ): SystemResult<Unit> = updateInternal(alarmVo.key, receiver, namespace) {
-        registerRepeating(receiver, alarmVo, intervalMillis, namespace, type)
+    ): SystemResult<Unit> = updateInternal(alarmData.key, receiver, namespace) {
+        registerRepeating(receiver, alarmData, intervalMillis, namespace, type)
     }
 
     /**
@@ -314,6 +322,27 @@ public open class AlarmController(
     }
 
     /**
+     * Creates the UI-facing PendingIntent shown by AlarmClockInfo.<br><br>
+     * AlarmClockInfo?먯꽌 ?ъ슜??UI 吏꾩엯??PendingIntent瑜??앹꽦?⑸땲??<br>
+     */
+    private fun getAlarmClockShowPendingIntent(key: Int, namespace: String?): PendingIntent? = tryCatchSystemManager(null) {
+        val launchIntent = context.packageManager.getLaunchIntentForPackage(context.packageName)?.apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+            putExtra(AlarmConstants.ALARM_KEY, key)
+        } ?: Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+            data = Uri.parse("package:${context.packageName}")
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+
+        return PendingIntent.getActivity(
+            context,
+            resolveShowRequestCode(key, namespace),
+            launchIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+        )
+    }
+
+    /**
      * Builds a stable requestCode using receiver and namespace.<br><br>
      * receiver.name을 기본 네임스페이스로 사용하며, namespace가 비어있으면 기본값을 씁니다.<br>
      * 동일 key라도 namespace가 다르면 서로 다른 requestCode가 됩니다.<br>
@@ -330,6 +359,11 @@ public open class AlarmController(
     private fun resolveRequestCode(receiver: Class<*>, key: Int, namespace: String?): Int {
         val effectiveNamespace = namespace?.takeIf { it.isNotBlank() } ?: receiver.name
         return (effectiveNamespace.hashCode() * 31) xor key
+    }
+
+    private fun resolveShowRequestCode(key: Int, namespace: String?): Int {
+        val effectiveNamespace = namespace?.takeIf { it.isNotBlank() } ?: context.packageName
+        return ("$effectiveNamespace:alarm_clock_show".hashCode() * 31) xor key
     }
 
     /**
@@ -382,16 +416,16 @@ public open class AlarmController(
      * 알람 스케줄 시간으로 Calendar를 생성하며, 오늘 시간이 지났으면 다음 날로 보정합니다.<br>
      * 특정 날짜가 지정된 경우 과거 날짜면 예외를 발생시킵니다.<br>
      *
-     * @param alarmVo The alarm data containing schedule information.<br><br>
+     * @param alarmData The alarm data containing schedule information.<br><br>
      *                스케줄 정보를 포함한 알람 데이터입니다.<br>
      * @return Calendar instance set to the appropriate alarm time.<br><br>
      *         알람 시간으로 설정된 Calendar 인스턴스입니다.<br>
      * @throws IllegalArgumentException If the specified date/time is in the past.<br><br>
      *                                 특정 날짜/시간이 과거인 경우 발생합니다.<br>
      */
-    private fun getCalendar(alarmVo: AlarmVO): Calendar {
+    private fun getCalendar(alarmData: AlarmData): Calendar {
         val now = Calendar.getInstance()
-        val schedule = alarmVo.schedule
+        val schedule = alarmData.schedule
         val alarmTime = Calendar.getInstance().apply {
             schedule.date?.let { date ->
                 set(Calendar.YEAR, date.year)
@@ -492,7 +526,7 @@ public open class AlarmController(
      * @return True if exact alarms are allowed, false otherwise.<br><br>
      *         정확 알람 허용 시 true, 미허용 시 false입니다.<br>
      */
-    public fun canScheduleExactAlarms(): Boolean = checkSdkVersion(Build.VERSION_CODES.S,
+    public open fun canScheduleExactAlarms(): Boolean = checkSdkVersion(Build.VERSION_CODES.S,
         positiveWork = { alarmManager.canScheduleExactAlarms() },
         negativeWork = { true }
     )
@@ -506,28 +540,13 @@ public open class AlarmController(
      */
     public fun buildExactAlarmPermissionIntent(): Intent? = checkSdkVersion(Build.VERSION_CODES.S,
         positiveWork = {
-            if (alarmManager.canScheduleExactAlarms()) return@checkSdkVersion null
+            if (canScheduleExactAlarms()) return@checkSdkVersion null
             Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {
                 data = Uri.parse("package:${context.packageName}")
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
         },
         negativeWork = { null }
-    )
-
-    /**
-     * Checks exact alarm permission and logs warning when denied (API 31+).<br><br>
-     * API 31+에서 정확 알람 권한을 확인하고, 거부 시 경고 로그를 남깁니다.<br>
-     *
-     * @return True if allowed or pre-S, false otherwise.<br><br>
-     *         허용 또는 S 미만이면 true, 그 외 false입니다.<br>
-     */
-    private fun ensureExactAlarmAllowedOrLog(): Boolean = checkSdkVersion(Build.VERSION_CODES.S,
-        positiveWork = {
-            if (alarmManager.canScheduleExactAlarms()) return@checkSdkVersion true
-            Logx.w("Exact alarm permission denied. Request permission in Settings first.")
-            false
-        }, negativeWork = { true }
     )
 
     private companion object {

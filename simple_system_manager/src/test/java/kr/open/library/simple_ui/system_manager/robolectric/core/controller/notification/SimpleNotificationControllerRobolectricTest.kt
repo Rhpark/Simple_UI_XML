@@ -16,13 +16,13 @@ import kr.open.library.simple_ui.system_manager.core.controller.notification.opt
 import kr.open.library.simple_ui.system_manager.core.controller.notification.option.BigTextNotificationOption
 import kr.open.library.simple_ui.system_manager.core.controller.notification.option.DefaultNotificationOption
 import kr.open.library.simple_ui.system_manager.core.controller.notification.option.ProgressNotificationOption
-import kr.open.library.simple_ui.system_manager.testutil.assertFailure
 import kr.open.library.simple_ui.system_manager.testutil.assertSuccess
 import kr.open.library.simple_ui.system_manager.testutil.assertSuccessValue
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -190,7 +190,7 @@ class SimpleNotificationControllerRobolectricTest {
         controller.showNotification(option, SimpleNotificationType.ACTIVITY)
         val result = controller.updateProgress(8, 101)
 
-        assertFailure(result)
+        assertSuccessValue(false, result)
     }
 
     @Test
@@ -208,7 +208,7 @@ class SimpleNotificationControllerRobolectricTest {
         controller.showNotification(option, SimpleNotificationType.ACTIVITY)
         val result = controller.updateProgress(9, -1)
 
-        assertFailure(result)
+        assertSuccessValue(false, result)
     }
 
     @Test
@@ -239,10 +239,10 @@ class SimpleNotificationControllerRobolectricTest {
 
     @Test
     @Config(sdk = [Build.VERSION_CODES.P])
-    fun completeProgress_notExistingNotification_returnsFalse() {
+    fun completeProgress_notExistingNotification_returnsSuccess() {
         val result = controller.completeProgress(999)
 
-        assertFailure(result)
+        assertSuccess(result)
     }
 
     @Test
@@ -489,6 +489,7 @@ class SimpleNotificationControllerRobolectricTest {
             recordingExecutor.runScheduledTask()
 
             assertFalse(progressBuilders.containsKey(30))
+            assertNull(shadowNotificationManager.getNotification(30))
         }
     }
 
@@ -581,6 +582,36 @@ class SimpleNotificationControllerRobolectricTest {
 
     @Test
     @Config(sdk = [Build.VERSION_CODES.P])
+    fun notify_whenReplacingProgressNotification_clearsStoredProgressState() {
+        val option =
+            ProgressNotificationOption(
+                notificationId = 33,
+                smallIcon = android.R.drawable.ic_dialog_info,
+                title = "Progress",
+                content = "Loading",
+                progressPercent = 10,
+            )
+
+        controller.showNotification(option, SimpleNotificationType.ACTIVITY)
+        assertTrue(controller.getProgressBuildersForTest().containsKey(33))
+
+        val notification =
+            NotificationCompat
+                .Builder(application, "default_notification_channel")
+                .setContentTitle("Direct")
+                .setSmallIcon(android.R.drawable.ic_dialog_info)
+                .build()
+
+        val result = controller.notify(33, notification)
+
+        assertSuccess(result)
+        assertFalse(controller.getProgressBuildersForTest().containsKey(33))
+        assertSuccessValue(false, controller.updateProgress(33, 80))
+        assertNotNull(shadowNotificationManager.getNotification(33))
+    }
+
+    @Test
+    @Config(sdk = [Build.VERSION_CODES.P])
     fun cancelNotification_withTagRemovesTaggedNotification() {
         val builder =
             NotificationCompat
@@ -592,6 +623,25 @@ class SimpleNotificationControllerRobolectricTest {
         assertEquals(1, shadowNotificationManager.size())
 
         val result = controller.cancelNotification(tag = "tagged", notificationId = 29)
+
+        assertSuccess(result)
+        assertEquals(0, shadowNotificationManager.size())
+    }
+
+    @Test
+    @Config(sdk = [Build.VERSION_CODES.TIRAMISU])
+    fun cancelNotification_whenPermissionCacheIsDenied_stillCancelsNotification() {
+        val notification =
+            NotificationCompat
+                .Builder(application, "default_notification_channel")
+                .setContentTitle("Direct")
+                .setSmallIcon(android.R.drawable.ic_dialog_info)
+                .build()
+
+        controller.notificationManager.notify(34, notification)
+        controller.setRemainPermissionsForTest(listOf(Manifest.permission.POST_NOTIFICATIONS))
+
+        val result = controller.cancelNotification(notificationId = 34)
 
         assertSuccess(result)
         assertEquals(0, shadowNotificationManager.size())
@@ -745,6 +795,13 @@ private fun SimpleNotificationController.getCleanupSchedulerForTest(): Scheduled
     }
     @Suppress("UNCHECKED_CAST")
     return field.get(builder) as? ScheduledExecutorService
+}
+
+private fun SimpleNotificationController.setRemainPermissionsForTest(remainPermissions: List<String>) {
+    val field = javaClass.superclass.getDeclaredField("remainPermissions").apply {
+        isAccessible = true
+    }
+    field.set(this, remainPermissions)
 }
 
 private open class AwaitFalseScheduler : ScheduledExecutorService {

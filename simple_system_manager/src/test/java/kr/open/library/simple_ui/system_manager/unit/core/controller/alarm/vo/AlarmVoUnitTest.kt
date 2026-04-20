@@ -1,11 +1,11 @@
 ﻿package kr.open.library.simple_ui.system_manager.unit.core.controller.alarm.vo
 
 import kr.open.library.simple_ui.system_manager.core.controller.alarm.AlarmConstants
-import kr.open.library.simple_ui.system_manager.core.controller.alarm.vo.AlarmDateVO
+import kr.open.library.simple_ui.system_manager.core.controller.alarm.vo.AlarmData
+import kr.open.library.simple_ui.system_manager.core.controller.alarm.vo.AlarmDateData
 import kr.open.library.simple_ui.system_manager.core.controller.alarm.vo.AlarmIdleMode
-import kr.open.library.simple_ui.system_manager.core.controller.alarm.vo.AlarmNotificationVO
-import kr.open.library.simple_ui.system_manager.core.controller.alarm.vo.AlarmScheduleVO
-import kr.open.library.simple_ui.system_manager.core.controller.alarm.vo.AlarmVO
+import kr.open.library.simple_ui.system_manager.core.controller.alarm.vo.AlarmNotificationData
+import kr.open.library.simple_ui.system_manager.core.controller.alarm.vo.AlarmScheduleData
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -14,7 +14,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /**
- * Unit tests for AlarmVO and AlarmConstants
+ * Unit tests for AlarmData and AlarmConstants
  */
 class AlarmVoUnitTest {
     // ==============================================
@@ -35,14 +35,14 @@ class AlarmVoUnitTest {
     }
 
     // ==============================================
-    // AlarmVO Creation Tests
+    // AlarmData Creation Tests
     // ==============================================
 
     @Test
-    fun AlarmVO_createsSuccessfullyWithValidData() {
-        val schedule = AlarmScheduleVO(hour = 7, minute = 30)
-        val notification = AlarmNotificationVO(title = "Wake Up", message = "Time to wake up!")
-        val alarm = AlarmVO(key = 1, schedule = schedule, notification = notification)
+    fun AlarmData_createsSuccessfullyWithValidData() {
+        val schedule = AlarmScheduleData(hour = 7, minute = 30)
+        val notification = AlarmNotificationData(title = "Wake Up", message = "Time to wake up!")
+        val alarm = AlarmData(key = 1, schedule = schedule, notification = notification)
 
         assertEquals(1, alarm.key)
         assertEquals(schedule, alarm.schedule)
@@ -56,18 +56,18 @@ class AlarmVoUnitTest {
     }
 
     @Test
-    fun AlarmVO_createsWithAllParameters() {
+    fun AlarmData_createsWithAllParameters() {
         val vibrationPattern = listOf(0L, 100L, 200L, 100L)
-        val schedule = AlarmScheduleVO(hour = 14, minute = 55, second = 30, idleMode = AlarmIdleMode.INEXACT)
+        val schedule = AlarmScheduleData(hour = 14, minute = 55, second = 30, idleMode = AlarmIdleMode.INEXACT)
         val notification =
-            AlarmNotificationVO(
+            AlarmNotificationData(
                 title = "Meeting",
                 message = "Team meeting in 5 minutes",
                 vibrationPattern = vibrationPattern,
                 soundUri = null,
             )
         val alarm =
-            AlarmVO(
+            AlarmData(
                 key = 2,
                 schedule = schedule,
                 notification = notification,
@@ -86,95 +86,95 @@ class AlarmVoUnitTest {
     }
 
     // ==============================================
-    // AlarmVO Validation Tests
+    // AlarmData Validation Tests
     // ==============================================
 
     @Test(expected = IllegalArgumentException::class)
-    fun AlarmVO_throwsExceptionWhenKeyIsZero() {
-        AlarmVO(
+    fun AlarmData_throwsExceptionWhenKeyIsZero() {
+        AlarmData(
             key = 0,
-            schedule = AlarmScheduleVO(hour = 10, minute = 0),
-            notification = AlarmNotificationVO(title = "Test", message = "Test message"),
+            schedule = AlarmScheduleData(hour = 10, minute = 0),
+            notification = AlarmNotificationData(title = "Test", message = "Test message"),
         )
     }
 
     @Test(expected = IllegalArgumentException::class)
-    fun AlarmVO_throwsExceptionWhenKeyIsNegative() {
-        AlarmVO(
+    fun AlarmData_throwsExceptionWhenKeyIsNegative() {
+        AlarmData(
             key = -1,
-            schedule = AlarmScheduleVO(hour = 10, minute = 0),
-            notification = AlarmNotificationVO(title = "Test", message = "Test message"),
+            schedule = AlarmScheduleData(hour = 10, minute = 0),
+            notification = AlarmNotificationData(title = "Test", message = "Test message"),
         )
     }
 
     @Test(expected = IllegalArgumentException::class)
-    fun AlarmVO_throwsExceptionWhenAcquireTimeIsZero() {
-        AlarmVO(
+    fun AlarmData_throwsExceptionWhenAcquireTimeIsZero() {
+        AlarmData(
             key = 1,
-            schedule = AlarmScheduleVO(hour = 10, minute = 0),
-            notification = AlarmNotificationVO(title = "Test", message = "Test message"),
+            schedule = AlarmScheduleData(hour = 10, minute = 0),
+            notification = AlarmNotificationData(title = "Test", message = "Test message"),
             acquireTime = 0L,
         )
     }
 
     @Test(expected = IllegalArgumentException::class)
-    fun AlarmVO_throwsExceptionWhenAcquireTimeIsNegative() {
-        AlarmVO(
+    fun AlarmData_throwsExceptionWhenAcquireTimeIsNegative() {
+        AlarmData(
             key = 1,
-            schedule = AlarmScheduleVO(hour = 10, minute = 0),
-            notification = AlarmNotificationVO(title = "Test", message = "Test message"),
+            schedule = AlarmScheduleData(hour = 10, minute = 0),
+            notification = AlarmNotificationData(title = "Test", message = "Test message"),
             acquireTime = -1000L,
         )
     }
 
     @Test(expected = IllegalArgumentException::class)
-    fun AlarmScheduleVO_throwsExceptionWhenHourIsNegative() {
-        AlarmScheduleVO(hour = -1, minute = 0)
+    fun AlarmScheduleData_throwsExceptionWhenHourIsNegative() {
+        AlarmScheduleData(hour = -1, minute = 0)
     }
 
     @Test(expected = IllegalArgumentException::class)
-    fun AlarmScheduleVO_throwsExceptionWhenHourIsGreaterThan23() {
-        AlarmScheduleVO(hour = 24, minute = 0)
+    fun AlarmScheduleData_throwsExceptionWhenHourIsGreaterThan23() {
+        AlarmScheduleData(hour = 24, minute = 0)
     }
 
     @Test(expected = IllegalArgumentException::class)
-    fun AlarmScheduleVO_throwsExceptionWhenMinuteIsNegative() {
-        AlarmScheduleVO(hour = 10, minute = -1)
+    fun AlarmScheduleData_throwsExceptionWhenMinuteIsNegative() {
+        AlarmScheduleData(hour = 10, minute = -1)
     }
 
     @Test(expected = IllegalArgumentException::class)
-    fun AlarmScheduleVO_throwsExceptionWhenMinuteIsGreaterThan59() {
-        AlarmScheduleVO(hour = 10, minute = 60)
+    fun AlarmScheduleData_throwsExceptionWhenMinuteIsGreaterThan59() {
+        AlarmScheduleData(hour = 10, minute = 60)
     }
 
     @Test(expected = IllegalArgumentException::class)
-    fun AlarmScheduleVO_throwsExceptionWhenSecondIsNegative() {
-        AlarmScheduleVO(hour = 10, minute = 30, second = -1)
+    fun AlarmScheduleData_throwsExceptionWhenSecondIsNegative() {
+        AlarmScheduleData(hour = 10, minute = 30, second = -1)
     }
 
     @Test(expected = IllegalArgumentException::class)
-    fun AlarmScheduleVO_throwsExceptionWhenSecondIsGreaterThan59() {
-        AlarmScheduleVO(hour = 10, minute = 30, second = 60)
+    fun AlarmScheduleData_throwsExceptionWhenSecondIsGreaterThan59() {
+        AlarmScheduleData(hour = 10, minute = 30, second = 60)
     }
 
     @Test(expected = IllegalArgumentException::class)
-    fun AlarmDateVO_throwsExceptionWhenDateIsInvalid() {
-        AlarmDateVO(year = 2026, month = 2, day = 31)
+    fun AlarmDateData_throwsExceptionWhenDateIsInvalid() {
+        AlarmDateData(year = 2026, month = 2, day = 31)
     }
 
     @Test(expected = IllegalArgumentException::class)
-    fun AlarmNotificationVO_throwsExceptionWhenTitleIsBlank() {
-        AlarmNotificationVO(title = "   ", message = "Test message")
+    fun AlarmNotificationData_throwsExceptionWhenTitleIsBlank() {
+        AlarmNotificationData(title = "   ", message = "Test message")
     }
 
     @Test(expected = IllegalArgumentException::class)
-    fun AlarmNotificationVO_throwsExceptionWhenMessageIsBlank() {
-        AlarmNotificationVO(title = "Test", message = "")
+    fun AlarmNotificationData_throwsExceptionWhenMessageIsBlank() {
+        AlarmNotificationData(title = "Test", message = "")
     }
 
     @Test(expected = IllegalArgumentException::class)
-    fun AlarmNotificationVO_throwsExceptionWhenVibrationPatternIsEmpty() {
-        AlarmNotificationVO(
+    fun AlarmNotificationData_throwsExceptionWhenVibrationPatternIsEmpty() {
+        AlarmNotificationData(
             title = "Test",
             message = "Test message",
             vibrationPattern = emptyList(),
@@ -182,8 +182,8 @@ class AlarmVoUnitTest {
     }
 
     @Test(expected = IllegalArgumentException::class)
-    fun AlarmNotificationVO_throwsExceptionWhenVibrationPatternHasNegativeValue() {
-        AlarmNotificationVO(
+    fun AlarmNotificationData_throwsExceptionWhenVibrationPatternHasNegativeValue() {
+        AlarmNotificationData(
             title = "Test",
             message = "Test message",
             vibrationPattern = listOf(0L, -100L, 200L),
@@ -191,16 +191,16 @@ class AlarmVoUnitTest {
     }
 
     // ==============================================
-    // AlarmVO Method Tests
+    // AlarmData Method Tests
     // ==============================================
 
     @Test
     fun withActiveState_createsNewAlarmWithModifiedState() {
         val original =
-            AlarmVO(
+            AlarmData(
                 key = 1,
-                schedule = AlarmScheduleVO(hour = 10, minute = 0),
-                notification = AlarmNotificationVO(title = "Test", message = "Test message"),
+                schedule = AlarmScheduleData(hour = 10, minute = 0),
+                notification = AlarmNotificationData(title = "Test", message = "Test message"),
                 isActive = true,
             )
 
@@ -214,10 +214,10 @@ class AlarmVoUnitTest {
     @Test
     fun withTime_createsNewAlarmWithModifiedTime() {
         val original =
-            AlarmVO(
+            AlarmData(
                 key = 1,
-                schedule = AlarmScheduleVO(hour = 10, minute = 30, second = 15),
-                notification = AlarmNotificationVO(title = "Test", message = "Test message"),
+                schedule = AlarmScheduleData(hour = 10, minute = 30, second = 15),
+                notification = AlarmNotificationData(title = "Test", message = "Test message"),
             )
 
         val modified = original.withTime(14, 45)
@@ -230,10 +230,10 @@ class AlarmVoUnitTest {
     @Test
     fun withTime_canModifySeconds() {
         val original =
-            AlarmVO(
+            AlarmData(
                 key = 1,
-                schedule = AlarmScheduleVO(hour = 10, minute = 30),
-                notification = AlarmNotificationVO(title = "Test", message = "Test message"),
+                schedule = AlarmScheduleData(hour = 10, minute = 30),
+                notification = AlarmNotificationData(title = "Test", message = "Test message"),
             )
 
         val modified = original.withTime(14, 45, 30)
@@ -246,10 +246,10 @@ class AlarmVoUnitTest {
     @Test
     fun getFormattedTime_returnsCorrectFormat() {
         val alarm =
-            AlarmVO(
+            AlarmData(
                 key = 1,
-                schedule = AlarmScheduleVO(hour = 7, minute = 5, second = 3),
-                notification = AlarmNotificationVO(title = "Test", message = "Test message"),
+                schedule = AlarmScheduleData(hour = 7, minute = 5, second = 3),
+                notification = AlarmNotificationData(title = "Test", message = "Test message"),
             )
 
         assertEquals("07:05:03", alarm.getFormattedTime())
@@ -258,10 +258,10 @@ class AlarmVoUnitTest {
     @Test
     fun getTotalSeconds_calculatesCorrectly() {
         val alarm =
-            AlarmVO(
+            AlarmData(
                 key = 1,
-                schedule = AlarmScheduleVO(hour = 2, minute = 30, second = 45),
-                notification = AlarmNotificationVO(title = "Test", message = "Test message"),
+                schedule = AlarmScheduleData(hour = 2, minute = 30, second = 45),
+                notification = AlarmNotificationData(title = "Test", message = "Test message"),
             )
 
         // 2 * 3600 + 30 * 60 + 45 = 7200 + 1800 + 45 = 9045
@@ -271,10 +271,10 @@ class AlarmVoUnitTest {
     @Test
     fun getDescription_returnsCorrectFormat() {
         val alarm =
-            AlarmVO(
+            AlarmData(
                 key = 123,
-                schedule = AlarmScheduleVO(hour = 6, minute = 30),
-                notification = AlarmNotificationVO(title = "Morning Alarm", message = "Test message"),
+                schedule = AlarmScheduleData(hour = 6, minute = 30),
+                notification = AlarmNotificationData(title = "Morning Alarm", message = "Test message"),
                 isActive = true,
             )
 
@@ -287,13 +287,13 @@ class AlarmVoUnitTest {
     }
 
     // ==============================================
-    // AlarmVO Companion Object Tests
+    // AlarmData Companion Object Tests
     // ==============================================
 
     @Test
     fun createSimple_createsAlarmWithMinimalConfiguration() {
         val alarm =
-            AlarmVO.createSimple(
+            AlarmData.createSimple(
                 key = 5,
                 title = "Simple Alarm",
                 message = "Simple message",
@@ -314,7 +314,7 @@ class AlarmVoUnitTest {
     @Test
     fun createIdleAllowed_createsAlarmWithIdlePermission() {
         val alarm =
-            AlarmVO.createIdleAllowed(
+            AlarmData.createIdleAllowed(
                 key = 10,
                 title = "Idle Alarm",
                 message = "Idle message",
@@ -333,7 +333,7 @@ class AlarmVoUnitTest {
     @Test
     fun createIdleAllowed_usesDefaultSecondWhenNotProvided() {
         val alarm =
-            AlarmVO.createIdleAllowed(
+            AlarmData.createIdleAllowed(
                 key = 11,
                 title = "Idle Alarm Default",
                 message = "Default second test",
@@ -352,7 +352,7 @@ class AlarmVoUnitTest {
     @Test
     fun createExactIdleAllowed_createsExactIdleAlarm() {
         val alarm =
-            AlarmVO.createExactIdleAllowed(
+            AlarmData.createExactIdleAllowed(
                 key = 12,
                 title = "Exact Idle Alarm",
                 message = "Exact idle message",
@@ -372,11 +372,11 @@ class AlarmVoUnitTest {
     fun vibrationEffect_returnsLongArrayFromPattern() {
         val pattern = listOf(0L, 100L, 200L, 100L)
         val alarm =
-            AlarmVO(
+            AlarmData(
                 key = 1,
-                schedule = AlarmScheduleVO(hour = 10, minute = 0),
+                schedule = AlarmScheduleData(hour = 10, minute = 0),
                 notification =
-                    AlarmNotificationVO(
+                    AlarmNotificationData(
                         title = "Test",
                         message = "Test message",
                         vibrationPattern = pattern,
@@ -394,10 +394,10 @@ class AlarmVoUnitTest {
     @Test
     fun vibrationEffect_returnsNullWhenPatternIsNull() {
         val alarm =
-            AlarmVO(
+            AlarmData(
                 key = 1,
-                schedule = AlarmScheduleVO(hour = 10, minute = 0),
-                notification = AlarmNotificationVO(title = "Test", message = "Test message"),
+                schedule = AlarmScheduleData(hour = 10, minute = 0),
+                notification = AlarmNotificationData(title = "Test", message = "Test message"),
             )
 
         val effect = alarm.notification.vibrationPattern?.toLongArray()
@@ -408,22 +408,22 @@ class AlarmVoUnitTest {
     @Test
     fun msg_returnsMessageValue() {
         val alarm =
-            AlarmVO(
+            AlarmData(
                 key = 1,
-                schedule = AlarmScheduleVO(hour = 10, minute = 0),
-                notification = AlarmNotificationVO(title = "Test", message = "Original message"),
+                schedule = AlarmScheduleData(hour = 10, minute = 0),
+                notification = AlarmNotificationData(title = "Test", message = "Original message"),
             )
 
         assertEquals("Original message", alarm.notification.message)
     }
 
     // ==============================================
-    // AlarmDateVO Tests
+    // AlarmDateData Tests
     // ==============================================
 
     @Test
-    fun AlarmDateVO_createsSuccessfullyWithValidDate() {
-        val date = AlarmDateVO(year = 2026, month = 6, day = 15)
+    fun AlarmDateData_createsSuccessfullyWithValidDate() {
+        val date = AlarmDateData(year = 2026, month = 6, day = 15)
 
         assertEquals(2026, date.year)
         assertEquals(6, date.month)
@@ -431,55 +431,55 @@ class AlarmVoUnitTest {
     }
 
     @Test
-    fun AlarmDateVO_createsSuccessfullyWithLeapYearDate() {
-        val date = AlarmDateVO(year = 2028, month = 2, day = 29)
+    fun AlarmDateData_createsSuccessfullyWithLeapYearDate() {
+        val date = AlarmDateData(year = 2028, month = 2, day = 29)
 
         assertEquals(29, date.day)
     }
 
     @Test(expected = IllegalArgumentException::class)
-    fun AlarmDateVO_throwsExceptionWhenYearIsBelow1970() {
-        AlarmDateVO(year = 1969, month = 1, day = 1)
+    fun AlarmDateData_throwsExceptionWhenYearIsBelow1970() {
+        AlarmDateData(year = 1969, month = 1, day = 1)
     }
 
     @Test(expected = IllegalArgumentException::class)
-    fun AlarmDateVO_throwsExceptionWhenMonthIsZero() {
-        AlarmDateVO(year = 2026, month = 0, day = 1)
+    fun AlarmDateData_throwsExceptionWhenMonthIsZero() {
+        AlarmDateData(year = 2026, month = 0, day = 1)
     }
 
     @Test(expected = IllegalArgumentException::class)
-    fun AlarmDateVO_throwsExceptionWhenMonthIsGreaterThan12() {
-        AlarmDateVO(year = 2026, month = 13, day = 1)
+    fun AlarmDateData_throwsExceptionWhenMonthIsGreaterThan12() {
+        AlarmDateData(year = 2026, month = 13, day = 1)
     }
 
     @Test(expected = IllegalArgumentException::class)
-    fun AlarmDateVO_throwsExceptionWhenDayIsZero() {
-        AlarmDateVO(year = 2026, month = 1, day = 0)
+    fun AlarmDateData_throwsExceptionWhenDayIsZero() {
+        AlarmDateData(year = 2026, month = 1, day = 0)
     }
 
     @Test(expected = IllegalArgumentException::class)
-    fun AlarmDateVO_throwsExceptionWhenDayIsGreaterThan31() {
-        AlarmDateVO(year = 2026, month = 1, day = 32)
+    fun AlarmDateData_throwsExceptionWhenDayIsGreaterThan31() {
+        AlarmDateData(year = 2026, month = 1, day = 32)
     }
 
     @Test(expected = IllegalArgumentException::class)
-    fun AlarmDateVO_throwsExceptionWhenFeb30() {
-        AlarmDateVO(year = 2026, month = 2, day = 30)
+    fun AlarmDateData_throwsExceptionWhenFeb30() {
+        AlarmDateData(year = 2026, month = 2, day = 30)
     }
 
     @Test(expected = IllegalArgumentException::class)
-    fun AlarmDateVO_throwsExceptionWhenFeb29OnNonLeapYear() {
-        AlarmDateVO(year = 2025, month = 2, day = 29)
+    fun AlarmDateData_throwsExceptionWhenFeb29OnNonLeapYear() {
+        AlarmDateData(year = 2025, month = 2, day = 29)
     }
 
     // ==============================================
-    // AlarmScheduleVO Extended Tests
+    // AlarmScheduleData Extended Tests
     // ==============================================
 
     @Test
-    fun AlarmScheduleVO_createsWithDateField() {
-        val date = AlarmDateVO(year = 2026, month = 12, day = 25)
-        val schedule = AlarmScheduleVO(hour = 9, minute = 0, date = date)
+    fun AlarmScheduleData_createsWithDateField() {
+        val date = AlarmDateData(year = 2026, month = 12, day = 25)
+        val schedule = AlarmScheduleData(hour = 9, minute = 0, date = date)
 
         assertNotNull(schedule.date)
         assertEquals(2026, schedule.date!!.year)
@@ -488,41 +488,41 @@ class AlarmVoUnitTest {
     }
 
     @Test
-    fun AlarmScheduleVO_dateDefaultsToNull() {
-        val schedule = AlarmScheduleVO(hour = 10, minute = 30)
+    fun AlarmScheduleData_dateDefaultsToNull() {
+        val schedule = AlarmScheduleData(hour = 10, minute = 30)
 
         assertNull(schedule.date)
     }
 
     @Test
-    fun AlarmScheduleVO_idleModeDefaultsToNone() {
-        val schedule = AlarmScheduleVO(hour = 10, minute = 30)
+    fun AlarmScheduleData_idleModeDefaultsToNone() {
+        val schedule = AlarmScheduleData(hour = 10, minute = 30)
 
         assertEquals(AlarmIdleMode.NONE, schedule.idleMode)
     }
 
     @Test
-    fun AlarmScheduleVO_createsWithInexactIdleMode() {
-        val schedule = AlarmScheduleVO(hour = 10, minute = 30, idleMode = AlarmIdleMode.INEXACT)
+    fun AlarmScheduleData_createsWithInexactIdleMode() {
+        val schedule = AlarmScheduleData(hour = 10, minute = 30, idleMode = AlarmIdleMode.INEXACT)
 
         assertEquals(AlarmIdleMode.INEXACT, schedule.idleMode)
     }
 
     @Test
-    fun AlarmScheduleVO_createsWithExactIdleMode() {
-        val schedule = AlarmScheduleVO(hour = 10, minute = 30, idleMode = AlarmIdleMode.EXACT)
+    fun AlarmScheduleData_createsWithExactIdleMode() {
+        val schedule = AlarmScheduleData(hour = 10, minute = 30, idleMode = AlarmIdleMode.EXACT)
 
         assertEquals(AlarmIdleMode.EXACT, schedule.idleMode)
     }
 
     // ==============================================
-    // AlarmVO.createOnDate Tests
+    // AlarmData.createOnDate Tests
     // ==============================================
 
     @Test
     fun createOnDate_createsAlarmWithSpecificDate() {
-        val date = AlarmDateVO(year = 2026, month = 7, day = 20)
-        val alarm = AlarmVO.createOnDate(
+        val date = AlarmDateData(year = 2026, month = 7, day = 20)
+        val alarm = AlarmData.createOnDate(
             key = 20,
             title = "Date Alarm",
             message = "Scheduled for a specific date",
@@ -544,8 +544,8 @@ class AlarmVoUnitTest {
 
     @Test
     fun createOnDate_createsAlarmWithSecondsSpecified() {
-        val date = AlarmDateVO(year = 2027, month = 1, day = 1)
-        val alarm = AlarmVO.createOnDate(
+        val date = AlarmDateData(year = 2027, month = 1, day = 1)
+        val alarm = AlarmData.createOnDate(
             key = 21,
             title = "New Year",
             message = "Happy New Year",
@@ -559,16 +559,16 @@ class AlarmVoUnitTest {
     }
 
     // ==============================================
-    // AlarmVO.withTime preserves date/idleMode
+    // AlarmData.withTime preserves date/idleMode
     // ==============================================
 
     @Test
     fun withTime_preservesDateField() {
-        val date = AlarmDateVO(year = 2026, month = 3, day = 15)
-        val original = AlarmVO(
+        val date = AlarmDateData(year = 2026, month = 3, day = 15)
+        val original = AlarmData(
             key = 30,
-            schedule = AlarmScheduleVO(hour = 10, minute = 0, date = date),
-            notification = AlarmNotificationVO(title = "Test", message = "Test message"),
+            schedule = AlarmScheduleData(hour = 10, minute = 0, date = date),
+            notification = AlarmNotificationData(title = "Test", message = "Test message"),
         )
 
         val modified = original.withTime(15, 30)
@@ -583,10 +583,10 @@ class AlarmVoUnitTest {
 
     @Test
     fun withTime_preservesIdleMode() {
-        val original = AlarmVO(
+        val original = AlarmData(
             key = 31,
-            schedule = AlarmScheduleVO(hour = 10, minute = 0, idleMode = AlarmIdleMode.EXACT),
-            notification = AlarmNotificationVO(title = "Test", message = "Test message"),
+            schedule = AlarmScheduleData(hour = 10, minute = 0, idleMode = AlarmIdleMode.EXACT),
+            notification = AlarmNotificationData(title = "Test", message = "Test message"),
         )
 
         val modified = original.withTime(20, 45)

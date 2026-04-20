@@ -71,47 +71,47 @@ public final class kr/open/library/simple_ui/system_manager/core/controller/alar
 public class kr/open/library/simple_ui/system_manager/core/controller/alarm/AlarmController : kr/open/library/simple_ui/system_manager/core/base/BaseSystemService {
 	public fun <init> (Landroid/content/Context;)V
 	public final fun buildExactAlarmPermissionIntent ()Landroid/content/Intent;
-	public final fun canScheduleExactAlarms ()Z
+	public fun canScheduleExactAlarms ()Z
 	public final fun exists (ILjava/lang/Class;Ljava/lang/String;)Z
 	public static synthetic fun exists$default (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/AlarmController;ILjava/lang/Class;Ljava/lang/String;ILjava/lang/Object;)Z
 	public final fun getAlarmManager ()Landroid/app/AlarmManager;
-	public final fun registerAlarmAndAllowWhileIdle (Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;Ljava/lang/String;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
-	public static synthetic fun registerAlarmAndAllowWhileIdle$default (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/AlarmController;Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;Ljava/lang/String;ILjava/lang/Object;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
-	public final fun registerAlarmClock (Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;Ljava/lang/String;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
-	public static synthetic fun registerAlarmClock$default (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/AlarmController;Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;Ljava/lang/String;ILjava/lang/Object;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
-	public final fun registerAlarmExactAndAllowWhileIdle (Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;Ljava/lang/String;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
-	public static synthetic fun registerAlarmExactAndAllowWhileIdle$default (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/AlarmController;Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;Ljava/lang/String;ILjava/lang/Object;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
-	public final fun registerBySchedule (Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;Ljava/lang/String;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
-	public static synthetic fun registerBySchedule$default (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/AlarmController;Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;Ljava/lang/String;ILjava/lang/Object;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
-	public final fun registerRepeating (Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;JLjava/lang/String;I)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
-	public static synthetic fun registerRepeating$default (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/AlarmController;Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;JLjava/lang/String;IILjava/lang/Object;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public final fun registerAlarmAndAllowWhileIdle (Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmData;Ljava/lang/String;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public static synthetic fun registerAlarmAndAllowWhileIdle$default (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/AlarmController;Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmData;Ljava/lang/String;ILjava/lang/Object;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public final fun registerAlarmClock (Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmData;Ljava/lang/String;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public static synthetic fun registerAlarmClock$default (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/AlarmController;Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmData;Ljava/lang/String;ILjava/lang/Object;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public final fun registerAlarmExactAndAllowWhileIdle (Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmData;Ljava/lang/String;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public static synthetic fun registerAlarmExactAndAllowWhileIdle$default (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/AlarmController;Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmData;Ljava/lang/String;ILjava/lang/Object;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public final fun registerBySchedule (Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmData;Ljava/lang/String;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public static synthetic fun registerBySchedule$default (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/AlarmController;Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmData;Ljava/lang/String;ILjava/lang/Object;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public final fun registerRepeating (Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmData;JLjava/lang/String;I)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public static synthetic fun registerRepeating$default (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/AlarmController;Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmData;JLjava/lang/String;IILjava/lang/Object;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
 	public final fun remove (ILjava/lang/Class;Ljava/lang/String;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
 	public static synthetic fun remove$default (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/AlarmController;ILjava/lang/Class;Ljava/lang/String;ILjava/lang/Object;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
-	public final fun updateAlarmClock (Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;Ljava/lang/String;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
-	public static synthetic fun updateAlarmClock$default (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/AlarmController;Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;Ljava/lang/String;ILjava/lang/Object;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
-	public final fun updateAllowWhileIdle (Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;Ljava/lang/String;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
-	public static synthetic fun updateAllowWhileIdle$default (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/AlarmController;Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;Ljava/lang/String;ILjava/lang/Object;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
-	public final fun updateExactAndAllowWhileIdle (Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;Ljava/lang/String;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
-	public static synthetic fun updateExactAndAllowWhileIdle$default (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/AlarmController;Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;Ljava/lang/String;ILjava/lang/Object;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
-	public final fun updateRepeating (Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;JLjava/lang/String;I)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
-	public static synthetic fun updateRepeating$default (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/AlarmController;Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;JLjava/lang/String;IILjava/lang/Object;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public final fun updateAlarmClock (Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmData;Ljava/lang/String;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public static synthetic fun updateAlarmClock$default (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/AlarmController;Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmData;Ljava/lang/String;ILjava/lang/Object;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public final fun updateAllowWhileIdle (Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmData;Ljava/lang/String;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public static synthetic fun updateAllowWhileIdle$default (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/AlarmController;Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmData;Ljava/lang/String;ILjava/lang/Object;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public final fun updateExactAndAllowWhileIdle (Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmData;Ljava/lang/String;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public static synthetic fun updateExactAndAllowWhileIdle$default (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/AlarmController;Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmData;Ljava/lang/String;ILjava/lang/Object;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public final fun updateRepeating (Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmData;JLjava/lang/String;I)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
+	public static synthetic fun updateRepeating$default (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/AlarmController;Ljava/lang/Class;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmData;JLjava/lang/String;IILjava/lang/Object;)Lkr/open/library/simple_ui/system_manager/core/base/SystemResult;
 }
 
 public abstract class kr/open/library/simple_ui/system_manager/core/controller/alarm/receiver/BaseAlarmReceiver : android/content/BroadcastReceiver {
 	protected field notificationController Lkr/open/library/simple_ui/system_manager/core/controller/notification/SimpleNotificationController;
 	public fun <init> ()V
-	protected abstract fun buildNotificationOption (Landroid/content/Context;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;)Lkr/open/library/simple_ui/system_manager/core/controller/notification/option/SimpleNotificationOptionBase;
-	protected abstract fun createNotificationChannel (Landroid/content/Context;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmNotificationVO;)V
+	protected abstract fun buildNotificationOption (Landroid/content/Context;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmData;)Lkr/open/library/simple_ui/system_manager/core/controller/notification/option/SimpleNotificationOptionBase;
+	protected abstract fun createNotificationChannel (Landroid/content/Context;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmNotificationData;)V
 	protected abstract fun getClassType ()Ljava/lang/Class;
 	protected final fun getNotificationController ()Lkr/open/library/simple_ui/system_manager/core/controller/notification/SimpleNotificationController;
 	protected abstract fun getPowerManagerAcquireTime ()J
-	protected abstract fun loadAlarmVoList (Landroid/content/Context;Landroid/content/Intent;I)Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;
-	protected abstract fun loadAllAlarmVoList (Landroid/content/Context;)Ljava/util/List;
+	protected abstract fun loadAlarmData (Landroid/content/Context;Landroid/content/Intent;I)Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmData;
+	protected abstract fun loadAllAlarmDataList (Landroid/content/Context;)Ljava/util/List;
 	protected fun onExactAlarmPermissionDenied (Landroid/content/Context;)V
 	public fun onReceive (Landroid/content/Context;Landroid/content/Intent;)V
-	protected fun resolveAlarmNamespace (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;)Ljava/lang/String;
-	protected fun resolveNotificationShowType (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;)Lkr/open/library/simple_ui/system_manager/core/controller/notification/SimpleNotificationType;
-	protected fun resolveRegisterType (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;)Lkr/open/library/simple_ui/system_manager/core/controller/alarm/receiver/BaseAlarmReceiver$RegisterType;
+	protected fun resolveAlarmNamespace (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmData;)Ljava/lang/String;
+	protected fun resolveNotificationShowType (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmData;)Lkr/open/library/simple_ui/system_manager/core/controller/notification/SimpleNotificationType;
+	protected fun resolveRegisterType (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmData;)Lkr/open/library/simple_ui/system_manager/core/controller/alarm/receiver/BaseAlarmReceiver$RegisterType;
 	protected final fun setNotificationController (Lkr/open/library/simple_ui/system_manager/core/controller/notification/SimpleNotificationController;)V
 }
 
@@ -124,13 +124,50 @@ public final class kr/open/library/simple_ui/system_manager/core/controller/alar
 	public static fun values ()[Lkr/open/library/simple_ui/system_manager/core/controller/alarm/receiver/BaseAlarmReceiver$RegisterType;
 }
 
-public final class kr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmDateVO {
+public final class kr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmData {
+	public static final field Companion Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmData$Companion;
+	public fun <init> (ILkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmScheduleData;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmNotificationData;ZJ)V
+	public synthetic fun <init> (ILkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmScheduleData;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmNotificationData;ZJILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()I
+	public final fun component2 ()Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmScheduleData;
+	public final fun component3 ()Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmNotificationData;
+	public final fun component4 ()Z
+	public final fun component5 ()J
+	public final fun copy (ILkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmScheduleData;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmNotificationData;ZJ)Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmData;
+	public static synthetic fun copy$default (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmData;ILkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmScheduleData;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmNotificationData;ZJILjava/lang/Object;)Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmData;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAcquireTime ()J
+	public final fun getDescription ()Ljava/lang/String;
+	public final fun getFormattedTime ()Ljava/lang/String;
+	public final fun getKey ()I
+	public final fun getNotification ()Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmNotificationData;
+	public final fun getSchedule ()Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmScheduleData;
+	public final fun getTotalSeconds ()I
+	public fun hashCode ()I
+	public final fun isActive ()Z
+	public fun toString ()Ljava/lang/String;
+	public final fun withActiveState (Z)Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmData;
+	public final fun withTime (III)Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmData;
+	public static synthetic fun withTime$default (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmData;IIIILjava/lang/Object;)Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmData;
+}
+
+public final class kr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmData$Companion {
+	public final fun createExactIdleAllowed (ILjava/lang/String;Ljava/lang/String;III)Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmData;
+	public static synthetic fun createExactIdleAllowed$default (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmData$Companion;ILjava/lang/String;Ljava/lang/String;IIIILjava/lang/Object;)Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmData;
+	public final fun createIdleAllowed (ILjava/lang/String;Ljava/lang/String;III)Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmData;
+	public static synthetic fun createIdleAllowed$default (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmData$Companion;ILjava/lang/String;Ljava/lang/String;IIIILjava/lang/Object;)Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmData;
+	public final fun createOnDate (ILjava/lang/String;Ljava/lang/String;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmDateData;III)Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmData;
+	public static synthetic fun createOnDate$default (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmData$Companion;ILjava/lang/String;Ljava/lang/String;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmDateData;IIIILjava/lang/Object;)Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmData;
+	public final fun createSimple (ILjava/lang/String;Ljava/lang/String;II)Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmData;
+}
+
+public final class kr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmDateData {
 	public fun <init> (III)V
 	public final fun component1 ()I
 	public final fun component2 ()I
 	public final fun component3 ()I
-	public final fun copy (III)Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmDateVO;
-	public static synthetic fun copy$default (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmDateVO;IIIILjava/lang/Object;)Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmDateVO;
+	public final fun copy (III)Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmDateData;
+	public static synthetic fun copy$default (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmDateData;IIIILjava/lang/Object;)Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmDateData;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getDay ()I
 	public final fun getMonth ()I
@@ -148,15 +185,15 @@ public final class kr/open/library/simple_ui/system_manager/core/controller/alar
 	public static fun values ()[Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmIdleMode;
 }
 
-public final class kr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmNotificationVO {
+public final class kr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmNotificationData {
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Landroid/net/Uri;)V
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Landroid/net/Uri;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/lang/String;
 	public final fun component3 ()Ljava/util/List;
 	public final fun component4 ()Landroid/net/Uri;
-	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Landroid/net/Uri;)Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmNotificationVO;
-	public static synthetic fun copy$default (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmNotificationVO;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Landroid/net/Uri;ILjava/lang/Object;)Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmNotificationVO;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Landroid/net/Uri;)Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmNotificationData;
+	public static synthetic fun copy$default (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmNotificationData;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Landroid/net/Uri;ILjava/lang/Object;)Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmNotificationData;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getMessage ()Ljava/lang/String;
 	public final fun getSoundUri ()Landroid/net/Uri;
@@ -166,61 +203,24 @@ public final class kr/open/library/simple_ui/system_manager/core/controller/alar
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class kr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmScheduleVO {
-	public fun <init> (IIILkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmIdleMode;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmDateVO;)V
-	public synthetic fun <init> (IIILkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmIdleMode;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmDateVO;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+public final class kr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmScheduleData {
+	public fun <init> (IIILkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmIdleMode;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmDateData;)V
+	public synthetic fun <init> (IIILkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmIdleMode;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmDateData;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()I
 	public final fun component2 ()I
 	public final fun component3 ()I
 	public final fun component4 ()Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmIdleMode;
-	public final fun component5 ()Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmDateVO;
-	public final fun copy (IIILkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmIdleMode;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmDateVO;)Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmScheduleVO;
-	public static synthetic fun copy$default (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmScheduleVO;IIILkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmIdleMode;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmDateVO;ILjava/lang/Object;)Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmScheduleVO;
+	public final fun component5 ()Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmDateData;
+	public final fun copy (IIILkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmIdleMode;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmDateData;)Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmScheduleData;
+	public static synthetic fun copy$default (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmScheduleData;IIILkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmIdleMode;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmDateData;ILjava/lang/Object;)Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmScheduleData;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getDate ()Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmDateVO;
+	public final fun getDate ()Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmDateData;
 	public final fun getHour ()I
 	public final fun getIdleMode ()Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmIdleMode;
 	public final fun getMinute ()I
 	public final fun getSecond ()I
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
-}
-
-public final class kr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO {
-	public static final field Companion Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO$Companion;
-	public fun <init> (ILkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmScheduleVO;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmNotificationVO;ZJ)V
-	public synthetic fun <init> (ILkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmScheduleVO;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmNotificationVO;ZJILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun component1 ()I
-	public final fun component2 ()Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmScheduleVO;
-	public final fun component3 ()Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmNotificationVO;
-	public final fun component4 ()Z
-	public final fun component5 ()J
-	public final fun copy (ILkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmScheduleVO;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmNotificationVO;ZJ)Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;
-	public static synthetic fun copy$default (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;ILkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmScheduleVO;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmNotificationVO;ZJILjava/lang/Object;)Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getAcquireTime ()J
-	public final fun getDescription ()Ljava/lang/String;
-	public final fun getFormattedTime ()Ljava/lang/String;
-	public final fun getKey ()I
-	public final fun getNotification ()Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmNotificationVO;
-	public final fun getSchedule ()Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmScheduleVO;
-	public final fun getTotalSeconds ()I
-	public fun hashCode ()I
-	public final fun isActive ()Z
-	public fun toString ()Ljava/lang/String;
-	public final fun withActiveState (Z)Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;
-	public final fun withTime (III)Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;
-	public static synthetic fun withTime$default (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;IIIILjava/lang/Object;)Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;
-}
-
-public final class kr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO$Companion {
-	public final fun createExactIdleAllowed (ILjava/lang/String;Ljava/lang/String;III)Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;
-	public static synthetic fun createExactIdleAllowed$default (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO$Companion;ILjava/lang/String;Ljava/lang/String;IIIILjava/lang/Object;)Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;
-	public final fun createIdleAllowed (ILjava/lang/String;Ljava/lang/String;III)Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;
-	public static synthetic fun createIdleAllowed$default (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO$Companion;ILjava/lang/String;Ljava/lang/String;IIIILjava/lang/Object;)Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;
-	public final fun createOnDate (ILjava/lang/String;Ljava/lang/String;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmDateVO;III)Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;
-	public static synthetic fun createOnDate$default (Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO$Companion;ILjava/lang/String;Ljava/lang/String;Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmDateVO;IIIILjava/lang/Object;)Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;
-	public final fun createSimple (ILjava/lang/String;Ljava/lang/String;II)Lkr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmVO;
 }
 
 public final class kr/open/library/simple_ui/system_manager/core/controller/notification/NotificationDefaultChannel {

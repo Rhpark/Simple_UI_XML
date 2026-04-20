@@ -9,6 +9,7 @@ import android.os.Build
 import androidx.annotation.RequiresPermission
 import androidx.core.app.NotificationCompat
 import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
+import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
 import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.system_manager.core.base.BaseSystemService
 import kr.open.library.simple_ui.system_manager.core.base.SystemResult
@@ -101,7 +102,10 @@ public open class SimpleNotificationController(
      */
     public val notificationManager: NotificationManager by lazy { context.applicationContext.getNotificationManager() }
 
-    private val builder = SimpleNotificationBuilder(context.applicationContext)
+    private val builder = SimpleNotificationBuilder(
+        context = context.applicationContext,
+        notificationManager = notificationManager,
+    )
 
     init {
         /**
@@ -172,6 +176,7 @@ public open class SimpleNotificationController(
 
     /**
      * Directly displays a notification using a pre-built Notification object.<br><br>
+     * Clears any cached progress state for the same notification ID before posting.<br><br>
      * 미리 빌드된 Notification 객체를 사용하여 직접 알림을 표시합니다.<br>
      *
      * @param notificationId Unique notification identifier.<br><br>
@@ -185,6 +190,7 @@ public open class SimpleNotificationController(
      */
     @RequiresPermission(POST_NOTIFICATIONS)
     public fun notify(notificationId: Int, build: Notification): SystemResult<Unit> = tryCatchSystemManagerResult {
+        builder.cancelNotification(notificationId)
         notificationManager.notify(notificationId, build)
         SystemResult.Success(Unit)
     }
@@ -198,10 +204,10 @@ public open class SimpleNotificationController(
      * @param progressPercent Progress percentage (0-100).<br><br>
      *                        진행률 (0-100).
      * @return [SystemResult.Success] with `true` if update was applied,
-     *         [SystemResult.Success] with `false` if unchanged or not found,
+     *         [SystemResult.Success] with `false` if unchanged, not found, or the input range is invalid,
      *         [SystemResult.PermissionDenied] if permission is missing, [SystemResult.Failure] on error.<br><br>
      *         업데이트가 반영되면 [SystemResult.Success](`true`),
-     *         변경 없음/대상 없음이면 [SystemResult.Success](`false`),
+     *         변경 없음/대상 없음/입력 범위 오류이면 [SystemResult.Success](`false`),
      *         권한 없음 시 [SystemResult.PermissionDenied], 오류 시 [SystemResult.Failure].<br>
      */
     @RequiresPermission(POST_NOTIFICATIONS)
@@ -209,7 +215,7 @@ public open class SimpleNotificationController(
         // 진행률 범위 검증
         if (progressPercent !in 0..100) {
             Logx.w("Invalid progress: $progressPercent (must be 0 ~ 100)")
-            return@tryCatchSystemManagerResult SystemResult.Failure(null)
+            return@tryCatchSystemManagerResult SystemResult.Success(false)
         }
         when (val result = builder.updateProgress(notificationId, progressPercent)) {
             is SimpleNotificationBuilder.ProgressUpdateResult.Updated -> {
@@ -235,9 +241,9 @@ public open class SimpleNotificationController(
      *                       고유 알림 식별자.
      * @param completedContent Completion message (optional).<br><br>
      *                         완료 메시지 (선택사항).
-     * @return [SystemResult.Success] if completion was successful,
+     * @return [SystemResult.Success] if completion was successful or the target does not exist,
      *         [SystemResult.PermissionDenied] if permission is missing, [SystemResult.Failure] on error.<br><br>
-     *         완료 처리 성공 시 [SystemResult.Success],
+     *         완료 처리 성공 또는 대상 없음 시 [SystemResult.Success],
      *         권한 없음 시 [SystemResult.PermissionDenied], 오류 시 [SystemResult.Failure].<br>
      */
     @RequiresPermission(POST_NOTIFICATIONS)
@@ -247,29 +253,35 @@ public open class SimpleNotificationController(
             showNotification(notificationId, it)
             return@tryCatchSystemManagerResult SystemResult.Success(Unit)
         }
-        Logx.w("Progress notification not found for ID: $notificationId")
-        SystemResult.Failure(null)
+        Logx.d("Progress notification not found for ID: $notificationId")
+        SystemResult.Success(Unit)
     }
 
     /**
      * Cancels a specific notification by ID.<br><br>
+     * This method is not blocked by the POST_NOTIFICATIONS permission cache.<br><br>
      * ID로 특정 알림을 취소합니다.<br>
      *
      * @param tag Notification tag (optional).<br><br>
      *            알림 태그 (선택사항).
      * @param notificationId Unique notification identifier.<br><br>
      *                       고유 알림 식별자.
-     * @return [SystemResult.Success] if cancellation was successful,
-     *         [SystemResult.PermissionDenied] if permission is missing, [SystemResult.Failure] on error.<br><br>
-     *         취소 성공 시 [SystemResult.Success],
-     *         권한 없음 시 [SystemResult.PermissionDenied], 오류 시 [SystemResult.Failure].<br>
+     * @return [SystemResult.Success] if cancellation was successful, [SystemResult.Failure] on error.<br><br>
+     *         취소 성공 시 [SystemResult.Success], 오류 시 [SystemResult.Failure].<br>
      */
-    public fun cancelNotification(tag: String? = null, notificationId: Int): SystemResult<Unit> = tryCatchSystemManagerResult {
-        tag?.let { notificationManager.cancel(tag, notificationId) }
-            ?: notificationManager.cancel(notificationId)
-        builder.cancelNotification(notificationId) // 진행률 빌더도 함께 제거
-        SystemResult.Success(Unit)
-    }
+    public fun cancelNotification(tag: String? = null, notificationId: Int): SystemResult<Unit> =
+        safeCatch(
+            block = {
+                tag?.let { notificationManager.cancel(tag, notificationId) }
+                    ?: notificationManager.cancel(notificationId)
+                builder.cancelNotification(notificationId)
+                SystemResult.Success(Unit)
+            },
+            onCatch = { e ->
+                Logx.e("SimpleNotificationController: Error occurred : ${e.message}")
+                SystemResult.Failure(e)
+            },
+        )
 
     /**
      * Cancels all active notifications.<br><br>
