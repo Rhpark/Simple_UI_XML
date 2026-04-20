@@ -234,7 +234,8 @@ class BaseSystemServiceRobolectricTest {
 
         fun testTryCatchResult(): SystemResult<String> = tryCatchSystemManagerResult { SystemResult.Success("success") }
 
-        fun testTryCatchResultWithException(): SystemResult<String> = tryCatchSystemManagerResult { throw RuntimeException("Test exception") }
+        fun testTryCatchResultWithException(): SystemResult<String> =
+            tryCatchSystemManagerResult { throw RuntimeException("Test exception") }
 
         fun testTryCatchResultPolicyRestricted(): SystemResult<String> = tryCatchSystemManagerResult { SystemResult.PolicyRestricted }
     }
