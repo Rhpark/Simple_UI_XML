@@ -71,23 +71,23 @@ android {
 //..
 dependencies {
     //..
-    implementation("io.github.rhpark:dash-droid-core:0.4.15")             // Core functionality only
-    implementation("io.github.rhpark:dash-droid-xml:0.4.15")              // XML UI components only (depends on Core)
-    implementation("io.github.rhpark:dash-droid-system-manager:0.4.15")   // System Manager only (depends on Core)
+    implementation("io.github.rhpark:dash-droid-core:0.4.16")             // Core functionality only
+    implementation("io.github.rhpark:dash-droid-xml:0.4.16")              // XML UI components only (depends on Core)
+    implementation("io.github.rhpark:dash-droid-system-manager:0.4.16")   // System Manager only (depends on Core)
 
     // Examples
-    // implementation("io.github.rhpark:dash-droid-xml:0.4.15")
+    // implementation("io.github.rhpark:dash-droid-xml:0.4.16")
     // -> simple_xml 기능만 사용하는 경우
     //
-    // implementation("io.github.rhpark:dash-droid-system-manager:0.4.15")
+    // implementation("io.github.rhpark:dash-droid-system-manager:0.4.16")
     // -> system_manager 기능만 사용하는 경우
     //
-    // implementation("io.github.rhpark:dash-droid-xml:0.4.15")
-    // implementation("io.github.rhpark:dash-droid-system-manager:0.4.15")
+    // implementation("io.github.rhpark:dash-droid-xml:0.4.16")
+    // implementation("io.github.rhpark:dash-droid-system-manager:0.4.16")
     // -> XML UI와 system_manager 기능을 함께 사용하는 경우
     //
-    // implementation("io.github.rhpark:dash-droid-core:0.4.15")
-    // implementation("io.github.rhpark:dash-droid-xml:0.4.15")
+    // implementation("io.github.rhpark:dash-droid-core:0.4.16")
+    // implementation("io.github.rhpark:dash-droid-xml:0.4.16")
     // -> 앱 코드에서 simple_core API를 직접 함께 사용하는 경우
     //..
 }
@@ -96,9 +96,9 @@ dependencies {
 ### 3. build.gradle (Groovy)
 ```groovy
 dependencies {
-    implementation "io.github.rhpark:dash-droid-core:0.4.15"
-    implementation "io.github.rhpark:dash-droid-xml:0.4.15"
-    implementation "io.github.rhpark:dash-droid-system-manager:0.4.15"
+    implementation "io.github.rhpark:dash-droid-core:0.4.16"
+    implementation "io.github.rhpark:dash-droid-xml:0.4.16"
+    implementation "io.github.rhpark:dash-droid-system-manager:0.4.16"
 }
 ```
 
