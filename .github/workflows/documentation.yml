@@ -65,15 +65,20 @@ jobs:
       - name: Update README.md
         run: |
           VERSION="${{ steps.version.outputs.version }}"
-          
+
           # Line 13: **libraries** (v0.3.0+):
           sed -i "s/\*\*libraries\*\* (v[0-9.]\+)/**libraries** (v$VERSION)/" README.md
-          
-          # Line 69-71, 74: implementation dependencies
+
+          # Maven Central coordinates (dash-droid-*)
+          sed -i "s/dash-droid-core:[0-9.]\+/dash-droid-core:$VERSION/g" README.md
+          sed -i "s/dash-droid-xml:[0-9.]\+/dash-droid-xml:$VERSION/g" README.md
+          sed -i "s/dash-droid-system-manager:[0-9.]\+/dash-droid-system-manager:$VERSION/g" README.md
+
+          # JitPack coordinates (Simple_UI_*)
           sed -i "s/Simple_UI_Core:[0-9.]\+/Simple_UI_Core:$VERSION/g" README.md
           sed -i "s/Simple_UI_XML:[0-9.]\+/Simple_UI_XML:$VERSION/g" README.md
           sed -i "s/Simple_UI_System_Manager:[0-9.]\+/Simple_UI_System_Manager:$VERSION/g" README.md
-          
+
           echo "✅ README.md updated"
 
       - name: Update AGENTS.md
