@@ -26,11 +26,11 @@
 ./gradlew ktlintCheck
 
 # 공개 API 바이너리 호환성 검사
-./gradlew simple_core:apiCheck simple_xml:apiCheck
+./gradlew simple_core:apiCheck simple_xml:apiCheck simple_system_manager:apiCheck
 ```
 
 > 추가/개선으로 공개 API가 변경된 경우:
-> `./gradlew simple_core:apiDump simple_xml:apiDump` 로 api 파일 갱신 후 커밋
+> `./gradlew simple_core:apiDump simple_xml:apiDump simple_system_manager:apiDump` 로 api 파일 갱신 후 커밋
 
 ## 코드 품질 간이 점검
 

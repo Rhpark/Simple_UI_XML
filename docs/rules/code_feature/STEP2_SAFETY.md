@@ -21,7 +21,7 @@
 ./gradlew testRobolectric
 
 # 공개 API 호환성 사전 확인 (기준선, 파일 변경 없음)
-./gradlew simple_core:apiCheck simple_xml:apiCheck
+./gradlew simple_core:apiCheck simple_xml:apiCheck simple_system_manager:apiCheck
 ```
 
 > 빌드/테스트가 실패한 상태에서는 구현을 시작하지 않는다.

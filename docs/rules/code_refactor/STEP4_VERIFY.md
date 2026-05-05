@@ -26,7 +26,7 @@
 ./gradlew ktlintCheck
 
 # 공개 API 바이너리 호환성 검사 (항상 실행)
-./gradlew simple_core:apiCheck simple_xml:apiCheck
+./gradlew simple_core:apiCheck simple_xml:apiCheck simple_system_manager:apiCheck
 ```
 
 ## 코드 품질 간이 점검
