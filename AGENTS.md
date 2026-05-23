@@ -85,9 +85,11 @@ SubAgent: {agent명}
 
 | agent | 트리거 | 설명 |
 | --- | --- | --- |
+| analysis | 분석, 원인 파악, 흐름 추적, 왜 이렇게 동작하나, 문서 불일치 확인, 의존성 환경 분석 | 코드·문서·환경을 분석해 판단 근거를 제공한다. 코드 리뷰·리팩토링·기능 작업 전 선행 실행 |
+| review | 코드 리뷰 워크플로우 실행, 리뷰 워크플로우, analysis 완료 후 리뷰 | analysis 산출물을 입력으로 받아 기능·로직·아키텍처·품질을 단계별로 검토한다 |
+| verify | STEP 산출물 독립 검증, 하네스 재판정, 결과 재확인 | Analysis/Review 에이전트의 STEP 산출물을 원본 컨텍스트 없이 독립 재판정한다 |
 | agent-feature | 기능 추가, 기능 개선, 기능 제거, API 추가, API 제거 | PRD/SPEC 기반으로 기능을 구현한다 |
 | agent-refactor | 리팩토링, 구조 개선, 중복 제거, 코드 정리 | 외부 동작 변경 없이 코드를 개선한다 |
-| agent-review | 코드 리뷰, 검토, 코드 봐줘, PR 리뷰 | 코드를 수정 없이 분석하고 이슈를 보고한다 |
 | agent-planning_writer | 기능 계획, PRD, SPEC, 구현 계획, planning | PRD/SPEC/IMPLEMENTATION_PLAN 문서를 작성한다 |
 | agent-planning_reviewer | 문서 검토, 문서 검증, PRD 검토, SPEC 검토, PLAN 검토 | PRD/SPEC/IMPLEMENTATION_PLAN 문서를 검증한다 |
 

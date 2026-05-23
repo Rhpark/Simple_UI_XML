@@ -20,7 +20,7 @@ local.properties
 codex.md
 
 # Dokka generated documentation
-docs/*
+#docs/*
 # Exception: Keep architecture documents
 !docs/ARCHITECTURE.md
 !docs/architecture/
@@ -29,9 +29,17 @@ docs/*
 !docs/readme/
 !docs/readme/**
 # Exception: Keep coverage index page
-!docs/coverage/
-docs/coverage/*
-!docs/coverage/index.html
+#!docs/coverage/
+#docs/coverage/*
+#!docs/coverage/index.html
+
+# Agent 산출물 (docs/agents/output/)
+docs/agents/output/analysis/**
+docs/agents/output/analysis/**/.gitkeep
+docs/agents/output/review/**
+docs/agents/output/review/**/.gitkeep
+docs/agents/output/feature/**
+docs/agents/output/feature/**/.gitkeep
 
 # Windows reserved-name artifacts
 nul

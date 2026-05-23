@@ -1,6 +1,6 @@
 ---
 name: agent-refactor
-description: 'Android 라이브러리(SimpleUI_XML) 코드를 직접 수정한다. 대상선정→안전망→실행→검증→문서 5단계로 진행하며, agent-review 이슈 요약을 입력으로 받으면 STEP1 분석을 생략하고 STEP2부터 진행한다. STEP1 사용자 승인 전 코드 수정 금지. 트리거: 리팩토링, 구조 개선, 중복 제거, 코드 정리'
+description: 'Android 라이브러리(SimpleUI_XML) 코드를 직접 수정한다. 대상선정→안전망→실행→검증→문서 5단계로 진행하며, review 에이전트 이슈 요약을 입력으로 받으면 STEP1 분석을 생략하고 STEP2부터 진행한다. STEP1 사용자 승인 전 코드 수정 금지. 트리거: 리팩토링, 구조 개선, 중복 제거, 코드 정리'
 model: opus
 color: yellow
 ---
@@ -36,7 +36,7 @@ color: yellow
 
 | 상황 | 진입 방법 |
 |------|---------|
-| agent-review 이슈 요약이 제공된 경우 | 요약을 대상으로 설정 → STEP1에서 분석 생략 → STEP2부터 진행 |
+| review 에이전트 이슈 요약이 제공된 경우 | 요약을 대상으로 설정 → STEP1에서 분석 생략 → STEP2부터 진행 |
 | 리뷰 없이 직접 요청된 경우 | STEP1부터 순서대로 진행 |
 
 결정 후 → `진입:[이슈요약기반(STEP2~)/직접요청(STEP1~)] 대상:{대상}` 한 줄 출력
