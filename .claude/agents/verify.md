@@ -32,28 +32,23 @@ tools: Read
 
 ### Analysis 워크플로우
 
-- STEP1: `docs/agents/analysis/step1/STEP1_SCOPE.md`
-- STEP2: `docs/agents/analysis/step2/STEP2_READ.md`
-- STEP3: `docs/agents/analysis/step3/STEP3_IMPACT.md`
-- STEP4: `docs/agents/analysis/step4/STEP4_REPORT.md`
+- STEP1: [STEP1_SCOPE.md](../../docs/agents/analysis/step1/STEP1_SCOPE.md)
+- STEP2: [STEP2_READ.md](../../docs/agents/analysis/step2/STEP2_READ.md)
+- STEP3: [STEP3_IMPACT.md](../../docs/agents/analysis/step3/STEP3_IMPACT.md)
+- STEP4: [STEP4_REPORT.md](../../docs/agents/analysis/step4/STEP4_REPORT.md)
 
 ### Review 워크플로우
 
-- STEP1: `docs/agents/review/step1/STEP1_FUNC.md`
-- STEP2: `docs/agents/review/step2/STEP2_LOGIC.md`
-- STEP3: `docs/agents/review/step3/STEP3_ARCH.md`
-- STEP4: `docs/agents/review/step4/STEP4_QUALITY.md`
-- STEP5: `docs/agents/review/step5/STEP5_REPORT.md`
-- STEP6 (선택): `docs/agents/review/step6/STEP6_SCORE.md`
+- STEP1: [STEP1_FUNC.md](../../docs/agents/review/step1/STEP1_FUNC.md)
+- STEP2: [STEP2_LOGIC.md](../../docs/agents/review/step2/STEP2_LOGIC.md)
+- STEP3: [STEP3_ARCH.md](../../docs/agents/review/step3/STEP3_ARCH.md)
+- STEP4: [STEP4_QUALITY.md](../../docs/agents/review/step4/STEP4_QUALITY.md)
+- STEP5: [STEP5_REPORT.md](../../docs/agents/review/step5/STEP5_REPORT.md)
+- STEP6 (선택): [STEP6_SCORE.md](../../docs/agents/review/step6/STEP6_SCORE.md)
 
 ### Android 플랫폼 보강 하네스 (Review 워크플로우 전용)
 
-이 프로젝트(SimpleUI_XML)는 Android 라이브러리이므로 Review STEP1~4 판정 시 아래 보강 하네스도 함께 읽고 판정한다.
-
-- STEP1 보강: `docs/agents/platforms/android/review/step1/REVIEW_STEP1_HARNESS.md`
-- STEP2 보강: `docs/agents/platforms/android/review/step2/REVIEW_STEP2_HARNESS.md`
-- STEP3 보강: `docs/agents/platforms/android/review/step3/REVIEW_STEP3_HARNESS.md`
-- STEP4 보강: `docs/agents/platforms/android/review/step4/REVIEW_STEP4_HARNESS.md`
+[VERIFY_HARNESS.md](platform/android/verify/VERIFY_HARNESS.md)를 읽어 보강 하네스 경로를 확인하고 STEP1~4 판정 시 함께 적용한다.
 
 ## 실행 절차
 

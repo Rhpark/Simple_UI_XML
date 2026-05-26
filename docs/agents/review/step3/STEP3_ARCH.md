@@ -93,6 +93,8 @@
 - [ ] 7번 통과 — Android 아키텍처 추가 확인(12번)이 완료됐다.
      **HIGH** / 미통과 시: 12번 재수행. REVIEW_STEP3_CHECKLIST.md 항목별 결과 재확인.
      → [REVIEW_STEP3_HARNESS.md](../../platforms/android/review/step3/REVIEW_STEP3_HARNESS.md) <!-- ★ -->
+- [ ] 8번 통과 — 보고서 첫 줄에 `현재 단계: 리뷰 - STEP3 아키텍처` 헤더가 있다.
+     **LOW** / 미통과 시: 체크리스트 1번 재수행.
 
 미통과 항목이 있으면 → 실패 규격에 따라 기록 후 복귀 조건 확인.
 
