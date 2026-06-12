@@ -221,3 +221,26 @@ interface PermissionSettingsRequest {
      */
     fun defer(policy: PermissionDeferredPolicy = PermissionDeferredPolicy.CANCEL_ON_STOP)
 }
+
+/**
+ * Converts an internal [PermissionDecisionType] into the caller-facing [PermissionDeniedType].<br><br>
+ * 내부 결정 상태 [PermissionDecisionType]을 호출부 노출용 [PermissionDeniedType]으로 변환합니다.<br>
+ *
+ * [PermissionDecisionType.GRANTED] is not a denied entry, so `null` is returned.<br>
+ * UI 모듈(simple_xml / simple_compose)이 공유하는 단일 변환 규칙입니다.<br><br>
+ * [PermissionDecisionType.GRANTED]는 거부 항목이 아니므로 `null`을 반환합니다.<br>
+ * This is the single conversion rule shared by the UI modules (simple_xml / simple_compose).<br>
+ *
+ * @return Return value: matching denied type, or null when granted. Log behavior: none.<br><br>
+ *         반환값: 대응하는 거부 타입, 승인 상태이면 null. 로그 동작: 없음.<br>
+ */
+fun PermissionDecisionType.toDeniedTypeOrNull(): PermissionDeniedType? = when (this) {
+    PermissionDecisionType.GRANTED -> null
+    PermissionDecisionType.DENIED -> PermissionDeniedType.DENIED
+    PermissionDecisionType.PERMANENTLY_DENIED -> PermissionDeniedType.PERMANENTLY_DENIED
+    PermissionDecisionType.MANIFEST_UNDECLARED -> PermissionDeniedType.MANIFEST_UNDECLARED
+    PermissionDecisionType.EMPTY_REQUEST -> PermissionDeniedType.EMPTY_REQUEST
+    PermissionDecisionType.NOT_SUPPORTED -> PermissionDeniedType.NOT_SUPPORTED
+    PermissionDecisionType.FAILED_TO_LAUNCH_SETTINGS -> PermissionDeniedType.FAILED_TO_LAUNCH_SETTINGS
+    PermissionDecisionType.LIFECYCLE_NOT_READY -> PermissionDeniedType.LIFECYCLE_NOT_READY
+}

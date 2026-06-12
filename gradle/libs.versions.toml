@@ -15,11 +15,13 @@ constraintlayout = "2.2.1"
 recyclerview = "1.3.2"
 #lifecycle = "2.10.0"
 lifecycle = "2.9.3"
+composeBom = "2024.12.01"
 appVersion = "0.4.16"
 githubGroup = "io.github.rhpark"
 mavenArtifactIdCore = "dash-droid-core"
 mavenArtifactIdXML = "dash-droid-xml"
 mavenArtifactIdSystemManager = "dash-droid-system-manager"
+mavenArtifactIdCompose = "dash-droid-compose"
 githubId = "Rhpark"
 email = "cli7942lic@gmail.com"
 githubUrl = "https://github.com/Rhpark/Simple_UI_XML"
@@ -42,6 +44,13 @@ androidx-fragment-ktx = { group = "androidx.fragment", name = "fragment-ktx", ve
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 androidx-recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "recyclerview" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity" }
+androidx-lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycle" }
+androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+androidx-compose-ui = { group = "androidx.compose.ui", name = "ui" }
+androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation" }
+androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime" }
+androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 
 # Unit & UI Testing.
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -57,4 +66,5 @@ androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-co
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 android-library = { id = "com.android.library", version.ref = "agp" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 

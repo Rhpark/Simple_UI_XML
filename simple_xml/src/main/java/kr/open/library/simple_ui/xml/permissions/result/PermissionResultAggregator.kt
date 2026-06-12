@@ -6,7 +6,7 @@ import kr.open.library.simple_ui.core.permissions.classifier.PermissionClassifie
 import kr.open.library.simple_ui.core.permissions.model.OrphanedDeniedRequestResult
 import kr.open.library.simple_ui.core.permissions.model.PermissionDecisionType
 import kr.open.library.simple_ui.core.permissions.model.PermissionDeniedItem
-import kr.open.library.simple_ui.core.permissions.model.PermissionDeniedType
+import kr.open.library.simple_ui.core.permissions.model.toDeniedTypeOrNull
 import kr.open.library.simple_ui.core.permissions.queue.PermissionQueue
 import kr.open.library.simple_ui.xml.permissions.coordinator.RequestEntry
 import kr.open.library.simple_ui.xml.permissions.state.PermissionStateSnapshot
@@ -245,23 +245,5 @@ internal class PermissionResultAggregator(
         val type = classifier.classify(permission)
         val deniedType = result.toDeniedTypeOrNull()?.name ?: "GRANTED"
         Logx.d("$LOG_TAG: requestId=$requestId, permission=$permission, type=$type, deniedType=$deniedType")
-    }
-
-    /**
-     * Maps an internal decision type to an external denied type.<br><br>
-     * 내부 결정 타입을 외부 거부 타입으로 매핑합니다.<br>
-     *
-     * @return Return value: denied type or null when granted. Log behavior: none.<br><br>
-     *         반환값: 거부 타입 또는 승인 시 null. 로그 동작: 없음.<br>
-     */
-    private fun PermissionDecisionType.toDeniedTypeOrNull(): PermissionDeniedType? = when (this) {
-        PermissionDecisionType.GRANTED -> null
-        PermissionDecisionType.DENIED -> PermissionDeniedType.DENIED
-        PermissionDecisionType.PERMANENTLY_DENIED -> PermissionDeniedType.PERMANENTLY_DENIED
-        PermissionDecisionType.MANIFEST_UNDECLARED -> PermissionDeniedType.MANIFEST_UNDECLARED
-        PermissionDecisionType.EMPTY_REQUEST -> PermissionDeniedType.EMPTY_REQUEST
-        PermissionDecisionType.NOT_SUPPORTED -> PermissionDeniedType.NOT_SUPPORTED
-        PermissionDecisionType.FAILED_TO_LAUNCH_SETTINGS -> PermissionDeniedType.FAILED_TO_LAUNCH_SETTINGS
-        PermissionDecisionType.LIFECYCLE_NOT_READY -> PermissionDeniedType.LIFECYCLE_NOT_READY
     }
 }

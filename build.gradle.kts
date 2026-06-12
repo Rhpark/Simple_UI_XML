@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.android.library) apply false
+    alias(libs.plugins.kotlin.compose) apply false
 
     // Firebase
     id("com.google.gms.google-services") version "4.4.4" apply false // Firebase Common
@@ -50,6 +51,7 @@ tasks.register("dokkaHtmlMultiModuleCustom") {
     dependsOn(":simple_core:dokkaGeneratePublicationHtml")
     dependsOn(":simple_system_manager:dokkaGeneratePublicationHtml")
     dependsOn(":simple_xml:dokkaGeneratePublicationHtml")
+    dependsOn(":simple_compose:dokkaGeneratePublicationHtml")
 
     doLast {
         val outputDir =
@@ -75,6 +77,12 @@ tasks.register("dokkaHtmlMultiModuleCustom") {
         project.copy {
             from(project.layout.projectDirectory.dir("simple_xml/build/dokka/html"))
             into(outputDir.resolve("simple-xml"))
+        }
+
+        // Copy simple_compose documentation
+        project.copy {
+            from(project.layout.projectDirectory.dir("simple_compose/build/dokka/html"))
+            into(outputDir.resolve("simple-compose"))
         }
 
         val indexFile =
@@ -140,6 +148,18 @@ tasks.register("dokkaHtmlMultiModuleCustom") {
                             <li>System UI controllers (StatusBar, NavigationBar, etc.)</li>
                         </ul>
                         <a href="simple-xml/index.html">View XML Documentation</a>
+                    </div>
+
+                    <div class="module">
+                        <h2>Simple UI Compose</h2>
+                        <p>Compose UI module (requires Simple UI Core). Provides:</p>
+                        <ul>
+                            <li>Composable permission request helpers</li>
+                            <li>Lifecycle-aware ViewModel event collection</li>
+                            <li>System bars and edge-to-edge helpers</li>
+                            <li>Lazy list scroll state helpers</li>
+                        </ul>
+                        <a href="simple-compose/index.html">View Compose Documentation</a>
                     </div>
                 </div>
             </body>

@@ -1,6 +1,7 @@
 ﻿package kr.open.library.simple_ui.xml.permissions.flow
 
 import kr.open.library.simple_ui.core.permissions.model.PermissionDecisionType
+import kr.open.library.simple_ui.core.permissions.runtime.RuntimePermissionDecisionTracker
 import kr.open.library.simple_ui.xml.permissions.host.PermissionHostAdapter
 
 /**
@@ -14,8 +15,10 @@ import kr.open.library.simple_ui.xml.permissions.host.PermissionHostAdapter
  */
 class RuntimePermissionHandler(
     private val host: PermissionHostAdapter,
-    private val requestedHistory: MutableSet<String>,
+    requestedHistory: MutableSet<String>,
 ) {
+    private val decisionTracker = RuntimePermissionDecisionTracker(requestedHistory)
+
     /**
      * Returns whether rationale UI should be shown for [permission].<br><br>
      * [permission]에 대해 설명 UI가 필요한지 반환합니다.<br>
@@ -36,7 +39,7 @@ class RuntimePermissionHandler(
      * @return Return value: true when requested before. Log behavior: none.<br><br>
      *         반환값: 이전 요청 이력이 있으면 true. 로그 동작: 없음.<br>
      */
-    fun wasRequested(permission: String): Boolean = requestedHistory.contains(permission)
+    fun wasRequested(permission: String): Boolean = decisionTracker.wasRequested(permission)
 
     /**
      * Marks [permissions] as requested in the history set.<br><br>
@@ -46,7 +49,7 @@ class RuntimePermissionHandler(
      *                    요청 이력에 기록할 권한 목록입니다.<br>
      */
     fun markRequested(permissions: List<String>) {
-        requestedHistory.addAll(permissions)
+        decisionTracker.markRequested(permissions)
     }
 
     /**
@@ -70,10 +73,11 @@ class RuntimePermissionHandler(
         shouldShowRationale: Boolean,
         wasRequestedBefore: Boolean,
         isRestored: Boolean = false,
-    ): PermissionDecisionType = when {
-        granted -> PermissionDecisionType.GRANTED
-        shouldShowRationale -> PermissionDecisionType.DENIED
-        wasRequestedBefore && !isRestored -> PermissionDecisionType.PERMANENTLY_DENIED
-        else -> PermissionDecisionType.DENIED
-    }
+    ): PermissionDecisionType = decisionTracker.mapResult(
+        permission = permission,
+        granted = granted,
+        shouldShowRationale = shouldShowRationale,
+        wasRequestedBefore = wasRequestedBefore,
+        isRestored = isRestored,
+    )
 }

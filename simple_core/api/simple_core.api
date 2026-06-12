@@ -411,6 +411,10 @@ public final class kr/open/library/simple_ui/core/permissions/model/PermissionDe
 	public static fun values ()[Lkr/open/library/simple_ui/core/permissions/model/PermissionDeniedType;
 }
 
+public final class kr/open/library/simple_ui/core/permissions/model/PermissionModelsKt {
+	public static final fun toDeniedTypeOrNull (Lkr/open/library/simple_ui/core/permissions/model/PermissionDecisionType;)Lkr/open/library/simple_ui/core/permissions/model/PermissionDeniedType;
+}
+
 public abstract interface class kr/open/library/simple_ui/core/permissions/model/PermissionRationaleRequest {
 	public abstract fun cancel ()V
 	public abstract fun defer (Lkr/open/library/simple_ui/core/permissions/model/PermissionDeferredPolicy;)V
@@ -441,6 +445,14 @@ public final class kr/open/library/simple_ui/core/permissions/queue/PermissionQu
 	public final fun isEmpty ()Z
 	public final fun peek ()Ljava/lang/String;
 	public final fun remove (Ljava/lang/String;)V
+}
+
+public final class kr/open/library/simple_ui/core/permissions/runtime/RuntimePermissionDecisionTracker {
+	public fun <init> (Ljava/util/Set;)V
+	public final fun mapResult (Ljava/lang/String;ZZZZ)Lkr/open/library/simple_ui/core/permissions/model/PermissionDecisionType;
+	public static synthetic fun mapResult$default (Lkr/open/library/simple_ui/core/permissions/runtime/RuntimePermissionDecisionTracker;Ljava/lang/String;ZZZZILjava/lang/Object;)Lkr/open/library/simple_ui/core/permissions/model/PermissionDecisionType;
+	public final fun markRequested (Ljava/util/List;)V
+	public final fun wasRequested (Ljava/lang/String;)Z
 }
 
 public final class kr/open/library/simple_ui/core/permissions/vo/PermissionConstants {
