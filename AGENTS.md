@@ -92,6 +92,9 @@ SubAgent: {agent명}
 | agent-refactor | 리팩토링, 구조 개선, 중복 제거, 코드 정리 | 외부 동작 변경 없이 코드를 개선한다 |
 | agent-planning_writer | 기능 계획, PRD, SPEC, 구현 계획, planning | PRD/SPEC/IMPLEMENTATION_PLAN 문서를 작성한다 |
 | agent-planning_reviewer | 문서 검토, 문서 검증, PRD 검토, SPEC 검토, PLAN 검토 | PRD/SPEC/IMPLEMENTATION_PLAN 문서를 검증한다 |
+| plan_format_check | PLAN 산출물 검증, ExitPlanMode 후 검증 | 산출물(PRD/SPEC/PLAN)의 존재·규격(형식) 검증 SubAgent. 내용·방향은 미검증(사람 몫). MakePlan 절차 1단계에서 호출 |
+
+> **참고**: 구현 계획(PLAN) 작성 절차는 Agent가 아니라 **Skill(MakePlan)** 이다. `/plan` 진입 시 따른다. 아래 `작업 도구 (Skills)` 참조.
 
 ## 작업 도구 (Skills)
  - 아래 작업은 전용 절차(Skill)가 있다. 요청에 맞는 Skill을 활용한다.
@@ -102,6 +105,9 @@ SubAgent: {agent명}
  - 파일 세트 생성    : Activity / Fragment / DialogFragment / Adapter / Layout
  - JSON 변환         : JSON → Kotlin Data Class, 직렬화 라이브러리 자동 감지
  - XML 레이아웃 점검 : Style · 명명 · 하드코딩 · 성능 · 접근성 검사
+ - 사전 계획 정리    : /plan 전 PRD/SPEC 작성 (대화형, BeforePlan)
+ - 구현 계획 작성    : PRD/SPEC을 입력으로 PLAN 작성 (/plan 진입 시 따르는 절차, MakePlan)
+ - 스킬 품질 점검    : Skill/커맨드를 루브릭(6섹션 30항목, S~F 등급)으로 점검 (SkillReview)
 
 ### Skills 실행 방법 (Claude Code 전용)
  - 아래 슬래시 명령으로 전용 절차(Skill)를 실행한다
@@ -112,6 +118,10 @@ SubAgent: {agent명}
  - /Create        : Activity / Fragment / DialogFragment / Adapter / Layout 생성
  - /JsonConvert   : JSON → Kotlin Data Class 변환
  - /XmlInspector  : XML 레이아웃 점검
+ - /BeforePlan    : /plan 전 PRD/SPEC 사전 작성
+ - /MakePlan      : 구현 계획(PLAN) 작성 절차
+ - /SkillReview   : Skill 품질 루브릭 점검 (S~F 등급)
+ - /plan          : 내장 plan 모드 + MakePlan 절차(.claude/skills/MakePlan/SKILL.md) 적용. 선행 PRD/SPEC을 알 때만 MakePlan 적용, 모르면 기본 /plan
 
 
 # 작업시 해당 모듈 문서 참조
@@ -120,6 +130,7 @@ SubAgent: {agent명}
  - simple_core 모듈 가이드: simple_core/AGENTS.md
  - simple_system_manager 모듈 가이드: simple_system_manager/AGENTS.md
  - simple_xml 모듈 가이드: simple_xml/AGENTS.md
+ - simple_compose 모듈 가이드: simple_compose/AGENTS.md
 
 ## 코딩 규칙 문서 위치
  - 코딩 규칙은 각 작업 에이전트(agent-feature, agent-refactor)가 직접 참조한다.

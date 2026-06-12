@@ -131,7 +131,7 @@
 
 
  ## 테스트 작성 규칙
-  - **.claude/skills/CodeReview/rules/TEST.md 참조**
+  - **.claude/skills/TestCode/SKILL.md 참조** (Unit/Robolectric 유형 판단 및 작성 규칙)
 
 
  ## 주요 클래스 역할 요약

@@ -45,22 +45,25 @@
 3. 큐/병합 (core)
    - PermissionQueue 구현
    - 동일 권한 병합, FIFO 처리
-4. 상태 저장/복원 (xml)
+4. 런타임 권한 판정 순수 로직 (core)
+   - RuntimePermissionDecisionTracker 구현
+   - 요청 이력 확인/기록, 결과 매핑 정책 담당
+5. 상태 저장/복원 (xml)
    - PermissionStateStore (Bundle 사용)
    - 요청 이력/큐/진행 상태 직렬화
    - orphaned 거부 결과 캐시/회수 처리
-5. 결과 집계 (xml)
+6. 결과 집계 (xml)
    - PermissionResultAggregator
-6. 호스트/런타임 처리 (xml)
+7. 호스트/런타임 처리 (xml)
    - PermissionHostAdapter
-   - RuntimePermissionHandler
-7. 요청 흐름/조정 (xml)
+   - RuntimePermissionHandler (host rationale 확인 + core runtime 위임)
+8. 요청 흐름/조정 (xml)
    - PermissionFlowProcessor
    - PermissionRequestCoordinator
-8. 공개 API/계약 (xml)
+9. 공개 API/계약 (xml)
    - PermissionRequester
    - PermissionRequestInterface
-9. 테스트
+10. 테스트
    - 단위 테스트: 큐/특수 타입 등 비의존 로직
    - Robolectric: Activity/Fragment 요청 흐름, 계약 테스트
 

@@ -185,6 +185,8 @@ enum class RuntimePermissionRequestability {
   - PermissionModels.kt
 - queue
   - PermissionQueue.kt
+- runtime
+  - RuntimePermissionDecisionTracker.kt
 - vo
   - PermissionConstants.kt
   - PermissionSpecialType.kt
@@ -212,14 +214,15 @@ enum class RuntimePermissionRequestability {
 - `classifier`: SDK 지원 여부와 runtime requestability를 함께 판단하되, 두 의미를 혼동하지 않는다.
 - `extensions`: 권한 보유 여부 등 공통 확장 함수를 제공한다.
 - `handler`: 특수 권한/Role 권한의 체크 및 인텐트 생성 규칙을 담당한다.
-- `model`: 결과/훅/복원 모델을 정의한다.
+- `model`: 결과/훅/복원 모델을 정의한다. 결정→거부 타입 변환(`toDeniedTypeOrNull`)도 이 패키지가 단일 출처로 제공하며 UI 모듈(xml/compose)이 공유한다.
 - `queue`: 요청 큐 및 중복 병합 정책을 담당한다.
+- `runtime`: 런타임 권한 요청 이력과 결과 매핑 순수 로직을 담당한다.
 - `vo`: 권한 상수 및 특수 권한 타입 정의를 제공한다.
 
 ### xml
 - `api`: 호출부가 사용하는 PermissionRequester 공개 API를 제공한다.
 - `host`: Activity/Fragment 기능을 추상화하여 요청 흐름에 필요한 기능을 제공한다.
-- `flow`: 런타임/특수/Role 권한 요청 흐름을 순차 처리한다.
+- `flow`: 런타임/특수/Role 권한 요청 흐름을 순차 처리한다. `RuntimePermissionHandler`는 host 기반 rationale 확인을 담당하고, 요청 이력·결과 매핑은 core `runtime` 로직에 위임한다.
 - `coordinator`: 요청 직렬화, 큐 처리, 복원 요청 재처리를 담당한다.
 - `result`: 요청 결과 집계, 완료 판정, orphaned 결과 처리를 담당한다.
 - `state`: 저장/복원 상태를 Bundle로 직렬화/역직렬화한다.

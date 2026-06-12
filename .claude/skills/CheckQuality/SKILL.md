@@ -11,16 +11,11 @@ SimpleUI_XML 프로젝트의 정적 분석을 일괄 실행한다.
 
 ## 실행 전 확인
 
-아래 명령으로 프로젝트 루트를 확인한다.
-
-```
-d:\Android Project\SimpleUI_XML
-```
-
-모든 Gradle 명령은 PowerShell로 실행한다.
+모든 Gradle 명령은 프로젝트 루트(현재 작업 디렉터리)에서 실행한다.
+경로를 하드코딩하지 않는다.
 
 ```bash
-powershell -Command "cd 'd:\Android Project\SimpleUI_XML'; .\gradlew.bat {task}"
+./gradlew {task}
 ```
 
 ## $ARGUMENTS 해석
@@ -37,19 +32,19 @@ powershell -Command "cd 'd:\Android Project\SimpleUI_XML'; .\gradlew.bat {task}"
 ### STEP 1 — ktlintCheck
 
 ```bash
-powershell -Command "cd 'd:\Android Project\SimpleUI_XML'; .\gradlew.bat ktlintCheck"
+./gradlew ktlintCheck
 ```
 
 ### STEP 2 — lintDebug
 
 ```bash
-powershell -Command "cd 'd:\Android Project\SimpleUI_XML'; .\gradlew.bat lintDebug"
+./gradlew lintDebug
 ```
 
 ### STEP 3 — apiDump
 
 ```bash
-powershell -Command "cd 'd:\Android Project\SimpleUI_XML'; .\gradlew.bat :simple_core:apiDump :simple_xml:apiDump :simple_system_manager:apiDump"
+./gradlew :simple_core:apiDump :simple_xml:apiDump :simple_system_manager:apiDump
 ```
 
 ## 결과 출력 형식

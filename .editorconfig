@@ -86,6 +86,12 @@ ktlint_standard_package-name = disabled
 [simple_xml/src/test/java/kr/open/library/simple_ui/**.kt]
 ktlint_standard_package-name = disabled
 
+[simple_compose/src/main/java/kr/open/library/simple_ui/**.kt]
+ktlint_standard_package-name = disabled
+
+[simple_compose/src/test/java/kr/open/library/simple_ui/**.kt]
+ktlint_standard_package-name = disabled
+
 [simple_system_manager/src/main/java/kr/open/library/simple_ui/**.kt]
 ktlint_standard_package-name = disabled
 

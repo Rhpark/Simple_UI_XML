@@ -23,7 +23,7 @@
 
 ## 범위
 ### 기본 규칙
-- 기본 개발 환경/규칙은 루트 AGENTS.md에서 연결되는 .claude/skills/CodeReview/rules/*.md를 따른다.
+- 기본 개발 환경/규칙은 루트 AGENTS.md에서 연결되는 docs/rules/CODING_RULE_INDEX.md를 따른다.
 
 ### 지원 언어
 - Kotlin, Java

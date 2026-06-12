@@ -1,0 +1,23 @@
+{
+  "skill_name": "SkillReview",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "방금 TestCode 스킬을 수정했는데 점검해줘",
+      "expected_output": "TestCode 단일 대상으로 규칙 검사(frontmatter/참조 실존/안전성) 후 통과 시 의미 검사(트리거/콘텐츠)를 수행하고, 등급(S~F) + 이슈별 '왜+어떻게' + 우선 조치 3분류 형식으로 보고한다. 파일은 수정하지 않는다.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "/SkillReview all",
+      "expected_output": ".claude/skills/*/SKILL.md 전체 + .claude/commands/*.md(구식) + SKILL.md 없는 잔재 폴더를 인벤토리하고, 규칙 검사 전수 → 통과분만 의미 검사 → 등급표(TL;DR 포함)로 보고한다. 환경 보정(PascalCase 비차단 등) 적용 사실을 명시한다.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "BeforePlan 스킬이 요즘 자동으로 안 뜨는 것 같은데 왜 그런지 봐줘",
+      "expected_output": "트리거 섹션(3-1~3-6) 중심 점검: description의 WHAT+WHEN, 트리거 키워드, disable-model-invocation 설정 여부, description과 본문 의미 일치를 검사하고 원인 후보를 근거(파일:라인)와 함께 보고한다.",
+      "files": []
+    }
+  ]
+}

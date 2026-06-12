@@ -12,7 +12,7 @@
 
 ## 전제/참조
 
-- 기본 규칙/환경은 루트 AGENTS.md에서 연결되는 .claude/skills/CodeReview/rules/*.md를 따른다.
+- 기본 규칙/환경은 루트 AGENTS.md에서 연결되는 docs/rules/CODING_RULE_INDEX.md를 따른다.
 - 상세 요구와 범위는 `PRD.md`를 따른다.
 - 실제 구현은 `kr.open.library.simple_ui.system_manager.core.controller.vibrator` 패키지에서 완료되어 있다.
 

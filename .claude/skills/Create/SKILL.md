@@ -78,11 +78,11 @@ STEP 0에서 확정된 타입의 파일을 **반드시** 읽은 후 진행한다
 
 | 확정 타입 | 로드할 파일 |
 |----------|-----------|
-| `Activity` | `.claude/skills/Create/selectActivity.md` |
-| `Fragment` | `.claude/skills/Create/selectFragment.md` |
-| `DialogFragment` | `.claude/skills/Create/selectDialogFragment.md` |
-| `Adapter` | `.claude/skills/Create/selectAdapter.md` |
-| `Layout` | `.claude/skills/Create/selectLayout.md` |
+| `Activity` | `.claude/skills/Create/references/selectActivity.md` |
+| `Fragment` | `.claude/skills/Create/references/selectFragment.md` |
+| `DialogFragment` | `.claude/skills/Create/references/selectDialogFragment.md` |
+| `Adapter` | `.claude/skills/Create/references/selectAdapter.md` |
+| `Layout` | `.claude/skills/Create/references/selectLayout.md` |
 
 ### STEP 2. 대화형 질문 진행
 - **Q1**: select 파일에 정의된 베이스 클래스 선택 질문

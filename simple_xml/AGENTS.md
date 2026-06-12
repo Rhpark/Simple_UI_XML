@@ -135,7 +135,7 @@
  ## 개발 시 주의사항
 
   ### XML ID 규칙 (필수 준수)
-   - **.claude/skills/CodeReview/rules/CODING.md의 "XML Id 규칙" 참조**
+   - **docs/rules/coding_rule/CODE_NAMING_RULE.md의 "XML Id 규칙" 참조**
    - **camelCase 사용** (snake_case 금지)
 
 
@@ -172,7 +172,7 @@
 
 
  ## 테스트 작성 규칙
-  - **.claude/skills/CodeReview/rules/TEST.md 참조**
+  - **.claude/skills/TestCode/SKILL.md 참조** (Unit/Robolectric 유형 판단 및 작성 규칙)
 
 
  ## 모듈 의존성 규칙
@@ -230,7 +230,7 @@
 
   ### simple_xml이 사용하는 simple_core 기능
    - Logx: 모든 로깅
-   - 에러 처리 규칙은 루트의 .claude/skills/CodeReview/rules/CODING.md를 참조
+   - 에러 처리 규칙은 docs/rules/coding_rule/patterns/CODE_PATTERNS_EXCEPTION.md를 참조
    - checkSdkVersion: API 분기
    - PermissionExtensions: 권한 체크 기반
    - BaseViewModel: ViewModel 기반 클래스
