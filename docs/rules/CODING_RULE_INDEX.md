@@ -5,7 +5,7 @@
 
 ## 사용 원칙
 
-- 단계 문서(code_review, code_refactor)에서는 이 인덱스를 규칙 기준 참조로 사용한다.
+- 단계 문서(docs/rules의 code_refactor 등, 그리고 CodeReview 스킬의 reference/)에서는 이 인덱스를 규칙 기준 참조로 사용한다.
 - 세부 규칙(경로/파일명) 변경 시 단계 문서를 일괄 수정하지 않고 이 인덱스 우선 갱신한다.
 
 ## 핵심 규칙 문서
