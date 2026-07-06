@@ -1,6 +1,6 @@
 # Glossary
 
-이 파일은 analysis·review 두 워크플로우가 공유하는 공용 용어 정의다.
+이 파일은 analysis·review·feature 세 워크플로우가 공유하는 공용 용어 정의다.
 워크플로우 전용 용어는 각 워크플로우의 `common/GLOSSARY.md`를 참조한다.
 
 ---
@@ -52,3 +52,4 @@
 
 - analysis 전용 용어 → 현재 `analysis/common/` 미생성, 필요 시 추가
 - review 전용 용어 → [review/common/GLOSSARY.md](../review/common/GLOSSARY.md)
+- feature 전용 용어 → [feature/common/GLOSSARY.md](../feature/common/GLOSSARY.md)
