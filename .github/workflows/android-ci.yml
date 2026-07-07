@@ -397,6 +397,8 @@ jobs:
 
       - name: Set up Android SDK (base)
         uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
 
       - name: Accept SDK licenses
         run: yes | sdkmanager --licenses
