@@ -3,42 +3,51 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![API](https://img.shields.io/badge/API-28%2B-brightgreen.svg?style=flat)](https://developer.android.com/studio/releases/platforms#9.0)
 
-This library helps you make easy and more simple code for Android developers
+# Simple UI
 
-> **안드로이드 개발자를 위해 좀 더 간단히 확인 할 수 있거나, 좀 더 간단히 만들 수 있거나.**
+Simple UI is a modular Android library for reducing recurring platform, XML UI, permission,
+logging, and system-service boilerplate.
 
-<br></br>
-
-## Project Structure
-
-**libraries**
-
-- **simple_core**: UI-independent core functionality (usable with Compose or XML)
-- **simple_xml**: XML UI-specific components and extensions (depends on Core)
-- **simple_system_manager**: Android system control and device information helpers (depends on Core)
-- **testing samples**: `app` module
-
-> - **simple_core**: UI 비의존 코어 기능 (Compose, XML 모두 사용 가능)
-> - **simple_xml**: XML UI 전용 컴포넌트 및 확장 (Core 의존)
-> - **simple_system_manager**: Android 시스템 제어 및 디바이스 정보 헬퍼 (Core 의존)
-> - **testing samples**: 테스트 샘플: `app` 모듈
+> Simple UI는 반복되는 Android 플랫폼·XML UI·권한·로깅·시스템 서비스 코드를 줄이기 위한 모듈형 라이브러리입니다.
 
 <br>
-</br>
 
-## Maven Central(Recommended)
+## Published Modules (현재 배포 모듈)
 
-### 1. setting.gradle
+The following modules are available in the current `0.4.16` release.
+
+| Module | Maven Central | Purpose |
+| --- | --- | --- |
+| `simple_core` | `io.github.rhpark:dash-droid-core:0.4.16` | Logging, common extensions, permission policies, and ViewModel helpers |
+| `simple_xml` | `io.github.rhpark:dash-droid-xml:0.4.16` | XML Activity/Fragment base classes, permission requests, View extensions, and RecyclerView helpers |
+| `simple_compose` | `io.github.rhpark:dash-droid-compose:0.4.16` | Compose permission request State, lifecycle-aware event/effect Flow collection, system bar/edge-to-edge helpers, and LazyList scroll-state helpers |
+| `simple_system_manager` | `io.github.rhpark:dash-droid-system-manager:0.4.16` | Android system controllers, Window-based helpers, and device information |
+
+> 아래 모듈은 현재 `0.4.16` 릴리스에서 사용할 수 있습니다.
+>
+> - `simple_core`: 로깅, 공통 확장, 권한 정책, ViewModel 헬퍼
+> - `simple_xml`: XML Activity/Fragment 기반 클래스, 권한 요청, View 확장, RecyclerView 헬퍼
+> - `simple_compose`: Compose 권한 요청 State, 이벤트/effect Flow 수집, 시스템 바/edge-to-edge 헬퍼, LazyList 스크롤 상태 헬퍼
+> - `simple_system_manager`: Android 시스템 제어, Window 기반 헬퍼, 디바이스 정보
+>
+> 저장소의 `app` 모듈은 라이브러리 배포물이 아니라 테스트·사용 예제용 앱입니다.
+
+<br>
+
+## Requirements (사용 환경)
+
+- Android `minSdk 28` or higher
+- Java/Kotlin JVM target 11
+- Current library build baseline: `compileSdk 35`
+
+> - Android `minSdk 28` 이상
+> - Java/Kotlin JVM target 11
+> - 현재 라이브러리 빌드 기준: `compileSdk 35`
+
+## Maven Central (Recommended)
+
+### 1. `settings.gradle.kts`
 ```kotlin
-pluginManagement {
-    repositories {
-        google {
-            //...
-        }
-        mavenCentral()
-        gradlePluginPortal()
-    }
-}
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
@@ -48,95 +57,84 @@ dependencyResolutionManagement {
 }
 ```
 
-<br>
-</br>
+### 2. Select dependencies (필요한 모듈 선택)
 
-### 2. build.gradle.kts (Module level)
+Add only the modules used by the app.
+
+> 앱에서 사용하는 모듈만 추가하세요.
+
+#### Core APIs
+
+Use this coordinate when the app directly imports `simple_core` APIs or types.
+
+> 앱 코드에서 `simple_core` API 또는 타입을 직접 사용하면 이 의존성을 추가해야 합니다.
+
+```kotlin
+dependencies {
+    implementation("io.github.rhpark:dash-droid-core:0.4.16")
+}
+```
+
+#### XML UI
+
+`dataBinding` and `viewBinding` are optional. Enable only the binding mode used by the selected XML base classes.
+
+> `dataBinding`과 `viewBinding`은 선택 사항입니다. 사용하는 XML 기반 클래스에 필요한 바인딩 방식만 활성화하세요.
+
 ```kotlin
 android {
-    //..
     buildFeatures {
-        dataBinding = true  // MVVM 패턴 사용 시 필수
-        // viewBinding = true  // ViewBinding만 사용할 경우
+        dataBinding = true // BaseDataBinding* 사용 시
+        // viewBinding = true // BaseViewBinding* 사용 시
     }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-    kotlinOptions {
-        jvmTarget = "11"
-    }
-    //..
 }
-//..
-dependencies {
-    //..
-    implementation("io.github.rhpark:dash-droid-core:0.4.16")             // Core functionality only
-    implementation("io.github.rhpark:dash-droid-xml:0.4.16")              // XML UI components only (depends on Core)
-    implementation("io.github.rhpark:dash-droid-system-manager:0.4.16")   // System Manager only (depends on Core)
 
-    // Examples
-    // implementation("io.github.rhpark:dash-droid-xml:0.4.16")
-    // -> simple_xml 기능만 사용하는 경우
-    //
-    // implementation("io.github.rhpark:dash-droid-system-manager:0.4.16")
-    // -> system_manager 기능만 사용하는 경우
-    //
-    // implementation("io.github.rhpark:dash-droid-xml:0.4.16")
-    // implementation("io.github.rhpark:dash-droid-system-manager:0.4.16")
-    // -> XML UI와 system_manager 기능을 함께 사용하는 경우
-    //
-    // implementation("io.github.rhpark:dash-droid-core:0.4.16")
-    // implementation("io.github.rhpark:dash-droid-xml:0.4.16")
-    // -> 앱 코드에서 simple_core API를 직접 함께 사용하는 경우
-    //..
+dependencies {
+    implementation("io.github.rhpark:dash-droid-xml:0.4.16")
 }
 ```
 
-### 3. build.gradle (Groovy)
-```groovy
-dependencies {
-    implementation "io.github.rhpark:dash-droid-core:0.4.16"
-    implementation "io.github.rhpark:dash-droid-xml:0.4.16"
-    implementation "io.github.rhpark:dash-droid-system-manager:0.4.16"
-}
-```
-
-### 4. Which module should I use? (어떤 모듈을 사용해야 하나요?)
-- `dash-droid-core`
-  - Use when you only need UI-independent core features: logging, common extensions, permission models, ViewModel helpers
-- `dash-droid-xml`
-  - Use when you need XML-based Activity/Fragment/Base UI, PermissionRequester, or View extension functions
-- `dash-droid-system-manager`
-  - Use when you need SystemBar, keyboard, system controllers, or device info APIs
-
-`dash-droid-xml` and `dash-droid-system-manager` use `dash-droid-core` internally.
-If you don't call `simple_core` APIs directly in your app code, you don't need to add `dash-droid-core` separately.
-
-
-> - `dash-droid-core`
->   - 로그, 공통 확장 함수, 권한 모델, ViewModel 등 UI 비의존 코어 기능만 사용할 때
-> - `dash-droid-xml`
->   - XML 기반 Activity/Fragment/Base UI, PermissionRequester, View 확장 함수가 필요할 때
-> - `dash-droid-system-manager`
->   - 시스템 바, 키보드, 시스템 컨트롤러, 디바이스 정보 API가 필요할 때
-> `dash-droid-xml`과 `dash-droid-system-manager`는 내부적으로 `dash-droid-core`를 사용합니다.
-> 앱 코드에서 `simple_core` API를 직접 호출하지 않는다면 `dash-droid-core`를 별도로 추가하지 않아도 됩니다.
-
-<br></br>
-
-## JitPack:Compatibility
+#### Compose UI
 
 ```kotlin
-pluginManagement {
-    repositories {
-        google()
-        mavenCentral()
-        gradlePluginPortal()
-        maven { url = uri("https://jitpack.io") }
+plugins {
+    id("org.jetbrains.kotlin.plugin.compose")
+}
+
+android {
+    buildFeatures {
+        compose = true
     }
 }
 
+dependencies {
+    implementation("io.github.rhpark:dash-droid-compose:0.4.16")
+}
+```
+
+#### System Manager
+
+```kotlin
+dependencies {
+    implementation("io.github.rhpark:dash-droid-system-manager:0.4.16")
+}
+```
+
+`dash-droid-xml`, `dash-droid-compose`, and `dash-droid-system-manager` are built on
+`dash-droid-core`. This internal relationship does not replace an app's direct dependency
+declaration. Add `dash-droid-core` whenever app source code imports Core APIs or Core model types.
+
+> `dash-droid-xml`, `dash-droid-compose`, `dash-droid-system-manager`는 `dash-droid-core`를
+> 기반으로 동작합니다. 이 내부 관계가 앱의 직접 의존성 선언을 대신하지는 않습니다. 앱 코드에서
+> Core API나 Core 모델 타입을 사용한다면 `dash-droid-core`를 직접 추가하세요.
+
+<br>
+
+## JitPack (Compatibility)
+
+Add the repository in `settings.gradle.kts`.
+
+```kotlin
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
@@ -145,19 +143,22 @@ dependencyResolutionManagement {
         maven { url = uri("https://jitpack.io") }
     }
 }
-
-dependencies {
-    implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_Core:0.4.16")
-    implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_XML:0.4.16")
-    implementation("com.github.Rhpark.Simple_UI_XML:Simple_UI_System_Manager:0.4.16")
-}
 ```
 
+| Module | JitPack coordinate |
+| --- | --- |
+| Core | `com.github.Rhpark.Simple_UI_XML:Simple_UI_Core:0.4.16` |
+| XML | `com.github.Rhpark.Simple_UI_XML:Simple_UI_XML:0.4.16` |
+| Compose | `com.github.Rhpark.Simple_UI_XML:Simple_UI_Compose:0.4.16` |
+| System Manager | `com.github.Rhpark.Simple_UI_XML:Simple_UI_System_Manager:0.4.16` |
+
+Add only the required coordinates to the app module's `dependencies` block.
+
+> `settings.gradle.kts`에 JitPack 저장소를 추가한 뒤 앱 모듈의 `dependencies` 블록에 필요한 좌표만 추가하세요.
+>
 > Maven Central 좌표를 권장합니다. JitPack 좌표는 기존 프로젝트 호환용으로만 유지됩니다.  
-> JitPack 사용 시에는 `https://jitpack.io` 저장소 추가가 필요합니다.
 
 <br>
-</br>
 
 ## More Information (더 많은 정보 보기)
 **General Guides**
@@ -165,6 +166,7 @@ dependencies {
 - **[Activity/Fragment Guide](docs/readme/README_ACTIVITY_FRAGMENT.md)** - 베이스 클래스 및 사용 패턴
 - **[Extensions Guide](docs/readme/README_EXTENSIONS.md)** - View/Resource 확장 함수 가이드
 - **[Permission Guide](docs/readme/README_PERMISSION.md)** - 권한 처리 가이드
+- **[Compose Guide](docs/readme/README_COMPOSE.md)** - Compose 권한/이벤트/시스템 바/스크롤 상태 가이드
 - **[MVVM Guide](docs/readme/README_MVVM.md)** - MVVM 구성 가이드
 - **[RecyclerView Guide](docs/readme/README_RECYCLERVIEW.md)** - Adapter/RecyclerView 가이드
 - **[Style Guide](docs/readme/README_STYLE.md)** - 스타일 가이드
@@ -188,17 +190,20 @@ dependencies {
 **Project Artifacts**
 - **[API Documentation](https://rhpark.github.io/Simple_UI_XML/api)** - Dokka로 생성된 API 문서
 - **[Code Coverage Report](https://rhpark.github.io/Simple_UI_XML/coverage)** - Kover 커버리지 리포트
-- **API baseline (`simple_xml/api/simple_xml.api`)** - 공개 API 시그니처 기준 파일
-- **API baseline (`simple_core/api/simple_core.api`)** - `simple_core` 공개 API 기준 파일
-- **API baseline (`simple_system_manager/api/simple_system_manager.api`)** - `simple_system_manager` 공개 API 기준 파일
+- **[Core API baseline](simple_core/api/simple_core.api)** - `simple_core` 공개 API 기준 파일
+- **[XML API baseline](simple_xml/api/simple_xml.api)** - `simple_xml` 공개 API 기준 파일
+- **[Compose API baseline](simple_compose/api/simple_compose.api)** - `simple_compose` 공개 API 기준 파일
+- **[System Manager API baseline](simple_system_manager/api/simple_system_manager.api)** - `simple_system_manager` 공개 API 기준 파일
 - **API validation commands (API 검증 명령)**
   - `./gradlew :simple_core:apiCheck`
   - `./gradlew :simple_system_manager:apiCheck`
   - `./gradlew :simple_xml:apiCheck`
+  - `./gradlew :simple_compose:apiCheck`
+- **Local Dokka generation (로컬 API 문서 생성)**
+  - `./gradlew dokkaHtmlMultiModuleCustom`
 
 
 <br>
-</br>
 
 ### Feedback / 피드백
 - [Q&A: 사용법/오류 질문](https://github.com/Rhpark/Simple_UI_XML/discussions/categories/q-a)
@@ -207,6 +212,5 @@ dependencies {
 - [첫 실행에서 막히면 **First-Run Issue**로 남겨주세요.](https://github.com/Rhpark/Simple_UI_XML/issues/new)
 
 <br>
-</br>
 
 

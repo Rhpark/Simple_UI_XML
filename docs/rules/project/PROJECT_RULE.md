@@ -1,25 +1,30 @@
 ﻿# PROJECT RULES
 
 ## 프로젝트 개요 및 목적
- - **Kotlin 기반 Android XML 개발 향상 라이브러리**
+ - **Kotlin 기반 Android 개발 생산성 향상 라이브러리**
+ - XML UI와 Jetpack Compose UI를 분리된 모듈로 지원한다.
  - 샘플 앱으로 활용법을 검증함 (settings.gradle.kts, app/build.gradle.kts).
  - 개발 환경/버전 기준은 `docs/rules/project/DEV_ENV_RULE.md` 및 gradle/libs.versions.toml을 따른다.
  - 반복되는 Activity/Fragment/권한/로깅/시스템 서비스 보일러플레이트를 제거하고 생산성을 높이는 것이 1차 목표 (docs/readme/README_START.md, docs/readme/README_ACTIVITY_FRAGMENT.md 등).
 
 
 # 프로젝트 정의
- - **Simple_UI_XML**은 Android XML 사용 개발자들이 개발을 더 쉽고 빠르게 할 수 있도록 도와주는 종합 라이브러리.
- - 추후 Compose 용도 대응 예정
+ - 제품·라이브러리 전체 명칭은 **Simple UI**다.
+ - 저장소명 **Simple_UI_XML**은 XML 모듈에서 시작된 레거시 이름이며, 현재 프로젝트 범위를 XML 전용으로 제한하지 않는다.
+ - Simple UI는 Android 개발자가 반복되는 플랫폼·UI 보일러플레이트를 줄이고 더 쉽고 빠르게 개발하도록 돕는 종합 라이브러리다.
+ - XML UI는 `simple_xml`, Jetpack Compose UI는 `simple_compose`가 담당한다.
 
 
 # 프로젝트 구조
- - 모듈 분리 구조로 UI 비의존 코어(simple_core)와 XML 전용 UI 레이어(simple_xml)를 제공.
+ - 모듈 분리 구조로 UI 비의존 코어(`simple_core`), XML 전용 UI 레이어(`simple_xml`), Compose 전용 UI 레이어(`simple_compose`), 시스템 제어·정보 기능(`simple_system_manager`)을 제공.
  - 샘플 앱(app)으로 활용법을 검증함 (settings.gradle.kts, app/build.gradle.kts).
 
 
 # 모듈별 상세 가이드
  - **simple_core 모듈**: simple_core/AGENTS.md 참조
  - **simple_xml 모듈**: simple_xml/AGENTS.md 참조
+ - **simple_compose 모듈**: simple_compose/AGENTS.md 참조
+ - **simple_system_manager 모듈**: simple_system_manager/AGENTS.md 참조
  - 각 모듈별 특화 규칙 및 주의사항은 해당 모듈 AGENTS.md 확인
 
 
