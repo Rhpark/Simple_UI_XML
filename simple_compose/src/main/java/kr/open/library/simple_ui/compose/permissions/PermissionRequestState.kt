@@ -54,6 +54,18 @@ internal const val EMPTY_REQUEST_PERMISSION = ""
 // ---------------------------------------------------------------------------
 
 /**
+ * 권한 요청 흐름의 현재 단계입니다.<br>
+ * Current phase of the permission request flow.<br>
+ */
+public enum class PermissionRequestPhase {
+    IDLE,
+    REQUESTING,
+    RATIONALE_REQUIRED,
+    SETTINGS_NAVIGATION_REQUIRED,
+    COMPLETED,
+}
+
+/**
  * Compose 전용 권한 요청 상태입니다. 런타임/특수/Role 권한을 하나의 State 기반 API로 처리합니다.<br>
  * Compose-first permission request state that handles runtime, special, and role permissions
  * through a single State-based API.<br>
