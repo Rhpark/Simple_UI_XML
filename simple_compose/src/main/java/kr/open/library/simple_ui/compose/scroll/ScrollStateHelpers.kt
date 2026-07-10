@@ -28,6 +28,14 @@ internal fun isVerticalByOrientation(orientation: Orientation): Boolean =
     orientation == Orientation.Vertical
 
 /**
+ * 0 이상인 픽셀 임계값 공통 계약을 검증합니다.<br>
+ * Validates the shared non-negative pixel-threshold contract.<br>
+ */
+internal fun validateThresholdPx(thresholdPx: Int) {
+    require(thresholdPx >= 0) { "thresholdPx must be >= 0, but was $thresholdPx" }
+}
+
+/**
  * 누적 델타와 임계값을 기반으로 스크롤 방향을 계산합니다.<br>
  * Calculates scroll direction from accumulated delta and threshold.<br>
  *
@@ -167,18 +175,18 @@ private data class ScrollObservation(
  * 델타가 임계값 미만이면 직전 방향을 유지합니다.
  * 초기값은 [ScrollDirection.IDLE]입니다.<br>
  *
- * **Note / 주의**: Unlike simple_xml's RecyclerScrollStateView, which re-emits
- * [ScrollDirection.IDLE] when scrolling stops, this state does **not** return to
- * [ScrollDirection.IDLE] after the first direction change — it keeps the last direction.<br>
- * 스크롤 정지 시 [ScrollDirection.IDLE]을 다시 발행하는 simple_xml의 RecyclerScrollStateView와 달리,
- * 이 상태는 최초 방향 변경 이후 [ScrollDirection.IDLE]로 **복귀하지 않고** 마지막 방향을 유지합니다.<br>
+ * 스크롤 세션이 종료되면 simple_xml의 RecyclerScrollStateView와 동일하게
+ * [ScrollDirection.IDLE]로 복귀합니다.<br>
+ * When the scroll session ends, the state returns to [ScrollDirection.IDLE], matching
+ * simple_xml's RecyclerScrollStateView.<br>
  *
- * **Programmatic jumps / 프로그램적 점프**: When the first visible index changes without an
- * active scroll motion (e.g., `scrollToItem` called while idle, or list data changes shifting the
- * index), the tracking baseline is reset and **no direction is emitted** — matching the xml
- * semantics where only actual scroll motion drives the direction.<br>
- * 스크롤 모션 없이 첫 가시 인덱스가 바뀌는 경우(유휴 상태의 `scrollToItem`, 리스트 데이터 변경 등)에는
- * 기준점만 재설정하고 **방향을 발행하지 않습니다** — 실제 스크롤 모션만 방향에 반영하는 xml 의미와 동일합니다.<br>
+ * **Programmatic jumps / 프로그램적 점프**: When the first visible index changes while
+ * [LazyListState.isScrollInProgress] is `false` (e.g., an instant position reset or a data change),
+ * the tracking baseline is reset and **no direction is emitted**. Programmatic animation that
+ * sets `isScrollInProgress` to `true` is treated as scroll motion.<br>
+ * [LazyListState.isScrollInProgress]가 `false`인 상태에서 첫 가시 인덱스가 바뀌는 경우
+ * (즉시 위치 재설정, 리스트 데이터 변경 등)에는 기준점만 재설정하고 **방향을 발행하지 않습니다**.
+ * `isScrollInProgress`가 `true`가 되는 프로그램적 애니메이션은 스크롤 모션으로 처리합니다.<br>
  *
  * Internally collects scroll deltas via [snapshotFlow] inside a [LaunchedEffect],
  * so reading the returned [State] is free of side effects.<br>
@@ -188,8 +196,8 @@ private data class ScrollObservation(
  * @param listState The [LazyListState] to observe.<br><br>
  *                  관찰할 [LazyListState].<br>
  * @param thresholdPx Minimum accumulated pixel delta required to register a direction change.
- *                    Defaults to 20.<br><br>
- *                    방향 변경으로 등록하기 위한 최소 누적 픽셀 델타. 기본값은 20입니다.<br>
+ *                    Must be zero or greater. Defaults to 20.<br><br>
+ *                    방향 변경으로 등록하기 위한 최소 누적 픽셀 델타. 0 이상이어야 하며 기본값은 20입니다.<br>
  * @return [State] holding the current [ScrollDirection].<br><br>
  *         현재 [ScrollDirection]을 보유하는 [State].<br>
  */
@@ -198,11 +206,13 @@ public fun rememberScrollDirectionState(
     listState: LazyListState,
     thresholdPx: Int = 20,
 ): State<ScrollDirection> {
+    validateThresholdPx(thresholdPx)
     val direction = remember(listState, thresholdPx) { mutableStateOf(ScrollDirection.IDLE) }
 
     LaunchedEffect(listState, thresholdPx) {
         var previousIndex = listState.firstVisibleItemIndex
         var previousOffset = listState.firstVisibleItemScrollOffset
+        var wasScrollInProgress = listState.isScrollInProgress
         var accumulatedDelta = 0
 
         snapshotFlow {
@@ -216,6 +226,18 @@ public fun rememberScrollDirectionState(
             val currentIndex = observation.index
             val currentOffset = observation.offset
             val orientation = observation.orientation
+
+            if (wasScrollInProgress && !observation.isScrollInProgress) {
+                accumulatedDelta = 0
+                previousIndex = currentIndex
+                previousOffset = currentOffset
+                wasScrollInProgress = false
+                if (direction.value != ScrollDirection.IDLE) {
+                    direction.value = ScrollDirection.IDLE
+                }
+                return@collect
+            }
+
             val frameDelta = when {
                 // 같은 아이템 내 오프셋 이동 — 실제 픽셀 델타 사용
                 // Offset movement within the same item — use the real pixel delta
@@ -224,7 +246,11 @@ public fun rememberScrollDirectionState(
                 // 스크롤 모션 중 아이템 경계 통과 — 방향 부호만 사용해 임계값 초과 유도
                 // Crossing an item boundary during scroll motion — inject the threshold by sign
                 observation.isScrollInProgress ->
-                    if (currentIndex > previousIndex) thresholdPx else -thresholdPx
+                    if (currentIndex > previousIndex) {
+                        thresholdPx.coerceAtLeast(1)
+                    } else {
+                        -thresholdPx.coerceAtLeast(1)
+                    }
 
                 // 스크롤 모션 없는 인덱스 변경(프로그램적 점프·데이터 변경) — 기준점만 재설정, 방향 미발행
                 // Index change without scroll motion (programmatic jump or data change) —
@@ -238,6 +264,7 @@ public fun rememberScrollDirectionState(
             accumulatedDelta += frameDelta
             previousIndex = currentIndex
             previousOffset = currentOffset
+            wasScrollInProgress = observation.isScrollInProgress
 
             val resolved = resolveScrollDirection(
                 accumulatedDelta = accumulatedDelta,
@@ -283,12 +310,14 @@ public fun rememberScrollDirectionState(
  *                  관찰할 [LazyListState].<br>
  * @param edge The [ScrollEdge] to watch.<br><br>
  *             감시할 [ScrollEdge].<br>
- * @param thresholdPx Pixel distance from the edge considered as "reached".
+ * @param thresholdPx Pixel distance from the edge considered as "reached". Must be zero or greater.
  *                    Applies only to [ScrollEdge.TOP] and [ScrollEdge.LEFT] (index == 0 check).
- *                    Defaults to 10.<br><br>
+ *                    [ScrollEdge.BOTTOM] and [ScrollEdge.RIGHT] use [LazyListState.canScrollForward]
+ *                    without this threshold. Defaults to 10.<br><br>
  *                    "도달"로 간주되는 엣지로부터의 픽셀 거리.
- *                    [ScrollEdge.TOP] 및 [ScrollEdge.LEFT] 엣지에만 적용됩니다.
- *                    기본값은 10입니다.<br>
+ *                    0 이상이어야 하며 [ScrollEdge.TOP] 및 [ScrollEdge.LEFT]에만 적용됩니다.
+ *                    [ScrollEdge.BOTTOM] 및 [ScrollEdge.RIGHT]는 이 임계값 없이
+ *                    [LazyListState.canScrollForward]로 판정합니다. 기본값은 10입니다.<br>
  * @return [State] holding `true` when the edge is reached, `false` otherwise.<br><br>
  *         엣지에 도달했을 때 `true`, 그렇지 않으면 `false`를 보유하는 [State].<br>
  */
@@ -297,8 +326,9 @@ public fun rememberEdgeReachedState(
     listState: LazyListState,
     edge: ScrollEdge,
     thresholdPx: Int = 10,
-): State<Boolean> =
-    remember(listState, edge, thresholdPx) {
+): State<Boolean> {
+    validateThresholdPx(thresholdPx)
+    return remember(listState, edge, thresholdPx) {
         derivedStateOf {
             val isVertical = isVerticalByOrientation(listState.layoutInfo.orientation)
             val firstVisibleIndex = listState.firstVisibleItemIndex
@@ -328,3 +358,4 @@ public fun rememberEdgeReachedState(
             }
         }
     }
+}

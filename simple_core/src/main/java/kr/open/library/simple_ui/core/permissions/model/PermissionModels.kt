@@ -244,3 +244,26 @@ fun PermissionDecisionType.toDeniedTypeOrNull(): PermissionDeniedType? = when (t
     PermissionDecisionType.FAILED_TO_LAUNCH_SETTINGS -> PermissionDeniedType.FAILED_TO_LAUNCH_SETTINGS
     PermissionDecisionType.LIFECYCLE_NOT_READY -> PermissionDeniedType.LIFECYCLE_NOT_READY
 }
+
+/**
+ * 요청 순서를 유지하면서 권한 결정 맵을 호출부용 거부 목록으로 변환합니다.<br><br>
+ * Converts permission decisions into caller-facing denied items while preserving request order.<br>
+ *
+ * 결과가 없는 권한은 승인으로 오인되지 않도록 [PermissionDecisionType.MANIFEST_UNDECLARED]로 처리합니다.<br>
+ * A permission without a recorded decision is treated as [PermissionDecisionType.MANIFEST_UNDECLARED]
+ * so that it cannot be mistaken for a granted permission.<br>
+ *
+ * @param permissions 요청한 권한 목록입니다.<br><br>
+ *                    Requested permissions in caller order.<br>
+ * @param results 권한별 내부 결정 상태입니다.<br><br>
+ *                Internal decision state by permission.<br>
+ * @return 요청 순서로 정렬된 거부 항목 목록이며, 모두 승인된 경우 빈 목록입니다.<br><br>
+ *         Denied items in request order, or an empty list when all permissions are granted.<br>
+ */
+fun buildPermissionDeniedItems(
+    permissions: List<String>,
+    results: Map<String, PermissionDecisionType>,
+): List<PermissionDeniedItem> = permissions.mapNotNull { permission ->
+    val decision = results[permission] ?: PermissionDecisionType.MANIFEST_UNDECLARED
+    decision.toDeniedTypeOrNull()?.let { deniedType -> PermissionDeniedItem(permission, deniedType) }
+}

@@ -412,6 +412,7 @@ public final class kr/open/library/simple_ui/core/permissions/model/PermissionDe
 }
 
 public final class kr/open/library/simple_ui/core/permissions/model/PermissionModelsKt {
+	public static final fun buildPermissionDeniedItems (Ljava/util/List;Ljava/util/Map;)Ljava/util/List;
 	public static final fun toDeniedTypeOrNull (Lkr/open/library/simple_ui/core/permissions/model/PermissionDecisionType;)Lkr/open/library/simple_ui/core/permissions/model/PermissionDeniedType;
 }
 

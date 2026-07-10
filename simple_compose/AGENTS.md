@@ -20,27 +20,32 @@
   ### permissions
    - **PermissionRequestState**: State 기반 권한 요청 API (simple_compose/src/main/java/kr/open/library/simple_ui/compose/permissions/PermissionRequestState.kt)
    - `rememberPermissionRequestState(permissions, gateSettingsNavigation = false)` — 런타임/특수/Role 권한 통합 처리
+   - `phase` / `isRequesting` — IDLE/요청/설명/설정 이동/완료 단계를 State로 노출. `isRequesting`은 시스템 UI 대기뿐 아니라 설명·설정 이동 결정을 기다리는 동안에도 true
+   - `refresh()` + 호스트 Resume 자동 재확인 — 외부 설정 변경을 반영해 `allGranted`만 재계산하고 `deniedItems`/`phase`는 유지
    - rationale은 콜백이 아닌 **상태 노출**(`rationaleRequired` + `continueRequest()`/`cancelRequest()`)
    - 특수/Role 설정 이동은 기본 즉시 이동, `gateSettingsNavigation = true`면 동의 게이트(`settingsNavigationRequired` + `continueSettingsNavigation()`/`cancelSettingsNavigation()`) — xml `onNavigateToSettings`와 동일 의미
    - 결과 매핑(GRANTED/DENIED/PERMANENTLY_DENIED)은 simple_core `RuntimePermissionDecisionTracker` 단일 출처 사용 (자체 구현 금지)
    - 미판정 권한은 무음 스킵하지 않고 MANIFEST_UNDECLARED 기본값으로 기록 (xml과 동일)
-   - 요청 이력·큐·진행 중 결과·rationale/설정 게이트 대기 상태는 rememberSaveable로 구성 변경에 보존
+   - 요청 이력·큐·진행 중 결과·최신 완료 `deniedItems` 한 건·`phase`·rationale/설정 게이트 대기 상태는 rememberSaveable로 구성 변경에 보존
+   - XML의 requestId별 orphaned 결과 목록과 Compose의 최신 `deniedItems`는 저장 구조가 다르며, 동일 API로 취급하지 않음
 
   ### state
    - **VmEventCollect**: BaseViewModelEvent 이벤트 채널·임의 Flow의 라이프사이클 인식 수집 (simple_compose/src/main/java/kr/open/library/simple_ui/compose/state/VmEventCollect.kt)
-   - `CollectVmEvent` / `CollectAsEffect` — LaunchedEffect + repeatOnLifecycle 기반, 단발 부수효과 전용
+   - `CollectVmEvent` / `CollectAsEffect` — LaunchedEffect + repeatOnLifecycle 기반 effect 수집
+   - `CollectAsEffect`를 단발 효과에 사용할 때는 재수집 시 값을 다시 내보내지 않는 이벤트 Flow(Channel 또는 replay 없는 hot Flow 등)를 전달
    - `collectAsStateWithLifecycle`은 androidx 제공이므로 재제공하지 않음
 
   ### systembars
    - **SystemBarsStyle**: 시스템 바 아이콘 명암(appearance) 제어 + 이탈 시 복원 (simple_compose/src/main/java/kr/open/library/simple_ui/compose/systembars/SystemBarsStyle.kt)
-   - `Modifier.systemBarsPaddingIf(condition)` — 조건부 inset 패딩
    - compileSdk 35 enforced edge-to-edge 대응: 색상 설정 API 미사용
 
   ### scroll
    - **ScrollStateHelpers**: LazyList 스크롤 방향·엣지 감지 (simple_compose/src/main/java/kr/open/library/simple_ui/compose/scroll/ScrollStateHelpers.kt)
    - `rememberScrollDirectionState`(기본 임계값 20px) / `rememberEdgeReachedState`(기본 10px) — simple_xml RecyclerScrollStateView와 동일 값 정책
    - 축은 `LazyListState.layoutInfo.orientation`으로 자동 감지, 축 불일치 엣지는 항상 false
-   - 방향은 **스크롤 모션만** 반영 — 모션 없는 인덱스 점프(유휴 scrollToItem·데이터 변경)는 방향 미발행 (xml 의미 동일)
+   - 엣지 임계값은 시작 엣지(TOP/LEFT)에만 적용하고, 끝 엣지(BOTTOM/RIGHT)는 `canScrollForward`로 판정
+   - XML RecyclerScrollStateView와 동일하게 실제 스크롤 세션 종료 시 방향은 IDLE로 복귀
+   - 방향은 **스크롤 모션만** 반영 — `isScrollInProgress == false`인 즉시 위치 재설정·데이터 변경은 방향 미발행, `true`인 프로그램적 애니메이션은 모션으로 처리
 
 
  ## 핵심 설계 원칙 (Compose 효과 규칙)
@@ -64,6 +69,7 @@
    - simple_core 모듈 (모든 기능 사용 가능)
    - Compose BOM 2024.12.01 고정 (Kotlin 2.0.21 호환): ui, foundation, runtime
    - androidx.activity:activity-compose, androidx.lifecycle:lifecycle-runtime-compose
+   - 공개 API에 노출되는 simple_core/ui/foundation/runtime/lifecycle은 `api`, 내부 launcher용 activity-compose는 `implementation`
 
 
  ## simple_core와의 관계

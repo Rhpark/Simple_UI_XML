@@ -116,11 +116,6 @@ android {
             }
         }
     }
-
-    lint {
-        // lint.xml 파일을 AAR에 포함시키기 위한 설정
-        lintConfig = file("src/main/lint.xml")
-    }
 }
 
 dependencies {
@@ -194,10 +189,12 @@ kover {
 }
 
 // simple_xml 모듈 Dokka 설정
-// - ./gradlew :simple_xml:dokkaHtml 실행 시 사용
-tasks.dokkaHtml {
-    // 생성되는 Dokka HTML 문서 상단에 표시할 모듈 이름
-    moduleName.set("Simple UI XML")
+// - ./gradlew :simple_xml:dokkaGenerateHtml 실행 시 사용
+dokka {
+    dokkaPublications.html {
+        // 생성되는 Dokka HTML 문서 상단에 표시할 모듈 이름
+        moduleName.set("Simple UI XML")
+    }
 
     dokkaSourceSets {
         named("main") {
@@ -207,15 +204,10 @@ tasks.dokkaHtml {
                 localDirectory.set(file("src/main/java"))
                 // GitHub 리포지토리의 대응 경로 (브랜치/디렉터리 구조가 일치해야 함)
                 remoteUrl.set(
-                    uri("https://github.com/Rhpark/Simple_UI_XML/tree/master/simple_xml/src/main/java").toURL(),
+                    uri("https://github.com/Rhpark/Simple_UI_XML/tree/master/simple_xml/src/main/java"),
                 )
                 // 특정 라인으로 이동하기 위한 suffix 형식
                 remoteLineSuffix.set("#L")
-            }
-
-            // Android 공식 레퍼런스와 연결 (예: Activity, Fragment 등 타입에 대한 링크 자동 생성)
-            externalDocumentationLink {
-                url.set(uri("https://developer.android.com/reference/").toURL())
             }
         }
     }

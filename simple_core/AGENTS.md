@@ -109,7 +109,7 @@
  ## 판단 기준
 
 - Activity/Fragment 없이 동작 가능한 로직 → core
-- Activity/Fragment 또는 ActivityResult 필요 → simple_xml
+- Activity/Fragment 또는 ActivityResult 필요 → 사용하는 UI 기술에 따라 simple_xml 또는 simple_compose
 - 시스템 서비스 controller/info → simple_system_manager
 - SDK 버전 분기가 필요한 경우 → `checkSdkVersion` / `@RequiresApi` 사용
 

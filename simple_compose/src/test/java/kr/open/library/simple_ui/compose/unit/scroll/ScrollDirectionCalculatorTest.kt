@@ -7,8 +7,10 @@ import kr.open.library.simple_ui.compose.scroll.isHorizontalEdgeReached
 import kr.open.library.simple_ui.compose.scroll.isVerticalByOrientation
 import kr.open.library.simple_ui.compose.scroll.isVerticalEdgeReached
 import kr.open.library.simple_ui.compose.scroll.resolveScrollDirection
+import kr.open.library.simple_ui.compose.scroll.validateThresholdPx
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -17,6 +19,18 @@ import org.junit.Test
  * ScrollStateHelpers.kt 의 스크롤 상태 순수 함수에 대한 단위 테스트입니다.<br>
  */
 class ScrollDirectionCalculatorTest {
+    @Test
+    fun `zero threshold is allowed like RecyclerScrollStateView`() {
+        validateThresholdPx(0)
+    }
+
+    @Test
+    fun `negative threshold is rejected`() {
+        assertThrows(IllegalArgumentException::class.java) {
+            validateThresholdPx(-1)
+        }
+    }
+
     // -----------------------------------------------------------------------
     // isVerticalByOrientation
     // -----------------------------------------------------------------------

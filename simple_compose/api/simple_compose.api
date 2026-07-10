@@ -1,8 +1,12 @@
-public final class kr/open/library/simple_ui/compose/BuildConfig {
-	public static final field BUILD_TYPE Ljava/lang/String;
-	public static final field DEBUG Z
-	public static final field LIBRARY_PACKAGE_NAME Ljava/lang/String;
-	public fun <init> ()V
+public final class kr/open/library/simple_ui/compose/permissions/PermissionRequestPhase : java/lang/Enum {
+	public static final field COMPLETED Lkr/open/library/simple_ui/compose/permissions/PermissionRequestPhase;
+	public static final field IDLE Lkr/open/library/simple_ui/compose/permissions/PermissionRequestPhase;
+	public static final field RATIONALE_REQUIRED Lkr/open/library/simple_ui/compose/permissions/PermissionRequestPhase;
+	public static final field REQUESTING Lkr/open/library/simple_ui/compose/permissions/PermissionRequestPhase;
+	public static final field SETTINGS_NAVIGATION_REQUIRED Lkr/open/library/simple_ui/compose/permissions/PermissionRequestPhase;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lkr/open/library/simple_ui/compose/permissions/PermissionRequestPhase;
+	public static fun values ()[Lkr/open/library/simple_ui/compose/permissions/PermissionRequestPhase;
 }
 
 public final class kr/open/library/simple_ui/compose/permissions/PermissionRequestState {
@@ -14,8 +18,11 @@ public final class kr/open/library/simple_ui/compose/permissions/PermissionReque
 	public final fun getAllGranted ()Z
 	public final fun getDeniedItems ()Ljava/util/List;
 	public final fun getPermissions ()Ljava/util/List;
+	public final fun getPhase ()Lkr/open/library/simple_ui/compose/permissions/PermissionRequestPhase;
 	public final fun getRationaleRequired ()Ljava/util/List;
 	public final fun getSettingsNavigationRequired ()Ljava/lang/String;
+	public final fun isRequesting ()Z
+	public final fun refresh ()V
 	public final fun request (Lkotlin/jvm/functions/Function1;)V
 }
 
@@ -56,6 +63,5 @@ public final class kr/open/library/simple_ui/compose/state/VmEventCollectKt {
 
 public final class kr/open/library/simple_ui/compose/systembars/SystemBarsStyleKt {
 	public static final fun SystemBarsStyle (ZZLandroidx/compose/runtime/Composer;II)V
-	public static final fun systemBarsPaddingIf (Landroidx/compose/ui/Modifier;Z)Landroidx/compose/ui/Modifier;
 }
 

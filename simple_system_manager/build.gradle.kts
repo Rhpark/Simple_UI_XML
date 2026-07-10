@@ -157,21 +157,19 @@ kover {
     }
 }
 
-tasks.dokkaHtml {
-    moduleName.set("Simple UI System Manager")
+dokka {
+    dokkaPublications.html {
+        moduleName.set("Simple UI System Manager")
+    }
 
     dokkaSourceSets {
         named("main") {
             sourceLink {
                 localDirectory.set(file("src/main/java"))
                 remoteUrl.set(
-                    uri("https://github.com/Rhpark/Simple_UI_XML/tree/master/simple_system_manager/src/main/java").toURL(),
+                    uri("https://github.com/Rhpark/Simple_UI_XML/tree/master/simple_system_manager/src/main/java"),
                 )
                 remoteLineSuffix.set("#L")
-            }
-
-            externalDocumentationLink {
-                url.set(uri("https://developer.android.com/reference/").toURL())
             }
         }
     }

@@ -5,7 +5,7 @@ import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.core.permissions.classifier.PermissionClassifier
 import kr.open.library.simple_ui.core.permissions.model.OrphanedDeniedRequestResult
 import kr.open.library.simple_ui.core.permissions.model.PermissionDecisionType
-import kr.open.library.simple_ui.core.permissions.model.PermissionDeniedItem
+import kr.open.library.simple_ui.core.permissions.model.buildPermissionDeniedItems
 import kr.open.library.simple_ui.core.permissions.model.toDeniedTypeOrNull
 import kr.open.library.simple_ui.core.permissions.queue.PermissionQueue
 import kr.open.library.simple_ui.xml.permissions.coordinator.RequestEntry
@@ -138,12 +138,7 @@ internal class PermissionResultAggregator(
         val entry = requests[requestId] ?: return
         if (!entry.isCompleted()) return
 
-        val deniedResults = entry.permissions.mapNotNull { permission ->
-            val decision = entry.results[permission] ?: PermissionDecisionType.MANIFEST_UNDECLARED
-            decision.toDeniedTypeOrNull()?.let { deniedType ->
-                PermissionDeniedItem(permission, deniedType)
-            }
-        }
+        val deniedResults = buildPermissionDeniedItems(entry.permissions, entry.results)
 
         if (entry.onDeniedResult != null) {
             safeCatch { entry.onDeniedResult.invoke(deniedResults) }

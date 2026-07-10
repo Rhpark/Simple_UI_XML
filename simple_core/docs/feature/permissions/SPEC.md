@@ -3,18 +3,22 @@
 ## 문서 정보
 - 문서명: PermissionRequester SPEC
 - 작성일: 2026-01-13
-- 대상 모듈: simple_core
+- 대상 모듈: simple_core, simple_xml (simple_compose는 core 정책 재사용 범위만 참조)
 - 패키지: kr.open.library.simple_ui.core.permissions.*
 - 상태: 확정
 - 연계 문서: PRD.md
 - 작업 가이드: [AGENTS.md](AGENTS.md) (권한 모듈 작업 규칙)
+
+> 이 문서의 공개 API·요청 큐·콜백·Bundle 복원 상세는 `simple_xml`의
+> `PermissionRequester` 명세다. `simple_compose`는 core 결과·판정 정책을 공유하지만
+> 별도의 State API와 `rememberSaveable` 복원 모델을 사용한다.
 
 ## 목표
 - PRD의 요구사항을 구현 가능한 수준으로 구체화한다.
 - Activity/Fragment 의존 영역과 비의존 영역을 분리한다.
 - 회전/프로세스 종료 후 복원까지 고려한 상태 보존을 정의한다.
 
-## 공개 API(확정)
+## XML PermissionRequester 공개 API(확정)
 ### 생성
 ```
 val requester = PermissionRequester(this)
@@ -149,8 +153,9 @@ enum class RuntimePermissionRequestability {
 
 ## 내부 구조(의존/비의존 분리)
 ### 쉬운 설명
-- Activity/Fragment 없이도 되는 로직은 core에, Activity/Fragment가 필요한 요청/라이프사이클 로직은 xml에 둔다.
-### 의존 영역
+- UI·ActivityResult·Lifecycle 없이 동작하는 정책은 core에 둔다.
+- Activity/Fragment 기반 요청/라이프사이클 로직은 xml, Compose 의존 로직은 compose에 둔다.
+### XML 의존 영역
 - PermissionRequester(외부 API)
 - ActivityResult 등록/실행
 - Settings/Role 인텐트 실행
@@ -214,7 +219,7 @@ enum class RuntimePermissionRequestability {
 - `classifier`: SDK 지원 여부와 runtime requestability를 함께 판단하되, 두 의미를 혼동하지 않는다.
 - `extensions`: 권한 보유 여부 등 공통 확장 함수를 제공한다.
 - `handler`: 특수 권한/Role 권한의 체크 및 인텐트 생성 규칙을 담당한다.
-- `model`: 결과/훅/복원 모델을 정의한다. 결정→거부 타입 변환(`toDeniedTypeOrNull`)도 이 패키지가 단일 출처로 제공하며 UI 모듈(xml/compose)이 공유한다.
+- `model`: 결과/훅/복원 모델을 정의한다. 결정→거부 타입 변환(`toDeniedTypeOrNull`)과 요청 순서 기반 거부 목록 생성(`buildPermissionDeniedItems`)을 단일 출처로 제공하며 UI 모듈(xml/compose)이 공유한다.
 - `queue`: 요청 큐 및 중복 병합 정책을 담당한다.
 - `runtime`: 런타임 권한 요청 이력과 결과 매핑 순수 로직을 담당한다.
 - `vo`: 권한 상수 및 특수 권한 타입 정의를 제공한다.
@@ -227,6 +232,11 @@ enum class RuntimePermissionRequestability {
 - `result`: 요청 결과 집계, 완료 판정, orphaned 결과 처리를 담당한다.
 - `state`: 저장/복원 상태를 Bundle로 직렬화/역직렬화한다.
 - `register`: RootActivity/RootFragment가 구현하는 PermissionRequestInterface 계약을 제공한다.
+
+### compose
+- `PermissionRequestState`: Compose 공개 State API와 최신 완료 결과 한 건을 보존한다.
+- `rememberPermissionRequestState`: ActivityResult launcher와 호스트 Lifecycle을 컴포지션에 연결한다.
+- XML의 requestId별 orphaned 결과 목록과 달리 Compose는 State 인스턴스의 최신 결과를 소비 없이 유지한다.
 
 ## 상태 보존 정책
 - 회전 시 시스템 UI 유지 + 결과 콜백 반드시 수신.

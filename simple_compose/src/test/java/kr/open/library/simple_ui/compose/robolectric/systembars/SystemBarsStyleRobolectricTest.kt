@@ -1,17 +1,12 @@
 package kr.open.library.simple_ui.compose.robolectric.systembars
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.core.view.WindowCompat
 import kr.open.library.simple_ui.compose.systembars.SystemBarsStyle
-import kr.open.library.simple_ui.compose.systembars.systemBarsPaddingIf
 import org.junit.Assert.assertFalse
-import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -143,46 +138,5 @@ class SystemBarsStyleRobolectricTest {
             "Composable 이탈 후 isAppearanceLightStatusBars가 원래 값(false)으로 복원되어야 합니다",
             controller.isAppearanceLightStatusBars,
         )
-    }
-
-    // -----------------------------------------------------------------------
-    // systemBarsPaddingIf — 조건부 패딩 Modifier 동작 검증
-    // systemBarsPaddingIf — conditional padding Modifier behavior
-    // -----------------------------------------------------------------------
-
-    @Test
-    fun `systemBarsPaddingIf returns same Modifier instance when condition is false`() {
-        val base = Modifier.fillMaxSize()
-        val result = base.systemBarsPaddingIf(condition = false)
-        assertSame("condition=false이면 동일한 Modifier 인스턴스를 반환해야 합니다", base, result)
-    }
-
-    @Test
-    fun `systemBarsPaddingIf returns different Modifier when condition is true`() {
-        val base = Modifier.fillMaxSize()
-        val result = base.systemBarsPaddingIf(condition = true)
-        // 패딩이 추가된 새로운 Modifier여야 하므로 동일 인스턴스가 아니어야 합니다
-        // Should be a new Modifier with padding added, so not the same instance
-        assertTrue("condition=true이면 패딩이 추가된 새 Modifier여야 합니다", result != base)
-    }
-
-    @Test
-    fun `systemBarsPaddingIf applies to composable without error when condition is true`() {
-        composeTestRule.setContent {
-            Box(modifier = Modifier.systemBarsPaddingIf(condition = true).fillMaxSize()) {}
-        }
-        composeTestRule.waitForIdle()
-        // 예외 없이 렌더링되면 통과
-        // Passes if rendered without exception
-    }
-
-    @Test
-    fun `systemBarsPaddingIf applies to composable without error when condition is false`() {
-        composeTestRule.setContent {
-            Box(modifier = Modifier.systemBarsPaddingIf(condition = false).fillMaxSize()) {}
-        }
-        composeTestRule.waitForIdle()
-        // 예외 없이 렌더링되면 통과
-        // Passes if rendered without exception
     }
 }

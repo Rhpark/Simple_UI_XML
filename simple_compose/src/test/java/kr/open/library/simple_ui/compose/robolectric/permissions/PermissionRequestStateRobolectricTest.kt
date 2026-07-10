@@ -6,9 +6,12 @@ import android.app.Application
 import android.content.pm.PackageManager
 import android.provider.Settings
 import androidx.activity.ComponentActivity
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.lifecycle.Lifecycle
 import androidx.test.core.app.ApplicationProvider
+import kr.open.library.simple_ui.compose.permissions.PermissionRequestPhase
 import kr.open.library.simple_ui.compose.permissions.PermissionRequestState
 import kr.open.library.simple_ui.compose.permissions.rememberPermissionRequestState
 import kr.open.library.simple_ui.core.permissions.model.PermissionDeniedItem
@@ -145,12 +148,16 @@ class PermissionRequestStateRobolectricTest {
         }
         composeTestRule.waitForIdle()
         assertFalse(state.allGranted)
+        assertEquals(PermissionRequestPhase.IDLE, state.phase)
+        assertFalse(state.isRequesting)
 
         var result: List<PermissionDeniedItem>? = null
         composeTestRule.runOnUiThread {
             state.request { result = it }
         }
         composeTestRule.waitForIdle()
+        assertEquals(PermissionRequestPhase.REQUESTING, state.phase)
+        assertTrue(state.isRequesting)
 
         deliverRuntimeResult(granted = false)
         composeTestRule.waitForIdle()
@@ -161,6 +168,8 @@ class PermissionRequestStateRobolectricTest {
         )
         assertEquals(result, state.deniedItems)
         assertFalse(state.allGranted)
+        assertEquals(PermissionRequestPhase.COMPLETED, state.phase)
+        assertFalse(state.isRequesting)
     }
 
     // -----------------------------------------------------------------------
@@ -187,6 +196,8 @@ class PermissionRequestStateRobolectricTest {
         // 일시 정지: rationale 상태만 노출되고 다이얼로그는 실행되지 않음
         // Paused: only the rationale state is exposed; the dialog is not launched
         assertEquals(listOf(Manifest.permission.CAMERA), state.rationaleRequired)
+        assertEquals(PermissionRequestPhase.RATIONALE_REQUIRED, state.phase)
+        assertTrue(state.isRequesting)
         assertNull(shadowOf(composeTestRule.activity).lastRequestedPermission)
         assertNull(result)
 
@@ -196,6 +207,7 @@ class PermissionRequestStateRobolectricTest {
         composeTestRule.waitForIdle()
 
         assertTrue(state.rationaleRequired.isEmpty())
+        assertEquals(PermissionRequestPhase.REQUESTING, state.phase)
         assertNotNull(shadowOf(composeTestRule.activity).lastRequestedPermission)
 
         // 승인 후 결과 전달 → 빈 거부 목록
@@ -311,6 +323,13 @@ class PermissionRequestStateRobolectricTest {
         // Emulate configuration change — rememberSaveable save/restore
         restorationTester.emulateSavedInstanceStateRestore()
         composeTestRule.waitForIdle()
+
+        assertEquals(
+            listOf(PermissionDeniedItem(Manifest.permission.CAMERA, PermissionDeniedType.DENIED)),
+            state?.deniedItems,
+        )
+        assertEquals(PermissionRequestPhase.COMPLETED, state?.phase)
+        assertFalse(state?.isRequesting ?: true)
 
         // 2차 요청 → 거부 (복원된 이력 있음 + rationale 불가 → PERMANENTLY_DENIED)
         // Second request → denial (restored history + no rationale → PERMANENTLY_DENIED)
@@ -451,6 +470,8 @@ class PermissionRequestStateRobolectricTest {
         // Paused: only the consent gate state is exposed; the settings screen is not launched
         val shadowActivity = shadowOf(composeTestRule.activity)
         assertEquals(Manifest.permission.SYSTEM_ALERT_WINDOW, state.settingsNavigationRequired)
+        assertEquals(PermissionRequestPhase.SETTINGS_NAVIGATION_REQUIRED, state.phase)
+        assertTrue(state.isRequesting)
         assertNull(shadowActivity.nextStartedActivityForResult)
         assertNull(result)
 
@@ -460,6 +481,7 @@ class PermissionRequestStateRobolectricTest {
         composeTestRule.waitForIdle()
 
         assertNull(state.settingsNavigationRequired)
+        assertEquals(PermissionRequestPhase.REQUESTING, state.phase)
         val started = shadowActivity.nextStartedActivityForResult
         assertNotNull(started)
         assertEquals(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, started.intent.action)
@@ -705,6 +727,47 @@ class PermissionRequestStateRobolectricTest {
         )
     }
 
+    @Test
+    fun `allGranted refreshes when permission changes while host is stopped`() {
+        lateinit var state: PermissionRequestState
+        composeTestRule.setContent {
+            state = rememberPermissionRequestState(listOf(Manifest.permission.CAMERA))
+        }
+        composeTestRule.waitForIdle()
+        assertFalse(state.allGranted)
+
+        composeTestRule.activityRule.scenario.moveToState(Lifecycle.State.CREATED)
+        shadowOf(application).grantPermissions(Manifest.permission.CAMERA)
+        composeTestRule.activityRule.scenario.moveToState(Lifecycle.State.RESUMED)
+        composeTestRule.waitForIdle()
+
+        assertTrue(state.allGranted)
+    }
+
+    @Test
+    fun `mutating the same permission list instance creates state for new contents`() {
+        val permissions = mutableListOf(Manifest.permission.CAMERA)
+        val recomposeSignal = mutableStateOf(0)
+        lateinit var state: PermissionRequestState
+        composeTestRule.setContent {
+            recomposeSignal.value
+            state = rememberPermissionRequestState(permissions)
+        }
+        composeTestRule.waitForIdle()
+        assertEquals(listOf(Manifest.permission.CAMERA), state.permissions)
+
+        composeTestRule.runOnUiThread {
+            permissions += Manifest.permission.SYSTEM_ALERT_WINDOW
+            recomposeSignal.value++
+        }
+        composeTestRule.waitForIdle()
+
+        assertEquals(
+            listOf(Manifest.permission.CAMERA, Manifest.permission.SYSTEM_ALERT_WINDOW),
+            state.permissions,
+        )
+    }
+
     // -----------------------------------------------------------------------
     // 테스트 헬퍼
     // Test helpers
@@ -722,6 +785,7 @@ class PermissionRequestStateRobolectricTest {
      * is reset via reflection to keep subsequent requestPermissions calls from receiving an
      * empty-array cancellation callback.<br>
      */
+    @Suppress("DEPRECATION")
     private fun deliverRuntimeResult(granted: Boolean) {
         val shadowActivity = shadowOf(composeTestRule.activity)
         val request = shadowActivity.lastRequestedPermission

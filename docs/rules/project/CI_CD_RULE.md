@@ -22,8 +22,10 @@
 ## Dokka 문서 업데이트 시점
  - `[release]` 커밋 시 Documentation 워크플로우 자동 실행
  - Dokka HTML 생성 및 GitHub Pages 배포
- - 로컬 확인 명령: `./gradlew dokkaHtml`
- - 출력 위치: `build/dokka/html/`
+ - 로컬 전체 문서 확인 명령: `./gradlew dokkaHtmlMultiModuleCustom`
+ - 모듈별 확인 명령: `./gradlew :<module>:dokkaGenerateHtml`
+ - 모듈별 출력 위치: `<module>/build/dokka/html/`
+ - 통합 복사 위치: `docs/api/`
 
 ## 버전 정책 연계
  - 버전 증분/태그 기준은 `docs/rules/project/VERSION_RULE.md`를 따른다.

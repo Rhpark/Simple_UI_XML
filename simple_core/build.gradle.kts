@@ -146,10 +146,12 @@ dependencies {
 }
 
 // simple_core 모듈 Dokka 설정
-// - ./gradlew :simple_core:dokkaHtml 실행 시 사용
-tasks.dokkaHtml {
-    // 생성되는 Dokka HTML 문서 상단에 표시할 모듈 이름
-    moduleName.set("Simple UI Core")
+// - ./gradlew :simple_core:dokkaGenerateHtml 실행 시 사용
+dokka {
+    dokkaPublications.html {
+        // 생성되는 Dokka HTML 문서 상단에 표시할 모듈 이름
+        moduleName.set("Simple UI Core")
+    }
 
     dokkaSourceSets {
         named("main") {
@@ -159,15 +161,10 @@ tasks.dokkaHtml {
                 localDirectory.set(file("src/main/java"))
                 // GitHub 리포지토리의 대응 경로 (브랜치/디렉터리 구조가 일치해야 함)
                 remoteUrl.set(
-                    uri("https://github.com/Rhpark/Simple_UI_XML/tree/master/simple_core/src/main/java").toURL(),
+                    uri("https://github.com/Rhpark/Simple_UI_XML/tree/master/simple_core/src/main/java"),
                 )
                 // 특정 라인으로 이동하기 위한 suffix 형식
                 remoteLineSuffix.set("#L")
-            }
-
-            // Android 공식 레퍼런스와 연결 (예: Context, View 등 타입에 대한 링크 자동 생성)
-            externalDocumentationLink {
-                url.set(uri("https://developer.android.com/reference/").toURL())
             }
         }
     }

@@ -1,12 +1,10 @@
 package kr.open.library.simple_ui.compose.systembars
 
 import androidx.activity.compose.LocalActivity
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import kr.open.library.simple_ui.core.logcat.Logx
@@ -32,8 +30,12 @@ private const val TAG = "SystemBarsStyle"
  * Because `window.statusBarColor` and similar APIs are deprecated under compileSdk 35
  * (Android 15 enforced edge-to-edge), this function controls **icon appearance only**.<br>
  *
- * Composable이 컴포지션에서 이탈할 때 원래 값을 자동으로 복원합니다.<br>
- * When the Composable leaves the composition, the original values are automatically restored.<br>
+ * 이 호출 지점이 컴포지션에 진입할 때의 아이콘 명암 값을 캡처하고, 이탈할 때 해당 값으로 복원합니다.
+ * 여러 `SystemBarsStyle`을 동시에 구성하면 복원 순서가 서로 영향을 줄 수 있으므로 한 Window에서는
+ * 현재 화면을 대표하는 호출 한 곳만 활성화합니다.<br>
+ * The icon appearance present when this call site enters the composition is captured and restored
+ * when it leaves. Keep one active owner for the current screen in a Window; concurrent
+ * `SystemBarsStyle` call sites can affect each other's restoration order.<br>
  *
  * Window를 얻을 수 없는 환경(프리뷰 등)에서는 아무 동작 없이 안전 종료하며 경고 로그를 남깁니다.<br>
  * If the Window cannot be obtained (e.g., preview environment), this function exits safely
@@ -94,36 +96,3 @@ public fun SystemBarsStyle(
         controller.isAppearanceLightNavigationBars = navigationBarDarkIcons
     }
 }
-
-// ---------------------------------------------------------------------------
-// 공개 Modifier 헬퍼
-// Public Modifier helper
-// ---------------------------------------------------------------------------
-
-/**
- * [condition]이 `true`일 때만 시스템 바(상태 바 + 내비게이션 바) 패딩을 적용합니다.<br>
- * Applies system bars (status bar + navigation bar) padding only when [condition] is `true`.<br>
- *
- * `androidx.compose.foundation.layout.systemBarsPadding()`과의 차이점:<br>
- * `androidx.compose.foundation.layout.systemBarsPadding()`은 항상 패딩을 적용하지만,
- * 이 함수는 조건이 충족될 때만 적용합니다.<br>
- * Difference from `androidx.compose.foundation.layout.systemBarsPadding()`:<br>
- * The standard extension always applies padding, whereas this function applies it
- * conditionally based on [condition].<br>
- *
- * 내부적으로 [androidx.compose.foundation.layout.systemBarsPadding]을 사용합니다.<br>
- * Internally uses [androidx.compose.foundation.layout.systemBarsPadding].<br>
- *
- * **사용 예시 / Usage example**:
- * ```kotlin
- * Box(modifier = Modifier.systemBarsPaddingIf(isFullscreen))
- * ```
- *
- * @param condition 패딩을 적용할 조건. `true`이면 패딩을 적용하고, `false`이면 원본 Modifier를 그대로 반환합니다.<br><br>
- *                  Condition to apply padding. When `true`, system bars padding is added;
- *                  when `false`, this Modifier is returned unchanged.<br>
- * @return 조건에 따라 시스템 바 패딩이 적용되거나 적용되지 않은 [Modifier].<br><br>
- *         A [Modifier] with or without system bars padding depending on [condition].<br>
- */
-public fun Modifier.systemBarsPaddingIf(condition: Boolean): Modifier =
-    if (condition) this.then(Modifier.systemBarsPadding()) else this

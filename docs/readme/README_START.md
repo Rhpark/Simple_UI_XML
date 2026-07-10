@@ -1,45 +1,45 @@
-﻿# 🚀 Simple UI XML — We handle the complexity, you keep your speed
+﻿# 🚀 Simple UI — We handle the complexity, you keep your speed
 > **복잡함은 우리가, 속도는 당신에게**
 
 <br></br>
 
 **Repetitive Activity/Fragment setups**, **never-ending permission handling**, and the swelling boilerplate... 
 
-We built **Simple UI XML** to give you that time back.
+We built **Simple UI** to give you that time back.
 
 > **반복되는 Activity/Fragment 세팅**, **끝나지 않는 권한 처리**, 그리고 불어나는 보일러플레이트...  
-> 그 시간을 돌려주기 위해 **Simple UI XML**을 만들었다.
+> 그 시간을 돌려주기 위해 **Simple UI**를 만들었다.
 
 <br>
 </br>
 
-## ✨ Simple UI XML: Core Impact & Reasons to Adopt (핵심 효과 & 도입 이유)
+## ✨ Simple UI: Core Impact & Reasons to Adopt (핵심 효과 & 도입 이유)
 
-- **250 lines → 87 lines / 4–5h → 2–3h (≈50% faster)** — Removes boilerplate so only the core flow remains.
-- **Turn complex Android APIs into "one liners"** — Automates boilerplate like activity setup and permission handling.
-- **Ships with the features teams want every day** — Feel the speed boost the moment you adopt it.
-- **Less repetitive coding → More focus on core features** — Boosts both lead time and quality for the entire team.
+- **Less screen and permission boilerplate** — Keeps application code focused on its core flow.
+- **Wrap common Android platform flows in focused APIs** — Reduces setup code for activities and permissions.
+- **Provide reusable Android building blocks** — Covers recurring permission, logging, UI, and system-service tasks.
+- **Less repetitive coding → More focus on core features** — Can improve delivery consistency when teams share the same patterns.
  
-**One-line takeaway:** Give the complexity to **Simple UI XML** and keep the speed for **yourself**.
-> - **250줄 → 87줄 / 4–5h → 2~3h (≈50% 단축)** — 보일러플레이트를 걷어내 핵심 흐름만 남깁니다.
-> - **복잡한 Android API를 "한 줄"로** — Activity 세팅·권한 처리 등 상용구 자동화.
-> - **현업이 매일 바라던 기능을 기본 제공** — 도입 즉시 체감 속도 상승.
-> - **반복 코딩 감소 → 핵심 기능 개발 집중** — 팀 전체 **리드타임·품질** 동시 향상.
-> **한 줄 결론:** 복잡함은 **Simple UI XML**에게, 속도는 **당신에게**.
+**One-line takeaway:** Give the complexity to **Simple UI** and keep the speed for **yourself**.
+> - **화면·권한 보일러플레이트 감소** — 애플리케이션 코드는 핵심 흐름에 집중합니다.
+> - **자주 쓰는 Android 플랫폼 흐름을 목적이 분명한 API로 래핑** — Activity·권한 설정 코드를 줄입니다.
+> - **재사용 가능한 Android 구성 요소 제공** — 반복되는 권한·로깅·UI·시스템 서비스 작업을 다룹니다.
+> - **반복 코딩 감소 → 핵심 기능 개발 집중** — 팀이 같은 패턴을 사용할 때 개발 일관성을 높일 수 있습니다.
+> **한 줄 결론:** 복잡함은 **Simple UI**에게, 속도는 **당신에게**.
 
 <br>
 </br>
 
 ### 👥 **Team Development Productivity Boost (팀 개발 생산성 혁신)**
 
-- Improve code consistency: Every teammate uses the same base classes and extensions → improves efficiency for bug tracking and maintenance.
-- Accelerate onboarding for new members: No need to master complex Android APIs → shortens the ramp-up period.
-- Cut code review time by 70%: Standardized patterns clarify review points → lets reviewers focus on the core logic.
-- Minimize collaboration conflicts: Integrated systems like PermissionRequester and Logx prevent duplicate implementations.
-> - 코드 일관성 향상: 모든 팀원이 동일한 Base 클래스 & Extension 사용 → 버그 추적·유지보수 효율성 향상
-> - 신규 멤버 온보딩 가속화: 복잡한 Android API 학습 불필요 → 적응 기간 단축
-> - 코드리뷰 시간 70% 단축: 표준화된 패턴으로 리뷰 포인트 명확화 → 핵심 로직에만 집중
-> - 협업 충돌 최소화: PermissionRequester, Logx 등 통합 시스템으로 중복 구현 방지
+- Improve code consistency: Shared base classes and extensions can make bug tracking and maintenance more predictable.
+- Support onboarding: Common wrappers reduce the platform-specific details needed for recurring flows.
+- Reduce code review overhead: Standardized patterns clarify review points and keep reviews focused on core logic.
+- Reduce duplicate implementations: Shared systems such as PermissionRequester and Logx provide a common starting point.
+> - 코드 일관성 향상: 공통 Base 클래스와 Extension으로 버그 추적·유지보수 흐름을 예측 가능하게 구성
+> - 신규 멤버 온보딩 지원: 반복 흐름에서 직접 다뤄야 하는 플랫폼 세부사항 감소
+> - 코드 리뷰 부담 감소: 표준화된 패턴으로 리뷰 지점을 명확히 해 핵심 로직에 집중
+> - 중복 구현 감소: PermissionRequester, Logx 같은 공통 시스템을 팀의 시작점으로 활용
 
 <br>
 </br>
@@ -47,10 +47,12 @@ We built **Simple UI XML** to give you that time back.
 ## 🎯 **Target Users (타겟 사용자)**
 - Android developers who want to use permissions, logging, and common utilities more simply (Simple_UI_Core)
 - Android developers who want to build XML-based screens faster (Simple_UI_XML)
+- Android developers who want Compose-native permission, lifecycle effect, system bar, and lazy-list helpers (Simple_UI_Compose)
 - Android developers who want to handle system controls and device information more easily (Simple_UI_System_Manager)
 
 > - 권한, 로깅, 공통 유틸리티를 함께 간단히 쓰고 싶은 안드로이드 개발자 (Simple_UI_Core)
 > - XML View 기반 화면을 빠르게 개발하고 싶은 안드로이드 개발자 (Simple_UI_XML)
+> - Compose 방식의 권한·라이프사이클 효과·시스템 바·LazyList 헬퍼가 필요한 안드로이드 개발자 (Simple_UI_Compose)
 > - 시스템 제어와 디바이스 정보를 손쉽게 다루고 싶은 안드로이드 개발자 (Simple_UI_System_Manager)
 
 
@@ -60,6 +62,7 @@ We built **Simple UI XML** to give you that time back.
 ## 📚 **Documentation Index (문서 인덱스)**
 
 - 전체 README 문서는 [README.md](../../README.md)에서 기능별로 바로 찾을 수 있습니다.
+- Compose 전용 설치와 사용법은 [README_COMPOSE.md](README_COMPOSE.md)를 참조하세요.
 
 <br>
 </br>
@@ -93,14 +96,16 @@ We built **Simple UI XML** to give you that time back.
     - `simple_core/api/simple_core.api`
     - `simple_xml/api/simple_xml.api`
     - `simple_system_manager/api/simple_system_manager.api`
-- Run `./gradlew :simple_core:apiCheck :simple_system_manager:apiCheck :simple_xml:apiCheck` before merge/release to prevent unintended API breaks.
+    - `simple_compose/api/simple_compose.api`
+- Run `./gradlew :simple_core:apiCheck :simple_system_manager:apiCheck :simple_xml:apiCheck :simple_compose:apiCheck` before merge/release to prevent unintended API breaks.
 - If an API change is intentional, run the corresponding `apiDump` task and include the updated `.api` diff.
 
 > - 공개 API 시그니처는 아래 기준 파일로 관리합니다.
 >   - `simple_core/api/simple_core.api`
 >   - `simple_xml/api/simple_xml.api`
 >   - `simple_system_manager/api/simple_system_manager.api`
-> - 머지/릴리즈 전 `./gradlew :simple_core:apiCheck :simple_system_manager:apiCheck :simple_xml:apiCheck`를 실행해 의도치 않은 API 변경을 차단합니다.
+>   - `simple_compose/api/simple_compose.api`
+> - 머지/릴리즈 전 `./gradlew :simple_core:apiCheck :simple_system_manager:apiCheck :simple_xml:apiCheck :simple_compose:apiCheck`를 실행해 의도치 않은 API 변경을 차단합니다.
 > - API 변경이 의도된 경우 해당 모듈의 `apiDump` 실행 후 `.api` 변경분을 함께 반영합니다.
 
 
@@ -167,6 +172,19 @@ FIREBASE_APP_ID_RELEASE=...
  
 <br></br>
 
+### Compose Platform Integration (Compose 플랫폼 통합)
+
+- **Unified permissions**: Runtime, special, and role permissions through `rememberPermissionRequestState`
+- **Lifecycle effects**: `CollectVmEvent` for channel events and `CollectAsEffect` for non-replaying effect flows
+- **System bars**: Icon appearance control with composition-lifetime restoration
+- **Lazy list state**: Direction and edge state that returns to `IDLE` when scrolling stops
+> - **통합 권한**: `rememberPermissionRequestState`로 런타임·특수·Role 권한 처리
+> - **라이프사이클 효과**: Channel 이벤트용 `CollectVmEvent`, 재수집 시 재방출하지 않는 effect Flow용 `CollectAsEffect`
+> - **시스템 바**: 컴포지션 수명에 맞춘 아이콘 명암 적용·복원
+> - **LazyList 상태**: 스크롤 종료 시 `IDLE`로 복귀하는 방향 상태와 Boolean 엣지 도달 상태
+
+<br></br>
+
 ### 🔧 **Developer Convenience (개발 편의성)**
 
 - **Extension functions**: Practical add-ons for Bundle, String, Date, Time, TryCatch, and more
@@ -214,6 +232,7 @@ FIREBASE_APP_ID_RELEASE=...
 - **System Manager Controller example**: [README_SERVICE_MANAGER_CONTROL.md](system_manager/controller/README_SERVICE_MANAGER_CONTROL.md)
 - **SystemBar controller detail**: [README_SYSTEMBAR_CONTROLLER.md](system_manager/controller/xml/README_SYSTEMBAR_CONTROLLER.md)
 - **Quick start** example: [README_SAMPLE.md](README_SAMPLE.md)
+- **Compose guide**: [README_COMPOSE.md](README_COMPOSE.md)
 
 
 > **Note:** Check [Maven Central](https://central.sonatype.com/search?q=io.github.rhpark) for the latest version.

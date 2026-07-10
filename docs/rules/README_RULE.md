@@ -3,6 +3,7 @@
 - 확장 함수 추가/변경 → docs/readme/README_EXTENSIONS.md
 - Logx 기능 변경 → docs/readme/README_LOGX.md
 - ViewModel 관련 → docs/readme/README_MVVM.md
+- Compose 기능 추가/변경 → docs/readme/README_COMPOSE.md
 - RecyclerView 관련 → docs/readme/README_RECYCLERVIEW.md
 - System Manager Info → docs/readme/system_manager/info/README_SERVICE_MANAGER_INFO.md
 - System Manager Control → docs/readme/system_manager/controller/README_SERVICE_MANAGER_CONTROL.md

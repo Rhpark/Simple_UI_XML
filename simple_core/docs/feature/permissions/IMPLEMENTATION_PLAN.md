@@ -5,14 +5,18 @@
 - 작성일: 2026-01-13
 - 대상 모듈: simple_core, simple_xml
 - 패키지: kr.open.library.simple_ui.core.permissions.*, kr.open.library.simple_ui.xml.permissions.*
-- 상태: Draft
+- 상태: Implemented
+
+> 이 계획은 `simple_core` 공통 정책과 `simple_xml`의 `PermissionRequester` 구현만 다룬다.
+> `simple_compose`는 이 계획의 XML 호스트·콜백·Bundle 복원 절차를 따르지 않으며,
+> Compose 구현 규칙은 `simple_compose/AGENTS.md`와 `PermissionRequestState` KDoc을 따른다.
 
 ## 목표
 - SPEC 기반으로 구현 순서와 범위를 명확히 한다.
 - 단위 테스트 + Robolectric 테스트를 포함한다.
 - 권한 요청 실패는 예외 대신 결과로 반환한다.
-- Activity/Fragment 의존/비의존 영역을 분리한다.
-  - 쉽게 말해, Activity/Fragment 없이도 되는 로직은 core에 두고, Activity/Fragment가 필요한 요청/라이프사이클 로직은 xml에 둔다.
+- 이 XML 구현 계획 안에서 Activity/Fragment 의존/비의존 영역을 분리한다.
+  - UI 비의존 정책은 core에 두고, Activity/Fragment 기반 요청/라이프사이클 로직은 xml에 둔다.
 
 ## 구현 범위
 - core(비의존)

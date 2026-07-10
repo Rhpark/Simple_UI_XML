@@ -3,10 +3,14 @@
 ## 문서 정보
 - 문서명: PermissionRequester PRD
 - 작성일: 2026-01-13
-- 대상 모듈: simple_core
+- 대상 모듈: simple_core, simple_xml (simple_compose는 core 정책 재사용 범위만 참조)
 - 패키지: kr.open.library.simple_ui.core.permissions.*
 - 상태: 확정
 - 작업 가이드: [AGENTS.md](AGENTS.md) (권한 모듈 작업 규칙)
+
+> 이 문서의 공개 API·큐·콜백·Bundle 복원 계약은 `simple_xml`의 `PermissionRequester`를 정의한다.
+> `simple_compose`는 결과 타입과 판정 정책만 공유하며, Compose API·State 복원 계약은
+> `simple_compose/AGENTS.md`와 `PermissionRequestState` KDoc을 따른다.
 
 ## 배경/문제 정의
 - 권한 요청은 시스템 UI/설정 화면과 연동되므로 Activity/Fragment 의존이 불가피하다.
@@ -15,14 +19,14 @@
 
 ## 목표
 - 런타임 위험 권한 + 특수 권한 + 역할(Role) 요청을 하나의 API로 통합한다.
-- PermissionRequester는 `PermissionRequester(this)` 형태로 간단히 생성한다.
+- XML PermissionRequester는 `PermissionRequester(this)` 형태로 간단히 생성한다.
 - 거부 결과만 단일 모델로 통일해 호출부에서 일관되게 처리할 수 있게 한다.
 - 동시 요청을 안전하게 직렬화하고, 중복 권한 요청을 병합한다.
 - 의존적인 영역과 비의존적인 영역을 분리해 테스트 가능성을 높인다.
 
 ## 비목표
 - UI 제공(다이얼로그/토스트/스낵바 등)은 제외한다.
-- Compose 지원은 범위에서 제외한다(추후 고려).
+- Compose UI 구현은 core 범위에서 제외하며, `simple_compose`가 core 권한 정책을 재사용한다.
 
 ## 범위
 ### 지원 환경
@@ -52,22 +56,25 @@
 
 ## 설계 원칙
 - 의존적 영역과 비의존적 영역을 명확히 분리한다.
-  - 쉽게 말해, Activity/Fragment 없이도 동작하는 로직은 core에 두고, Activity/Fragment가 필요한 요청/라이프사이클 로직은 xml에 둔다.
-  - 의존적 영역: Activity/Fragment 기반 요청 실행기, Activity Result 등록/호출.
+  - UI·ActivityResult·Lifecycle 없이 동작하는 정책은 core에 둔다.
+  - XML 호스트 의존 요청/라이프사이클 로직은 xml, Compose 의존 로직은 compose에 둔다.
+  - 의존적 영역: Activity/Fragment 또는 Compose 기반 요청 실행기, Activity Result 등록/호출.
   - 비의존적 영역: 권한 분류, 결과 모델, 영구 거부 판정, 큐/병합 정책.
-- 단일 API 제공, 내부 분기 처리(런타임 vs 특수 vs 역할).
-- 인스턴스 범위는 Activity/Fragment 단위로 제한한다(전역 싱글턴 금지).
+- XML에서는 PermissionRequester 단일 API가 런타임/특수/역할 요청을 내부 분기 처리한다.
+- XML 인스턴스 범위는 Activity/Fragment 단위로 제한한다(전역 싱글턴 금지).
 
 ## 모듈/패키지 구조(요약)
-- 권한 요청 기능은 `simple_core`와 `simple_xml`로 분리한다.
+- 권한 요청 기능은 공통 정책 `simple_core`와 UI 기술별 `simple_xml`/`simple_compose`로 분리한다.
 - `kr.open.library.simple_ui.core.permissions`
   - Activity/Fragment 비의존 로직을 담당한다.
   - 권한 분류, 결과 모델, 특수/Role 처리 규칙, 큐/병합 정책, 확장 함수, 상수 정의가 포함된다.
 - `kr.open.library.simple_ui.xml.permissions`
   - Activity/Fragment 의존 로직을 담당한다.
   - PermissionRequester 공개 API, ActivityResult 등록/실행, 요청 흐름/직렬화, 상태 저장/복원이 포함된다.
+- `kr.open.library.simple_ui.compose.permissions`
+  - Compose State 기반 공개 API와 ActivityResult 실행, rememberSaveable 상태 복원을 담당한다.
 
-## API 설계(확정)
+## XML PermissionRequester API 설계(확정)
 ### 생성
 ```
 val requester = PermissionRequester(this)

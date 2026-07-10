@@ -108,7 +108,6 @@ android {
 
     buildFeatures {
         compose = true
-        buildConfig = true
     }
 
     testOptions {
@@ -123,14 +122,14 @@ android {
 }
 
 dependencies {
-    implementation(project(":simple_core"))
+    api(project(":simple_core"))
 
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.compose.ui)
-    implementation(libs.androidx.compose.foundation)
-    implementation(libs.androidx.compose.runtime)
+    api(platform(libs.androidx.compose.bom))
+    api(libs.androidx.compose.ui)
+    api(libs.androidx.compose.foundation)
+    api(libs.androidx.compose.runtime)
     implementation(libs.androidx.activity.compose)
-    implementation(libs.androidx.lifecycle.runtime.compose)
+    api(libs.androidx.lifecycle.runtime.compose)
 
     dokkaPlugin("org.jetbrains.dokka:android-documentation-plugin:2.1.0")
 
@@ -150,7 +149,6 @@ kover {
     reports {
         filters {
             excludes {
-                classes("**.BuildConfig")
                 classes("**.R")
                 classes("**.R$*")
             }
@@ -158,21 +156,19 @@ kover {
     }
 }
 
-tasks.dokkaHtml {
-    moduleName.set("Simple UI Compose")
+dokka {
+    dokkaPublications.html {
+        moduleName.set("Simple UI Compose")
+    }
 
     dokkaSourceSets {
         named("main") {
             sourceLink {
                 localDirectory.set(file("src/main/java"))
                 remoteUrl.set(
-                    uri("https://github.com/Rhpark/Simple_UI_XML/tree/master/simple_compose/src/main/java").toURL(),
+                    uri("https://github.com/Rhpark/Simple_UI_XML/tree/master/simple_compose/src/main/java"),
                 )
                 remoteLineSuffix.set("#L")
-            }
-
-            externalDocumentationLink {
-                url.set(uri("https://developer.android.com/reference/").toURL())
             }
         }
     }

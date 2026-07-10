@@ -20,7 +20,7 @@ plugins {
 
 // Dokka V2 Multi-Module Configuration + KtLint setup
 subprojects {
-    // 각 모듈에 Dokka 플러그인을 적용하여 dokkaHtml / dokkaGeneratePublicationHtml 태스크를 활성화
+    // 각 모듈에 Dokka 플러그인을 적용하여 Dokka V2 HTML 생성 태스크를 활성화
     apply(plugin = "org.jetbrains.dokka")
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
 
@@ -67,7 +67,7 @@ tasks.register("dokkaHtmlMultiModuleCustom") {
             into(outputDir.resolve("simple-core"))
         }
 
-        // Copy simple_xml documentation
+        // Copy simple_system_manager documentation
         project.copy {
             from(project.layout.projectDirectory.dir("simple_system_manager/build/dokka/html"))
             into(outputDir.resolve("simple-system-manager"))
@@ -112,7 +112,7 @@ tasks.register("dokkaHtmlMultiModuleCustom") {
             <body>
                 <div class="container">
                     <h1>Simple UI Library - API Documentation</h1>
-                    <p>Welcome to the Simple UI Library documentation. This library provides Android XML UI development tools.</p>
+                    <p>Simple UI provides shared Android policies and separate XML, Compose, and system-manager modules.</p>
 
                     <div class="module">
                         <h2>Simple UI Core</h2>
@@ -120,7 +120,7 @@ tasks.register("dokkaHtmlMultiModuleCustom") {
                         <ul>
                             <li>Extensions (Bundle, Date, String, etc.)</li>
                             <li>Logging system (Logx)</li>
-                            <li>System managers (Battery, Location, Network, etc.)</li>
+                            <li>Permission classification and result policies</li>
                             <li>Base ViewModel</li>
                         </ul>
                         <a href="simple-core/index.html">View Core Documentation</a>
@@ -145,7 +145,7 @@ tasks.register("dokkaHtmlMultiModuleCustom") {
                             <li>Base Activity & Fragment classes</li>
                             <li>View extensions (TextView, EditText, ImageView, etc.)</li>
                             <li>Permission management</li>
-                            <li>System UI controllers (StatusBar, NavigationBar, etc.)</li>
+                            <li>RecyclerView adapters and scroll-state helpers</li>
                         </ul>
                         <a href="simple-xml/index.html">View XML Documentation</a>
                     </div>
@@ -154,8 +154,8 @@ tasks.register("dokkaHtmlMultiModuleCustom") {
                         <h2>Simple UI Compose</h2>
                         <p>Compose UI module (requires Simple UI Core). Provides:</p>
                         <ul>
-                            <li>Composable permission request helpers</li>
-                            <li>Lifecycle-aware ViewModel event collection</li>
+                            <li>Compose permission request State</li>
+                            <li>Lifecycle-aware event and effect-flow collection</li>
                             <li>System bars and edge-to-edge helpers</li>
                             <li>Lazy list scroll state helpers</li>
                         </ul>

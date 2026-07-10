@@ -1,5 +1,7 @@
 package kr.open.library.simple_ui.compose.robolectric.scroll
 
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -8,10 +10,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
 import kr.open.library.simple_ui.compose.scroll.ScrollDirection
 import kr.open.library.simple_ui.compose.scroll.ScrollEdge
 import kr.open.library.simple_ui.compose.scroll.rememberEdgeReachedState
@@ -264,6 +270,42 @@ class ScrollStateHelpersRobolectricTest {
         composeTestRule.waitForIdle()
 
         assertEquals(ScrollDirection.DOWN, direction())
+    }
+
+    @Test
+    fun `direction returns to IDLE after an animated scroll session ends`() {
+        val observedDirections = mutableListOf<ScrollDirection>()
+        lateinit var listState: LazyListState
+        lateinit var scroll: () -> Unit
+
+        composeTestRule.setContent {
+            listState = rememberLazyListState()
+            val scope = rememberCoroutineScope()
+            val directionState = rememberScrollDirectionState(listState)
+            scroll = {
+                scope.launch {
+                    listState.animateScrollBy(
+                        value = 100f,
+                        animationSpec = tween(durationMillis = 200),
+                    )
+                }
+            }
+            LaunchedEffect(directionState) {
+                snapshotFlow { directionState.value }.collect { observedDirections += it }
+            }
+            LazyColumn(state = listState, modifier = Modifier.height(200.dp)) {
+                items(50) {
+                    Box(modifier = Modifier.fillMaxWidth().height(1000.dp))
+                }
+            }
+        }
+        composeTestRule.waitForIdle()
+
+        composeTestRule.runOnIdle { scroll() }
+        composeTestRule.waitUntil(timeoutMillis = 3_000) {
+            observedDirections.contains(ScrollDirection.DOWN) &&
+                observedDirections.lastOrNull() == ScrollDirection.IDLE
+        }
     }
 
     @Test

@@ -13,9 +13,12 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.Saver
-import androidx.compose.runtime.saveable.listSaver
+import androidx.compose.runtime.saveable.mapSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
 import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.core.permissions.classifier.PermissionClassifier
@@ -27,7 +30,7 @@ import kr.open.library.simple_ui.core.permissions.handler.SpecialPermissionHandl
 import kr.open.library.simple_ui.core.permissions.model.PermissionDecisionType
 import kr.open.library.simple_ui.core.permissions.model.PermissionDeniedItem
 import kr.open.library.simple_ui.core.permissions.model.PermissionDeniedType
-import kr.open.library.simple_ui.core.permissions.model.toDeniedTypeOrNull
+import kr.open.library.simple_ui.core.permissions.model.buildPermissionDeniedItems
 import kr.open.library.simple_ui.core.permissions.queue.PermissionQueue
 import kr.open.library.simple_ui.core.permissions.runtime.RuntimePermissionDecisionTracker
 import kr.open.library.simple_ui.core.thread.assertMainThreadDebug
@@ -44,37 +47,6 @@ private const val TAG = "PermissionRequestState"
  * Empty permission placeholder used for empty request results.<br>
  */
 internal const val EMPTY_REQUEST_PERMISSION = ""
-
-// ---------------------------------------------------------------------------
-// 내부 순수 함수 (unit 테스트 대상)
-// Internal pure functions (subject to unit testing)
-// ---------------------------------------------------------------------------
-
-/**
- * 결정 맵에서 거부 항목 목록을 요청 순서대로 생성합니다.<br>
- * Builds the denied item list from the decision map, preserving the request order.<br>
- *
- * 결정→거부 타입 변환은 simple_core의 [toDeniedTypeOrNull] 단일 출처를 사용합니다.<br>
- * The decision-to-denied-type conversion uses the single source [toDeniedTypeOrNull] in simple_core.<br>
- *
- * @param permissions 요청한 권한 목록 (순서 기준).<br><br>
- *                    Requested permission list that defines the order.<br>
- * @param results 권한별 내부 결정 상태 맵.<br><br>
- *                Map of internal decision states per permission.<br>
- * @return 거부 항목 목록. 전부 승인이면 빈 목록.<br><br>
- *         Denied item list, or an empty list when everything is granted.<br>
- */
-internal fun toDeniedItems(
-    permissions: List<String>,
-    results: Map<String, PermissionDecisionType>,
-): List<PermissionDeniedItem> = permissions.mapNotNull { permission ->
-    // 미판정 권한은 xml(PermissionResultAggregator)과 동일하게 MANIFEST_UNDECLARED 기본값으로 기록한다
-    // — 무음 스킵하면 거부 목록에서 빠져 승인된 것처럼 보인다
-    // Unrecorded permissions default to MANIFEST_UNDECLARED, matching xml's
-    // PermissionResultAggregator — silently skipping them would read as granted
-    val decision = results[permission] ?: PermissionDecisionType.MANIFEST_UNDECLARED
-    decision.toDeniedTypeOrNull()?.let { deniedType -> PermissionDeniedItem(permission, deniedType) }
-}
 
 // ---------------------------------------------------------------------------
 // 공개 API
@@ -113,15 +85,16 @@ internal fun toDeniedItems(
  * PermissionRequester). Debug builds fail fast on violation.<br>
  *
  * **구성 변경 복원 / Configuration change restoration**:<br>
- * 요청 이력·대기 큐·진행 여부·rationale 대기 상태([rationaleRequired]와 그 대상 런타임 권한)는
- * `rememberSaveable`로 보존되어, rationale 대기 중 회전이 발생해도 흐름이 멈추지 않습니다.
- * 복원 후 도착한 결과는 콜백 없이 State([allGranted], [deniedItems])만 갱신하며,
+ * 요청 이력·대기 큐·진행 여부·rationale/설정 이동 동의 대기 상태와 최신 완료 결과
+ * ([deniedItems], [phase])는 `rememberSaveable`로 보존됩니다.
+ * 복원 후 도착한 결과는 콜백 없이 State([allGranted], [deniedItems], [phase])를 갱신하며,
  * [RuntimePermissionDecisionTracker.mapResult]에 `isRestored = true`로 전달되어
  * PERMANENTLY_DENIED 오판을 방지합니다.<br>
- * Request history, the pending queue, and the in-flight flag survive configuration changes via
- * `rememberSaveable`. Results delivered after restoration update only the State values
- * ([allGranted], [deniedItems]) without a callback, and are mapped with `isRestored = true`
- * to avoid PERMANENTLY_DENIED misjudgment.<br>
+ * Request history, the pending queue, the in-flight flag, rationale/settings consent waits, and
+ * the latest completed result ([deniedItems], [phase]) survive configuration changes via
+ * `rememberSaveable`. Results delivered after restoration update the State values
+ * ([allGranted], [deniedItems], [phase]) without a callback and are mapped with
+ * `isRestored = true` to avoid PERMANENTLY_DENIED misjudgment.<br>
  */
 @Stable
 public class PermissionRequestState internal constructor(
@@ -134,6 +107,8 @@ public class PermissionRequestState internal constructor(
     restoredPendingRuntime: List<String> = emptyList(),
     restoredRationaleRequired: List<String> = emptyList(),
     restoredResults: Map<String, PermissionDecisionType> = emptyMap(),
+    restoredDeniedItems: List<PermissionDeniedItem> = emptyList(),
+    restoredPhase: PermissionRequestPhase = PermissionRequestPhase.IDLE,
     private val gateSettingsNavigation: Boolean = false,
     restoredSettingsNavigationRequired: String? = null,
 ) {
@@ -224,17 +199,27 @@ public class PermissionRequestState internal constructor(
     private var wasRequestedBeforeSnapshot: Map<String, Boolean> = emptyMap()
 
     private val allGrantedState = mutableStateOf(computeAllGranted())
-    private val deniedItemsState = mutableStateOf<List<PermissionDeniedItem>>(emptyList())
+    private val deniedItemsState = mutableStateOf(restoredDeniedItems)
     private val rationaleRequiredState = mutableStateOf(restoredRationaleRequired)
     private val settingsNavigationRequiredState = mutableStateOf(restoredSettingsNavigationRequired)
+    private val phaseState = mutableStateOf(
+        when {
+            restoredRationaleRequired.isNotEmpty() -> PermissionRequestPhase.RATIONALE_REQUIRED
+            restoredSettingsNavigationRequired != null -> PermissionRequestPhase.SETTINGS_NAVIGATION_REQUIRED
+            isRestoredInFlight -> PermissionRequestPhase.REQUESTING
+            else -> restoredPhase
+        },
+    )
 
     /**
      * 모든 권한이 허용된 상태인지 여부 (State 기반, 재구성 트리거).<br>
      * Whether every permission is granted (State-backed, triggers recomposition).<br>
      *
-     * 초기값은 생성 시점의 권한 보유 상태로 계산되며, 요청 완료 시 재계산됩니다.<br>
+     * 초기값은 생성 시점의 권한 보유 상태로 계산되며, 요청 완료·호스트 Resume·[refresh] 호출 시
+     * 재계산됩니다. 재계산은 마지막 요청 결과인 [deniedItems]와 [phase]를 변경하지 않습니다.<br>
      * The initial value is computed from the grant status at creation time and is
-     * recomputed when a request completes.<br>
+     * recomputed when a request completes, the host resumes, or [refresh] is called.
+     * Recalculation does not change the last request result in [deniedItems] or [phase].<br>
      */
     public val allGranted: Boolean
         get() = allGrantedState.value
@@ -275,6 +260,40 @@ public class PermissionRequestState internal constructor(
         get() = settingsNavigationRequiredState.value
 
     /**
+     * 현재 권한 요청 흐름 단계입니다.<br>
+     * Current phase of the permission request flow.<br>
+     *
+     * [PermissionRequestPhase.COMPLETED]는 다음 [request]가 시작되거나 새 State가 생성될 때까지 유지됩니다.<br>
+     * [PermissionRequestPhase.COMPLETED] remains until the next [request] starts or a new State is created.<br>
+     */
+    public val phase: PermissionRequestPhase
+        get() = phaseState.value
+
+    /**
+     * 권한 요청 흐름이 진행 중인지 나타냅니다.<br>
+     * Indicates whether a permission request flow is currently in progress.<br>
+     *
+     * 시스템 UI 결과 대기뿐 아니라 rationale 또는 설정 이동 동의를 기다리는 일시 정지 상태도 포함합니다.<br>
+     * This includes pauses awaiting rationale or settings-navigation consent, not only system UI results.<br>
+     */
+    public val isRequesting: Boolean
+        get() = phaseState.value != PermissionRequestPhase.IDLE &&
+            phaseState.value != PermissionRequestPhase.COMPLETED
+
+    /**
+     * 외부 설정 변경을 포함한 현재 권한 보유 상태를 다시 확인합니다.<br>
+     * Re-checks current grants, including changes made outside this request flow.<br>
+     *
+     * 마지막 요청 결과인 [deniedItems]와 [phase]는 변경하지 않습니다.<br>
+     * The last request result in [deniedItems] and the current [phase] are left unchanged.<br>
+     */
+    @MainThread
+    public fun refresh() {
+        assertMainThreadDebug("PermissionRequestState.refresh")
+        allGrantedState.value = computeAllGranted()
+    }
+
+    /**
      * 권한 요청을 시작하고 거부 결과를 [onResult] 콜백으로 전달합니다.<br>
      * Starts the permission request and delivers denied results via [onResult].<br>
      *
@@ -300,11 +319,13 @@ public class PermissionRequestState internal constructor(
         if (permissions.isEmpty()) {
             val denied = listOf(PermissionDeniedItem(EMPTY_REQUEST_PERMISSION, PermissionDeniedType.EMPTY_REQUEST))
             deniedItemsState.value = denied
+            phaseState.value = PermissionRequestPhase.COMPLETED
             safeCatch { onResult(denied) }
             return
         }
 
         isInFlight = true
+        phaseState.value = PermissionRequestPhase.REQUESTING
         isRestoredSession = false
         this.onResult = onResult
         results.clear()
@@ -334,6 +355,7 @@ public class PermissionRequestState internal constructor(
             }.orEmpty()
         if (needsRationale.isNotEmpty()) {
             rationaleRequiredState.value = needsRationale
+            phaseState.value = PermissionRequestPhase.RATIONALE_REQUIRED
             return
         }
         launchRuntimeOrQueue()
@@ -354,6 +376,7 @@ public class PermissionRequestState internal constructor(
             return
         }
         rationaleRequiredState.value = emptyList()
+        phaseState.value = PermissionRequestPhase.REQUESTING
         // 사용자가 명시적으로 계속한 새 launch의 결과는 신뢰 가능한 스냅샷이 있으므로
         // 복원 보호(isRestored)를 해제한다 — 유지하면 PERMANENTLY_DENIED가 DENIED로 다운그레이드됨
         // A fresh launch explicitly continued by the user has a reliable snapshot, so the
@@ -405,6 +428,7 @@ public class PermissionRequestState internal constructor(
             return
         }
         settingsNavigationRequiredState.value = null
+        phaseState.value = PermissionRequestPhase.REQUESTING
         if (!launchSettings(permission)) {
             // 실패가 기록되고 큐에서 제거됨 — 다음 항목 진행 (다음 항목은 다시 게이트에서 대기)
             // Failure recorded and removed from the queue — advance (the next entry gates again)
@@ -600,6 +624,7 @@ public class PermissionRequestState internal constructor(
                 // Consent gate before settings navigation — same semantics as simple_xml's
                 // onNavigateToSettings. Pauses until continue/cancelSettingsNavigation() is called
                 settingsNavigationRequiredState.value = permission
+                phaseState.value = PermissionRequestPhase.SETTINGS_NAVIGATION_REQUIRED
                 return
             }
             if (launchSettings(permission)) return
@@ -658,7 +683,7 @@ public class PermissionRequestState internal constructor(
      * Completes the request, updating the State values and invoking the callback.<br>
      */
     private fun complete() {
-        val denied = toDeniedItems(permissions, results)
+        val denied = buildPermissionDeniedItems(permissions, results)
         deniedItemsState.value = denied
         allGrantedState.value = computeAllGranted()
         rationaleRequiredState.value = emptyList()
@@ -668,6 +693,7 @@ public class PermissionRequestState internal constructor(
         onResult = null
         isInFlight = false
         isRestoredSession = false
+        phaseState.value = PermissionRequestPhase.COMPLETED
         callback?.let { safeCatch { it(denied) } }
     }
 
@@ -693,9 +719,22 @@ public class PermissionRequestState internal constructor(
      * Companion container providing the Saver factory.<br>
      */
     internal companion object {
+        private const val SAVER_REQUESTED_HISTORY = "requestedHistory"
+        private const val SAVER_QUEUE = "queue"
+        private const val SAVER_IS_IN_FLIGHT = "isInFlight"
+        private const val SAVER_PENDING_RUNTIME = "pendingRuntime"
+        private const val SAVER_RATIONALE_REQUIRED = "rationaleRequired"
+        private const val SAVER_RESULT_PERMISSIONS = "resultPermissions"
+        private const val SAVER_RESULT_TYPES = "resultTypes"
+        private const val SAVER_SETTINGS_NAVIGATION_REQUIRED = "settingsNavigationRequired"
+        private const val SAVER_DENIED_PERMISSIONS = "deniedPermissions"
+        private const val SAVER_DENIED_TYPES = "deniedTypes"
+        private const val SAVER_PHASE = "phase"
+
         /**
-         * 요청 이력·대기 큐·진행 여부를 저장/복원하는 [Saver]를 생성합니다.<br>
-         * Creates a [Saver] that persists the request history, pending queue, and in-flight flag.<br>
+         * 요청 이력·대기 큐·진행 상태·동의 대기 상태·최신 완료 결과를 저장/복원하는 [Saver]를 생성합니다.<br>
+         * Creates a [Saver] that persists request history, pending and consent-wait states,
+         * in-flight progress, and the latest completed result.<br>
          *
          * @param context 복원 시 상태 생성에 사용할 컨텍스트.<br><br>
          *                Context used to recreate the state on restoration.<br>
@@ -709,25 +748,31 @@ public class PermissionRequestState internal constructor(
             activity: Activity?,
             permissions: List<String>,
             gateSettingsNavigation: Boolean,
-        ): Saver<PermissionRequestState, Any> = listSaver(
+        ): Saver<PermissionRequestState, Any> = mapSaver(
             save = { state ->
-                listOf(
-                    ArrayList(state.requestedHistory),
-                    ArrayList(state.queueBacking),
-                    state.isInFlight,
-                    ArrayList(state.pendingRuntime),
-                    ArrayList(state.rationaleRequiredState.value),
-                    ArrayList(state.results.keys),
-                    ArrayList(state.results.values.map { it.name }),
-                    state.settingsNavigationRequiredState.value ?: "",
+                mapOf(
+                    SAVER_REQUESTED_HISTORY to ArrayList(state.requestedHistory),
+                    SAVER_QUEUE to ArrayList(state.queueBacking),
+                    SAVER_IS_IN_FLIGHT to state.isInFlight,
+                    SAVER_PENDING_RUNTIME to ArrayList(state.pendingRuntime),
+                    SAVER_RATIONALE_REQUIRED to ArrayList(state.rationaleRequiredState.value),
+                    SAVER_RESULT_PERMISSIONS to ArrayList(state.results.keys),
+                    SAVER_RESULT_TYPES to ArrayList(state.results.values.map { it.name }),
+                    SAVER_SETTINGS_NAVIGATION_REQUIRED to
+                        (state.settingsNavigationRequiredState.value ?: ""),
+                    SAVER_DENIED_PERMISSIONS to
+                        ArrayList(state.deniedItemsState.value.map { it.permission }),
+                    SAVER_DENIED_TYPES to
+                        ArrayList(state.deniedItemsState.value.map { it.result.name }),
+                    SAVER_PHASE to state.phaseState.value.name,
                 )
             },
             restore = { saved ->
                 @Suppress("UNCHECKED_CAST")
-                val resultKeys = saved[5] as ArrayList<String>
+                val resultKeys = saved[SAVER_RESULT_PERMISSIONS] as? ArrayList<String> ?: arrayListOf()
 
                 @Suppress("UNCHECKED_CAST")
-                val resultNames = saved[6] as ArrayList<String>
+                val resultNames = saved[SAVER_RESULT_TYPES] as? ArrayList<String> ?: arrayListOf()
                 val restoredResults = resultKeys.indices
                     .mapNotNull { index ->
                         val name = resultNames.getOrNull(index) ?: return@mapNotNull null
@@ -737,18 +782,42 @@ public class PermissionRequestState internal constructor(
                     }.toMap()
 
                 @Suppress("UNCHECKED_CAST")
+                val deniedPermissions = saved[SAVER_DENIED_PERMISSIONS] as? ArrayList<String> ?: arrayListOf()
+
+                @Suppress("UNCHECKED_CAST")
+                val deniedTypes = saved[SAVER_DENIED_TYPES] as? ArrayList<String> ?: arrayListOf()
+                val restoredDeniedItems = deniedPermissions.indices.mapNotNull { index ->
+                    val typeName = deniedTypes.getOrNull(index) ?: return@mapNotNull null
+                    val type = PermissionDeniedType.entries.firstOrNull { it.name == typeName }
+                        ?: return@mapNotNull null
+                    PermissionDeniedItem(deniedPermissions[index], type)
+                }
+                val restoredPhase = (saved[SAVER_PHASE] as? String)
+                    ?.let { phaseName -> PermissionRequestPhase.entries.firstOrNull { it.name == phaseName } }
+                    ?: PermissionRequestPhase.IDLE
+
+                @Suppress("UNCHECKED_CAST")
                 PermissionRequestState(
                     context = context,
                     activity = activity,
                     permissions = permissions,
-                    requestedHistory = (saved[0] as ArrayList<String>).toMutableSet(),
-                    queueBacking = (saved[1] as ArrayList<String>).toMutableList(),
-                    isRestoredInFlight = saved[2] as Boolean,
-                    restoredPendingRuntime = (saved[3] as ArrayList<String>).toList(),
-                    restoredRationaleRequired = (saved[4] as ArrayList<String>).toList(),
+                    requestedHistory =
+                        (saved[SAVER_REQUESTED_HISTORY] as? ArrayList<String>)?.toMutableSet()
+                            ?: mutableSetOf(),
+                    queueBacking =
+                        (saved[SAVER_QUEUE] as? ArrayList<String>)?.toMutableList()
+                            ?: mutableListOf(),
+                    isRestoredInFlight = saved[SAVER_IS_IN_FLIGHT] as? Boolean ?: false,
+                    restoredPendingRuntime =
+                        (saved[SAVER_PENDING_RUNTIME] as? ArrayList<String>)?.toList().orEmpty(),
+                    restoredRationaleRequired =
+                        (saved[SAVER_RATIONALE_REQUIRED] as? ArrayList<String>)?.toList().orEmpty(),
                     restoredResults = restoredResults,
+                    restoredDeniedItems = restoredDeniedItems,
+                    restoredPhase = restoredPhase,
                     gateSettingsNavigation = gateSettingsNavigation,
-                    restoredSettingsNavigationRequired = (saved[7] as String).ifEmpty { null },
+                    restoredSettingsNavigationRequired =
+                        (saved[SAVER_SETTINGS_NAVIGATION_REQUIRED] as? String)?.ifEmpty { null },
                 )
             },
         )
@@ -759,10 +828,16 @@ public class PermissionRequestState internal constructor(
  * [PermissionRequestState]를 생성하고 컴포지션 생명주기에 연결합니다.<br>
  * Creates a [PermissionRequestState] and wires it into the composition lifecycle.<br>
  *
- * 초기 [PermissionRequestState.allGranted]는 [Context.hasPermission] 기반으로 계산됩니다.
- * 요청 이력·대기 큐·진행 여부는 `rememberSaveable`로 구성 변경에 걸쳐 보존됩니다.<br>
+ * 초기 [PermissionRequestState.allGranted]는 [Context.hasPermission] 기반으로 계산되며,
+ * 호스트가 Resume될 때 외부 설정 변경을 반영해 [PermissionRequestState.allGranted]만 다시 계산합니다.
+ * 마지막 요청의 [PermissionRequestState.deniedItems]와 [PermissionRequestState.phase]는 재확인으로
+ * 변경되지 않습니다. 요청 이력·대기 큐·진행 여부·최신 완료 결과 한 건은 `rememberSaveable`로
+ * 구성 변경에 걸쳐 보존됩니다.<br>
  * The initial [PermissionRequestState.allGranted] is computed via [Context.hasPermission].
- * The request history, pending queue, and in-flight flag survive configuration changes
+ * Whenever the host resumes, external settings changes are reflected by recomputing only
+ * [PermissionRequestState.allGranted]; [PermissionRequestState.deniedItems] and
+ * [PermissionRequestState.phase] remain the last request result. Request history, the pending
+ * queue, the in-flight flag, and one latest completed result survive configuration changes
  * through `rememberSaveable`.<br>
  *
  * **사용 예시 / Usage example**:
@@ -805,16 +880,23 @@ public fun rememberPermissionRequestState(
 ): PermissionRequestState {
     val context = LocalContext.current
     val activity = LocalActivity.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val normalizedPermissions = permissions.distinct()
 
     val state = rememberSaveable(
-        permissions,
+        normalizedPermissions,
         gateSettingsNavigation,
-        saver = PermissionRequestState.saver(context, activity, permissions, gateSettingsNavigation),
+        saver = PermissionRequestState.saver(
+            context,
+            activity,
+            normalizedPermissions,
+            gateSettingsNavigation,
+        ),
     ) {
         PermissionRequestState(
             context = context,
             activity = activity,
-            permissions = permissions,
+            permissions = normalizedPermissions,
             gateSettingsNavigation = gateSettingsNavigation,
         )
     }
@@ -838,6 +920,18 @@ public fun rememberPermissionRequestState(
         onDispose {
             state.runtimeLauncher = null
             state.settingsLauncher = null
+        }
+    }
+
+    DisposableEffect(state, lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                state.refresh()
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
         }
     }
 

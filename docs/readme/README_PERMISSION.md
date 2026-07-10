@@ -5,11 +5,13 @@
 This document explains the permission-related architecture of Simple UI, covering:
 - permission inspection helpers in `simple_core`
 - permission request flow in `simple_xml`
+- Compose State-based permission flow in `simple_compose`
 - feature-specific permission requirements used by `system_manager`
 
 > 이 문서는 Simple UI의 권한 관련 구조를 설명하며, 다음 범위를 다룹니다.
 > - `simple_core`의 권한 판별/헬퍼
 > - `simple_xml`의 권한 요청 흐름
+> - `simple_compose`의 Compose State 기반 권한 요청 흐름
 > - `system_manager` 기능에서 사용하는 권한 요구사항
 
 <br></br>
@@ -33,6 +35,17 @@ This document explains the permission-related architecture of Simple UI, coverin
 > - Activity/Fragment/Dialog 기반 권한 요청
 > - 생명주기 인식 요청 조정
 > - 상태 저장/복원 지원
+
+### simple_compose
+- Compose State-based runtime/special/Role permission requesting
+- `rememberSaveable` restoration of request progress and one latest completed result
+- `allGranted` refresh on Resume for external permission changes
+- Rationale/settings decisions exposed as State
+
+> - Compose State 기반 런타임/특수/Role 권한 요청
+> - `rememberSaveable`을 통한 요청 진행 상태와 최신 완료 결과 한 건 복원
+> - 외부 권한 변경 반영을 위한 Resume 시 `allGranted` 재계산
+> - rationale/settings 결정을 State로 노출
 
 ### system_manager
 - Uses the above layers and defines feature-specific permission combinations
@@ -196,7 +209,23 @@ override fun onCreate(savedInstanceState: Bundle?) {
 
 <br></br>
 
+## simple_compose Permission Request Flow (simple_compose 권한 요청 흐름)
+
+Compose에서는 `rememberPermissionRequestState`를 사용합니다. XML과 결과 타입·사전 판정 정책은 공유하지만
+복원 저장 구조는 다릅니다. 콜백 UI 훅 대신 `rationaleRequired`, `settingsNavigationRequired`, `phase`를
+State로 노출합니다.
+
+- Compose는 State 인스턴스마다 최신 완료 결과 한 건을 `deniedItems`와 `COMPLETED` phase로 보존합니다.
+- XML의 requestId별 orphaned 결과 목록과 달리 Compose 결과는 소비 후 제거되는 목록이 아닙니다.
+- 호스트 Resume 시 외부 권한 변경을 반영해 `allGranted`만 자동 재계산하며,
+  `deniedItems`와 `phase`는 마지막 요청 결과로 유지합니다.
+- 상세 설치·예제·XML 대응표는 [README_COMPOSE.md](README_COMPOSE.md)를 참조하세요.
+
+<br></br>
+
 ## Lifecycle and Host Rules (생명주기 및 호스트 규칙)
+
+### simple_xml
 
 - Activity permission requests must be made after `super.onCreate()`.
 - Fragment/Dialog permission requests must be made only after the host is attached (`isAdded == true`).
@@ -209,6 +238,16 @@ override fun onCreate(savedInstanceState: Bundle?) {
 > - `PermissionRequester`는 구성 변경 및 프로세스 복원 흐름을 위해 상태 저장/복원을 지원합니다.
 > - rationale/settings 콜백이 `proceed()`, `cancel()`, `defer(policy)` 없이 반환되면 흐름은 자동 취소됩니다.
 > - `defer()`의 기본 정책은 `CANCEL_ON_STOP`이며, `onStop` 이후에도 유지가 필요하면 `CANCEL_ON_DESTROY`를 사용할 수 있습니다.
+
+### simple_compose
+
+- Create the state with `rememberPermissionRequestState` inside a composition hosted by an Activity.
+- Call public request/decision methods on the main thread.
+- Rationale and settings-consent waits remain active until their continue/cancel method is called.
+
+> - Activity가 호스팅하는 컴포지션 안에서 `rememberPermissionRequestState`로 State를 생성하세요.
+> - 공개 요청·결정 메서드는 메인 스레드에서 호출하세요.
+> - rationale/설정 이동 동의 대기는 해당 continue/cancel 메서드를 호출할 때까지 유지됩니다.
 
 <br></br>
 
@@ -341,6 +380,8 @@ See feature doc: [README_NETWORK_INFO.md](system_manager/info/core/README_NETWOR
 - In those callbacks, always finish the decision with `proceed()`, `cancel()`, or `defer(policy)`.
 - Use `defer(CANCEL_ON_DESTROY)` only when the deferred UI must survive `onStop`; otherwise keep the default `CANCEL_ON_STOP`.
 - Use `simple_core` helpers such as `hasPermission()` and `remainPermissions()` when you need pre-check logic.
+- In Compose, `isRequesting` also includes rationale/settings consent waits. Check the latest
+  `deniedItems` and `phase`; call `refresh()` to recompute only `allGranted` immediately.
 
 > - `AndroidManifest.xml`에 권한이 선언되어 있는지 확인하세요.
 > - 권한이 dangerous, normal, special, role 중 어떤 유형인지 확인하세요.
@@ -350,5 +391,7 @@ See feature doc: [README_NETWORK_INFO.md](system_manager/info/core/README_NETWOR
 > - 해당 콜백에서는 반드시 `proceed()`, `cancel()`, `defer(policy)` 중 하나로 결정을 마무리하세요.
 > - `defer(CANCEL_ON_DESTROY)`는 `onStop` 이후에도 유지가 필요할 때만 사용하고, 그 외에는 기본값 `CANCEL_ON_STOP`을 유지하세요.
 > - 사전 점검이 필요하면 `hasPermission()`, `remainPermissions()` 같은 `simple_core` 헬퍼를 활용하세요.
+> - Compose의 `isRequesting`에는 rationale/settings 동의 대기도 포함됩니다. 최신 `deniedItems`와 `phase`를
+>   확인하고, `allGranted`만 즉시 재계산해야 할 때 `refresh()`를 호출하세요.
 
 <br></br>
