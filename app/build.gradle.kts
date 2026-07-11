@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
     // FireBase (Add the Google services Gradle plugin)
     id("com.google.gms.google-services")
     id("com.google.firebase.appdistribution") // apk 자동 배포
@@ -92,6 +93,7 @@ android {
         dataBinding = true
         viewBinding = true
         buildConfig = true // BuildConfig 활성화
+        compose = true
     }
 }
 
@@ -166,12 +168,14 @@ firebaseAppDistribution {
 
 dependencies {
     implementation(project(":simple_core"))
+    implementation(project(":simple_compose"))
     implementation(project(":simple_system_manager"))
     implementation(project(":simple_xml"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.activity)
+    implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.androidx.constraintlayout)
     testImplementation(libs.junit)

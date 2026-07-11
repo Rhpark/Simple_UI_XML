@@ -48,6 +48,9 @@
             android:name=".activity_fragment.ActivityFragmentActivity"
             android:exported="false" />
         <activity
+            android:name=".compose.ComposeExamplesActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity_fragment.activity.BaseActivityExample"
             android:exported="false" />
         <activity

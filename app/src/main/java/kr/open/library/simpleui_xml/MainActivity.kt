@@ -5,6 +5,7 @@ import android.os.Bundle
 import kr.open.library.simple_ui.xml.extensions.view.bold
 import kr.open.library.simple_ui.xml.ui.components.activity.binding.BaseDataBindingActivity
 import kr.open.library.simpleui_xml.activity_fragment.ActivityFragmentActivity
+import kr.open.library.simpleui_xml.compose.ComposeExamplesActivity
 import kr.open.library.simpleui_xml.databinding.ActivityMainBinding
 import kr.open.library.simpleui_xml.extenstions_style.ExtensionsStyleActivity
 import kr.open.library.simpleui_xml.logx.LogxActivity
@@ -51,6 +52,10 @@ class MainActivity : BaseDataBindingActivity<ActivityMainBinding>(R.layout.activ
 
         binding.btnActivityFragmentExample.setOnClickListener {
             startActivity(Intent(this, ActivityFragmentActivity::class.java))
+        }
+
+        binding.btnComposeExamples.setOnClickListener {
+            startActivity(Intent(this, ComposeExamplesActivity::class.java))
         }
 
         binding.tvTitle.bold()

@@ -72,6 +72,11 @@
                     android:id="@+id/btnActivityFragmentExample"
                     style="@style/Button.MatchWrap"
                     android:text="Go to Activity/Fragment Example" />
+
+                <Button
+                    android:id="@+id/btnComposeExamples"
+                    style="@style/Button.MatchWrap"
+                    android:text="Go to Compose Examples" />
             </LinearLayout>
         </ScrollView>
 
