@@ -18,10 +18,10 @@ The following modules are available in the current `0.5.0` release.
 
 | Module | Maven Central                                      | Purpose |
 | --- |----------------------------------------------------| --- |
-| `simple_core` | `io.github.rhpark:dash-droid-core:0.5.0`           | Logging, common extensions, permission policies, and ViewModel helpers |
-| `simple_xml` | `io.github.rhpark:dash-droid-xml:0.5.0`            | XML Activity/Fragment base classes, permission requests, View extensions, and RecyclerView helpers |
-| `simple_compose` | `io.github.rhpark:dash-droid-compose:0.5.0`        | Compose permission request State, lifecycle-aware event/effect Flow collection, system bar/edge-to-edge helpers, and LazyList scroll-state helpers |
-| `simple_system_manager` | `io.github.rhpark:dash-droid-system-manager:0.5.0` | Android system controllers, Window-based helpers, and device information |
+| `simple_core` | `io.github.rhpark:dash-droid-core:0.5.1`           | Logging, common extensions, permission policies, and ViewModel helpers |
+| `simple_xml` | `io.github.rhpark:dash-droid-xml:0.5.1`            | XML Activity/Fragment base classes, permission requests, View extensions, and RecyclerView helpers |
+| `simple_compose` | `io.github.rhpark:dash-droid-compose:0.5.1`        | Compose permission request State, lifecycle-aware event/effect Flow collection, system bar/edge-to-edge helpers, and LazyList scroll-state helpers |
+| `simple_system_manager` | `io.github.rhpark:dash-droid-system-manager:0.5.1` | Android system controllers, Window-based helpers, and device information |
 
 > 아래 모듈은 현재 `0.5.0` 릴리스에서 사용할 수 있습니다.
 >
@@ -71,7 +71,7 @@ Use this coordinate when the app directly imports `simple_core` APIs or types.
 
 ```kotlin
 dependencies {
-    implementation("io.github.rhpark:dash-droid-core:0.5.0")
+    implementation("io.github.rhpark:dash-droid-core:0.5.1")
 }
 ```
 
@@ -90,7 +90,7 @@ android {
 }
 
 dependencies {
-    implementation("io.github.rhpark:dash-droid-xml:0.5.0")
+    implementation("io.github.rhpark:dash-droid-xml:0.5.1")
 }
 ```
 
@@ -108,7 +108,7 @@ android {
 }
 
 dependencies {
-    implementation("io.github.rhpark:dash-droid-compose:0.5.0")
+    implementation("io.github.rhpark:dash-droid-compose:0.5.1")
 }
 ```
 
@@ -116,7 +116,7 @@ dependencies {
 
 ```kotlin
 dependencies {
-    implementation("io.github.rhpark:dash-droid-system-manager:0.5.0")
+    implementation("io.github.rhpark:dash-droid-system-manager:0.5.1")
 }
 ```
 
@@ -147,10 +147,10 @@ dependencyResolutionManagement {
 
 | Module | JitPack coordinate                                               |
 | --- |------------------------------------------------------------------|
-| Core | `com.github.Rhpark.Simple_UI_XML:Simple_UI_Core:0.5.0`           |
-| XML | `com.github.Rhpark.Simple_UI_XML:Simple_UI_XML:0.5.0`            |
-| Compose | `com.github.Rhpark.Simple_UI_XML:Simple_UI_Compose:0.5.0`        |
-| System Manager | `com.github.Rhpark.Simple_UI_XML:Simple_UI_System_Manager:0.5.0` |
+| Core | `com.github.Rhpark.Simple_UI_XML:Simple_UI_Core:0.5.1`           |
+| XML | `com.github.Rhpark.Simple_UI_XML:Simple_UI_XML:0.5.1`            |
+| Compose | `com.github.Rhpark.Simple_UI_XML:Simple_UI_Compose:0.5.1`        |
+| System Manager | `com.github.Rhpark.Simple_UI_XML:Simple_UI_System_Manager:0.5.1` |
 
 Add only the required coordinates to the app module's `dependencies` block.
 
