@@ -138,6 +138,11 @@ patterns = {
         r"\bsimple_system_manager/",
         r"\bsimple_system_manager\b",
     ],
+    "simple_compose": [
+        r":simple_compose:",
+        r"\bsimple_compose/",
+        r"\bsimple_compose\b",
+    ],
     "app": [
         r":app:",
         r"\bapp/",

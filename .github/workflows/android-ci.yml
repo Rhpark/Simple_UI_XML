@@ -143,7 +143,7 @@ jobs:
 
           GRADLE_VERSION=$(python3 .github/scripts/read_app_version.py || true)
           if [ -z "$GRADLE_VERSION" ]; then
-            echo "Error: Failed to read version from simple_core/build.gradle.kts, simple_system_manager/build.gradle.kts, or simple_xml/build.gradle.kts"
+            echo "Error: Failed to read version from gradle/libs.versions.toml or library module build files"
             exit 1
           fi
 
@@ -303,7 +303,7 @@ jobs:
         run: bash -o pipefail -c "./gradlew apiCheck --stacktrace --info --build-cache --no-daemon --no-parallel --no-configuration-cache -Pkotlin.compiler.execution.strategy=in-process |& tee api-check.log"
 
       - name: Run tests and generate coverage
-        run: bash -o pipefail -c "./gradlew :simple_core:koverHtmlReport :simple_system_manager:koverHtmlReport :simple_xml:koverHtmlReport --build-cache |& tee test-coverage.log"
+        run: bash -o pipefail -c "./gradlew :simple_core:koverHtmlReport :simple_system_manager:koverHtmlReport :simple_xml:koverHtmlReport :simple_compose:koverHtmlReport --build-cache |& tee test-coverage.log"
 
       - name: Capture failure snippet (Tests)
         if: failure()
@@ -329,6 +329,7 @@ jobs:
             simple_core/build/test-results/**/*.xml
             simple_system_manager/build/test-results/**/*.xml
             simple_xml/build/test-results/**/*.xml
+            simple_compose/build/test-results/**/*.xml
           check_name: Test Results
 
       - name: Upload test reports
@@ -340,6 +341,7 @@ jobs:
             simple_core/build/reports/tests/
             simple_system_manager/build/reports/tests/
             simple_xml/build/reports/tests/
+            simple_compose/build/reports/tests/
           retention-days: 30
 
       - name: Upload coverage report
@@ -351,6 +353,7 @@ jobs:
             simple_core/build/reports/kover/html/
             simple_system_manager/build/reports/kover/html/
             simple_xml/build/reports/kover/html/
+            simple_compose/build/reports/kover/html/
           retention-days: 30
 
       - name: Report failure (Tests)

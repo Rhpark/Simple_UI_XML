@@ -73,13 +73,23 @@ jobs:
           sed -i "s/dash-droid-core:[0-9.]\+/dash-droid-core:$VERSION/g" README.md
           sed -i "s/dash-droid-xml:[0-9.]\+/dash-droid-xml:$VERSION/g" README.md
           sed -i "s/dash-droid-system-manager:[0-9.]\+/dash-droid-system-manager:$VERSION/g" README.md
+          sed -i "s/dash-droid-compose:[0-9.]\+/dash-droid-compose:$VERSION/g" README.md
 
           # JitPack coordinates (Simple_UI_*)
           sed -i "s/Simple_UI_Core:[0-9.]\+/Simple_UI_Core:$VERSION/g" README.md
           sed -i "s/Simple_UI_XML:[0-9.]\+/Simple_UI_XML:$VERSION/g" README.md
           sed -i "s/Simple_UI_System_Manager:[0-9.]\+/Simple_UI_System_Manager:$VERSION/g" README.md
+          sed -i "s/Simple_UI_Compose:[0-9.]\+/Simple_UI_Compose:$VERSION/g" README.md
 
           echo "✅ README.md updated"
+
+      - name: Update README_COMPOSE.md
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+
+          sed -i "s/dash-droid-compose:[0-9.]\+/dash-droid-compose:$VERSION/g" docs/readme/README_COMPOSE.md
+
+          echo "✅ README_COMPOSE.md updated"
 
       - name: Update AGENTS.md
         run: |
@@ -119,6 +129,16 @@ jobs:
           
           echo "✅ simple_system_manager/AGENTS.md updated"
 
+      - name: Update simple_compose/AGENTS.md
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+
+          sed -i "s/\*\*현재 버전\*\*: [0-9.]\+/**현재 버전**: $VERSION/g" simple_compose/AGENTS.md || true
+          sed -i "s/Simple_UI_Compose:[0-9.]\+/Simple_UI_Compose:$VERSION/g" simple_compose/AGENTS.md || true
+          sed -i "s/dash-droid-compose:[0-9.]\+/dash-droid-compose:$VERSION/g" simple_compose/AGENTS.md || true
+
+          echo "✅ simple_compose/AGENTS.md updated"
+
       - name: Update PRD.md
         run: |
           VERSION="${{ steps.version.outputs.version }}"
@@ -148,7 +168,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           
-          git add README.md AGENTS.md simple_xml/AGENTS.md simple_core/AGENTS.md simple_system_manager/AGENTS.md PRD.md
+          git add README.md AGENTS.md docs/readme/README_COMPOSE.md simple_xml/AGENTS.md simple_core/AGENTS.md simple_system_manager/AGENTS.md simple_compose/AGENTS.md PRD.md
           git commit -m "docs: Update version to $VERSION [skip ci]"
           git push
           
@@ -216,9 +236,11 @@ jobs:
           mkdir -p docs/coverage/simple_core
           mkdir -p docs/coverage/simple_system_manager
           mkdir -p docs/coverage/simple_xml
+          mkdir -p docs/coverage/simple_compose
           cp -r coverage-from-ci/simple_core/build/reports/kover/html/* docs/coverage/simple_core/ || cp -r coverage-from-ci/simple_core/* docs/coverage/simple_core/
           cp -r coverage-from-ci/simple_system_manager/build/reports/kover/html/* docs/coverage/simple_system_manager/ || cp -r coverage-from-ci/simple_system_manager/* docs/coverage/simple_system_manager/
           cp -r coverage-from-ci/simple_xml/build/reports/kover/html/* docs/coverage/simple_xml/ || cp -r coverage-from-ci/simple_xml/* docs/coverage/simple_xml/
+          cp -r coverage-from-ci/simple_compose/build/reports/kover/html/* docs/coverage/simple_compose/ || cp -r coverage-from-ci/simple_compose/* docs/coverage/simple_compose/
 
       - name: Add version banner to documentation
         run: |
@@ -254,6 +276,10 @@ jobs:
           fi
           if [ ! -f "docs/coverage/simple_xml/index.html" ]; then
             echo "❌ simple_xml coverage not generated!"
+            exit 1
+          fi
+          if [ ! -f "docs/coverage/simple_compose/index.html" ]; then
+            echo "❌ simple_compose coverage not generated!"
             exit 1
           fi
           echo "✅ Coverage reports generated successfully"
