@@ -69,6 +69,10 @@ jobs:
           # Line 13: **libraries** (v0.3.0+):
           sed -i "s/\*\*libraries\*\* (v[0-9.]\+)/**libraries** (v$VERSION)/" README.md
 
+          # "current \`x.x.x\` release" sentence (English + Korean)
+          sed -i "s/current \`[0-9.]\+\` release/current \`$VERSION\` release/" README.md
+          sed -i "s/현재 \`[0-9.]\+\` 릴리스/현재 \`$VERSION\` 릴리스/" README.md
+
           # Maven Central coordinates (dash-droid-*)
           sed -i "s/dash-droid-core:[0-9.]\+/dash-droid-core:$VERSION/g" README.md
           sed -i "s/dash-droid-xml:[0-9.]\+/dash-droid-xml:$VERSION/g" README.md
