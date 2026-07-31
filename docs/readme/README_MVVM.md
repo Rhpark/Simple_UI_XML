@@ -37,11 +37,9 @@ This feature **spans three modules** (이 기능은 **세 모듈**에 걸쳐 있
 
 <br>
 
-
 ## 🔎 At a Glance (한눈 비교)
 
 <br>
-
 
 ### Activity/Fragment + ViewModel Initialization (Activity/Fragment + ViewModel 초기화)
 
@@ -53,7 +51,6 @@ This feature **spans three modules** (이 기능은 **세 모듈**에 걸쳐 있
 | `onCreate` boilerplate (`onCreate` 보일러플레이트) | Complex initialization code<br>복잡한 초기화 코드 | ✅ Minimal code<br>최소한의 코드 |
 
 <br>
-
 
 ### ViewModel Event System (ViewModel 이벤트 시스템)
 | Category (항목) | Plain Android (기본 Android) | Simple UI (심플 UI) |
@@ -67,7 +64,6 @@ This feature **spans three modules** (이 기능은 **세 모듈**에 걸쳐 있
 > **핵심:** Simple UI는 "복잡한 MVVM 보일러플레이트"의 **자동화**를 통해 개발 속도를 향상시킵니다.
 
 <br>
-
 
 ## 💡 Why Simple UI MVVM Matters (왜 Simple UI MVVM이 중요한가)
 
@@ -83,7 +79,6 @@ This feature **spans three modules** (이 기능은 **세 모듈**에 걸쳐 있
 > - **빠른 프로토타이핑**: 아이디어를 바로 구현하여 테스트 가능
 
 <br>
-
 
 ## 📦 Before You Begin (시작하기 전에)
 
@@ -198,7 +193,6 @@ class HomeFragment : BaseDataBindingFragment<FragmentHomeBinding>(R.layout.fragm
 > - Lifecycle 관리 자동화
 
 <br>
-
 
 ## 🧩 Plain Android MVVM VS Simple UI MVVM Comparisons (코드 비교)
 
@@ -376,7 +370,6 @@ override fun onEventVmCollect(binding: ActivityMainBinding) {
 ---
 
 <br>
-
 
 ### 2. Fragment + ViewModel Integration (둘째: Fragment + ViewModel 연동)
 
@@ -622,7 +615,6 @@ class InfoDialog : BaseDataBindingDialogFragment<DialogInfoBinding>(R.layout.dia
 
 <br>
 
-
 ### 4. ViewModel Event System Comparison (넷째: ViewModel 이벤트 시스템 비교)
 
 <details>
@@ -736,7 +728,6 @@ sealed class MainEvent {
 
 <br>
 
-
 ## 🚀 Core Advantages of Simple UI MVVM/ Simple UI MVVM의 핵심 장점
 
 
@@ -750,7 +741,6 @@ sealed class MainEvent {
 
 <br>
 
-
 ### 2. **🛠️ Standardized Event System (표준화된 이벤트 시스템)**
 - **`BaseViewModelEvent`:** Flow/Channel automatically prepared.
 - **`sendEventVm()`:** Dispatch events in one line.
@@ -763,7 +753,6 @@ sealed class MainEvent {
 
 <br>
 
-
 ### 3. **🎯 Optimized Developer Experience (개발자 경험 최적화)**
 - **Type safety:** Prevent errors at compile time.
 - **Consistent patterns:** Align the whole team on the same MVVM structure.
@@ -773,7 +762,6 @@ sealed class MainEvent {
 > - **빠른 개발**: 보일러플레이트 제거로 생산성 향상
 
 <br>
-
 
 ### 4. **🔧 Mistake-Proofing (실수 방지)**
 - **LifecycleOwner omissions:** Automatically wired to prevent mistakes.
@@ -785,7 +773,6 @@ sealed class MainEvent {
 
 <br>
 
-
 ### 5. **📉 Less Setup Code in the Guide Example (가이드 예제 기준 코드 간소화)**
 - **Activity + ViewModel:** 30–40 lines → under 15 (**60% reduction**)
 - **Fragment + ViewModel:** 50–60 lines → under 20 (**65% reduction**)
@@ -795,7 +782,6 @@ sealed class MainEvent {
 > - **ViewModel 이벤트**: Channel 구성 10줄+ → sendEventVm() 한 줄
 
 <br>
-
 
 ## 💡 What the Guide Highlights (가이드에서 드러나는 개선점)
 
@@ -814,7 +800,6 @@ sealed class MainEvent {
 > - **`sendEventVm()`로 일회성 이벤트 전송을 간결하게 유지할 수 있습니다.**
 
 <br>
-
 
 ## 🎉 Conclusion: What This MVVM Guide Demonstrates (결론: 이 MVVM 가이드가 보여주는 것)
 
@@ -840,7 +825,6 @@ This guide is intended to show how the library simplifies common MVVM setup patt
 
 <br>
 
-
 ## 🚀 Explore Real Implementations (실제 구현 예제 보기)
 
 **Live sample code:**
@@ -849,7 +833,6 @@ This guide is intended to show how the library simplifies common MVVM setup patt
 > - 실제로 앱을 구동시켜서 실제 구현 예제를 확인해 보세요!
 
 <br>
-
 
 **Try these features:**
 - Activity + ViewModel automatic initialization

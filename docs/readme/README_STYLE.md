@@ -27,7 +27,6 @@
 
 <br>
 
-
 ## 🔎 At a Glance Comparison (한눈 비교)
 
 ### XML Style System (XML Style 시스템)
@@ -43,7 +42,6 @@
 
 <br>
 
-
 ## 💡 Why Simple Style XML Matters (Style XML이 유용한 이유)
 
 ### ⚡ **Concise XML Too (XML도 간결하게)**
@@ -56,7 +54,6 @@
 > - **누락 방지**: Style이 width/height를 함께 제공하므로 속성 누락 가능성을 줄입니다.
 
 <br>
-
 
 ## 📦 Simple UI Style vs Plain XML Setup (Simple UI Style과 순수 XML 설정 비교)
 
@@ -177,7 +174,6 @@
 
 <br>
 
-
 ## 🎯 Key Advantages of Style (Style의 주요 장점)
 
 ### 📝 Attribute Reduction in This Example (이 예제의 속성 감소)
@@ -186,8 +182,6 @@ The example replaces four repeated XML attributes with one style reference and k
 > 이 예제는 반복되는 XML 속성 네 개를 Style 참조 한 줄로 바꾸고, width/height를 공통 Style에서 관리합니다.
 
 <br>
-
-
 
 ## 🎯 Conclusion (결론)
 
@@ -202,14 +196,12 @@ Use Style XML when repeated layout attributes should be shared across screens.
 
 <br>
 
-
 ## 📂 Example (예제)
 
 **Path:**
 > - 🎨 Layout: `app/src/main/res/layout/activity_extensions_style.xml`
 
 <br>
-
 
 ### 🎯 Supported Style Patterns (지원 가능한 Style 패턴)
 
@@ -232,7 +224,6 @@ Basic size combinations available for all Views (모든 View에서 사용 가능
 ```
 
 <br>
-
 
 ### 🎯 Supported Style Combinations (지원 가능한 Style 조합)
 
@@ -366,7 +357,6 @@ The following lists applicable Style patterns organized by View type.
 ```
 
 <br>
-
 
 ### 💡 Style System Tips (Style 시스템 활용 팁)
 

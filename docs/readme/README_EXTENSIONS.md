@@ -35,7 +35,6 @@ This feature **spans two modules** (이 기능은 **두 모듈**에 걸쳐 있�
 
 <br>
 
-
 ## 🔎 At a Glance (한눈 비교)
 
 ### Extensions Comparison (확장 함수 비교)
@@ -61,12 +60,10 @@ This feature **spans two modules** (이 기능은 **두 모듈**에 걸쳐 있�
 
 <br>
 
-
 **Key takeaway:** Simple UI exposes recurring operations through named extension functions.
 > **핵심:** Simple UI는 반복되는 동작을 목적이 드러나는 확장 함수로 제공합니다.
 
 <br>
-
 
 ## 💡 Why Simple UI Extensions Are Useful (Simple UI Extensions이 유용한 이유)
 
@@ -81,7 +78,6 @@ This feature **spans two modules** (이 기능은 **두 모듈**에 걸쳐 있�
 
 <br>
 
-
 ### 🛡️ **Explicit Defaults and Shared Policies (명시적 기본값과 공통 정책)**
 - **Typed Bundle access:** request a target type and provide a default with `Bundle.getValue<T>`
 - **Null safety:** chain safe defaults using `firstNotNull()`
@@ -95,7 +91,6 @@ This feature **spans two modules** (이 기능은 **두 모듈**에 걸쳐 있�
 
 <br>
 
-
 ### 🎨 **Intuitive, Readable Code (직관적이고 읽기 쉬운 코드)**
 - **Method chaining:** `textView.bold().underline().italic()` makes intent obvious
 - **Natural extensions:** `3.14159.roundTo(2)` reads like a number
@@ -108,7 +103,6 @@ This feature **spans two modules** (이 기능은 **두 모듈**에 걸쳐 있�
 
 
 <br>
-
 
 ## 📦 Complete Comparison: Extensions & Style vs Plain Android (비교 목록: Extensions & Style vs 순수 Android)
 
@@ -128,7 +122,6 @@ This feature **spans two modules** (이 기능은 **두 모듈**에 걸쳐 있�
 - **View helpers:** `setVisible/Gone()`, `setMargins()`, `setOnDebouncedClickListener()`
 <br>
 
-
 ---
 
 ## 🟩 simple_core Extensions (UI-Independent / UI 비의존)
@@ -140,14 +133,12 @@ This feature **spans two modules** (이 기능은 **두 모듈**에 걸쳐 있�
 - **Drop-in usage:(즉시 사용)** `view.setWidth(100.dpToPx(this))`
 <br>
 
-
 #### **🔢 round_to/** — Number rounding extensions (숫자 반올림 Extensions)
 **Module**: `simple_core`
 - **Decimal rounding(소수점 반올림):** `3.14159.roundTo(2)` → `3.14`
 - **Round up/down(올림/내림):** `price.roundUp(2)`, `price.roundDown(2)`
 - **Integer rounding(정수 반올림):** `1234.roundTo(2)` → `1200`
 <br>
-
 
 #### **🎯 conditional/** — Conditional execution extensions (조건부 실행 Extensions)
 **Module**: `simple_core`
@@ -157,13 +148,11 @@ This feature **spans two modules** (이 기능은 **두 모듈**에 걸쳐 있�
 - **Collection helpers:** `list.ifNotEmpty { }.filterIf(condition) { }`
 <br>
 
-
 #### **📦 bundle/** — Type-aware Bundle extensions (Bundle 타입 기반 접근 Extensions)
 **Module**: `simple_core`
 - **Requested type and fallback(요청 타입과 폴백):** `bundle.getValue<Int>("id", 0)`
 - **Reified type dispatch(reified 타입 분기):** supported types use their matching Bundle accessor; missing, unsupported, or failed lookups return the supplied default
 <br>
-
 
 #### **📝 string/** — String validation & processing extensions (문자열 검증/가공 Extensions)
 **Module**: `simple_core`
@@ -175,12 +164,10 @@ This feature **spans two modules** (이 기능은 **두 모듈**에 걸쳐 있�
 - **Strip HTML tags(HTML TAG 제거):** `html.removeHtmlTags()`
 <br>
 
-
 #### **📅 date/** — Date formatting extensions (날짜 포맷 Extensions)
 **Module**: `simple_core`
 - **Long → String:** `timestamp.toDateString("yyyy-MM-dd")`
 <br>
-
 
 #### **⏱️ time/** — Execution time measurement extensions (실행 시간 측정 Extensions)
 **Module**: `simple_core`
@@ -188,7 +175,6 @@ This feature **spans two modules** (이 기능은 **두 모듈**에 걸쳐 있�
 - **Result + nanoseconds:** `measureTimeNanos { doWork() }`
 - **Custom time source:** `measureTime(timeProvider) { doWork() }`, `measureTimeWithResult(timeProvider) { doWork() }`
 <br>
-
 
 #### **⚠️ trycatch/** — Exception handling extensions (예외 처리 Extensions)
 **Module**: `simple_core`
@@ -198,13 +184,11 @@ This feature **spans two modules** (이 기능은 **두 모듈**에 걸쳐 있�
 - **Boundary guards(경계 검증):** `requireInBounds`, `requireMinSdkVersion`, `requireMaxSdkVersion`, `throwMinSdkVersion`
 <br>
 
-
 #### **🔐 permissions/** — Permission check extensions (권한 확인 Extensions)
 **Module**: `simple_core`
 - **Unified permission check(통합 권한 체크):** `hasPermission(Manifest.permission.CAMERA)`
 - **Supports both normal and special permissions(일반/특수 권한 모두 지원)**
 <br>
-
 
 #### **🎨 resource/** — Resource access extensions (리소스 접근 Extensions)
 **Module**: `simple_xml`
@@ -212,11 +196,9 @@ This feature **spans two modules** (이 기능은 **두 모듈**에 걸쳐 있�
 - **Automatic SDK branching:** handles version differences internally
 <br>
 
-
 **코드 위치: `kr.open.library.simple_ui.core.permissions.extensions.*` 패키지**
 
 <br>
-
 
 ## 📝 Code Comparisons (코드 비교)
 
@@ -666,7 +648,6 @@ class MainActivity : BaseDataBindingActivity<ActivityMainBinding>(R.layout.activ
 
 <br>
 
-
 **Observed code structure (확인 가능한 코드 구조):**
 
 - Common platform operations are exposed through named extension functions.
@@ -678,7 +659,6 @@ class MainActivity : BaseDataBindingActivity<ActivityMainBinding>(R.layout.activ
 > - 호출부에서 같은 helper 구현을 반복하지 않고 의도를 표현할 수 있습니다.
 
 <br>
-
 
 ### 6. 🛡️ Typed Access with Fallback (타입 지정 접근과 폴백)
 
@@ -697,7 +677,6 @@ val name = bundle.getValue("name", "Unknown")
 > `getValue<T>()`는 `BundleInline.kt`에 구현된 타입을 지원합니다. 키가 없거나 지원하지 않는 타입이거나 조회가 실패하면 전달한 기본값을 반환합니다.
 <br>
 
-
 #### **Prevent mistakes with type inference (타입 추론으로 실수 방지)**
 ```kotlin
 // ❌ 순수 Android
@@ -708,7 +687,6 @@ val rounded = Math.round(price * 100.0) / 100.0  // 복잡!
 val rounded = price.roundTo(2)  // 타입 자동 추론
 ```
 <br>
-
 
 ### 7. 🎨 Intuitive APIs — Code as Documentation (**직관적 API** - 코드가 곧 문서)
 
@@ -731,7 +709,6 @@ panel.slideIn(RIGHT)  // "패널을 오른쪽에서 슬라이드"
 
 <br>
 
-
 #### **Clarify intent through chaining (체이닝으로 의도 명확화)**
 ```kotlin
 textView
@@ -747,7 +724,6 @@ imageView.load(R.drawable.icon) {
 ```
 
 <br>
-
 
 ### 8. 📦 Organized Package Structure — Easy to Find, Easy to Learn (**체계적 패키지 구조** - 찾기 쉽고 배우기 쉬운 구조)
 
@@ -776,7 +752,6 @@ kr.open.library.simple_ui.xml.extensions/
 
 <br>
 
-
 ### 9. ⚡ Practical, Ready-to-Use Features (**실전에서 바로 쓸 수 있는 기능들**)
 
 #### **Solve everyday pain points (매일 마주치는 문제를 해결)**
@@ -804,7 +779,6 @@ val userId = intent.extras?.getValue("user_id", -1) ?: -1
 ```
 <br>
 
-
 ## 🎯 Conclusion (결론)
 
 **Simple UI Extensions** was created to solve the **repetition and inconvenience** of Plain Android development.
@@ -822,7 +796,6 @@ Use these extensions when their named behavior and default policy match the appl
 
 <br>
 
-
 ## 📂 Explore the Actual Code (실제 코드 확인)
 
 **Sample files:**
@@ -830,7 +803,6 @@ Use these extensions when their named behavior and default policy match the appl
  - ⚡ Run the sample to experience the difference firsthand!
 
 <br>
-
 
 **Implemented examples:**
 - 📦 view/ — Toast, SnackBar, TextView styling (bold, italic, underline, strikethrough)
@@ -843,7 +815,6 @@ Use these extensions when their named behavior and default policy match the appl
 - 📦 permissions/ - CAMERA Permission Check
 
 <br>
-
 
 ## 📦 Additional Extensions (샘플 외 라이브러리 내장 확장 함수)
 > - (추가 Extensions 기능 - 실제 코드에는 미포함, 라이브러리 내장)
@@ -859,7 +830,6 @@ Use these extensions when their named behavior and default policy match the appl
 - `roundDown(decimals)` — round down to the specified place/ 지정된 자리로 내림
 
 <br>
-
 
 **Supported types/지원 타입:** Double, Float, Int, Long, Short
 
@@ -890,7 +860,6 @@ val up = number.roundUp(2)       // 1300
 - Use the same method names for both decimal and integer rounding/ 소수점,정수 모두 동일한 메서드명
 
 <br>
-
 
 ### 🔀 conditional/ — Conditional Execution Extensions (조건부 실행 확장)
 
@@ -923,7 +892,6 @@ val result = checkSdkVersion(Build.VERSION_CODES.S,
 ```
 
 <br>
-
 
 **2. Numeric conditionals (숫자 조건부 실행, ifGreaterThan, ifGreaterThanOrEqual, ifEquals, ifNotEquals)**
 ```kotlin
@@ -971,7 +939,6 @@ errorCode.ifNotEquals(0) {
 
 <br>
 
-
 **3. Boolean conditionals (Boolean 조건부 실행, ifTrue, ifFalse)**
 ```kotlin
 // 기존 방식
@@ -994,8 +961,6 @@ isNetworkAvailable.ifTrue {
 ```
 <br>
 
-
-
 **4. Null coalescing (Null 체크, firstNotNull)**
 ```kotlin
 // 기존 방식
@@ -1006,8 +971,6 @@ val finalValue = firstNotNull(userInput, cachedValue, defaultValue)
 
 ```
 <br>
-
-
 
 **5. Collection conditionals (Collection 조건부, filterIf, ifNotEmpty)**
 ```kotlin
@@ -1026,7 +989,6 @@ searchResults
 
 <br>
 
-
 **Benefits/ 장점:**
 - Improve readability by removing nested `if` statements/ if문 중첩 제거로 가독성 향상
 - Embrace a functional programming style/ 함수형 프로그래밍 스타일
@@ -1034,7 +996,6 @@ searchResults
 - Simplify SDK version branching/ SDK 버전 분기 간소화
 
 <br>
-
 
 ### 📦 bundle/ — Type-Safe Bundle Access (Bundle 타입 안전 접근)
 
@@ -1087,7 +1048,6 @@ throwMinSdkVersion(Build.VERSION_CODES.S)
 
 <br>
 
-
 ### ⏱️ time/ — Execution Time Measurement (실행 시간 측정)
 
 **Provided features (제공 기능):**
@@ -1117,7 +1077,6 @@ val elapsedNanos = measureTime(System::nanoTime) {
 
 <br>
 
-
 ### 🎨 view/ Package — Additional View Extensions (view/ 패키지 - 추가 View Extensions)
 
 The sample code only covers Toast/SnackBar/TextView, but the library ships with far more extensions.
@@ -1140,7 +1099,6 @@ val price = editText.textToFloat() ?: 0f
 val distance = editText.textToDouble() ?: 0.0
 ```
 <br>
-
 
 #### **TextView Extensions (TextView 확장 함수)**
 ```kotlin
@@ -1198,7 +1156,6 @@ textView.style {
 
 <br>
 
-
 #### **ImageView Extensions (ImageView 확장 함수)**
 ```kotlin
 // 이미지 설정
@@ -1226,7 +1183,6 @@ imageView.load(R.drawable.icon) {
 ```
 <br>
 
-
 #### **View Extensions — Visibility Helpers (View Extensions - Visibility, 뷰 가시성 확장)**
 ```kotlin
 view.setVisible()    // visibility = VISIBLE
@@ -1234,7 +1190,6 @@ view.setGone()       // visibility = GONE
 view.setInvisible()  // visibility = INVISIBLE
 ```
 <br>
-
 
 #### **View Extensions — Prevent Double-Click (View Extensions - 중복 클릭 방지)**
 ```kotlin
@@ -1256,7 +1211,6 @@ button.setOnDebouncedClickListener(600L) { view ->
 ```
 <br>
 
-
 #### **View Extensions — Layout Manipulation (View Extensions - 레이아웃 조작)**
 ```kotlin
 // Margin 설정
@@ -1276,7 +1230,6 @@ view.setWidthMatchParent()
 view.setHeightWrapContent()
 ```
 <br>
-
 
 #### **View Extensions — Animations (View Extensions - 애니메이션)**
 ```kotlin
@@ -1308,7 +1261,6 @@ arrowIcon.rotate(toDegrees = 180f, duration = 200L)
 ```
 
 <br>
-
 
 #### **View Extensions — Advanced Features (View Extensions - 고급 기능)**
 ```kotlin
@@ -1415,7 +1367,6 @@ class AnimatedView(context: Context) : View(context) {
 
 <br>
 
-
 ### 📝 string/ Package — String Validation & Processing Extensions (string/ 패키지 - 문자열 검증/가공 Extensions)
 
 Simple UI offers a rich set of string validation and transformation extensions.
@@ -1423,7 +1374,6 @@ Simple UI offers a rich set of string validation and transformation extensions.
 > Simple UI는 다양한 문자열 검증 및 가공 Extensions를 제공합니다.
 
 <br>
-
 
 #### **String validation extensions (문자열 검증 Extensions)**
 ```kotlin
@@ -1483,7 +1433,6 @@ val safe = userInput.removeHtmlTags().trim()  // " Hello "
 
 <br>
 
-
 **Performance optimization (성능 최적화):**
 ```kotlin
 // 내부 구현 - Precompiled Regex 패턴 재사용
@@ -1497,7 +1446,6 @@ private val ALPHANUMERIC_REGEX = "^[a-zA-Z0-9]*$".toRegex()
 
 <br>
 
-
 ### ⚠️ trycatch/ Package — Exception Handling Extensions (예외 처리 확장 함수)
 > (trycatch/ 패키지 - 예외 처리 Extensions)
 
@@ -1508,13 +1456,11 @@ Simple UI provides three `safeCatch` overloads for safe exception handling.
 
 <br>
 
-
 #### **1. safeCatch(block) — Unit-return overload (safeCatch(block) - Unit 반환형)**
 Protect simple executions where no return value is needed.
 >반환값이 필요없는 단순 실행을 안전하게 보호합니다.
 
 <br>
-
 
 ```kotlin
 // 기존 방식
@@ -1541,7 +1487,6 @@ safeCatch {
 ```
 
 <br>
-
 
 #### **2. safeCatch(defaultValue, block) — default value overload (safeCatch(defaultValue, block) - 기본값 반환형)**
 Return a default value whenever an exception occurs.
@@ -1573,7 +1518,6 @@ val userInfo = safeCatch(UserInfo.EMPTY) {
 }
 ```
 <br>
-
 
 #### **3. safeCatch(block, onCatch) — custom exception handler overload (safeCatch(block, onCatch) - 예외 핸들러 반환형)**
 Receive the exception object, handle it customly, and return a value.

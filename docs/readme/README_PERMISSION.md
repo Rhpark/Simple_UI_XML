@@ -11,7 +11,6 @@
 
 <br>
 
-
 ## 🔎 At a Glance (한눈 비교)
 
 | Category                          |            Plain Android             |               Simple UI               |
@@ -39,7 +38,6 @@ request-id results, while Compose restores the latest State result across proces
 
 <br>
 
-
 ## 💡 Why It Matters (왜 중요한가)
 
 - **One API for every permission type:** Runtime, special, and role permissions no longer need separate wiring.
@@ -52,7 +50,6 @@ request-id results, while Compose restores the latest State result across proces
 > - **XML·Compose 동등성**: 동일한 사전 판정·결과 정책을 두 UI 스택에서 공유합니다.
 
 <br>
-
 
 ## Overview (개요)
 This document explains the permission-related architecture of Simple UI, covering:

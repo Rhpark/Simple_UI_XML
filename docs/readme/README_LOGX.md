@@ -15,7 +15,6 @@
 
 <br>
 
-
 ## 🔎 At a Glance (한눈 비교)
 
 | Category                                      |     Plain Android Log      |                        Simple UI Logx                        |
@@ -50,7 +49,6 @@
 
 <br>
 
-
 **Default log output format (기본 로그 출력 형태):**
 ```
 AppName : (MainActivity.kt:25).onCreate
@@ -60,7 +58,6 @@ AppName[tag] : (MainActivity.kt:25).onCreate - msg
 
 <br>
 
-
 **Analyze the output structure (출력 구조 분석):**
 ```
 AppName[tag] : (FileName:LineNumber).Method - Message
@@ -68,7 +65,6 @@ AppName[tag] : (FileName:LineNumber).Method - Message
 ```
 
 <br>
-
 
 **Component breakdown (각 구성요소):**
 - `AppName[tag]` – Logcat tag (setAppName + optional tag)
@@ -86,7 +82,6 @@ AppName[tag] : (FileName:LineNumber).Method - Message
 
 <br>
 
-
 **🎯 Core advantages (🎯 핵심 장점):**
 - Standard Android Log: `D/TAG: message`
 - **Logx**: `AppName[tag] : (File:Line).Method - message`
@@ -95,7 +90,6 @@ AppName[tag] : (FileName:LineNumber).Method - Message
 > **디버깅 맥락을 더 쉽게 확인할 수 있습니다.** 어느 파일의 몇 번째 줄, 어떤 메서드에서 호출했는지 바로 파악할 수 있습니다.
 
 <br>
-
 
 ## Core Differences: Code Length Comparison (핵심 차이점: 코드 길이 비교)
 
@@ -132,7 +126,6 @@ override fun onCreate() {
 
 <br>
 
-
 ### Step 2: Start Logging (2단계: 로깅 시작)
 ```kotlin
 // 기본 로깅
@@ -150,7 +143,6 @@ Logx.t("Thread 정보")         // 스레드 정보
 ```
 
 <br>
-
 
 ### Step 3: Advanced Configuration (3단계: 고급 설정)
 
@@ -193,7 +185,6 @@ Only the **file-saving feature** may require permissions depending on the storag
 
 <br>
 
-
 | Storage type  | Path  | Permission | User access  |
 |:--|:--|:--:|:--:|
 | **INTERNAL** | `/data/data/[package]/files/AppLogs` |  Not required (불필요) |  Not accessible (불가) |
@@ -221,7 +212,6 @@ Logx.setStorageType(LogStorageType.INTERNAL)
 
 <br>
 
-
 **2. APP_EXTERNAL (no permission required, recommended**
 ```kotlin
 Logx.initialize(applicationContext)
@@ -235,7 +225,6 @@ Logx.setStorageType(LogStorageType.APP_EXTERNAL)
 > ✅ **추천**: 대부분의 경우 최선의 선택!
 
 <br>
-
 
 **3. PUBLIC_EXTERNAL (permission needed on Android 9 or lower)**
 ```kotlin
@@ -328,7 +317,6 @@ class MainActivity : BaseDataBindingActivity<ActivityMainBinding>(R.layout.activ
 
 
 <br>
-
 
 ## Log vs Logx (Log와 Logx 비교)
 
@@ -438,7 +426,6 @@ private fun logJsonData() {
 
 <br>
 
-
 ### 3. Thread ID Tracing (Thread ID 추적)
 
 <details>
@@ -490,7 +477,6 @@ private fun demonstrateThreadTracking() {
 </details>
 
 <br>
-
 
 ### 4. File Saving (파일 저장)
 
@@ -583,7 +569,6 @@ private fun logWithFile(tag: String, message: String) {
 
 <br>
 
-
 ### 5. Configuration Management (설정 관리)
 
 <details>
@@ -663,7 +648,6 @@ private fun setupLogging() {
 
 <br>
 
-
 ## Core Advantages of Simple UI Logx (Simple UI Logx의 핵심 장점)
 
 ### 1. **Named Diagnostic Helpers (목적이 명확한 진단 Helper)**
@@ -675,7 +659,6 @@ private fun setupLogging() {
 > - **Thread 추적**: 현재 Thread 정보 → `Logx.t()` 한 줄
 
 <br>
-
 
 ### 2. **Fully automated file saving (자동화된 파일 저장 기능)**
 - **Automatic storage path**: Choose between Internal/External/Public locations
@@ -689,7 +672,6 @@ private fun setupLogging() {
 
 <br>
 
-
 ### 3. **Simple setter configuration (간단한 setter 설정 기능)**
 - **Setter-based**: Explicit and easy-to-read configuration
 - **Runtime changes**: Adjust settings at runtime with ease
@@ -700,7 +682,6 @@ private fun setupLogging() {
 
 <br>
 
-
 ### 4. **Developer-friendly tooling (개발자 친화적 도구)**
 - **Tracing utilities**: Capture caller paths and execution threads
 - **Structured output**: Render JSON data in a readable format
@@ -710,7 +691,6 @@ private fun setupLogging() {
 > - **코드 간소화**: 유지보수 편리한 구조
 
 <br>
-
 
 ## What the Guide Highlights (가이드에서 드러나는 개선점)
 
@@ -725,7 +705,6 @@ private fun setupLogging() {
 > - **setter 기반 옵션**으로 화면 전반의 로깅 규칙을 맞추기 쉽습니다.
 
 <br>
-
 
 ## Conclusion: What Logx Adds over Android Log (결론: Logx가 Android Log에 더해 주는 것)
 
@@ -745,7 +724,6 @@ Start with the sample when needed. ✨
 > - 실제로 앱을 구동 시켜서 실제 구현 예제를 확인해 보세요!
 
 <br>
-
 
 **Features you can try (테스트 가능한 기능):**
 - Basic logging vs advanced logging

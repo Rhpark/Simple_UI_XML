@@ -29,11 +29,9 @@
 
 <br>
 
-
 ## 🔎 At a Glance (한눈 비교)
 
 <br>
-
 
 ### Adapter (어댑터)
 | Category               |                Plain Android                 |          Simple UI          |
@@ -49,7 +47,6 @@
 > | 개발자 경험 | 과도한 보일러플레이트 | ✅ 간결한 라이브러리 호출 |
 
 <br>
-
 
 ### RecyclerView (RecyclerView 비교)
 | Category                       |              Plain Android               |              Simple UI               |
@@ -71,7 +68,6 @@
 
 <br>
 
-
 ## 💡 Why It Matters (중요한 이유)
 
 - **Shorter development time:** Remove adapter boilerplate and focus on core logic.
@@ -84,7 +80,6 @@
 > - **유지보수성**: 통합 API로 일관된 코드 스타일 유지
 
 <br>
-
 
 ## 📚 Adapter Options Provided by Simple UI (Simple UI가 제공하는 Adapter)
 
@@ -127,7 +122,6 @@ Base 어댑터를 상속하지 않고 **생성자 + 람다** 하나로 바로 �
 
 <br>
 
-
 ## 🤔 Which Adapter Should You Choose? (어떤 Adapter를 선택해야 할까?)
 
 **#1: SimpleRcvDataBindingListAdapter**
@@ -143,7 +137,6 @@ Base 어댑터를 상속하지 않고 **생성자 + 람다** 하나로 바로 �
 
 <br>
 
-
 **#2: SimpleRcvListAdapter**
 - ✅ DiffUtil built-in
 - ❌ No DataBinding (use `findViewById`)
@@ -154,7 +147,6 @@ Base 어댑터를 상속하지 않고 **생성자 + 람다** 하나로 바로 �
 > - 📌 DataBinding을 사용하지 않는 프로젝트에 적합
 
 <br>
-
 
 **#3: SimpleRcvDataBindingAdapter**
 - ❌ No DiffUtil (immediate notify-based updates)
@@ -169,7 +161,6 @@ Base 어댑터를 상속하지 않고 **생성자 + 람다** 하나로 바로 �
 
 <br>
 
-
 **#4: SimpleRcvAdapter**
 - ❌ No DiffUtil (immediate notify-based updates)
 - ❌ No DataBinding
@@ -183,7 +174,6 @@ Base 어댑터를 상속하지 않고 **생성자 + 람다** 하나로 바로 �
 
 <br>
 
-
 **#5: SimpleRcvViewBindingListAdapter / SimpleRcvViewBindingAdapter**
 - ✅ Dedicated ViewBinding variants available
 - ✅ Use `inflate(...)` instead of `layoutRes`
@@ -196,8 +186,6 @@ Base 어댑터를 상속하지 않고 **생성자 + 람다** 하나로 바로 �
 > - 📌 **DataBinding 없이 ViewBinding 편의성**을 원할 때 선택
 
 <br>
-
-
 
 ## 🎯 Scope: Activity-Based Multi-Adapter RecyclerView System (비교 대상: Activity 기반 다중 Adapter RecyclerView 시스템)
 
@@ -217,7 +205,6 @@ Base 어댑터를 상속하지 않고 **생성자 + 람다** 하나로 바로 �
 > - Activity 기반 전체 로직 처리 (ViewModel 없음)
 
 <br>
-
 
 ## 🧩 Real Code Comparisons (실제 코드 비교)
 
@@ -317,7 +304,6 @@ private val simpleAdapter = SimpleRcvDataBindingAdapter<SampleItem, ItemRcvTextv
 
 <br>
 
-
 ### Second: Scroll Detection Implementation Comparison (둘째: 스크롤 감지 구현 비교)
 
 <details>
@@ -415,7 +401,6 @@ private fun setupScrollStateDetection() {
 
 <br>
 
-
 ### Third: DiffUtil Handling Comparison (셋째: DiffUtil 처리 방식 비교)
 
 <details>
@@ -466,7 +451,6 @@ val adapter = SimpleRcvListAdapter<SampleItem>(
 </details>
 
 <br>
-
 
 ### Fourth: Sealed Interface Pattern for Header/Footer (넷째: sealed interface 패턴으로 Header/Footer 구현)
 
@@ -541,7 +525,6 @@ adapter.setItems(buildSealedItems(SampleItem.createSampleData()))
 
 <br>
 
-
 ## 🚀 Core Advantages of Simple UI RecyclerView/Adapter (Simple UI RecyclerView/Adapter의 핵심 장점)
 
 ### 1. **📉 Reduced Boilerplate in the Guide Example (가이드 예제 기준 보일러플레이트 감소)**
@@ -554,7 +537,6 @@ adapter.setItems(buildSealedItems(SampleItem.createSampleData()))
 
 <br>
 
-
 ### 2. **⚡ Flow-Powered Advanced Scrolling (Flow 기반 고급 스크롤 기능)**
 - **Automatic direction detection:** Real-time classification into UP/DOWN/LEFT/RIGHT/IDLE
 - **Edge detection:** Real-time TOP/BOTTOM/LEFT/RIGHT reach status
@@ -565,7 +547,6 @@ adapter.setItems(buildSealedItems(SampleItem.createSampleData()))
 
 <br>
 
-
 ### 3. **🛠️ Developer-Friendly Architecture (개발자 친화적 설계)**
 - **Unified API:** Manipulate every adapter through the same methods
 - **Type safety:** Prevent mistakes at compile time
@@ -575,7 +556,6 @@ adapter.setItems(buildSealedItems(SampleItem.createSampleData()))
 > - **확장성**: 필요에 따라 커스텀 Adapter 쉽게 추가
 
 <br>
-
 
 ## 💡 What the Guide Highlights (가이드에서 드러나는 개선점)
 
@@ -589,7 +569,6 @@ adapter.setItems(buildSealedItems(SampleItem.createSampleData()))
 > - **통합된 Adapter API로 화면 간 설정 패턴을 더 일정하게 유지할 수 있습니다.**
 
 <br>
-
 
 ## 🎉 Conclusion: What This RecyclerView Guide Demonstrates (결론: 이 RecyclerView 가이드가 보여주는 것)
 
@@ -608,7 +587,6 @@ This guide is intended to show how the library simplifies common RecyclerView se
 > 이 가이드는 라이브러리가 공통 RecyclerView 설정 경로를 어떻게 단순화하는지 보여주기 위한 문서입니다.
 
 <br>
-
 
 ## 🚀 Advanced Guide to Simple UI Adapters (Simple UI Adapter 고급 기능 가이드)
 
@@ -754,7 +732,6 @@ class MyAdapter : BaseRcvListAdapter<Item, VH>(listDiffUtil = diffCallback) {
 
 <br>
 
-
 **BaseRcvAdapter 동작 기준(일반 Adapter):**
 - `BaseRcvAdapter`는 `DiffUtil`/`AsyncListDiffer`를 사용하지 않습니다.
 - 내부 리스트를 즉시 갱신하고 `notify...` 계열 API로 UI를 반영합니다.
@@ -776,7 +753,6 @@ class MyAdapter : BaseRcvListAdapter<Item, VH>(listDiffUtil = diffCallback) {
 > - ✅ **데이터 클래스 + 간단한 비교**: 생성자 요구사항이므로 최소 비교 람다는 명시적으로 전달합니다
 
 <br>
-
 
 ## 🎨 Advanced RecyclerScrollStateView Configuration (RecyclerScrollStateView 고급 설정)
 
@@ -893,7 +869,6 @@ RecyclerScrollStateView keeps listener references strongly until you replace the
 - **High value (20-30px) (높은 값)**: Generous edge detection (for infinite scroll, etc.) (여유있는 Edge 감지, 무한 스크롤 등)
 
 <br>
-
 
 ## 🛠️ ViewHolder Advanced Features (ViewHolder 고급 기능)
 
@@ -1012,7 +987,6 @@ override fun onViewRecycled(holder: VH) {
 
 <br>
 
-
 ## 🧪 Example Code (실제 구현 예제보기)
 
 **Live sample code (라이브 예제 코드):**
@@ -1022,7 +996,6 @@ override fun onViewRecycled(holder: VH) {
 > - Run the app to see the implementations in action!
 
 <br>
-
 
 **Features you can test (테스트 가능한 기능):**
 - Compare six Simple UI adapters vs two traditional adapters

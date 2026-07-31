@@ -3,7 +3,7 @@
 
 <br>
 
-**Repetitive Activity/Fragment setups**, **never-ending permission handling**, and the swelling boilerplate... 
+**Repetitive Activity/Fragment setups**, **never-ending permission handling**, and the swelling boilerplate...
 
 We built **Simple UI** to give you that time back.
 
@@ -11,7 +11,6 @@ We built **Simple UI** to give you that time back.
 > 그 시간을 돌려주기 위해 **Simple UI**를 만들었다.
 
 <br>
-
 
 ## ✨ Simple UI: Core Impact & Reasons to Adopt (핵심 효과 & 도입 이유)
 
@@ -29,7 +28,6 @@ We built **Simple UI** to give you that time back.
 
 <br>
 
-
 ### 👥 **Team Development Productivity Boost (팀 개발 생산성 혁신)**
 
 - Improve code consistency: Shared base classes and extensions can make bug tracking and maintenance more predictable.
@@ -42,7 +40,6 @@ We built **Simple UI** to give you that time back.
 > - 중복 구현 감소: PermissionRequester, Logx 같은 공통 시스템을 팀의 시작점으로 활용
 
 <br>
-
 
 ## 🎯 **Target Users (타겟 사용자)**
 - Android developers who want to use permissions, logging, and common utilities more simply (Simple_UI_Core)
@@ -58,14 +55,12 @@ We built **Simple UI** to give you that time back.
 
 <br>
 
-
 ## 📚 **Documentation Index (문서 인덱스)**
 
 - 전체 README 문서는 [README.md](../../README.md)에서 기능별로 바로 찾을 수 있습니다.
 - Compose 전용 설치와 사용법은 [README_COMPOSE.md](README_COMPOSE.md)를 참조하세요.
 
 <br>
-
 
 ## 📦 **Module Selection and Dependencies (모듈 선택과 의존성)**
 
@@ -83,7 +78,6 @@ A transitive dependency does not replace a direct dependency declaration for API
 
 <br>
 
-
 ## 📋 **Library Defaults (라이브러리 기본 설정)**
 
 - **minSdk**: 28
@@ -93,7 +87,6 @@ A transitive dependency does not replace a direct dependency declaration for API
 
 
 <br>
-
 
 ## 🔁 **Release Pipeline Notes (릴리즈 파이프라인 주의사항)**
 
@@ -105,7 +98,6 @@ A transitive dependency does not replace a direct dependency declaration for API
 > - `release-metadata`, `coverage-report`는 하위 단계 정합성을 위해 CD 단계를 거쳐 전달됩니다.
 
 <br>
-
 
 ## 🧩 **API Compatibility Baseline (API 호환성 베이스라인)**
 
@@ -127,7 +119,6 @@ A transitive dependency does not replace a direct dependency declaration for API
 
 
 <br>
-
 
 ## 🔐 **Firebase App Distribution Config (Firebase App Distribution 설정)**
 
@@ -156,7 +147,6 @@ FIREBASE_APP_ID_RELEASE=...
 ```
 
 <br>
-
 
 ## ✨ **Key Features (핵심 특징)**
 
@@ -233,8 +223,6 @@ FIREBASE_APP_ID_RELEASE=...
 > - **SystemBar 주의사항**: 가시성 API(`setStatusBarVisible/Gone`, `setNavigationBarVisible/Gone`)에서만 `BEHAVIOR_DEFAULT`가 재설정됩니다.
 
 <br>
-
-
 
 ## **Examples (예제)**
 

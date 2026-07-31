@@ -230,7 +230,7 @@ class SampleDialog :
 ### Activity Initialization Comparison (Activity 초기화 비교)
 | Category         | Plain Android | BaseDataBindingActivity |
 |:-----------------|:--|:--|
-| Binding creation | Need `DataBindingUtil.setContentView`/cast | Complete by just passing layoutRes to constructor | 
+| Binding creation | Need `DataBindingUtil.setContentView`/cast | Complete by just passing layoutRes to constructor |
 | LifecycleOwner   | Manual assignment | Automatically assigned |
 | bind ViewModel   | Write `ViewModelProvider` directly | Use `getViewModel()` helper |
 | Event collection | Repeat `lifecycleScope.launch` | `onEventVmCollect(binding)` 내부에서 공통 구현 |
@@ -259,7 +259,7 @@ RootActivity/RootFragment have built-in `PermissionRequester` to automatically h
 | Category           | Plain Android | Simple UI |
 |:-------------------|:--|:--|
 | Request API        | `registerForActivityResult(RequestMultiplePermissions())` | `requestPermissions(listOf(...))` |
-| State preservation | Manual Bundle storage | Requester saves/restores | 
+| State preservation | Manual Bundle storage | Requester saves/restores |
 | Special permission | Write branching code directly | Requester branches with predefined rules |
 
 **Usage example / 사용 예시**

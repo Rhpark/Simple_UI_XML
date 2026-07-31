@@ -6,19 +6,17 @@
 
 <br>
 
-
 ## 🔎 At a glance (한눈 비교)
 
 ### Permission Requester (권한 요청)
 > ### 권한 관리
 | Category                    |               Plain Android               |             Simple UI              |
 |:----------------------------|:-----------------------------------------:|:----------------------------------:|
-| Permission request method   | Manually register ActivityResultContract  | ✅ One line requestPermissions()  | 
-| Special permission handling |        Separate logic (50+ lines)         |      ✅ Automatic distinction       | 
+| Permission request method   | Manually register ActivityResultContract  | ✅ One line requestPermissions()  |
+| Special permission handling |        Separate logic (50+ lines)         |      ✅ Automatic distinction       |
 | Permission result handling  |      Manual callback implementation       |   ✅ Automatic callback provided    |
 | Developer experience        |            Complex boilerplate            |      ✅ Concise library calls       |
 <br>
-
 
 ### MVVM
 | Category                |        Plain Android         |            Simple UI             |
@@ -164,7 +162,6 @@ class PermissionsActivity : BaseDataBindingActivity<ActivityPermissionsBinding>(
 
 <br>
 
-
 ### #2: ViewModel Event System (ViewModel 이벤트 시스템)
 
 <details>
@@ -291,7 +288,6 @@ class PermissionsActivity :
 
 <br>
 
-
 ### #3: RecyclerView Adapter (RecyclerView 어댑터)
 
 <details>
@@ -371,7 +367,6 @@ For additional adapter options such as ViewBinding/ListAdapter/header-footer var
 
 <br>
 
-
 ### #4: SnackBar (SnackBar 예제)
 
 <details>
@@ -415,7 +410,6 @@ binding.root.snackBarShowShort("권한이 허용되었습니다!")
 
 <br>
 
-
 ## 🚀 Simple UI XML Key Points (Simple UI XML 핵심)
 
 ### 1. 📉 Full permission management automation(권한 관리 자동화)
@@ -428,7 +422,6 @@ binding.root.snackBarShowShort("권한이 허용되었습니다!")
 
 <br>
 
-
 ### 2. ⚡ MVVM architecture automation(MVVM 아키텍처 자동화)
 - Event system: Manual Flow channel setup → BaseViewModelEvent automatic
 - Activity initialization: Manual DataBinding setup → BaseDataBindingActivity automatic
@@ -439,7 +432,6 @@ binding.root.snackBarShowShort("권한이 허용되었습니다!")
 
 <br>
 
-
 ### 3. 🛠️ UI component simplification(UI 컴포넌트 간소화)
 - RecyclerView: Custom Adapter implementation → SimpleRcvAdapter-based result list
 - SnackBar: Builder pattern → Simple with extension function
@@ -449,7 +441,6 @@ binding.root.snackBarShowShort("권한이 허용되었습니다!")
 > - **DataBinding**: 수동 설정 → 자동 적용
 
 <br>
-
 
 ### 4. 🎯 Developer experience optimization(개발자 경험 최적화)
 - Type safety: Prevent compile-time errors
@@ -462,10 +453,9 @@ binding.root.snackBarShowShort("권한이 허용되었습니다!")
 
 <br>
 
-
 ## 💡 Developer Feedback(개발자 후기)
 - "No more worrying about complex registerForActivityResult!"
-- "It's so convenient to handle normal and special permissions the same way!" 
+- "It's so convenient to handle normal and special permissions the same way!"
 - "The event system is standardized with BaseViewModelEvent, making the code so clean!"
 - "RecyclerView result display is really simple thanks to SimpleRcvAdapter!"
 > - **"복잡한 registerForActivityResult를 더 이상 고민할 필요가 없어요!"**
@@ -474,7 +464,6 @@ binding.root.snackBarShowShort("권한이 허용되었습니다!")
 > - **"SimpleRcvAdapter 덕분에 권한 결과 리스트 구성이 정말 간단해졌습니다!"**
 
 <br>
-
 
 ## 🎉 Conclusion (결론)
 
@@ -492,7 +481,6 @@ The sample demonstrates how Simple UI XML combines permission requests, ViewMode
 
 <br>
 
-
 ## Example Code (예제 코드)
 
 **Path:**
@@ -500,7 +488,6 @@ The sample demonstrates how Simple UI XML combines permission requests, ViewMode
 > - Plain Android Example: `app/src/main/java/kr/open/library/simpleui_xml/permissions_origin/`
 
 <br>
-
 
 **Testable features:**
 - Identical handling method for normal vs special permissions

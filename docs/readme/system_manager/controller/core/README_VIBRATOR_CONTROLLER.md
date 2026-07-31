@@ -3,7 +3,7 @@
 
 ## Module Information (모듈 정보)
 - **Module**: `simple_system_manager` (system manager 전용 모듈 / system_manager 전용 모듈)
-- **Package**: `kr.open.library.simple_ui.system_manager.core.controller.vibrator` 
+- **Package**: `kr.open.library.simple_ui.system_manager.core.controller.vibrator`
 
 <br>
 
