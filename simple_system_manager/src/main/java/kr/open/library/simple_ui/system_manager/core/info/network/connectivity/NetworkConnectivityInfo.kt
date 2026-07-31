@@ -47,10 +47,10 @@ import java.net.Inet4Address
  *
  * Required Permissions:<br>
  * - `android.permission.ACCESS_NETWORK_STATE` (Required for network connectivity checks)<br>
- * - `android.permission.ACCESS_WIFI_STATE` (Required for WiFi status checks)<br><br>
+ * - `android.permission.ACCESS_WIFI_STATE` (Required only for WiFi enabled state and summary checks)<br><br>
  * 필요한 권한:<br>
  * - `android.permission.ACCESS_NETWORK_STATE` (네트워크 연결성 확인에 필요)<br>
- * - `android.permission.ACCESS_WIFI_STATE` (WiFi 상태 확인에 필요)<br><br>
+ * - `android.permission.ACCESS_WIFI_STATE` (WiFi 활성화 상태와 요약 정보 확인에만 필요)<br><br>
  *
  * Supported Transport Types:<br>
  * - WiFi, Mobile(Cellular), VPN, Bluetooth<br>
@@ -112,11 +112,16 @@ public class NetworkConnectivityInfo(
     private var networkDefaultCallback: NetworkStateCallback? = null
 
     /**
-     * Checks if network is connected.<br><br>
-     * 네트워크가 연결되어 있는지 확인합니다.<br>
+     * Checks whether the active network has both capabilities and link properties.<br><br>
+     * 활성 네트워크에 네트워크 능력과 링크 속성이 모두 있는지 확인합니다.<br>
      *
-     * @return `true` if network is connected, `false` otherwise.<br><br>
-     *         네트워크가 연결되어 있으면 `true`, 그렇지 않으면 `false`.<br>
+     * This does not guarantee validated Internet access. Inspect `NET_CAPABILITY_VALIDATED`
+     * when Internet reachability is required.<br><br>
+     * 이 결과는 검증된 인터넷 연결을 보장하지 않습니다. 인터넷 도달 가능성이 필요하면
+     * `NET_CAPABILITY_VALIDATED`를 함께 확인해야 합니다.<br>
+     *
+     * @return `true` if both values are available, `false` otherwise.<br><br>
+     *         두 값이 모두 있으면 `true`, 그렇지 않으면 `false`.<br>
      */
     @RequiresPermission(ACCESS_NETWORK_STATE)
     public fun isNetworkConnected(): Boolean = safeCatch(false) {
@@ -241,17 +246,18 @@ public class NetworkConnectivityInfo(
     public fun isWifiEnabled(): Boolean = wifiController.isWifiEnabled()
 
     /**
-     * Registers general network state callback.<br><br>
-     * 일반 네트워크 상태 콜백을 등록합니다.<br>
+     * Registers a general network callback using the default `NetworkRequest` filters.<br><br>
+     * 기본 `NetworkRequest` 필터를 사용하는 일반 네트워크 콜백을 등록합니다.<br>
      *
-     * @param handler Handler for callback execution (null for main thread).<br><br>
-     *                콜백 실행을 위한 핸들러 (null이면 메인 스레드).<br>
+     * @param handler Handler for callback execution. When null, the platform default connectivity
+     *                callback thread is used.<br><br>
+     *                콜백 실행용 핸들러. null이면 플랫폼 기본 연결성 콜백 스레드를 사용합니다.<br>
      * @param onNetworkAvailable Called when network is connected.<br><br>
      *                           네트워크 연결 시 호출.<br>
      * @param onNetworkLosing Called when network is about to be lost.<br><br>
      *                        네트워크 끊어질 예정 시 호출.<br>
-     * @param onNetworkLost Called when network is lost.<br><br>
-     *                      네트워크 끊어짐 시 호출.<br>
+     * @param onNetworkLost Called when a network no longer satisfies the request or is disconnected.<br><br>
+     *                      네트워크가 요청 조건을 더 이상 충족하지 않거나 연결이 끊기면 호출.<br>
      * @param onUnavailable Called when network is unavailable.<br><br>
      *                      네트워크 사용 불가 시 호출.<br>
      * @param onNetworkCapabilitiesChanged Called when network capabilities change.<br><br>
@@ -296,14 +302,16 @@ public class NetworkConnectivityInfo(
      * Registers default network state callback.<br><br>
      * 기본 네트워크 상태 콜백을 등록합니다.<br>
      *
-     * @param handler Handler for callback execution (null for main thread).<br><br>
-     *                콜백 실행을 위한 핸들러 (null이면 메인 스레드).<br>
+     * @param handler Handler for callback execution. When null, the platform default connectivity
+     *                callback thread is used.<br><br>
+     *                콜백 실행용 핸들러. null이면 플랫폼 기본 연결성 콜백 스레드를 사용합니다.<br>
      * @param onNetworkAvailable Called when network is connected.<br><br>
      *                           네트워크 연결 시 호출.<br>
      * @param onNetworkLosing Called when network is about to be lost.<br><br>
      *                        네트워크 끊어질 예정 시 호출.<br>
-     * @param onNetworkLost Called when network is lost.<br><br>
-     *                      네트워크 끊어짐 시 호출.<br>
+     * @param onNetworkLost Called when a network is no longer the default network. The network may
+     *                      still remain physically connected.<br><br>
+     *                      네트워크가 더 이상 기본 네트워크가 아니면 호출. 물리적 연결은 유지될 수 있습니다.<br>
      * @param onUnavailable Called when network is unavailable.<br><br>
      *                      네트워크 사용 불가 시 호출.<br>
      * @param onNetworkCapabilitiesChanged Called when network capabilities change.<br><br>
@@ -402,6 +410,11 @@ public class NetworkConnectivityInfo(
      * `getIPAddressByNetworkType(NetworkCapabilities.TRANSPORT_ETHERNET)`<br>
      * `getIPAddressByNetworkType(NetworkCapabilities.TRANSPORT_WIFI)`<br>
      * `getIPAddressByNetworkType(NetworkCapabilities.TRANSPORT_CELLULAR)`<br>
+     *
+     * This is a best-effort snapshot that traverses `ConnectivityManager.allNetworks`, which is
+     * deprecated on API 31 and later. Only the first non-loopback IPv4 address is returned.<br><br>
+     * 이 메서드는 API 31 이상에서 더 이상 권장되지 않는 `ConnectivityManager.allNetworks`를 순회하는
+     * 최선형 스냅샷 조회입니다. 첫 번째 비루프백 IPv4 주소만 반환합니다.<br>
      *
      * @param type Network transport type (e.g., TRANSPORT_WIFI).<br><br>
      *             네트워크 전송 타입 (예: TRANSPORT_WIFI).<br>
