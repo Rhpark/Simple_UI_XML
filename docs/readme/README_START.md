@@ -67,6 +67,23 @@ We built **Simple UI** to give you that time back.
 <br>
 </br>
 
+## 📦 **Module Selection and Dependencies (모듈 선택과 의존성)**
+
+Installation coordinates and supported module combinations are maintained in
+[README.md — Select dependencies](../../README.md#2-select-dependencies-필요한-모듈-선택).
+
+Declare every Simple UI module whose APIs or model types are referenced directly by app source code.
+A transitive dependency does not replace a direct dependency declaration for APIs and types used by the app.
+
+> 설치 좌표와 지원 모듈 조합은
+> [README.md — 필요한 모듈 선택](../../README.md#2-select-dependencies-필요한-모듈-선택)을 참조하세요.
+>
+> 앱 소스 코드에서 API나 모델 타입을 직접 사용하는 모든 Simple UI 모듈을 직접 의존성으로 선언하세요.
+> 전이 의존성은 앱에서 사용하는 API와 타입에 대한 직접 의존성 선언을 대신하지 않습니다.
+
+<br>
+</br>
+
 ## 📋 **Library Defaults (라이브러리 기본 설정)**
 
 - **minSdk**: 28
@@ -147,11 +164,11 @@ FIREBASE_APP_ID_RELEASE=...
 
 - **Base classes**: RootActivity, BaseActivity, BaseDataBindingActivity, BaseViewBindingActivity
 - **Fragment**: RootFragment, BaseFragment, BaseDataBindingFragment, BaseViewBindingFragment, RootDialogFragment, BaseDialogFragment, BaseDataBindingDialogFragment, BaseViewBindingDialogFragment
-- **RecyclerView**: content-only normal adapters (`SimpleRcvAdapter`, `SimpleBindingRcvAdapter`, `SimpleViewBindingRcvAdapter`), section normal adapters (`SimpleHeaderFooterRcvAdapter`, `SimpleHeaderFooterDataBindingRcvAdapter`, `SimpleHeaderFooterViewBindingRcvAdapter`, `HeaderFooterRcvAdapter`), list adapters (`SimpleRcvListAdapter`, `SimpleRcvDataBindingListAdapter`, `SimpleRcvViewBindingListAdapter`), DiffUtil(ListAdapter) + RecyclerScrollStateView
-- **RecyclerView click contract**: listeners are attached once in `onCreateViewHolder`, and position/item are resolved at click time (`BaseRcvAdapter`: content index only, `BaseRcvListAdapter`: adapter index)
-- **RecyclerView bind signature**: override order is `onBindViewHolder(holder, item, position)` (same order for header/footer bind overrides)
+- **RecyclerView**: content-only normal adapters (`SimpleRcvAdapter`, `SimpleRcvDataBindingAdapter`, `SimpleRcvViewBindingAdapter`), Header/Content/Footer via `BaseRcvAdapter` + sealed interface, list adapters (`SimpleRcvListAdapter`, `SimpleRcvDataBindingListAdapter`, `SimpleRcvViewBindingListAdapter`), DiffUtil(ListAdapter) + RecyclerScrollStateView
+- **RecyclerView click contract**: listeners are attached once in `onCreateViewHolder`, and position/item are resolved at click time (`BaseRcvAdapter`: complete item-list index, including sealed sections; `BaseRcvListAdapter`: current list index)
+- **RecyclerView bind signature**: override order is `onBindViewHolder(holder, item, position)` (dispatch sealed Header/Content/Footer items in the same method)
 - **RecyclerView mutation contract**: mutation APIs (`setItems`, `addItems`, `removeItem` ...) use `onResult` callbacks and report `NormalAdapterResult` / `ListAdapterResult`
-- **Section replace contract**: `HeaderFooterRcvAdapter.setHeaderItems` / `setFooterItems` use `notifyItemRangeChanged` when size/viewType are compatible, otherwise fallback to remove+insert
+- **Section update contract**: rebuild the complete sealed Header/Content/Footer list and pass it to `BaseRcvAdapter.setItems`; dedicated section CRUD APIs are not provided
 - **Large removal note**: `BaseRcvAdapter.removeItems(...)` emits per-item `notifyItemRemoved`; for large/contiguous removals, prefer `removeRange` / `removeAll`
 - **ListAdapter queue controls**: `BaseRcvListAdapter` provides `setQueuePolicy`
 - **Custom layouts**: Layout components with lifecycle awareness
@@ -159,11 +176,11 @@ FIREBASE_APP_ID_RELEASE=...
 - **MVVM support**: Fully compatible with ViewModel and DataBinding
 > - **기본 클래스**: RootActivity, BaseActivity, BaseDataBindingActivity, BaseViewBindingActivity
 > - **Fragment**: RootFragment, BaseFragment, BaseDataBindingFragment, BaseViewBindingFragment, RootDialogFragment, BaseDialogFragment, BaseDataBindingDialogFragment, BaseViewBindingDialogFragment
-> - **RecyclerView**: content 전용 normal 어댑터(`SimpleRcvAdapter`, `SimpleBindingRcvAdapter`, `SimpleViewBindingRcvAdapter`), 섹션 normal 어댑터(`SimpleHeaderFooterRcvAdapter`, `SimpleHeaderFooterDataBindingRcvAdapter`, `SimpleHeaderFooterViewBindingRcvAdapter`, `HeaderFooterRcvAdapter`), list 어댑터(`SimpleRcvListAdapter`, `SimpleRcvDataBindingListAdapter`, `SimpleRcvViewBindingListAdapter`), DiffUtil(ListAdapter) + RecyclerScrollStateView
-> - **RecyclerView 클릭 규약**: 리스너는 `onCreateViewHolder`에서 1회 연결되고, position/item은 클릭 시점에 조회됩니다(`BaseRcvAdapter`: content 인덱스만 전달, `BaseRcvListAdapter`: adapter 인덱스 전달)
-> - **RecyclerView 바인딩 시그니처**: `onBindViewHolder(holder, item, position)` 순서로 오버라이드합니다(header/footer 바인딩도 동일 순서)
+> - **RecyclerView**: content 전용 normal 어댑터(`SimpleRcvAdapter`, `SimpleRcvDataBindingAdapter`, `SimpleRcvViewBindingAdapter`), `BaseRcvAdapter` + sealed interface 기반 Header/Content/Footer, list 어댑터(`SimpleRcvListAdapter`, `SimpleRcvDataBindingListAdapter`, `SimpleRcvViewBindingListAdapter`), DiffUtil(ListAdapter) + RecyclerScrollStateView
+> - **RecyclerView 클릭 규약**: 리스너는 `onCreateViewHolder`에서 1회 연결되고, position/item은 클릭 시점에 조회됩니다(`BaseRcvAdapter`: sealed 섹션을 포함한 전체 item 목록 인덱스, `BaseRcvListAdapter`: 현재 목록 인덱스).
+> - **RecyclerView 바인딩 시그니처**: `onBindViewHolder(holder, item, position)` 순서로 오버라이드하며, sealed Header/Content/Footer item도 같은 메서드에서 분기합니다.
 > - **RecyclerView 변경 규약**: 변경 API(`setItems`, `addItems`, `removeItem` 등)는 `onResult` 콜백을 통해 `NormalAdapterResult` / `ListAdapterResult`를 전달합니다.
-> - **섹션 교체 규약**: `HeaderFooterRcvAdapter.setHeaderItems` / `setFooterItems`는 크기/뷰타입 호환 시 `notifyItemRangeChanged`를 사용하고, 아니면 remove+insert로 반영합니다.
+> - **섹션 갱신 규약**: sealed Header/Content/Footer 전체 목록을 다시 구성해 `BaseRcvAdapter.setItems`로 전달하며, 전용 section CRUD API는 제공하지 않습니다.
 > - **대량 제거 주의**: `BaseRcvAdapter`의 `removeItems(...)`는 항목별 `notifyItemRemoved`를 호출하므로, 대량/연속 제거는 `removeRange` / `removeAll`을 권장합니다.
 > - **ListAdapter 큐 제어**: `BaseRcvListAdapter`에서 `setQueuePolicy`를 제공합니다.
 > - **커스텀 레이아웃**: Lifecycle 지원하는 Layout 컴포넌트들

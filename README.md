@@ -44,6 +44,15 @@ The following modules are available in the current `0.5.1` release.
 > - Java/Kotlin JVM target 11
 > - 현재 라이브러리 빌드 기준: `compileSdk 35`
 
+## Next Major System Manager Migration (다음 메이저 System Manager 이전)
+
+The repository's next-major source state contains approved breaking changes to `simple_system_manager`. The concrete release version and schedule are not fixed, and the published `0.5.1` coordinates above remain unchanged.
+
+> 저장소의 다음 메이저 소스 상태에는 승인된 `simple_system_manager` Breaking Change가 반영되어 있습니다. 구체적인 릴리스 버전과 일정은 확정되지 않았으며, 위에 표시된 배포 버전 `0.5.1` 좌표는 변경하지 않습니다.
+
+- **[System Manager Migration Guide](docs/readme/system_manager/README_SYSTEM_MANAGER_MIGRATION.md)** - Removed aliases and implementation types, replacement paths, and unchanged `NetworkBase` inheritance contract
+  > 제거된 별칭·구현 타입, 대체 경로, 변경하지 않은 `NetworkBase` 상속 계약을 안내합니다.
+
 ## Maven Central (Recommended)
 
 ### 1. `settings.gradle.kts`
@@ -63,11 +72,31 @@ Add only the modules used by the app.
 
 > 앱에서 사용하는 모듈만 추가하세요.
 
+Declare every Simple UI module whose APIs or model types are referenced by app source code.
+Do not rely only on a transitive dependency when app code calls that module's APIs, inherits
+its classes, or references its parameter and return types.
+
+> 앱 소스 코드에서 API나 모델 타입을 직접 사용하는 모든 Simple UI 모듈을 직접 의존성으로 선언하세요.
+> API 호출, 클래스 상속, 매개변수·반환형 참조에 사용하는 모듈을 전이 의존성에만 의존하지 않습니다.
+
+| App usage (앱 사용 범위) | Direct dependencies (직접 선언할 모듈) |
+| --- | --- |
+| Core logging, extensions, permission helpers, or ViewModel APIs<br>Core 로깅·확장·권한 헬퍼·ViewModel API | `dash-droid-core` |
+| XML Activity/Fragment/View/Adapter APIs only<br>XML Activity/Fragment/View/Adapter API만 사용 | `dash-droid-xml` |
+| XML APIs with Core APIs or model types<br>XML API와 Core API·모델 타입을 함께 사용 | `dash-droid-xml` + `dash-droid-core` |
+| Compose-only helpers<br>Compose 전용 헬퍼만 사용 | `dash-droid-compose` |
+| Compose APIs with `BaseViewModelEvent` or other Core types<br>Compose API와 `BaseViewModelEvent` 등 Core 타입을 함께 사용 | `dash-droid-compose` + `dash-droid-core` |
+| System Manager APIs only<br>System Manager API만 사용 | `dash-droid-system-manager` |
+| System Manager APIs with Core APIs or model types<br>System Manager API와 Core API·모델 타입을 함께 사용 | `dash-droid-system-manager` + `dash-droid-core` |
+| XML UI with System Manager APIs<br>XML UI와 System Manager API를 함께 사용 | `dash-droid-xml` + `dash-droid-system-manager` |
+
 #### Core APIs
 
-Use this coordinate when the app directly imports `simple_core` APIs or types.
+Use this coordinate when app source code directly calls `simple_core` APIs, inherits Core
+classes, or references Core model types.
 
-> 앱 코드에서 `simple_core` API 또는 타입을 직접 사용하면 이 의존성을 추가해야 합니다.
+> 앱 코드에서 `simple_core` API를 직접 호출하거나 Core 클래스를 상속하거나 Core 모델 타입을
+> 참조하면 이 의존성을 추가해야 합니다.
 
 ```kotlin
 dependencies {
@@ -121,12 +150,13 @@ dependencies {
 ```
 
 `dash-droid-xml`, `dash-droid-compose`, and `dash-droid-system-manager` are built on
-`dash-droid-core`. This internal relationship does not replace an app's direct dependency
-declaration. Add `dash-droid-core` whenever app source code imports Core APIs or Core model types.
+`dash-droid-core`. A transitive dependency supports the modules' internal connection, but it
+does not replace a direct declaration when app source code uses Core APIs or Core model types.
 
 > `dash-droid-xml`, `dash-droid-compose`, `dash-droid-system-manager`는 `dash-droid-core`를
-> 기반으로 동작합니다. 이 내부 관계가 앱의 직접 의존성 선언을 대신하지는 않습니다. 앱 코드에서
-> Core API나 Core 모델 타입을 사용한다면 `dash-droid-core`를 직접 추가하세요.
+> 기반으로 동작합니다. 전이 의존성은 모듈 내부 연결을 지원하지만, 앱 소스 코드가 Core API나
+> Core 모델 타입을 사용한다면 직접 의존성 선언을 대신하지 않습니다. 이 경우 `dash-droid-core`를
+> 직접 추가하세요.
 
 <br>
 
@@ -174,6 +204,7 @@ Add only the required coordinates to the app module's `dependencies` block.
 - **[Sample Guide](docs/readme/README_SAMPLE.md)** - 샘플 비교 가이드
 
 **System Manager**
+- **[System Manager Migration Guide](docs/readme/system_manager/README_SYSTEM_MANAGER_MIGRATION.md)** - 다음 메이저 공개 API 이전 가이드
 - **[System Manager Extensions](docs/readme/system_manager/README_SYSTEM_MANAGER_EXTENSIONS.md)** - 확장 함수 진입점
 - **[SystemBar Controller Guide](docs/readme/system_manager/controller/xml/README_SYSTEMBAR_CONTROLLER.md)** - 상태 모델, 가시성/색상 정책, `@MainThread` 계약
 - **[SoftKeyboard Controller Guide](docs/readme/system_manager/controller/xml/README_SOFTKEYBOARD_CONTROLLER.md)** - IME 제어/반환 계약

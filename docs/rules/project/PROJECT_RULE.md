@@ -20,6 +20,20 @@
  - 샘플 앱(app)으로 활용법을 검증함 (settings.gradle.kts, app/build.gradle.kts).
 
 
+## 예제 앱 의존성 검증 모드
+ - 기본 모드는 `project(":simple_*")` 의존성을 사용하여 현재 소스를 통합 검증한다.
+ - `-PuseMavenArtifacts=true`를 지정하면 Version Catalog의 현재 버전에 해당하는 Maven Central 좌표를 사용한다.
+ - Maven 모드는 배포된 AAR/POM의 소비자 호환성을 확인하며, 아직 배포하지 않은 현재 소스 변경은 검증하지 않는다.
+ - Maven 소비 빌드 명령: `./gradlew :app:assembleDebug -PuseMavenArtifacts=true`
+
+
+## 로컬 Maven 단일 모듈 소비 검증
+ - `-PlocalConsumerPublication=true`를 지정하면 현재 소스의 AAR/POM을 `build/consumer-maven`에 발행한다.
+ - `maven_consumer_smoke`는 이 속성을 지정한 경우에만 포함하며, Core/XML/Compose/System Manager Maven 좌표를 각각 하나씩 사용하는 독립 소비 모듈을 컴파일한다.
+ - 로컬 소비 검증은 Maven Central 저장소 구성과 서명을 활성화하지 않으며 외부 저장소에 산출물을 배포하지 않는다.
+ - 단일 모듈 소비 검증 명령: `./gradlew :maven_consumer_smoke:consumerSmokeCheck -PlocalConsumerPublication=true`
+
+
 # 모듈별 상세 가이드
  - **simple_core 모듈**: simple_core/AGENTS.md 참조
  - **simple_xml 모듈**: simple_xml/AGENTS.md 참조
@@ -46,7 +60,7 @@
  - 기본 Activity/Fragment/Adapter/권한/로그/시스템 서비스 래퍼로 표준 흐름만 남기도록 설계 (docs/readme/README_RECYCLERVIEW.md, docs/readme/system_manager/info/README_SERVICE_MANAGER_INFO.md, docs/readme/system_manager/controller/README_SERVICE_MANAGER_CONTROL.md).
 
 ## 안정성과 일관성
- - BaseSystemService.kt에서 권한 미리 검증 후 tryCatchSystemManager로 실패를 기본값 처리.
+ - `simple_system_manager`의 BaseSystemService에서 권한을 미리 검증하고 tryCatchSystemManager로 실패를 기본값 처리.
  - @RequiresPermission/@RequiresApi 표기.
  - safeCatch로 예외 안전성 확보.
 
@@ -56,5 +70,5 @@
 
 ## 문서·배포 준비 완료
  - 한/영 병기 KDoc과 세분화된 README,
- - 다중 모듈 Dokka 산출물(docs/api) 및 JitPack 퍼블리싱 스크립트.(Maven 예정)
+ - 다중 모듈 Dokka 산출물(docs/api)과 Maven Central 배포를 제공하며, JitPack 좌표는 기존 소비자 호환용으로 유지.
 
