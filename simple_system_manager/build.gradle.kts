@@ -131,11 +131,11 @@ dependencies {
     dokkaPlugin("org.jetbrains.dokka:android-documentation-plugin:2.1.0")
 
     testImplementation(libs.junit)
-    testImplementation("org.robolectric:robolectric:4.16")
-    testImplementation("androidx.test:core:1.6.1")
-    testImplementation("org.mockito:mockito-core:5.7.0")
-    testImplementation("org.mockito:mockito-inline:5.2.0")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1")
+    testImplementation(libs.robolectric)
+    testImplementation(libs.androidx.test.core)
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.mockito.inline)
+    testImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }
