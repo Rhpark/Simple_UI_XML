@@ -3,7 +3,7 @@
 ## 문서 정보
 - 문서명: Battery Info PRD
 - 작성일: 2026-02-01
-- 수정일: 2026-02-01
+- 수정일: 2026-07-27
 - 대상 모듈: simple_system_manager
 - 패키지: kr.open.library.simple_ui.system_manager.core.info.battery
 - 상태: 현행(as-is)
@@ -35,6 +35,7 @@
 - `BatteryStateReceiver`의 브로드캐스트 수신 + 주기 갱신 로직
 - `BatteryPropertyReader`의 값 변환/검증 및 총 용량 추정
 - PowerProfile 반사(reflection) 기반 총 용량 조회
+- `PowerProfile`, `PowerProfileVO`의 공개 호환성 유지 및 Deprecated 마이그레이션 안내
 
 ### 제외 범위
 - 앱/화면 레벨 UI 코드
@@ -74,7 +75,14 @@
 - `sfUpdate`는 스냅샷이 아니라 이벤트이며 순서 보장이 없음
 - SharedFlow 버퍼 정책에 따라 이벤트가 드롭될 수 있음
 - PowerProfile reflection은 기기에 따라 실패할 수 있음
+- `PowerProfile`, `PowerProfileVO`는 내부 구현이지만 기존 공개 ABI 호환성을 위해 다음 메이저 전까지 유지함
 - `CoroutineScope`에 Job이 없으면 자동 정리가 보장되지 않음 (수동 `unRegister()` 필요)
+
+## 공개 API 전환 정책
+- 소비자는 배터리 총 용량 조회에 `BatteryStateInfo.getTotalCapacity()`를 사용한다.
+- `PowerProfile`, `PowerProfileVO`는 일반 경고 수준으로 Deprecated 처리한다.
+- `PowerProfile.getAveragePower()`와 개별 전력 지표에는 안정적인 공개 대체 API를 제공하지 않는다.
+- 두 타입은 마이그레이션 기간 동안 공개 ABI를 유지하고 다음 메이저에서 `internal`로 전환한다.
 
 ## 성공 기준
 - 단일 API로 배터리 상태를 안정적으로 수집/관찰할 수 있다.

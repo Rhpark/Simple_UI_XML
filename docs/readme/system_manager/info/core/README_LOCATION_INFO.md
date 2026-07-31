@@ -41,6 +41,8 @@ Provides SharedFlow-based location tracking and location helper utilities.
   - `saveApplyLocation(location)` - Save location to SharedPreferences (immediate apply) (SharedPreferences에 위치 저장 (즉시 적용))
   - `loadLocation()` - Load saved location (저장된 위치 로드)
   - `removeLocation()` - Delete saved location (저장된 위치 삭제)
+- **Direct Snapshot Storage:** `LocationSharedPreference` - Lightweight save/load/remove API when location tracking and provider state management are not needed.
+  - **직접 스냅샷 저장:** 위치 추적과 Provider 상태 관리가 필요하지 않을 때 `LocationSharedPreference`로 저장/복원/삭제 기능만 사용할 수 있습니다.
 - **Lifecycle Management:**
   - `unRegister()` - Stop updates immediately and keep the instance reusable (즉시 업데이트 중지, 인스턴스 재사용 가능)
   - `onDestroy()` - Manual cleanup required to release resources (리소스 해제를 위해 수동 정리 필요)

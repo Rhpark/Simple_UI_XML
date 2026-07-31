@@ -33,6 +33,8 @@
 
 ## 공개 API 설계
 
+### LocationStateInfo
+
 ```kotlin
 public open class LocationStateInfo(context: Context) :
     BaseSystemService(context, listOf(ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION)) {
@@ -67,6 +69,21 @@ public open class LocationStateInfo(context: Context) :
     fun removeLocation()
 }
 ```
+
+### LocationSharedPreference
+
+```kotlin
+public class LocationSharedPreference(context: Context) : BaseSharedPreference {
+    fun loadLocation(): Location?
+    fun saveApplyLocation(location: Location)
+    fun removeApply()
+}
+```
+
+- 위치 추적 등록과 provider 상태 조회 없이 `Location` 스냅샷 저장 기능만 필요한 소비자용 경량 API다.
+- `LocationStateInfo`의 `loadLocation`, `saveApplyLocation`, `removeLocation`도 내부적으로 동일 저장소에 위임한다.
+- 고정된 `location_preferences` 파일에 위도/경도/정확도/시간/provider를 저장한다.
+- 위치 런타임 권한을 검사하거나 요구하지 않는다.
 
 ## 공통 동작 규칙
 

@@ -15,7 +15,8 @@
 - 위치 데이터는 정확도/시간/제공자에 따라 품질 편차가 크므로, 단순 최근값 반환만으로는 품질 보장이 어렵습니다.
 
 ## 목표
-- 위치 상태 수집/조회/유틸 기능을 `LocationStateInfo` 단일 API로 제공한다.
+- 위치 상태 수집/조회/유틸 기능의 주요 진입점을 `LocationStateInfo`로 제공한다.
+- 위치 추적 없이 스냅샷 저장·복원·삭제만 필요한 경우 `LocationSharedPreference`를 독립적으로 제공한다.
 - 위치 변경 이벤트와 제공자 상태 변경 이벤트를 `SharedFlow` 기반으로 일관되게 발행한다.
 - 예외 상황에서 기본값 반환 + `Logx` 로깅으로 앱 크래시를 방지한다.
 - 내부 품질 판단(`LocationQuality`)으로 최적의 최근 위치를 선택한다.
@@ -33,6 +34,9 @@
   - 수집 시작/해제/정리: `registerStart`, `unRegister`, `onDestroy`
   - 상태 조회: provider enabled 여부, `getLocation`, 거리/방향/반경 계산
   - 저장소 연동: `saveApplyLocation`, `loadLocation`, `removeLocation`
+- `LocationSharedPreference` 공개 API
+  - 위치 스냅샷 저장/복원/삭제: `saveApplyLocation`, `loadLocation`, `removeApply`
+  - 위치 추적 등록이나 런타임 권한 상태 관리 없이 저장 기능만 사용
 - 내부 헬퍼 동작
   - `LocationQueryHelper`: provider 상태 조회/최적 위치 조회
   - `LocationStateReceiver`: 리스너/리시버 등록과 폴링 루프

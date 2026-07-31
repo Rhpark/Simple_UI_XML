@@ -6,12 +6,15 @@ import android.os.BatteryManager
 import androidx.test.core.app.ApplicationProvider
 import kr.open.library.simple_ui.system_manager.core.info.battery.BatteryStateConstants
 import kr.open.library.simple_ui.system_manager.core.info.battery.internal.helper.BatteryPropertyReader
+import kr.open.library.simple_ui.system_manager.core.info.battery.internal.helper.power.PowerProfile
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.`when`
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
@@ -158,6 +161,39 @@ class BatteryPropertyReaderRobolectricTest {
     fun `getTotalCapacity returns positive value or error`() {
         val capacity = batteryPropertyReader.getTotalCapacity(chargeCounter = 3000000, capacity = 50)
         assertTrue(capacity > 0.0 || capacity == BatteryStateConstants.BATTERY_ERROR_VALUE_DOUBLE)
+    }
+
+    @Test
+    fun `getTotalCapacity prefers PowerProfile capacity`() {
+        val powerProfile = mock(PowerProfile::class.java)
+        `when`(powerProfile.getBatteryCapacity()).thenReturn(4800.0)
+        val reader = BatteryPropertyReader(context, powerProfile = powerProfile)
+
+        val capacity = reader.getTotalCapacity(chargeCounter = 3000000, capacity = 50)
+
+        assertEquals(4800.0, capacity, 0.01)
+    }
+
+    @Test
+    fun `getTotalCapacity falls back to charge counter`() {
+        val powerProfile = mock(PowerProfile::class.java)
+        `when`(powerProfile.getBatteryCapacity()).thenReturn(0.0)
+        val reader = BatteryPropertyReader(context, powerProfile = powerProfile)
+
+        val capacity = reader.getTotalCapacity(chargeCounter = 3000000, capacity = 50)
+
+        assertEquals(6000.0, capacity, 0.01)
+    }
+
+    @Test
+    fun `getTotalCapacity returns error when all methods fail`() {
+        val powerProfile = mock(PowerProfile::class.java)
+        `when`(powerProfile.getBatteryCapacity()).thenReturn(0.0)
+        val reader = BatteryPropertyReader(context, powerProfile = powerProfile)
+
+        val capacity = reader.getTotalCapacity(chargeCounter = 0, capacity = 0)
+
+        assertEquals(BatteryStateConstants.BATTERY_ERROR_VALUE_DOUBLE, capacity, 0.01)
     }
 
     // ==============================================
