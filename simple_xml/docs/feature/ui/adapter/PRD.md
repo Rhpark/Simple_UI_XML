@@ -3,7 +3,7 @@
 ## 문서 정보
 - 문서명: Adapter Feature PRD
 - 작성일: 2026-03-02
-- 수정일: 2026-03-02
+- 수정일: 2026-07-30
 - 대상 모듈: simple_xml
 - 패키지: `kr.open.library.simple_ui.xml.ui.adapter`
 - 상태: 현행(as-is)
@@ -18,12 +18,12 @@
 ## 배경/문제 정의
 - RecyclerView 구현은 `Adapter`, `ViewHolder`, `DiffUtil`, 클릭 처리, payload, notify 호출, 리스트 상태 동기화까지 여러 책임이 한 번에 얽히기 쉽습니다.
 - 단순 즉시 반영형 어댑터와 연속 변경이 잦은 `ListAdapter`는 실패 의미와 업데이트 비용이 다르지만, 호출부는 이를 쉽게 혼동합니다.
-- `Header / Content / Footer` 섹션이 필요한 화면은 일반 content-only adapter보다 좌표 변환과 viewType 분기가 훨씬 복잡합니다.
+- `Header / Content / Footer`가 필요한 화면은 전용 계층을 추가하기보다 하나의 item 모델에서 섹션 타입을 안전하게 구분할 방법이 필요합니다.
 - 클릭 이벤트를 바인딩 시점 `position`에 의존해 처리하면, `DiffUtil` 이동 후 stale position 버그가 생길 수 있습니다.
 - 라이브러리 사용자는 “단순 목록”, “섹션 목록”, “대량 변경 목록” 중 어떤 계층을 선택해야 하는지 명확한 기준이 필요합니다.
 
 ## 제품 목표
-- RecyclerView adapter 계층을 `normal`, `header/footer`, `list`로 분리해 사용 시나리오별 선택 기준을 명확히 한다.
+- RecyclerView adapter 계층을 `normal`, `list`로 분리해 사용 시나리오별 선택 기준을 명확히 한다.
 - 공통 조회/쓰기/클릭 계약을 제공해 adapter 계열 간 사용 패턴을 일관되게 유지한다.
 - `normal`은 즉시 반영 + 명시적 결과 모델, `list`는 큐 기반 종료 결과 모델로 실패 의미를 분리한다.
 - `ListAdapter` 연속 변경을 내부 큐로 직렬화해 호출 시점과 실제 반영 시점의 충돌을 줄인다.
@@ -49,7 +49,6 @@
 - normal 계층
   - `RootRcvAdapter`
   - `BaseRcvAdapter`
-  - `HeaderFooterRcvAdapter`
   - `NormalAdapterResult`
 - list 계층
   - `BaseRcvListAdapter`
@@ -83,9 +82,9 @@
 - QA/리뷰어: 클릭/이동/삭제/큐 드롭/실패 의미가 코드와 문서에서 동일해야 합니다.
 
 ## 핵심 시나리오
-1. 개발자는 content-only 단순 목록에서 `SimpleRcvAdapter` 또는 `SimpleBindingRcvAdapter`를 사용해 즉시 notify 기반 목록을 구현합니다.
+1. 개발자는 content-only 단순 목록에서 `SimpleRcvAdapter` 또는 `SimpleRcvDataBindingAdapter`를 사용해 즉시 notify 기반 목록을 구현합니다.
 2. 개발자는 연속 추가/삭제/셔플이 빈번한 목록에서 `SimpleRcvListAdapter` 또는 `BaseRcvListAdapter`를 사용해 DiffUtil + queue 기반 업데이트를 사용합니다.
-3. 개발자는 header/footer가 필요한 목록에서 `HeaderFooterRcvAdapter` 또는 `SimpleHeaderFooter...` 계열을 사용합니다.
+3. 개발자는 header/footer가 필요한 목록에서 `BaseRcvAdapter`의 item을 sealed interface로 정의하고 Header/Content/Footer 타입을 함께 전달합니다.
 4. 개발자는 클릭 처리 시 바인딩 시점 `position`을 직접 캡처하지 않고, 공통 클릭 API(`setOnItemClickListener`) 또는 클릭 시점 현재 position을 사용합니다.
 5. 예제 앱은 `RecyclerViewActivity`에서 simple normal / simple list / custom list를 전환하며 add/remove/shuffle 동작을 보여줍니다.
 
@@ -94,7 +93,7 @@
 ### P0 (필수)
 - FR-01 계층 분리
   - `normal`과 `list`는 별도 계층으로 유지한다.
-  - `HeaderFooterRcvAdapter`는 `normal` 계층 위에서 section 책임을 추가한다.
+  - Header/Content/Footer는 별도 adapter 계층이 아니라 `BaseRcvAdapter`와 sealed interface item 조합으로 처리한다.
 - FR-02 공통 계약
   - 모든 adapter는 읽기 계약(`AdapterReadApi`)을 제공한다.
   - 쓰기 계약은 `AdapterWriteApi<ITEM, RESULT>`로 통일한다.
@@ -111,10 +110,10 @@
   - 예제 앱은 stale position 패턴을 권장하지 않는다.
 
 ### P1 (중요)
-- FR-06 section CRUD
-  - `HeaderFooterRcvAdapter`는 header/footer CRUD와 섹션별 bind/viewType 훅을 제공한다.
+- FR-06 section 표현
+  - Header/Content/Footer는 sealed interface item과 `getContentItemViewType()`/`onBindViewHolder()` 분기로 표현한다.
 - FR-07 simple adapter 라인업
-  - normal, header/footer, list 각각 simple adapter 진입점을 제공한다.
+  - normal과 list 각각 View, DataBinding, ViewBinding 진입점을 제공한다.
 - FR-08 main thread 계약
   - 공개 adapter API는 메인 스레드 호출을 전제로 한다.
   - 런타임 가드로 off-main-thread 호출을 빠르게 실패시킨다.
@@ -147,9 +146,9 @@
   - 예제 앱에서 `Change` 후 아이템 클릭 시 stale position 삭제 버그가 재발하지 않는다.
 
 ## 수용 기준 (Acceptance Criteria)
-1. 개발자는 content-only / section / queue 기반 목록 중 어떤 adapter를 선택해야 하는지 문서만으로 판단할 수 있다.
+1. 개발자는 즉시 반영 / queue 기반 목록 중 어떤 adapter를 선택해야 하는지 문서만으로 판단할 수 있다.
 2. `BaseRcvAdapter`와 `BaseRcvListAdapter`의 결과 모델 차이를 호출부에서 혼동하지 않는다.
-3. `HeaderFooterRcvAdapter`가 header/content/footer별 바인딩과 notify 계약을 명시적으로 제공한다.
+3. Header/Content/Footer 예제가 `BaseRcvAdapter`와 sealed interface만으로 동작한다.
 4. 예제 앱이 클릭 시점 현재 position 기반 동작을 보여준다.
 
 ## 제약/전제

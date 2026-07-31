@@ -13,7 +13,8 @@
 
 ## 실제 사용 경로(중요)
 - `normal` 계층
-  - `RootRcvAdapter` -> `BaseRcvAdapter` -> `HeaderFooterRcvAdapter`
+  - `RootRcvAdapter` -> `BaseRcvAdapter`
+  - Header/Content/Footer는 `BaseRcvAdapter`의 item을 sealed interface로 구성
 - `list` 계층
   - `BaseRcvListAdapter`
   - 내부 큐: `AdapterOperationQueue`, `OperationQueueProcessor`, `QueuePolicy`
@@ -36,8 +37,6 @@
   - `simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/adapter/normal/root/RootRcvAdapter.kt`
   - `simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/adapter/normal/base/BaseRcvAdapter.kt`
   - `simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/adapter/normal/base/BaseRcvAdapterData.kt`
-  - `simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/adapter/normal/headerfooter/HeaderFooterRcvAdapter.kt`
-  - `simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/adapter/normal/headerfooter/HeaderFooterAdapterData.kt`
   - `simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/adapter/normal/result/NormalAdapterResult.kt`
 - list
   - `simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/adapter/list/base/BaseRcvListAdapter.kt`
@@ -64,17 +63,18 @@
 ## 어댑터 선택 기준
 
 - 단순 content 즉시 반영 → normal 패키지 (`BaseRcvAdapter`, `SimpleRcvAdapter` 계열)
-- Header / Content / Footer 섹션 필요 → `HeaderFooterRcvAdapter`, `SimpleHeaderFooter...` 계열
+- Header / Content / Footer 섹션 필요 → `BaseRcvAdapter` + sealed interface 패턴
 - 빈번하거나 대량의 리스트 변경 → list 패키지 (`BaseRcvListAdapter`)
 - list 패키지 어댑터는 `AdapterOperationQueue`를 내부 사용
 - DiffUtil 사용 시 list 패키지 어댑터 활용
+- 여러 변경을 하나의 종료 결과로 처리할 수 있으면 단건 API 반복보다 `addItems`, `addItemsAt`, `removeItems`, `removeRange`, `setItems` 같은 일괄 API를 우선 사용
+- 각 변경의 순서나 종료 결과를 개별적으로 받아야 하면 단건 API 사용
 - ViewHolder는 viewholder 패키지 기본 클래스 참고
 
 ## 코드 경로 (구현 참고)
 
 - RootRcvAdapter (공통 normal 기반): `simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/adapter/normal/root/RootRcvAdapter.kt`
 - BaseRcvAdapter (일반 content 전용): `simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/adapter/normal/base/BaseRcvAdapter.kt`
-- HeaderFooterRcvAdapter (section 지원): `simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/adapter/normal/headerfooter/HeaderFooterRcvAdapter.kt`
 - BaseRcvListAdapter (ListAdapter 기반): `simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/adapter/list/base/BaseRcvListAdapter.kt`
 - AdapterOperationQueue (BaseRcvListAdapter 내부): `simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/adapter/list/base/queue/AdapterOperationQueue.kt`
 - DiffUtil 콜백: `simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/adapter/list/base/diffutil/RcvListDiffUtilCallBack.kt`
@@ -86,11 +86,13 @@
 - `position` 캡처 방식의 클릭 처리를 사용하지 않는다 → `setOnItemClickListener` 사용
 - `BaseRcvListAdapter` 계열을 즉시 반영 용도로 사용하지 않는다
   - 즉시 반영이 필요하면 반드시 normal 패키지 사용
+- `BaseRcvListAdapter`의 큐 연산을 성능만을 이유로 임의 병합하지 않는다
+  - 연산 병합은 개별 `onResult`의 순서와 종료 의미를 바꿀 수 있으므로 별도 명세와 검증 없이 적용하지 않는다
 
 ## 판단 기준
 
 - 즉시 반영 필요 → normal 패키지 (`BaseRcvAdapter`, `SimpleRcvAdapter` 계열)
-- Header / Content / Footer 섹션 필요 → `HeaderFooterRcvAdapter` 계열
+- Header / Content / Footer 섹션 필요 → `BaseRcvAdapter` item을 sealed interface로 정의
 - 빈번하거나 대량의 리스트 변경 → list 패키지 (`BaseRcvListAdapter`)
 - 새 클래스 추가 시: UI 공통 계약(클릭/읽기/쓰기) → common 패키지 / normal 즉시 반영 → normal 패키지 / 큐 기반 → list 패키지
 
@@ -106,4 +108,6 @@
 - 현재 로컬 확정 코드(as-is)를 기준으로 작성합니다.
 - `normal`과 `list`를 같은 의미 체계로 설명하지 않습니다.
 - `normal`은 즉시 반영, `list`는 큐 기반 종료 결과라는 차이를 명확히 씁니다.
+- DiffUtil을 모든 사용 패턴에서 자동으로 성능을 최적화하는 기능으로 설명하지 않습니다.
+- list 계층의 단건 연산 비용과 일괄 API 선택 기준을 함께 설명합니다.
 - 예제 앱 설명에는 바인딩 시점 `position` 캡처 대신 `setOnItemClickListener` 사용 원칙을 반영합니다.

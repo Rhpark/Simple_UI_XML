@@ -3,7 +3,7 @@
 ## 문서 정보
 - 문서명: Adapter Feature SPEC
 - 작성일: 2026-03-02
-- 수정일: 2026-03-02
+- 수정일: 2026-07-30
 - 대상 모듈: simple_xml
 - 패키지: `kr.open.library.simple_ui.xml.ui.adapter`
 - 수준: 구현 재현 가능 수준(Implementation-ready)
@@ -26,7 +26,7 @@
 - `normal`
   - `RootRcvAdapter`: 공통 normal 인프라
   - `BaseRcvAdapter`: content-only 즉시 반영
-  - `HeaderFooterRcvAdapter`: section 지원 즉시 반영
+  - Header/Content/Footer: `BaseRcvAdapter` + sealed interface item 패턴
   - `NormalAdapterResult`
 - `list`
   - `BaseRcvListAdapter`: DiffUtil + queue 기반 ListAdapter
@@ -51,7 +51,6 @@ AdapterClickable<ITEM, VH>
 
 RootRcvAdapter<ITEM, VH>
  └─ BaseRcvAdapter<ITEM, VH>
-    └─ HeaderFooterRcvAdapter<ITEM, VH>
 
 ListAdapter<ITEM, VH>
  └─ BaseRcvListAdapter<ITEM, VH>
@@ -147,19 +146,13 @@ public sealed interface ListAdapterResult {
   - 단건/범위 추가/삭제는 범위 notify 사용
   - `removeItems()`는 best-effort 다건 제거
 
-### HeaderFooterRcvAdapter
-- 책임
-  - header/content/footer section CRUD
-  - adapter position -> section position 해석
-  - 섹션별 bind / payload bind / viewType 훅
-  - 클릭을 adapter index에서 content index로 매핑
-- 데이터 저장소
-  - `HeaderFooterAdapterData`
-- section API
-  - `getHeaderItems`, `getFooterItems`, `getAllItems`
-  - `setHeaderItems`, `setFooterItems`
-  - `addHeaderItem`, `addHeaderItemAt`, `addHeaderItems`, `clearHeaderItems`
-  - `addFooterItem`, `addFooterItemAt`, `addFooterItems`, `clearFooterItems`
+### Header/Content/Footer 패턴
+- 별도의 Header/Footer adapter나 section CRUD API는 제공하지 않습니다.
+- 호출부는 Header/Content/Footer를 하나의 sealed interface item 계층으로 정의합니다.
+- `getContentItemViewType(position, item)`에서 item 타입을 viewType으로 변환합니다.
+- `onBindViewHolder(holder, item, position)`에서 sealed item 타입별로 바인딩합니다.
+- `setItems()`에는 Header/Content/Footer가 포함된 전체 목록을 전달합니다.
+- position과 클릭 콜백은 전체 목록의 adapter index를 사용합니다.
 
 ## list 계층 명세
 
@@ -306,12 +299,18 @@ simpleListAdapter.setOnItemClickListener { position, _, _ ->
 - `BaseRcvAdapter`
   - 단순성/즉시성을 우선
   - 전체 교체는 `notifyDataSetChanged()`
-- `HeaderFooterRcvAdapter`
-  - size/viewType 호환 시 `notifyItemRangeChanged`
-  - 비호환 시 remove + insert
+- Header/Content/Footer
+  - `BaseRcvAdapter.setItems()`의 전체 목록 교체 계약을 사용
+  - 단건·범위 변경 시에도 전체 sealed item 목록의 index를 사용
 - `BaseRcvListAdapter`
   - DiffUtil + submitList + queue 직렬화
   - 연속 변경 안정성이 중요할 때 사용
+  - 각 mutation은 하나의 큐 연산으로 처리되고 `submitList()`로 반영
+  - 대부분의 단건 mutation은 현재 리스트의 복사본을 생성한 뒤 변경을 적용
+  - 단건 mutation을 반복하면 리스트 복사와 DiffUtil 적용도 큐 순서대로 반복
+  - 여러 변경을 하나의 종료 결과로 처리할 수 있으면 `addItems`, `addItemsAt`, `removeItems`, `removeRange`, `setItems` 같은 일괄 API를 우선 사용
+  - 각 변경의 순서나 종료 결과가 개별적으로 필요하면 단건 API 사용
+  - 현행 계약은 큐 연산을 자동 병합하지 않으며 개별 `onResult` 의미를 유지
 
 ## 테스트 명세(현행)
 - Robolectric
@@ -321,20 +320,20 @@ simpleListAdapter.setOnItemClickListener { position, _, _ ->
 - 검증 축
   - simple adapter 바인딩
   - normal/list mutation
-  - header/footer section 동작
+  - sealed interface 기반 Header/Content/Footer 동작
   - queue 정책/종료 상태
 
 ## 알려진 구조적 이슈
 - `BaseRcvListAdapter`는 façade와 mutation engine을 함께 들고 있어 파일 크기가 큽니다.
-- `HeaderFooterRcvAdapter`는 section CRUD, bind routing, click mapping을 한 파일에서 처리합니다.
+- Header/Content/Footer 조립과 content 개수 계산은 호출부 책임이므로 예제 패턴을 명확히 유지해야 합니다.
 - `AdapterWriteApi`가 public 공통 계약이므로, 향후 normal/list 의미 차이가 더 벌어지면 재평가가 필요합니다.
 
 ## 추적 매트릭스
 - `normal` 즉시 반영
   - 코드: `normal/base/BaseRcvAdapter.kt`
   - 문서: PRD/SPEC/README
-- `header/footer` 섹션 계약
-  - 코드: `normal/headerfooter/HeaderFooterRcvAdapter.kt`
+- `header/footer` 표현 계약
+  - 코드: `normal/base/BaseRcvAdapter.kt`, 앱 `RecyclerViewActivity.kt`
   - 문서: PRD/SPEC/README
 - `list` queue 종료 결과
   - 코드: `list/base/BaseRcvListAdapter.kt`, `list/base/queue/`

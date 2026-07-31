@@ -12,7 +12,7 @@
 |------|------------|
 | 동적 리스트 (DiffUtil 필요) | `BaseRcvListAdapter` |
 | 즉시 갱신 (DiffUtil 불필요) | `BaseRcvAdapter` |
-| Header/Footer 섹션 필요 | `HeaderFooterRcvAdapter` |
+| Header/Footer 섹션 필요 | `BaseRcvAdapter` + sealed interface item |
 | 라이브러리 미사용 또는 복잡한 ViewType | `RecyclerView.Adapter` |
 
 ## Simple Adapter 선택 기준
@@ -24,12 +24,10 @@
 | DiffUtil + DataBinding | `SimpleRcvDataBindingListAdapter` |
 | DiffUtil + ViewBinding | `SimpleRcvViewBindingListAdapter` |
 | DiffUtil + 기본 ViewHolder | `SimpleRcvListAdapter` |
-| 즉시 notify + DataBinding | `SimpleBindingRcvAdapter` |
-| 즉시 notify + ViewBinding | `SimpleViewBindingRcvAdapter` |
+| 즉시 notify + DataBinding | `SimpleRcvDataBindingAdapter` |
+| 즉시 notify + ViewBinding | `SimpleRcvViewBindingAdapter` |
 | 즉시 notify + 기본 ViewHolder | `SimpleRcvAdapter` |
-| Header/Footer + DataBinding | `SimpleHeaderFooterDataBindingRcvAdapter` |
-| Header/Footer + ViewBinding | `SimpleHeaderFooterViewBindingRcvAdapter` |
-| Header/Footer + 기본 ViewHolder | `SimpleHeaderFooterRcvAdapter` |
+| Header/Footer 섹션 | `BaseRcvAdapter` + sealed interface item |
 
 ## 커스텀 Adapter 작성 규칙
 
@@ -141,16 +139,39 @@ lifecycleScope.launch {
 
 ---
 
-### Header/Footer Adapter
+### Header/Footer sealed item 패턴
 
 ```kotlin
-val adapter = SimpleHeaderFooterDataBindingRcvAdapter<Item, ItemBinding>(
-    layoutRes = R.layout.item,
-) { holder, item, position ->
-    holder.binding.tvTitle.text = item.title
-}.apply {
-    setHeaderItems(listOf(headerItem))
-    setItems(contentItems)
-    setFooterItems(listOf(footerItem))
+sealed interface UiRow {
+    data class Header(val title: String) : UiRow
+    data class Content(val item: Item) : UiRow
+    data class Footer(val count: Int) : UiRow
 }
+
+val adapter = object : BaseRcvAdapter<UiRow, RecyclerView.ViewHolder>() {
+    override fun getContentItemViewType(position: Int, item: UiRow): Int = when (item) {
+        is UiRow.Header -> 0
+        is UiRow.Content -> 1
+        is UiRow.Footer -> 2
+    }
+
+    override fun createViewHolderInternal(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        // viewType에 맞는 ViewHolder를 생성한다.
+        TODO("Create a ViewHolder for each viewType")
+    }
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, item: UiRow, position: Int) {
+        when (item) {
+            is UiRow.Header -> Unit
+            is UiRow.Content -> Unit
+            is UiRow.Footer -> Unit
+        }
+    }
+}
+
+adapter.setItems(buildList {
+    add(UiRow.Header("Header"))
+    contentItems.forEach { add(UiRow.Content(it)) }
+    add(UiRow.Footer(contentItems.size))
+})
 ```

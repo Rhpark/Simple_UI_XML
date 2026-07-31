@@ -10,13 +10,13 @@
 
 ## 목적
 - 현재 adapter 구현을 기준으로 실행 흐름을 단계별로 재현 가능하게 정리합니다.
-- 유지보수 시 `normal`, `header/footer`, `list` 중 어느 계층에서 문제가 발생했는지 빠르게 좁힐 수 있게 합니다.
+- 유지보수 시 `normal`, `list`, sealed item 구성 중 어느 경계에서 문제가 발생했는지 빠르게 좁힐 수 있게 합니다.
 - 예제 앱 사용 방식까지 포함해 코드/문서/테스트 정합성을 유지합니다.
 
 ## 구현 범위
 - 공통 계약/유틸
 - normal 계층
-- header/footer section 계층
+- sealed interface 기반 Header/Content/Footer 구성
 - list queue 계층
 - simple adapter 계층
 - viewholder 계층
@@ -27,7 +27,7 @@
 ### 1) adapter 선택
 1. 호출부가 사용 시나리오를 결정합니다.
 2. content-only + 즉시 반영이면 `BaseRcvAdapter` 계열
-3. header/footer가 필요하면 `HeaderFooterRcvAdapter` 계열
+3. header/footer가 필요하면 `BaseRcvAdapter` item을 sealed interface로 구성
 4. 연속 변경/대량 변경이면 `BaseRcvListAdapter` 계열
 
 검증 포인트
@@ -57,7 +57,7 @@
 - `getMutableItemList()` 변경이 adapter 상태를 직접 바꾸는 것으로 오해하지 않는지 확인
 
 ### 4) normal mutation 실행
-1. `BaseRcvAdapter` 또는 `HeaderFooterRcvAdapter` 공개 mutation API 호출
+1. `BaseRcvAdapter` 공개 mutation API 호출
 2. `AdapterCommonDataLogic.validate*()`로 입력 검증
 3. 실패 시 즉시 `NormalAdapterResult.Rejected`
 4. 성공 시 내부 데이터 갱신 + `notify...`
@@ -65,7 +65,7 @@
 
 검증 포인트
 - invalid position, empty input, item not found가 즉시 결과로 내려오는지 확인
-- `HeaderFooterRcvAdapter`의 section notify 순서가 계약과 맞는지 확인
+- sealed item 전체 목록의 순서와 viewType 분기가 계약과 맞는지 확인
 
 ### 5) list mutation 실행
 1. `BaseRcvListAdapter` 공개 mutation API 호출
@@ -94,14 +94,14 @@
    - `onBindViewHolder(holder, position)` -> `item` 조회 -> `onBindViewHolder(holder, item, position)`
    - payload가 있으면 payload 훅으로 위임
 2. `header/footer`
-   - adapter position을 section position으로 해석
-   - header/content/footer 훅으로 분기
+   - adapter position의 sealed item 타입을 확인
+   - `getContentItemViewType()`과 `onBindViewHolder()`에서 header/content/footer 타입으로 분기
 3. `list`
    - `ListAdapter` currentList 기준으로 바인딩
 
 검증 포인트
 - payload가 있을 때 full bind로 잘못 떨어지지 않는지 확인
-- header/footer section position 계산이 일관적인지 확인
+- sealed item 목록의 position과 바인딩 position이 일관적인지 확인
 
 ### 8) 예제 앱 사용 흐름
 1. `RecyclerViewActivity`에서 3가지 adapter 전환
@@ -132,7 +132,7 @@
   - `common / normal / list / viewholder` 패키지 경계 유지
 - 기능 정합성
   - 즉시 반영 vs queue 반영 결과 모델 구분
-  - header/footer section CRUD
+   - sealed interface 기반 Header/Content/Footer 바인딩
   - queue drop / failed 의미
 - 사용성 정합성
   - 예제 앱 stale position 재발 방지
@@ -156,7 +156,7 @@
 - `BaseRcvListAdapter` mutation 블록 delegate 분리 여부 검토
 - `BaseRcvAdapterItemApi` 유지 필요성 재검토
 - queue policy 문서화와 결과 모델 설명 강화 여부 검토
-- `HeaderFooterRcvAdapter` / `BaseRcvListAdapter` 파일 분해 필요성 재평가
+- `BaseRcvListAdapter` 파일 분해 필요성 재평가
 
 ## 산출물 기준
 - 문서만 보고 현재 adapter 구조를 재현 가능해야 합니다.

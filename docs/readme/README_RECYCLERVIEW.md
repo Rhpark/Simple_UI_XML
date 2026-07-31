@@ -6,13 +6,13 @@
 - **Package**: `kr.open.library.simple_ui.xml.ui.adapter.*`, `kr.open.library.simple_ui.xml.ui.view.recyclerview.*`
 - **Provides**: RecyclerView adapters (normal/list) + scroll helpers
   - Core adapters (`BaseRcvAdapter`, `BaseRcvListAdapter`)
-  - Simple adapter variants (`SimpleRcvAdapter`, `SimpleBindingRcvAdapter`, `SimpleViewBindingRcvAdapter`, `SimpleRcvListAdapter`, `SimpleRcvDataBindingListAdapter`, `SimpleRcvViewBindingListAdapter`)
+  - Simple adapter variants (`SimpleRcvAdapter`, `SimpleRcvDataBindingAdapter`, `SimpleRcvViewBindingAdapter`, `SimpleRcvListAdapter`, `SimpleRcvDataBindingListAdapter`, `SimpleRcvViewBindingListAdapter`)
   - ViewHolder helpers (`RootViewHolder`, `BaseRcvDataBindingViewHolder`, `BaseRcvViewBindingViewHolder`, `BaseRcvViewHolder`)
   - RecyclerScrollStateView for scroll state management
   - Header/Content/Footer support via sealed interface pattern (see [Sealed Interface Pattern](#fourth-sealed-interface-pattern-for-headerfooter-넷째-sealed-interface-패턴으로-headerfooter-구현))
 > - **제공 범위**: RecyclerView 어댑터(normal/list) + 스크롤 헬퍼
 >   - 코어 어댑터 (`BaseRcvAdapter`, `BaseRcvListAdapter`)
->   - 간편 어댑터(`SimpleRcvAdapter`, `SimpleBindingRcvAdapter`, `SimpleViewBindingRcvAdapter`, `SimpleRcvListAdapter`, `SimpleRcvDataBindingListAdapter`, `SimpleRcvViewBindingListAdapter`)
+>   - 간편 어댑터(`SimpleRcvAdapter`, `SimpleRcvDataBindingAdapter`, `SimpleRcvViewBindingAdapter`, `SimpleRcvListAdapter`, `SimpleRcvDataBindingListAdapter`, `SimpleRcvViewBindingListAdapter`)
 >   - ViewHolder 헬퍼 (`RootViewHolder`, `BaseRcvDataBindingViewHolder`, `BaseRcvViewBindingViewHolder`, `BaseRcvViewHolder`)
 >   - RecyclerScrollStateView 스크롤 상태 관리
 >   - Header/Content/Footer는 sealed interface 패턴으로 지원 (하단 [Sealed Interface Pattern](#fourth-sealed-interface-pattern-for-headerfooter-넷째-sealed-interface-패턴으로-headerfooter-구현) 참조)
@@ -131,12 +131,12 @@ Base 어댑터를 상속하지 않고 **생성자 + 람다** 하나로 바로 �
 ## 🤔 Which Adapter Should You Choose? (어떤 Adapter를 선택해야 할까?)
 
 **#1: SimpleRcvDataBindingListAdapter**
-- ✅ DiffUtil built-in → automatic performance optimization
+- ✅ DiffUtil built-in → calculates changed ranges between submitted lists
 - ✅ DataBinding support → concise code
 - ✅ `ListAdapterResult` support → applied / rejected / dropped / failed 분기 가능
 - 📌 **Best fit for most DataBinding ListAdapter cases**
 
-> - ✅ DiffUtil 내장 → 자동 성능 최적화
+> - ✅ DiffUtil 내장 → 제출된 목록 사이의 변경 범위 계산
 > - ✅ DataBinding 지원 → 간결한 코드
 > - ✅ `ListAdapterResult` 지원 → applied / rejected / dropped / failed 분기 가능
 > - 📌 **DataBinding + ListAdapter 조합의 대부분 케이스에 최적**
@@ -156,7 +156,7 @@ Base 어댑터를 상속하지 않고 **생성자 + 람다** 하나로 바로 �
 <br>
 </br>
 
-**#3: SimpleBindingRcvAdapter**
+**#3: SimpleRcvDataBindingAdapter**
 - ❌ No DiffUtil (immediate notify-based updates)
 - ✅ Supports DataBinding
 - ❌ Content-only normal adapter
@@ -184,7 +184,7 @@ Base 어댑터를 상속하지 않고 **생성자 + 람다** 하나로 바로 �
 <br>
 </br>
 
-**#5: SimpleRcvViewBindingListAdapter / SimpleViewBindingRcvAdapter**
+**#5: SimpleRcvViewBindingListAdapter / SimpleRcvViewBindingAdapter**
 - ✅ Dedicated ViewBinding variants available
 - ✅ Use `inflate(...)` instead of `layoutRes`
 - ✅ Same normal/list split as DataBinding and view-based adapters
@@ -296,8 +296,8 @@ private val simpleListAdapter = SimpleRcvDataBindingListAdapter<SampleItem, Item
     }
 }
 
-// SimpleBindingRcvAdapter - 일반 Adapter(즉시 notify)
-private val simpleAdapter = SimpleBindingRcvAdapter<SampleItem, ItemRcvTextviewBinding>(
+// SimpleRcvDataBindingAdapter - 일반 Adapter(즉시 notify)
+private val simpleAdapter = SimpleRcvDataBindingAdapter<SampleItem, ItemRcvTextviewBinding>(
     layoutRes = R.layout.item_rcv_textview,
 ) { holder, item, position ->
     holder.binding.apply {
@@ -536,8 +536,8 @@ fun buildSealedItems(contentItems: List<SampleItem>): List<RcvItem> = buildList 
 adapter.setItems(buildSealedItems(SampleItem.createSampleData()))
 ```
 
-**Result:** No separate `HeaderFooterRcvAdapter` needed. A single `BaseRcvAdapter` with a sealed interface handles all section types with compile-time type safety.
-> **결과:** 별도 `HeaderFooterRcvAdapter` 없이 `BaseRcvAdapter` 하나로 모든 섹션을 처리합니다. sealed interface의 `when` 분기로 컴파일 타임에 타입 누락을 방지합니다.
+**Result:** No dedicated Header/Footer adapter is needed. A single `BaseRcvAdapter` with a sealed interface handles all section types with compile-time type safety.
+> **결과:** 전용 Header/Footer 어댑터 없이 `BaseRcvAdapter` 하나로 모든 섹션을 처리합니다. sealed interface의 `when` 분기로 컴파일 타임에 타입 누락을 방지합니다.
 
 <br>
 </br>
@@ -622,7 +622,7 @@ This guide is intended to show how the library simplifies common RecyclerView se
 - `getItemOrNull(position)` — safely get item at position, returns null if out of bounds
 - `getItemPosition(item)` — get index of target item, returns -1 if not found
 - `getMutableItemList()` — get a mutable snapshot copy (mutations do NOT affect adapter state)
-- `SimpleViewBindingRcvAdapter(inflate, onBind)` — ViewBinding-based content-only normal adapter variant
+- `SimpleRcvViewBindingAdapter(inflate, onBind)` — ViewBinding-based content-only normal adapter variant
 - `SimpleRcvViewBindingListAdapter(inflate, listDiffUtil, onBind)` — ListAdapter variant with ViewBinding
 - `setQueuePolicy(maxPending, overflowPolicy)` — configure queue pending size and overflow policy (`BaseRcvListAdapter`)
 
@@ -634,7 +634,7 @@ This guide is intended to show how the library simplifies common RecyclerView se
 > - `getItemOrNull(position)` — position의 아이템을 안전하게 조회, 범위 벗어나면 null 반환
 > - `getItemPosition(item)` — 대상 아이템의 인덱스 반환, 없으면 -1
 > - `getMutableItemList()` — 가변 스냅샷 복사본 반환 (변경해도 adapter 상태에 반영되지 않음)
-> - `SimpleViewBindingRcvAdapter(inflate, onBind)` — ViewBinding 기반 content-only 일반 어댑터 변형
+> - `SimpleRcvViewBindingAdapter(inflate, onBind)` — ViewBinding 기반 content-only 일반 어댑터 변형
 > - `SimpleRcvViewBindingListAdapter(inflate, listDiffUtil, onBind)` — ViewBinding 기반 ListAdapter 변형
 > - `setQueuePolicy(maxPending, overflowPolicy)` — 큐 대기 크기 및 오버플로 정책 설정 (`BaseRcvListAdapter`)
 
@@ -646,12 +646,15 @@ This guide is intended to show how the library simplifies common RecyclerView se
 - `BaseRcvAdapter` callbacks are wrapped with `safeCatch` (`CancellationException`/`Error` rethrow, other exceptions are logged).
 - Queue-based adapters (`BaseRcvListAdapter`) isolate callback failures with `RuntimeException` boundaries.
 - Queue operation models (`Operation`, `SetItemsOp` etc.) are internal implementation details for queue adapters; use adapter public mutation methods instead of constructing operations directly.
+- Each `BaseRcvListAdapter` mutation is queued as one operation and submitted through `submitList()`; most single-item operations create a copied list snapshot.
+- When multiple changes can share one terminal result, prefer batch APIs such as `addItems()`, `addItemsAt()`, `removeItems()`, `removeRange()`, or `setItems()` over repeated single-item calls.
+- Use single-item APIs when each change requires its own ordering or terminal result.
 - `Bind signature`: override order is `onBindViewHolder(holder, item, position)`.
 - `removeRange(start, count, ...)` follows start+count semantics.
 - `removeItems(items, ...)` is best-effort and removes only existing matches.
 - `Large removal note`: `BaseRcvAdapter.removeItems(...)` emits per-item `notifyItemRemoved`; for large/contiguous removals, prefer `removeRange` / `removeAll`.
 - Click/long-click listeners are attached once in `onCreateViewHolder`, but position/item are resolved at click time from `bindingAdapterPosition`.
-- `BaseRcvAdapter` callback position is content index.
+- `BaseRcvAdapter` callback position is the index in its complete item list, including sealed Header/Content/Footer items.
 - `BaseRcvListAdapter` callback position equals list index.
 
 > - 결과 기반 변경 API가 권장 기본 계약입니다.
@@ -662,12 +665,15 @@ This guide is intended to show how the library simplifies common RecyclerView se
 > - `BaseRcvAdapter` 콜백은 `safeCatch`로 감싸져 있습니다 (`CancellationException`/`Error`는 재발생, 그 외 예외는 로깅).
 > - 큐 기반 어댑터(`BaseRcvListAdapter`)는 `RuntimeException` 경계로 콜백 실패를 격리합니다.
 > - 큐 연산 모델(`Operation`, `SetItemsOp` 등)은 내부 구현 세부사항입니다; 직접 생성하지 말고 adapter 공개 변경 메서드를 사용하세요.
+> - `BaseRcvListAdapter`의 각 변경은 하나의 큐 연산으로 등록되어 `submitList()`로 반영되며, 대부분의 단건 연산은 리스트 스냅샷을 복사합니다.
+> - 여러 변경을 하나의 종료 결과로 처리할 수 있으면 단건 API 반복보다 `addItems()`, `addItemsAt()`, `removeItems()`, `removeRange()`, `setItems()` 같은 일괄 API를 우선 사용하세요.
+> - 각 변경의 순서나 종료 결과를 개별적으로 받아야 하면 단건 API를 사용하세요.
 > - 바인딩 시그니처: `onBindViewHolder(holder, item, position)` 순서로 오버라이드합니다.
 > - `removeRange(start, count, ...)` 는 start+count 방식을 따릅니다.
 > - `removeItems(items, ...)` 는 best-effort 방식으로 실제 존재하는 항목만 제거합니다.
 > - 대량 제거 주의: `BaseRcvAdapter.removeItems(...)`는 아이템별 `notifyItemRemoved`를 호출합니다; 대량/연속 제거 시 `removeRange` / `removeAll`을 사용하세요.
 > - 클릭/롱클릭 리스너는 `onCreateViewHolder`에서 1회 연결되며, position/item은 클릭 시점에 `bindingAdapterPosition`으로 조회됩니다.
-> - `BaseRcvAdapter` 콜백 position은 content 인덱스입니다.
+> - `BaseRcvAdapter` 콜백 position은 sealed Header/Content/Footer를 포함한 전체 item 목록의 인덱스입니다.
 > - `BaseRcvListAdapter` 콜백 position은 리스트 인덱스와 동일합니다.
 
 <br></br>
@@ -705,7 +711,7 @@ val adapter = object : BaseRcvAdapter<UiRow, BaseRcvViewHolder>() {
         add(UiRow.Content(2, "항목 B"))
         add(UiRow.Footer(2))
     })
-    // 클릭 콜백 position은 content 인덱스
+    // 클릭 콜백 position은 Header/Content/Footer를 포함한 전체 목록의 인덱스
     setOnItemClickListener { position, item, _ ->
         Log.d("Adapter", "[$position] = $item")
     }
@@ -1012,7 +1018,7 @@ override fun onViewRecycled(holder: VH) {
 **Live sample code (라이브 예제 코드):**
 > - Simple UI sample: `app/src/main/java/kr/open/library/simpleui_xml/recyclerview/new_/`
 > - Plain Android sample: `app/src/main/java/kr/open/library/simpleui_xml/recyclerview/origin/`
-> - `RecyclerViewActivity`에서 `SimpleRcvViewBindingListAdapter`, `SimpleViewBindingRcvAdapter`, `SimpleHeaderFooterViewBindingRcvAdapter`도 바로 전환해 볼 수 있습니다.
+> - `RecyclerViewActivity`에서 `SimpleRcvViewBindingListAdapter`, `SimpleRcvViewBindingAdapter`, sealed interface 기반 Header/Footer 예제도 바로 전환해 볼 수 있습니다.
 > - Run the app to see the implementations in action!
 
 <br>
@@ -1023,13 +1029,13 @@ override fun onViewRecycled(holder: VH) {
 - Flow-based, real-time scroll-direction/edge detection
 - Switch adapters dynamically via RadioButtons
 - Add/remove/shuffle/clear items on the fly
-- Evaluate automatic DiffUtil performance
+- Compare DiffUtil-based update behavior
 - Validate unified API consistency
 > - 6가지 Simple UI Adapter vs 2가지 전통 Adapter 비교
 > - Flow 기반 실시간 스크롤 방향/Edge 감지
 > - RadioButton으로 동적 Adapter 전환
 > - 실시간 아이템 추가/삭제/섞기/전체삭제
-> - DiffUtil 자동 적용 성능 비교
+> - DiffUtil 기반 업데이트 동작 비교
 > - 통합 API 일관성 테스트
 
 <br>
