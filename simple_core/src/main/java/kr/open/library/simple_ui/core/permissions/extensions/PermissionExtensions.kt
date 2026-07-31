@@ -146,6 +146,30 @@ public inline fun Context.hasPermissions(vararg permissions: String, doWork: () 
 public inline fun Context.remainPermissions(permissions: List<String>): List<String> = permissions.filterNot { hasPermission(it) }
 
 /**
+ * Safely reads the permissions declared in this application's AndroidManifest.xml.<br><br>
+ * 이 애플리케이션의 AndroidManifest.xml에 선언된 권한 목록을 안전하게 조회합니다.<br>
+ *
+ * @return Manifest-declared permissions with duplicates removed, or an empty set when retrieval fails.<br><br>
+ *         중복이 제거된 매니페스트 선언 권한 집합이며, 조회에 실패하면 빈 집합을 반환합니다.<br>
+ */
+public fun Context.readDeclaredManifestPermissions(): Set<String> = safeCatch(defaultValue = emptySet()) {
+    val packageInfo = checkSdkVersion(
+        Build.VERSION_CODES.TIRAMISU,
+        positiveWork = {
+            packageManager.getPackageInfo(
+                packageName,
+                PackageManager.PackageInfoFlags.of(PackageManager.GET_PERMISSIONS.toLong()),
+            )
+        },
+        negativeWork = {
+            @Suppress("DEPRECATION")
+            packageManager.getPackageInfo(packageName, PackageManager.GET_PERMISSIONS)
+        },
+    )
+    packageInfo.requestedPermissions?.toSet() ?: emptySet()
+}
+
+/**
  * Checks whether usage stats access is enabled for this app.<br><br>
  * 앱에 사용량 통계 권한이 허용되었는지 확인합니다.<br>
  *

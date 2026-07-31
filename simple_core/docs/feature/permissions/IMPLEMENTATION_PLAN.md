@@ -40,7 +40,7 @@
    - PermissionDecisionType
    - RuntimePermissionRequestability
    - OrphanedDeniedRequestResult, Rationale/Settings 요청 모델
-   - PermissionConstants / PermissionSpecialType
+   - PermissionPolicy / PermissionConstants / PermissionSpecialType
 2. 분류기/핸들러/확장 (core)
    - PermissionClassifier
    - isSupported / hasPermission / runtime requestability 의미 분리

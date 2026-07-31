@@ -330,6 +330,7 @@ public final class kr/open/library/simple_ui/core/permissions/extensions/Permiss
 	public static final fun hasPermissions (Landroid/content/Context;[Ljava/lang/String;Lkotlin/jvm/functions/Function0;)Z
 	public static final fun hasUsageStatsPermission (Landroid/content/Context;)Z
 	public static final fun isSpecialPermission (Ljava/lang/String;)Z
+	public static final fun readDeclaredManifestPermissions (Landroid/content/Context;)Ljava/util/Set;
 	public static final fun remainPermissions (Landroid/content/Context;Ljava/util/List;)Ljava/util/List;
 }
 

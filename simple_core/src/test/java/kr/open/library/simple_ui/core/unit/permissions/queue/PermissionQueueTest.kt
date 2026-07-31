@@ -2,7 +2,9 @@ package kr.open.library.simple_ui.core.unit.permissions.queue
 
 import kr.open.library.simple_ui.core.permissions.queue.PermissionQueue
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /**
@@ -74,5 +76,34 @@ class PermissionQueueTest {
         val queue = PermissionQueue(backing)
 
         assertNull(queue.peek())
+    }
+
+    /**
+     * Verifies that clear removes every queued request.<br><br>
+     * clear가 대기 중인 모든 요청을 제거하는지 검증합니다.<br>
+     */
+    @Test
+    fun clearShouldRemoveAllRequests() {
+        val queue = PermissionQueue(mutableListOf("req1", "req2"))
+
+        queue.clear()
+
+        assertTrue(queue.asList().isEmpty())
+        assertNull(queue.peek())
+    }
+
+    /**
+     * Verifies that isEmpty follows the current queue state.<br><br>
+     * isEmpty가 현재 큐 상태를 반영하는지 검증합니다.<br>
+     */
+    @Test
+    fun isEmptyShouldReflectQueueState() {
+        val queue = PermissionQueue(mutableListOf())
+
+        assertTrue(queue.isEmpty())
+
+        queue.enqueue("req1")
+
+        assertFalse(queue.isEmpty())
     }
 }

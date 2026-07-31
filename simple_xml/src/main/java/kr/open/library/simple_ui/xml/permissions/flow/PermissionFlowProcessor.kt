@@ -29,6 +29,19 @@ import kotlin.coroutines.resume
  * Processes runtime, special, and role permission flows.<br><br>
  * 런타임/특수/Role 권한 흐름을 처리합니다.<br>
  *
+ * Design note: the three flows are kept in one class on purpose.<br>
+ * They look symmetric but are not independent — special and role share one ActivityResult launcher
+ * (routed via [currentActivityAction]), the launcher must be registered before the host starts, and
+ * each flow's [kotlinx.coroutines.CompletableDeferred] is completed from a different callback.
+ * Splitting along the surface symmetry would spread this shared launcher/lifecycle/completion
+ * handling across classes and add coordination cost without reducing complexity.<br><br>
+ * 설계 노트: 세 흐름을 의도적으로 한 클래스에 둡니다.<br>
+ * 겉으로 대칭적이지만 독립적이지 않습니다 — 특수와 Role은 하나의 ActivityResult 런처를
+ * 공유하고([currentActivityAction]로 라우팅), 런처는 host가 시작되기 전에 등록되어야 하며, 각
+ * 흐름의 [kotlinx.coroutines.CompletableDeferred]는 서로 다른 콜백에서 완료됩니다. 표면적 대칭을
+ * 따라 분리하면 이 공유 런처/생명주기/완료 처리가 여러 클래스로 흩어져 조율 비용만 늘고 복잡도는
+ * 줄지 않습니다.<br>
+ *
  * @param host Host adapter supplying Activity/Fragment capabilities.<br><br>
  *             Activity/Fragment 기능을 제공하는 호스트 어댑터입니다.<br>
  * @param classifierProvider Permission classifier provider for runtime/special/role decisions.<br><br>

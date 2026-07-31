@@ -265,6 +265,73 @@ class PermissionRequesterRobolectricTest {
     }
 
     /**
+     * Verifies that a non-empty request is rejected while the host lifecycle is not ready.<br><br>
+     * 호스트 lifecycle이 준비되지 않은 동안 비어 있지 않은 요청이 거부되는지 검증합니다.<br>
+     */
+    @Test
+    fun requestPermissions_beforeActivityCreate_returnsLifecycleNotReadyForEachPermission() {
+        val activityController = Robolectric.buildActivity(ComponentActivity::class.java)
+        val requester = PermissionRequester(activityController.get())
+        val permissions = listOf("com.test.FIRST", "com.test.SECOND")
+        var results: List<PermissionDeniedItem>? = null
+
+        requester.requestPermissions(
+            permissions = permissions,
+            onDeniedResult = { deniedItems -> results = deniedItems },
+        )
+
+        assertEquals(permissions, results?.map { item -> item.permission })
+        assertTrue(results.orEmpty().all { item -> item.result == PermissionDeniedType.LIFECYCLE_NOT_READY })
+    }
+
+    /**
+     * Verifies that requestPermission delegates a manifest-undeclared permission to the common result path.<br><br>
+     * requestPermission이 manifest 미선언 권한을 공통 결과 경로로 전달하는지 검증합니다.<br>
+     */
+    @Test
+    fun requestPermission_manifestUndeclared_returnsSingleDeniedResult() {
+        val activityController = Robolectric.buildActivity(ComponentActivity::class.java).create()
+        val requester = PermissionRequester(activityController.get())
+        activityController.start().resume()
+        val permission = "com.test.NOT_DECLARED"
+        var results: List<PermissionDeniedItem>? = null
+
+        requester.requestPermission(
+            permission = permission,
+            onDeniedResult = { deniedItems -> results = deniedItems },
+        )
+        Shadows.shadowOf(Looper.getMainLooper()).idle()
+
+        assertEquals(
+            listOf(PermissionDeniedItem(permission, PermissionDeniedType.MANIFEST_UNDECLARED)),
+            results,
+        )
+    }
+
+    /**
+     * Verifies that duplicate permissions are normalized before result aggregation.<br><br>
+     * 중복 권한이 결과 집계 전에 정규화되는지 검증합니다.<br>
+     */
+    @Test
+    fun requestPermissions_duplicatePermission_returnsOneDeniedItem() {
+        val activityController = Robolectric.buildActivity(ComponentActivity::class.java).create()
+        val requester = PermissionRequester(activityController.get())
+        activityController.start().resume()
+        val permission = "com.test.DUPLICATED"
+        var results: List<PermissionDeniedItem>? = null
+
+        requester.requestPermissions(
+            permissions = listOf(permission, permission),
+            onDeniedResult = { deniedItems -> results = deniedItems },
+        )
+        Shadows.shadowOf(Looper.getMainLooper()).idle()
+
+        assertEquals(1, results?.size)
+        assertEquals(permission, results?.single()?.permission)
+        assertEquals(PermissionDeniedType.MANIFEST_UNDECLARED, results?.single()?.result)
+    }
+
+    /**
      * Creates a saved state bundle containing a single permission request entry.<br><br>
      * 단일 권한 요청 엔트리를 포함한 saved state 번들을 생성합니다.<br>
      */

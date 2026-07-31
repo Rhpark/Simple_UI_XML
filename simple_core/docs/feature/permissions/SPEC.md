@@ -181,6 +181,8 @@ enum class RuntimePermissionRequestability {
 ### core (UI 비의존)
 - classifier
   - PermissionClassifier.kt
+- internal
+  - PermissionPolicy.kt
 - extensions
   - PermissionExtensions.kt
 - handler
@@ -217,12 +219,13 @@ enum class RuntimePermissionRequestability {
 ### core
 - `classifier`: 권한 문자열을 런타임/특수/Role로 분류하고 지원 여부를 판단한다.
 - `classifier`: SDK 지원 여부와 runtime requestability를 함께 판단하되, 두 의미를 혼동하지 않는다.
+- `internal`: 특수 권한 설정 액션, package URI 필요 여부, API 레벨별 지원 권한 정책을 단일 출처로 관리한다.
 - `extensions`: 권한 보유 여부 등 공통 확장 함수를 제공한다.
 - `handler`: 특수 권한/Role 권한의 체크 및 인텐트 생성 규칙을 담당한다.
 - `model`: 결과/훅/복원 모델을 정의한다. 결정→거부 타입 변환(`toDeniedTypeOrNull`)과 요청 순서 기반 거부 목록 생성(`buildPermissionDeniedItems`)을 단일 출처로 제공하며 UI 모듈(xml/compose)이 공유한다.
 - `queue`: 요청 큐 및 중복 병합 정책을 담당한다.
 - `runtime`: 런타임 권한 요청 이력과 결과 매핑 순수 로직을 담당한다.
-- `vo`: 권한 상수 및 특수 권한 타입 정의를 제공한다.
+- `vo`: 내부 정책과 같은 값을 제공하는 공개 권한 상수 및 특수 권한 타입 정의를 제공한다.
 
 ### xml
 - `api`: 호출부가 사용하는 PermissionRequester 공개 API를 제공한다.

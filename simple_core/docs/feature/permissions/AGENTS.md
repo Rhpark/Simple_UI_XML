@@ -23,7 +23,7 @@
 - Activity/Fragment/ActivityResult/Lifecycle에 의존하지 않는다.
 - 권한 분류, 결과 모델, 특수/Role 규칙, 큐/병합 정책을 담당한다.
 - Role 문자열은 `android.app.role.` prefix로 구분한다.
-- 특수 권한 목록/매핑은 `PermissionSpecialType`/`PermissionConstants` 기준을 사용한다.
+- 특수 권한 목록은 `PermissionSpecialType`, 내부 매핑은 `PermissionPolicy`를 단일 출처로 사용하고 `PermissionConstants`는 같은 값을 공개한다.
 - `MANAGE_MEDIA`는 일반 앱 요청 불가로 기본 `NOT_SUPPORTED` 처리한다.
 - 테스트는 unit 테스트로 구성한다.
 

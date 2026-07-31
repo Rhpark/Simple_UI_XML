@@ -1,6 +1,59 @@
 # Permission Guide for Simple UI
 > **Simple UI 권한 가이드**
 
+## 📦 Module Information (모듈 정보)
+- **Modules**: `simple_core` (inspection/policy), `simple_xml` (request flow), `simple_compose` (State flow)
+- **Package**: `kr.open.library.simple_ui.core.permissions.*`, `kr.open.library.simple_ui.xml.permissions.*`, `kr.open.library.simple_ui.compose.permissions.*`
+- **Provides**: Unified runtime/special/role permission handling for both XML and Compose
+> - **모듈**: `simple_core`(판별/정책), `simple_xml`(요청 흐름), `simple_compose`(State 흐름)
+> - **패키지**: `kr.open.library.simple_ui.core.permissions.*`, `kr.open.library.simple_ui.xml.permissions.*`, `kr.open.library.simple_ui.compose.permissions.*`
+> - **제공 범위**: XML·Compose 양쪽을 위한 런타임/특수/Role 권한 통합 처리
+
+<br>
+</br>
+
+## 🔎 At a Glance (한눈 비교)
+
+| Category                          |            Plain Android             |               Simple UI               |
+|:----------------------------------|:------------------------------------:|:-------------------------------------:|
+| Runtime permissions               |  Register `ActivityResult` manually  |     ✅ Unified `requestPermissions`    |
+| Special permissions<br>(overlay, write settings, etc.) |     Build settings `Intent` yourself      | ✅ Handled by the same API |
+| Role permissions (`RoleManager`)  |     Call `RoleManager` directly      |      ✅ Handled by the same API        |
+| Result after process death        |    Callback lost, result dropped     | ✅ XML: `consumeOrphanedDeniedResults()`<br>Compose: restored `deniedItems` + `COMPLETED` phase |
+| Denied result detail              |         granted / denied only        |       ✅ 7 result types (why it failed)|
+| XML + Compose                     |          Wire each separately        |    ✅ Shared policy, both supported    |
+
+> | 항목 | 기본 Android | Simple UI |
+> |:---|:---:|:---:|
+> | 런타임 권한 | `ActivityResult` 직접 등록 | ✅ 통합 `requestPermissions` |
+> | 특수 권한<br>(오버레이, 설정 쓰기 등) | 설정 `Intent` 직접 작성 | ✅ 동일 API로 처리 |
+> | Role 권한 (`RoleManager`) | `RoleManager` 직접 호출 | ✅ 동일 API로 처리 |
+> | 프로세스 사망 후 결과 | 콜백 유실, 결과 소실 | ✅ XML: `consumeOrphanedDeniedResults()`<br>Compose: 복원된 `deniedItems` + `COMPLETED` phase |
+> | 거부 결과 상세 | granted / denied 2종 | ✅ 7종 결과 타입(실패 원인 구분) |
+> | XML + Compose | 각각 따로 구성 | ✅ 정책 공유, 양쪽 지원 |
+
+**Key takeaway:** Simple UI treats runtime, special, and role permissions as one flow. XML preserves
+request-id results, while Compose restores the latest State result across process death.
+> **핵심:** Simple UI는 런타임·특수·Role 권한을 하나의 흐름으로 다룹니다. 프로세스 사망 시
+> XML은 requestId별 결과를 보존하고, Compose는 최신 State 결과를 복원합니다.
+
+<br>
+</br>
+
+## 💡 Why It Matters (왜 중요한가)
+
+- **One API for every permission type:** Runtime, special, and role permissions no longer need separate wiring.
+- **No dropped results:** XML retains request-id results, and Compose restores the latest completed State result after process death.
+- **Actionable failures:** 7 result types distinguish user denial from misuse (undeclared manifest, lifecycle timing, etc.).
+- **XML and Compose parity:** The same pre-check and result policy is shared across both UI stacks.
+> - **모든 권한 타입을 하나의 API로**: 런타임·특수·Role 권한을 각각 따로 배선할 필요가 없습니다.
+> - **결과 유실 없음**: XML은 requestId별 결과를 보존하고, Compose는 프로세스 사망 후 최신 완료 State 결과를 복원합니다.
+> - **행동 가능한 실패 정보**: 7종 결과 타입으로 사용자 거부와 오용(미선언 Manifest, 생명주기 타이밍 등)을 구분합니다.
+> - **XML·Compose 동등성**: 동일한 사전 판정·결과 정책을 두 UI 스택에서 공유합니다.
+
+<br>
+</br>
+
 ## Overview (개요)
 This document explains the permission-related architecture of Simple UI, covering:
 - permission inspection helpers in `simple_core`
@@ -13,6 +66,28 @@ This document explains the permission-related architecture of Simple UI, coverin
 > - `simple_xml`의 권한 요청 흐름
 > - `simple_compose`의 Compose State 기반 권한 요청 흐름
 > - `system_manager` 기능에서 사용하는 권한 요구사항
+
+<br></br>
+
+## Module Dependencies (모듈 의존성)
+
+Declare every module whose permission APIs or model types are referenced directly by app source code.
+The complete installation policy is maintained in
+[README.md — Select dependencies](../../README.md#2-select-dependencies-필요한-모듈-선택).
+
+> 앱 소스 코드에서 권한 API나 모델 타입을 직접 사용하는 모든 모듈을 직접 의존성으로 선언하세요.
+> 전체 설치 정책은 [README.md — 필요한 모듈 선택](../../README.md#2-select-dependencies-필요한-모듈-선택)을
+> 참조하세요.
+
+| Permission usage (권한 사용 범위) | Direct dependencies (직접 선언할 모듈) |
+| --- | --- |
+| `hasPermission`, `remainPermissions`, and Core permission policies<br>`hasPermission`, `remainPermissions`, Core 권한 정책 | `dash-droid-core` |
+| XML `PermissionRequester` APIs only<br>XML `PermissionRequester` API만 사용 | `dash-droid-xml` |
+| XML permission APIs with Core helpers, logging, or model types<br>XML 권한 API와 Core 헬퍼·로깅·모델 타입을 함께 사용 | `dash-droid-xml` + `dash-droid-core` |
+| Compose permission State APIs only<br>Compose 권한 State API만 사용 | `dash-droid-compose` |
+| Compose permission APIs with Core helpers or model types<br>Compose 권한 API와 Core 헬퍼·모델 타입을 함께 사용 | `dash-droid-compose` + `dash-droid-core` |
+| Permission-aware System Manager APIs<br>권한이 필요한 System Manager API | `dash-droid-system-manager` |
+| System Manager APIs with Core permission helpers<br>System Manager API와 Core 권한 헬퍼를 함께 사용 | `dash-droid-system-manager` + `dash-droid-core` |
 
 <br></br>
 
@@ -85,12 +160,14 @@ This document explains the permission-related architecture of Simple UI, coverin
 - Normal permissions are treated as granted by design when declared in the manifest.
 - Special app access permissions such as overlay, usage stats, notification listener, and accessibility are handled through dedicated checks.
 - Manifest-declared permission reading is centralized through `Context.readDeclaredManifestPermissions()`.
+- The public import path is `kr.open.library.simple_ui.core.permissions.extensions.readDeclaredManifestPermissions`.
 
 > **동작 요약**
 > - 위험 권한은 런타임 API를 통해 확인합니다.
 > - 일반 권한은 Manifest에 선언되어 있으면 설계상 허용된 것으로 간주합니다.
 > - 오버레이, 사용 기록, 알림 접근, 접근성 같은 특수 앱 액세스 권한은 전용 체크 방식으로 처리합니다.
 > - Manifest 선언 권한 조회는 `Context.readDeclaredManifestPermissions()`로 공통화되어 있습니다.
+> - 공개 import 경로는 `kr.open.library.simple_ui.core.permissions.extensions.readDeclaredManifestPermissions`입니다.
 
 **Usage example (사용 예시):**
 ```kotlin
@@ -139,6 +216,13 @@ Simple UI provides `PermissionRequester` through Activity, Fragment, and Dialog 
 > - `saveState(outState)`
 
 **Request example**
+
+The example below uses `Logx` from `simple_core`; declare `dash-droid-core` together with
+`dash-droid-xml` when using the example as written.
+
+> 아래 예제는 `simple_core`의 `Logx`를 사용합니다. 예제를 그대로 사용한다면
+> `dash-droid-core`와 `dash-droid-xml`을 함께 직접 선언하세요.
+
 ```kotlin
 requestPermissions(
     permissions = listOf(
@@ -318,7 +402,7 @@ The table below summarizes feature-level permission requirements for `system_man
 | **LocationStateInfo**        | `ACCESS_FINE_LOCATION`<br>`ACCESS_COARSE_LOCATION`                   | ✅ | - |
 | **SimInfo**                  | `READ_PHONE_STATE`<br>`READ_PHONE_NUMBERS`<br>`ACCESS_FINE_LOCATION` | ✅ | - |
 | **TelephonyInfo**            | `READ_PHONE_STATE`<br>`READ_PHONE_NUMBERS`<br>`ACCESS_FINE_LOCATION` | ✅ | - |
-| **NetworkConnectivityInfo**  | `ACCESS_NETWORK_STATE`<br>`ACCESS_WIFI_STATE` (optional / 선택)        | - | - |
+| **NetworkConnectivityInfo**  | `ACCESS_NETWORK_STATE`<br>`ACCESS_WIFI_STATE` (WiFi state/summary only / WiFi 상태·요약 전용) | - | - |
 
 ### Battery State Info - `BATTERY_STATS` (System Only, Optional) (배터리 상태 정보 - 시스템 전용, 선택)
 BatteryStateInfo does not enforce `android.permission.BATTERY_STATS`. This is an optional system/privileged permission.
@@ -351,8 +435,13 @@ TelephonyInfo requires phone state, phone numbers, and fine location permissions
 See feature doc: [README_TELEPHONY_INFO.md](system_manager/info/core/README_TELEPHONY_INFO.md)
 
 ### Network Connectivity Info - Network State Permissions (네트워크 연결 정보 - 네트워크 상태 권한)
-NetworkConnectivityInfo requires network state permissions, and Wi-Fi state is optional.
-> NetworkConnectivityInfo는 네트워크 상태 권한이 필요하며, Wi-Fi 상태 권한은 선택입니다.
+NetworkConnectivityInfo requires `ACCESS_NETWORK_STATE` for connectivity queries and callbacks.
+`ACCESS_WIFI_STATE` is additionally required only for `isWifiEnabled()` and
+`getNetworkConnectivitySummary()`. Both are normal permissions declared in the manifest and do not
+require a runtime request.
+> NetworkConnectivityInfo의 연결성 조회와 콜백에는 `ACCESS_NETWORK_STATE`가 필요합니다.
+> `isWifiEnabled()`와 `getNetworkConnectivitySummary()`에는 `ACCESS_WIFI_STATE`도 필요합니다.
+> 두 권한 모두 Manifest에 선언하는 일반 권한이며 런타임 요청은 필요하지 않습니다.
 
 See feature doc: [README_NETWORK_INFO.md](system_manager/info/core/README_NETWORK_INFO.md)
 

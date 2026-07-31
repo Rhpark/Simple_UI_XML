@@ -8,7 +8,7 @@ import android.os.Build
 import android.provider.Settings
 import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
 import kr.open.library.simple_ui.core.permissions.extensions.hasPermission
-import kr.open.library.simple_ui.core.permissions.vo.PermissionConstants
+import kr.open.library.simple_ui.core.permissions.internal.PermissionPolicy
 
 /**
  * Handles special permission checks and settings intents.<br><br>
@@ -50,9 +50,9 @@ class SpecialPermissionHandler(
                 negativeWork = { null }
             )
         }
-        val action = PermissionConstants.SPECIAL_PERMISSION_ACTIONS[permission] ?: return null
+        val action = PermissionPolicy.specialPermissionActions[permission] ?: return null
         return Intent(action).apply {
-            if (PermissionConstants.PERMISSIONS_REQUIRING_PACKAGE_URI.contains(permission)) {
+            if (PermissionPolicy.permissionsRequiringPackageUri.contains(permission)) {
                 data = Uri.parse("package:${context.packageName}")
             }
         }

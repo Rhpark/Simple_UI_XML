@@ -1,9 +1,6 @@
 package kr.open.library.simple_ui.core.permissions.vo
 
-import android.Manifest
-import android.os.Build
-import android.provider.Settings
-import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
+import kr.open.library.simple_ui.core.permissions.internal.PermissionPolicy
 
 /**
  * Centralizes permission-related constants shared across the library.<br><br>
@@ -14,62 +11,26 @@ public object PermissionConstants {
      * Maps each special permission to the Settings action required to grant it.<br><br>
      * 특수 권한을 부여하기 위해 이동해야 하는 Settings 액션을 매핑합니다.<br>
      */
-    val SPECIAL_PERMISSION_ACTIONS: Map<String, String> = buildMap {
-        PermissionSpecialType.entries.forEach {
-            when (it) {
-                PermissionSpecialType.SYSTEM_ALERT_WINDOW -> put(it.permission, Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
-                PermissionSpecialType.WRITE_SETTINGS -> put(it.permission, Settings.ACTION_MANAGE_WRITE_SETTINGS)
-                PermissionSpecialType.PACKAGE_USAGE_STATS -> put(it.permission, Settings.ACTION_USAGE_ACCESS_SETTINGS)
-                PermissionSpecialType.BIND_ACCESSIBILITY_SERVICE -> put(it.permission, Settings.ACTION_ACCESSIBILITY_SETTINGS)
-                PermissionSpecialType.REQUEST_INSTALL_PACKAGES -> put(it.permission, Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES)
-                PermissionSpecialType.ACCESS_NOTIFICATION_POLICY -> put(it.permission, Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
-                PermissionSpecialType.BIND_NOTIFICATION_LISTENER_SERVICE -> put(
-                    it.permission,
-                    Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS,
-                )
-                PermissionSpecialType.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS -> put(
-                    it.permission,
-                    Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
-                )
-                else -> {
-                    checkSdkVersion(Build.VERSION_CODES.S) {
-                        if (it == PermissionSpecialType.SCHEDULE_EXACT_ALARM) {
-                            put(Manifest.permission.SCHEDULE_EXACT_ALARM, Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
-                        }
-                    }
-
-                    checkSdkVersion(Build.VERSION_CODES.R) {
-                        if (it == PermissionSpecialType.MANAGE_EXTERNAL_STORAGE) {
-                            put(Manifest.permission.MANAGE_EXTERNAL_STORAGE, Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
-                        }
-                    }
-                }
-            }
-        }
-    }
+    val SPECIAL_PERMISSION_ACTIONS: Map<String, String>
+        get() = PermissionPolicy.specialPermissionActions
 
     /**
      * Enumerates special permissions that require a package URI when launching settings.<br><br>
      * 설정 화면 호출 시 package URI가 필요한 특수 권한 목록입니다.<br>
      */
-    val PERMISSIONS_REQUIRING_PACKAGE_URI = buildSet<String> {
-        add(Manifest.permission.SYSTEM_ALERT_WINDOW)
-        add(Manifest.permission.WRITE_SETTINGS)
-        add(Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
-        add(Manifest.permission.REQUEST_INSTALL_PACKAGES)
-        checkSdkVersion(Build.VERSION_CODES.R) { add(Manifest.permission.MANAGE_EXTERNAL_STORAGE) }
-    }
+    val PERMISSIONS_REQUIRING_PACKAGE_URI: Set<String>
+        get() = PermissionPolicy.permissionsRequiringPackageUri
 
     /**
      * Groups permissions that only exist from specific API levels upward.<br><br>
      * 특정 API 레벨 이상에서만 존재하는 권한을 묶어둔 영역입니다.<br>
      *
      * **Structural limitation / 구조적 한계:**<br>
-     * These sets are maintained manually. Permissions not listed here fall through to `else → true`
+     * These sets are maintained manually by the internal permission policy. Permissions not listed here fall through to `else → true`
      * in [PermissionClassifier.isSupported], which treats them as universally supported.
      * When a new Android version introduces new dangerous permissions, the corresponding set
      * must be added here and a matching branch must be added to [PermissionClassifier.isSupported].<br><br>
-     * 이 집합들은 수동으로 관리됩니다. 여기에 없는 권한은 [PermissionClassifier.isSupported]의
+     * 이 공개 집합과 내부 권한 정책은 함께 수동으로 관리됩니다. 여기에 없는 권한은 [PermissionClassifier.isSupported]의
      * `else → true` 분기로 흘러 모든 API 레벨에서 지원되는 것처럼 처리됩니다.
      * 새 Android 버전에서 신규 dangerous 권한이 추가되면 해당 집합과 분기를 반드시 추가해야 합니다.<br>
      */
@@ -78,25 +39,29 @@ public object PermissionConstants {
          * Permissions that were introduced on Android R.<br><br>
          * Android R에서 추가된 권한 목록입니다.<br>
          */
-        val ANDROID_R_PERMISSIONS: Set<String> = setOf(Manifest.permission.MANAGE_EXTERNAL_STORAGE)
+        val ANDROID_R_PERMISSIONS: Set<String>
+            get() = PermissionPolicy.ApiLevelRequirements.androidRPermissions
 
         /**
          * Permissions that were introduced on Android S.<br><br>
          * Android S에서 추가된 권한 목록입니다.<br>
          */
-        val ANDROID_S_PERMISSIONS: Set<String> = setOf(Manifest.permission.SCHEDULE_EXACT_ALARM)
+        val ANDROID_S_PERMISSIONS: Set<String>
+            get() = PermissionPolicy.ApiLevelRequirements.androidSPermissions
 
         /**
          * Permissions that were introduced on Android 13 (Tiramisu).<br><br>
          * Android 13(Tiramisu)에서 추가된 권한 목록입니다.<br>
          */
-        val ANDROID_TIRAMISU_PERMISSIONS: Set<String> = setOf(Manifest.permission.POST_NOTIFICATIONS)
+        val ANDROID_TIRAMISU_PERMISSIONS: Set<String>
+            get() = PermissionPolicy.ApiLevelRequirements.androidTiramisuPermissions
 
         /**
          * Permissions that were introduced on Android 14 (U).<br><br>
          * Android 14(U)에서 추가된 권한 목록입니다.<br>
          */
-        val ANDROID_U_PERMISSIONS: Set<String> = setOf(Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED)
+        val ANDROID_U_PERMISSIONS: Set<String>
+            get() = PermissionPolicy.ApiLevelRequirements.androidUPermissions
     }
 
     /**

@@ -9,6 +9,15 @@ import kr.open.library.simple_ui.core.permissions.model.PermissionDecisionType
  * UI 비의존 순수 로직 단일 출처입니다. simple_xml / simple_compose가 공유합니다.<br>
  * Single source of UI-independent pure logic shared by simple_xml / simple_compose.<br>
  *
+ * Design note: kept here on purpose. The `PERMANENTLY_DENIED` derivation and the [mapResult]
+ * `isRestored` downgrade are subtle, so a per-stack copy would drift and make XML and Compose report
+ * different decisions for the same platform state. The rule has no UI dependency, so it lives in
+ * `core` that both stacks already depend on. XML and Compose must call this instead of reimplementing.<br><br>
+ * 설계 노트: 의도적으로 여기에 둡니다. `PERMANENTLY_DENIED` 도출과 [mapResult]의 `isRestored`
+ * 강등은 미묘해서, 스택별로 복제하면 서로 어긋나 같은 플랫폼 상태에 대해 XML과 Compose가 다른
+ * 결정을 보고하게 됩니다. 이 규칙은 UI 의존이 없어 두 스택이 이미 의존하는 `core`에 둡니다. XML과
+ * Compose는 재구현하지 않고 이를 호출해야 합니다.<br>
+ *
  * @param requestedHistory Mutable set tracking previously requested permissions (owned by the caller for save/restore).<br><br>
  *                         이전 요청 이력을 추적하는 가변 집합입니다(저장/복원을 위해 호출부가 소유).<br>
  */
