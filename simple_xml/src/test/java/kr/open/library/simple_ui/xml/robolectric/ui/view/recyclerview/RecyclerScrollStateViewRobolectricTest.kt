@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ApplicationProvider
 import kotlinx.coroutines.runBlocking
+import kr.open.library.simple_ui.xml.R
 import kr.open.library.simple_ui.xml.ui.view.recyclerview.OnEdgeReachedListener
 import kr.open.library.simple_ui.xml.ui.view.recyclerview.OnScrollDirectionChangedListener
 import kr.open.library.simple_ui.xml.ui.view.recyclerview.RecyclerScrollStateView
@@ -18,12 +19,18 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertSame
+import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.ArgumentMatchers.anyInt
+import org.mockito.Mockito.doReturn
+import org.mockito.Mockito.spy
+import org.mockito.Mockito.verify
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import org.xmlpull.v1.XmlPullParser
 
 /**
  * Robolectric tests for RecyclerScrollStateView
@@ -846,6 +853,32 @@ class RecyclerScrollStateViewRobolectricTest {
 
         // Then - should use default thresholds and not crash
         assertNotNull(view)
+    }
+
+    @Test
+    fun initTypeArray_whenThresholdValidationFails_recyclesTypedArray() {
+        val attrs = context.resources.getLayout(android.R.layout.simple_list_item_1)
+        try {
+            while (attrs.eventType != XmlPullParser.START_TAG) {
+                attrs.next()
+            }
+            val typedArray = spy(context.obtainStyledAttributes(attrs, R.styleable.RecyclerScrollStateView))
+            doReturn(-1)
+                .`when`(typedArray)
+                .getInt(anyInt(), anyInt())
+            val trackingContext = spy(context)
+            doReturn(typedArray)
+                .`when`(trackingContext)
+                .obtainStyledAttributes(attrs, R.styleable.RecyclerScrollStateView)
+
+            assertThrows(IllegalArgumentException::class.java) {
+                RecyclerScrollStateView(trackingContext, attrs)
+            }
+
+            verify(typedArray).recycle()
+        } finally {
+            attrs.close()
+        }
     }
 
     // ==============================================

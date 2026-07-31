@@ -143,17 +143,25 @@ public open class RecyclerScrollStateView : RecyclerView {
      *              XML의 속성 집합.<br>
      */
     private fun initTypeArray(attrs: AttributeSet?) {
-        attrs?.let {
-            context.obtainStyledAttributes(it, R.styleable.RecyclerScrollStateView).apply {
-                setScrollDirectionThreshold(
-                    getInt(R.styleable.RecyclerScrollStateView_scrollDirectionThreshold, DEFAULT_SCROLL_DIRECTION_THRESHOLD),
-                )
+        if (attrs == null) return
 
-                setEdgeReachThreshold(
-                    getInt(R.styleable.RecyclerScrollStateView_edgeReachThreshold, DEFAULT_EDGE_REACH_THRESHOLD),
-                )
-                recycle()
-            }
+        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.RecyclerScrollStateView)
+        try {
+            setScrollDirectionThreshold(
+                typedArray.getInt(
+                    R.styleable.RecyclerScrollStateView_scrollDirectionThreshold,
+                    DEFAULT_SCROLL_DIRECTION_THRESHOLD,
+                ),
+            )
+
+            setEdgeReachThreshold(
+                typedArray.getInt(
+                    R.styleable.RecyclerScrollStateView_edgeReachThreshold,
+                    DEFAULT_EDGE_REACH_THRESHOLD,
+                ),
+            )
+        } finally {
+            typedArray.recycle()
         }
     }
 
