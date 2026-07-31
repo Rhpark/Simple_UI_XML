@@ -126,10 +126,10 @@ android {
 dependencies {
     // Core dependencies only (no UI)
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.viewmodel)
-    implementation(libs.androidx.lifecycle.common)
+    api(libs.androidx.lifecycle.viewmodel)
+    api(libs.androidx.lifecycle.common)
     implementation(libs.androidx.lifecycle.process)
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
+    api("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
 
     // Dokka - Document
     dokkaPlugin("org.jetbrains.dokka:android-documentation-plugin:2.1.0")
@@ -189,23 +189,6 @@ kover {
                 classes("**.BR")
                 classes("**.DataBinderMapperImpl*") // *로 Inner 클래스까지 함께 제외
                 classes("**.DataBindingTriggerClass")
-
-                /*******************************
-                 *   Android OS 에 종속 인 부분  *
-                 * 통합 테스트 단위에서 태스트 예정 *
-                 *******************************/
-
-                classes("kr.open.library.simple_ui.core.logcat.ILogx*")
-                classes("kr.open.library.simple_ui.core.logcat.extensions.LogxExtensions*")
-                classes("kr.open.library.simple_ui.core.logcat.Logx*")
-                classes("kr.open.library.simple_ui.core.logcat.runtime.LogxWriter*")
-                classes("kr.open.library.simple_ui.core.extensions.display.DisplayUnitExtensions*")
-
-                classes("kr.open.library.simple_ui.core.system_manager.controller.alarm.receiver.BaseAlarmReceiver*")
-                // BatteryStateInfo tests completed - coverage enabled
-                classes("kr.open.library.simple_ui.core.system_manager.info.battery.power.PowerProfile*")
-                classes("kr.open.library.simple_ui.core.system_manager.info.location.LocationStateInfo*")
-                classes("kr.open.library.simple_ui.core.system_manager.info.network.sim.SimInfo*")
             }
         }
     }

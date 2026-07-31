@@ -1,6 +1,7 @@
 import org.gradle.api.tasks.testing.Test
 import com.vanniktech.maven.publish.MavenPublishBaseExtension
 import com.vanniktech.maven.publish.SonatypeHost
+import java.io.File
 
 plugins {
     alias(libs.plugins.android.library)
@@ -119,15 +120,16 @@ android {
 }
 
 dependencies {
-    // Core module dependency
-    implementation(project(":simple_core"))
+    // 공개 API가 노출하는 Core 의존성
+    api(project(":simple_core"))
 
-    // UI dependencies
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
-    implementation(libs.androidx.activity)
-    implementation(libs.androidx.constraintlayout)
+    // 공개 API가 노출하는 UI 의존성
+    api(libs.androidx.appcompat)
+    api(libs.material)
+    api(libs.androidx.activity)
+    api(libs.androidx.constraintlayout)
     api(libs.androidx.recyclerview)
+    api(libs.androidx.lifecycle.common)
 
     // Lifecycle (XML에서 필요한 추가 라이프사이클)
     implementation(libs.androidx.lifecycle.process)
@@ -166,23 +168,6 @@ kover {
 
                 classes("**.DataBinderMapperImpl*") // *로 Inner 클래스까지 함께 제외
                 classes("**.DataBindingTriggerClass")
-
-                // 2. 베이스 컴포넌트(단위 테스트 어려움)
-                classes("kr.open.library.simple_ui.xml.ui.activity.RootActivity*")
-                classes("kr.open.library.simple_ui.xml.ui.activity.BaseActivity*")
-                classes("kr.open.library.simple_ui.xml.ui.activity.BaseBindingActivity*")
-                classes("kr.open.library.simple_ui.xml.ui.fragment.RootFragment*")
-                classes("kr.open.library.simple_ui.xml.ui.fragment.BaseFragment*")
-                classes("kr.open.library.simple_ui.xml.ui.fragment.BaseBindingFragment*")
-                classes("kr.open.library.simple_ui.xml.ui.fragment.dialog.RootDialogFragment*")
-                classes("kr.open.library.simple_ui.xml.ui.fragment.dialog.BaseDialogFragment*")
-                classes("kr.open.library.simple_ui.xml.ui.fragment.dialog.BaseBindingDialogFragment*")
-                classes("kr.open.library.simple_ui.xml.system_manager.controller.window.*")
-                // 3. Lifecycle 커스텀 Layout
-                classes("kr.open.library.simple_ui.core.logcat.extensions.LogxExtensions*")
-                classes("kr.open.library.simple_ui.core.extensions.display.DisplayUnitExtensions*")
-                classes("kr.open.library.simple_ui.core.system_manager.controller.alarm.*")
-                classes("kr.open.library.simple_ui.xml.permissions.register.*")
             }
         }
     }
@@ -244,4 +229,85 @@ tasks.register("testAll") {
     group = "verification"
 
     dependsOn("testUnit", "testRobolectric")
+}
+
+// Android 리소스 공개 API 기준선
+val releaseResourceSymbols =
+    layout.buildDirectory.file("intermediates/compile_symbol_list/release/generateReleaseRFile/R.txt")
+val resourceApiBaseline = layout.projectDirectory.file("api/simple_xml-resources.api")
+
+fun readCompiledResourceSymbols(file: File): List<String> =
+    file.useLines(Charsets.UTF_8) { lines ->
+        lines
+            .filter { it.isNotBlank() }
+            .map { line ->
+                val parts = line.trim().split(Regex("\\s+"), limit = 4)
+                require(parts.size >= 3) { "Invalid Android resource symbol: $line" }
+                "${parts[1]} ${parts[2]}"
+            }.distinct()
+            .sorted()
+            .toList()
+    }
+
+fun readResourceApiBaseline(file: File): List<String> =
+    file
+        .readLines(Charsets.UTF_8)
+        .map(String::trim)
+        .filter(String::isNotEmpty)
+        .distinct()
+        .sorted()
+
+val resourceApiDump = tasks.register("resourceApiDump") {
+    group = "verification"
+    description = "Updates the simple_xml Android resource API baseline"
+    dependsOn("generateReleaseRFile")
+
+    inputs.file(releaseResourceSymbols)
+    outputs.file(resourceApiBaseline)
+
+    doLast {
+        val symbols = readCompiledResourceSymbols(releaseResourceSymbols.get().asFile)
+        resourceApiBaseline.asFile.apply {
+            parentFile.mkdirs()
+            writeText(symbols.joinToString(separator = "\n", postfix = "\n"), Charsets.UTF_8)
+        }
+    }
+}
+
+val resourceApiCheck = tasks.register("resourceApiCheck") {
+    group = "verification"
+    description = "Checks the simple_xml Android resource API baseline"
+    dependsOn("generateReleaseRFile")
+
+    inputs.file(releaseResourceSymbols)
+    inputs.file(resourceApiBaseline)
+
+    doLast {
+        val expected = readResourceApiBaseline(resourceApiBaseline.asFile)
+        val actual = readCompiledResourceSymbols(releaseResourceSymbols.get().asFile)
+        if (expected != actual) {
+            val expectedSet = expected.toSet()
+            val actualSet = actual.toSet()
+            val removedOrRenamed = expected.filterNot(actualSet::contains)
+            val added = actual.filterNot(expectedSet::contains)
+            throw GradleException(
+                buildString {
+                    appendLine("simple_xml Android resource API differs from its baseline.")
+                    if (removedOrRenamed.isNotEmpty()) {
+                        appendLine("Removed or renamed resources:")
+                        removedOrRenamed.forEach { appendLine("- $it") }
+                    }
+                    if (added.isNotEmpty()) {
+                        appendLine("Added resources:")
+                        added.forEach { appendLine("+ $it") }
+                    }
+                    append("Run :simple_xml:resourceApiDump only when the resource API change is intentional.")
+                },
+            )
+        }
+    }
+}
+
+tasks.matching { it.name == "apiCheck" }.configureEach {
+    dependsOn(resourceApiCheck)
 }

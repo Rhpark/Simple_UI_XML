@@ -4,8 +4,10 @@
  - **Maven 좌표**: JitPack `com.github.Rhpark:Simple_UI_Compose` / Maven Central `io.github.rhpark:dash-droid-compose` (appVersion 공유)
 
 
- ## 기능 설계 문서
-  - 모듈 신설 PRD/SPEC/PLAN: docs/agents/output/plan/260611_135832/ (260611_135832_PRD.md / SPEC.md / PLAN.md)
+ ## 기능 및 감사 문서
+  - 공개 API 감사: simple_compose/docs/public_api/PUBLIC_API_AUDIT.md
+  - 소비자 가이드: docs/readme/README_COMPOSE.md
+  - 권한 공통 가이드: docs/readme/README_PERMISSION.md
 
 
  ## 모듈 정의

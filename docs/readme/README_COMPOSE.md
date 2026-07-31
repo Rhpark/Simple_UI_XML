@@ -10,9 +10,11 @@
 > - **Maven Central**: `io.github.rhpark:dash-droid-compose:0.5.1`
 > - **역할**: Compose 화면에서 권한, ViewModel 이벤트/effect Flow 수집, 시스템 바, LazyList 스크롤 상태 처리의 보일러플레이트를 줄입니다.
 
-`simple_core` is provided as a transitive dependency. Add it directly only when app source code imports Core APIs or Core model types.
+`simple_core` is provided as a transitive dependency. Add it directly when app source code calls
+Core APIs, inherits Core classes, or references Core model types.
 
-> `simple_core`는 전이 의존성으로 제공됩니다. 앱 코드에서 Core API나 Core 모델 타입을 직접 import하는 경우에만 별도로 추가하세요.
+> `simple_core`는 전이 의존성으로 제공됩니다. 앱 코드에서 Core API를 호출하거나 Core 클래스를
+> 상속하거나 Core 모델 타입을 참조하면 직접 의존성으로 추가하세요.
 
 ## Installation (설치)
 
@@ -28,6 +30,17 @@ android {
 }
 
 dependencies {
+    implementation("io.github.rhpark:dash-droid-compose:0.5.1")
+}
+```
+
+When app source code also uses Core APIs or model types, declare both modules directly.
+
+> 앱 소스 코드에서 Core API나 모델 타입도 함께 사용하면 두 모듈을 모두 직접 선언하세요.
+
+```kotlin
+dependencies {
+    implementation("io.github.rhpark:dash-droid-core:0.5.1")
     implementation("io.github.rhpark:dash-droid-compose:0.5.1")
 }
 ```
@@ -128,6 +141,12 @@ Both XML and Compose share result types, pre-check policy, and denied-item creat
 `CollectVmEvent` makes it explicit that the collected Flow is a one-time UI event from `BaseViewModelEvent`.
 
 > `CollectVmEvent`는 `BaseViewModelEvent`에서 전달되는 값이 단발 UI 이벤트라는 의도를 호출부에서 명확하게 표현합니다.
+
+`BaseViewModelEvent` is owned by `simple_core`. Apps using `CollectVmEvent` should declare both
+`dash-droid-core` and `dash-droid-compose` directly.
+
+> `BaseViewModelEvent`는 `simple_core`가 소유합니다. `CollectVmEvent`를 사용하는 앱은
+> `dash-droid-core`와 `dash-droid-compose`를 모두 직접 선언하세요.
 
 ```kotlin
 viewModel.CollectVmEvent { event ->

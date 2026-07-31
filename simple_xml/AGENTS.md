@@ -9,7 +9,9 @@
  ## 기능별 전용 규칙
 
   - ui/adapter (행동 규칙 포함): simple_xml/docs/feature/ui/adapter/AGENTS.md
+  - ui/layout (현행 설계 문서): simple_xml/docs/feature/ui/layout/
   - permissions (리팩터링 계획): simple_xml/docs/feature/permissions/
+  - 공개 API 감사: simple_xml/docs/public_api/PUBLIC_API_AUDIT.md
 
 
  ## 모듈 정의
@@ -39,19 +41,22 @@
 
 
 
- ## 주요 패키지 구조 (총 125개 파일)
+ ## 주요 패키지 구조
 
-  ### ui/activity
+  ### ui/components/activity
    - **RootActivity**: 시스템 바 제어, 권한 관리 기본 클래스 (simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/components/activity/root/RootActivity.kt)
    - **BaseActivity**: 자동 레이아웃 바인딩 (simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/components/activity/normal/BaseActivity.kt)
    - **BaseDataBindingActivity**: DataBinding 자동 바인딩 (simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/components/activity/binding/BaseDataBindingActivity.kt)
    - StatusBar/NavigationBar 색상 제어, Edge-to-edge 대응
 
 
-  ### ui/fragment
-   - **BaseFragment**: Fragment 자동 레이아웃 바인딩 (simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/fragment/)
+  ### ui/components/fragment
+   - **BaseFragment**: Fragment 자동 레이아웃 바인딩 (simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/components/fragment/)
    - **BaseDataBindingFragment**: DataBinding Fragment
-   - **dialog**: DialogFragment 기본 구현 (simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/fragment/dialog/)
+
+
+  ### ui/components/dialog
+   - **DialogFragment 계열**: 일반, DataBinding, ViewBinding 기반 구현 (simple_xml/src/main/java/kr/open/library/simple_ui/xml/ui/components/dialog/)
 
 
   ### ui/adapter
@@ -109,7 +114,8 @@
 
   ### 3. Adapter 업데이트 전략 분리
    - list 패키지(`BaseRcvListAdapter`)는 DiffUtil + 큐 기반으로 리스트 연산(add, remove, update)을 순차 처리
-   - normal 패키지(`BaseRcvAdapter`, `HeaderFooterRcvAdapter`)는 내부 리스트를 즉시 갱신하고 notify 계열 API로 반영
+   - normal 패키지(`BaseRcvAdapter`)는 내부 리스트를 즉시 갱신하고 notify 계열 API로 반영
+   - Header / Content / Footer는 `BaseRcvAdapter`와 sealed interface item 패턴으로 표현
    - normal/list를 분리해 동기화 안정성, 실패 전달 방식, 업데이트 비용의 트레이드오프를 명확히 관리
 
 
@@ -213,10 +219,10 @@
    - queue policy를 통해 backpressure 동작 제어 가능
 
 
-  ### RootRcvAdapter / BaseRcvAdapter / HeaderFooterRcvAdapter
+  ### RootRcvAdapter / BaseRcvAdapter
    - `RootRcvAdapter`: normal 어댑터 공통 기반, 스레드 가드/클릭/legacy bridge 공통 처리
-   - `BaseRcvAdapter`: content 전용 normal 어댑터
-   - `HeaderFooterRcvAdapter`: Header / Content / Footer 섹션을 포함하는 normal 어댑터
+   - `BaseRcvAdapter`: 즉시 반영형 목록 어댑터
+   - Header / Content / Footer는 item을 sealed interface로 정의하여 처리
 
 
   ### RecyclerScrollStateView

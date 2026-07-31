@@ -8,6 +8,7 @@
 
  ## 기능별 전용 규칙
 
+- 공개 API 감사: simple_core/docs/public_api/PUBLIC_API_AUDIT.md
 - permissions (행동 규칙 포함): simple_core/docs/feature/permissions/AGENTS.md
 - logcat
   - 사용법: docs/readme/README_LOGX.md
@@ -43,7 +44,7 @@
 
 
 
- ## 주요 패키지 구조 (총 119개 파일)
+ ## 주요 패키지 구조 (main Kotlin 소스 총 52개 파일)
 
   ### extensions (8개 하위 패키지)
    - **bundle**: Bundle 생성/접근 간편화 (simple_core/src/main/java/kr/open/library/simple_ui/core/extensions/bundle/BundleInline.kt)
@@ -64,7 +65,7 @@
 
 
   ### permissions
-   - **Context 확장 기반 권한 체크** (simple_core/src/main/java/kr/open/library/simple_ui/core/permissions/extentions/PermissionExtensions.kt)
+   - **Context 확장 기반 권한 체크** (simple_core/src/main/java/kr/open/library/simple_ui/core/permissions/extensions/PermissionExtensions.kt)
    - 일반 권한 + 특수 권한(SYSTEM_ALERT_WINDOW, WRITE_SETTINGS 등) 통합 처리
    - 권한 VO 모델 (simple_core/src/main/java/kr/open/library/simple_ui/core/permissions/vo/)
    - simple_xml의 PermissionRequester가 이 레이어를 사용
@@ -135,13 +136,6 @@
 
 
  ## 주요 클래스 역할 요약
-
-  ### BaseSystemService
-   - 모든 시스템 서비스의 기본 클래스
-   - 권한 자동 검증 및 갱신
-   - tryCatchSystemManager로 안전한 실행
-   - 예제: LocationStateInfo, WifiController
-
 
   ### Logx
    - DSL 기반 로깅 설정

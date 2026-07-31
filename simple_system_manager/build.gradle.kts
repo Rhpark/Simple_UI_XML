@@ -121,7 +121,8 @@ android {
 }
 
 dependencies {
-    implementation(project(":simple_core"))
+    // 공개 API가 노출하는 Core 의존성
+    api(project(":simple_core"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
