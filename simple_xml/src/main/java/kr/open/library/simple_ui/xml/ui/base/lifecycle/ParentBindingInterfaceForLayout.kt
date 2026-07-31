@@ -16,15 +16,13 @@ interface ParentBindingInterfaceForLayout<BINDING : ViewBinding> :
     ParentBindingInterface<BINDING>,
     DefaultLifecycleObserver {
     /**
-     * Called when the binding is initialized in onCreate().<br>
+     * Called when a new binding is initialized after the layout is attached.<br>
      * Implement setup logic that requires binding here.<br><br>
-     * onCreate에서 바인딩이 초기화된 후 호출됩니다.<br>
+     * 레이아웃이 attach된 후 새 바인딩이 초기화되면 호출됩니다.<br>
      * 바인딩이 필요한 초기화 로직을 여기서 수행하세요.<br>
      *
      * @param binding The initialized ViewBinding instance.<br><br>
      *                초기화된 ViewBinding 인스턴스.<br>
-     * @param savedInstanceState Saved instance state, if available.<br><br>
-     *                           저장된 상태가 있다면 해당 Bundle.<br>
      */
     fun onInitBind(binding: BINDING) {}
 }

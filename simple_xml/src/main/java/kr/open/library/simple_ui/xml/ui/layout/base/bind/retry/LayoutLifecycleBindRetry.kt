@@ -42,11 +42,13 @@ internal class LayoutLifecycleBindRetry(
         override fun run() {
             if (!started) return
             if (!view.isAttachedToWindow) return
+            if (retryCount >= maxRetry) return
+
+            retryCount++
             val owner = callbacks.bind()
             if (owner != null) return
 
             if (retryCount < maxRetry) {
-                retryCount++
                 view.postDelayed(this, retryDelayMs)
             }
         }
@@ -66,7 +68,9 @@ internal class LayoutLifecycleBindRetry(
             if (retryOwner != null) return@doOnLayout
 
             retryCount = 0
-            view.postDelayed(retryRunnable, retryDelayMs)
+            if (maxRetry > 0) {
+                view.postDelayed(retryRunnable, retryDelayMs)
+            }
         }
     }
 
