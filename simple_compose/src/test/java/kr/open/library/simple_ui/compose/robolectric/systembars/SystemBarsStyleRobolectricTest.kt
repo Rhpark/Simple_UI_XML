@@ -1,5 +1,7 @@
 package kr.open.library.simple_ui.compose.robolectric.systembars
 
+import androidx.activity.compose.LocalActivity
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -138,5 +140,58 @@ class SystemBarsStyleRobolectricTest {
             "Composable 이탈 후 isAppearanceLightStatusBars가 원래 값(false)으로 복원되어야 합니다",
             controller.isAppearanceLightStatusBars,
         )
+    }
+
+    @Test
+    fun `SystemBarsStyle restores status and navigation appearances independently`() {
+        val window = composeTestRule.activity.window
+        val view = window.decorView
+        val controller = WindowCompat.getInsetsController(window, view)
+        composeTestRule.runOnUiThread {
+            controller.isAppearanceLightStatusBars = false
+            controller.isAppearanceLightNavigationBars = true
+        }
+
+        var showStyle by mutableStateOf(true)
+        composeTestRule.setContent {
+            if (showStyle) {
+                SystemBarsStyle(
+                    statusBarDarkIcons = true,
+                    navigationBarDarkIcons = false,
+                )
+            }
+        }
+        composeTestRule.waitForIdle()
+        assertTrue(controller.isAppearanceLightStatusBars)
+        assertFalse(controller.isAppearanceLightNavigationBars)
+
+        composeTestRule.runOnUiThread {
+            showStyle = false
+        }
+        composeTestRule.waitForIdle()
+
+        assertFalse(controller.isAppearanceLightStatusBars)
+        assertTrue(controller.isAppearanceLightNavigationBars)
+    }
+
+    @Test
+    fun `SystemBarsStyle without an Activity window leaves appearances unchanged`() {
+        val window = composeTestRule.activity.window
+        val view = window.decorView
+        val controller = WindowCompat.getInsetsController(window, view)
+        composeTestRule.runOnUiThread {
+            controller.isAppearanceLightStatusBars = false
+            controller.isAppearanceLightNavigationBars = false
+        }
+
+        composeTestRule.setContent {
+            CompositionLocalProvider(LocalActivity provides null) {
+                SystemBarsStyle(statusBarDarkIcons = true)
+            }
+        }
+        composeTestRule.waitForIdle()
+
+        assertFalse(controller.isAppearanceLightStatusBars)
+        assertFalse(controller.isAppearanceLightNavigationBars)
     }
 }

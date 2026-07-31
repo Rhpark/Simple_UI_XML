@@ -25,6 +25,18 @@ class ScrollDirectionCalculatorTest {
     }
 
     @Test
+    fun `zero delta with zero threshold keeps the previous direction`() {
+        val result = resolveScrollDirection(
+            accumulatedDelta = 0,
+            thresholdPx = 0,
+            isVertical = true,
+            previousDirection = ScrollDirection.DOWN,
+        )
+
+        assertEquals(ScrollDirection.DOWN, result)
+    }
+
+    @Test
     fun `negative threshold is rejected`() {
         assertThrows(IllegalArgumentException::class.java) {
             validateThresholdPx(-1)

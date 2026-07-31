@@ -673,6 +673,42 @@ class PermissionRequestStateRobolectricTest {
     }
 
     @Test
+    fun `gated settings request without a launcher completes after consent`() {
+        val state = PermissionRequestState(
+            context = application,
+            activity = null,
+            permissions = listOf(Manifest.permission.SYSTEM_ALERT_WINDOW),
+            gateSettingsNavigation = true,
+        )
+
+        var result: List<PermissionDeniedItem>? = null
+        composeTestRule.runOnUiThread {
+            state.request { result = it }
+        }
+        assertEquals(
+            Manifest.permission.SYSTEM_ALERT_WINDOW,
+            state.settingsNavigationRequired,
+        )
+
+        composeTestRule.runOnUiThread {
+            state.continueSettingsNavigation()
+        }
+        composeTestRule.waitForIdle()
+
+        assertEquals(
+            listOf(
+                PermissionDeniedItem(
+                    Manifest.permission.SYSTEM_ALERT_WINDOW,
+                    PermissionDeniedType.FAILED_TO_LAUNCH_SETTINGS,
+                ),
+            ),
+            result,
+        )
+        assertEquals(PermissionRequestPhase.COMPLETED, state.phase)
+        assertFalse(state.isRequesting)
+    }
+
+    @Test
     fun `runtime result delivered after restoration mid-dialog updates state without deadlock`() {
         // 적대적 리뷰 테스트 공백 보강: 다이얼로그 표시 중 회전 → 복원 후 결과 재전달 →
         // 콜백 없이 State만 갱신(isRestored 보호로 DENIED)되고 흐름이 교착되지 않아야 한다
@@ -766,6 +802,115 @@ class PermissionRequestStateRobolectricTest {
             listOf(Manifest.permission.CAMERA, Manifest.permission.SYSTEM_ALERT_WINDOW),
             state.permissions,
         )
+    }
+
+    // -----------------------------------------------------------------------
+    // 잘못된 호출·중복 결과 방어
+    // Invalid-call and duplicate-result guards
+    // -----------------------------------------------------------------------
+
+    @Test
+    fun `decision methods without a pending decision leave the state unchanged`() {
+        lateinit var state: PermissionRequestState
+        composeTestRule.setContent {
+            state = rememberPermissionRequestState(listOf(Manifest.permission.CAMERA))
+        }
+        composeTestRule.waitForIdle()
+
+        composeTestRule.runOnUiThread {
+            state.continueRequest()
+            state.cancelRequest()
+            state.continueSettingsNavigation()
+            state.cancelSettingsNavigation()
+        }
+        composeTestRule.waitForIdle()
+
+        assertEquals(PermissionRequestPhase.IDLE, state.phase)
+        assertFalse(state.isRequesting)
+        assertTrue(state.rationaleRequired.isEmpty())
+        assertNull(state.settingsNavigationRequired)
+        assertTrue(state.deniedItems.isEmpty())
+    }
+
+    @Test
+    fun `duplicate request while runtime dialog is active keeps the first callback`() {
+        lateinit var state: PermissionRequestState
+        composeTestRule.setContent {
+            state = rememberPermissionRequestState(listOf(Manifest.permission.CAMERA))
+        }
+        composeTestRule.waitForIdle()
+
+        var firstResult: List<PermissionDeniedItem>? = null
+        var secondResult: List<PermissionDeniedItem>? = null
+        composeTestRule.runOnUiThread {
+            state.request { firstResult = it }
+            state.request { secondResult = it }
+        }
+        composeTestRule.waitForIdle()
+
+        assertEquals(PermissionRequestPhase.REQUESTING, state.phase)
+        assertNotNull(shadowOf(composeTestRule.activity).lastRequestedPermission)
+
+        deliverRuntimeResult(granted = false)
+        composeTestRule.waitForIdle()
+
+        assertEquals(
+            listOf(PermissionDeniedItem(Manifest.permission.CAMERA, PermissionDeniedType.DENIED)),
+            firstResult,
+        )
+        assertNull(secondResult)
+    }
+
+    @Test
+    fun `missing runtime result is rechecked and completes without a silent omission`() {
+        lateinit var state: PermissionRequestState
+        composeTestRule.setContent {
+            state = rememberPermissionRequestState(listOf(Manifest.permission.CAMERA))
+        }
+        composeTestRule.waitForIdle()
+
+        var result: List<PermissionDeniedItem>? = null
+        composeTestRule.runOnUiThread {
+            state.request { result = it }
+        }
+        composeTestRule.waitForIdle()
+
+        composeTestRule.runOnUiThread {
+            state.handleRuntimeResult(emptyMap())
+        }
+        composeTestRule.waitForIdle()
+
+        assertEquals(
+            listOf(PermissionDeniedItem(Manifest.permission.CAMERA, PermissionDeniedType.DENIED)),
+            result,
+        )
+        assertEquals(PermissionRequestPhase.COMPLETED, state.phase)
+        assertFalse(state.isRequesting)
+    }
+
+    @Test
+    fun `late runtime and settings results do not overwrite the latest completed result`() {
+        lateinit var state: PermissionRequestState
+        composeTestRule.setContent {
+            state = rememberPermissionRequestState(emptyList())
+        }
+        composeTestRule.waitForIdle()
+
+        composeTestRule.runOnUiThread {
+            state.request { }
+        }
+        composeTestRule.waitForIdle()
+        val completedResult = state.deniedItems
+
+        composeTestRule.runOnUiThread {
+            state.handleRuntimeResult(mapOf(Manifest.permission.CAMERA to true))
+            state.handleSettingsResult()
+        }
+        composeTestRule.waitForIdle()
+
+        assertEquals(completedResult, state.deniedItems)
+        assertEquals(PermissionRequestPhase.COMPLETED, state.phase)
+        assertFalse(state.isRequesting)
     }
 
     // -----------------------------------------------------------------------

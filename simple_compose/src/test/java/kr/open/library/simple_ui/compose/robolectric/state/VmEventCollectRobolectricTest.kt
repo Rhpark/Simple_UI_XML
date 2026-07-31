@@ -1,14 +1,20 @@
 package kr.open.library.simple_ui.compose.robolectric.state
 
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleRegistry
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.onStart
 import kr.open.library.simple_ui.compose.state.CollectAsEffect
 import kr.open.library.simple_ui.compose.state.CollectVmEvent
 import kr.open.library.simple_ui.core.viewmodel.BaseViewModelEvent
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -39,6 +45,17 @@ class VmEventCollectRobolectricTest {
 
     private class TestIntViewModel : BaseViewModelEvent<Int>() {
         fun emit(value: Int) = sendEventVm(value)
+    }
+
+    private class ManualLifecycleOwner : LifecycleOwner {
+        private val registry = LifecycleRegistry(this)
+
+        override val lifecycle: Lifecycle
+            get() = registry
+
+        fun moveTo(state: Lifecycle.State) {
+            registry.currentState = state
+        }
     }
 
     // -----------------------------------------------------------------------
@@ -181,5 +198,101 @@ class VmEventCollectRobolectricTest {
 
         composeTestRule.waitUntil(timeoutMillis = 3_000) { received.value != null }
         assertEquals("resumed-event", received.value)
+    }
+
+    @Test
+    fun `CollectAsEffect stops below STARTED and restarts when lifecycle becomes active`() {
+        val sharedFlow = MutableSharedFlow<String>(extraBufferCapacity = 1)
+        val received = mutableListOf<String>()
+        val lifecycleOwner = ManualLifecycleOwner()
+        composeTestRule.runOnIdle {
+            lifecycleOwner.moveTo(Lifecycle.State.CREATED)
+        }
+
+        composeTestRule.setContent {
+            CompositionLocalProvider(LocalLifecycleOwner provides lifecycleOwner) {
+                sharedFlow.CollectAsEffect { value ->
+                    received += value
+                }
+            }
+        }
+        composeTestRule.waitForIdle()
+        assertEquals(0, sharedFlow.subscriptionCount.value)
+
+        composeTestRule.runOnIdle {
+            lifecycleOwner.moveTo(Lifecycle.State.STARTED)
+        }
+        composeTestRule.waitUntil(timeoutMillis = 3_000) {
+            sharedFlow.subscriptionCount.value == 1
+        }
+        composeTestRule.runOnIdle {
+            sharedFlow.tryEmit("started")
+        }
+        composeTestRule.waitUntil(timeoutMillis = 3_000) {
+            received == listOf("started")
+        }
+
+        composeTestRule.runOnIdle {
+            lifecycleOwner.moveTo(Lifecycle.State.CREATED)
+        }
+        composeTestRule.waitUntil(timeoutMillis = 3_000) {
+            sharedFlow.subscriptionCount.value == 0
+        }
+        composeTestRule.runOnIdle {
+            sharedFlow.tryEmit("stopped")
+        }
+        composeTestRule.waitForIdle()
+        assertEquals(listOf("started"), received)
+
+        composeTestRule.runOnIdle {
+            lifecycleOwner.moveTo(Lifecycle.State.STARTED)
+        }
+        composeTestRule.waitUntil(timeoutMillis = 3_000) {
+            sharedFlow.subscriptionCount.value == 1
+        }
+        composeTestRule.runOnIdle {
+            sharedFlow.tryEmit("restarted")
+        }
+        composeTestRule.waitUntil(timeoutMillis = 3_000) {
+            received == listOf("started", "restarted")
+        }
+    }
+
+    @Test
+    fun `CollectAsEffect uses the latest callback without restarting collection`() {
+        val sharedFlow = MutableSharedFlow<String>(extraBufferCapacity = 1)
+        var collectionStarts = 0
+        val trackedFlow = sharedFlow.onStart { collectionStarts++ }
+        val firstCallbackValues = mutableListOf<String>()
+        val secondCallbackValues = mutableListOf<String>()
+        val useSecondCallback = mutableStateOf(false)
+
+        composeTestRule.setContent {
+            val useSecond = useSecondCallback.value
+            trackedFlow.CollectAsEffect { value ->
+                if (useSecond) {
+                    secondCallbackValues += value
+                } else {
+                    firstCallbackValues += value
+                }
+            }
+        }
+        composeTestRule.waitUntil(timeoutMillis = 3_000) {
+            sharedFlow.subscriptionCount.value == 1
+        }
+
+        composeTestRule.runOnIdle {
+            useSecondCallback.value = true
+        }
+        composeTestRule.waitForIdle()
+        composeTestRule.runOnIdle {
+            sharedFlow.tryEmit("latest")
+        }
+        composeTestRule.waitUntil(timeoutMillis = 3_000) {
+            secondCallbackValues == listOf("latest")
+        }
+
+        assertTrue(firstCallbackValues.isEmpty())
+        assertEquals(1, collectionStarts)
     }
 }

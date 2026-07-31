@@ -373,6 +373,49 @@ class ScrollStateHelpersRobolectricTest {
     }
 
     @Test
+    fun `direction follows forward and backward item-boundary crossings during animation`() {
+        val observedDirections = mutableListOf<ScrollDirection>()
+        lateinit var scrollTo: (Int) -> Unit
+
+        composeTestRule.setContent {
+            val listState = rememberLazyListState()
+            val scope = rememberCoroutineScope()
+            val directionState = rememberScrollDirectionState(listState)
+            scrollTo = { index ->
+                scope.launch {
+                    listState.animateScrollToItem(index)
+                }
+            }
+            LaunchedEffect(directionState) {
+                snapshotFlow { directionState.value }.collect { observedDirections += it }
+            }
+            LazyColumn(state = listState, modifier = Modifier.height(200.dp)) {
+                items(50) {
+                    Box(modifier = Modifier.fillMaxWidth().height(50.dp))
+                }
+            }
+        }
+        composeTestRule.waitForIdle()
+
+        composeTestRule.runOnIdle {
+            scrollTo(10)
+        }
+        composeTestRule.waitUntil(timeoutMillis = 3_000) {
+            observedDirections.contains(ScrollDirection.DOWN) &&
+                observedDirections.lastOrNull() == ScrollDirection.IDLE
+        }
+
+        composeTestRule.runOnIdle {
+            observedDirections.clear()
+            scrollTo(0)
+        }
+        composeTestRule.waitUntil(timeoutMillis = 3_000) {
+            observedDirections.contains(ScrollDirection.UP) &&
+                observedDirections.lastOrNull() == ScrollDirection.IDLE
+        }
+    }
+
+    @Test
     fun `index jump without scroll motion does not emit a direction`() {
         // 적대적 리뷰 회귀 테스트: 스크롤 모션 없는 인덱스 점프(프로그램적 이동·데이터 변경)는
         // 방향을 발행하지 않아야 한다 — xml은 스크롤 모션 델타만 방향에 반영
