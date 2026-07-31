@@ -1,7 +1,9 @@
 # simple_compose 모듈 개요
  - **전역 규칙은 루트 AGENTS.md 참조**
  - 주석 스타일, 코딩 컨벤션, 대화 규칙 등은 루트 AGENTS.md를 따름
- - **Maven 좌표**: JitPack `com.github.Rhpark:Simple_UI_Compose` / Maven Central `io.github.rhpark:dash-droid-compose` (appVersion 공유)
+ - **현재 버전**: 0.5.1
+ - **Maven Central 권장 좌표**: `io.github.rhpark:dash-droid-compose:0.5.1`
+ - **JitPack 호환 좌표**: `com.github.Rhpark.Simple_UI_XML:Simple_UI_Compose:0.5.1`
 
 
  ## 기능 및 감사 문서

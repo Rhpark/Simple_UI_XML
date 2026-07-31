@@ -1,4 +1,4 @@
-﻿# 📘 Simple UI Activity & Fragment - Complete Guide
+# 📘 Simple UI Activity & Fragment - Complete Guide
 > **Simple UI Activity & Fragment 전체 가이드**
 
 ## 📦 Module Information (모듈 정보)
@@ -9,7 +9,7 @@
   - `components/fragment/` - RootFragment, BaseFragment, BaseViewBindingFragment, BaseDataBindingFragment
   - `components/dialog/` - RootDialogFragment, BaseDialogFragment, BaseViewBindingDialogFragment, BaseDataBindingDialogFragment
 
-<br></br>
+<br>
 Simple UI's Activity/Fragment base classes are productivity tools that eliminate repetitive initialization code and centralize permission handling and MVVM interactions in one place. This document provides the philosophy behind each base class, usage scenarios, and practical examples.
  > Simple UI의 Activity/Fragment 베이스 클래스는 반복되는 초기화 코드를 걷어내고, 권한 처리, MVVM 상호 작용까지 한 곳에 모아둔 생산성 도구입니다. 이 문서는 각 베이스 클래스의 철학과 사용 시나리오, 실제 예제까지 상세히 정리했습니다.
 
@@ -25,11 +25,11 @@ Simple UI's Activity/Fragment base classes are productivity tools that eliminate
 See a 3-line initialization flow in the guide example, based on the provided Base classes.
 > **“가이드 예제 기준으로 Activity/Fragment 초기화 흐름을 3줄 수준으로 정리했습니다.”** – 제공하는 Base 클래스를 사용할 때의 초기화 흐름을 비교해 보세요.
 
-<br></br>
+<br>
 
 ## 🔎 At a Glance (한눈에 비교)
 
-### Activity / Fragment Initialization
+### Activity / Fragment Initialization (Activity / Fragment 초기화)
 | Category  | Plain Android                     | Simple UI                                              |
 |:--|:---------------------------------------------|:-------------------------------------------------------|
 |  `setContentView` setup | Multiple boilerplate `onCreate` code | Automatically handled via constructor parameter        |
@@ -46,7 +46,7 @@ See a 3-line initialization flow in the guide example, based on the provided Bas
 | Result  | Need to implement callback interface | Handle the `PermissionDeniedItem` list          |
 | State preservation | Manually implement `onSaveInstanceState` | Base class preserves internally                 |
 
-<br></br>
+<br>
 
 ## 💡 Why It Matters (왜 중요한가)
 - **Faster Development:** Minimize Activity·Fragment initialization code to focus on core logic.
@@ -61,7 +61,7 @@ See a 3-line initialization flow in the guide example, based on the provided Bas
 > - **Better maintainability / 유지보수성 향상:** 공통 기능을 한 곳에서 관리해 OS 업그레이드 대응이 빨라집니다.
 > - **Rapid prototyping / 빠른 프로토타이핑:** 새로운 아이디어를 수분 만에 화면으로 옮길 수 있습니다.
 
-<br></br>
+<br>
 
 ## ⚙️ Required Setup (필수 설정)
 To use Simple UI's Activity/Fragment base classes, you need to verify the minimal Gradle setup and XML structure.
@@ -105,9 +105,9 @@ android {
    - Symptom: BaseDataBindingActivity throws `UninitializedPropertyAccessException`
    - Solution: Make sure to add the `dataBinding = true` option and Sync.
 
-<br></br>
+<br>
 
-## 🧱 Tier 1: BaseActivity / BaseFragment
+## 🧱 Tier 1: BaseActivity / BaseFragment (1단계: BaseActivity / BaseFragment)
 
 ### Key traits (핵심 특징)
 
@@ -129,7 +129,7 @@ android {
 > - 외부 SDK가 자체 뷰 시스템을 제어하는 경우
 > - 매우 가벼운 데모/테스트 화면
 
-<br></br>
+<br>
 
 ### Activity initialization comparison (Activity 초기화 비교)
 | Category            | Plain Android | BaseActivity |
@@ -143,7 +143,7 @@ android {
 | `onCreateView` | 수동 inflate + container attach 여부 판단 | `return inflater.inflate(layoutRes, container, false)`만 작성 |
 | Permission request | `registerForActivityResult` 필요 | `requestPermissions()` 상속 |
 
-<br></br>
+<br>
 
 ## 🧱 Tier 2: BaseViewBindingActivity / BaseViewBindingFragment / BaseViewBindingDialogFragment (ViewBinding 기반)
 
@@ -169,7 +169,7 @@ android {
 > - `findViewById()` 없이 타입 안전한 View 접근만 필요할 때
 > - Activity / Fragment / DialogFragment에 동일한 binding 패턴을 적용하고 싶을 때
 
-### ViewBinding Quick Example
+### ViewBinding Quick Example (ViewBinding 빠른 예제)
 ```kotlin
 class SampleActivity :
     BaseViewBindingActivity<ActivitySampleBinding>(ActivitySampleBinding::inflate) {
@@ -200,7 +200,7 @@ class SampleDialog :
 }
 ```
 
-<br></br>
+<br>
 
 ## 🧱 Tier 3: BaseDataBindingActivity / BaseDataBindingFragment / BaseDataBindingDialogFragment (DataBinding 기반)
 
@@ -227,7 +227,7 @@ class SampleDialog :
 > - DialogFragment / Fragment에서도 동일한 패턴을 유지하고 싶을 때
 
 
-### Activity Initialization Comparison
+### Activity Initialization Comparison (Activity 초기화 비교)
 | Category         | Plain Android | BaseDataBindingActivity |
 |:-----------------|:--|:--|
 | Binding creation | Need `DataBindingUtil.setContentView`/cast | Complete by just passing layoutRes to constructor | 
@@ -235,20 +235,20 @@ class SampleDialog :
 | bind ViewModel   | Write `ViewModelProvider` directly | Use `getViewModel()` helper |
 | Event collection | Repeat `lifecycleScope.launch` | `onEventVmCollect(binding)` 내부에서 공통 구현 |
 
-### Fragment Initialization Comparison
+### Fragment Initialization Comparison (Fragment 초기화 비교)
 | Category | Plain Android | BaseDataBindingFragment |
 |:--|:--|:--|
 | Nullable binding | `_binding` 관리 + `onDestroyView`에서 null 처리 | 내부에서 자동 정리 |
 | ViewModel 범위 | `by viewModels()`/`activityViewModels()` 분기 | `getViewModel()` 선택 사용 |
 | SavedState | 별도 Bundle 처리 | ViewModelProvider가 자동 처리 |
 
-### MVVM Pattern Tip
+### MVVM Pattern Tip (MVVM 패턴 팁)
 
 For the BaseDataBinding family: assign binding variables first in `onCreate(binding, savedInstanceState)` (Activity) or `onBindingCreated(binding, savedInstanceState)` (Fragment/Dialog), then handle lifecycle-dependent initialization in `onViewCreated(binding, savedInstanceState)`. `onEventVmCollect(binding)` is called automatically after binding initialization, so one-time events can be collected safely.
 
 > BaseDataBinding 계열은 Activity에서는 `onCreate(binding, savedInstanceState)`, Fragment/Dialog에서는 `onBindingCreated(binding, savedInstanceState)`에서 binding 변수 연결을 먼저 수행하고, lifecycle 의존 초기화는 `onViewCreated(binding, savedInstanceState)`에서 처리하는 패턴을 권장합니다. `onEventVmCollect(binding)`는 바인딩 초기화 이후 자동 호출되므로 1회성 이벤트를 안전하게 수집할 수 있습니다.
 
-<br></br>
+<br>
 
 ## 🔁 Permission Request System (공통 권한 요청)
 
@@ -279,7 +279,7 @@ requestPermissions(
 )
 ```
 
-<br></br>
+<br>
 
 ## 🪟 Window Extension Based SystemBar Usage (Window 확장 기반 SystemBar 사용)
 When using Activity/Fragment base classes, prefer the Window extension path for SystemBar control.  
@@ -391,7 +391,7 @@ when (state) {
 > - 동적 텍스트는 `getString(R.string.some_format, value)` 포맷 문자열 패턴을 사용하세요. (`BaseActivityExample`의 시스템바 높이 표기 참조)
 > - 상세 내용은 `docs/readme/system_manager/controller/xml/README_SYSTEMBAR_CONTROLLER.md`와 `docs/readme/README_EXTENSIONS.md`를 참고하세요.
 
-<br></br>
+<br>
 
 ## 🧩 Base Class Features Summary (베이스 클래스 기능 정리)
 
@@ -434,7 +434,7 @@ when (state) {
 > - `getViewModel()`, `getViewModel(factory)` 제공
 > - Fragment/DialogFragment는 `getActivityViewModel()`, `getActivityViewModel(factory)`로 Activity 스코프 ViewModel 공유 가능
 > - `BaseViewBindingDialogFragment`에도 동일한 패턴 적용
-<br></br>
+<br>
 
 ## ⚙️ Advanced Features – Initialization Callbacks (고급 초기화 콜백)
 ### RootActivity - `beforeOnCreated(savedInstanceState: Bundle?)`
@@ -498,12 +498,12 @@ override fun onViewCreated(binding: FragmentDetailBinding, savedInstanceState: B
 In Fragment/Dialog, `onBindingCreated(binding, savedInstanceState)` can be used as an earlier initialization point. However, `viewLifecycleOwner` may not be ready at that point, so lifecycle-dependent logic should be handled in `onViewCreated(binding, savedInstanceState)`.
 > Fragment/Dialog에서는 `onBindingCreated(binding, savedInstanceState)`를 더 이른 초기화 지점으로 사용할 수 있습니다. 다만 이 시점에는 `viewLifecycleOwner`가 아직 준비되지 않았을 수 있으므로, lifecycle 의존 로직은 `onViewCreated(binding, savedInstanceState)`에서 처리하는 것을 권장합니다.
 
-### 🪟 BaseDataBindingDialogFragment follows the BaseDataBindingFragment pattern
+### 🪟 BaseDataBindingDialogFragment Pattern (BaseDataBindingDialogFragment 패턴)
 
 DialogFragment supports the same `onBindingCreated(binding, ...)`, `onViewCreated(binding, ...)`, and `onEventVmCollect(binding)` overrides, providing a consistent coding experience with Activity/Fragment.
 > DialogFragment도 `onBindingCreated(binding, ...)`, `onViewCreated(binding, ...)`, `onEventVmCollect(binding)`을 동일하게 override하여 Activity/Fragment와 같은 코딩 경험을 제공합니다.
 
-<br></br>
+<br>
 
 ## 🔄 Initialization Flow Summary (초기화 흐름 요약)
 ### Activity
@@ -534,32 +534,34 @@ DialogFragment supports the same `onBindingCreated(binding, ...)`, `onViewCreate
 > 4. `onEventVmCollect(binding)` – `onViewCreated(binding, ...)` 이후 자동 호출
 > 5. `onDestroyView()` – Binding/리소스 자동 정리
 
-<br></br>
+<br>
 
 ## ⭐ Core Advantages of Simple UI Activity/Fragment (핵심 장점)
-1. **Overwhelming code simplification / 압도적인 코드 단순화**
-2. **Automated boilerplate handling / 반복 코드 자동화**
-3. **Unified permission management / 일원화된 권한 관리**
-4. **Optimized developer experience / 개발자 경험 최적화**
-5. **Mistake prevention / 휴먼 에러 방지**
+1. **Shared initialization flow / 공통 초기화 흐름**
+2. **Base-class boilerplate handling / Base 클래스의 반복 코드 처리**
+3. **Consistent permission entry points / 일관된 권한 진입점**
+4. **Named lifecycle hooks / 이름이 명확한 생명주기 hook**
+5. **Binding cleanup in the base hierarchy / Base 계층의 Binding 정리**
 
-<br></br>
+<br>
 
-## 🗣️ Developer Reviews (사용자 후기)
-- "The base-class template keeps new screen setup consistent."
-- "Permission request handling follows the same flow across screens."
-- "DialogFragment screens can also follow the same lifecycle and setup pattern."
-> - "Base 클래스 템플릿으로 새 화면 설정 흐름을 일정하게 유지할 수 있습니다."
-> - "권한 요청 처리 흐름을 화면 전반에서 같은 방식으로 가져갈 수 있습니다."
-> - "DialogFragment 화면도 동일한 생명주기/설정 패턴으로 정리할 수 있습니다."
+## Consistent Usage Outcomes (일관된 사용 결과)
 
-<br></br>
+- The base-class template keeps new screen setup consistent.
+- Permission request handling follows the same flow across screens.
+- DialogFragment screens can follow the same lifecycle and setup pattern.
+
+> - Base 클래스 템플릿으로 새 화면 설정 흐름을 일정하게 유지할 수 있습니다.
+> - 권한 요청 처리 흐름을 화면 전반에서 같은 방식으로 가져갈 수 있습니다.
+> - DialogFragment 화면도 동일한 생명주기와 설정 패턴으로 정리할 수 있습니다.
+
+<br>
 
 ## ✅ Conclusion: What This Guide Demonstrates (결론: 이 가이드가 보여주는 것)
 Simple UI Activity/Fragment base classes are designed to reduce repeated setup work and keep screen initialization, permission handling, and lifecycle hooks aligned across screens.
 > Simple UI Activity/Fragment 베이스 클래스는 반복되는 설정 작업을 줄이고, 화면 초기화·권한 처리·생명주기 훅의 사용 방식을 화면 전반에서 맞추도록 설계되었습니다.
 
-<br></br>
+<br>
 
 ## 🧭 Selection Guide: Which Base Class Should I Use? (선택 가이드)
 
@@ -575,7 +577,7 @@ Simple UI Activity/Fragment base classes are designed to reduce repeated setup w
 
 
 ### Which One Should I Choose? (어떤 것을 선택할까?)
-#### Choose BaseActivity / BaseFragment
+#### Choose BaseActivity / BaseFragment (BaseActivity / BaseFragment 선택)
 
 - Quick demo screens
 - When not using DataBinding syntax in XML
@@ -585,7 +587,7 @@ Simple UI Activity/Fragment base classes are designed to reduce repeated setup w
 > - XML에서 DataBinding 문법을 사용하지 않는 경우
 > - 커스텀 뷰 라이브러리와 혼용할 때
 
-#### Choose BaseViewBindingActivity / BaseViewBindingFragment
+#### Choose BaseViewBindingActivity / BaseViewBindingFragment (BaseViewBinding 계열 선택)
 
 - When you want type-safe view access without DataBinding expressions
 - When you want a lighter binding setup than DataBinding
@@ -595,7 +597,7 @@ Simple UI Activity/Fragment base classes are designed to reduce repeated setup w
 > - DataBinding보다 가벼운 binding 구성이 필요한 경우
 > - Activity / Fragment / Dialog에서 같은 binding 패턴을 유지하고 싶은 경우
 
-#### Choose BaseDataBindingActivity / BaseDataBindingFragment
+#### Choose BaseDataBindingActivity / BaseDataBindingFragment (BaseDataBinding 계열 선택)
 
 - Using MVVM + LiveData/StateFlow
 - When binding safety and event hooks are needed
@@ -606,7 +608,7 @@ Simple UI Activity/Fragment base classes are designed to reduce repeated setup w
 > - Dialog/Fragment에서도 동일한 코드 스타일을 유지하고 싶은 경우
 
 
-### Advanced Parameter: `isAttachToParent`
+### Advanced Parameter: `isAttachToParent` (고급 매개변수)
 #### Constructor Signature (생성자 시그니처)
 ```kotlin
 abstract class BaseFragment(
@@ -614,7 +616,7 @@ abstract class BaseFragment(
     private val isAttachToParent: Boolean = false
 )
 ```
-#### What is `isAttachToParent`?
+#### What is `isAttachToParent`? (`isAttachToParent`란?)
 - Works identically to the third parameter of LayoutInflater.inflate(layoutRes, container, isAttachToParent).
 > - `LayoutInflater.inflate(layoutRes, container, isAttachToParent)`의 세 번째 파라미터와 동일하게 동작합니다.
 
@@ -643,7 +645,7 @@ class CustomFragment : BaseFragment(
 )
 ```
 
-<br></br>
+<br>
 
 ## 🧠 Are You Using MVVM Pattern? (MVVM 패턴 활용)
 ### `getViewModel()` - Easy ViewModel Creation (간편 ViewModel 생성)
@@ -893,7 +895,7 @@ class HomeFragment : BaseDataBindingFragment<FragmentHomeBinding>(R.layout.fragm
 > - 🔄 이 패턴은 **Activity** (`lifecycleScope`)와 **Fragment** (`viewLifecycleOwner.lifecycleScope`) 모두에서 작동합니다
 > - Activity는 `lifecycleScope`, Fragment는 `viewLifecycleOwner.lifecycleScope`를 사용해 단발성 이벤트를 안전하게 처리할 수 있습니다.
 
-<br></br>
+<br>
 
 ## 👀 View Real Implementation Examples (실제 구현 예제)
 - `app/src/main/java/kr/open/library/simpleui_xml/activity_fragment/activity/BaseDataBindingActivityExample.kt`
@@ -902,4 +904,3 @@ class HomeFragment : BaseDataBindingFragment<FragmentHomeBinding>(R.layout.fragm
 
 Run the actual app module to see each base class in action with your own eyes. Don't stop at the README—run the code yourself!
 > 실제 앱 모듈을 실행하면 각 베이스 클래스의 동작을 눈으로 확인할 수 있습니다. README에서 끝나지 말고 코드를 직접 실행해 보세요!
-

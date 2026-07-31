@@ -1,17 +1,17 @@
-﻿# Network Connectivity Info vs Plain Android - Complete Comparison Guide
+# Network Connectivity Info vs Plain Android - Complete Comparison Guide
 > **Network Connectivity Info vs 순수 Android - 비교 가이드**
 
 ## Module Information (모듈 정보)
 - **Module**: `simple_system_manager` (system manager module / system manager 전용 모듈)
 - **Package**: `kr.open.library.simple_ui.system_manager.core.info.network.connectivity`
 
-<br></br>
+<br>
 
 ## Overview (개요)
 Provides network connectivity queries and callback helpers across transport types.  
 > 전송 타입별 네트워크 연결 조회와 콜백 헬퍼를 제공합니다.
 
-<br></br>
+<br>
 
 ## At a Glance (한눈 비교)
 - **Basic Connectivity:** `isNetworkConnected()` - Check whether the active network has both capabilities and link properties (활성 네트워크의 능력·링크 속성 존재 여부)
@@ -50,7 +50,7 @@ Provides network connectivity queries and callback helpers across transport type
   - `onBlockedStatusChanged` - Blocked status changed (차단 상태 변경)
 - **Summary Info:** `getNetworkConnectivitySummary()` - Query all connection states at once (NetworkConnectivitySummary data class) (모든 연결 상태 한 번에 조회 (NetworkConnectivitySummary 데이터 클래스))
 
-<br></br>
+<br>
 
 ## Why It Matters (중요한 이유)
 **Issues**
@@ -69,7 +69,7 @@ Provides network connectivity queries and callback helpers across transport type
 > - 콜백 등록/해제가 표준화됨
 > - IP 주소 헬퍼로 전송 타입별 IPv4 조회 단순화
 
-<br></br>
+<br>
 
 ## Plain Android (순수 Android 방식)
 - ConnectivityManager callbacks and NetworkCapabilities handling are implemented manually.
@@ -79,7 +79,7 @@ Provides network connectivity queries and callback helpers across transport type
 > - WiFi/Cellular/VPN 등 전송 타입별 체크가 반복됩니다.
 > - 전송 타입별 IP 주소 조회에는 네트워크·능력·링크 속성 탐색이 필요합니다.
 
-<br></br>
+<br>
 
 ## Simple UI Approach (Simple UI 방식)
 ```kotlin
@@ -121,7 +121,7 @@ networkInfo.registerDefaultNetworkCallback(
 networkInfo.unregisterDefaultNetworkCallback()
 ```
 
-<br></br>
+<br>
 
 ## Permissions (권한)
 Declare `ACCESS_NETWORK_STATE` for connectivity queries and callbacks. Declare `ACCESS_WIFI_STATE`
@@ -133,7 +133,7 @@ normal permissions and do not require a runtime request.
 
 - [README_PERMISSION.md](../../../README_PERMISSION.md)
 
-<br></br>
+<br>
 
 ## Contract Boundaries (계약 경계)
 - Query methods return a point-in-time snapshot; use callbacks to observe subsequent changes.
@@ -145,7 +145,7 @@ normal permissions and do not require a runtime request.
 > - 문자열 파싱 기반 호환 필드는 Android 버전에 따라 null일 수 있는 최선형 값입니다.
 > - `getIPAddressByNetworkType()`은 첫 번째 비루프백 IPv4 주소만 반환하며 지속 관찰 API가 아닙니다.
 
-<br></br>
+<br>
 
 ## Related Docs (관련 문서)
 - Summary: [README_SERVICE_MANAGER_INFO.md](../README_SERVICE_MANAGER_INFO.md)
@@ -153,5 +153,4 @@ normal permissions and do not require a runtime request.
 - Android Network State Guide: [Read network state](https://developer.android.com/develop/connectivity/network-ops/reading-network-state)
 - Android API Reference: [ConnectivityManager](https://developer.android.com/reference/android/net/ConnectivityManager)
 
-<br></br>
-
+<br>

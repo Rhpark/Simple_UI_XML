@@ -1,17 +1,17 @@
-﻿# Display Info vs Plain Android - Complete Comparison Guide
+# Display Info vs Plain Android - Complete Comparison Guide
 > **Display Info vs 순수 Android - 비교 가이드**
 
 ## Module Information (모듈 정보)
 - **Module**: `simple_system_manager` (system manager module / system manager 전용 모듈)
 - **Package**: `kr.open.library.simple_ui.system_manager.xml.display`
 
-<br></br>
+<br>
 
 ## Overview (개요)
 Provides display size/insets utilities with automatic SDK branching.  
 > SDK 자동 분기를 포함한 디스플레이 크기/인셋 유틸을 제공합니다.
 
-<br></br>
+<br>
 
 ## At a Glance (한눈 비교)
 - **Physical Screen Size:** `getPhysicalScreenSize()` - Physical screen size (물리적 화면 크기)
@@ -25,14 +25,14 @@ Provides display size/insets utilities with automatic SDK branching.
 - **Auto SDK Branching:** Automatic handling for Android R (API 30) and above/below (Android R (API 30) 이상/이하 자동 처리)
 - **Main Thread Required:** Methods that access `activity.window.decorView` should be called on main thread (`@MainThread`) (`activity.window.decorView` 접근 메서드는 메인 스레드 호출 권장)
 
-<br></br>
+<br>
 
 ## Return Contract (반환 규약: null vs 0)
 - `null`: Measurement unavailable (e.g., API 28-29에서 Activity 없음, Insets 미수신, 시스템 리소스 조회 실패)
 - `DisplayInfoSize(0, 0)` / `DisplayInfoBarInsets(0, 0, 0, 0)`: Measurement succeeded, but there is no reserved system-bar area (e.g., 제스처 내비게이션, 하드웨어 키, 앱 창 미도달 영역)
 - Non-zero values: Reserved area is detected and reported
 
-<br></br>
+<br>
 
 ## Why It Matters (중요한 이유)
 **Issues**
@@ -47,8 +47,8 @@ Provides display size/insets utilities with automatic SDK branching.
 > - 복잡한 Insets 계산
 > - 코드 중복 (버전별 분기 반복)
 
-**Advantages**
-- **Dramatically simplified** (Auto SDK branching)
+**Advantages (장점)**
+- Shared API with internal SDK branching (내부 SDK 분기를 포함한 공통 API)
 - Context-based architecture (no Activity required for construction)
 - Automatic Android R (API 30) branching
 - Automatic Deprecated API avoidance
@@ -57,7 +57,7 @@ Provides display size/insets utilities with automatic SDK branching.
 - DisplayInfoSize data class for structured size information
 - Multi-window mode support
 - Optional Activity parameter for methods requiring it
-> - **대폭 간소화** (SDK 분기 자동 처리)
+> - 내부 SDK 분기를 포함한 공통 API
 > - Context 기반 아키텍처 (생성 시 Activity 불필요)
 > - Android R (API 30) 자동 분기
 > - Deprecated API 자동 회피
@@ -67,7 +67,7 @@ Provides display size/insets utilities with automatic SDK branching.
 > - 멀티윈도우 모드 지원
 > - 필요한 메서드에만 선택적 Activity 파라미터 사용
 
-<br></br>
+<br>
 
 ## Plain Android (순수 Android 방식)
 ```kotlin
@@ -148,7 +148,7 @@ class DisplayHelper(private val context: Context) {
 }
 ```
 
-<br></br>
+<br>
 
 ## Simple UI Approach (Simple UI 방식)
 ```kotlin
@@ -188,7 +188,7 @@ class MainActivity : BaseDataBindingActivity<ActivityMainBinding>(R.layout.activ
 }
 ```
 
-<br></br>
+<br>
 
 ## Permissions (권한)
 No permission is required for DisplayInfo, but see the guide for policy context.  
@@ -196,7 +196,7 @@ No permission is required for DisplayInfo, but see the guide for policy context.
 
 - [README_PERMISSION.md](../../../README_PERMISSION.md)
 
-<br></br>
+<br>
 
 ## Related Docs (관련 문서)
 - Summary: [README_SERVICE_MANAGER_INFO.md](../README_SERVICE_MANAGER_INFO.md)
@@ -205,5 +205,4 @@ No permission is required for DisplayInfo, but see the guide for policy context.
 - Feature SPEC: [SPEC.md](../../../../../simple_system_manager/docs/feature/system_manager/info/display/SPEC.md)
 - Feature Plan: [IMPLEMENTATION_PLAN.md](../../../../../simple_system_manager/docs/feature/system_manager/info/display/IMPLEMENTATION_PLAN.md)
 
-<br></br>
-
+<br>

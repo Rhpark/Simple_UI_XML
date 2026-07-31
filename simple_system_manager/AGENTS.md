@@ -2,6 +2,9 @@
 
 - 전역 규칙과 코딩/문서 규칙은 루트 AGENTS.md를 우선 참조합니다.
 - 이 모듈은 `simple_core`에만 의존하며, `system_manager` 기능을 독립적으로 제공합니다.
+- **현재 버전**: 0.5.1
+- **Maven Central 권장 좌표**: `io.github.rhpark:dash-droid-system-manager:0.5.1`
+- **JitPack 호환 좌표**: `com.github.Rhpark.Simple_UI_XML:Simple_UI_System_Manager:0.5.1`
 
 ## 모듈 정의
 

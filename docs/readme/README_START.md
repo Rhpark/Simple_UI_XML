@@ -1,7 +1,7 @@
-﻿# 🚀 Simple UI — We handle the complexity, you keep your speed
+# 🚀 Simple UI — We handle the complexity, you keep your speed
 > **복잡함은 우리가, 속도는 당신에게**
 
-<br></br>
+<br>
 
 **Repetitive Activity/Fragment setups**, **never-ending permission handling**, and the swelling boilerplate... 
 
@@ -11,7 +11,7 @@ We built **Simple UI** to give you that time back.
 > 그 시간을 돌려주기 위해 **Simple UI**를 만들었다.
 
 <br>
-</br>
+
 
 ## ✨ Simple UI: Core Impact & Reasons to Adopt (핵심 효과 & 도입 이유)
 
@@ -19,7 +19,7 @@ We built **Simple UI** to give you that time back.
 - **Wrap common Android platform flows in focused APIs** — Reduces setup code for activities and permissions.
 - **Provide reusable Android building blocks** — Covers recurring permission, logging, UI, and system-service tasks.
 - **Less repetitive coding → More focus on core features** — Can improve delivery consistency when teams share the same patterns.
- 
+
 **One-line takeaway:** Give the complexity to **Simple UI** and keep the speed for **yourself**.
 > - **화면·권한 보일러플레이트 감소** — 애플리케이션 코드는 핵심 흐름에 집중합니다.
 > - **자주 쓰는 Android 플랫폼 흐름을 목적이 분명한 API로 래핑** — Activity·권한 설정 코드를 줄입니다.
@@ -28,7 +28,7 @@ We built **Simple UI** to give you that time back.
 > **한 줄 결론:** 복잡함은 **Simple UI**에게, 속도는 **당신에게**.
 
 <br>
-</br>
+
 
 ### 👥 **Team Development Productivity Boost (팀 개발 생산성 혁신)**
 
@@ -42,7 +42,7 @@ We built **Simple UI** to give you that time back.
 > - 중복 구현 감소: PermissionRequester, Logx 같은 공통 시스템을 팀의 시작점으로 활용
 
 <br>
-</br>
+
 
 ## 🎯 **Target Users (타겟 사용자)**
 - Android developers who want to use permissions, logging, and common utilities more simply (Simple_UI_Core)
@@ -57,7 +57,7 @@ We built **Simple UI** to give you that time back.
 
 
 <br>
-</br>
+
 
 ## 📚 **Documentation Index (문서 인덱스)**
 
@@ -65,7 +65,7 @@ We built **Simple UI** to give you that time back.
 - Compose 전용 설치와 사용법은 [README_COMPOSE.md](README_COMPOSE.md)를 참조하세요.
 
 <br>
-</br>
+
 
 ## 📦 **Module Selection and Dependencies (모듈 선택과 의존성)**
 
@@ -82,7 +82,7 @@ A transitive dependency does not replace a direct dependency declaration for API
 > 전이 의존성은 앱에서 사용하는 API와 타입에 대한 직접 의존성 선언을 대신하지 않습니다.
 
 <br>
-</br>
+
 
 ## 📋 **Library Defaults (라이브러리 기본 설정)**
 
@@ -93,7 +93,7 @@ A transitive dependency does not replace a direct dependency declaration for API
 
 
 <br>
-</br>
+
 
 ## 🔁 **Release Pipeline Notes (릴리즈 파이프라인 주의사항)**
 
@@ -105,7 +105,7 @@ A transitive dependency does not replace a direct dependency declaration for API
 > - `release-metadata`, `coverage-report`는 하위 단계 정합성을 위해 CD 단계를 거쳐 전달됩니다.
 
 <br>
-</br>
+
 
 ## 🧩 **API Compatibility Baseline (API 호환성 베이스라인)**
 
@@ -127,7 +127,7 @@ A transitive dependency does not replace a direct dependency declaration for API
 
 
 <br>
-</br>
+
 
 ## 🔐 **Firebase App Distribution Config (Firebase App Distribution 설정)**
 
@@ -156,7 +156,7 @@ FIREBASE_APP_ID_RELEASE=...
 ```
 
 <br>
-</br>
+
 
 ## ✨ **Key Features (핵심 특징)**
 
@@ -186,8 +186,8 @@ FIREBASE_APP_ID_RELEASE=...
 > - **커스텀 레이아웃**: Lifecycle 지원하는 Layout 컴포넌트들
 > - **XML 스타일 시스템**: 포괄적인 UI 스타일 라이브러리 (style.xml)
 > - **MVVM 지원**: ViewModel, DataBinding 호환 지원
- 
-<br></br>
+
+<br>
 
 ### Compose Platform Integration (Compose 플랫폼 통합)
 
@@ -200,7 +200,7 @@ FIREBASE_APP_ID_RELEASE=...
 > - **시스템 바**: 컴포지션 수명에 맞춘 아이콘 명암 적용·복원
 > - **LazyList 상태**: 스크롤 종료 시 `IDLE`로 복귀하는 방향 상태와 Boolean 엣지 도달 상태
 
-<br></br>
+<br>
 
 ### 🔧 **Developer Convenience (개발 편의성)**
 
@@ -214,8 +214,8 @@ FIREBASE_APP_ID_RELEASE=...
 > - **권한 관리**: PermissionRequester 통합 지원
 > - **고급 로깅**: Logx - 파일 저장, 필터링, 커스텀 포매팅 지원
 > - **로컬 저장**: 위임자 기반 설정 관리 + 안전 커밋 (BaseSharedPreference)
-  
-<br> </br>
+
+<br>
 
 ### ⚙️ **Effortless System Control (간편한 시스템 제어)**
 
@@ -233,7 +233,7 @@ FIREBASE_APP_ID_RELEASE=...
 > - **SystemBar 주의사항**: 가시성 API(`setStatusBarVisible/Gone`, `setNavigationBarVisible/Gone`)에서만 `BEHAVIOR_DEFAULT`가 재설정됩니다.
 
 <br>
-</br>
+
 
 
 ## **Examples (예제)**
@@ -259,8 +259,3 @@ FIREBASE_APP_ID_RELEASE=...
 
 
 <br>
-</br>
-
-.
-
-

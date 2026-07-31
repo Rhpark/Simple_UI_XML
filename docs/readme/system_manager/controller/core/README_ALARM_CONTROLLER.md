@@ -1,11 +1,11 @@
-﻿# AlarmController vs Plain Android - Complete Comparison Guide
+# AlarmController vs Plain Android - Complete Comparison Guide
 > **AlarmController vs 순수 Android - 비교 가이드**
 
 ## Module Information (모듈 정보)
 - **Module**: `simple_system_manager` (system manager 전용 모듈 / system_manager 전용 모듈)
 - **Package**: `kr.open.library.simple_ui.system_manager.core.controller.alarm` (패키지)
 
-<br></br>
+<br>
 
 ## Overview (개요)
 Provides simple APIs for alarm register/remove/existence checks.  
@@ -14,7 +14,7 @@ Provides simple APIs for alarm register/remove/existence checks.
 - Exact alarm APIs (`registerAlarmClock`, `registerAlarmExactAndAllowWhileIdle`) require `SCHEDULE_EXACT_ALARM` on API 31+. Inexact APIs work without this permission.
 > Exact 알람 API는 API 31+에서 `SCHEDULE_EXACT_ALARM` 권한이 필요합니다. Inexact API(`registerAlarmAndAllowWhileIdle`, `registerRepeating`)는 권한 없이도 동작합니다.
 
-<br></br>
+<br>
 
 ## At a Glance (한눈 비교)
 | Item (항목) | Plain Android (기본 방식) | Simple UI (Simple UI) | Notes (비고) |
@@ -26,7 +26,7 @@ Provides simple APIs for alarm register/remove/existence checks.
 | Alarm trigger safety | Caller-side permission handling | Internal guard in receiver | Android 13+ `POST_NOTIFICATIONS` pre-check<br>권한 누락 시 안전 스킵 |
 | Permission / SDK branching | Handled by caller | Handled internally | Exact alarm permission required<br>Exact 알람 권한 주의 |
 
-<br></br>
+<br>
 
 ## Why It Matters (중요한 이유)
 **Issues / 문제점**
@@ -45,7 +45,7 @@ Provides simple APIs for alarm register/remove/existence checks.
 > <br>Calendar 계산, PendingIntent 생성 자동 처리
 > <br>예외 처리 및 SDK 분기 내부 처리
 
-<br></br>
+<br>
 
 ## 순수 Android 방식 (Plain Android)
 ```kotlin
@@ -102,7 +102,7 @@ private fun removeAlarm(key: Int) {
 }
 ```
 
-<br></br>
+<br>
 
 ## Simple UI Approach (Simple UI 방식)
 ```kotlin
@@ -151,7 +151,7 @@ private fun checkAlarmExists(key: Int): Boolean {
 }
 ```
 
-<br></br>
+<br>
 
 ## BaseAlarmReceiver Implementation (BaseAlarmReceiver 구현)
 
@@ -208,7 +208,7 @@ class AlarmReceiver : BaseAlarmReceiver() {
 > <br>`createNotificationChannel()`에서 `notificationController`를 초기화해야 합니다. 초기화하지 않으면 알림 옵션 생성과 표시를 안전하게 건너뜁니다.
 > <br>Android 13 이상에서 `POST_NOTIFICATIONS`가 허용되지 않으면 알림 옵션 생성과 표시를 건너뜁니다. 권한 요청 UI는 앱에서 처리해야 합니다.
 
-<br></br>
+<br>
 
 ## Manifest and Permissions (Manifest 및 권한)
 
@@ -247,7 +247,7 @@ Declare the permissions and system broadcast actions required by the Receiver in
 > <br>`SCHEDULE_EXACT_ALARM`은 API 31 이상의 exact 계열 등록에 필요하며, inexact 계열에는 필요하지 않습니다.
 > <br>`POST_NOTIFICATIONS`는 선언만으로 허용되지 않습니다. API 33 이상에서는 앱이 런타임 권한을 요청해야 합니다.
 
-<br></br>
+<br>
 
 ## Related Extensions (관련 확장 함수)
 - `getAlarmController()`
@@ -255,7 +255,4 @@ Declare the permissions and system broadcast actions required by the Receiver in
 
 See full list / 전체 목록: [README_SYSTEM_MANAGER_EXTENSIONS.md](../../README_SYSTEM_MANAGER_EXTENSIONS.md)
 
-<br></br>
-
-
-
+<br>

@@ -1,17 +1,17 @@
-﻿# SIM Info vs Plain Android - Complete Comparison Guide
+# SIM Info vs Plain Android - Complete Comparison Guide
 > **SIM Info vs 순수 Android - 비교 가이드**
 
 ## Module Information (모듈 정보)
 - **Module**: `simple_system_manager` (system manager module / system manager 전용 모듈)
 - **Package**: `kr.open.library.simple_ui.system_manager.core.info.network.sim`
 
-<br></br>
+<br>
 
 ## Overview (개요)
 Provides SIM information helpers and multi-SIM utilities with safe permission fallback.  
 > 안전한 권한 폴백과 멀티 SIM 유틸을 포함한 SIM 정보 헬퍼를 제공합니다.
 
-<br></br>
+<br>
 
 ## At a Glance (한눈 비교)
 - **Basic Info:** `isDualSim()`, `isSingleSim()`, `isMultiSim()` - Check SIM type (SIM 타입 확인)
@@ -40,7 +40,7 @@ Provides SIM information helpers and multi-SIM utilities with safe permission fa
   - `updateUSimTelephonyManagerList()` - Update TelephonyManager list per SIM slot (SIM 슬롯별 TelephonyManager 목록 업데이트)
   - `getTelephonyManagerFromUSim(slotIndex)` - Return TelephonyManager for specific SIM slot (특정 SIM 슬롯의 TelephonyManager 반환)
 
-<br></br>
+<br>
 
 ## Why It Matters (중요한 이유)
 **Issues**
@@ -59,7 +59,7 @@ Provides SIM information helpers and multi-SIM utilities with safe permission fa
 > - 권한 폴백으로 안전한 기본값과 경고 제공
 > - 슬롯별 TelephonyManager 접근 제공
 
-<br></br>
+<br>
 
 ## Plain Android (순수 Android 방식)
 - Manual use of `SubscriptionManager` and `TelephonyManager` per slot is required.
@@ -69,7 +69,7 @@ Provides SIM information helpers and multi-SIM utilities with safe permission fa
 > - 런타임 권한과 API 분기를 호출부에서 처리해야 합니다.
 > - SubId와 슬롯 인덱스 매핑 로직을 수동 구현해야 합니다.
 
-<br></br>
+<br>
 
 ## Simple UI Approach (Simple UI 방식)
 ```kotlin
@@ -104,7 +104,7 @@ requestPermissions(
 )
 ```
 
-<br></br>
+<br>
 
 ## Permissions (권한)
 SimInfo requires phone state/number and fine location permissions.  
@@ -112,11 +112,10 @@ SimInfo requires phone state/number and fine location permissions.
 
 - [README_PERMISSION.md](../../../README_PERMISSION.md)
 
-<br></br>
+<br>
 
 ## Related Docs (관련 문서)
 - Summary: [README_SERVICE_MANAGER_INFO.md](../README_SERVICE_MANAGER_INFO.md)
 - Permission Guide: [README_PERMISSION.md](../../../README_PERMISSION.md)
 
-<br></br>
-
+<br>

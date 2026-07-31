@@ -1,17 +1,17 @@
-﻿# Battery Info vs Plain Android - Complete Comparison Guide
+# Battery Info vs Plain Android - Complete Comparison Guide
 > **Battery Info vs 순수 Android - 비교 가이드**
 
 ## Module Information (모듈 정보)
 - **Module**: `simple_system_manager` (system manager module / system manager 전용 모듈)
 - **Package**: `kr.open.library.simple_ui.system_manager.core.info.battery`
 
-<br></br>
+<br>
 
 ## Overview (개요)
 Provides real-time battery state collection with SharedFlow and helper getters.  
 > SharedFlow 기반 실시간 배터리 상태 수집과 헬퍼 getter를 제공합니다.
 
-<br></br>
+<br>
 
 ## Internal API Migration (내부 API 이전)
 - `PowerProfile` and `PowerProfileVO` are internal implementation types and are no longer public consumer APIs in the next major source state.
@@ -23,7 +23,7 @@ Provides real-time battery state collection with SharedFlow and helper getters.
 - The internal fallback order remains PowerProfile reflection → charge-counter estimation → error value.
   > 내부 폴백 순서는 PowerProfile 리플렉션 → chargeCounter 추정 → 오류 값으로 유지됩니다.
 
-<br></br>
+<br>
 
 ## Quick Usage Flow (사용 흐름 요약)
 1) `registerStart(lifecycleScope)` 호출  
@@ -56,7 +56,7 @@ class MainActivity : AppCompatActivity() {
 }
 ```
 
-<br></br>
+<br>
 
 ## At a Glance (한눈 비교)
 - **Real-time Updates:** `registerStart(coroutine: CoroutineScope, updateCycleTime: Long = 2000L): Boolean` - SharedFlow-based event updates
@@ -87,7 +87,7 @@ class MainActivity : AppCompatActivity() {
 - **Error Handling:** `BATTERY_ERROR_VALUE`, `BATTERY_ERROR_VALUE_LONG`, `BATTERY_ERROR_VALUE_DOUBLE`, `BATTERY_ERROR_VALUE_BOOLEAN(null)` - Return values on error (오류 시 반환값)
 - **BatteryStateEvent:** 11 event types (OnCapacity, OnTemperature, OnVoltage, OnCurrentAmpere, OnCurrentAverageAmpere, OnChargeStatus, OnChargePlug, OnHealth, OnChargeCounter, OnEnergyCounter, OnPresent) (11가지 이벤트 타입)
 
-<br></br>
+<br>
 
 ## Why It Matters (중요한 이유)
 **Issues**
@@ -106,19 +106,19 @@ class MainActivity : AppCompatActivity() {
 > - Lifecycle 관리 수동
 > - 메모리 누수 위험
 
-**Advantages**
-- **Dramatically simplified** (Complex Receiver → One line registration)
+**Advantages (장점)**
+- Receiver registration through the library API (라이브러리 API를 통한 Receiver 등록)
 - Automatic BroadcastReceiver management
 - SharedFlow-based reactive updates
 - 11 type-safe events
 - Automatic Lifecycle cleanup
-> - **대폭 간소화** (복잡한 Receiver → 한 줄 등록)
+> - 라이브러리 API를 통한 Receiver 등록
 > - BroadcastReceiver 자동 관리
 > - SharedFlow 기반 반응형 업데이트
 > - 11가지 타입 안전한 이벤트
 > - Lifecycle 자동 정리
 
-<br></br>
+<br>
 
 ## 순수 Android 방식 (Plain Android)
 ```kotlin
@@ -203,7 +203,7 @@ class BatteryMonitor(private val context: Context) {
 }
 ```
 
-<br></br>
+<br>
 
 ## Simple UI Approach (Simple UI 방식)
 ```kotlin
@@ -270,7 +270,7 @@ private fun updateCurrent(current: Int) {
 }
 ```
 
-<br></br>
+<br>
 
 ## Permissions (권한)
 See the permission guide for required permissions and policy.  
@@ -279,7 +279,7 @@ See the permission guide for required permissions and policy.
 - [README_PERMISSION.md](../../../README_PERMISSION.md)
 - `android.permission.BATTERY_STATS`는 시스템/프리로드 전용이며 런타임 권한 요청 대상이 아닙니다.
 
-<br></br>
+<br>
 
 ## Related Docs (관련 문서)
 - Next major migration: [README_SYSTEM_MANAGER_MIGRATION.md](../../README_SYSTEM_MANAGER_MIGRATION.md)
@@ -289,5 +289,4 @@ See the permission guide for required permissions and policy.
 - Feature SPEC: [SPEC.md](../../../../../simple_system_manager/docs/feature/system_manager/info/battery/SPEC.md)
 - Feature Plan: [IMPLEMENTATION_PLAN.md](../../../../../simple_system_manager/docs/feature/system_manager/info/battery/IMPLEMENTATION_PLAN.md)
 
-<br></br>
-
+<br>

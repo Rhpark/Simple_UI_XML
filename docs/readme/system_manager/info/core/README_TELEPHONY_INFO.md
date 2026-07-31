@@ -1,17 +1,17 @@
-﻿# Telephony Info vs Plain Android - Complete Comparison Guide
+# Telephony Info vs Plain Android - Complete Comparison Guide
 > **Telephony Info vs 순수 Android - 비교 가이드**
 
 ## Module Information (모듈 정보)
 - **Module**: `simple_system_manager` (system manager module / system manager 전용 모듈)
 - **Package**: `kr.open.library.simple_ui.system_manager.core.info.network.telephony`
 
-<br></br>
+<br>
 
 ## Overview (개요)
 Provides telephony helpers, network type parsing, and real-time callbacks with API compatibility.  
 > 통신 정보 헬퍼, 네트워크 타입 파싱, API 호환 콜백을 제공합니다.
 
-<br></br>
+<br>
 
 ## At a Glance (한눈 비교)
 - **Carrier Info:** `getCarrierName()`, `getMobileCountryCode()`, `getMobileNetworkCode()` - Carrier name, MCC/MNC (통신사명, MCC/MNC)
@@ -59,7 +59,7 @@ Provides telephony helpers, network type parsing, and real-time callbacks with A
 - `setOnDisplayState(slotIndex, callback)` - Set display info callback (디스플레이 정보 콜백 설정)
 - `setOnTelephonyNetworkType(slotIndex, callback)` - Set network type callback (통신망 타입 콜백 설정)
 
-<br></br>
+<br>
 
 ## Why It Matters (중요한 이유)
 **Issues**
@@ -78,7 +78,7 @@ Provides telephony helpers, network type parsing, and real-time callbacks with A
 > - StateFlow/Callback 기반 실시간 업데이트 지원
 > - 권한 폴백으로 안전한 기본값과 경고 제공
 
-<br></br>
+<br>
 
 ## Plain Android (순수 Android 방식)
 - Manual branching between TelephonyCallback (API 31+) and PhoneStateListener is required.
@@ -88,7 +88,7 @@ Provides telephony helpers, network type parsing, and real-time callbacks with A
 > - 전화 상태/번호/위치 권한을 런타임에서 직접 처리해야 합니다.
 > - 멀티 SIM은 슬롯별 TelephonyManager 구성이 필요합니다.
 
-<br></br>
+<br>
 
 ## Simple UI Approach (Simple UI 방식)
 ### Basic Example (기본 예시)
@@ -160,7 +160,7 @@ requestPermissions(
 )
 ```
 
-<br></br>
+<br>
 
 ## Callback API Migration (콜백 API 마이그레이션)
 
@@ -180,7 +180,7 @@ requestPermissions(
 The raw listener objects exposed by `CommonTelephonyCallback` have no direct replacement. Register and unregister through `TelephonyInfo` so the library can manage SDK branching and callback lifecycle.
 > `CommonTelephonyCallback`이 노출하던 원시 리스너 객체에는 직접 대체 API를 제공하지 않습니다. SDK 분기와 콜백 생명주기를 라이브러리가 관리할 수 있도록 `TelephonyInfo`를 통해 등록하고 해제해 주세요.
 
-<br></br>
+<br>
 
 ## Permissions (권한)
 TelephonyInfo requires phone state/number and fine location permissions.  
@@ -188,12 +188,11 @@ TelephonyInfo requires phone state/number and fine location permissions.
 
 - [README_PERMISSION.md](../../../README_PERMISSION.md)
 
-<br></br>
+<br>
 
 ## Related Docs (관련 문서)
 - Next major migration: [README_SYSTEM_MANAGER_MIGRATION.md](../../README_SYSTEM_MANAGER_MIGRATION.md)
 - Summary: [README_SERVICE_MANAGER_INFO.md](../README_SERVICE_MANAGER_INFO.md)
 - Permission Guide: [README_PERMISSION.md](../../../README_PERMISSION.md)
 
-<br></br>
-
+<br>

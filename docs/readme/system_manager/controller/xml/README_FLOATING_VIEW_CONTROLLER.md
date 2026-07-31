@@ -1,17 +1,17 @@
-﻿# FloatingViewController vs Plain Android - Complete Comparison Guide
+# FloatingViewController vs Plain Android - Complete Comparison Guide
 > **FloatingViewController vs 순수 Android - 비교 가이드**
 
 ## Module Information (모듈 정보)
 - **Module**: `simple_system_manager` (system manager 전용 모듈 / system_manager 전용 모듈)
 - **Package**: `kr.open.library.simple_ui.system_manager.xml.controller.window`
 
-<br></br>
+<br>
 
 ## Overview (개요)
 Provides simple APIs for floating view add/move/remove.  
 > 플로팅 뷰 추가/이동/제거를 간단한 API로 제공합니다.
 
-<br></br>
+<br>
 
 ## At a Glance (한눈 비교)
 | Item (항목)           | Plain Android (기본 방식)      | Simple UI (Simple UI) | Notes (비고) |
@@ -21,7 +21,7 @@ Provides simple APIs for floating view add/move/remove.
 | Collision handling  | Manual implementation      | Provided internally   | Improved stability<br>안정성 향상 |
 | Permission          | Handled by caller          | Same                  | `SYSTEM_ALERT_WINDOW` required<br>`SYSTEM_ALERT_WINDOW` 권한 필요 |
 
-<br></br>
+<br>
 
 ## Why It Matters (중요한 이유)
 **Issues**
@@ -40,7 +40,7 @@ Provides simple APIs for floating view add/move/remove.
 > SDK 분기 및 WindowManager 설정 자동화
 > 코드 간소화
 
-<br></br>
+<br>
 
 ## Plain Android (순수 Android 방식)
 ```kotlin
@@ -94,7 +94,7 @@ private fun addFloatingView() {
 }
 ```
 
-<br></br>
+<br>
 
 ## Simple UI Approach (Simple UI 방식)
 ```kotlin
@@ -132,7 +132,7 @@ private fun removeAll() {
 }
 ```
 
-<br></br>
+<br>
 
 ## Return Contract (반환 계약)
 - `Boolean` 반환은 **실제 WindowManager 반영 성공 여부**를 기준으로 합니다.
@@ -150,13 +150,10 @@ private fun removeAll() {
 > 현재 `removeAllFloatingView()`는 `first-failure-stop` 전략입니다.
 > 중간 실패 시 즉시 `false`를 반환하며, 일반 호출에서는 부분 정리 상태가 남을 수 있습니다.
 
-<br></br>
+<br>
 
 ## Related Extensions (관련 확장 함수)
 - `getFloatingViewController()`  
   See full list / 전체 목록: [README_SYSTEM_MANAGER_EXTENSIONS.md](../../README_SYSTEM_MANAGER_EXTENSIONS.md)
 
-<br></br>
-
-
-
+<br>

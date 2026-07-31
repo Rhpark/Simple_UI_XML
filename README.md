@@ -1,4 +1,4 @@
-﻿[![Maven Central](https://img.shields.io/maven-central/v/io.github.rhpark/dash-droid-core)](https://central.sonatype.com/search?q=io.github.rhpark)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.rhpark/dash-droid-core)](https://central.sonatype.com/search?q=io.github.rhpark)
 [![](https://jitpack.io/v/rhpark/Simple_UI_XML.svg)](https://jitpack.io/#rhpark/Simple_UI_XML)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![API](https://img.shields.io/badge/API-28%2B-brightgreen.svg?style=flat)](https://developer.android.com/studio/releases/platforms#9.0)
@@ -53,7 +53,7 @@ The repository's next-major source state contains approved breaking changes to `
 - **[System Manager Migration Guide](docs/readme/system_manager/README_SYSTEM_MANAGER_MIGRATION.md)** - Removed aliases and implementation types, replacement paths, and unchanged `NetworkBase` inheritance contract
   > 제거된 별칭·구현 타입, 대체 경로, 변경하지 않은 `NetworkBase` 상속 계약을 안내합니다.
 
-## Maven Central (Recommended)
+## Maven Central (권장)
 
 ### 1. `settings.gradle.kts`
 ```kotlin
@@ -90,7 +90,7 @@ its classes, or references its parameter and return types.
 | System Manager APIs with Core APIs or model types<br>System Manager API와 Core API·모델 타입을 함께 사용 | `dash-droid-system-manager` + `dash-droid-core` |
 | XML UI with System Manager APIs<br>XML UI와 System Manager API를 함께 사용 | `dash-droid-xml` + `dash-droid-system-manager` |
 
-#### Core APIs
+#### Core APIs (Core API)
 
 Use this coordinate when app source code directly calls `simple_core` APIs, inherits Core
 classes, or references Core model types.
@@ -104,7 +104,7 @@ dependencies {
 }
 ```
 
-#### XML UI
+#### XML UI (XML UI)
 
 `dataBinding` and `viewBinding` are optional. Enable only the binding mode used by the selected XML base classes.
 
@@ -123,7 +123,7 @@ dependencies {
 }
 ```
 
-#### Compose UI
+#### Compose UI (Compose UI)
 
 ```kotlin
 plugins {
@@ -141,7 +141,7 @@ dependencies {
 }
 ```
 
-#### System Manager
+#### System Manager (시스템 관리)
 
 ```kotlin
 dependencies {
@@ -160,7 +160,7 @@ does not replace a direct declaration when app source code uses Core APIs or Cor
 
 <br>
 
-## JitPack (Compatibility)
+## JitPack (호환용)
 
 Add the repository in `settings.gradle.kts`.
 
@@ -243,5 +243,3 @@ Add only the required coordinates to the app module's `dependencies` block.
 - [첫 실행에서 막히면 **First-Run Issue**로 남겨주세요.](https://github.com/Rhpark/Simple_UI_XML/issues/new)
 
 <br>
-
-

@@ -1,17 +1,17 @@
-﻿# Location Info vs Plain Android - Complete Comparison Guide
+# Location Info vs Plain Android - Complete Comparison Guide
 > **Location Info vs 순수 Android - 비교 가이드**
 
 ## Module Information (모듈 정보)
 - **Module**: `simple_system_manager` (system manager module / system manager 전용 모듈)
 - **Package**: `kr.open.library.simple_ui.system_manager.core.info.location`
 
-<br></br>
+<br>
 
 ## Overview (개요)
 Provides SharedFlow-based location tracking and location helper utilities.  
 > SharedFlow 기반 위치 추적과 위치 헬퍼 유틸을 제공합니다.
 
-<br></br>
+<br>
 
 ## At a Glance (한눈 비교)
 - **Real-time Updates:** `registerStart(coroutineScope, locationProvider, updateCycleTime, minDistanceM)` - SharedFlow-based location tracking
@@ -53,7 +53,7 @@ Provides SharedFlow-based location tracking and location helper utilities.
   - **저전력 모드:** 필요 시 `POLLING_DISABLED_UPDATE_CYCLE_TIME`(별칭: `DISABLE_UPDATE_CYCLE_TIME`)로 폴링을 비활성화할 수 있습니다.
 - **LocationStateEvent:** 5 event types (OnLocationChanged, OnGpsEnabled, OnNetworkEnabled, OnPassiveEnabled, OnFusedEnabled) (5가지 이벤트 타입)
 
-<br></br>
+<br>
 
 ## Why It Matters (중요한 이유)
 **Issues**
@@ -70,15 +70,15 @@ Provides SharedFlow-based location tracking and location helper utilities.
 > - Lifecycle 관리 수동
 > - 메모리 누수 위험
 
-**Advantages**
-- **Dramatically simplified** (Complex Listener → One line registration)
+**Advantages (장점)**
+- Listener registration through the library API (라이브러리 API를 통한 Listener 등록)
 - Automatic LocationListener management
 - SharedFlow-based reactive updates
 - 5 type-safe events (Location, GPS, Network, Passive, Fused)
 - Automatic Provider status tracking
 - Distance/bearing calculation helpers provided
 - Explicit stop/destroy APIs (`unRegister()`, `onDestroy()`)
-> - **대폭 간소화** (복잡한 Listener → 한 줄 등록)
+> - 라이브러리 API를 통한 Listener 등록
 > - LocationListener 자동 관리
 > - SharedFlow 기반 반응형 업데이트
 > - 5가지 타입 안전한 이벤트 (위치, GPS, Network, Passive, Fused)
@@ -86,7 +86,7 @@ Provides SharedFlow-based location tracking and location helper utilities.
 > - 거리/방향 계산 헬퍼 제공
 > - 명시적 중지/정리 API 제공 (`unRegister()`, `onDestroy()`)
 
-<br></br>
+<br>
 
 ## Plain Android (순수 Android 방식)
 ```kotlin
@@ -182,7 +182,7 @@ class LocationTracker(private val context: Context) {
 }
 ```
 
-<br></br>
+<br>
 
 ## Simple UI Approach (Simple UI 방식)
 ```kotlin
@@ -258,7 +258,7 @@ class MainActivity : BaseDataBindingActivity<ActivityMainBinding>(R.layout.activ
 }
 ```
 
-<br></br>
+<br>
 
 ## Permissions (권한)
 See the permission guide for required permissions and policy.  
@@ -266,11 +266,10 @@ See the permission guide for required permissions and policy.
 
 - [README_PERMISSION.md](../../../README_PERMISSION.md)
 
-<br></br>
+<br>
 
 ## Related Docs (관련 문서)
 - Summary: [README_SERVICE_MANAGER_INFO.md](../README_SERVICE_MANAGER_INFO.md)
 - Permission Guide: [README_PERMISSION.md](../../../README_PERMISSION.md)
 
-<br></br>
-
+<br>

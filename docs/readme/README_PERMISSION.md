@@ -10,7 +10,7 @@
 > - **제공 범위**: XML·Compose 양쪽을 위한 런타임/특수/Role 권한 통합 처리
 
 <br>
-</br>
+
 
 ## 🔎 At a Glance (한눈 비교)
 
@@ -38,7 +38,7 @@ request-id results, while Compose restores the latest State result across proces
 > XML은 requestId별 결과를 보존하고, Compose는 최신 State 결과를 복원합니다.
 
 <br>
-</br>
+
 
 ## 💡 Why It Matters (왜 중요한가)
 
@@ -52,7 +52,7 @@ request-id results, while Compose restores the latest State result across proces
 > - **XML·Compose 동등성**: 동일한 사전 판정·결과 정책을 두 UI 스택에서 공유합니다.
 
 <br>
-</br>
+
 
 ## Overview (개요)
 This document explains the permission-related architecture of Simple UI, covering:
@@ -67,7 +67,7 @@ This document explains the permission-related architecture of Simple UI, coverin
 > - `simple_compose`의 Compose State 기반 권한 요청 흐름
 > - `system_manager` 기능에서 사용하는 권한 요구사항
 
-<br></br>
+<br>
 
 ## Module Dependencies (모듈 의존성)
 
@@ -89,7 +89,7 @@ The complete installation policy is maintained in
 | Permission-aware System Manager APIs<br>권한이 필요한 System Manager API | `dash-droid-system-manager` |
 | System Manager APIs with Core permission helpers<br>System Manager API와 Core 권한 헬퍼를 함께 사용 | `dash-droid-system-manager` + `dash-droid-core` |
 
-<br></br>
+<br>
 
 ## Permission Architecture (권한 구조)
 
@@ -127,7 +127,7 @@ The complete installation policy is maintained in
 
 > - 위 두 레이어를 사용하며, 기능별 권한 조합을 정의합니다.
 
-<br></br>
+<br>
 
 ## simple_core Permission Helpers (simple_core 권한 헬퍼)
 
@@ -187,7 +187,7 @@ if (denied.isEmpty()) {
 }
 ```
 
-<br></br>
+<br>
 
 ## simple_xml Permission Request Flow (simple_xml 권한 요청 흐름)
 
@@ -261,7 +261,7 @@ requestPermissions(
 > - `restoreState(savedInstanceState)` / `saveState(outState)`를 자동으로 연결합니다.
 > - ActivityResult 등록을 직접 구성하지 않고 화면 클래스에서 `requestPermissions(...)`를 바로 호출할 수 있습니다.
 
-<br></br>
+<br>
 
 **After process restore — consuming orphaned denied results **
 
@@ -291,7 +291,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
 }
 ```
 
-<br></br>
+<br>
 
 ## simple_compose Permission Request Flow (simple_compose 권한 요청 흐름)
 
@@ -305,7 +305,7 @@ State로 노출합니다.
   `deniedItems`와 `phase`는 마지막 요청 결과로 유지합니다.
 - 상세 설치·예제·XML 대응표는 [README_COMPOSE.md](README_COMPOSE.md)를 참조하세요.
 
-<br></br>
+<br>
 
 ## Lifecycle and Host Rules (생명주기 및 호스트 규칙)
 
@@ -333,7 +333,7 @@ State로 노출합니다.
 > - 공개 요청·결정 메서드는 메인 스레드에서 호출하세요.
 > - rationale/설정 이동 동의 대기는 해당 continue/cancel 메서드를 호출할 때까지 유지됩니다.
 
-<br></br>
+<br>
 
 ## Denied Result Model (거부 결과 모델)
 
@@ -369,7 +369,7 @@ Simple UI can return more than a simple granted/denied result.
 > - 생명주기 사용 오류를 추측하지 않고 결과로 확인할 수 있습니다.
 > - 지원되지 않는 권한이나 설정 화면 실행 실패를 명시적으로 처리할 수 있습니다.
 
-<br></br>
+<br>
 
 ## Sample Usage in the App Module (app 모듈 샘플 사용 예시)
 
@@ -387,7 +387,7 @@ The sample app demonstrates these request flows in [PermissionsActivity.kt](../.
 > - 특수 권한 단독 요청 (`SYSTEM_ALERT_WINDOW`)
 > - 복수 특수 권한 요청 (`SYSTEM_ALERT_WINDOW` + `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS`)
 
-<br></br>
+<br>
 
 ## System Manager Permission Matrix (system_manager 권한 매트릭스)
 
@@ -445,7 +445,7 @@ require a runtime request.
 
 See feature doc: [README_NETWORK_INFO.md](system_manager/info/core/README_NETWORK_INFO.md)
 
-<br></br>
+<br>
 
 ## Permission Types Summary (권한 타입별 정리)
 
@@ -457,7 +457,7 @@ See feature doc: [README_NETWORK_INFO.md](system_manager/info/core/README_NETWOR
 | **Role Permissions**             | `android.app.role.*`                                                                                  | `RoleManager` 기반 흐름으로 처리 |
 | **Signature/System Permissions** | `BATTERY_STATS`                                                                                       | 일반 앱 요청 대상으로는 지원하지 않거나 강제하지 않음 |
 
-<br></br>
+<br>
 
 ## Permission Troubleshooting Checklist (권한 점검 체크리스트)
 
@@ -483,4 +483,4 @@ See feature doc: [README_NETWORK_INFO.md](system_manager/info/core/README_NETWOR
 > - Compose의 `isRequesting`에는 rationale/settings 동의 대기도 포함됩니다. 최신 `deniedItems`와 `phase`를
 >   확인하고, `allGranted`만 즉시 재계산해야 할 때 `refresh()`를 호출하세요.
 
-<br></br>
+<br>

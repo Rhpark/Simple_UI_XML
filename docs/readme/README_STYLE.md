@@ -1,4 +1,4 @@
-﻿# 📦 Simple Style vs Plain Android - Complete Comparison Guide
+# 📦 Simple Style vs Plain Android - Complete Comparison Guide
 > **Simple Style vs 순수 Android - 비교 가이드**
 
 ## 📦 Module Information (모듈 정보)
@@ -10,15 +10,23 @@
   - RecyclerView LayoutManager orientations
   - Weight-based layouts
 
+> - **모듈**: `simple_xml` (UI 의존 모듈)
+> - **위치**: `simple_xml/src/main/res/values/style.xml`
+> - **제공 기능**: XML Style 라이브러리
+>   - Layout Style (MatchWrap, WrapWrap, MatchMatch 등)
+>   - View 크기 조합
+>   - RecyclerView LayoutManager 방향
+>   - Weight 기반 Layout
+
 ### Style Output Example (style 출력 예시)
 ![xml_style.png](../../example_gif/xml_style.png)
 
 > **"Achieve Simpler Layouts with Style XML!"** See the tangible difference that Style provides compared to Plain XML at a glance.
-<br></br>
+<br>
 > **"더 간단한 Layout Style XML로!"** 순수 XML 대비 Style이 주는 체감 차이를 한눈에 확인하세요.
 
 <br>
-</br>
+
 
 ## 🔎 At a Glance Comparison (한눈 비교)
 
@@ -30,23 +38,27 @@
 | **View Size**                             | `layout_width="match_parent"`<br>`layout_height="wrap_content"`                                                   | `style="@style/View.MatchWrap"`                   | **2 attrs→1 line**     |
 | **Nested Properties**                     | orientation + gravity + width + height + etc.. written every time                                                 | Combine various styles through chaining           | **Remove Repetition ** |
 
-**Key Point:** Style XML solves "repetitive code" in one line. Development speed changes dramatically.
-> **핵심:** Style XML은 "반복 코드"를 한줄로 해결합니다. 개발 속도가 달라집니다.
+**Key Point:** Style XML replaces repeated layout attributes with a reusable style reference.
+> **핵심:** Style XML은 반복되는 Layout 속성을 재사용 가능한 Style 참조로 바꿉니다.
 
 <br>
-</br>
 
-## 💡 Why Simple Style XML Matters (왜 Style XML이 필수인가?)
+
+## 💡 Why Simple Style XML Matters (Style XML이 유용한 이유)
 
 ### ⚡ **Concise XML Too (XML도 간결하게)**
 - **Style Inheritance**: `Layout.MatchWrap.Vertical.Center` - 4 properties in 1 line
 - **Weight Automation**: `View.WeightWrap` - automatically sets width=0dp + weight=10
 - **Error Prevention**: width/height cannot be omitted
 
-<br>
-</br>
+> - **Style 상속**: `Layout.MatchWrap.Vertical.Center`로 네 개 속성을 한 줄에서 지정합니다.
+> - **Weight 자동 설정**: `View.WeightWrap`이 width=0dp와 weight=10을 설정합니다.
+> - **누락 방지**: Style이 width/height를 함께 제공하므로 속성 누락 가능성을 줄입니다.
 
-## 📦 Setting Ui Style vs Plain XML
+<br>
+
+
+## 📦 Simple UI Style vs Plain XML Setup (Simple UI Style과 순수 XML 설정 비교)
 
 
 <details>
@@ -105,7 +117,7 @@
 **Issues:** Write width/height every time, repeat weight + width=0dp, combine orientation + gravity direction
 > **문제점:** 매번 width/height 작성, weight + width=0dp 반복, orientation + gravity 방향 조합
 
-<br></br>
+<br>
 </details>
 
 <details>
@@ -164,48 +176,40 @@
 </details>
 
 <br>
-</br>
+
 
 ## 🎯 Key Advantages of Style (Style의 주요 장점)
 
-### 📝 **Dramatic Code Reduction** - XML properties **4 lines→1 line (75% reduction)** + prevent width/height omission errors 
-> (XML 속성 **4줄→1줄 (75% 단축)** + width/height 누락 실수 방지)
+### 📝 Attribute Reduction in This Example (이 예제의 속성 감소)
+
+The example replaces four repeated XML attributes with one style reference and keeps width/height in the shared style.
+> 이 예제는 반복되는 XML 속성 네 개를 Style 참조 한 줄로 바꾸고, width/height를 공통 Style에서 관리합니다.
 
 <br>
-</br>
 
 
-## 📣 Real User Reviews (실제 사용 후기)
 
-💬 **"After introducing the XML Style system, layout writing time was cut in half. Just one line of Layout.MatchWrap.Vertical.Center and it's done!"**
-> 💬 **"XML Style 시스템 도입 후 레이아웃 작성 시간 반 토막. Layout.MatchWrap.Vertical.Center 한 줄이면 끝!"**
-
-<br>
-</br>
-
-## 🎯 Conclusion: Essential Tool for Android Developers (결론: Android 개발자를 위한 필수 도구)
+## 🎯 Conclusion (결론)
 
 **Style XML** was created to solve the **repetition and inconvenience** of Layout Style configuration in Plain Android.
 
 ✅ **XML Style System** - Layout basic properties in just one line! (레이아웃 기본 속성을 단 한줄로!)
 
-**If you want to increase development speed,**
+Use Style XML when repeated layout attributes should be shared across screens.
 
-**Try using Style XML!** 🚀
 > - **Style XML**은 순수 Android에서 Layout Style 설정의 **반복과 불편함**을 해결하기 위해 만들어졌습니다.
-> - **개발 속도를 높이고 싶다면,**
-> - **Style XML을 사용해 보세요!** 🚀
+> - 화면마다 반복되는 Layout 속성을 공유해야 할 때 Style XML을 사용할 수 있습니다.
 
 <br>
-</br>
 
-## 📂 Example
+
+## 📂 Example (예제)
 
 **Path:**
 > - 🎨 Layout: `app/src/main/res/layout/activity_extensions_style.xml`
 
 <br>
-</br>
+
 
 ### 🎯 Supported Style Patterns (지원 가능한 Style 패턴)
 
@@ -228,7 +232,7 @@ Basic size combinations available for all Views (모든 View에서 사용 가능
 ```
 
 <br>
-</br>
+
 
 ### 🎯 Supported Style Combinations (지원 가능한 Style 조합)
 
@@ -362,7 +366,7 @@ The following lists applicable Style patterns organized by View type.
 ```
 
 <br>
-</br>
+
 
 ### 💡 Style System Tips (Style 시스템 활용 팁)
 
@@ -408,17 +412,14 @@ The following lists applicable Style patterns organized by View type.
 ```
 
 **Advantages (장점):**
-- Reduce XML code by 50% or more 
-- Error prevention (width/height omission, etc.)
-- Easy maintenance 
-- Maintain consistency across the entire project 
-> - (XML 코드 50% 이상 단축)
-> -  (실수 방지 (width/height 누락 등))
-> - (유지보수 용이)
-> - (프로젝트 전체 일관성 유지)
+- Reuse width, height, weight, and other shared attributes
+- Reduce width/height omissions by defining them in the selected style
+- Update shared defaults in one resource
+- Apply the same naming pattern across layouts
+
+> - width, height, weight와 그 밖의 공통 속성을 재사용합니다.
+> - 선택한 Style에서 width/height를 정의해 속성 누락 가능성을 줄입니다.
+> - 공통 기본값을 하나의 리소스에서 변경합니다.
+> - Layout 전반에 같은 이름 패턴을 적용합니다.
 
 <br>
-</br>
-
-.
-

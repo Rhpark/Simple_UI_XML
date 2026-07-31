@@ -1,4 +1,4 @@
-﻿# 📱 Simple UI MVVM Pattern – Complete Guide
+# 📱 Simple UI MVVM Pattern – Complete Guide
 > **Simple UI MVVM 패턴 - 가이드**
 
 ## 📦 Module Information (모듈 정보)
@@ -21,7 +21,7 @@ This feature **spans three modules** (이 기능은 **세 모듈**에 걸쳐 있
 - **Purpose**: Collect channel events and non-replaying effect flows with Compose lifecycle awareness
 - **Re-collection note**: Cold flows or replaying shared flows can emit again when the lifecycle restarts
 
-<br></br>
+<br>
 
 ### Activity + ViewModel Quick Setup (Activity + ViewModel 초기 설정)
 ![mvvm_activity_init.gif](../../example_gif/mvvm_activity_init.gif)
@@ -36,14 +36,14 @@ This feature **spans three modules** (이 기능은 **세 모듈**에 걸쳐 있
 > **"MVVM 세팅 예제를 10줄 안팎으로 정리해 보자!"** 기존 Activity/Fragment + ViewModel 구현과 설정 흐름을 비교해 보세요.
 
 <br>
-</br>
+
 
 ## 🔎 At a Glance (한눈 비교)
 
 <br>
-</br>
 
-### Activity/Fragment + ViewModel Initialization
+
+### Activity/Fragment + ViewModel Initialization (Activity/Fragment + ViewModel 초기화)
 
 | Category (항목) | Plain Android (기본 Android) | Simple UI (심플 UI) |
 |:--------------------------|:------------------------------------------:|:--------------------------------------:|
@@ -53,9 +53,9 @@ This feature **spans three modules** (이 기능은 **세 모듈**에 걸쳐 있
 | `onCreate` boilerplate (`onCreate` 보일러플레이트) | Complex initialization code<br>복잡한 초기화 코드 | ✅ Minimal code<br>최소한의 코드 |
 
 <br>
-</br>
 
-### ViewModel Event System
+
+### ViewModel Event System (ViewModel 이벤트 시스템)
 | Category (항목) | Plain Android (기본 Android) | Simple UI (심플 UI) |
 |:--|:--:|:--:|
 | Event channel setup (이벤트 채널 구성) | Manually wire Flow/Channel (10+ lines)<br>Flow/Channel 수동 구성 (10줄 이상) | Automatically handled by `BaseViewModelEvent` ✅<br>`BaseViewModelEvent`가 자동 처리 |
@@ -67,7 +67,7 @@ This feature **spans three modules** (이 기능은 **세 모듈**에 걸쳐 있
 > **핵심:** Simple UI는 "복잡한 MVVM 보일러플레이트"의 **자동화**를 통해 개발 속도를 향상시킵니다.
 
 <br>
-</br>
+
 
 ## 💡 Why Simple UI MVVM Matters (왜 Simple UI MVVM이 중요한가)
 
@@ -83,7 +83,7 @@ This feature **spans three modules** (이 기능은 **세 모듈**에 걸쳐 있
 > - **빠른 프로토타이핑**: 아이디어를 바로 구현하여 테스트 가능
 
 <br>
-</br>
+
 
 ## 📦 Before You Begin (시작하기 전에)
 
@@ -180,7 +180,7 @@ class HomeFragment : BaseDataBindingFragment<FragmentHomeBinding>(R.layout.fragm
 }
 ```
 
-<br></br>
+<br>
 
 ## 🎯 Activity/Fragment Development with MVVM (MVVM 기반 Activity/Fragment 개발)
 
@@ -198,7 +198,7 @@ class HomeFragment : BaseDataBindingFragment<FragmentHomeBinding>(R.layout.fragm
 > - Lifecycle 관리 자동화
 
 <br>
-</br>
+
 
 ## 🧩 Plain Android MVVM VS Simple UI MVVM Comparisons (코드 비교)
 
@@ -271,7 +271,7 @@ class MainActivity : AppCompatActivity() {
 **Issues:** Complex DataBinding setup, manual LifecycleOwner wiring, verbose event collection boilerplate, and no standardized function names.
 >**문제점:** 복잡한 DataBinding 설정, 수동 LifecycleOwner 연결, 이벤트 수집 보일러플레이트, 함수명 표준화 없음
 
-<br></br>
+<br>
 </details>
 <details>
 <summary><strong>Simple UI — automatic Activity + ViewModel setup/ Simple UI - Activity + ViewModel 자동 초기화</strong></summary>
@@ -376,7 +376,7 @@ override fun onEventVmCollect(binding: ActivityMainBinding) {
 ---
 
 <br>
-</br>
+
 
 ### 2. Fragment + ViewModel Integration (둘째: Fragment + ViewModel 연동)
 
@@ -466,7 +466,7 @@ class MainFragment : Fragment() {
 **Issues:** Complicated inflate logic, manual nullable-binding handling, manual LifecycleOwner wiring, memory-leak safeguards, and no standardized function names.
 > **문제점:** 복잡한 inflate, nullable binding 처리, 수동 LifecycleOwner, 메모리 누수 방지 코드, 함수명 표준화 없음
 
-<br></br>
+<br>
 </details>
 
 <details>
@@ -527,7 +527,7 @@ class MainFragment : BaseDataBindingFragment<FragmentMainBinding>(R.layout.fragm
 
 
 </details>
-<br></br>
+<br>
 
 ### 3. DialogFragment + ViewModel Integration (셋째: DialogFragment + ViewModel 연동)
 
@@ -580,7 +580,7 @@ class InfoDialog : AppCompatDialogFragment() {
 **Issues:** Manual nullable-binding 처리, lifecycleOwner 지정, event Flow 구독, 다이얼로그 종료 처리 등이 모두 반복됩니다.
 > **문제점:** nullable-binding, lifecycleOwner, 이벤트 구독, 다이얼로그 종료 로직까지 매번 작성해야 합니다.
 
-<br></br>
+<br>
 </details>
 
 <details>
@@ -621,7 +621,7 @@ class InfoDialog : BaseDataBindingDialogFragment<DialogInfoBinding>(R.layout.dia
 </details>
 
 <br>
-</br>
+
 
 ### 4. ViewModel Event System Comparison (넷째: ViewModel 이벤트 시스템 비교)
 
@@ -684,7 +684,7 @@ sealed class MainEvent {
 **Issues:** Complex channel setup, manual event dispatch, and resource cleanup you must handle yourself.
 > **문제점:** 복잡한 채널 구성, 수동 이벤트 전송, 리소스 해제 직접 관리
 
-<br></br>
+<br>
 </details>
 
 <details>
@@ -735,7 +735,7 @@ sealed class MainEvent {
 </details>
 
 <br>
-</br>
+
 
 ## 🚀 Core Advantages of Simple UI MVVM/ Simple UI MVVM의 핵심 장점
 
@@ -749,7 +749,7 @@ sealed class MainEvent {
 > - **메모리 관리**: nullable binding 처리 자동
 
 <br>
-</br>
+
 
 ### 2. **🛠️ Standardized Event System (표준화된 이벤트 시스템)**
 - **`BaseViewModelEvent`:** Flow/Channel automatically prepared.
@@ -762,7 +762,7 @@ sealed class MainEvent {
 > - **리소스 관리**: 채널 자동 해제
 
 <br>
-</br>
+
 
 ### 3. **🎯 Optimized Developer Experience (개발자 경험 최적화)**
 - **Type safety:** Prevent errors at compile time.
@@ -773,7 +773,7 @@ sealed class MainEvent {
 > - **빠른 개발**: 보일러플레이트 제거로 생산성 향상
 
 <br>
-</br>
+
 
 ### 4. **🔧 Mistake-Proofing (실수 방지)**
 - **LifecycleOwner omissions:** Automatically wired to prevent mistakes.
@@ -784,7 +784,7 @@ sealed class MainEvent {
 > - **채널 해제**: BaseViewModelEvent가 자동 관리
 
 <br>
-</br>
+
 
 ### 5. **📉 Less Setup Code in the Guide Example (가이드 예제 기준 코드 간소화)**
 - **Activity + ViewModel:** 30–40 lines → under 15 (**60% reduction**)
@@ -795,7 +795,7 @@ sealed class MainEvent {
 > - **ViewModel 이벤트**: Channel 구성 10줄+ → sendEventVm() 한 줄
 
 <br>
-</br>
+
 
 ## 💡 What the Guide Highlights (가이드에서 드러나는 개선점)
 
@@ -814,7 +814,7 @@ sealed class MainEvent {
 > - **`sendEventVm()`로 일회성 이벤트 전송을 간결하게 유지할 수 있습니다.**
 
 <br>
-</br>
+
 
 ## 🎉 Conclusion: What This MVVM Guide Demonstrates (결론: 이 MVVM 가이드가 보여주는 것)
 
@@ -839,7 +839,7 @@ This guide is intended to show how the library simplifies common MVVM setup patt
 ---
 
 <br>
-</br>
+
 
 ## 🚀 Explore Real Implementations (실제 구현 예제 보기)
 
@@ -849,7 +849,7 @@ This guide is intended to show how the library simplifies common MVVM setup patt
 > - 실제로 앱을 구동시켜서 실제 구현 예제를 확인해 보세요!
 
 <br>
-</br>
+
 
 **Try these features:**
 - Activity + ViewModel automatic initialization
@@ -873,6 +873,3 @@ This guide is intended to show how the library simplifies common MVVM setup patt
 > - nullable binding 자동 처리
 
 <br>
-</br>
-.
-

@@ -1,17 +1,17 @@
-﻿# WifiController vs Plain Android - Complete Comparison Guide
+# WifiController vs Plain Android - Complete Comparison Guide
 > **WifiController vs 순수 Android - 비교 가이드**
 
 ## Module Information (모듈 정보)
 - **Module**: `simple_system_manager` (system manager 전용 모듈 / system_manager 전용 모듈)
 - **Package**: `kr.open.library.simple_ui.system_manager.core.controller.wifi`
 
-<br></br>
+<br>
 
 ## Overview (개요)
 Provides simple APIs for WiFi info/status queries and scans.  
 > WiFi 정보/상태 조회 및 스캔을 간단한 API로 제공합니다.
 
-<br></br>
+<br>
 
 ## At a Glance (한눈 비교)
 | Item (항목)                | Plain Android (기본 방식)                                 | Simple UI (Simple UI) | Notes (비고) |
@@ -21,7 +21,7 @@ Provides simple APIs for WiFi info/status queries and scans.
 | Scan handling            | Manual permission + calls                             | Simple call           | Permissions are the same<br>권한은 동일 |
 | Deprecated API handling  | Handled by caller                                     | Handled internally    | Less boilerplate<br>코드 간소화 |
 
-<br></br>
+<br>
 
 ## Why It Matters (중요한 이유)
 **Issues**
@@ -40,7 +40,7 @@ Provides simple APIs for WiFi info/status queries and scans.
 > <br>SSID 따옴표 제거 자동 처리
 > <br>헬퍼 함수 제공
 
-<br></br>
+<br>
 
 ## Plain Android (순수 Android 방식)
 ```kotlin
@@ -102,7 +102,7 @@ private fun scanWifi() {
 }
 ```
 
-<br></br>
+<br>
 
 ## Simple UI Approach (Simple UI 방식)
 ```kotlin
@@ -136,13 +136,10 @@ private fun scanWifi() {
 }
 ```
 
-<br></br>
+<br>
 
 ## Related Extensions (관련 확장 함수)
 - `getWifiController()`  
   See full list / 전체 목록: [README_SYSTEM_MANAGER_EXTENSIONS.md](../../README_SYSTEM_MANAGER_EXTENSIONS.md)
 
-<br></br>
-
-
-
+<br>

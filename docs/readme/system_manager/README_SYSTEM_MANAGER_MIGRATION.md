@@ -6,7 +6,7 @@
 - **Applies to**: the next major source state (다음 메이저 소스 상태)
 - **Release version**: not fixed (릴리스 버전 미확정)
 
-<br></br>
+<br>
 
 ## Overview (개요)
 The next major source state reduces the public API surface without changing the primary controller and info behavior. Five approved breaking changes are included.
@@ -15,7 +15,7 @@ The next major source state reduces the public API surface without changing the 
 The published `0.5.1` coordinates are not renamed by this document. Apply this guide when adopting the future major release or building the next-major source state directly.
 > 이 문서는 현재 배포된 `0.5.1` 좌표를 변경하지 않습니다. 향후 메이저 릴리스를 적용하거나 다음 메이저 소스 상태를 직접 빌드할 때 이 가이드를 사용하세요.
 
-<br></br>
+<br>
 
 ## Migration Summary (이전 요약)
 
@@ -30,7 +30,7 @@ The published `0.5.1` coordinates are not renamed by this document. Apply this g
 | `CommonTelephonyCallback` raw listeners | No direct replacement; register through `TelephonyInfo`.<br>직접 대체 API가 없으며 `TelephonyInfo`를 통해 등록합니다. |
 | `kr.open.library.simple_ui.system_manager.BuildConfig` | Use the consuming app or module's own build configuration.<br>소비 앱 또는 모듈 자체 빌드 설정을 사용합니다. |
 
-<br></br>
+<br>
 
 ## 1. Notification Accessor (알림 접근자)
 
@@ -41,7 +41,7 @@ The published `0.5.1` coordinates are not renamed by this document. Apply this g
 val notificationManager = context.getNotificationManager()
 ```
 
-<br></br>
+<br>
 
 ## 2. Core and XML Service Boundary (Core/XML 서비스 경계)
 
@@ -56,7 +56,7 @@ val windowManager = context.getSystemService(WindowManager::class.java)
 val inputMethodManager = context.getSystemService(InputMethodManager::class.java)
 ```
 
-<br></br>
+<br>
 
 ## 3. Battery PowerProfile (배터리 PowerProfile)
 
@@ -66,7 +66,7 @@ val inputMethodManager = context.getSystemService(InputMethodManager::class.java
 The internal fallback remains PowerProfile reflection → charge-counter estimation → error value. Individual average-power metrics do not receive a new public replacement.
 > 내부 폴백은 PowerProfile 리플렉션 → chargeCounter 추정 → 오류 값 순서를 유지합니다. 개별 평균 전력 지표에는 새 공개 대체 API를 제공하지 않습니다.
 
-<br></br>
+<br>
 
 ## 4. Telephony Callback Implementation (Telephony 콜백 구현)
 
@@ -83,7 +83,7 @@ The internal fallback remains PowerProfile reflection → charge-counter estimat
 | `unregisterAdvancedCallback(slotIndex)` | `unregisterCallBack(slotIndex)` |
 | Callback manager StateFlow and per-slot setters | The same consumer-facing properties and setters on `TelephonyInfo`<br>`TelephonyInfo`의 동일 소비자용 프로퍼티와 setter |
 
-<br></br>
+<br>
 
 ## 5. Library BuildConfig (라이브러리 BuildConfig)
 
@@ -100,7 +100,7 @@ if (com.example.app.BuildConfig.DEBUG) {
 }
 ```
 
-<br></br>
+<br>
 
 ## Unchanged Public Contracts (변경하지 않은 공개 계약)
 
@@ -113,7 +113,7 @@ if (com.example.app.BuildConfig.DEBUG) {
 > - `NetworkLinkPropertiesData : NetworkBase` 상속은 유지됩니다.
 > - 대표 Controller·Info 진입점과 XML 확장 API 5개는 계속 공개됩니다.
 
-<br></br>
+<br>
 
 ## Consumer Checklist (소비자 체크리스트)
 
@@ -126,7 +126,7 @@ if (com.example.app.BuildConfig.DEBUG) {
 > - 제거된 라이브러리 `BuildConfig` 대신 앱 또는 소유 모듈의 빌드 플래그를 사용합니다.
 > - 다음 메이저 아티팩트로 앱을 다시 빌드하고 필요한 경우 Telephony 실기기 시나리오를 실행합니다.
 
-<br></br>
+<br>
 
 ## Related Docs (관련 문서)
 - [System Manager Extensions](README_SYSTEM_MANAGER_EXTENSIONS.md)

@@ -1,4 +1,4 @@
-﻿# System Manager Extensions vs Plain Android - Complete Comparison Guide
+# System Manager Extensions vs Plain Android - Complete Comparison Guide
 > **System Manager Extensions vs 순수 Android - 비교 가이드**
 
 ## Module Information (모듈 정보)
@@ -7,13 +7,13 @@
   - `kr.open.library.simple_ui.system_manager.core.extensions`
   - `kr.open.library.simple_ui.system_manager.xml.extensions`
 
-<br></br>
+<br>
 
 ## Overview (개요)
 Summarizes system service accessors and controller/info entry points owned by `simple_system_manager`.
 > `simple_system_manager`가 제공하는 시스템 서비스 접근자와 controller/info 확장 진입점을 정리합니다.
 
-<br></br>
+<br>
 
 ## At a Glance (한눈 비교)
 
@@ -56,7 +56,7 @@ Summarizes system service accessors and controller/info entry points owned by `s
 | `Window.getSystemBarController()` | `SystemBarController` | System bar control (cached)<br>시스템 바 제어(캐시) | [README_SYSTEMBAR_CONTROLLER.md](controller/xml/README_SYSTEMBAR_CONTROLLER.md) |
 | `Window.destroySystemBarControllerCache()` | `Unit` | Clear system bar controller cache<br>시스템 바 컨트롤러 캐시 제거 | [README_SYSTEMBAR_CONTROLLER.md](controller/xml/README_SYSTEMBAR_CONTROLLER.md) |
 
-<br></br>
+<br>
 
 ## Why It Matters (중요한 이유)
 Provides a compact map of Context and Window extension entry points for `simple_system_manager`.  
@@ -65,7 +65,7 @@ Provides a compact map of Context and Window extension entry points for `simple_
 Extensions provide typed system service access and the primary entry points for controllers and info objects.
 > 확장 함수는 타입이 지정된 시스템 서비스 접근과 controller/info 객체의 기본 진입점을 제공합니다.
 
-<br></br>
+<br>
 
 ## Usage Example (사용 예시)
 ```kotlin
@@ -95,7 +95,7 @@ private fun clearSystemBar(window: Window) {
 }
 ```
 
-<br></br>
+<br>
 
 ## Notes (주의사항)
 - `getNotificationManager()` is the only public notification service accessor.
@@ -111,7 +111,7 @@ private fun clearSystemBar(window: Window) {
 - `window.getSystemBarController()`와 `window.destroySystemBarControllerCache()`는 `@MainThread` 계약이며 Debug 빌드에서는 오프 메인스레드 호출 시 `IllegalStateException`으로 즉시 실패합니다.
 - `clearTint`, `applyWindowInsetsAsPadding`, `bindLifecycleObserver`/`unbindLifecycleObserver`는 View 확장 범위이므로 `docs/readme/README_EXTENSIONS.md`를 참조하십시오.
 
-<br></br>
+<br>
 
 ## Related Docs (관련 문서)
 - Next major migration: [README_SYSTEM_MANAGER_MIGRATION.md](README_SYSTEM_MANAGER_MIGRATION.md)

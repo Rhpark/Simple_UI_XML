@@ -1,7 +1,7 @@
 # System Manager Info Guide — Document Moved
 > **System Manager 정보 가이드 — 문서 이동 안내**
 
-<br></br>
+<br>
 
 ## Current Module Ownership (현재 모듈 소유권)
 
@@ -11,7 +11,7 @@ The previous `simple_core.system_manager` package is no longer the current publi
 > System Manager 정보 API는 `simple_system_manager` 모듈이 소유합니다.
 > 기존 `simple_core.system_manager` 패키지는 현재 공개 API 위치가 아닙니다.
 
-<br></br>
+<br>
 
 ## Current Guide (현재 문서)
 
@@ -25,7 +25,7 @@ The previous `simple_core.system_manager` package is no longer the current publi
 > - **문서**: [system_manager/info/README_SERVICE_MANAGER_INFO.md](system_manager/info/README_SERVICE_MANAGER_INFO.md)
 > - **Maven Central**: `io.github.rhpark:dash-droid-system-manager:0.5.1`
 
-<br></br>
+<br>
 
 ## Dependency Declaration (의존성 선언)
 

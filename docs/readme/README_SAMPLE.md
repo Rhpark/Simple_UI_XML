@@ -1,15 +1,15 @@
-﻿# 📊 Simple UI XML vs Plain Android - 비교 가이드
+# 📊 Simple UI XML vs Plain Android - 비교 가이드
 
 ![simple_example.gif](../../example_gif/simple_example.gif)
 
 > 기존 권한 관리 개발 대비 Simple UI가 주는 체감 차이를 한눈에 확인하세요.
 
 <br>
-</br>
+
 
 ## 🔎 At a glance (한눈 비교)
 
-### Permission Requester
+### Permission Requester (권한 요청)
 > ### 권한 관리
 | Category                    |               Plain Android               |             Simple UI              |
 |:----------------------------|:-----------------------------------------:|:----------------------------------:|
@@ -18,9 +18,9 @@
 | Permission result handling  |      Manual callback implementation       |   ✅ Automatic callback provided    |
 | Developer experience        |            Complex boilerplate            |      ✅ Concise library calls       |
 <br>
-</br>
 
-### MVVM 
+
+### MVVM
 | Category                |        Plain Android         |            Simple UI             |
 |:------------------------|:----------------------------:|:--------------------------------:|
 | ViewModel events        |  Manual Flow channel setup   |  ✅ BaseViewModelEvent automatic  |
@@ -31,7 +31,7 @@
 **Key point:** Simple UI automates "complex permission management implementation". Development speed transforms.
 > **핵심:** Simple UI는 "복잡한 권한 관리 구현"을 **자동화**합니다. 개발 속도가 달라집니다.
 
-<br></br>
+<br>
 
 ## 💡 Why it matters(왜 중요한가)
 
@@ -48,9 +48,9 @@
 > - **유지보수성**: BaseViewModelEvent로 표준화된 이벤트 시스템
 > - **빠른 프로토타이핑**: 아이디어를 바로 구현하여 테스트 가능
 
-<br></br>
+<br>
 
-## 🎯 MVVM + Flow Based Permissions Management System
+## 🎯 MVVM + Flow-Based Permission Management (MVVM + Flow 기반 권한 관리)
 
 **Example implementation features:**
 - Normal, multiple, and special permission requests
@@ -63,11 +63,11 @@
 > - RecyclerView로 권한 요청 결과 표시
 > - SnackBar 피드백
 
-<br></br>
+<br>
 
-## Plain Android Code Vs Simple UI Code
+## Plain Android vs Simple UI Code (순수 Android와 Simple UI 코드 비교)
 
-### #1: Permission Request Type
+### #1: Permission Request Type (권한 요청 유형)
 
 <details>
 <summary><strong>Plain Android - ActivityResultContract 수동 등록</strong></summary>
@@ -118,7 +118,7 @@ class PermissionsActivityOrigin : AppCompatActivity() {
 **Problem:** Complex launcher registration, separate logic for normal/special permissions, individual result handling required
 > **문제점:** 복잡한 launcher 등록, 일반/특수 권한 분리 로직, 개별 결과 처리 필요
 
-<br></br>
+<br>
 </details>
 
 <details>
@@ -163,9 +163,9 @@ class PermissionsActivity : BaseDataBindingActivity<ActivityPermissionsBinding>(
 </details>
 
 <br>
-</br>
 
-### #2: ViewModel Event System
+
+### #2: ViewModel Event System (ViewModel 이벤트 시스템)
 
 <details>
 <summary><strong>Plain Android - Flow 채널 수동 구성</strong></summary>
@@ -226,7 +226,7 @@ class PermissionsActivity : AppCompatActivity()
 **Problem:** Complex channel setup, manual event emission, direct resource cleanup management
 > **문제점:** 복잡한 채널 구성, 수동 이벤트 전송, 리소스 해제 직접 관리
 
-<br></br>
+<br>
 </details>
 
 <details>
@@ -290,9 +290,9 @@ class PermissionsActivity :
 </details>
 
 <br>
-</br>
 
-### #3: RecyclerView Adapter
+
+### #3: RecyclerView Adapter (RecyclerView 어댑터)
 
 <details>
 <summary><strong>Plain Android - 커스텀 Adapter 구현</strong></summary>
@@ -337,7 +337,7 @@ private fun setupRecyclerView() {
 **Problem:** Need to implement ViewHolder class, Adapter class, and manual binding logic all separately
 > **문제점:** ViewHolder 클래스, Adapter 클래스, 수동 바인딩 로직 모두 구현 필요
 
-<br></br>
+<br>
 </details>
 
 <details>
@@ -370,9 +370,9 @@ For additional adapter options such as ViewBinding/ListAdapter/header-footer var
 </details>
 
 <br>
-</br>
 
-### #4: SnackBar 
+
+### #4: SnackBar (SnackBar 예제)
 
 <details>
 <summary><strong>Plain Android - Builder 패턴 수동 구현</strong></summary>
@@ -414,9 +414,9 @@ binding.root.snackBarShowShort("권한이 허용되었습니다!")
 </details>
 
 <br>
-</br>
 
-## 🚀 Key Point Simple UI XML
+
+## 🚀 Simple UI XML Key Points (Simple UI XML 핵심)
 
 ### 1. 📉 Full permission management automation(권한 관리 자동화)
 - Complex launcher registration: ActivityResultContract registration → one line requestPermissions()
@@ -427,7 +427,7 @@ binding.root.snackBarShowShort("권한이 허용되었습니다!")
 > - **권한 결과 처리**: 개별 콜백 구현 → 통합 콜백 제공
 
 <br>
-</br>
+
 
 ### 2. ⚡ MVVM architecture automation(MVVM 아키텍처 자동화)
 - Event system: Manual Flow channel setup → BaseViewModelEvent automatic
@@ -438,7 +438,7 @@ binding.root.snackBarShowShort("권한이 허용되었습니다!")
 > - **리소스 관리**: 수동 해제 → Lifecycle 연동 자동
 
 <br>
-</br>
+
 
 ### 3. 🛠️ UI component simplification(UI 컴포넌트 간소화)
 - RecyclerView: Custom Adapter implementation → SimpleRcvAdapter-based result list
@@ -449,7 +449,7 @@ binding.root.snackBarShowShort("권한이 허용되었습니다!")
 > - **DataBinding**: 수동 설정 → 자동 적용
 
 <br>
-</br>
+
 
 ### 4. 🎯 Developer experience optimization(개발자 경험 최적화)
 - Type safety: Prevent compile-time errors
@@ -461,7 +461,7 @@ binding.root.snackBarShowShort("권한이 허용되었습니다!")
 > - **검증된 구현**: 수많은 프로젝트에서 검증된 안정성
 
 <br>
-</br>
+
 
 ## 💡 Developer Feedback(개발자 후기)
 - "No more worrying about complex registerForActivityResult!"
@@ -474,35 +474,33 @@ binding.root.snackBarShowShort("권한이 허용되었습니다!")
 > - **"SimpleRcvAdapter 덕분에 권한 결과 리스트 구성이 정말 간단해졌습니다!"**
 
 <br>
-</br>
 
-## 🎉 Conclusion: A new standard for permission management development (결론: 권한 관리 개발의 새로운 표준)
-**Simple UI XML** is an innovative library that makes complex permission management simple and powerful.
-- ✅ Permission request automation - Complex launcher registration in one line!
-- ✅ Complete MVVM architecture - Event system and initialization automatic!
-- ✅ UI component simplification - RecyclerView and SnackBar made easy!
 
-**No more traditional complexity. Experience productive development with Simple UI! 🚀**
+## 🎉 Conclusion (결론)
 
-> **Simple UI XML**은 복잡한 권한 관리를 **단순하고 강력하게** 만드는 혁신적인 라이브러리입니다.
+The sample demonstrates how Simple UI XML combines permission requests, ViewModel events, RecyclerView adapters, and SnackBar helpers in an application module.
+
+- ✅ Permission request flow through the library requester
+- ✅ ViewModel event dispatch and collection
+- ✅ RecyclerView adapter and SnackBar usage
+
+> 이 샘플은 Simple UI XML의 권한 요청, ViewModel 이벤트, RecyclerView Adapter, SnackBar helper를 애플리케이션 모듈에서 함께 사용하는 방법을 보여줍니다.
 >
->- ✅ **권한 요청 자동화** - 복잡한 launcher 등록을 한 줄로!
->- ✅ **MVVM 아키텍처 완성** - 이벤트 시스템과 초기화 자동!
->- ✅ **UI 컴포넌트 간소화** - RecyclerView와 SnackBar를 쉽게!
->
-> **전통적인 복잡함은 이제 그만. Simple UI와 함께 생산적인 개발을 경험하세요!** 🚀
+> - ✅ 라이브러리 requester를 통한 권한 요청 흐름
+> - ✅ ViewModel 이벤트 전송과 수집
+> - ✅ RecyclerView Adapter와 SnackBar 사용
 
 <br>
-</br>
 
-## Example Code
+
+## Example Code (예제 코드)
 
 **Path:**
 > - Simple UI Example: `app/src/main/java/kr/open/library/simpleui_xml/permission/`
 > - Plain Android Example: `app/src/main/java/kr/open/library/simpleui_xml/permissions_origin/`
 
 <br>
-</br>
+
 
 **Testable features:**
 - Identical handling method for normal vs special permissions
@@ -527,5 +525,3 @@ For advanced adapter contracts, section APIs, and queue semantics, see `README_R
 > 고급 adapter 계약, section API, queue 동작은 `README_RECYCLERVIEW.md`를 참고하세요.
 
 <br>
-</br>
-

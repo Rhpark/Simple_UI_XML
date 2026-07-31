@@ -1,17 +1,17 @@
-﻿# VibratorController vs Plain Android - Complete Comparison Guide
+# VibratorController vs Plain Android - Complete Comparison Guide
 > **VibratorController vs 순수 Android - 비교 가이드**
 
 ## Module Information (모듈 정보)
 - **Module**: `simple_system_manager` (system manager 전용 모듈 / system_manager 전용 모듈)
 - **Package**: `kr.open.library.simple_ui.system_manager.core.controller.vibrator` 
 
-<br></br>
+<br>
 
 ## Overview (개요)
 Simplifies vibration execution, pattern/preset vibration, and SDK branching, with amplitude support checks.  
 > 진동 실행, 패턴/프리셋 진동, SDK 버전 분기를 단순화하고 강도 지원 여부 확인까지 제공합니다.
 
-<br></br>
+<br>
 
 ## At a Glance (한눈 비교)
 | Item (항목)               | Plain Android (기본 방식)               | Simple UI (Simple UI)                                                        | Notes (비고) |
@@ -23,7 +23,7 @@ Simplifies vibration execution, pattern/preset vibration, and SDK branching, wit
 | Predefined(Q+) safety   | Caller must guard                   | pre-Q returns false + logs                                                   | Safe fallback<br>안전 실패 |
 | Permission              | Handled by caller                   | Same                                                                         | `VIBRATE` permission required<br>매니페스트 선언 필요(일반 권한) |
 
-<br></br>
+<br>
 
 ## Why It Matters (중요한 이유)
 **Issues / 문제점**
@@ -42,7 +42,7 @@ Simplifies vibration execution, pattern/preset vibration, and SDK branching, wit
 > SDK 버전 분기 자동 처리
 > Deprecated API 내부 처리
 
-<br></br>
+<br>
 
 ## Plain Android (순수 Android 방식)
 ```kotlin
@@ -92,7 +92,7 @@ private fun vibratePattern(pattern: LongArray, repeat: Int = -1) {
 }
 ```
 
-<br></br>
+<br>
 
 ## Simple UI Approach (Simple UI 방식)
 ```kotlin
@@ -137,7 +137,7 @@ private fun checkAmplitudeSupport() {
 }
 ```
 
-<br></br>
+<br>
 
 ## Notes (주의사항)
 - `createPredefined()` is available from Android Q(29). pre-Q returns false and logs a warning.  
@@ -147,13 +147,10 @@ private fun checkAmplitudeSupport() {
 - `VIBRATE` is a normal permission: declare in AndroidManifest.xml (no runtime prompt).  
   `VIBRATE`는 일반 권한이므로 매니페스트 선언이 필요하고 런타임 요청은 없습니다.
 
-<br></br>
+<br>
 
 ## Related Extensions (관련 확장 함수)
 - `getVibratorController()`  
   See full list / 전체 목록: [README_SYSTEM_MANAGER_EXTENSIONS.md](../../README_SYSTEM_MANAGER_EXTENSIONS.md)
 
-<br></br>
-
-
-
+<br>

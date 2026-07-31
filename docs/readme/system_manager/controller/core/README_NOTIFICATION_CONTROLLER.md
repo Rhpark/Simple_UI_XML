@@ -1,17 +1,17 @@
-﻿# NotificationController vs Plain Android - Complete Comparison Guide
+# NotificationController vs Plain Android - Complete Comparison Guide
 > **NotificationController vs 순수 Android - 비교 가이드**
 
 ## Module Information (모듈 정보)
 - **Module**: `simple_system_manager` (system manager 전용 모듈 / system_manager 전용 모듈)
 - **Package**: `kr.open.library.simple_ui.system_manager.core.controller.notification`
 
-<br></br>
+<br>
 
 ## Overview (개요)
 Simplifies notification display, progress updates, and channel management.  
 > 알림 표시/진행률 업데이트/채널 관리를 단순화합니다.
 
-<br></br>
+<br>
 
 ## At a Glance (한눈 비교)
 | Item (항목)                         | Plain Android (기본 방식)              | Simple UI (Simple UI)                                   | Notes (비고) |
@@ -23,7 +23,7 @@ Simplifies notification display, progress updates, and channel management.
 | Update result                     | Always notify                      | `Success(false)` when same value or target missing      | Avoid redundant updates<br>불필요한 업데이트 방지 |
 | Cleanup responsibility            | Manual handling                    | `cleanup()` recommended                                 | Release resources on end<br>종료 시 리소스 정리 |
 
-<br></br>
+<br>
 
 ## Why It Matters (중요한 이유)
 **Issues / 문제점**
@@ -42,7 +42,7 @@ Simplifies notification display, progress updates, and channel management.
 > <br>PendingIntent 자동 생성
 > <br>진행률 알림 자동 정리(유휴 30분)
 
-<br></br>
+<br>
 
 ## 순수 Android 방식 (Plain Android)
 ```kotlin
@@ -108,7 +108,7 @@ private fun showProgressNotification(progress: Int) {
 }
 ```
 
-<br></br>
+<br>
 
 ## Simple UI Approach (Simple UI 방식)
 ```kotlin
@@ -176,7 +176,7 @@ private fun showBigTextNotification() {
 }
 ```
 
-<br></br>
+<br>
 
 ## Notes (주의사항)
 - Android 13+ requires the `POST_NOTIFICATIONS` permission.
@@ -194,7 +194,7 @@ private fun showBigTextNotification() {
 > 진행률 알림 사용 후 Activity/Service 종료 시 `cleanup()` 호출을 권장합니다.
 > `createChannel()`은 이후 생성되는 알림에만 적용됩니다.
 
-<br></br>
+<br>
 
 ## Documentation Notes (문서 관리 메모)
 - Source KDoc follows the bilingual style: English first, then `<br><br>`, then Korean, and ending with `<br>`.
@@ -204,13 +204,10 @@ private fun showBigTextNotification() {
 > KDoc/문서의 한글 깨짐을 방지하려면 소스/문서 파일 인코딩을 UTF-8로 유지해야 합니다.
 > 내부 구현 참고 파일: `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/core/controller/notification/internal/SimpleNotificationBuilder.kt`
 
-<br></br>
+<br>
 
 ## Related Extensions (관련 확장 함수)
 - `getNotificationController(channel)`  
   See full list / 전체 목록: [README_SYSTEM_MANAGER_EXTENSIONS.md](../../README_SYSTEM_MANAGER_EXTENSIONS.md)
 
-<br></br>
-
-
-
+<br>
