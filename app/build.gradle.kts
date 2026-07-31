@@ -166,11 +166,27 @@ firebaseAppDistribution {
     }
 }
 
+val useMavenArtifacts =
+    providers
+        .gradleProperty("useMavenArtifacts")
+        .map { it.toBooleanStrict() }
+        .getOrElse(false)
+
 dependencies {
-    implementation(project(":simple_core"))
-    implementation(project(":simple_compose"))
-    implementation(project(":simple_system_manager"))
-    implementation(project(":simple_xml"))
+    if (useMavenArtifacts) {
+        val group = libs.versions.githubGroup.get()
+        val version = libs.versions.appVersion.get()
+
+        implementation("$group:${libs.versions.mavenArtifactIdCore.get()}:$version")
+        implementation("$group:${libs.versions.mavenArtifactIdCompose.get()}:$version")
+        implementation("$group:${libs.versions.mavenArtifactIdSystemManager.get()}:$version")
+        implementation("$group:${libs.versions.mavenArtifactIdXML.get()}:$version")
+    } else {
+        implementation(project(":simple_core"))
+        implementation(project(":simple_compose"))
+        implementation(project(":simple_system_manager"))
+        implementation(project(":simple_xml"))
+    }
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

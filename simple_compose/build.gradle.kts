@@ -19,6 +19,10 @@ val enableJitpackPublication = providers
     .orElse(providers.environmentVariable("JITPACK"))
     .map { it.equals("true", ignoreCase = true) }
     .getOrElse(false)
+val localConsumerPublication = providers
+    .gradleProperty("localConsumerPublication")
+    .map { it.equals("true", ignoreCase = true) }
+    .getOrElse(false)
 
 if (enableJitpackPublication) {
     publishing {
@@ -38,8 +42,10 @@ if (enableJitpackPublication) {
     apply(plugin = "com.vanniktech.maven.publish")
 
     extensions.configure<MavenPublishBaseExtension> {
-        publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
-        signAllPublications()
+        if (!localConsumerPublication) {
+            publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
+            signAllPublications()
+        }
 
         coordinates(
             libs.versions.githubGroup.get(),
@@ -71,6 +77,24 @@ if (enableJitpackPublication) {
                 url.set(libs.versions.githubUrl.get())
                 connection.set(libs.versions.githubScmConnection.get())
                 developerConnection.set(libs.versions.githubScmDeveloperConnection.get())
+            }
+        }
+    }
+}
+
+if (localConsumerPublication) {
+    publishing {
+        repositories {
+            maven {
+                name = "localConsumer"
+                url =
+                    rootProject
+                        .layout
+                        .buildDirectory
+                        .dir("consumer-maven")
+                        .get()
+                        .asFile
+                        .toURI()
             }
         }
     }
