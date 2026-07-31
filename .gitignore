@@ -7,19 +7,38 @@
 /.idea/workspace.xml
 /.idea/navEditor.xml
 /.idea/assetWizardSettings.xml
+/.idea/*
+!/.idea/.gitignore
+!/.idea/deploymentTargetSelector.xml
 .DS_Store
+desktop.ini
 /build
 **/build/
 /captures
 .externalNativeBuild
 .cxx
 local.properties
+
+# Local signing material
+/private-key.asc
+
+# Local Gradle and Kotlin state
+/.gradle-user-home/
+/.kotlin/
+
+# Local build snapshots
+**/build_locked_*/
+
 # Claude AI 설정 파일
 # CLAUDE.md
+/.claude/config.json
+/.claude/settings.local.json
+/.claude/skills/Create-workspace/
 
 codex.md
 
 # Dokka generated documentation
+/docs/api/
 #docs/*
 # Exception: Keep architecture documents
 !docs/ARCHITECTURE.md
