@@ -22,12 +22,12 @@ import androidx.core.app.NotificationCompat.Action
  *                     클릭 시 자동으로 닫힐지 여부.<br>
  * @param onGoing Whether this is an ongoing notification.<br><br>
  *                진행 중인 알림인지 여부.<br>
- * @param clickIntent Intent to execute when notification is clicked.<br><br>
- *                    알림 클릭 시 실행할 인텐트.<br>
+ * @param initialClickIntent Intent to execute when notification is clicked.<br><br>
+ *                           알림 클릭 시 실행할 인텐트.<br>
  * @param actions List of action buttons to display.<br><br>
  *                표시할 액션 버튼 목록.<br>
- * @param pendingIntentFlags PendingIntent flags used for clickIntent (validated on Android 12+).<br><br>
- *                          clickIntent에 사용하는 PendingIntent 플래그이며 Android 12+에서 검증됩니다.<br>
+ * @param initialPendingIntentFlags PendingIntent flags used for clickIntent (validated on Android 12+).<br><br>
+ *                                  clickIntent에 사용하는 PendingIntent 플래그이며 Android 12+에서 검증됩니다.<br>
  */
 sealed class SimpleNotificationOptionBase(
     public open val notificationId: Int,
@@ -36,14 +36,17 @@ sealed class SimpleNotificationOptionBase(
     public open val content: String?,
     public open val isAutoCancel: Boolean,
     public open val onGoing: Boolean,
-    public open val clickIntent: Intent? = null,
+    initialClickIntent: Intent? = null,
     public open val actions: List<Action>? = null,
-    public open val pendingIntentFlags: Int
+    initialPendingIntentFlags: Int
 ) {
+    public open val clickIntent: Intent? = initialClickIntent
+    public open val pendingIntentFlags: Int = initialPendingIntentFlags
+
     init {
-        if (clickIntent != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            val hasImmutable = pendingIntentFlags and PendingIntent.FLAG_IMMUTABLE != 0
-            val hasMutable = pendingIntentFlags and PendingIntent.FLAG_MUTABLE != 0
+        if (initialClickIntent != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val hasImmutable = initialPendingIntentFlags and PendingIntent.FLAG_IMMUTABLE != 0
+            val hasMutable = initialPendingIntentFlags and PendingIntent.FLAG_MUTABLE != 0
 
             require(hasImmutable || hasMutable) {
                 "Android 12+ requires FLAG_IMMUTABLE or FLAG_MUTABLE in pendingIntentFlags."
@@ -93,9 +96,9 @@ public data class DefaultNotificationOption(
         content = content,
         isAutoCancel = isAutoCancel,
         onGoing = onGoing,
-        clickIntent = clickIntent,
+        initialClickIntent = clickIntent,
         actions = actions,
-        pendingIntentFlags = pendingIntentFlags
+        initialPendingIntentFlags = pendingIntentFlags
     )
 
 /**
@@ -141,9 +144,9 @@ public data class BigTextNotificationOption(
         content = content,
         isAutoCancel = isAutoCancel,
         onGoing = onGoing,
-        clickIntent = clickIntent,
+        initialClickIntent = clickIntent,
         actions = actions,
-        pendingIntentFlags = pendingIntentFlags
+        initialPendingIntentFlags = pendingIntentFlags
     )
 
 /**
@@ -189,9 +192,9 @@ public data class BigPictureNotificationOption(
         content = content,
         isAutoCancel = isAutoCancel,
         onGoing = onGoing,
-        clickIntent = clickIntent,
+        initialClickIntent = clickIntent,
         actions = actions,
-        pendingIntentFlags = pendingIntentFlags
+        initialPendingIntentFlags = pendingIntentFlags
     )
 
 /**
@@ -236,10 +239,10 @@ public data class ProgressNotificationOption(
         title = title,
         content = content,
         isAutoCancel = isAutoCancel,
-        clickIntent = clickIntent,
+        initialClickIntent = clickIntent,
         onGoing = onGoing,
         actions = actions,
-        pendingIntentFlags = pendingIntentFlags
+        initialPendingIntentFlags = pendingIntentFlags
     ) {
     init {
         require(progressPercent in 0..100) { "Progress percent must be between 0 and 100" }
