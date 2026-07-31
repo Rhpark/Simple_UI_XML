@@ -18,6 +18,7 @@
 
 - 유지보수 관점에서 일관된 알람 등록/갱신/제거/조회 API를 제공한다.
 - 정확 알람 권한 정책(API 31+)을 안전하게 처리하고, 권한 거부 시 크래시를 방지한다.
+- 알림 권한 정책(API 33+)을 확인하고, 권한이 없으면 알림 표시를 안전하게 건너뛴다.
 - 부팅/시간/타임존/정확 알람 권한 변경 시 재등록 흐름을 제공한다.
 - 스케줄 정보와 알림 표시 정보를 분리해 책임을 명확히 한다.
 - WakeLock을 안전하게 관리하고 예외 발생 시에도 알람 처리를 지속한다.
@@ -67,6 +68,7 @@
    - 권한 허용/거부 변화에 따른 재등록/안내 훅 제공
 10. **알림 표시 흐름**
     - `SimpleNotificationController` 기반 알림 표시, 옵션 구성은 하위 클래스에서 확장
+    - API 33 이상에서 `POST_NOTIFICATIONS` 권한 확인 후 알림 표시
 11. **PendingIntent 충돌 방지**
     - namespace + receiver 기반 requestCode 계산 전략
 
@@ -85,6 +87,8 @@
 - WakeLock 권한이 없는 경우 SecurityException을 허용하고, WakeLock 없이 처리한다.
 - `AlarmData.acquireTime`는 deprecated 상태이며, 현재 런타임에서 알람별 WakeLock 시간으로 반영되지 않는다.
 - 리시버는 AndroidManifest에 필요한 intent-filter 및 권한을 등록해야 한다.
+- `BaseAlarmReceiver.createNotificationChannel()` 구현은 `notificationController`를 직접 초기화해야 한다.
+- API 33 이상에서 `POST_NOTIFICATIONS` 런타임 권한 요청은 앱 레벨에서 처리한다. 권한이 없으면 Receiver는 알림 표시를 건너뛴다.
 
 ## 성공 기준
 
@@ -92,15 +96,17 @@
 - 정확 알람 권한 미허용 상태에서 안전하게 실패 처리된다.
 - 부팅/시간/타임존 변경 후 저장된 알람이 재등록된다.
 - PendingIntent 충돌 없이 여러 알람을 안정적으로 등록할 수 있다.
+- 유효하지 않은 알람 키, 저장 데이터 누락, 알림 컨트롤러 미초기화, 알림 권한 거부 상태에서 크래시 없이 종료된다.
 
 ## 관련 파일
 
 - `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/core/controller/alarm/AlarmController.kt`
 - `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/core/controller/alarm/AlarmConstants.kt`
-- `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/core/controller/alarm/receiver/BaseAlarmReceiver.kt`
-- `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmData.kt` (AlarmData, AlarmScheduleData, AlarmDateData, AlarmNotificationData, AlarmIdleMode, RegisterType 포함)
+- `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/core/controller/alarm/receiver/BaseAlarmReceiver.kt` (BaseAlarmReceiver, RegisterType 포함)
+- `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmData.kt` (AlarmData, AlarmScheduleData, AlarmDateData, AlarmNotificationData, AlarmIdleMode 포함)
 
 ## 테스트
 
 - `simple_system_manager/src/test/java/kr/open/library/simple_ui/system_manager/unit/core/controller/alarm/vo/AlarmVoUnitTest.kt`
 - `simple_system_manager/src/test/java/kr/open/library/simple_ui/system_manager/robolectric/core/controller/alarm/AlarmControllerRobolectricTest.kt`
+- `simple_system_manager/src/test/java/kr/open/library/simple_ui/system_manager/robolectric/core/controller/alarm/receiver/BaseAlarmReceiverRobolectricTest.kt`

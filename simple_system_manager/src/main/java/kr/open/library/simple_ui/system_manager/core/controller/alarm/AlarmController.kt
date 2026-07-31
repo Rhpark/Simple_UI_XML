@@ -323,7 +323,7 @@ public open class AlarmController(
 
     /**
      * Creates the UI-facing PendingIntent shown by AlarmClockInfo.<br><br>
-     * AlarmClockInfo?먯꽌 ?ъ슜??UI 吏꾩엯??PendingIntent瑜??앹꽦?⑸땲??<br>
+     * AlarmClockInfo에 표시되는 UI 진입용 PendingIntent를 생성합니다.<br>
      */
     private fun getAlarmClockShowPendingIntent(key: Int, namespace: String?): PendingIntent? = tryCatchSystemManager(null) {
         val launchIntent = context.packageManager.getLaunchIntentForPackage(context.packageName)?.apply {

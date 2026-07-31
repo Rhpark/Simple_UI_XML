@@ -54,8 +54,9 @@
 - onReceive에서 WakeLock을 안전하게 획득/해제
 - 부팅/시간/타임존 변경 시 `loadAllAlarmDataList` 기반 재등록
 - 정확 알람 권한 변경 시 재등록 또는 거부 훅 호출
-- 알람 트리거 시 알림 채널 생성 → 옵션 생성 → 알림 표시
-- `notificationController`는 `lateinit`으로 선언되며, `handleAlarmTrigger` 흐름에서 `ensureNotificationControllerInitialized()`를 통해 초기화됨
+- 알람 트리거 시 알림 채널 생성 → 컨트롤러 초기화 확인 → API 33+ 알림 권한 확인 → 옵션 생성 → 알림 표시
+- `notificationController`는 `lateinit`으로 선언되며, 하위 Receiver가 `createNotificationChannel()`에서 직접 초기화
+- `ensureNotificationControllerInitialized()`는 초기화 여부만 확인하며, 초기화되지 않았으면 이후 처리를 안전하게 중단
 
 ## 구현 흐름 요약
 
@@ -63,7 +64,7 @@
    - AlarmData 생성 → AlarmController.register* 호출
    - requestCode 계산 → PendingIntent 생성 → AlarmManager 등록
 2. 알람 트리거
-   - BaseAlarmReceiver 수신 → key 추출 → AlarmData 로딩 → 알림 표시
+   - BaseAlarmReceiver 수신 → key 추출 → AlarmData 로딩 → 채널/컨트롤러 준비 → 알림 권한 확인 → 알림 표시
 3. 재등록
    - BOOT/TIME/TIMEZONE 변경 → 저장된 알람 재등록
 4. 권한 변경
@@ -71,13 +72,16 @@
 
 ## 테스트 현황
 
-- `AlarmVoUnitTest`: Data/상수/팩토리/유효성/AlarmDateData/AlarmScheduleData/AlarmIdleMode 검증 (~56개 테스트)
-- `AlarmControllerRobolectricTest`: 등록/해제/업데이트/반복/스케줄기반/namespace/날짜지정 검증 (~19개 테스트)
+- `AlarmVoUnitTest`: Data/상수/팩토리/유효성/AlarmDateData/AlarmScheduleData/AlarmIdleMode 검증 (29개 테스트)
+- `AlarmControllerRobolectricTest`: 등록/해제/업데이트/반복/스케줄 기반/namespace/날짜 지정 검증 (25개 테스트)
+- `BaseAlarmReceiverRobolectricTest`: 시스템 변경 재등록, 정확 알람 권한 변경, WakeLock 해제와 알림 트리거 방어 흐름 검증 (10개 테스트)
 
 ## 운영/유지보수 체크리스트
 
 - Manifest에 BOOT/TIME/TIMEZONE/정확 알람 권한 변경 액션 등록 여부
 - 정확 알람 권한 허용 상태 확인 로직 유지
+- API 33+ `POST_NOTIFICATIONS` 런타임 권한 요청 여부
+- `createNotificationChannel()`에서 `notificationController` 초기화 여부
 - 알람 저장소 구현 누락 여부(`loadAllAlarmDataList`, `loadAlarmData`)
 - namespace 전략을 등록/삭제/조회 모두 동일하게 사용하는지 확인
 - `registerRepeating`의 intervalMillis 최소값(60,000ms) 클램핑 동작 확인
@@ -91,3 +95,4 @@
 - `simple_system_manager/src/main/java/kr/open/library/simple_ui/system_manager/core/controller/alarm/vo/AlarmData.kt`
 - `simple_system_manager/src/test/java/kr/open/library/simple_ui/system_manager/unit/core/controller/alarm/vo/AlarmVoUnitTest.kt`
 - `simple_system_manager/src/test/java/kr/open/library/simple_ui/system_manager/robolectric/core/controller/alarm/AlarmControllerRobolectricTest.kt`
+- `simple_system_manager/src/test/java/kr/open/library/simple_ui/system_manager/robolectric/core/controller/alarm/receiver/BaseAlarmReceiverRobolectricTest.kt`

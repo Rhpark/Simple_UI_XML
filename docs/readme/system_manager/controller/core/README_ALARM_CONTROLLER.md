@@ -153,9 +153,107 @@ private fun checkAlarmExists(key: Int): Boolean {
 
 <br></br>
 
+## BaseAlarmReceiver Implementation (BaseAlarmReceiver 구현)
+
+The Receiver passed to `AlarmController` extends `BaseAlarmReceiver` and connects alarm storage with notification configuration. The following structure is used by the sample app.
+> `AlarmController`에 전달한 Receiver는 `BaseAlarmReceiver`를 상속해 알람 저장소와 알림 구성을 연결합니다. 아래 코드는 샘플 앱에서 실제 사용하는 구조입니다.
+
+```kotlin
+// Alarm receiver implementation (알람 리시버 구현)
+class AlarmReceiver : BaseAlarmReceiver() {
+    override val classType: Class<*> = this::class.java
+    override val powerManagerAcquireTime: Long = 5_000L
+
+    override fun loadAllAlarmDataList(context: Context): List<AlarmData> =
+        AlarmSampleStore.getAll()
+
+    override fun loadAlarmData(
+        context: Context,
+        intent: Intent,
+        key: Int,
+    ): AlarmData? = AlarmSampleStore.get(key)
+
+    override fun createNotificationChannel(
+        context: Context,
+        notification: AlarmNotificationData,
+    ) {
+        val channel = NotificationChannel(
+            "Alarm_ID",
+            "Alarm_Name",
+            NotificationManager.IMPORTANCE_HIGH,
+        )
+        notificationController = context.getNotificationController(channel)
+    }
+
+    override fun buildNotificationOption(
+        context: Context,
+        alarmData: AlarmData,
+    ): SimpleNotificationOptionBase =
+        DefaultNotificationOption(
+            notificationId = alarmData.key,
+            smallIcon = android.R.drawable.ic_dialog_info,
+            title = alarmData.notification.title,
+            content = alarmData.notification.message,
+            isAutoCancel = false,
+        )
+}
+```
+
+- Implement `loadAllAlarmDataList()` with persistent storage such as a database, file, or Preference because it is used to restore alarms after boot, time, or timezone changes.
+- `loadAlarmData()` must return the alarm matching the key delivered through `AlarmConstants.ALARM_KEY`.
+- Initialize `notificationController` inside `createNotificationChannel()`. If it is not initialized, notification option creation and display are safely skipped.
+- On Android 13+, notification option creation and display are skipped when `POST_NOTIFICATIONS` is not granted. The app is responsible for the permission request UI.
+> `loadAllAlarmDataList()`는 부팅·시간·타임존 변경 후 재등록에 사용되므로 DB, 파일, Preference 같은 영속 저장소로 구현해야 합니다.
+> <br>`loadAlarmData()`는 `AlarmConstants.ALARM_KEY`로 전달된 키에 대응하는 알람을 반환해야 합니다.
+> <br>`createNotificationChannel()`에서 `notificationController`를 초기화해야 합니다. 초기화하지 않으면 알림 옵션 생성과 표시를 안전하게 건너뜁니다.
+> <br>Android 13 이상에서 `POST_NOTIFICATIONS`가 허용되지 않으면 알림 옵션 생성과 표시를 건너뜁니다. 권한 요청 UI는 앱에서 처리해야 합니다.
+
+<br></br>
+
+## Manifest and Permissions (Manifest 및 권한)
+
+Declare the permissions and system broadcast actions required by the Receiver in the app manifest.
+> Receiver에 필요한 권한과 시스템 브로드캐스트 액션을 앱 Manifest에 선언합니다.
+
+```xml
+<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+<uses-permission android:name="android.permission.WAKE_LOCK" />
+<uses-permission
+    android:name="android.permission.SCHEDULE_EXACT_ALARM"
+    android:minSdkVersion="31" />
+<uses-permission
+    android:name="android.permission.POST_NOTIFICATIONS"
+    android:minSdkVersion="33" />
+
+<application>
+    <receiver
+        android:name=".AlarmReceiver"
+        android:enabled="true"
+        android:exported="true">
+        <intent-filter>
+            <action android:name="android.intent.action.BOOT_COMPLETED" />
+            <action android:name="android.intent.action.TIME_CHANGED" />
+            <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+            <action android:name="android.app.action.SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED" />
+        </intent-filter>
+    </receiver>
+</application>
+```
+
+- The Receiver continues processing without a WakeLock when `WAKE_LOCK` is missing or WakeLock acquisition fails.
+- `SCHEDULE_EXACT_ALARM` is required for exact alarm registration on API 31+, but not for inexact alarms.
+- Declaring `POST_NOTIFICATIONS` does not grant it automatically. The app must request the runtime permission on API 33+.
+> `WAKE_LOCK`이 없거나 WakeLock 획득이 실패해도 Receiver는 WakeLock 없이 처리를 계속합니다.
+> <br>`SCHEDULE_EXACT_ALARM`은 API 31 이상의 exact 계열 등록에 필요하며, inexact 계열에는 필요하지 않습니다.
+> <br>`POST_NOTIFICATIONS`는 선언만으로 허용되지 않습니다. API 33 이상에서는 앱이 런타임 권한을 요청해야 합니다.
+
+<br></br>
+
 ## Related Extensions (관련 확장 함수)
-- `getAlarmController()`  
-  See full list / 전체 목록: [README_SYSTEM_MANAGER_EXTENSIONS.md](../../README_SYSTEM_MANAGER_EXTENSIONS.md)
+- `getAlarmController()`
+- `getNotificationController(NotificationChannel)`
+
+See full list / 전체 목록: [README_SYSTEM_MANAGER_EXTENSIONS.md](../../README_SYSTEM_MANAGER_EXTENSIONS.md)
 
 <br></br>
 

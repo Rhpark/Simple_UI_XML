@@ -279,6 +279,8 @@ abstract class BaseAlarmReceiver : BroadcastReceiver() {
 - 기본값(-1)이면 오류 로그 후 종료
 - `loadAlarmData()`로 알람 로딩
 - `createNotificationChannel()` 호출 후 `notificationController` 초기화 여부 확인
+- API 33 이상에서 `POST_NOTIFICATIONS` 런타임 권한 확인
+- 권한이 없으면 `buildNotificationOption()`과 알림 표시를 수행하지 않고 종료
 - `buildNotificationOption()`으로 옵션 구성
 - `SimpleNotificationController.showNotification()` 호출
 
@@ -295,6 +297,9 @@ abstract class BaseAlarmReceiver : BroadcastReceiver() {
   - 권한이 없으면 exact 계열 등록은 `SystemResult.PermissionDenied` 반환
 - WakeLock
   - `android.permission.WAKE_LOCK` 권한이 없으면 SecurityException이 발생할 수 있으나, 코드에서 안전 처리됨
+- 알림
+  - API 33 이상에서 `POST_NOTIFICATIONS` 런타임 권한 필요
+  - 권한 요청 흐름은 앱 책임이며, 권한이 없으면 Receiver가 알림 표시를 안전하게 건너뜀
 - 부팅/시간 변경 수신
   - `RECEIVE_BOOT_COMPLETED` 권한 필요
   - Receiver intent-filter 등록 필요
@@ -327,3 +332,4 @@ abstract class BaseAlarmReceiver : BroadcastReceiver() {
   - `AlarmVoUnitTest`: Data 유효성/팩토리/기본값 검증
 - Robolectric 테스트
   - `AlarmControllerRobolectricTest`: 알람 등록/해제 동작 검증
+  - `BaseAlarmReceiverRobolectricTest`: 시스템 변경 재등록, 정확 알람 권한 변경, WakeLock 해제, 정상 알림 표시, 잘못된 키·저장 데이터 누락·컨트롤러 미초기화·알림 권한 거부 방어 검증
