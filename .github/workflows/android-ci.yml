@@ -8,6 +8,8 @@ on:
     branches: [ master ]
   workflow_dispatch:
 
+permissions: {}
+
 jobs:
   initialize-check:
     name: Initialize Check
@@ -24,7 +26,7 @@ jobs:
       testers: ${{ steps.determine.outputs.testers }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 10
 
@@ -171,6 +173,7 @@ jobs:
           cat > metadata/release-metadata.json <<EOF
           {
             "should_release": "${{ steps.determine.outputs.should_release }}",
+            "source_sha": "${{ github.sha }}",
             "tag": "${{ steps.determine.outputs.tag }}",
             "title": "${{ steps.determine.outputs.title }}",
             "body": $(echo '${{ steps.determine.outputs.body }}' | jq -Rs .),
@@ -181,7 +184,7 @@ jobs:
 
       - name: Upload metadata artifact
         if: steps.determine.outputs.should_release == 'true'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: release-metadata
           path: metadata/release-metadata.json
@@ -221,19 +224,19 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: 17
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v6
         with:
+          cache-provider: basic
           cache-read-only: false
-          cache-cleanup: on-success
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
@@ -273,7 +276,9 @@ jobs:
     name: Tests (Unit, Robolectric)
     if: ${{ needs.initialize-check.outputs.docs_only != 'true' }}
     runs-on: ubuntu-latest
-    needs: ktlint
+    needs:
+      - initialize-check
+      - ktlint
     permissions:
       contents: read
       checks: write
@@ -282,19 +287,19 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: 17
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v6
         with:
+          cache-provider: basic
           cache-read-only: false
-          cache-cleanup: on-success
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
@@ -333,7 +338,7 @@ jobs:
           check_name: Test Results
 
       - name: Upload test reports
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: test-reports
@@ -345,7 +350,7 @@ jobs:
           retention-days: 30
 
       - name: Upload coverage report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: success()
         with:
           name: coverage-report
@@ -368,11 +373,85 @@ jobs:
             Event: ${{ github.event_name }}
         run: bash .github/scripts/report_action_error.sh
 
+  maven-consumer:
+    name: Maven Consumer Check
+    if: ${{ needs.initialize-check.outputs.docs_only != 'true' }}
+    runs-on: ubuntu-latest
+    needs:
+      - initialize-check
+      - test
+    permissions:
+      contents: read
+      issues: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Set up Android SDK (base)
+        uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+
+      - name: Accept SDK licenses
+        run: yes | sdkmanager --licenses
+
+      - name: Install SDK packages
+        run: sdkmanager "platforms;android-35" "build-tools;35.0.0" "platform-tools"
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          cache-provider: basic
+          cache-read-only: false
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Verify Maven consumers
+        run: bash -o pipefail -c "./gradlew :maven_consumer_smoke:consumerSmokeCheck -PlocalConsumerPublication=true --build-cache |& tee maven-consumer.log"
+
+      - name: Capture failure snippet (Maven Consumer Check)
+        if: failure()
+        run: |
+          python3 .github/scripts/extract_gradle_failure.py maven-consumer.log maven-consumer-failure.log
+          SUMMARY="$(head -n 1 maven-consumer-failure.log | tr -d '\r')"
+          if [ -z "$SUMMARY" ]; then
+            SUMMARY="Maven consumer verification failed."
+          fi
+          {
+            echo "MAVEN_CONSUMER_FAILURE_SUMMARY<<EOF"
+            echo "$SUMMARY"
+            echo "EOF"
+            echo "MAVEN_CONSUMER_FAILURE_LOG_PATH=$(pwd)/maven-consumer-failure.log"
+          } >> "$GITHUB_ENV"
+
+      - name: Report failure (Maven Consumer Check)
+        if: failure()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          STAGE_NAME: "Maven Consumer Check"
+          FAILURE_MESSAGE: ${{ env.MAVEN_CONSUMER_FAILURE_SUMMARY || 'Maven consumer verification failed.' }}
+          FAILURE_LOG_PATH: ${{ env.MAVEN_CONSUMER_FAILURE_LOG_PATH }}
+          ISSUE_LABELS: "CI-Maven-Consumer"
+          FAILURE_ENVIRONMENT: |
+            Runner: ${{ runner.os }}
+            Event: ${{ github.event_name }}
+        run: bash .github/scripts/report_action_error.sh
+
   build:
     name: Build and Lint Check
     if: ${{ needs.initialize-check.outputs.docs_only != 'true' }}
     runs-on: ubuntu-latest
-    needs: test
+    needs:
+      - initialize-check
+      - maven-consumer
     permissions:
       contents: read
       checks: write
@@ -381,7 +460,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Prepare Google Services config
         run: |
@@ -389,11 +468,8 @@ jobs:
           ${{ secrets.FIREBASE_CREDENTIALS }}
           EOF
 
-      - name: Validate Gradle Wrapper
-        uses: gradle/wrapper-validation-action@v2
-
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: 17
@@ -410,7 +486,9 @@ jobs:
         run: sdkmanager "platforms;android-35" "build-tools;35.0.0" "platform-tools"
 
       - name: Setup Gradle (cache)
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          cache-provider: basic
 
       - name: Make gradlew executable
         run: chmod +x ./gradlew
@@ -455,7 +533,7 @@ jobs:
 
       - name: Upload reports
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: build-reports
           path: |

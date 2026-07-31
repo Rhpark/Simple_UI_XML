@@ -8,22 +8,26 @@ on:
       - completed
     branches:
       - master
-  workflow_dispatch:
+
+permissions: {}
 
 jobs:
   check-ci-success:
     name: Check CI Success
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    permissions:
+      actions: read
     outputs:
       should_release: ${{ steps.load_metadata.outputs.should_release }}
       tag: ${{ steps.load_metadata.outputs.tag }}
       title: ${{ steps.load_metadata.outputs.title }}
       body: ${{ steps.load_metadata.outputs.body }}
       testers: ${{ steps.load_metadata.outputs.testers }}
+      source_sha: ${{ steps.load_metadata.outputs.source_sha }}
     steps:
       - name: Download metadata artifact
-        uses: dawidd6/action-download-artifact@v3
+        uses: dawidd6/action-download-artifact@v21
         with:
           workflow: android-ci.yml
           run_id: ${{ github.event.workflow_run.id }}
@@ -34,9 +38,31 @@ jobs:
       - name: Load metadata
         id: load_metadata
         run: |
+          set -euo pipefail
           if [ -f "metadata/release-metadata.json" ]; then
             cat metadata/release-metadata.json
-            echo "should_release=$(jq -r .should_release metadata/release-metadata.json)" >> $GITHUB_OUTPUT
+            SHOULD_RELEASE=$(jq -r .should_release metadata/release-metadata.json)
+            SOURCE_SHA=$(jq -r '.source_sha // empty' metadata/release-metadata.json)
+            TRIGGER_SHA="${{ github.event.workflow_run.head_sha }}"
+            TRIGGER_EVENT="${{ github.event.workflow_run.event }}"
+
+            if [ "$SHOULD_RELEASE" = "true" ]; then
+              if [ "$TRIGGER_EVENT" != "push" ]; then
+                echo "::error::Release metadata is only accepted from a push-triggered CI run. Event: $TRIGGER_EVENT"
+                exit 1
+              fi
+              if ! [[ "$SOURCE_SHA" =~ ^[0-9a-f]{40}$ ]]; then
+                echo "::error::Release metadata contains an invalid source SHA: $SOURCE_SHA"
+                exit 1
+              fi
+              if [ "$SOURCE_SHA" != "$TRIGGER_SHA" ]; then
+                echo "::error::Release metadata SHA does not match the verified CI SHA. Metadata: $SOURCE_SHA, CI: $TRIGGER_SHA"
+                exit 1
+              fi
+            fi
+
+            echo "should_release=$SHOULD_RELEASE" >> $GITHUB_OUTPUT
+            echo "source_sha=$SOURCE_SHA" >> $GITHUB_OUTPUT
             echo "tag=$(jq -r .tag metadata/release-metadata.json)" >> $GITHUB_OUTPUT
             echo "title=$(jq -r .title metadata/release-metadata.json)" >> $GITHUB_OUTPUT
             BODY=$(jq -r .body metadata/release-metadata.json)
@@ -53,11 +79,12 @@ jobs:
             echo "title=" >> $GITHUB_OUTPUT
             echo "body=" >> $GITHUB_OUTPUT
             echo "testers=" >> $GITHUB_OUTPUT
+            echo "source_sha=" >> $GITHUB_OUTPUT
           fi
 
       - name: Upload metadata artifact for downstream workflows
         if: ${{ hashFiles('metadata/release-metadata.json') != '' }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: release-metadata
           path: metadata/release-metadata.json
@@ -65,7 +92,7 @@ jobs:
 
       - name: Download coverage report artifact from triggering CI run
         if: ${{ steps.load_metadata.outputs.should_release == 'true' }}
-        uses: dawidd6/action-download-artifact@v3
+        uses: dawidd6/action-download-artifact@v21
         with:
           workflow: android-ci.yml
           run_id: ${{ github.event.workflow_run.id }}
@@ -97,7 +124,7 @@ jobs:
 
       - name: Upload coverage report artifact for downstream workflows
         if: ${{ steps.load_metadata.outputs.should_release == 'true' }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: coverage-report
           path: |
@@ -117,16 +144,23 @@ jobs:
       issues: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
+          ref: ${{ needs.check-ci-success.outputs.source_sha }}
           fetch-depth: 10
 
       - name: Create Git Tag
         run: |
           TAG="${{ needs.check-ci-success.outputs.tag }}"
+          SOURCE_SHA="${{ needs.check-ci-success.outputs.source_sha }}"
+          CHECKED_OUT_SHA=$(git rev-parse HEAD)
+          if [ "$CHECKED_OUT_SHA" != "$SOURCE_SHA" ]; then
+            echo "::error::Checked-out SHA does not match the verified CI SHA. Checkout: $CHECKED_OUT_SHA, CI: $SOURCE_SHA"
+            exit 1
+          fi
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          bash -o pipefail -c "git tag -a \"$TAG\" -m \"Release $TAG\" | tee -a release-tag.log"
+          bash -o pipefail -c "git tag -a \"$TAG\" \"$SOURCE_SHA\" -m \"Release $TAG\" | tee -a release-tag.log"
           bash -o pipefail -c "git push origin \"$TAG\" | tee -a release-tag.log"
 
       - name: Create GitHub Release
@@ -183,17 +217,15 @@ jobs:
       issues: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Validate Gradle Wrapper
-        uses: gradle/wrapper-validation-action@v2
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.check-ci-success.outputs.source_sha }}
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: 17
-          cache: gradle
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
@@ -207,7 +239,9 @@ jobs:
         run: sdkmanager "platforms;android-35" "build-tools;35.0.0" "platform-tools"
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          cache-provider: basic
 
       - name: Make gradlew executable
         run: chmod +x ./gradlew
@@ -259,7 +293,9 @@ jobs:
       issues: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.check-ci-success.outputs.source_sha }}
 
       - name: Prepare Google Services config
         run: |
@@ -267,15 +303,11 @@ jobs:
           ${{ secrets.FIREBASE_CREDENTIALS }}
           EOF
 
-      - name: Validate Gradle Wrapper
-        uses: gradle/wrapper-validation-action@v2
-
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: 17
-          cache: gradle
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
@@ -289,7 +321,9 @@ jobs:
         run: sdkmanager "platforms;android-35" "build-tools;35.0.0" "platform-tools"
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          cache-provider: basic
 
       - name: Make gradlew executable
         run: chmod +x ./gradlew
@@ -340,7 +374,7 @@ jobs:
           fi
 
       - name: Upload verification APK artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: verification-apk
           path: ${{ steps.verification_artifact.outputs.artifact }}
@@ -368,7 +402,9 @@ jobs:
       issues: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.check-ci-success.outputs.source_sha }}
 
       - name: Prepare Firebase credentials
         run: |
@@ -383,15 +419,11 @@ jobs:
           ${{ secrets.FIREBASE_CREDENTIALS }}
           EOF
 
-      - name: Validate Gradle Wrapper
-        uses: gradle/wrapper-validation-action@v2
-
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: 17
-          cache: gradle
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
@@ -405,14 +437,16 @@ jobs:
         run: sdkmanager "platforms;android-35" "build-tools;35.0.0" "platform-tools"
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          cache-provider: basic
 
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
       - name: Download verification APK artifact
         id: download_verification
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: verification-apk
           path: ./downloaded-apk
