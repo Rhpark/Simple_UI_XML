@@ -59,23 +59,8 @@ import java.util.concurrent.Executor
  * - `android.permission.READ_PHONE_STATE` (필수)<br>
  * - `android.permission.ACCESS_FINE_LOCATION` (셀 정보)<br>
  *
- * Usage Example:<br>
- * ```kotlin
- * val callbackManager = TelephonyCallbackManager(context)
- *
- * // Simple API
- * callbackManager.registerSimpleCallback(
- *     onSignalStrengthChanged = { signal -> ... }
- * )
- *
- * // Advanced API (API 31+)
- * callbackManager.registerAdvancedCallback(
- *     simSlotIndex = 0,
- *     onCellInfo = { info -> ... }
- * )
- * ```
  */
-public class TelephonyCallbackManager(
+internal class TelephonyCallbackManager(
     context: Context,
 ) : BaseSystemService(context, listOf(READ_PHONE_STATE, ACCESS_FINE_LOCATION)) {
     // =================================================

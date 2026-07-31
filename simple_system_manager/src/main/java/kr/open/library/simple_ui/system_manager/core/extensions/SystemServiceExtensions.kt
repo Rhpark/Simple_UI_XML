@@ -16,8 +16,6 @@ import android.os.VibratorManager
 import android.telephony.SubscriptionManager
 import android.telephony.TelephonyManager
 import android.telephony.euicc.EuiccManager
-import android.view.WindowManager
-import android.view.inputmethod.InputMethodManager
 import androidx.annotation.RequiresApi
 import kr.open.library.simple_ui.system_manager.core.controller.alarm.AlarmController
 import kr.open.library.simple_ui.system_manager.core.controller.notification.SimpleNotificationController
@@ -30,15 +28,9 @@ import kr.open.library.simple_ui.system_manager.core.info.location.LocationState
  * SystemService *
  *****************/
 
-public fun Context.getWindowManager(): WindowManager = getSystemService(WindowManager::class.java)
-
 public fun Context.getBatteryManager(): BatteryManager = getSystemService(BatteryManager::class.java)
 
-public fun Context.getInputMethodManager(): InputMethodManager = getSystemService(InputMethodManager::class.java)
-
 public fun Context.getTelephonyManager(): TelephonyManager = getSystemService(TelephonyManager::class.java)
-
-public fun Context.getSystemNotificationManager(): NotificationManager = getSystemService(NotificationManager::class.java)
 
 public fun Context.getSubscriptionManager(): SubscriptionManager = getSystemService(SubscriptionManager::class.java)
 
@@ -52,6 +44,13 @@ public fun Context.getLocationManager(): LocationManager = getSystemService(Loca
 
 public fun Context.getAlarmManager(): AlarmManager = getSystemService(AlarmManager::class.java)
 
+/**
+ * Returns the notification system service for this context.<br><br>
+ * 이 컨텍스트의 알림 시스템 서비스를 반환합니다.<br>
+ *
+ * @return The `NotificationManager` registered for this context.<br><br>
+ *         이 컨텍스트에 등록된 `NotificationManager`입니다.<br>
+ */
 public fun Context.getNotificationManager(): NotificationManager = getSystemService(NotificationManager::class.java)
 
 public fun Context.getPowerManager(): PowerManager = getSystemService(PowerManager::class.java)

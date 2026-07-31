@@ -3,17 +3,51 @@
 
 ## Module Information (모듈 정보)
 - **Module**: `simple_system_manager` (system manager 전용 모듈)
-- **Package**: `kr.open.library.simple_ui.system_manager.xml.extensions`
+- **Packages**:
+  - `kr.open.library.simple_ui.system_manager.core.extensions`
+  - `kr.open.library.simple_ui.system_manager.xml.extensions`
 
 <br></br>
 
 ## Overview (개요)
-Summarizes extension entry points for system manager helpers owned by `simple_system_manager`.  
-> `simple_system_manager`가 제공하는 system manager 확장 진입점을 정리합니다.
+Summarizes system service accessors and controller/info entry points owned by `simple_system_manager`.
+> `simple_system_manager`가 제공하는 시스템 서비스 접근자와 controller/info 확장 진입점을 정리합니다.
 
 <br></br>
 
 ## At a Glance (한눈 비교)
+
+### Core System Services (Core 시스템 서비스)
+
+| Function (함수) | Return (반환) | Notes (비고) |
+|---|---|---|
+| `getBatteryManager()` | `BatteryManager` | Battery service (배터리 서비스) |
+| `getTelephonyManager()` | `TelephonyManager` | Telephony service (전화 서비스) |
+| `getSubscriptionManager()` | `SubscriptionManager` | Subscription service (구독 서비스) |
+| `getEuiccManager()` | `EuiccManager` | eSIM service (eSIM 서비스) |
+| `getConnectivityManager()` | `ConnectivityManager` | Connectivity service (연결성 서비스) |
+| `getWifiManager()` | `WifiManager` | Wi-Fi service (Wi-Fi 서비스) |
+| `getLocationManager()` | `LocationManager` | Location service (위치 서비스) |
+| `getAlarmManager()` | `AlarmManager` | Alarm service (알람 서비스) |
+| `getNotificationManager()` | `NotificationManager` | Primary notification service accessor (대표 알림 서비스 접근자) |
+| `getPowerManager()` | `PowerManager` | Power service (전원 서비스) |
+| `getBluetoothManager()` | `BluetoothManager` | Bluetooth service (블루투스 서비스) |
+| `getVibrator()` | `Vibrator` | Legacy vibrator service for API 30 and below (API 30 이하 레거시 진동 서비스) |
+| `getVibratorManager()` | `VibratorManager` | API 31+ (`@RequiresApi(S)`) |
+
+### Core Controllers and Info (Core 컨트롤러·정보)
+
+| Function (함수) | Return (반환) | Description (설명) |
+|---|---|---|
+| `getAlarmController()` | `AlarmController` | Alarm control (알람 제어) |
+| `getNotificationController(channel)` | `SimpleNotificationController` | Notification control (알림 제어) |
+| `getVibratorController()` | `VibratorController` | Vibration control (진동 제어) |
+| `getWifiController()` | `WifiController` | Wi-Fi control (Wi-Fi 제어) |
+| `getBatteryStateInfo()` | `BatteryStateInfo` | Battery state access (배터리 상태 조회) |
+| `getLocationStateInfo()` | `LocationStateInfo` | Location state access (위치 상태 조회) |
+
+### XML Controllers and Info (XML 컨트롤러·정보)
+
 | Function (함수) | Return (반환) | Description (설명) | Related Docs (관련 상세 문서) |
 |---|---|---|---|
 | `getSoftKeyboardController()` | `SoftKeyboardController` | Keyboard show/hide/delay control<br>키보드 표시/숨김/지연 제어 | [README_SOFTKEYBOARD_CONTROLLER.md](controller/xml/README_SOFTKEYBOARD_CONTROLLER.md) |
@@ -28,12 +62,21 @@ Summarizes extension entry points for system manager helpers owned by `simple_sy
 Provides a compact map of Context and Window extension entry points for `simple_system_manager`.  
 > `simple_system_manager`의 Context, Window 확장 함수 진입점과 역할을 한 번에 확인할 수 있습니다.
 
-Extensions are the primary entry point to create XML-side system manager controllers owned by `simple_system_manager`.  
-> 확장 함수는 `simple_system_manager`가 소유하는 XML 계열 system manager controller를 생성하는 기본 진입점입니다.
+Extensions provide typed system service access and the primary entry points for controllers and info objects.
+> 확장 함수는 타입이 지정된 시스템 서비스 접근과 controller/info 객체의 기본 진입점을 제공합니다.
 
 <br></br>
 
 ## Usage Example (사용 예시)
+```kotlin
+private val alarmController by lazy { getAlarmController() }
+private val connectivityManager by lazy { getConnectivityManager() }
+
+// Use the primary notification service accessor
+// (대표 알림 서비스 접근자 사용)
+private val notificationManager by lazy { getNotificationManager() }
+```
+
 ```kotlin
 private fun showKeyboard(editText: EditText) {
     getSoftKeyboardController().show(editText)
@@ -55,6 +98,12 @@ private fun clearSystemBar(window: Window) {
 <br></br>
 
 ## Notes (주의사항)
+- `getNotificationManager()` is the only public notification service accessor.
+  > `getNotificationManager()`가 유일한 공개 알림 서비스 접근자입니다.
+- Core no longer exposes `getWindowManager()` or `getInputMethodManager()`. Consumers that need the raw Android services should use `Context.getSystemService(Class)`.
+  > Core는 `getWindowManager()`와 `getInputMethodManager()`를 더 이상 공개하지 않습니다. Android 원시 서비스가 필요한 소비자는 `Context.getSystemService(Class)`를 사용하세요.
+- `getVibrator()` targets API 30 and below; use `getVibratorManager()` on API 31+.
+  > `getVibrator()`는 API 30 이하용이며 API 31 이상에서는 `getVibratorManager()`를 사용합니다.
 - Floating view 계열은 `SYSTEM_ALERT_WINDOW` 권한이 필요할 수 있습니다.
 - Floating controller의 Boolean 반환은 실제 `WindowManager` 적용 성공 여부를 기준으로 합니다.
 - `removeAllFloatingView()`는 `first-failure-stop` 전략이며 일반 호출에서는 부분 정리 상태가 남을 수 있습니다.
@@ -65,6 +114,9 @@ private fun clearSystemBar(window: Window) {
 <br></br>
 
 ## Related Docs (관련 문서)
+- Next major migration: [README_SYSTEM_MANAGER_MIGRATION.md](README_SYSTEM_MANAGER_MIGRATION.md)
+- Core controller docs: `docs/readme/system_manager/controller/core/`
+- Core info docs: `docs/readme/system_manager/info/core/`
 - Controller docs: `docs/readme/system_manager/controller/xml/`
 - Info docs: `docs/readme/system_manager/info/xml/`
 - Feature docs: `simple_system_manager/docs/feature/system_manager/`

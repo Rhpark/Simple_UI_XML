@@ -162,6 +162,26 @@ requestPermissions(
 
 <br></br>
 
+## Callback API Migration (콜백 API 마이그레이션)
+
+`TelephonyCallbackManager` and `CommonTelephonyCallback` are internal implementation types in the next major source state. Use `TelephonyInfo` as the single consumer entry point.
+> `TelephonyCallbackManager`와 `CommonTelephonyCallback`은 다음 메이저 소스 상태에서 내부 구현 타입입니다. 소비자 진입점으로는 `TelephonyInfo`만 사용해 주세요.
+
+| Previous API (기존 API) | Replacement API (대체 API) |
+| --- | --- |
+| `TelephonyCallbackManager(context)` | `TelephonyInfo(context)` |
+| `registerSimpleCallback(...)` | `registerCallback(...)` |
+| `unregisterSimpleCallback()` | `unregisterCallback()` |
+| `registerAdvancedCallbackFromDefaultUSim(...)` | `registerTelephonyCallBackFromDefaultUSim(...)` |
+| `registerAdvancedCallback(...)` | `registerTelephonyCallBack(...)` |
+| `unregisterAdvancedCallback(slotIndex)` | `unregisterCallBack(slotIndex)` |
+| `currentSignalStrength`, `currentServiceState`, `currentNetworkState` | Same properties on `TelephonyInfo` (`TelephonyInfo`의 동일 프로퍼티) |
+
+The raw listener objects exposed by `CommonTelephonyCallback` have no direct replacement. Register and unregister through `TelephonyInfo` so the library can manage SDK branching and callback lifecycle.
+> `CommonTelephonyCallback`이 노출하던 원시 리스너 객체에는 직접 대체 API를 제공하지 않습니다. SDK 분기와 콜백 생명주기를 라이브러리가 관리할 수 있도록 `TelephonyInfo`를 통해 등록하고 해제해 주세요.
+
+<br></br>
+
 ## Permissions (권한)
 TelephonyInfo requires phone state/number and fine location permissions.  
 > TelephonyInfo는 전화 상태/번호 및 위치 권한이 필요합니다.
@@ -171,6 +191,7 @@ TelephonyInfo requires phone state/number and fine location permissions.
 <br></br>
 
 ## Related Docs (관련 문서)
+- Next major migration: [README_SYSTEM_MANAGER_MIGRATION.md](../../README_SYSTEM_MANAGER_MIGRATION.md)
 - Summary: [README_SERVICE_MANAGER_INFO.md](../README_SERVICE_MANAGER_INFO.md)
 - Permission Guide: [README_PERMISSION.md](../../../README_PERMISSION.md)
 

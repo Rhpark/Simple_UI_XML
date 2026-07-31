@@ -7,7 +7,7 @@ package kr.open.library.simple_ui.system_manager.core.info.battery.internal.help
  * @param res Resource string identifier for the power profile metric.<br><br>
  *            파워 프로파일 지표에 대응하는 리소스 문자열 식별자입니다.<br>
  */
-public enum class PowerProfileVO(
+internal enum class PowerProfileVO(
     public val res: String,
 ) {
     /**

@@ -30,15 +30,10 @@ import kr.open.library.simple_ui.system_manager.core.info.network.telephony.data
  * 이 클래스는 telephony 이벤트를 처리하기 위한 통합 인터페이스를 제공하며,
  * 새로운 TelephonyCallback (API 31+)과 기존 PhoneStateListener를 모두 지원합니다.<br>
  *
- * You must call TelephonyStateInfo.registerCallBack() or TelephonyStateInfo.registerListen()
- * before using this class.<br><br>
- * 이 클래스를 사용하기 전에 TelephonyStateInfo.registerCallBack() 또는
- * TelephonyStateInfo.registerListen()을 호출해야 합니다.<br>
- *
  * @param telephonyManager The TelephonyManager instance.<br><br>
- *                         TelephonyManager 인스턴스.
+ *                         TelephonyManager 인스턴스입니다.<br>
  */
-public open class CommonTelephonyCallback(
+internal open class CommonTelephonyCallback(
     private val telephonyManager: TelephonyManager,
 ) {
     /**

@@ -15,7 +15,7 @@ import androidx.annotation.RequiresApi
 import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
 import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.system_manager.core.base.BaseSystemService
-import kr.open.library.simple_ui.system_manager.core.extensions.getWindowManager
+import kr.open.library.simple_ui.system_manager.xml.extensions.internal.getWindowManagerInternal
 
 /**
  * Provides display-related metrics such as physical screen size, app window size, status bar, and navigation bar sizes.<br><br>
@@ -80,7 +80,7 @@ public open class DisplayInfo(
         const val DISPLAY_DEF_PACKAGE = "android"
     }
 
-    private val windowManager: WindowManager by lazy { context.getWindowManager() }
+    private val windowManager: WindowManager by lazy { context.getWindowManagerInternal() }
 
     /**
      * Returns the physical screen size in pixels (ignores multi-window mode).<br><br>

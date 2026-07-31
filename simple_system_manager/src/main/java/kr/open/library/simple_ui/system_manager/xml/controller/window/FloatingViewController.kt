@@ -13,12 +13,12 @@ import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
 import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.system_manager.core.base.BaseSystemService
 import kr.open.library.simple_ui.system_manager.core.base.SystemResult
-import kr.open.library.simple_ui.system_manager.core.extensions.getWindowManager
 import kr.open.library.simple_ui.system_manager.xml.controller.window.drag.FloatingDragView
 import kr.open.library.simple_ui.system_manager.xml.controller.window.drag.FloatingDragViewConfig
 import kr.open.library.simple_ui.system_manager.xml.controller.window.fixed.FloatingFixedView
 import kr.open.library.simple_ui.system_manager.xml.controller.window.vo.FloatingViewCollisionsType
 import kr.open.library.simple_ui.system_manager.xml.controller.window.vo.FloatingViewTouchType
+import kr.open.library.simple_ui.system_manager.xml.extensions.internal.getWindowManagerInternal
 
 /**
  * Floating view management controller that handles draggable and fixed overlays.<br><br>
@@ -33,7 +33,7 @@ import kr.open.library.simple_ui.system_manager.xml.controller.window.vo.Floatin
 public open class FloatingViewController(
     context: Context,
 ) : BaseSystemService(context, listOf(android.Manifest.permission.SYSTEM_ALERT_WINDOW)) {
-    public val windowManager: WindowManager by lazy { context.getWindowManager() }
+    public val windowManager: WindowManager by lazy { context.getWindowManagerInternal() }
 
     private var floatingDragViewInfoList: MutableList<FloatingDragViewConfig> = mutableListOf()
     private var floatingFixedView: FloatingFixedView? = null

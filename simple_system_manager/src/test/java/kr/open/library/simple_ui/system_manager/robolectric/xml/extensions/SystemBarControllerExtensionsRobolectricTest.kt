@@ -1,7 +1,6 @@
 ﻿package kr.open.library.simple_ui.system_manager.robolectric.xml.extensions
 
 import android.app.Activity
-import kr.open.library.simple_ui.system_manager.BuildConfig
 import kr.open.library.simple_ui.system_manager.R
 import kr.open.library.simple_ui.system_manager.xml.extensions.destroySystemBarControllerCache
 import kr.open.library.simple_ui.system_manager.xml.extensions.getSystemBarController
@@ -15,6 +14,7 @@ import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import java.util.concurrent.atomic.AtomicReference
+import kr.open.library.simple_ui.core.BuildConfig as CoreBuildConfig
 
 @RunWith(RobolectricTestRunner::class)
 class SystemBarControllerExtensionsRobolectricTest {
@@ -54,7 +54,7 @@ class SystemBarControllerExtensionsRobolectricTest {
     }
 
     @Test
-    fun `window extension throws off main thread in debug`() {
+    fun `window extension follows core build variant policy off main thread`() {
         val thrown = AtomicReference<Throwable?>(null)
 
         val worker =
@@ -69,10 +69,10 @@ class SystemBarControllerExtensionsRobolectricTest {
         worker.start()
         worker.join()
 
-        if (BuildConfig.DEBUG) {
+        if (CoreBuildConfig.DEBUG) {
             assertTrue(thrown.get() is IllegalStateException)
         } else {
-            assertTrue(thrown.get() == null)
+            assertNull(thrown.get())
         }
     }
 }

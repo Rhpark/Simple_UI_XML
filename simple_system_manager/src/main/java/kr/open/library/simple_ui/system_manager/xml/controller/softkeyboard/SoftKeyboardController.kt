@@ -26,7 +26,7 @@ import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
 import kr.open.library.simple_ui.core.logcat.Logx
 import kr.open.library.simple_ui.system_manager.core.base.BaseSystemService
 import kr.open.library.simple_ui.system_manager.core.base.SystemResult
-import kr.open.library.simple_ui.system_manager.core.extensions.getInputMethodManager
+import kr.open.library.simple_ui.system_manager.xml.extensions.internal.getInputMethodManagerInternal
 
 /**
  * Controller for managing soft keyboard operations using InputMethodManager and WindowInsets.<br><br>
@@ -52,7 +52,7 @@ public open class SoftKeyboardController(
         private const val IME_FALLBACK_POLL_INTERVAL_MS: Long = 50L
     }
 
-    private val imm: InputMethodManager by lazy { context.getInputMethodManager() }
+    private val imm: InputMethodManager by lazy { context.getInputMethodManagerInternal() }
 
     private enum class HideRequestResult {
         REQUEST_ISSUED,

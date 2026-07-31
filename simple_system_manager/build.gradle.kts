@@ -106,7 +106,7 @@ android {
     }
 
     buildFeatures {
-        buildConfig = true
+        buildConfig = false
     }
 
     testOptions {
@@ -144,7 +144,6 @@ kover {
     reports {
         filters {
             excludes {
-                classes("**.BuildConfig")
                 classes("**.R")
                 classes("**.R$*")
                 classes("**.databinding.**")

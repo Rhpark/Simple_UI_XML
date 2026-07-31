@@ -1,10 +1,3 @@
-public final class kr/open/library/simple_ui/system_manager/BuildConfig {
-	public static final field BUILD_TYPE Ljava/lang/String;
-	public static final field DEBUG Z
-	public static final field LIBRARY_PACKAGE_NAME Ljava/lang/String;
-	public fun <init> ()V
-}
-
 public abstract class kr/open/library/simple_ui/system_manager/core/base/BaseSystemService {
 	public fun <init> (Landroid/content/Context;Ljava/util/List;)V
 	public synthetic fun <init> (Landroid/content/Context;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -481,21 +474,18 @@ public final class kr/open/library/simple_ui/system_manager/core/extensions/Syst
 	public static final fun getBluetoothManager (Landroid/content/Context;)Landroid/bluetooth/BluetoothManager;
 	public static final fun getConnectivityManager (Landroid/content/Context;)Landroid/net/ConnectivityManager;
 	public static final fun getEuiccManager (Landroid/content/Context;)Landroid/telephony/euicc/EuiccManager;
-	public static final fun getInputMethodManager (Landroid/content/Context;)Landroid/view/inputmethod/InputMethodManager;
 	public static final fun getLocationManager (Landroid/content/Context;)Landroid/location/LocationManager;
 	public static final fun getLocationStateInfo (Landroid/content/Context;)Lkr/open/library/simple_ui/system_manager/core/info/location/LocationStateInfo;
 	public static final fun getNotificationController (Landroid/content/Context;Landroid/app/NotificationChannel;)Lkr/open/library/simple_ui/system_manager/core/controller/notification/SimpleNotificationController;
 	public static final fun getNotificationManager (Landroid/content/Context;)Landroid/app/NotificationManager;
 	public static final fun getPowerManager (Landroid/content/Context;)Landroid/os/PowerManager;
 	public static final fun getSubscriptionManager (Landroid/content/Context;)Landroid/telephony/SubscriptionManager;
-	public static final fun getSystemNotificationManager (Landroid/content/Context;)Landroid/app/NotificationManager;
 	public static final fun getTelephonyManager (Landroid/content/Context;)Landroid/telephony/TelephonyManager;
 	public static final fun getVibrator (Landroid/content/Context;)Landroid/os/Vibrator;
 	public static final fun getVibratorController (Landroid/content/Context;)Lkr/open/library/simple_ui/system_manager/core/controller/vibrator/VibratorController;
 	public static final fun getVibratorManager (Landroid/content/Context;)Landroid/os/VibratorManager;
 	public static final fun getWifiController (Landroid/content/Context;)Lkr/open/library/simple_ui/system_manager/core/controller/wifi/WifiController;
 	public static final fun getWifiManager (Landroid/content/Context;)Landroid/net/wifi/WifiManager;
-	public static final fun getWindowManager (Landroid/content/Context;)Landroid/view/WindowManager;
 }
 
 public final class kr/open/library/simple_ui/system_manager/core/info/battery/BatteryStateConstants {
@@ -678,72 +668,6 @@ public class kr/open/library/simple_ui/system_manager/core/info/battery/BatteryS
 	public final fun registerStart (Lkotlinx/coroutines/CoroutineScope;J)Z
 	public static synthetic fun registerStart$default (Lkr/open/library/simple_ui/system_manager/core/info/battery/BatteryStateInfo;Lkotlinx/coroutines/CoroutineScope;JILjava/lang/Object;)Z
 	public final fun unRegister ()V
-}
-
-public final class kr/open/library/simple_ui/system_manager/core/info/battery/internal/helper/power/PowerProfile {
-	public static final field Companion Lkr/open/library/simple_ui/system_manager/core/info/battery/internal/helper/power/PowerProfile$Companion;
-	public fun <init> (Landroid/content/Context;)V
-	public final fun getAveragePower (Lkr/open/library/simple_ui/system_manager/core/info/battery/internal/helper/power/PowerProfileVO;)Ljava/lang/Object;
-	public final fun getAveragePower (Lkr/open/library/simple_ui/system_manager/core/info/battery/internal/helper/power/PowerProfileVO;I)Ljava/lang/Object;
-	public final fun getBatteryCapacity ()D
-	public final fun isPowerProfileAvailable ()Z
-}
-
-public final class kr/open/library/simple_ui/system_manager/core/info/battery/internal/helper/power/PowerProfile$Companion {
-}
-
-public final class kr/open/library/simple_ui/system_manager/core/info/battery/internal/helper/power/PowerProfileVO : java/lang/Enum {
-	public static final field ATTR_NAME Lkr/open/library/simple_ui/system_manager/core/info/battery/internal/helper/power/PowerProfileVO;
-	public static final field CPU_CLUSTER_POWER_COUNT Lkr/open/library/simple_ui/system_manager/core/info/battery/internal/helper/power/PowerProfileVO;
-	public static final field CPU_CORE_POWER_PREFIX Lkr/open/library/simple_ui/system_manager/core/info/battery/internal/helper/power/PowerProfileVO;
-	public static final field CPU_CORE_SPEED_PREFIX Lkr/open/library/simple_ui/system_manager/core/info/battery/internal/helper/power/PowerProfileVO;
-	public static final field CPU_PER_CLUSTER_CORE_COUNT Lkr/open/library/simple_ui/system_manager/core/info/battery/internal/helper/power/PowerProfileVO;
-	public static final field POWER_AUDIO Lkr/open/library/simple_ui/system_manager/core/info/battery/internal/helper/power/PowerProfileVO;
-	public static final field POWER_BATTERY_CAPACITY Lkr/open/library/simple_ui/system_manager/core/info/battery/internal/helper/power/PowerProfileVO;
-	public static final field POWER_BLUETOOTH_CONTROLLER_IDLE Lkr/open/library/simple_ui/system_manager/core/info/battery/internal/helper/power/PowerProfileVO;
-	public static final field POWER_BLUETOOTH_CONTROLLER_OPERATING_VOLTAGE Lkr/open/library/simple_ui/system_manager/core/info/battery/internal/helper/power/PowerProfileVO;
-	public static final field POWER_BLUETOOTH_CONTROLLER_RX Lkr/open/library/simple_ui/system_manager/core/info/battery/internal/helper/power/PowerProfileVO;
-	public static final field POWER_BLUETOOTH_CONTROLLER_TX Lkr/open/library/simple_ui/system_manager/core/info/battery/internal/helper/power/PowerProfileVO;
-	public static final field POWER_CAMERA Lkr/open/library/simple_ui/system_manager/core/info/battery/internal/helper/power/PowerProfileVO;
-	public static final field POWER_CPU_ACTIVE Lkr/open/library/simple_ui/system_manager/core/info/battery/internal/helper/power/PowerProfileVO;
-	public static final field POWER_CPU_IDLE Lkr/open/library/simple_ui/system_manager/core/info/battery/internal/helper/power/PowerProfileVO;
-	public static final field POWER_CPU_SUSPEND Lkr/open/library/simple_ui/system_manager/core/info/battery/internal/helper/power/PowerProfileVO;
-	public static final field POWER_FLASHLIGHT Lkr/open/library/simple_ui/system_manager/core/info/battery/internal/helper/power/PowerProfileVO;
-	public static final field POWER_GPS_ON Lkr/open/library/simple_ui/system_manager/core/info/battery/internal/helper/power/PowerProfileVO;
-	public static final field POWER_GPS_OPERATING_VOLTAGE Lkr/open/library/simple_ui/system_manager/core/info/battery/internal/helper/power/PowerProfileVO;
-	public static final field POWER_GPS_SIGNAL_QUALITY_BASED Lkr/open/library/simple_ui/system_manager/core/info/battery/internal/helper/power/PowerProfileVO;
-	public static final field POWER_GROUP_DISPLAY_AMBIENT Lkr/open/library/simple_ui/system_manager/core/info/battery/internal/helper/power/PowerProfileVO;
-	public static final field POWER_GROUP_DISPLAY_SCREEN_FULL Lkr/open/library/simple_ui/system_manager/core/info/battery/internal/helper/power/PowerProfileVO;
-	public static final field POWER_GROUP_DISPLAY_SCREEN_ON Lkr/open/library/simple_ui/system_manager/core/info/battery/internal/helper/power/PowerProfileVO;
-	public static final field POWER_MEMORY Lkr/open/library/simple_ui/system_manager/core/info/battery/internal/helper/power/PowerProfileVO;
-	public static final field POWER_MODEM_CONTROLLER_IDLE Lkr/open/library/simple_ui/system_manager/core/info/battery/internal/helper/power/PowerProfileVO;
-	public static final field POWER_MODEM_CONTROLLER_OPERATING_VOLTAGE Lkr/open/library/simple_ui/system_manager/core/info/battery/internal/helper/power/PowerProfileVO;
-	public static final field POWER_MODEM_CONTROLLER_RX Lkr/open/library/simple_ui/system_manager/core/info/battery/internal/helper/power/PowerProfileVO;
-	public static final field POWER_MODEM_CONTROLLER_SLEEP Lkr/open/library/simple_ui/system_manager/core/info/battery/internal/helper/power/PowerProfileVO;
-	public static final field POWER_MODEM_CONTROLLER_TX Lkr/open/library/simple_ui/system_manager/core/info/battery/internal/helper/power/PowerProfileVO;
-	public static final field POWER_RADIO_ACTIVE Lkr/open/library/simple_ui/system_manager/core/info/battery/internal/helper/power/PowerProfileVO;
-	public static final field POWER_RADIO_ON Lkr/open/library/simple_ui/system_manager/core/info/battery/internal/helper/power/PowerProfileVO;
-	public static final field POWER_RADIO_SCANNING Lkr/open/library/simple_ui/system_manager/core/info/battery/internal/helper/power/PowerProfileVO;
-	public static final field POWER_SCREEN_FULL Lkr/open/library/simple_ui/system_manager/core/info/battery/internal/helper/power/PowerProfileVO;
-	public static final field POWER_VIDEO Lkr/open/library/simple_ui/system_manager/core/info/battery/internal/helper/power/PowerProfileVO;
-	public static final field POWER_WIFI_ACTIVE Lkr/open/library/simple_ui/system_manager/core/info/battery/internal/helper/power/PowerProfileVO;
-	public static final field POWER_WIFI_BATCHED_SCAN Lkr/open/library/simple_ui/system_manager/core/info/battery/internal/helper/power/PowerProfileVO;
-	public static final field POWER_WIFI_CONTROLLER_IDLE Lkr/open/library/simple_ui/system_manager/core/info/battery/internal/helper/power/PowerProfileVO;
-	public static final field POWER_WIFI_CONTROLLER_OPERATING_VOLTAGE Lkr/open/library/simple_ui/system_manager/core/info/battery/internal/helper/power/PowerProfileVO;
-	public static final field POWER_WIFI_CONTROLLER_RX Lkr/open/library/simple_ui/system_manager/core/info/battery/internal/helper/power/PowerProfileVO;
-	public static final field POWER_WIFI_CONTROLLER_TX Lkr/open/library/simple_ui/system_manager/core/info/battery/internal/helper/power/PowerProfileVO;
-	public static final field POWER_WIFI_CONTROLLER_TX_LEVELS Lkr/open/library/simple_ui/system_manager/core/info/battery/internal/helper/power/PowerProfileVO;
-	public static final field POWER_WIFI_ON Lkr/open/library/simple_ui/system_manager/core/info/battery/internal/helper/power/PowerProfileVO;
-	public static final field POWER_WIFI_SCAN Lkr/open/library/simple_ui/system_manager/core/info/battery/internal/helper/power/PowerProfileVO;
-	public static final field TAG_ARRAY Lkr/open/library/simple_ui/system_manager/core/info/battery/internal/helper/power/PowerProfileVO;
-	public static final field TAG_ARRAYITEM Lkr/open/library/simple_ui/system_manager/core/info/battery/internal/helper/power/PowerProfileVO;
-	public static final field TAG_DEVICE Lkr/open/library/simple_ui/system_manager/core/info/battery/internal/helper/power/PowerProfileVO;
-	public static final field TAG_ITEM Lkr/open/library/simple_ui/system_manager/core/info/battery/internal/helper/power/PowerProfileVO;
-	public static final field TAG_MODEM Lkr/open/library/simple_ui/system_manager/core/info/battery/internal/helper/power/PowerProfileVO;
-	public static fun getEntries ()Lkotlin/enums/EnumEntries;
-	public final fun getRes ()Ljava/lang/String;
-	public static fun valueOf (Ljava/lang/String;)Lkr/open/library/simple_ui/system_manager/core/info/battery/internal/helper/power/PowerProfileVO;
-	public static fun values ()[Lkr/open/library/simple_ui/system_manager/core/info/battery/internal/helper/power/PowerProfileVO;
 }
 
 public final class kr/open/library/simple_ui/system_manager/core/info/location/LocationSharedPreference : kr/open/library/simple_ui/core/local/base/BaseSharedPreference {
@@ -1067,85 +991,6 @@ public final class kr/open/library/simple_ui/system_manager/core/info/network/te
 	public static synthetic fun setOnTelephonyNetworkType$default (Lkr/open/library/simple_ui/system_manager/core/info/network/telephony/TelephonyInfo;ILkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
 	public final fun unregisterCallBack (I)V
 	public final fun unregisterCallback ()Z
-}
-
-public class kr/open/library/simple_ui/system_manager/core/info/network/telephony/callback/CommonTelephonyCallback {
-	public fun <init> (Landroid/telephony/TelephonyManager;)V
-	public final fun getBaseGpsTelephonyCallback ()Lkr/open/library/simple_ui/system_manager/core/info/network/telephony/callback/CommonTelephonyCallback$BaseGpsTelephonyCallback;
-	public final fun getBasePhoneStateListener ()Lkr/open/library/simple_ui/system_manager/core/info/network/telephony/callback/CommonTelephonyCallback$BasePhoneStateListener;
-	public final fun getBaseTelephonyCallback ()Lkr/open/library/simple_ui/system_manager/core/info/network/telephony/callback/CommonTelephonyCallback$BaseTelephonyCallback;
-	public final fun setOnActiveDataSubId (Lkotlin/jvm/functions/Function1;)V
-	public final fun setOnCallState (Lkotlin/jvm/functions/Function2;)V
-	public final fun setOnCellInfo (Lkotlin/jvm/functions/Function1;)V
-	public final fun setOnDataConnectionState (Lkotlin/jvm/functions/Function2;)V
-	public final fun setOnDisplay (Lkotlin/jvm/functions/Function1;)V
-	public final fun setOnServiceState (Lkotlin/jvm/functions/Function1;)V
-	public final fun setOnSignalStrength (Lkotlin/jvm/functions/Function1;)V
-	public final fun setOnTelephonyNetworkType (Lkotlin/jvm/functions/Function1;)V
-}
-
-public class kr/open/library/simple_ui/system_manager/core/info/network/telephony/callback/CommonTelephonyCallback$BaseGpsTelephonyCallback : kr/open/library/simple_ui/system_manager/core/info/network/telephony/callback/CommonTelephonyCallback$BaseTelephonyCallback, android/telephony/TelephonyCallback$CellInfoListener {
-	public fun <init> (Lkr/open/library/simple_ui/system_manager/core/info/network/telephony/callback/CommonTelephonyCallback;)V
-	public fun onCellInfoChanged (Ljava/util/List;)V
-}
-
-public class kr/open/library/simple_ui/system_manager/core/info/network/telephony/callback/CommonTelephonyCallback$BasePhoneStateListener : android/telephony/PhoneStateListener {
-	public fun <init> (Lkr/open/library/simple_ui/system_manager/core/info/network/telephony/callback/CommonTelephonyCallback;)V
-	public fun onActiveDataSubscriptionIdChanged (I)V
-	public fun onCallStateChanged (ILjava/lang/String;)V
-	public fun onCellInfoChanged (Ljava/util/List;)V
-	public fun onDataConnectionStateChanged (II)V
-	public fun onDisplayInfoChanged (Landroid/telephony/TelephonyDisplayInfo;)V
-	public fun onServiceStateChanged (Landroid/telephony/ServiceState;)V
-	public fun onSignalStrengthsChanged (Landroid/telephony/SignalStrength;)V
-}
-
-public class kr/open/library/simple_ui/system_manager/core/info/network/telephony/callback/CommonTelephonyCallback$BaseTelephonyCallback : android/telephony/TelephonyCallback, android/telephony/TelephonyCallback$ActiveDataSubscriptionIdListener, android/telephony/TelephonyCallback$CallStateListener, android/telephony/TelephonyCallback$DataConnectionStateListener, android/telephony/TelephonyCallback$DisplayInfoListener, android/telephony/TelephonyCallback$ServiceStateListener, android/telephony/TelephonyCallback$SignalStrengthsListener {
-	public fun <init> (Lkr/open/library/simple_ui/system_manager/core/info/network/telephony/callback/CommonTelephonyCallback;)V
-	public fun onActiveDataSubscriptionIdChanged (I)V
-	public fun onCallStateChanged (I)V
-	public fun onDataConnectionStateChanged (II)V
-	public fun onDisplayInfoChanged (Landroid/telephony/TelephonyDisplayInfo;)V
-	public fun onServiceStateChanged (Landroid/telephony/ServiceState;)V
-	public fun onSignalStrengthsChanged (Landroid/telephony/SignalStrength;)V
-}
-
-public final class kr/open/library/simple_ui/system_manager/core/info/network/telephony/callback/TelephonyCallbackManager : kr/open/library/simple_ui/system_manager/core/base/BaseSystemService {
-	public fun <init> (Landroid/content/Context;)V
-	public final fun getCurrentNetworkState ()Lkotlinx/coroutines/flow/StateFlow;
-	public final fun getCurrentServiceState ()Landroid/telephony/ServiceState;
-	public final fun getCurrentServiceState ()Lkotlinx/coroutines/flow/StateFlow;
-	public final fun getCurrentSignalStrength ()Landroid/telephony/SignalStrength;
-	public final fun getCurrentSignalStrength ()Lkotlinx/coroutines/flow/StateFlow;
-	public final fun getSubscriptionManager ()Landroid/telephony/SubscriptionManager;
-	public final fun getTelephonyManager ()Landroid/telephony/TelephonyManager;
-	public final fun getTelephonyManagerFromUSim (I)Landroid/telephony/TelephonyManager;
-	public final fun isRegistered (I)Z
-	public fun onDestroy ()V
-	public final fun registerAdvancedCallback (ILjava/util/concurrent/Executor;ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)V
-	public static synthetic fun registerAdvancedCallback$default (Lkr/open/library/simple_ui/system_manager/core/info/network/telephony/callback/TelephonyCallbackManager;ILjava/util/concurrent/Executor;ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
-	public final fun registerAdvancedCallbackFromDefaultUSim (Ljava/util/concurrent/Executor;ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)Z
-	public static synthetic fun registerAdvancedCallbackFromDefaultUSim$default (Lkr/open/library/simple_ui/system_manager/core/info/network/telephony/callback/TelephonyCallbackManager;Ljava/util/concurrent/Executor;ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Z
-	public final fun registerSimpleCallback (Landroid/os/Handler;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)Z
-	public static synthetic fun registerSimpleCallback$default (Lkr/open/library/simple_ui/system_manager/core/info/network/telephony/callback/TelephonyCallbackManager;Landroid/os/Handler;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Z
-	public final fun setOnActiveDataSubId (ILkotlin/jvm/functions/Function1;)V
-	public static synthetic fun setOnActiveDataSubId$default (Lkr/open/library/simple_ui/system_manager/core/info/network/telephony/callback/TelephonyCallbackManager;ILkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
-	public final fun setOnCallState (ILkotlin/jvm/functions/Function2;)V
-	public static synthetic fun setOnCallState$default (Lkr/open/library/simple_ui/system_manager/core/info/network/telephony/callback/TelephonyCallbackManager;ILkotlin/jvm/functions/Function2;ILjava/lang/Object;)V
-	public final fun setOnCellInfo (ILkotlin/jvm/functions/Function1;)V
-	public static synthetic fun setOnCellInfo$default (Lkr/open/library/simple_ui/system_manager/core/info/network/telephony/callback/TelephonyCallbackManager;ILkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
-	public final fun setOnDataConnectionState (ILkotlin/jvm/functions/Function2;)V
-	public static synthetic fun setOnDataConnectionState$default (Lkr/open/library/simple_ui/system_manager/core/info/network/telephony/callback/TelephonyCallbackManager;ILkotlin/jvm/functions/Function2;ILjava/lang/Object;)V
-	public final fun setOnDisplayState (ILkotlin/jvm/functions/Function1;)V
-	public static synthetic fun setOnDisplayState$default (Lkr/open/library/simple_ui/system_manager/core/info/network/telephony/callback/TelephonyCallbackManager;ILkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
-	public final fun setOnServiceState (ILkotlin/jvm/functions/Function1;)V
-	public static synthetic fun setOnServiceState$default (Lkr/open/library/simple_ui/system_manager/core/info/network/telephony/callback/TelephonyCallbackManager;ILkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
-	public final fun setOnSignalStrength (ILkotlin/jvm/functions/Function1;)V
-	public static synthetic fun setOnSignalStrength$default (Lkr/open/library/simple_ui/system_manager/core/info/network/telephony/callback/TelephonyCallbackManager;ILkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
-	public final fun setOnTelephonyNetworkType (ILkotlin/jvm/functions/Function1;)V
-	public static synthetic fun setOnTelephonyNetworkType$default (Lkr/open/library/simple_ui/system_manager/core/info/network/telephony/callback/TelephonyCallbackManager;ILkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
-	public final fun unregisterAdvancedCallback (I)V
-	public final fun unregisterSimpleCallback ()Z
 }
 
 public final class kr/open/library/simple_ui/system_manager/core/info/network/telephony/data/cell/cdma/CellIdentityCdmaData {

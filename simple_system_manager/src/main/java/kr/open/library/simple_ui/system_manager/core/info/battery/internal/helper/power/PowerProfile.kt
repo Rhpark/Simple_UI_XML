@@ -26,7 +26,7 @@ import java.lang.reflect.Method
  * @see PowerProfileVO for available power metrics
  */
 @SuppressLint("PrivateApi")
-public class PowerProfile(
+internal class PowerProfile(
     private val context: Context,
 ) {
     /**

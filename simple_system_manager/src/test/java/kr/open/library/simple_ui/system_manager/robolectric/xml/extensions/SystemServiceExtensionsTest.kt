@@ -26,21 +26,18 @@ import kr.open.library.simple_ui.system_manager.core.extensions.getBatteryStateI
 import kr.open.library.simple_ui.system_manager.core.extensions.getBluetoothManager
 import kr.open.library.simple_ui.system_manager.core.extensions.getConnectivityManager
 import kr.open.library.simple_ui.system_manager.core.extensions.getEuiccManager
-import kr.open.library.simple_ui.system_manager.core.extensions.getInputMethodManager
 import kr.open.library.simple_ui.system_manager.core.extensions.getLocationManager
 import kr.open.library.simple_ui.system_manager.core.extensions.getLocationStateInfo
 import kr.open.library.simple_ui.system_manager.core.extensions.getNotificationController
 import kr.open.library.simple_ui.system_manager.core.extensions.getNotificationManager
 import kr.open.library.simple_ui.system_manager.core.extensions.getPowerManager
 import kr.open.library.simple_ui.system_manager.core.extensions.getSubscriptionManager
-import kr.open.library.simple_ui.system_manager.core.extensions.getSystemNotificationManager
 import kr.open.library.simple_ui.system_manager.core.extensions.getTelephonyManager
 import kr.open.library.simple_ui.system_manager.core.extensions.getVibrator
 import kr.open.library.simple_ui.system_manager.core.extensions.getVibratorController
 import kr.open.library.simple_ui.system_manager.core.extensions.getVibratorManager
 import kr.open.library.simple_ui.system_manager.core.extensions.getWifiController
 import kr.open.library.simple_ui.system_manager.core.extensions.getWifiManager
-import kr.open.library.simple_ui.system_manager.core.extensions.getWindowManager
 import kr.open.library.simple_ui.system_manager.xml.controller.softkeyboard.SoftKeyboardController
 import kr.open.library.simple_ui.system_manager.xml.extensions.getDisplayInfo
 import kr.open.library.simple_ui.system_manager.xml.extensions.getFloatingViewController
@@ -130,7 +127,6 @@ class SystemServiceExtensionsTest {
 
         assertSame(batteryManager, application.getBatteryManager())
         assertSame(notificationManager, application.getNotificationManager())
-        assertSame(notificationManager, application.getSystemNotificationManager())
         assertSame(powerManager, application.getPowerManager())
         assertSame(locationManager, application.getLocationManager())
         assertSame(connectivityManager, application.getConnectivityManager())
@@ -139,8 +135,6 @@ class SystemServiceExtensionsTest {
         assertSame(subscriptionManager, application.getSubscriptionManager())
         assertSame(euiccManager, application.getEuiccManager())
         assertSame(bluetoothManager, application.getBluetoothManager())
-        assertNotNull(application.getWindowManager())
-        assertNotNull(application.getInputMethodManager())
     }
 
     @Test
