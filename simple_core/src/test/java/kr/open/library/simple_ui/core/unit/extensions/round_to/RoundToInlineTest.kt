@@ -1,6 +1,7 @@
 package kr.open.library.simple_ui.core.unit.extensions.round_to
 
 import kr.open.library.simple_ui.core.extensions.round_to.roundDown
+import kr.open.library.simple_ui.core.extensions.round_to.roundHalfUp
 import kr.open.library.simple_ui.core.extensions.round_to.roundTo
 import kr.open.library.simple_ui.core.extensions.round_to.roundUp
 import org.junit.Assert.assertEquals
@@ -172,10 +173,17 @@ class RoundToInlineTest {
     // ========== Boundary Tests ==========
 
     @Test
-    fun double_halfValue_roundsUp() {
-        val value = 1.5
+    fun roundHalfUp_halfValues_roundAwayFromZero() {
+        assertEquals(3.0, roundHalfUp(2.5), 0.0)
+        assertEquals(-3.0, roundHalfUp(-2.5), 0.0)
+    }
 
-        assertEquals(2.0, value.roundTo(0), 0.0001)
+    @Test
+    fun floatingPoint_halfValues_useHalfUpConsistently() {
+        assertEquals(3.0, 2.5.roundTo(0), 0.0)
+        assertEquals(-3.0, (-2.5).roundTo(0), 0.0)
+        assertEquals(3.0f, 2.5f.roundTo(0), 0.0f)
+        assertEquals(-3.0f, (-2.5f).roundTo(0), 0.0f)
     }
 
     @Test

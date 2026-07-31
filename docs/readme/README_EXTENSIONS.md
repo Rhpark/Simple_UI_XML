@@ -15,7 +15,7 @@ This feature **spans two modules** (이 기능은 **두 모듈**에 걸쳐 있�
   - `permissions/` - Permission inspection & helper extensions
   - `round_to/` - Number rounding
   - `string/` - String validation & processing
-  - `time/` - Time manipulation
+  - `time/` - Execution time measurement
   - `trycatch/` - Exception handling
 
 ### **simple_xml** - UI-Dependent Extensions (UI 의존 확장 함수)
@@ -171,11 +171,20 @@ This feature **spans two modules** (이 기능은 **두 모듈**에 걸쳐 있�
 <br>
 </br>
 
+#### **⏱️ time/** — Execution time measurement extensions (실행 시간 측정 Extensions)
+**Module**: `simple_core`
+- **Result + milliseconds:** `measureTimeMillis { doWork() }`
+- **Result + nanoseconds:** `measureTimeNanos { doWork() }`
+- **Custom time source:** `measureTime(timeProvider) { doWork() }`, `measureTimeWithResult(timeProvider) { doWork() }`
+<br>
+</br>
+
 #### **⚠️ trycatch/** — Exception handling extensions (예외 처리 Extensions)
 **Module**: `simple_core`
 - **Three overloads(3가지 오버로드):** `safeCatch(block)`, `safeCatch(defaultValue, block)`, `safeCatch(block, onCatch)`
 - **Coroutine friendly(코루틴 안전):** automatically rethrows `CancellationException`(자동전파)
 - **Auto logging(자동 로깅):** prints stack traces when exceptions occur
+- **Boundary guards(경계 검증):** `requireInBounds`, `requireMinSdkVersion`, `requireMaxSdkVersion`, `throwMinSdkVersion`
 <br>
 </br>
 
@@ -725,7 +734,7 @@ kr.open.library.simple_ui.core.extensions/
 ├─ display/        → 단위 변환 (dp↔px, sp↔px) ⚠️ Requires Context
 ├─ round_to/       → 숫자 반올림 (roundTo, roundUp, roundDown)
 ├─ string/         → 문자열 검증/가공 (isEmailValid, isPhoneNumberValid, isUrlValid, isNumeric, isAlphaNumeric, removeHtmlTags)
-├─ time/           → 시간 조작/포맷팅
+├─ time/           → 실행 결과와 경과 시간 측정
 └─ trycatch/       → 예외 처리 (safeCatch)
 ```
 
@@ -835,6 +844,7 @@ If you want to accelerate development,
 - 📦 resource/ - Drawable, Color 타입 안전 접근
 - 📦 string/ - email valid, round_to, etc/ 이메일,숫자 검증 실시간, 공백 제거
 - 📦 date/ - Data Format, other etc type, 날짜 포맷 다양한 형식
+- 📦 time/ - measure execution time with result/ 실행 결과와 경과 시간 측정
 - 📦 trycatch/ - safeCatch/ 예외 처리
 - 📦 permissions/ - CAMERA Permission Check
 
@@ -849,7 +859,8 @@ If you want to accelerate development,
 ### 🔢 round_to/ — Number Rounding Extensions (숫자 반올림 확장)
 
 **Features:**
-- `roundTo(decimals)` — round to the specified decimal place/ 지정된 소수점 자리로 반올림
+- `roundTo(decimals)` — round exact halves away from zero at the specified place/ 지정된 자리의 정확한 절반값을 0에서 멀어지는 방향으로 반올림
+- `roundHalfUp(value)` — apply the same half-up rule directly/ 같은 half-up 규칙을 값에 직접 적용
 - `roundUp(decimals)` — round up to the specified place/ 지정된 자리로 올림
 - `roundDown(decimals)` — round down to the specified place/ 지정된 자리로 내림
 
@@ -863,6 +874,10 @@ If you want to accelerate development,
 // 소수점 반올림
 val pi = 3.14159
 val rounded = pi.roundTo(2)  // 3.14
+
+// exact half는 양수·음수 모두 0에서 멀어지는 방향으로 반올림
+val positiveHalf = roundHalfUp(2.5)   // 3.0
+val negativeHalf = roundHalfUp(-2.5)  // -3.0
 
 // 올림/내림
 val price = 3.14159
@@ -1047,11 +1062,64 @@ val isActive = bundle.getValue("is_active", false)
 // 지원 타입: Int, Boolean, Float, Long, Double, String, Char, Short, Byte, ByteArray, Bundle
 ```
 
+#### **4. Boundary guards — index and SDK requirements (경계 검증 - 인덱스 및 SDK 요구사항)**
+
+Use explicit exceptions when an index or Android SDK requirement is not satisfied.
+
+> 인덱스 또는 Android SDK 요구사항을 충족하지 못하면 명확한 예외를 발생시킵니다.
+
+```kotlin
+requireInBounds(position in items.indices) {
+    "Invalid position: $position"
+}
+
+requireMinSdkVersion(Build.VERSION_CODES.S)
+requireMaxSdkVersion(Build.VERSION_CODES.TIRAMISU)
+
+// 항상 최소 SDK 요구 예외를 발생시켜 공통 실패 경로에서 사용할 수 있습니다.
+throwMinSdkVersion(Build.VERSION_CODES.S)
+```
+
+- `requireInBounds`: 조건이 `false`이면 `IndexOutOfBoundsException`을 발생시킵니다.
+- `requireMinSdkVersion`: 현재 SDK가 요구 버전보다 낮으면 `UnsupportedOperationException`을 발생시킵니다.
+- `requireMaxSdkVersion`: 현재 SDK가 허용 버전보다 높으면 `UnsupportedOperationException`을 발생시킵니다.
+- `throwMinSdkVersion`: 현재 SDK와 관계없이 최소 SDK 요구 예외를 발생시킵니다.
+
 **Benefits/ 장점:**
 - No need to call different methods per type/ 타입별로 다른 메서드 호출 불필요
 - Compile-time safety via reified types/ Reified Type으로 컴파일 타임 타입 체크
 - Automatically return `defaultValue` and log when keys are missing/ Key 누락 시 자동으로 defaultValue 반환 및 로그 출력
 - Improve code consistency/ 코드 일관성 향상
+
+<br>
+</br>
+
+### ⏱️ time/ — Execution Time Measurement (실행 시간 측정)
+
+**Provided features (제공 기능):**
+- `measureTimeMillis(block)` — returns the block result with elapsed milliseconds/ 실행 결과와 밀리초 경과 시간 반환
+- `measureTimeNanos(block)` — returns the block result with elapsed nanoseconds/ 실행 결과와 나노초 경과 시간 반환
+- `measureTime(timeProvider, block)` — measures elapsed time with a caller-provided time source/ 호출부가 제공한 시간 공급원으로 경과 시간 측정
+- `measureTimeWithResult(timeProvider, block)` — returns the result and elapsed value from a custom time source/ 사용자 지정 시간 공급원의 결과와 경과값 반환
+
+**Usage examples (사용 예시):**
+```kotlin
+val (result, elapsedMillis) = measureTimeMillis {
+    loadData()
+}
+
+val elapsedNanos = measureTime(System::nanoTime) {
+    updateCache()
+}
+```
+
+`measureTimeMillis` and `measureTimeNanos` use `System.nanoTime()` internally so wall-clock changes do not affect elapsed-time measurement.<br>
+`measureTimeMillis`와 `measureTimeNanos`는 내부적으로 `System.nanoTime()`을 사용하므로 시스템 시각 변경이 경과 시간 측정에 영향을 주지 않습니다.
+
+**Benefits/ 장점:**
+- Return the block result and elapsed time together/ 블록 실행 결과와 경과 시간을 함께 반환
+- Choose milliseconds, nanoseconds, or a caller-provided time source/ 밀리초·나노초·호출부 제공 시간 공급원 중 용도에 맞게 선택
+- Keep measurement code concise without manual start/end calculations/ 시작·종료 시각을 직접 계산하지 않고 측정 코드를 간결하게 유지
 
 <br>
 </br>

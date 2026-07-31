@@ -7,7 +7,6 @@ package kr.open.library.simple_ui.core.extensions.round_to
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.pow
-import kotlin.math.round
 import kotlin.math.roundToLong
 
 /**
@@ -22,7 +21,7 @@ import kotlin.math.roundToLong
  */
 public inline fun Double.roundTo(decimals: Int): Double {
     val factor = 10.0.pow(decimals.toDouble())
-    return round(this * factor) / factor
+    return roundHalfUp(this * factor) / factor
 }
 
 /**
@@ -67,7 +66,7 @@ public inline fun Double.roundDown(decimals: Int): Double {
  */
 public inline fun Float.roundTo(decimals: Int): Float {
     val factor = 10f.pow(decimals.toFloat())
-    return round(this * factor) / factor
+    return (roundHalfUp((this * factor).toDouble()) / factor).toFloat()
 }
 
 /**

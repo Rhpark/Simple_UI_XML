@@ -2,12 +2,14 @@ package kr.open.library.simple_ui.core.unit.extensions
 
 import android.util.Log
 import kotlinx.coroutines.CancellationException
+import kr.open.library.simple_ui.core.extensions.trycatch.requireInBounds
 import kr.open.library.simple_ui.core.extensions.trycatch.safeCatch
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -570,5 +572,35 @@ class TryCatchExtensionsTest {
         )
         val userResult = safeCatch(defaultValue = User("default")) { User("actual") }
         assertEquals("actual", userResult.name)
+    }
+
+    /**
+     * 유효한 범위에서는 예외 메시지를 계산하지 않는지 검증합니다.<br><br>
+     * Verifies that a valid range does not evaluate the lazy exception message.<br>
+     */
+    @Test
+    fun testRequireInBoundsSkipsLazyMessageWhenValid() {
+        var isMessageEvaluated = false
+
+        requireInBounds(value = true) {
+            isMessageEvaluated = true
+            "평가되면 안 되는 메시지"
+        }
+
+        assertFalse("유효한 범위에서는 메시지를 계산하지 않아야 합니다", isMessageEvaluated)
+    }
+
+    /**
+     * 유효하지 않은 범위에서는 계산된 메시지와 함께 예외를 던지는지 검증합니다.<br><br>
+     * Verifies that an invalid range throws with the evaluated message.<br>
+     */
+    @Test
+    fun testRequireInBoundsThrowsWithLazyMessageWhenInvalid() {
+        val exception =
+            assertThrows(IndexOutOfBoundsException::class.java) {
+                requireInBounds(value = false) { "허용 범위를 벗어났습니다" }
+            }
+
+        assertEquals("허용 범위를 벗어났습니다", exception.message)
     }
 }
