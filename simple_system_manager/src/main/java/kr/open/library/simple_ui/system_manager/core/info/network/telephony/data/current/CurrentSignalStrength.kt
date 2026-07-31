@@ -54,7 +54,7 @@ public data class CurrentSignalStrength(
     public val cellDataWcdmaList: MutableList<CellSignalStrengthWcdmaData> = mutableListOf()
 
     init {
-        cellDataList = signalStrength?.cellSignalStrengths as List<CellSignalStrength>
+        cellDataList = signalStrength?.cellSignalStrengths
         cellDataList?.let {
             it.forEach { item ->
 

@@ -93,7 +93,10 @@ public data class CurrentServiceState(
      * @return NetworkRegistrationInfo, or null.<br><br>
      *         NetworkRegistrationInfo, 또는 null.
      */
-    public fun getNetworkRegistrationInfo(index: Int): NetworkRegistrationInfo? = serviceState?.networkRegistrationInfoList?.get(index)
+    public fun getNetworkRegistrationInfo(index: Int): NetworkRegistrationInfo? =
+        serviceState
+            ?.networkRegistrationInfoList
+            ?.getOrNull(index)
 
     /**
      * Gets the domain from NetworkRegistrationInfo.<br><br>
