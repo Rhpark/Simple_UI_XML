@@ -1,4 +1,34 @@
 {
+  "permissions": {
+    "allow": [
+      "Bash(git checkout *)",
+      "Bash(git stash *)",
+      "Bash(git pull *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(cp README.md /tmp/rt.md)",
+      "Bash(sed -i 's/current `[0-9.]\\\\+` release/current `__TRACKED_VAR__` release/' /tmp/rt.md)",
+      "Bash(sed -i 's/현재 `[0-9.]\\\\+` 릴리스/현재 `__TRACKED_VAR__` 릴리스/' /tmp/rt.md)",
+      "Read(//tmp/**)",
+      "Bash(rm -f /tmp/rt.md)",
+      "Bash(grep -n \"current \\\\`\\\\|현재 \\\\`\" .github/workflows/documentation.yml)",
+      "Bash(git config *)",
+      "Bash(git commit *)",
+      "Bash(git push *)",
+      "Bash(git fetch *)",
+      "Bash(python3 -c ' *)",
+      "Bash(node -e \"try{require\\('fs'\\).readFileSync\\('docs/adr/0001-keep-permission-flow-processor-monolithic.md'\\).toString\\('utf8'\\);console.log\\('UTF-8 정상 — 깨짐 없음'\\)}catch\\(e\\){console.log\\('오류:',e.message\\)}\")",
+      "Bash(iconv -f UTF-8 -t UTF-8 docs/adr/0001-keep-permission-flow-processor-monolithic.md)",
+      "Bash(grep -vE \"^\\\\+\\\\+\\\\+|^\\\\+ \\\\*|^\\\\+$\")",
+      "Bash(awk '{ print length\": \"$0 }')",
+      "Bash(grep -vE \"//|\\\\*\")",
+      "Bash(grep -viE \"//|\\\\* \")",
+      "Bash(grep -viE \"//|SDK_INT\")",
+      "Bash(git diff *)",
+      "Bash(sort -k2 -rn)",
+      "Bash(sort -k1 -rn)"
+    ]
+  },
   "hooks": {
     "UserPromptSubmit": [
       {
@@ -6,8 +36,8 @@
           {
             "type": "command",
             "command": "powershell -Command \"[Console]::OutputEncoding = [System.Text.Encoding]::UTF8; Write-Output ('{\\\"hookSpecificOutput\\\": {\\\"hookEventName\\\": \\\"UserPromptSubmit\\\", \\\"additionalContext\\\": \\\"[세션 시작 필수 규칙] 아직 CLAUDE.md와 AGENTS.md를 읽지 않았다면 지금 즉시 읽으세요. 연결된 모든 문서도 읽은 후 첫 응답에 읽은 문서 목록을 공유하세요.\\\"}}')\"",
-            "once": true,
-            "statusMessage": "세션 규칙 로드 중..."
+            "statusMessage": "세션 규칙 로드 중...",
+            "once": true
           }
         ]
       }
