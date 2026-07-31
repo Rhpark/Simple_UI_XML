@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rootManualVerification"
+    style="@style/View.AllMatch">
+
+    <LinearLayout
+        style="@style/Layout.MatchWrap.Vertical.CenterHorizontal"
+        android:padding="24dp">
+
+        <TextView
+            style="@style/TextView.MatchWrap.Bold.Center"
+            android:text="@string/xml_manual_description"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/tvAnimationSample"
+            style="@style/TextView.MatchWrap.Normal.Center"
+            android:paddingTop="24dp"
+            android:paddingBottom="24dp"
+            android:text="@string/xml_manual_animation_target"
+            android:textSize="24sp" />
+
+        <Button
+            android:id="@+id/btnShowToast"
+            style="@style/Button.MatchWrap"
+            android:text="@string/xml_manual_show_toast" />
+
+        <Button
+            android:id="@+id/btnShowSnackBar"
+            style="@style/Button.MatchWrap"
+            android:text="@string/xml_manual_show_snackbar" />
+
+        <Button
+            android:id="@+id/btnRotateSample"
+            style="@style/Button.MatchWrap"
+            android:text="@string/xml_manual_rotate_animation" />
+
+    </LinearLayout>
+
+</ScrollView>

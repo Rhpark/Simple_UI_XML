@@ -64,6 +64,9 @@ ktlint_standard_package-name = disabled
 [app/src/test/**.kt]
 ktlint_standard_package-name = disabled
 
+[app/src/verification/**.kt]
+ktlint_standard_package-name = disabled
+
 [build.gradle.kts]
 ktlint_standard_import-ordering = disabled
 

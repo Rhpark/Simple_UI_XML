@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <application>
+        <activity
+            android:name=".activity_fragment.ActivityFragmentActivity"
+            android:exported="true"
+            tools:replace="android:exported" />
+        <activity
+            android:name=".activity_fragment.activity.BaseActivityExample"
+            android:exported="true"
+            tools:replace="android:exported" />
+        <activity
+            android:name=".compose.ComposeExamplesActivity"
+            android:exported="true"
+            tools:replace="android:exported" />
+        <activity
+            android:name=".deviceverification.ComposePermissionManualVerificationActivity"
+            android:exported="true" />
+        <activity
+            android:name=".deviceverification.XmlManualVerificationActivity"
+            android:exported="true" />
+        <activity
+            android:name=".extenstions_style.ExtensionsStyleActivity"
+            android:exported="true"
+            tools:replace="android:exported" />
+        <activity
+            android:name=".logx.LogxActivity"
+            android:exported="true"
+            tools:replace="android:exported" />
+        <activity
+            android:name=".permission.PermissionsActivity"
+            android:exported="true"
+            tools:replace="android:exported" />
+        <activity
+            android:name=".system_service_manager.controller.alarm.AlarmControllerActivity"
+            android:exported="true"
+            tools:replace="android:exported" />
+        <activity
+            android:name=".system_service_manager.controller.floating.FloatingViewControllerActivity"
+            android:exported="true"
+            tools:replace="android:exported" />
+        <activity
+            android:name=".system_service_manager.controller.notification.NotificationControllerActivity"
+            android:exported="true"
+            tools:replace="android:exported" />
+        <activity
+            android:name=".system_service_manager.controller.softkeyboard.SoftKeyboardControllerActivity"
+            android:exported="true"
+            tools:replace="android:exported" />
+        <activity
+            android:name=".system_service_manager.controller.vibrator.VibratorControllerActivity"
+            android:exported="true"
+            tools:replace="android:exported" />
+        <activity
+            android:name=".system_service_manager.controller.wifi.WifiControllerActivity"
+            android:exported="true"
+            tools:replace="android:exported" />
+        <activity
+            android:name=".system_service_manager.info.ServiceManagerInfoActivity"
+            android:exported="true"
+            tools:replace="android:exported" />
+    </application>
+
+</manifest>

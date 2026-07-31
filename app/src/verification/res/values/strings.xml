@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="xml_manual_description">XML 수동 검증: 각 버튼의 표시와 종료 후 잔여 동작을 확인해 주세요.</string>
+    <string name="xml_manual_animation_target">애니메이션 대상</string>
+    <string name="xml_manual_animation_running">애니메이션 실행 중</string>
+    <string name="xml_manual_animation_completed">애니메이션 완료</string>
+    <string name="xml_manual_show_toast">Toast 표시</string>
+    <string name="xml_manual_show_snackbar">Snackbar 표시</string>
+    <string name="xml_manual_rotate_animation">회전 애니메이션</string>
+    <string name="xml_manual_toast_message">XML-P1-001 Toast</string>
+    <string name="xml_manual_snackbar_message">XML-P1-001 Snackbar</string>
+</resources>
