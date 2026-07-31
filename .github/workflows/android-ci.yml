@@ -374,8 +374,15 @@ jobs:
         run: bash .github/scripts/report_action_error.sh
 
   maven-consumer:
-    name: Maven Consumer Check
-    if: ${{ needs.initialize-check.outputs.docs_only != 'true' }}
+    name: Maven Consumer Check (Release/Manual)
+    if: >-
+      ${{
+        needs.initialize-check.outputs.docs_only != 'true' &&
+        (
+          needs.initialize-check.outputs.should_release == 'true' ||
+          github.event_name == 'workflow_dispatch'
+        )
+      }}
     runs-on: ubuntu-latest
     needs:
       - initialize-check
@@ -447,10 +454,20 @@ jobs:
 
   build:
     name: Build and Lint Check
-    if: ${{ needs.initialize-check.outputs.docs_only != 'true' }}
+    if: >-
+      ${{
+        always() &&
+        needs.initialize-check.outputs.docs_only != 'true' &&
+        needs.test.result == 'success' &&
+        (
+          needs.maven-consumer.result == 'success' ||
+          needs.maven-consumer.result == 'skipped'
+        )
+      }}
     runs-on: ubuntu-latest
     needs:
       - initialize-check
+      - test
       - maven-consumer
     permissions:
       contents: read

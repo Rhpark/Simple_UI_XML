@@ -5,7 +5,7 @@
    - Initialize Check
    - KtLint Check
    - Tests(Unit, Robolectric)
-   - Maven Consumer Check
+   - Maven Consumer Check (`[release]` 또는 수동 실행)
    - Build
  - **2. Android CD** (`android-cd.yml`)
    - Release(GitHub Release 생성)
@@ -41,10 +41,12 @@
  - 다른 워크플로의 Artifact를 조회하는 Job에는 `actions: read`만 부여한다.
 
 ## Maven 소비자 검증 규칙
- - 단위 테스트와 API 호환성 검사가 성공한 뒤 Maven 소비자 검증을 수행한다.
+ - 일반 Push와 Pull Request에서는 Maven 소비자 검증을 생략하고 로컬 검증을 사용한다.
+ - `[release]` 커밋 또는 Android CI 수동 실행에서는 단위 테스트 성공 후 Maven 소비자 검증을 수행한다.
  - 현재 소스의 네 라이브러리 모듈을 로컬 전용 Maven 저장소에 발행한다.
  - 각 소비자 모듈은 `core`, `system-manager`, `xml`, `compose` 중 하나의 Maven 좌표만 직접 의존한다.
- - 네 소비자 모듈이 모두 컴파일되어야 Build 단계로 진행한다.
+ - 릴리스 실행에서는 네 소비자 모듈이 모두 컴파일되어야 Build 단계로 진행한다.
+ - Maven 소비자 Job이 생략된 일반 실행에서는 단위 테스트 성공 후 Build 단계로 진행한다.
  - 로컬 검증에서는 Maven Central 배포와 서명을 수행하지 않는다.
  - 검증 명령: `./gradlew :maven_consumer_smoke:consumerSmokeCheck -PlocalConsumerPublication=true`
 
