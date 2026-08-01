@@ -7,7 +7,6 @@ import android.app.NotificationManager
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.os.PersistableBundle
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
@@ -40,10 +39,9 @@ class NotificationControllerActivity :
         )
     }
 
-    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-        super.onCreate(savedInstanceState, persistentState)
-
-        getBinding().vm = vm
+    override fun onCreate(binding: ActivityNotificationControllerBinding, savedInstanceState: Bundle?) {
+        super.onCreate(binding, savedInstanceState)
+        binding.vm = vm
         lifecycle.addObserver(vm)
         requestNotificationPermission()
     }

@@ -8,6 +8,8 @@ import android.annotation.SuppressLint
 import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
@@ -31,12 +33,15 @@ class ServiceManagerInfoActivity : BaseDataBindingActivity<ActivityServiceManage
     private val adapter = SimpleRcvAdapter<String>(android.R.layout.test_list_item) { holder, item, position ->
         holder.findViewById<TextView>(android.R.id.text1).text = item
     }
+    private val mainHandler = Handler(Looper.getMainLooper())
 
     private val batteryInfo: BatteryStateInfo by lazy { BatteryStateInfo(this) }
     private val locationInfo: LocationStateInfo by lazy { LocationStateInfo(this) }
     private val simInfo: SimInfo by lazy { SimInfo(this) }
-    private val telephonyInfo: TelephonyInfo by lazy { TelephonyInfo(this) }
-    private val networkInfo: NetworkConnectivityInfo by lazy { NetworkConnectivityInfo(this) }
+    private val telephonyInfoDelegate = lazy { TelephonyInfo(this) }
+    private val telephonyInfo by telephonyInfoDelegate
+    private val networkInfoDelegate = lazy { NetworkConnectivityInfo(this) }
+    private val networkInfo by networkInfoDelegate
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -192,7 +197,7 @@ class ServiceManagerInfoActivity : BaseDataBindingActivity<ActivityServiceManage
 
                         // StateFlow 기반 콜백 등록
                         telephonyInfo.registerCallback(
-                            handler = null,
+                            handler = mainHandler,
                             onSignalStrengthChanged = { signalStrength ->
                                 addItem("Signal Strength Level: ${signalStrength?.level}")
                             },
@@ -288,7 +293,7 @@ class ServiceManagerInfoActivity : BaseDataBindingActivity<ActivityServiceManage
 
                 // 기본 네트워크 콜백 등록
                 networkInfo.registerDefaultNetworkCallback(
-                    handler = null,
+                    handler = mainHandler,
                     onNetworkAvailable = { network ->
                         addItem("Network Available: $network")
                     },
@@ -468,6 +473,16 @@ class ServiceManagerInfoActivity : BaseDataBindingActivity<ActivityServiceManage
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        if (networkInfoDelegate.isInitialized()) {
+            networkInfo.onDestroy()
+        }
+        if (telephonyInfoDelegate.isInitialized()) {
+            telephonyInfo.onDestroy()
+        }
+        super.onDestroy()
     }
 
     private fun addItem(item: String) = adapter.addItem(item)
