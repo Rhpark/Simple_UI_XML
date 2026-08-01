@@ -27,8 +27,8 @@ Provides telephony helpers, network type parsing, and real-time callbacks with A
 - **Service State:** `currentServiceState` StateFlow + `getCurrentServiceState()` latest value (StateFlow + 최신 값 getter)
 - **Multi-SIM:** `getActiveSimCount()`, `getActiveSubscriptionInfoList()` - Multi-SIM support (멀티 SIM 지원)
 - **TelephonyManager Query:** `getTelephonyManagerFromUSim(slotIndex)` - Return TelephonyManager for specific SIM slot (특정 SIM 슬롯의 TelephonyManager 반환)
-- **Permission fallback:** Returns safe defaults/empty lists and logs warnings when permission is missing. Request the required permissions through the Simple UI permission flow before querying telephony APIs.
-  - 권한이 없으면 안전한 기본값/빈 리스트를 반환하며 로그에 경고가 남습니다. Telephony API 호출 전에 Simple UI 권한 요청 흐름으로 필요한 권한을 먼저 확보하세요.
+- **Permission fallback:** Each guarded API checks only its own permission requirement. Missing optional permissions do not block unrelated telephony APIs.
+  - 보호된 각 API는 자신에게 필요한 권한만 확인합니다. 선택 권한이 없어도 무관한 Telephony API는 차단되지 않습니다.
 - **Real-time Callback (Basic):** `registerCallback(handler, onSignalStrength, onServiceState, onNetworkState)` - Callback + StateFlow updates (콜백 + StateFlow 자동 업데이트)
 - **Unregister Callback:** `unregisterCallback()` - Unregister registered callback (등록된 콜백 해제)
 - **Auto API Compatibility:** Automatic branching between TelephonyCallback (API 31+) vs PhoneStateListener (TelephonyCallback (API 31+) vs PhoneStateListener 자동 분기)
@@ -93,13 +93,9 @@ Provides telephony helpers, network type parsing, and real-time callbacks with A
 ## Simple UI Approach (Simple UI 방식)
 ### Basic Example (기본 예시)
 ```kotlin
-// Request required permissions together (필수 권한 일괄 요청)
+// Request the base permission only (기본 권한만 요청)
 requestPermissions(
-    permissions = listOf(
-        Manifest.permission.READ_PHONE_STATE,
-        Manifest.permission.READ_PHONE_NUMBERS,
-        Manifest.permission.ACCESS_FINE_LOCATION
-    ),
+    permissions = listOf(Manifest.permission.READ_PHONE_STATE),
     onDeniedResult = { deniedResults ->
         if (deniedResults.isEmpty()) {
             // Permissions granted - Query network info (권한 허용됨 - 통신망 정보 조회)
@@ -131,30 +127,37 @@ requestPermissions(
 
 ### Detailed Rationale Example (자세한 사유 예시)
 ```kotlin
-// Same permission set with explicit rationale (필요 권한을 이유와 함께 요청)
+val telephonyInfo = TelephonyInfo(context)
+
+// Request an optional permission only when the related feature is used.
+// (관련 기능을 사용할 때만 선택 권한 요청)
+requestPermissions(
+    permissions = listOf(Manifest.permission.READ_PHONE_NUMBERS),
+    onDeniedResult = { deniedResults ->
+        if (deniedResults.isEmpty()) {
+            // READ_PHONE_STATE or READ_PHONE_NUMBERS is accepted.
+            // (READ_PHONE_STATE 또는 READ_PHONE_NUMBERS 중 하나를 허용)
+            val phoneNumber = telephonyInfo.getPhoneNumber()
+            Log.d("Telephony", "Phone Number (전화번호): $phoneNumber")
+        } else {
+            Log.d("Telephony", "Denied Permissions (거부된 권한): ${deniedResults.map { it.permission }}")
+        }
+    },
+)
+
+// ACCESS_FINE_LOCATION is additionally required only for cell info callbacks.
+// (셀 정보 콜백에는 ACCESS_FINE_LOCATION을 추가로 요청)
 requestPermissions(
     permissions = listOf(
         Manifest.permission.READ_PHONE_STATE,
-        Manifest.permission.READ_PHONE_NUMBERS,
-        Manifest.permission.ACCESS_FINE_LOCATION
+        Manifest.permission.ACCESS_FINE_LOCATION,
     ),
     onDeniedResult = { deniedResults ->
         if (deniedResults.isEmpty()) {
-            // All permissions granted - Full info access (모든 권한 허용됨 - 전체 정보 접근)
-            val telephonyInfo = TelephonyInfo(context)
-
-            // Query phone number (requires READ_PHONE_NUMBERS)
-            // (전화번호 조회 (READ_PHONE_NUMBERS 필요))
-            val phoneNumber = telephonyInfo.getPhoneNumber()
-            Log.d("Telephony", "Phone Number (전화번호): $phoneNumber")
-
-            // Cell tower location info (requires ACCESS_FINE_LOCATION)
-            // (셀 타워 위치 정보 (ACCESS_FINE_LOCATION 필요))
-            // ... Detailed cell info can be queried (상세 셀 정보 조회 가능)
-        } else {
-            // Partial permissions granted - Only safe APIs return data
-            // (일부 권한만 허용됨 - 허용된 범위의 API만 사용 가능)
-            Log.d("Telephony", "Denied Permissions (거부된 권한): ${deniedResults.map { it.permission }}")
+            telephonyInfo.registerTelephonyCallBackFromDefaultUSim(
+                executor = context.mainExecutor,
+                isGpsOn = true,
+            )
         }
     },
 )
@@ -183,8 +186,14 @@ The raw listener objects exposed by `CommonTelephonyCallback` have no direct rep
 <br>
 
 ## Permissions (권한)
-TelephonyInfo requires phone state/number and fine location permissions.  
-> TelephonyInfo는 전화 상태/번호 및 위치 권한이 필요합니다.
+Permissions are feature-specific. The library checks the current permission state for each guarded operation. Call `refreshPermissions()` after a permission change only when reading the permission snapshot through `getPermissionInfo()` or `isPermissionGranted()`.
+> 권한은 기능별로 적용됩니다. 라이브러리는 보호된 작업마다 현재 권한 상태를 확인합니다. 권한 변경 후 `getPermissionInfo()` 또는 `isPermissionGranted()`로 권한 스냅샷을 읽을 때만 `refreshPermissions()`를 호출하세요.
+
+| Feature (기능) | Permission (권한) |
+| --- | --- |
+| Basic telephony, SIM/subscription, simple callback, advanced callback with `isGpsOn=false`<br>기본 전화망, SIM/구독, 단순 콜백, `isGpsOn=false` 고급 콜백 | `READ_PHONE_STATE` |
+| `getPhoneNumber()` | `READ_PHONE_STATE` **or** `READ_PHONE_NUMBERS`<br>`READ_PHONE_STATE` **또는** `READ_PHONE_NUMBERS` |
+| Cell info callback with `isGpsOn=true`<br>`isGpsOn=true` 셀 정보 콜백 | `READ_PHONE_STATE` + `ACCESS_FINE_LOCATION` |
 
 - [README_PERMISSION.md](../../../README_PERMISSION.md)
 

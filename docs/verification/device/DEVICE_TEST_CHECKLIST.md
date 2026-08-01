@@ -106,6 +106,8 @@
 
 ## `simple_system_manager`
 
+`SYS-P0-009`는 SIM이 없는 단말에서 `READ_PHONE_STATE`를 허용한 상태로 실행합니다. `DeviceInfoIntegrationTest.missingPhonePermissionFallbackIsSafe`는 권한 없음 기본값을 별도로 검증하는 보조 테스트이며 `SYS-P0-009`를 대체하지 않습니다.
+
 | ID | 우선순위 | 방식 | 실행 항목 | 기대 결과 | 복구 |
 | --- | --- | --- | --- | --- | --- |
 | `SYS-P0-001` | P0 | 자동 | 지원 시스템 서비스와 `SystemResult`를 조회합니다. | 서비스가 안전하게 조회되고 오류가 규격화됩니다. | 없음 |

@@ -109,6 +109,14 @@ class TelephonyCallbackManagerRobolectricTest {
     }
 
     @Test
+    fun registerSimpleCallback_worksWithoutFineLocationPermission() {
+        Shadows.shadowOf(application).denyPermissions(Manifest.permission.ACCESS_FINE_LOCATION)
+        callbackManager.refreshPermissions()
+
+        assertTrue(callbackManager.registerSimpleCallback())
+    }
+
+    @Test
     @Config(sdk = [Build.VERSION_CODES.P])
     fun registerSimpleCallback_onPreS_usesLegacyPhoneStateListener() {
         // Re-run setup under pre-S configuration

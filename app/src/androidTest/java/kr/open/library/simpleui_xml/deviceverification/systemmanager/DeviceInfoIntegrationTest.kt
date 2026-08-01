@@ -93,13 +93,36 @@ internal class DeviceInfoIntegrationTest {
             context,
             Manifest.permission.READ_PHONE_STATE,
         ) == PackageManager.PERMISSION_GRANTED
-        val expectedSimState = if (hasPhonePermission) {
-            TelephonyManager.SIM_STATE_ABSENT
-        } else {
-            TelephonyManager.SIM_STATE_UNKNOWN
-        }
+        assumeTrue(
+            "READ_PHONE_STATE 권한이 없어 SYS-P0-009는 ENV_UNAVAILABLE입니다.",
+            hasPhonePermission,
+        )
+        assumeTrue(
+            "실제 SIM이 있어 SYS-P0-009는 ENV_UNAVAILABLE입니다.",
+            telephonyInfo.getSimState() == TelephonyManager.SIM_STATE_ABSENT,
+        )
 
-        assertEquals(expectedSimState, telephonyInfo.getSimState())
+        assertEquals(TelephonyManager.SIM_STATE_ABSENT, telephonyInfo.getSimState())
+        assertFalse(telephonyInfo.isSimReady())
+        assertEquals(0, telephonyInfo.getActiveSimCount())
+        assertEquals(0, simInfo.getActiveSimCount())
+        assertTrue(simInfo.getActiveSubscriptionInfoList().isEmpty())
+    }
+
+    @Test
+    fun missingPhonePermissionFallbackIsSafe() {
+        val simInfo = SimInfo(context)
+        val telephonyInfo = TelephonyInfo(context)
+        val hasPhonePermission = ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.READ_PHONE_STATE,
+        ) == PackageManager.PERMISSION_GRANTED
+        assumeTrue(
+            "READ_PHONE_STATE 권한이 있어 권한 폴백 검증은 ENV_UNAVAILABLE입니다.",
+            !hasPhonePermission,
+        )
+
+        assertEquals(TelephonyManager.SIM_STATE_UNKNOWN, telephonyInfo.getSimState())
         assertFalse(telephonyInfo.isSimReady())
         assertEquals(0, telephonyInfo.getActiveSimCount())
         assertEquals(0, simInfo.getActiveSimCount())
@@ -109,12 +132,23 @@ internal class DeviceInfoIntegrationTest {
     @Test
     fun sysP1001_actualSimInformationMatchesSubscription() {
         val telephonyInfo = TelephonyInfo(context)
+        val simInfo = SimInfo(context)
+        val hasPhonePermission = ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.READ_PHONE_STATE,
+        ) == PackageManager.PERMISSION_GRANTED
+        assumeTrue(
+            "READ_PHONE_STATE 권한이 없어 SYS-P1-001은 ENV_UNAVAILABLE입니다.",
+            hasPhonePermission,
+        )
         assumeTrue(
             "실제 SIM이 없어 SYS-P1-001은 ENV_UNAVAILABLE입니다.",
             telephonyInfo.isSimReady(),
         )
 
         assertTrue(telephonyInfo.getActiveSimCount() > 0)
+        assertTrue(simInfo.getActiveSimCount() > 0)
+        assertTrue(simInfo.getActiveSubscriptionInfoList().isNotEmpty())
         assertNotNull(telephonyInfo.getDefaultDataSubscriptionInfo())
     }
 

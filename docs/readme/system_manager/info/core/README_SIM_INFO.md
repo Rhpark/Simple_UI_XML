@@ -17,8 +17,8 @@ Provides SIM information helpers and multi-SIM utilities with safe permission fa
 - **Basic Info:** `isDualSim()`, `isSingleSim()`, `isMultiSim()` - Check SIM type (SIM 타입 확인)
 - **Active SIM:** `getActiveSimCount()`, `getActiveSimSlotIndexList()` - Active SIM information (활성화된 SIM 정보)
 - **Read Permission:** `isCanReadSimInfo()` - Check if SIM info can be read (permission and initialization status) (SIM 정보 읽기 가능 여부 확인 (권한 및 초기화 상태))
-- **Permission fallback:** Returns empty list/null and logs a warning when permission is missing. Request permissions through the Simple UI permission flow before querying SIM APIs.
-  - 권한이 없으면 빈 리스트/null을 반환하고 로그에 경고가 남습니다. SIM API 호출 전에 Simple UI 권한 요청 흐름으로 필요한 권한을 먼저 확보하세요.
+- **Permission fallback:** Guarded SIM/subscription APIs check only their own permission requirement. Missing phone-number permission does not block basic SIM queries.
+  - 보호된 SIM/구독 API는 자신에게 필요한 권한만 확인합니다. 전화번호 권한이 없어도 기본 SIM 조회는 차단되지 않습니다.
 - **Subscription Info:** `getActiveSubscriptionInfoList()` - Query all subscription info (모든 구독 정보 조회)
 - **Subscription ID:**
   - `getSubIdFromDefaultUSim()` - Query default SIM subscription ID (기본 SIM의 구독 ID 조회)
@@ -75,11 +75,7 @@ Provides SIM information helpers and multi-SIM utilities with safe permission fa
 ```kotlin
 // Request phone state permission (required) (전화 상태 권한 요청 (필수))
 requestPermissions(
-    permissions = listOf(
-        Manifest.permission.READ_PHONE_STATE,
-        Manifest.permission.READ_PHONE_NUMBERS,
-        Manifest.permission.ACCESS_FINE_LOCATION
-    ),
+    permissions = listOf(Manifest.permission.READ_PHONE_STATE),
     onDeniedResult = { deniedResults ->
         if (deniedResults.isEmpty()) {
             // Permissions granted - Query SIM info (권한 허용됨 - SIM 정보 조회)
@@ -92,10 +88,6 @@ requestPermissions(
             // Active SIM count (활성 SIM 개수)
             val activeCount = simInfo.getActiveSimCount()
             Log.d("SIM", "Active SIM Count (활성 SIM 개수): $activeCount")
-
-            // Query phone number (전화번호 조회)
-            val phoneNumber = simInfo.getPhoneNumberFromDefaultUSim()
-            Log.d("SIM", "Phone Number (전화번호): $phoneNumber")
         } else {
             // Permissions denied (권한 거부됨)
             toastShowShort("Phone state permission required (전화 상태 권한이 필요합니다)")
@@ -104,11 +96,19 @@ requestPermissions(
 )
 ```
 
+Request `READ_PHONE_NUMBERS` separately only when querying a phone number. `READ_PHONE_STATE` or `READ_PHONE_NUMBERS` satisfies the phone-number API contract.
+> 전화번호를 조회할 때만 `READ_PHONE_NUMBERS`를 별도로 요청하세요. 전화번호 API는 `READ_PHONE_STATE` 또는 `READ_PHONE_NUMBERS` 중 하나로 권한 조건을 충족합니다.
+
 <br>
 
 ## Permissions (권한)
-SimInfo requires phone state/number and fine location permissions.  
-> SimInfo는 전화 상태/번호 및 위치 권한이 필요합니다.
+Permissions are feature-specific. Guarded APIs return safe defaults when their own permission is missing; APIs that directly delegate to Android still require the permission declared by `@RequiresPermission`.
+> 권한은 기능별로 적용됩니다. 보호된 API는 자신의 권한이 없으면 안전한 기본값을 반환하며, Android API를 직접 위임하는 메서드는 `@RequiresPermission`에 선언된 권한을 호출자가 확보해야 합니다.
+
+| Feature (기능) | Permission (권한) |
+| --- | --- |
+| SIM state, active count/slots, subscription and carrier information<br>SIM 상태, 활성 개수/슬롯, 구독 및 통신사 정보 | `READ_PHONE_STATE` |
+| Phone-number APIs<br>전화번호 API | `READ_PHONE_STATE` **or** `READ_PHONE_NUMBERS`<br>`READ_PHONE_STATE` **또는** `READ_PHONE_NUMBERS` |
 
 - [README_PERMISSION.md](../../../README_PERMISSION.md)
 

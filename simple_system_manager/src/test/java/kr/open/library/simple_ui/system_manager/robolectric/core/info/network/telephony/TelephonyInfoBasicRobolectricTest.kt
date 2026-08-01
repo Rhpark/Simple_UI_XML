@@ -125,6 +125,21 @@ class TelephonyInfoBasicRobolectricTest {
     }
 
     @Test
+    fun phoneStateApis_workWithoutUnrelatedOptionalPermissions() {
+        Shadows.shadowOf(application).denyPermissions(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.READ_PHONE_NUMBERS,
+        )
+        telephonyInfo.refreshPermissions()
+        doReturn(TelephonyManager.SIM_STATE_READY).`when`(telephonyManager).simState
+        doReturn(1).`when`(subscriptionManager).activeSubscriptionInfoCount
+
+        assertEquals(TelephonyManager.SIM_STATE_READY, telephonyInfo.getSimState())
+        assertTrue(telephonyInfo.isSimReady())
+        assertEquals(1, telephonyInfo.getActiveSimCount())
+    }
+
+    @Test
     fun getSimOperatorName_returnsValue() {
         doReturn("OperatorY").`when`(telephonyManager).simOperatorName
         assertEquals("OperatorY", telephonyInfo.getSimOperatorName())
@@ -154,6 +169,19 @@ class TelephonyInfoBasicRobolectricTest {
     fun getPhoneNumber_returnsValueWhenNonBlank() {
         @Suppress("DEPRECATION")
         doReturn("01012345678").`when`(telephonyManager).line1Number
+        assertEquals("01012345678", telephonyInfo.getPhoneNumber())
+    }
+
+    @Test
+    fun getPhoneNumber_worksWithReadPhoneNumbersOnly() {
+        Shadows.shadowOf(application).denyPermissions(
+            Manifest.permission.READ_PHONE_STATE,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+        )
+        telephonyInfo.refreshPermissions()
+        @Suppress("DEPRECATION")
+        doReturn("01012345678").`when`(telephonyManager).line1Number
+
         assertEquals("01012345678", telephonyInfo.getPhoneNumber())
     }
 

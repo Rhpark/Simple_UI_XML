@@ -1,6 +1,5 @@
 package kr.open.library.simple_ui.system_manager.core.info.network.sim
 
-import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.Manifest.permission.READ_PHONE_NUMBERS
 import android.Manifest.permission.READ_PHONE_STATE
 import android.annotation.SuppressLint
@@ -42,21 +41,21 @@ import kr.open.library.simple_ui.system_manager.core.extensions.getTelephonyMana
  * - 통신사 정보 (MCC/MNC)<br>
  * - 전화번호 조회<br>
  *
- * Required Permissions:<br>
- * - `android.permission.READ_PHONE_STATE` (Required)<br>
- * - `android.permission.READ_PHONE_NUMBERS` (Phone numbers)<br>
- * - `android.permission.ACCESS_FINE_LOCATION` (Some features)<br><br>
- * 필수 권한:<br>
- * - `android.permission.READ_PHONE_STATE` (필수)<br>
- * - `android.permission.READ_PHONE_NUMBERS` (전화번호)<br>
- * - `android.permission.ACCESS_FINE_LOCATION` (일부 기능)<br>
+ * Permissions by feature:<br>
+ * - `android.permission.READ_PHONE_STATE` (SIM and subscription information)<br>
+ * - `android.permission.READ_PHONE_NUMBERS` (Alternative permission for phone number lookup)<br><br>
+ * 기능별 권한:<br>
+ * - `android.permission.READ_PHONE_STATE` (SIM 및 구독 정보)<br>
+ * - `android.permission.READ_PHONE_NUMBERS` (전화번호 조회의 대체 권한)<br>
  *
  * ⚠️ Permission fallback:<br>
- * - Permissions are checked through BaseSystemService. Missing permissions lead to default values (e.g., empty list, null) and warning logs.<br>
- * - Call refreshPermissions() after acquiring permissions to update the state.<br><br>
+ * - Guarded SIM/subscription operations check only their own permission requirement and return safe defaults when it is not met.<br>
+ * - APIs that directly delegate to the platform still require the permission declared by their RequiresPermission annotation.<br>
+ * - Call refreshPermissions() after a permission change before reading getPermissionInfo() or isPermissionGranted().<br><br>
  * ⚠️ 권한 폴백:<br>
- * - BaseSystemService를 통해 권한을 확인합니다. 권한이 없으면 기본값(예: 빈 리스트, null)을 반환하고 경고 로그를 남깁니다.<br>
- * - 권한을 획득한 뒤에는 refreshPermissions()를 호출하여 상태를 갱신하세요.<br>
+ * - 보호된 SIM/구독 작업은 자신에게 필요한 권한만 검사하며, 충족하지 못하면 안전한 기본값을 반환합니다.<br>
+ * - 플랫폼 API를 직접 위임하는 메서드는 RequiresPermission에 선언된 권한을 호출자가 확보해야 합니다.<br>
+ * - 권한 변경 후 getPermissionInfo() 또는 isPermissionGranted()를 읽기 전에는 refreshPermissions()를 호출하세요.<br>
  *
  * Usage Example:<br>
  * ```kotlin
@@ -79,7 +78,11 @@ import kr.open.library.simple_ui.system_manager.core.extensions.getTelephonyMana
  */
 public class SimInfo(
     context: Context,
-) : BaseSystemService(context, listOf(READ_PHONE_STATE, READ_PHONE_NUMBERS, ACCESS_FINE_LOCATION)) {
+) : BaseSystemService(context, listOf(READ_PHONE_STATE, READ_PHONE_NUMBERS)) {
+    private companion object {
+        val PHONE_STATE_PERMISSIONS = listOf(READ_PHONE_STATE)
+    }
+
     // =================================================
     // Core System Services
     // =================================================
@@ -197,7 +200,9 @@ public class SimInfo(
      *         활성화된 SIM 카드 수.
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun getActiveSimCount(): Int = tryCatchSystemManager(0) { return subscriptionManager.activeSubscriptionInfoCount }
+    public fun getActiveSimCount(): Int = tryCatchSystemManagerWithPermissions(PHONE_STATE_PERMISSIONS, 0) {
+        return subscriptionManager.activeSubscriptionInfoCount
+    }
 
     /**
      * Gets active SIM slot index list.<br><br>
@@ -207,9 +212,10 @@ public class SimInfo(
      *         활성화된 SIM 슬롯 인덱스 목록.
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun getActiveSimSlotIndexList(): List<Int> = tryCatchSystemManager(emptyList()) {
-        getActiveSubscriptionInfoList().map { it.simSlotIndex }
-    }
+    public fun getActiveSimSlotIndexList(): List<Int> =
+        tryCatchSystemManagerWithPermissions(PHONE_STATE_PERMISSIONS, emptyList()) {
+            getActiveSubscriptionInfoList().map { it.simSlotIndex }
+        }
 
     /**
      * Updates TelephonyManager list per SIM slot.<br><br>
@@ -257,16 +263,17 @@ public class SimInfo(
      *         기본 subscription ID, 사용할 수 없는 경우 null.
      */
     @RequiresPermission(READ_PHONE_STATE)
-    private fun getSubIdFromDefaultUSimInternal(): Int? = tryCatchSystemManager(null) {
-        isReadSimInfoFromDefaultUSim = false
+    private fun getSubIdFromDefaultUSimInternal(): Int? =
+        tryCatchSystemManagerWithPermissions(PHONE_STATE_PERMISSIONS, null) {
+            isReadSimInfoFromDefaultUSim = false
 
-        val id = checkSdkVersion(Build.VERSION_CODES.R,
-            positiveWork = { telephonyManager.subscriptionId },
-            negativeWork = { getActiveSubscriptionInfoList().firstOrNull()?.subscriptionId },
-        )
-        isReadSimInfoFromDefaultUSim = id != null
-        return id
-    }
+            val id = checkSdkVersion(Build.VERSION_CODES.R,
+                positiveWork = { telephonyManager.subscriptionId },
+                negativeWork = { getActiveSubscriptionInfoList().firstOrNull()?.subscriptionId },
+            )
+            isReadSimInfoFromDefaultUSim = id != null
+            return id
+        }
 
     /**
      * Gets subscription ID for specific SIM slot.<br><br>
@@ -278,12 +285,13 @@ public class SimInfo(
      *         Subscription ID, 사용할 수 없는 경우 null.
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun getSubId(simSlotIndex: Int): Int? = tryCatchSystemManager(null) {
-        checkSdkVersion(Build.VERSION_CODES.R,
-            positiveWork = { uSimTelephonyManagerList[simSlotIndex]?.subscriptionId },
-            negativeWork = { getActiveSubscriptionInfoSimSlot(simSlotIndex)?.subscriptionId },
-        )
-    }
+    public fun getSubId(simSlotIndex: Int): Int? =
+        tryCatchSystemManagerWithPermissions(PHONE_STATE_PERMISSIONS, null) {
+            checkSdkVersion(Build.VERSION_CODES.R,
+                positiveWork = { uSimTelephonyManagerList[simSlotIndex]?.subscriptionId },
+                negativeWork = { getActiveSubscriptionInfoSimSlot(simSlotIndex)?.subscriptionId },
+            )
+        }
 
     /**
      * Converts subscription ID to SIM slot index.<br><br>
@@ -305,9 +313,10 @@ public class SimInfo(
      *         SubscriptionInfo 목록.
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun getActiveSubscriptionInfoList(): List<SubscriptionInfo> = tryCatchSystemManager(emptyList()) {
-        return subscriptionManager.activeSubscriptionInfoList ?: emptyList()
-    }
+    public fun getActiveSubscriptionInfoList(): List<SubscriptionInfo> =
+        tryCatchSystemManagerWithPermissions(PHONE_STATE_PERMISSIONS, emptyList()) {
+            return subscriptionManager.activeSubscriptionInfoList ?: emptyList()
+        }
 
     /**
      * Gets SubscriptionInfo for default subscription.<br><br>

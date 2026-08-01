@@ -106,6 +106,44 @@ class BaseSystemServiceRobolectricTest {
     }
 
     @Test
+    fun tryCatchSystemManagerWithPermissions_usesOperationPermissionsOnly() {
+        shadowApp.grantPermissions(Manifest.permission.CAMERA)
+        val service = TestSystemService(
+            context,
+            listOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO),
+        )
+
+        val result = service.testTryCatchWithPermissions(listOf(Manifest.permission.CAMERA))
+
+        assertEquals("success", result)
+    }
+
+    @Test
+    fun tryCatchSystemManagerWithPermissions_acceptsAnyGrantedPermission() {
+        shadowApp.grantPermissions(Manifest.permission.CAMERA)
+        val service = TestSystemService(context, null)
+
+        val result = service.testTryCatchWithPermissions(
+            permissions = listOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO),
+            requireAllPermissions = false,
+        )
+
+        assertEquals("success", result)
+    }
+
+    @Test
+    fun tryCatchSystemManagerWithPermissions_returnsDefaultWhenAllAlternativesDenied() {
+        val service = TestSystemService(context, null)
+
+        val result = service.testTryCatchWithPermissions(
+            permissions = listOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO),
+            requireAllPermissions = false,
+        )
+
+        assertEquals("default", result)
+    }
+
+    @Test
     fun tryCatchSystemManager_returnDefaultValueOnException() {
         shadowApp.grantPermissions(Manifest.permission.CAMERA)
         val service = TestSystemService(context, listOf(Manifest.permission.CAMERA))
@@ -231,6 +269,17 @@ class BaseSystemServiceRobolectricTest {
         fun testTryCatch(): String = tryCatchSystemManager("default") { "success" }
 
         fun testTryCatchWithException(): String = tryCatchSystemManager("default") { throw RuntimeException("Test exception") }
+
+        fun testTryCatchWithPermissions(
+            permissions: List<String>,
+            requireAllPermissions: Boolean = true,
+        ): String = tryCatchSystemManagerWithPermissions(
+            requiredPermissions = permissions,
+            defaultValue = "default",
+            requireAllPermissions = requireAllPermissions,
+        ) {
+            "success"
+        }
 
         fun testTryCatchResult(): SystemResult<String> = tryCatchSystemManagerResult { SystemResult.Success("success") }
 

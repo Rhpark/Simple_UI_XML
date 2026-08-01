@@ -63,6 +63,10 @@ import java.util.concurrent.Executor
 internal class TelephonyCallbackManager(
     context: Context,
 ) : BaseSystemService(context, listOf(READ_PHONE_STATE, ACCESS_FINE_LOCATION)) {
+    private companion object {
+        val PHONE_STATE_PERMISSIONS = listOf(READ_PHONE_STATE)
+    }
+
     // =================================================
     // Core Components
     // =================================================
@@ -193,9 +197,10 @@ internal class TelephonyCallbackManager(
      * 활성화된 구독 정보 목록을 반환합니다.<br>
      */
     @RequiresPermission(READ_PHONE_STATE)
-    private fun getActiveSubscriptionInfoListInternal(): List<SubscriptionInfo> = tryCatchSystemManager(emptyList()) {
-        return subscriptionManager.activeSubscriptionInfoList ?: emptyList()
-    }
+    private fun getActiveSubscriptionInfoListInternal(): List<SubscriptionInfo> =
+        tryCatchSystemManagerWithPermissions(PHONE_STATE_PERMISSIONS, emptyList()) {
+            return subscriptionManager.activeSubscriptionInfoList ?: emptyList()
+        }
 
     // =================================================
     // Simple Callback API (기본 SIM, StateFlow 통합)
@@ -233,7 +238,7 @@ internal class TelephonyCallbackManager(
         onSignalStrengthChanged: ((SignalStrength) -> Unit)? = null,
         onServiceStateChanged: ((ServiceState) -> Unit)? = null,
         onNetworkStateChanged: ((TelephonyNetworkState) -> Unit)? = null,
-    ): Boolean = tryCatchSystemManager(false) {
+    ): Boolean = tryCatchSystemManagerWithPermissions(PHONE_STATE_PERMISSIONS, false) {
         checkSdkVersion(Build.VERSION_CODES.S,
             positiveWork = {
                 registerModernCallback(
@@ -351,7 +356,7 @@ internal class TelephonyCallbackManager(
      */
     @SuppressLint("MissingPermission")
     public fun unregisterSimpleCallback(): Boolean =
-        tryCatchSystemManager(false) {
+        tryCatchSystemManagerWithPermissions(emptyList(), false) {
             if (!isCallbackRegistered) {
                 Logx.w("TelephonyCallbackManager: No callback registered")
                 return false
@@ -398,7 +403,7 @@ internal class TelephonyCallbackManager(
         onCallState: ((callState: Int, phoneNumber: String?) -> Unit)? = null,
         onDisplayInfo: ((telephonyDisplayInfo: TelephonyDisplayInfo) -> Unit)? = null,
         onTelephonyNetworkState: ((telephonyNetworkState: TelephonyNetworkState) -> Unit)? = null,
-    ): Boolean = tryCatchSystemManager(false) {
+    ): Boolean = tryCatchSystemManagerWithPermissions(PHONE_STATE_PERMISSIONS, false) {
         val subscriptionInfoList = getActiveSubscriptionInfoListInternal()
         val defaultSim = subscriptionInfoList.firstOrNull() ?: throw IllegalStateException("No default SIM found")
 

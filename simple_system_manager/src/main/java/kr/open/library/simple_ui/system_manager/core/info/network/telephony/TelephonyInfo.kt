@@ -60,21 +60,23 @@ import java.util.concurrent.Executor
  * - 슬롯별 콜백 관리<br>
  * - 고급 콜백 시스템<br>
  *
- * Required Permissions:<br>
- * - `android.permission.READ_PHONE_STATE` (Required)<br>
- * - `android.permission.ACCESS_FINE_LOCATION` (Cell info)<br>
- * - `android.permission.READ_PHONE_NUMBERS` (Phone numbers)<br><br>
- * 필수 권한:<br>
- * - `android.permission.READ_PHONE_STATE` (필수)<br>
- * - `android.permission.ACCESS_FINE_LOCATION` (셀 정보)<br>
- * - `android.permission.READ_PHONE_NUMBERS` (전화번호)<br>
+ * Permissions by feature:<br>
+ * - `android.permission.READ_PHONE_STATE` (Basic telephony, SIM/subscription, and callbacks)<br>
+ * - `android.permission.READ_PHONE_NUMBERS` (Alternative permission for phone number lookup)<br>
+ * - `android.permission.ACCESS_FINE_LOCATION` (Cell info callback when `isGpsOn` is true)<br><br>
+ * 기능별 권한:<br>
+ * - `android.permission.READ_PHONE_STATE` (기본 전화망, SIM/구독 및 콜백)<br>
+ * - `android.permission.READ_PHONE_NUMBERS` (전화번호 조회의 대체 권한)<br>
+ * - `android.permission.ACCESS_FINE_LOCATION` (`isGpsOn`이 true인 셀 정보 콜백)<br>
  *
  * ⚠️ Permission fallback:<br>
- * - If any required permission is missing, public API calls return safe defaults (null, empty list, or false) via tryCatchSystemManager().<br>
- * - Always call refreshPermissions() after the host Activity/Fragment obtains runtime permissions.<br><br>
+ * - Each guarded operation checks only its own permission requirement. Missing optional permissions do not block unrelated APIs.<br>
+ * - A guarded operation returns a safe default (null, empty list, or false) when its own requirement is not met.<br>
+ * - Call refreshPermissions() after a permission change before reading getPermissionInfo() or isPermissionGranted().<br><br>
  * ⚠️ 권한 폴백:<br>
- * - 필수 권한이 누락된 경우, 공개 API 호출은 tryCatchSystemManager()를 통해 안전한 기본값(null, 빈 리스트 또는 false)을 반환합니다.<br>
- * - 호스트 Activity/Fragment가 런타임 권한을 획득한 후에는 항상 refreshPermissions()를 호출하세요.<br>
+ * - 보호된 각 작업은 자신에게 필요한 권한만 검사하므로 선택 권한이 없어도 무관한 API는 차단되지 않습니다.<br>
+ * - 해당 작업의 권한 조건을 충족하지 못하면 안전한 기본값(null, 빈 리스트 또는 false)을 반환합니다.<br>
+ * - 권한 변경 후 getPermissionInfo() 또는 isPermissionGranted()를 읽기 전에는 refreshPermissions()를 호출하세요.<br>
  *
  * Usage Example:<br>
  * ```kotlin
@@ -103,6 +105,11 @@ import java.util.concurrent.Executor
 public class TelephonyInfo(
     context: Context,
 ) : BaseSystemService(context, listOf(READ_PHONE_STATE, ACCESS_FINE_LOCATION, READ_PHONE_NUMBERS)) {
+    private companion object {
+        val PHONE_STATE_PERMISSIONS = listOf(READ_PHONE_STATE)
+        val PHONE_NUMBER_PERMISSIONS = listOf(READ_PHONE_STATE, READ_PHONE_NUMBERS)
+    }
+
     // =================================================
     // Core Components (Delegation)
     // =================================================
@@ -141,7 +148,7 @@ public class TelephonyInfo(
      *         통신사 이름 또는 사용 불가 시 null.
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun getCarrierName(): String? = tryCatchSystemManager(null) {
+    public fun getCarrierName(): String? = tryCatchSystemManagerWithPermissions(PHONE_STATE_PERMISSIONS, null) {
         return telephonyManager.networkOperatorName?.takeIf { it.isNotBlank() }
     }
 
@@ -153,7 +160,7 @@ public class TelephonyInfo(
      *         MCC 문자열, 사용할 수 없는 경우 null.
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun getMobileCountryCode(): String? = tryCatchSystemManager(null) {
+    public fun getMobileCountryCode(): String? = tryCatchSystemManagerWithPermissions(PHONE_STATE_PERMISSIONS, null) {
         return telephonyManager.networkOperator?.take(3)?.takeIf { it.length == 3 }
     }
 
@@ -165,7 +172,7 @@ public class TelephonyInfo(
      *         MNC 문자열, 사용할 수 없는 경우 null.
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun getMobileNetworkCode(): String? = tryCatchSystemManager(null) {
+    public fun getMobileNetworkCode(): String? = tryCatchSystemManagerWithPermissions(PHONE_STATE_PERMISSIONS, null) {
         val operator = telephonyManager.networkOperator
         return if (operator?.length in 5..6) {
             operator.substring(3)
@@ -186,7 +193,10 @@ public class TelephonyInfo(
      *         TelephonyManager의 SIM 상태 상수.
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun getSimState(): Int = tryCatchSystemManager(TelephonyManager.SIM_STATE_UNKNOWN) {
+    public fun getSimState(): Int = tryCatchSystemManagerWithPermissions(
+        PHONE_STATE_PERMISSIONS,
+        TelephonyManager.SIM_STATE_UNKNOWN,
+    ) {
         return telephonyManager.simState
     }
 
@@ -208,7 +218,7 @@ public class TelephonyInfo(
      *         SIM 운영자 이름, 사용할 수 없는 경우 null.
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun getSimOperatorName(): String? = tryCatchSystemManager(null) {
+    public fun getSimOperatorName(): String? = tryCatchSystemManagerWithPermissions(PHONE_STATE_PERMISSIONS, null) {
         return telephonyManager.simOperatorName?.takeIf { it.isNotBlank() }
     }
 
@@ -220,7 +230,7 @@ public class TelephonyInfo(
      *         ISO 국가 코드, 사용할 수 없는 경우 null.
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun getSimCountryIso(): String? = tryCatchSystemManager(null) {
+    public fun getSimCountryIso(): String? = tryCatchSystemManagerWithPermissions(PHONE_STATE_PERMISSIONS, null) {
         return telephonyManager.simCountryIso?.takeIf { it.isNotBlank() }
     }
 
@@ -240,7 +250,11 @@ public class TelephonyInfo(
      */
     @SuppressLint("HardwareIds")
     @RequiresPermission(anyOf = [READ_PHONE_STATE, READ_PHONE_NUMBERS])
-    public fun getPhoneNumber(): String? = tryCatchSystemManager(null) {
+    public fun getPhoneNumber(): String? = tryCatchSystemManagerWithPermissions(
+        requiredPermissions = PHONE_NUMBER_PERMISSIONS,
+        defaultValue = null,
+        requireAllPermissions = false,
+    ) {
         @Suppress("DEPRECATION")
         return telephonyManager.line1Number?.takeIf { it.isNotBlank() }
     }
@@ -252,7 +266,10 @@ public class TelephonyInfo(
      * @return Call state constant from TelephonyManager.<br><br>
      *         TelephonyManager의 통화 상태 상수.
      */
-    public fun getCallState(): Int = tryCatchSystemManager(TelephonyManager.CALL_STATE_IDLE) {
+    public fun getCallState(): Int = tryCatchSystemManagerWithPermissions(
+        PHONE_STATE_PERMISSIONS,
+        TelephonyManager.CALL_STATE_IDLE,
+    ) {
         return telephonyManager.callState
     }
 
@@ -268,7 +285,10 @@ public class TelephonyInfo(
      *         TelephonyManager의 네트워크 타입 상수.
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun getNetworkType(): Int = tryCatchSystemManager(TelephonyManager.NETWORK_TYPE_UNKNOWN) {
+    public fun getNetworkType(): Int = tryCatchSystemManagerWithPermissions(
+        PHONE_STATE_PERMISSIONS,
+        TelephonyManager.NETWORK_TYPE_UNKNOWN,
+    ) {
         return checkSdkVersion(Build.VERSION_CODES.R,
             positiveWork = { telephonyManager.dataNetworkType },
             negativeWork = {
@@ -286,7 +306,10 @@ public class TelephonyInfo(
      *         TelephonyManager의 데이터 네트워크 타입 상수.
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun getDataNetworkType(): Int = tryCatchSystemManager(TelephonyManager.NETWORK_TYPE_UNKNOWN) {
+    public fun getDataNetworkType(): Int = tryCatchSystemManagerWithPermissions(
+        PHONE_STATE_PERMISSIONS,
+        TelephonyManager.NETWORK_TYPE_UNKNOWN,
+    ) {
         return telephonyManager.dataNetworkType
     }
 
@@ -298,7 +321,7 @@ public class TelephonyInfo(
      *         로밍 중이면 `true`, 그렇지 않으면 `false`.<br>
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun isNetworkRoaming(): Boolean = tryCatchSystemManager(false) {
+    public fun isNetworkRoaming(): Boolean = tryCatchSystemManagerWithPermissions(PHONE_STATE_PERMISSIONS, false) {
         return telephonyManager.isNetworkRoaming
     }
 
@@ -314,7 +337,7 @@ public class TelephonyInfo(
      *         활성화된 SIM 카드 수.
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun getActiveSimCount(): Int = tryCatchSystemManager(0) {
+    public fun getActiveSimCount(): Int = tryCatchSystemManagerWithPermissions(PHONE_STATE_PERMISSIONS, 0) {
         return subscriptionManager.activeSubscriptionInfoCount
     }
 
@@ -326,9 +349,10 @@ public class TelephonyInfo(
      *         SubscriptionInfo 목록.
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun getActiveSubscriptionInfoList(): List<SubscriptionInfo> = tryCatchSystemManager(emptyList()) {
-        return subscriptionManager.activeSubscriptionInfoList ?: emptyList()
-    }
+    public fun getActiveSubscriptionInfoList(): List<SubscriptionInfo> =
+        tryCatchSystemManagerWithPermissions(PHONE_STATE_PERMISSIONS, emptyList()) {
+            return subscriptionManager.activeSubscriptionInfoList ?: emptyList()
+        }
 
     /**
      * Gets subscription info for the default data SIM.<br><br>
@@ -338,12 +362,13 @@ public class TelephonyInfo(
      *         SubscriptionInfo, 사용할 수 없는 경우 null.
      */
     @RequiresPermission(READ_PHONE_STATE)
-    public fun getDefaultDataSubscriptionInfo(): SubscriptionInfo? = tryCatchSystemManager(null) {
-        return checkSdkVersion(Build.VERSION_CODES.R,
-            positiveWork = { telephonyManager.subscriptionId },
-            negativeWork = { getActiveSubscriptionInfoList().firstOrNull()?.subscriptionId },
-        )?.let { subscriptionManager.getActiveSubscriptionInfo(it) }
-    }
+    public fun getDefaultDataSubscriptionInfo(): SubscriptionInfo? =
+        tryCatchSystemManagerWithPermissions(PHONE_STATE_PERMISSIONS, null) {
+            return checkSdkVersion(Build.VERSION_CODES.R,
+                positiveWork = { telephonyManager.subscriptionId },
+                negativeWork = { getActiveSubscriptionInfoList().firstOrNull()?.subscriptionId },
+            )?.let { subscriptionManager.getActiveSubscriptionInfo(it) }
+        }
 
     // =================================================
     // Utility Methods / 유틸리티 메서드

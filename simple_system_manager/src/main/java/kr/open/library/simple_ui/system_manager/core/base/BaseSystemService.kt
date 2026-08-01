@@ -163,6 +163,49 @@ public abstract class BaseSystemService(
     }
 
     /**
+     * Executes one operation with its own permission requirement.<br>
+     * This internal path prevents an optional permission for one API from blocking unrelated APIs on the same service.<br><br>
+     * 개별 작업에 필요한 권한만 검사하여 실행합니다.<br>
+     * 한 API의 선택 권한이 같은 서비스의 다른 API까지 차단하지 않도록 하는 모듈 내부 실행 경로입니다.<br>
+     *
+     * @param requiredPermissions Permissions required by the operation.<br><br>
+     *                            해당 작업에 필요한 권한 목록입니다.<br>
+     * @param defaultValue Value returned when the permission requirement is not met or execution fails.<br><br>
+     *                     권한 조건을 충족하지 못하거나 실행에 실패할 때 반환할 기본값입니다.<br>
+     * @param requireAllPermissions `true` to require every permission, `false` to accept any one permission.<br><br>
+     *                              모든 권한이 필요하면 `true`, 하나만 있어도 되면 `false`입니다.<br>
+     * @param block Operation to execute after the permission check.<br><br>
+     *              권한 확인 후 실행할 작업입니다.<br>
+     */
+    internal inline fun <T> tryCatchSystemManagerWithPermissions(
+        requiredPermissions: List<String>,
+        defaultValue: T,
+        requireAllPermissions: Boolean = true,
+        block: () -> T,
+    ): T {
+        val deniedPermissions = context.remainPermissions(requiredPermissions)
+        val isPermissionRequirementMet = requiredPermissions.isEmpty() ||
+            if (requireAllPermissions) {
+                deniedPermissions.isEmpty()
+            } else {
+                deniedPermissions.size < requiredPermissions.size
+            }
+
+        if (!isPermissionRequirementMet) {
+            Logx.w("${this::class.simpleName}: Missing runtime/special permissions!!! - $deniedPermissions")
+            return defaultValue
+        }
+
+        return safeCatch(
+            block = block,
+            onCatch = { e ->
+                Logx.e("${this::class.simpleName}: Error occurred : ${e.message}")
+                defaultValue
+            },
+        )
+    }
+
+    /**
      * Safe execution with cause-distinguishing result type.<br>
      * Returns [SystemResult.PermissionDenied] when required runtime/special permissions are missing.<br>
      * Returns [SystemResult.Failure] when an exception occurs during execution.<br>
