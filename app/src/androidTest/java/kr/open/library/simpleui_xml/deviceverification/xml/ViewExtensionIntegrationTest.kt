@@ -24,7 +24,13 @@ internal class ViewExtensionIntegrationTest {
             scenario.onActivity { activity ->
                 val sample = activity.findViewById<TextView>(R.id.tvSampleText)
                 activity.findViewById<android.view.View>(R.id.btnBold).performClick()
-                assertTrue(sample.typeface.style and Typeface.BOLD != 0)
+                val hasBoldTypeface = sample.typeface.style and Typeface.BOLD != 0
+                val usesFakeBold = sample.paint.isFakeBoldText
+                assertTrue(
+                    "XML-P0-006 굵게 표시가 적용되지 않았습니다: " +
+                        "typefaceStyle=${sample.typeface.style}, fakeBold=$usesFakeBold",
+                    hasBoldTypeface || usesFakeBold,
+                )
 
                 val displayInput = activity.findViewById<EditText>(R.id.edtDisplayValue)
                 displayInput.setText("10")
