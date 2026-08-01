@@ -26,7 +26,9 @@
       "Bash(grep -viE \"//|SDK_INT\")",
       "Bash(git diff *)",
       "Bash(sort -k2 -rn)",
-      "Bash(sort -k1 -rn)"
+      "Bash(sort -k1 -rn)",
+      "Bash(awk '/^<br>$/{ln=NR; getline a; getline b; if\\(a==\"\" && b==\"\"\\){print \"line \"ln\": <br> 다음 빈줄2개\"; cnt++; if\\(cnt>=3\\) exit}}' docs/readme/README_EXTENSIONS.md)",
+      "Bash(grep -nE \"^<br>$\" docs/readme/README_EXTENSIONS.md)"
     ]
   },
   "hooks": {
