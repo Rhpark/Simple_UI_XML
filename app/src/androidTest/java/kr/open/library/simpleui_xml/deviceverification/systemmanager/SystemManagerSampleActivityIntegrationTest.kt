@@ -17,6 +17,7 @@ import kr.open.library.simpleui_xml.deviceverification.harness.PhysicalDeviceRul
 import kr.open.library.simpleui_xml.system_service_manager.controller.notification.NotificationControllerActivity
 import kr.open.library.simpleui_xml.system_service_manager.controller.wifi.WifiControllerActivity
 import kr.open.library.simpleui_xml.system_service_manager.info.ServiceManagerInfoActivity
+import org.junit.Assert.assertTrue
 import org.junit.Assert.fail
 import org.junit.Rule
 import org.junit.Test
@@ -81,6 +82,28 @@ internal class SystemManagerSampleActivityIntegrationTest {
     }
 
     @Test
+    fun sysP0007_batterySampleRegistersWithoutRuntimePermission() {
+        ActivityScenario.launch(ServiceManagerInfoActivity::class.java).use { scenario ->
+            scenario.onActivity { activity ->
+                activity.findViewById<View>(R.id.btnBatteryRegister).performClick()
+            }
+            awaitCondition("배터리 등록 결과가 목록에 추가되지 않았습니다.") {
+                var itemCount = 0
+                scenario.onActivity { activity ->
+                    itemCount = activity.findViewById<RecyclerView>(R.id.rcvResult).adapter?.itemCount ?: 0
+                }
+                itemCount >= BATTERY_INFO_ITEM_COUNT
+            }
+
+            scenario.onActivity { activity ->
+                val itemCount = activity.findViewById<RecyclerView>(R.id.rcvResult).adapter?.itemCount ?: 0
+                assertTrue("배터리 등록 결과가 비어 있습니다.", itemCount >= BATTERY_INFO_ITEM_COUNT)
+                activity.findViewById<View>(R.id.btnBatteryUnregister).performClick()
+            }
+        }
+    }
+
+    @Test
     fun sysP0008_networkSampleReceivesCallbackOnMainThread() {
         val networkInfo = NetworkConnectivityInfo(context)
         val isNetworkConnected = networkInfo.isNetworkConnected()
@@ -135,6 +158,7 @@ internal class SystemManagerSampleActivityIntegrationTest {
         const val NOTIFICATION_CHANNEL_ID = "default_channel"
         const val NOTIFICATION_ID = 1
         const val REGISTER_ACTION_ITEM_COUNT = 2
+        const val BATTERY_INFO_ITEM_COUNT = 7
         const val MAX_RETRIES = 100
         const val RETRY_INTERVAL_MILLIS = 50L
     }

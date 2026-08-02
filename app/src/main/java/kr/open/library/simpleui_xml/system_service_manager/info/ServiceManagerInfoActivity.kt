@@ -2,7 +2,6 @@ package kr.open.library.simpleui_xml.system_service_manager.info
 
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
-import android.Manifest.permission.BATTERY_STATS
 import android.Manifest.permission.READ_PHONE_STATE
 import android.annotation.SuppressLint
 import android.location.LocationManager
@@ -12,6 +11,7 @@ import android.os.Handler
 import android.os.Looper
 import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kr.open.library.simple_ui.core.extensions.conditional.checkSdkVersion
 import kr.open.library.simple_ui.core.logcat.Logx
@@ -35,7 +35,9 @@ class ServiceManagerInfoActivity : BaseDataBindingActivity<ActivityServiceManage
     }
     private val mainHandler = Handler(Looper.getMainLooper())
 
-    private val batteryInfo: BatteryStateInfo by lazy { BatteryStateInfo(this) }
+    private val batteryInfoDelegate = lazy { BatteryStateInfo(this) }
+    private val batteryInfo by batteryInfoDelegate
+    private var batteryUpdateJob: Job? = null
     private val locationInfo: LocationStateInfo by lazy { LocationStateInfo(this) }
     private val simInfo: SimInfo by lazy { SimInfo(this) }
     private val telephonyInfoDelegate = lazy { TelephonyInfo(this) }
@@ -328,40 +330,26 @@ class ServiceManagerInfoActivity : BaseDataBindingActivity<ActivityServiceManage
             }
 
             btnBatteryRegister.setOnClickListener {
-                requestPermissions(listOf(BATTERY_STATS)) { deniedPermissions ->
-                    Logx.d("deniedPermissions $deniedPermissions")
-                    if (deniedPermissions.isEmpty()) {
-                        batteryInfo.registerStart(lifecycleScope)
-                        addItem("Capacity :" + batteryInfo.getCapacity())
-                        addItem("Technology :" + batteryInfo.getTechnology())
-                        addItem("ChargePlugStr :" + batteryInfo.getChargePlugList())
-                        addItem("Health :" + batteryInfo.getHealth())
-                        addItem("ChargeStatus :" + batteryInfo.getChargeStatus())
-                        addItem("CurrentAmpere :" + batteryInfo.getCurrentAmpere())
-                        addItem("Temperature :" + batteryInfo.getTemperature())
-                        lifecycleScope.launch {
-                            batteryInfo.sfUpdate.collect { type ->
-                                when (type) {
-                                    is BatteryStateEvent.OnCapacity -> addItem("Capacity = ${type.percent}")
-                                    is BatteryStateEvent.OnChargeCounter -> addItem("ChargeCounter = ${type.counter}")
-                                    is BatteryStateEvent.OnChargePlug -> addItem("ChargePlugStr = ${type.type}")
-                                    is BatteryStateEvent.OnChargeStatus -> addItem("OnChargeStatus = ${type.status}")
-                                    is BatteryStateEvent.OnCurrentAmpere -> addItem("Current Ampere = ${type.current} mA")
-                                    is BatteryStateEvent.OnEnergyCounter -> addItem("EnergyCounte = ${type.energy}")
-                                    is BatteryStateEvent.OnHealth -> addItem("Health = ${type.health}")
-                                    is BatteryStateEvent.OnPresent -> addItem("Present = ${type.present}")
-                                    is BatteryStateEvent.OnTemperature -> addItem("Temperature = ${type.temperature}")
-                                    is BatteryStateEvent.OnVoltage -> addItem("Charge voltage = ${type.voltage} v")
-                                    is BatteryStateEvent.OnCurrentAverageAmpere -> addItem("Current AverageAmpere = ${type.current} mA")
-                                }
-                            }
-                        }
-                    } else {
-                        toastShowShort("Permission Denied $deniedPermissions")
-                    }
+                startBatteryUpdateCollection()
+                if (!batteryInfo.registerStart(lifecycleScope)) {
+                    stopBatteryUpdateCollection()
+                    addItem("Battery Register Failed")
+                    toastShowShort("Battery Register Failed")
+                    return@setOnClickListener
                 }
+
+                addItem("Capacity :" + batteryInfo.getCapacity())
+                addItem("Technology :" + batteryInfo.getTechnology())
+                addItem("ChargePlugStr :" + batteryInfo.getChargePlugList())
+                addItem("Health :" + batteryInfo.getHealth())
+                addItem("ChargeStatus :" + batteryInfo.getChargeStatus())
+                addItem("CurrentAmpere :" + batteryInfo.getCurrentAmpere())
+                addItem("Temperature :" + batteryInfo.getTemperature())
             }
-            btnBatteryUnregister.setOnClickListener { batteryInfo.unRegister() }
+            btnBatteryUnregister.setOnClickListener {
+                batteryInfo.unRegister()
+                stopBatteryUpdateCollection()
+            }
 
             btnLocationRegister.setOnClickListener {
                 requestPermissions(listOf(ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION)) { deniedPermissions ->
@@ -476,6 +464,10 @@ class ServiceManagerInfoActivity : BaseDataBindingActivity<ActivityServiceManage
     }
 
     override fun onDestroy() {
+        stopBatteryUpdateCollection()
+        if (batteryInfoDelegate.isInitialized()) {
+            batteryInfo.onDestroy()
+        }
         if (networkInfoDelegate.isInitialized()) {
             networkInfo.onDestroy()
         }
@@ -488,6 +480,33 @@ class ServiceManagerInfoActivity : BaseDataBindingActivity<ActivityServiceManage
     private fun addItem(item: String) = adapter.addItem(item)
 
     private fun addItem(items: List<String>) = adapter.addItems(items)
+
+    private fun startBatteryUpdateCollection() {
+        if (batteryUpdateJob?.isActive == true) return
+
+        batteryUpdateJob = lifecycleScope.launch {
+            batteryInfo.sfUpdate.collect { type ->
+                when (type) {
+                    is BatteryStateEvent.OnCapacity -> addItem("Capacity = ${type.percent}")
+                    is BatteryStateEvent.OnChargeCounter -> addItem("ChargeCounter = ${type.counter}")
+                    is BatteryStateEvent.OnChargePlug -> addItem("ChargePlugStr = ${type.type}")
+                    is BatteryStateEvent.OnChargeStatus -> addItem("OnChargeStatus = ${type.status}")
+                    is BatteryStateEvent.OnCurrentAmpere -> addItem("Current Ampere = ${type.current} mA")
+                    is BatteryStateEvent.OnEnergyCounter -> addItem("EnergyCounter = ${type.energy}")
+                    is BatteryStateEvent.OnHealth -> addItem("Health = ${type.health}")
+                    is BatteryStateEvent.OnPresent -> addItem("Present = ${type.present}")
+                    is BatteryStateEvent.OnTemperature -> addItem("Temperature = ${type.temperature}")
+                    is BatteryStateEvent.OnVoltage -> addItem("Charge voltage = ${type.voltage} v")
+                    is BatteryStateEvent.OnCurrentAverageAmpere -> addItem("Current AverageAmpere = ${type.current} mA")
+                }
+            }
+        }
+    }
+
+    private fun stopBatteryUpdateCollection() {
+        batteryUpdateJob?.cancel()
+        batteryUpdateJob = null
+    }
 
     private fun getBearingDirection(bearing: Float): String =
         when {
