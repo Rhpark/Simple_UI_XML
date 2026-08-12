@@ -17,9 +17,14 @@
 
 ## 버전 번호 규칙
  - `Major.Minor.Patch` (Semantic Versioning)
- - Breaking changes: Major 증가
- - 새 기능 추가: Minor 증가
- - 버그 수정: Patch 증가
+ - `0.x` 개발 단계
+   - 호환되지 않는 API 변경 또는 새 기능 추가: Minor 증가
+   - 호환 가능한 버그 수정: Patch 증가
+ - `1.0.0` 이상 안정 단계
+   - 호환되지 않는 API 변경: Major 증가
+   - 호환 가능한 새 기능 추가: Minor 증가
+   - 호환 가능한 버그 수정: Patch 증가
+ - `1.0.0`은 공개 API 안정성과 이후 호환성 관리 정책을 선언할 준비가 되었을 때 발행한다.
 
 ## CI/CD 연계 규칙
  - 버전 정책과 연결되는 파이프라인 상세는 `docs/rules/project/CI_CD_RULE.md`를 따른다.
