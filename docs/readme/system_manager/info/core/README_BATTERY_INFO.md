@@ -14,8 +14,8 @@ Provides real-time battery state collection with SharedFlow and helper getters.
 <br>
 
 ## Internal API Migration (내부 API 이전)
-- `PowerProfile` and `PowerProfileVO` are internal implementation types and are no longer public consumer APIs in the next major source state.
-  > `PowerProfile`과 `PowerProfileVO`는 내부 구현 타입이며 다음 메이저 소스 상태에서 더 이상 소비자 공개 API가 아닙니다.
+- `PowerProfile` and `PowerProfileVO` are internal implementation types and are not public consumer APIs in the upcoming 0.6.0 source state.
+  > `PowerProfile`과 `PowerProfileVO`는 내부 구현 타입이며 배포 예정 0.6.0 소스 상태에서는 소비자 공개 API가 아닙니다.
 - Use `BatteryStateInfo.getTotalCapacity()` instead of `PowerProfile.getBatteryCapacity()`.
   > `PowerProfile.getBatteryCapacity()` 대신 `BatteryStateInfo.getTotalCapacity()`를 사용해 주세요.
 - Individual power metrics exposed by `PowerProfile.getAveragePower()` have no stable public replacement.
@@ -282,7 +282,7 @@ See the permission guide for required permissions and policy.
 <br>
 
 ## Related Docs (관련 문서)
-- Next major migration: [README_SYSTEM_MANAGER_MIGRATION.md](../../README_SYSTEM_MANAGER_MIGRATION.md)
+- 0.6.0 migration: [README_SYSTEM_MANAGER_MIGRATION.md](../../README_SYSTEM_MANAGER_MIGRATION.md)
 - Summary: [README_SERVICE_MANAGER_INFO.md](../README_SERVICE_MANAGER_INFO.md)
 - Permission Guide: [README_PERMISSION.md](../../../README_PERMISSION.md)
 - Feature PRD: [PRD.md](../../../../../simple_system_manager/docs/feature/system_manager/info/battery/PRD.md)

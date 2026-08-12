@@ -3,7 +3,7 @@
 ## 문서 정보
 - 문서명: Battery Info SPEC
 - 작성일: 2026-02-01
-- 수정일: 2026-07-27
+- 수정일: 2026-08-02
 - 대상 모듈: simple_system_manager
 - 패키지: kr.open.library.simple_ui.system_manager.core.info.battery
 - 수준: 구현 재현 가능 수준(Implementation-ready)
@@ -25,8 +25,8 @@
   - `BatteryStateEmitter`: StateFlow 캐싱 + SharedFlow 이벤트 발행
   - `BatteryPropertyReader`: BatteryManager/Intent 기반 값 조회 및 변환
 - `battery/internal/helper/power/`
-  - `PowerProfile`: reflection 기반 배터리 용량 조회. 공개 호환성을 위해 Deprecated 상태로 유지
-  - `PowerProfileVO`: PowerProfile 리소스 키 정의. 공개 호환성을 위해 Deprecated 상태로 유지
+  - `PowerProfile`: reflection 기반 배터리 용량 조회를 담당하는 내부 구현
+  - `PowerProfileVO`: PowerProfile 리소스 키를 정의하는 내부 enum
 - `battery/internal/model/`
   - `BatteryStateData`: 내부 상태 스냅샷 모델
 
@@ -71,12 +71,11 @@ public open class BatteryStateInfo(context: Context) : BaseSystemService(context
 }
 ```
 
-### Deprecated 공개 API
-- `PowerProfile`, `PowerProfileVO`의 Deprecated 수준은 `DeprecationLevel.WARNING`이다.
-- `PowerProfile.getBatteryCapacity()`의 대체 경로는 `BatteryStateInfo.getTotalCapacity()`다.
+### 내부 PowerProfile 정책
+- `PowerProfile`, `PowerProfileVO`는 `internal`이며 0.6.0 공개 API 기준선에 포함하지 않는다.
+- 이전 `PowerProfile.getBatteryCapacity()` 소비자의 공개 대체 경로는 `BatteryStateInfo.getTotalCapacity()`다.
 - `PowerProfile.getAveragePower()`와 `PowerProfileVO`의 개별 전력 지표에는 안정적인 공개 대체 API가 없다.
-- 두 타입은 현재 공개 ABI를 유지하며 다음 메이저에서 `internal`로 전환한다.
-- 라이브러리 내부 `BatteryPropertyReader`는 다음 메이저 전환 전까지 의도적으로 Deprecated 구현을 사용한다.
+- 라이브러리 내부 `BatteryPropertyReader`만 이 구현을 사용하며 Deprecated 호환 억제는 두지 않는다.
 
 ## 공통 동작 규칙
 

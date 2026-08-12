@@ -52,7 +52,8 @@
 ## 금지 패턴
 
 - simple_xml / simple_core 에 system_manager 기능 코드를 두지 않는다
-- View / Activity / Fragment 직접 의존성을 core 패키지(`system_manager.core.*`)에 두지 않는다
+- View / Activity / Fragment 인스턴스 의존성이나 Window 상태 소유를 core 패키지(`system_manager.core.*`)에 두지 않는다
+- 상태를 소유하지 않는 `Context` 기반 `WindowManager`·`InputMethodManager` 접근자는 소비자 편의 퍼사드로 허용한다
 - 전역 싱글턴을 허용하지 않는다 (Window / Context는 생성자 주입)
 - `simple_xml`이 이 모듈을 의존하는 방향을 허용하지 않는다
 

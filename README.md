@@ -44,11 +44,11 @@ The following modules are available in the current `0.5.1` release.
 > - Java/Kotlin JVM target 11
 > - 현재 라이브러리 빌드 기준: `compileSdk 35`
 
-## Next Major System Manager Migration (다음 메이저 System Manager 이전)
+## Upcoming 0.6.0 System Manager Migration (배포 예정 0.6.0 System Manager 이전)
 
-The repository's next-major source state contains approved breaking changes to `simple_system_manager`. The concrete release version and schedule are not fixed, and the published `0.5.1` coordinates above remain unchanged.
+The repository's upcoming 0.6.0 source state contains four approved breaking-change groups in `simple_system_manager`. The published `0.5.1` coordinates above remain unchanged until 0.6.0 is released.
 
-> 저장소의 다음 메이저 소스 상태에는 승인된 `simple_system_manager` Breaking Change가 반영되어 있습니다. 구체적인 릴리스 버전과 일정은 확정되지 않았으며, 위에 표시된 배포 버전 `0.5.1` 좌표는 변경하지 않습니다.
+> 저장소의 배포 예정 0.6.0 소스 상태에는 승인된 `simple_system_manager` Breaking Change 4개 묶음이 반영되어 있습니다. 0.6.0이 실제로 배포되기 전까지 위에 표시된 배포 버전 `0.5.1` 좌표는 유지됩니다.
 
 - **[System Manager Migration Guide](docs/readme/system_manager/README_SYSTEM_MANAGER_MIGRATION.md)** - Removed aliases and implementation types, replacement paths, and unchanged `NetworkBase` inheritance contract
   > 제거된 별칭·구현 타입, 대체 경로, 변경하지 않은 `NetworkBase` 상속 계약을 안내합니다.
@@ -204,7 +204,7 @@ Add only the required coordinates to the app module's `dependencies` block.
 - **[Sample Guide](docs/readme/README_SAMPLE.md)** - 샘플 비교 가이드
 
 **System Manager**
-- **[System Manager Migration Guide](docs/readme/system_manager/README_SYSTEM_MANAGER_MIGRATION.md)** - 다음 메이저 공개 API 이전 가이드
+- **[System Manager Migration Guide](docs/readme/system_manager/README_SYSTEM_MANAGER_MIGRATION.md)** - 0.6.0 공개 API 이전 가이드
 - **[System Manager Extensions](docs/readme/system_manager/README_SYSTEM_MANAGER_EXTENSIONS.md)** - 확장 함수 진입점
 - **[SystemBar Controller Guide](docs/readme/system_manager/controller/xml/README_SYSTEMBAR_CONTROLLER.md)** - 상태 모델, 가시성/색상 정책, `@MainThread` 계약
 - **[SoftKeyboard Controller Guide](docs/readme/system_manager/controller/xml/README_SOFTKEYBOARD_CONTROLLER.md)** - IME 제어/반환 계약

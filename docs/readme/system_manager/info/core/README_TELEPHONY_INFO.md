@@ -167,8 +167,8 @@ requestPermissions(
 
 ## Callback API Migration (콜백 API 마이그레이션)
 
-`TelephonyCallbackManager` and `CommonTelephonyCallback` are internal implementation types in the next major source state. Use `TelephonyInfo` as the single consumer entry point.
-> `TelephonyCallbackManager`와 `CommonTelephonyCallback`은 다음 메이저 소스 상태에서 내부 구현 타입입니다. 소비자 진입점으로는 `TelephonyInfo`만 사용해 주세요.
+`TelephonyCallbackManager` and `CommonTelephonyCallback` are internal implementation types in the upcoming 0.6.0 source state. Use `TelephonyInfo` as the single consumer entry point.
+> `TelephonyCallbackManager`와 `CommonTelephonyCallback`은 배포 예정 0.6.0 소스 상태에서 내부 구현 타입입니다. 소비자 진입점으로는 `TelephonyInfo`만 사용해 주세요.
 
 | Previous API (기존 API) | Replacement API (대체 API) |
 | --- | --- |
@@ -200,7 +200,7 @@ Permissions are feature-specific. The library checks the current permission stat
 <br>
 
 ## Related Docs (관련 문서)
-- Next major migration: [README_SYSTEM_MANAGER_MIGRATION.md](../../README_SYSTEM_MANAGER_MIGRATION.md)
+- 0.6.0 migration: [README_SYSTEM_MANAGER_MIGRATION.md](../../README_SYSTEM_MANAGER_MIGRATION.md)
 - Summary: [README_SERVICE_MANAGER_INFO.md](../README_SERVICE_MANAGER_INFO.md)
 - Permission Guide: [README_PERMISSION.md](../../../README_PERMISSION.md)
 
