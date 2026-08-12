@@ -21,7 +21,9 @@ Summarizes system service accessors and controller/info entry points owned by `s
 
 | Function (함수) | Return (반환) | Notes (비고) |
 |---|---|---|
+| `getWindowManager()` | `WindowManager` | Window service convenience accessor (윈도우 서비스 편의 접근자) |
 | `getBatteryManager()` | `BatteryManager` | Battery service (배터리 서비스) |
+| `getInputMethodManager()` | `InputMethodManager` | Input method service convenience accessor (입력기 서비스 편의 접근자) |
 | `getTelephonyManager()` | `TelephonyManager` | Telephony service (전화 서비스) |
 | `getSubscriptionManager()` | `SubscriptionManager` | Subscription service (구독 서비스) |
 | `getEuiccManager()` | `EuiccManager` | eSIM service (eSIM 서비스) |
@@ -71,6 +73,8 @@ Extensions provide typed system service access and the primary entry points for 
 ```kotlin
 private val alarmController by lazy { getAlarmController() }
 private val connectivityManager by lazy { getConnectivityManager() }
+private val windowManager by lazy { getWindowManager() }
+private val inputMethodManager by lazy { getInputMethodManager() }
 
 // Use the primary notification service accessor
 // (대표 알림 서비스 접근자 사용)
@@ -100,8 +104,8 @@ private fun clearSystemBar(window: Window) {
 ## Notes (주의사항)
 - `getNotificationManager()` is the only public notification service accessor.
   > `getNotificationManager()`가 유일한 공개 알림 서비스 접근자입니다.
-- Core no longer exposes `getWindowManager()` or `getInputMethodManager()`. Consumers that need the raw Android services should use `Context.getSystemService(Class)`.
-  > Core는 `getWindowManager()`와 `getInputMethodManager()`를 더 이상 공개하지 않습니다. Android 원시 서비스가 필요한 소비자는 `Context.getSystemService(Class)`를 사용하세요.
+- `getWindowManager()` and `getInputMethodManager()` remain public convenience accessors and do not own Window or IME state.
+  > `getWindowManager()`와 `getInputMethodManager()`는 Window 또는 IME 상태를 소유하지 않는 공개 편의 접근자로 유지합니다.
 - `getVibrator()` targets API 30 and below; use `getVibratorManager()` on API 31+.
   > `getVibrator()`는 API 30 이하용이며 API 31 이상에서는 `getVibratorManager()`를 사용합니다.
 - Floating view 계열은 `SYSTEM_ALERT_WINDOW` 권한이 필요할 수 있습니다.
@@ -114,7 +118,7 @@ private fun clearSystemBar(window: Window) {
 <br>
 
 ## Related Docs (관련 문서)
-- Next major migration: [README_SYSTEM_MANAGER_MIGRATION.md](README_SYSTEM_MANAGER_MIGRATION.md)
+- 0.6.0 migration: [README_SYSTEM_MANAGER_MIGRATION.md](README_SYSTEM_MANAGER_MIGRATION.md)
 - Core controller docs: `docs/readme/system_manager/controller/core/`
 - Core info docs: `docs/readme/system_manager/info/core/`
 - Controller docs: `docs/readme/system_manager/controller/xml/`

@@ -16,6 +16,8 @@ import android.os.VibratorManager
 import android.telephony.SubscriptionManager
 import android.telephony.TelephonyManager
 import android.telephony.euicc.EuiccManager
+import android.view.WindowManager
+import android.view.inputmethod.InputMethodManager
 import androidx.annotation.RequiresApi
 import kr.open.library.simple_ui.system_manager.core.controller.alarm.AlarmController
 import kr.open.library.simple_ui.system_manager.core.controller.notification.SimpleNotificationController
@@ -24,11 +26,29 @@ import kr.open.library.simple_ui.system_manager.core.controller.wifi.WifiControl
 import kr.open.library.simple_ui.system_manager.core.info.battery.BatteryStateInfo
 import kr.open.library.simple_ui.system_manager.core.info.location.LocationStateInfo
 
-/*****************
- * SystemService *
- *****************/
+/*
+ * SystemService
+ */
+
+/**
+ * Returns the window system service for this context.<br><br>
+ * 이 컨텍스트의 윈도우 시스템 서비스를 반환합니다.<br>
+ *
+ * @return The `WindowManager` registered for this context.<br><br>
+ *         이 컨텍스트에 등록된 `WindowManager`입니다.<br>
+ */
+public fun Context.getWindowManager(): WindowManager = getSystemService(WindowManager::class.java)
 
 public fun Context.getBatteryManager(): BatteryManager = getSystemService(BatteryManager::class.java)
+
+/**
+ * Returns the input method system service for this context.<br><br>
+ * 이 컨텍스트의 입력기 시스템 서비스를 반환합니다.<br>
+ *
+ * @return The `InputMethodManager` registered for this context.<br><br>
+ *         이 컨텍스트에 등록된 `InputMethodManager`입니다.<br>
+ */
+public fun Context.getInputMethodManager(): InputMethodManager = getSystemService(InputMethodManager::class.java)
 
 public fun Context.getTelephonyManager(): TelephonyManager = getSystemService(TelephonyManager::class.java)
 

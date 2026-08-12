@@ -17,6 +17,8 @@ import android.os.VibratorManager
 import android.telephony.SubscriptionManager
 import android.telephony.TelephonyManager
 import android.telephony.euicc.EuiccManager
+import android.view.WindowManager
+import android.view.inputmethod.InputMethodManager
 import androidx.test.core.app.ApplicationProvider
 import kr.open.library.simple_ui.system_manager.core.controller.wifi.WifiController
 import kr.open.library.simple_ui.system_manager.core.extensions.getAlarmController
@@ -26,6 +28,7 @@ import kr.open.library.simple_ui.system_manager.core.extensions.getBatteryStateI
 import kr.open.library.simple_ui.system_manager.core.extensions.getBluetoothManager
 import kr.open.library.simple_ui.system_manager.core.extensions.getConnectivityManager
 import kr.open.library.simple_ui.system_manager.core.extensions.getEuiccManager
+import kr.open.library.simple_ui.system_manager.core.extensions.getInputMethodManager
 import kr.open.library.simple_ui.system_manager.core.extensions.getLocationManager
 import kr.open.library.simple_ui.system_manager.core.extensions.getLocationStateInfo
 import kr.open.library.simple_ui.system_manager.core.extensions.getNotificationController
@@ -38,6 +41,7 @@ import kr.open.library.simple_ui.system_manager.core.extensions.getVibratorContr
 import kr.open.library.simple_ui.system_manager.core.extensions.getVibratorManager
 import kr.open.library.simple_ui.system_manager.core.extensions.getWifiController
 import kr.open.library.simple_ui.system_manager.core.extensions.getWifiManager
+import kr.open.library.simple_ui.system_manager.core.extensions.getWindowManager
 import kr.open.library.simple_ui.system_manager.xml.controller.softkeyboard.SoftKeyboardController
 import kr.open.library.simple_ui.system_manager.xml.extensions.getDisplayInfo
 import kr.open.library.simple_ui.system_manager.xml.extensions.getFloatingViewController
@@ -113,6 +117,8 @@ class SystemServiceExtensionsTest {
         val subscriptionManager = mock(SubscriptionManager::class.java)
         val euiccManager = mock(EuiccManager::class.java)
         val bluetoothManager = mock(BluetoothManager::class.java)
+        val windowManager = mock(WindowManager::class.java)
+        val inputMethodManager = mock(InputMethodManager::class.java)
 
         shadow.setSystemService(Context.BATTERY_SERVICE, batteryManager)
         shadow.setSystemService(Context.NOTIFICATION_SERVICE, notificationManager)
@@ -124,6 +130,8 @@ class SystemServiceExtensionsTest {
         shadow.setSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE, subscriptionManager)
         shadow.setSystemService(Context.EUICC_SERVICE, euiccManager)
         shadow.setSystemService(Context.BLUETOOTH_SERVICE, bluetoothManager)
+        shadow.setSystemService(Context.WINDOW_SERVICE, windowManager)
+        shadow.setSystemService(Context.INPUT_METHOD_SERVICE, inputMethodManager)
 
         assertSame(batteryManager, application.getBatteryManager())
         assertSame(notificationManager, application.getNotificationManager())
@@ -135,6 +143,8 @@ class SystemServiceExtensionsTest {
         assertSame(subscriptionManager, application.getSubscriptionManager())
         assertSame(euiccManager, application.getEuiccManager())
         assertSame(bluetoothManager, application.getBluetoothManager())
+        assertSame(windowManager, application.getWindowManager())
+        assertSame(inputMethodManager, application.getInputMethodManager())
     }
 
     @Test

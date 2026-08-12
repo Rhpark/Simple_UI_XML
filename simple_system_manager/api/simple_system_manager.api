@@ -474,6 +474,7 @@ public final class kr/open/library/simple_ui/system_manager/core/extensions/Syst
 	public static final fun getBluetoothManager (Landroid/content/Context;)Landroid/bluetooth/BluetoothManager;
 	public static final fun getConnectivityManager (Landroid/content/Context;)Landroid/net/ConnectivityManager;
 	public static final fun getEuiccManager (Landroid/content/Context;)Landroid/telephony/euicc/EuiccManager;
+	public static final fun getInputMethodManager (Landroid/content/Context;)Landroid/view/inputmethod/InputMethodManager;
 	public static final fun getLocationManager (Landroid/content/Context;)Landroid/location/LocationManager;
 	public static final fun getLocationStateInfo (Landroid/content/Context;)Lkr/open/library/simple_ui/system_manager/core/info/location/LocationStateInfo;
 	public static final fun getNotificationController (Landroid/content/Context;Landroid/app/NotificationChannel;)Lkr/open/library/simple_ui/system_manager/core/controller/notification/SimpleNotificationController;
@@ -486,6 +487,7 @@ public final class kr/open/library/simple_ui/system_manager/core/extensions/Syst
 	public static final fun getVibratorManager (Landroid/content/Context;)Landroid/os/VibratorManager;
 	public static final fun getWifiController (Landroid/content/Context;)Lkr/open/library/simple_ui/system_manager/core/controller/wifi/WifiController;
 	public static final fun getWifiManager (Landroid/content/Context;)Landroid/net/wifi/WifiManager;
+	public static final fun getWindowManager (Landroid/content/Context;)Landroid/view/WindowManager;
 }
 
 public final class kr/open/library/simple_ui/system_manager/core/info/battery/BatteryStateConstants {
