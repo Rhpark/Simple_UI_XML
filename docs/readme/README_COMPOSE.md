@@ -40,7 +40,7 @@ When app source code also uses Core APIs or model types, declare both modules di
 
 ```kotlin
 dependencies {
-    implementation("io.github.rhpark:dash-droid-core:0.5.1")
+    implementation("io.github.rhpark:dash-droid-core:0.6.0")
     implementation("io.github.rhpark:dash-droid-compose:0.6.0")
 }
 ```
@@ -238,6 +238,58 @@ fun MessageList() {
 > - 실제 스크롤 세션이 종료되면 방향은 `IDLE`로 복귀합니다.
 > - `isScrollInProgress == false`인 인덱스 변경은 방향을 변경하지 않습니다. 프로그램적 애니메이션처럼 이 값이 `true`인 이동은 스크롤 모션으로 처리합니다.
 > - 리스트 축과 맞지 않는 엣지는 항상 `false`입니다.
+
+## Debounced Click (중복 클릭 차단)
+
+```kotlin
+@Composable
+fun SubmitArea(onSubmit: () -> Unit) {
+    // Modifier 방식: clickable 자리에 그대로 사용
+    Box(modifier = Modifier.debouncedClickable { onSubmit() })
+
+    // 콜백 방식: 외부 컴포넌트의 onClick 파라미터에 전달
+    val onClick = rememberDebouncedClick { onSubmit() }
+    ExternalButton(onClick = onClick)
+}
+```
+
+- The default interval is `DEFAULT_CLICK_DEBOUNCE_MS` (500ms) and must be 0 or greater.
+- Clicks within the interval are ignored; ignored clicks do not extend the interval.
+- The debounce timestamp is kept for the composition lifetime and resets when the composition is recreated by a configuration change.
+- Use `debouncedClickable` in place of `clickable`, and `rememberDebouncedClick` when only an `onClick` lambda can be passed.
+- Accessibility roles are not included. Chain `Modifier.semantics { role = Role.Button }` when a role is required.
+
+> - 기본 차단 간격은 `DEFAULT_CLICK_DEBOUNCE_MS`(500ms)이며 0 이상이어야 합니다.
+> - 간격 이내의 클릭은 무시되며, 무시된 클릭은 간격을 연장하지 않습니다.
+> - 차단 시각은 컴포지션 동안 유지되고 구성 변경으로 컴포지션이 재생성되면 초기화됩니다.
+> - `clickable` 대신 `debouncedClickable`을 사용하고, `onClick` 람다만 전달 가능한 경우 `rememberDebouncedClick`을 사용합니다.
+> - 접근성 role은 포함하지 않습니다. role이 필요하면 `Modifier.semantics { role = Role.Button }`을 체이닝하세요.
+
+## Toast (토스트)
+
+```kotlin
+@Composable
+fun SaveArea() {
+    val showToast = rememberToast()
+
+    Box(modifier = Modifier.debouncedClickable { showToast("저장했습니다") })
+}
+
+// Composable 외부(ViewModel 콜백, 이벤트 핸들러 등)
+fun onSaveFailed(context: Context) {
+    context.showToast("저장에 실패했습니다", durationLong = true)
+}
+```
+
+- `rememberToast` resolves `LocalContext` once and returns a stable function for the composition lifetime.
+- `durationLong = true` uses `Toast.LENGTH_LONG`; the default is `Toast.LENGTH_SHORT`.
+- Previous Toasts are not cancelled, so consecutive calls queue up per Android's default policy. Guard the call site when rapid repeats must be prevented.
+- Display failures are logged through `Logx` and ignored.
+
+> - `rememberToast`는 `LocalContext`를 한 번 조회하고 컴포지션 동안 동일한 함수를 반환합니다.
+> - `durationLong = true`는 `Toast.LENGTH_LONG`을 사용하며 기본값은 `Toast.LENGTH_SHORT`입니다.
+> - 이전 Toast를 취소하지 않으므로 연속 호출 시 Android 기본 정책에 따라 큐에 쌓입니다. 연타를 막아야 하면 호출부에서 차단하세요.
+> - 표시 실패는 `Logx`로 기록하고 무시합니다.
 
 ## Example App (예제 앱)
 

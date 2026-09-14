@@ -51,6 +51,21 @@
    - XML RecyclerScrollStateView와 동일하게 실제 스크롤 세션 종료 시 방향은 IDLE로 복귀
    - 방향은 **스크롤 모션만** 반영 — `isScrollInProgress == false`인 즉시 위치 재설정·데이터 변경은 방향 미발행, `true`인 프로그램적 애니메이션은 모션으로 처리
 
+  ### click
+   - **DebouncedClick**: 중복 클릭 차단 (simple_compose/src/main/java/kr/open/library/simple_ui/compose/click/DebouncedClick.kt)
+   - `Modifier.debouncedClickable` — `clickable` 대체, 차단 간격 기본 `DEFAULT_CLICK_DEBOUNCE_MS`(500ms)
+   - `rememberDebouncedClick` — `onClick` 람다만 전달 가능한 외부 컴포넌트용
+   - 차단 시각은 컴포지션 수명 동안 유지하며 구성 변경 시 초기화
+   - 무시된 클릭은 기준 시각을 갱신하지 않음 (차단 간격을 연장하지 않는다)
+   - 접근성 role은 파라미터로 받지 않음 — value class 시그니처 맹글링 회피, 필요 시 `Modifier.semantics` 체이닝
+
+  ### toast
+   - **ToastHelpers**: Toast 표시 (simple_compose/src/main/java/kr/open/library/simple_ui/compose/toast/ToastHelpers.kt)
+   - `rememberToast` — `LocalContext` 1회 조회 후 컴포지션 동안 동일 함수 반환
+   - `Context.showToast` — Composable 외부(ViewModel 콜백 등)용 확장 함수
+   - 이전 Toast를 취소하지 않음 (Android 기본 큐 정책 유지), 표시 실패는 `safeCatch`로 로깅 후 무시
+   - SnackBar는 `SnackbarHostState`가 Material3 소유이므로 제공하지 않음 (금지 패턴)
+
 
  ## 핵심 설계 원칙 (Compose 효과 규칙)
   - `derivedStateOf`/`snapshotFlow` 계산 블록 안에서 상태를 쓰지 않는다 (부수효과 금지)

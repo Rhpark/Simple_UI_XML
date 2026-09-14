@@ -44,11 +44,11 @@ The following modules are available in the current `0.6.0` release.
 > - Java/Kotlin JVM target 11
 > - 현재 라이브러리 빌드 기준: `compileSdk 35`
 
-## Upcoming 0.6.0 System Manager Migration (배포 예정 0.6.0 System Manager 이전)
+## System Manager Migration (System Manager 이전)
 
-The repository's upcoming 0.6.0 source state contains four approved breaking-change groups in `simple_system_manager`. The published `0.5.1` coordinates above remain unchanged until 0.6.0 is released.
+`0.6.0` introduced four approved breaking-change groups in `simple_system_manager`. Follow the guide below when upgrading from `0.5.x`.
 
-> 저장소의 배포 예정 0.6.0 소스 상태에는 승인된 `simple_system_manager` Breaking Change 4개 묶음이 반영되어 있습니다. 0.6.0이 실제로 배포되기 전까지 위에 표시된 배포 버전 `0.5.1` 좌표는 유지됩니다.
+> `0.6.0`에서 승인된 `simple_system_manager` Breaking Change 4개 묶음이 반영되었습니다. `0.5.x`에서 올릴 때 아래 가이드를 따르세요.
 
 - **[System Manager Migration Guide](docs/readme/system_manager/README_SYSTEM_MANAGER_MIGRATION.md)** - Removed aliases and implementation types, replacement paths, and unchanged `NetworkBase` inheritance contract
   > 제거된 별칭·구현 타입, 대체 경로, 변경하지 않은 `NetworkBase` 상속 계약을 안내합니다.
