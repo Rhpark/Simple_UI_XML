@@ -95,6 +95,7 @@ jobs:
           VERSION="${{ steps.version.outputs.version }}"
 
           sed -i "s/dash-droid-compose:[0-9.]\+/dash-droid-compose:$VERSION/g" docs/readme/README_COMPOSE.md
+          sed -i "s/dash-droid-core:[0-9.]\+/dash-droid-core:$VERSION/g" docs/readme/README_COMPOSE.md
 
           echo "✅ README_COMPOSE.md updated"
 
