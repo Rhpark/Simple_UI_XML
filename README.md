@@ -14,16 +14,16 @@ logging, and system-service boilerplate.
 
 ## Published Modules (현재 배포 모듈)
 
-The following modules are available in the current `0.6.0` release.
+The following modules are available in the current `0.6.1` release.
 
 | Module | Maven Central                                      | Purpose |
 | --- |----------------------------------------------------| --- |
-| `simple_core` | `io.github.rhpark:dash-droid-core:0.6.0`           | Logging, common extensions, permission policies, and ViewModel helpers |
-| `simple_xml` | `io.github.rhpark:dash-droid-xml:0.6.0`            | XML Activity/Fragment base classes, permission requests, View extensions, and RecyclerView helpers |
-| `simple_compose` | `io.github.rhpark:dash-droid-compose:0.6.0`        | Compose permission request State, lifecycle-aware event/effect Flow collection, system bar/edge-to-edge helpers, and LazyList scroll-state helpers |
-| `simple_system_manager` | `io.github.rhpark:dash-droid-system-manager:0.6.0` | Android system controllers, Window-based helpers, and device information |
+| `simple_core` | `io.github.rhpark:dash-droid-core:0.6.1`           | Logging, common extensions, permission policies, and ViewModel helpers |
+| `simple_xml` | `io.github.rhpark:dash-droid-xml:0.6.1`            | XML Activity/Fragment base classes, permission requests, View extensions, and RecyclerView helpers |
+| `simple_compose` | `io.github.rhpark:dash-droid-compose:0.6.1`        | Compose permission request State, lifecycle-aware event/effect Flow collection, system bar/edge-to-edge helpers, and LazyList scroll-state helpers |
+| `simple_system_manager` | `io.github.rhpark:dash-droid-system-manager:0.6.1` | Android system controllers, Window-based helpers, and device information |
 
-> 아래 모듈은 현재 `0.6.0` 릴리스에서 사용할 수 있습니다.
+> 아래 모듈은 현재 `0.6.1` 릴리스에서 사용할 수 있습니다.
 >
 > - `simple_core`: 로깅, 공통 확장, 권한 정책, ViewModel 헬퍼
 > - `simple_xml`: XML Activity/Fragment 기반 클래스, 권한 요청, View 확장, RecyclerView 헬퍼
@@ -100,7 +100,7 @@ classes, or references Core model types.
 
 ```kotlin
 dependencies {
-    implementation("io.github.rhpark:dash-droid-core:0.6.0")
+    implementation("io.github.rhpark:dash-droid-core:0.6.1")
 }
 ```
 
@@ -119,7 +119,7 @@ android {
 }
 
 dependencies {
-    implementation("io.github.rhpark:dash-droid-xml:0.6.0")
+    implementation("io.github.rhpark:dash-droid-xml:0.6.1")
 }
 ```
 
@@ -137,7 +137,7 @@ android {
 }
 
 dependencies {
-    implementation("io.github.rhpark:dash-droid-compose:0.6.0")
+    implementation("io.github.rhpark:dash-droid-compose:0.6.1")
 }
 ```
 
@@ -145,7 +145,7 @@ dependencies {
 
 ```kotlin
 dependencies {
-    implementation("io.github.rhpark:dash-droid-system-manager:0.6.0")
+    implementation("io.github.rhpark:dash-droid-system-manager:0.6.1")
 }
 ```
 
@@ -177,10 +177,10 @@ dependencyResolutionManagement {
 
 | Module | JitPack coordinate                                               |
 | --- |------------------------------------------------------------------|
-| Core | `com.github.Rhpark.Simple_UI_XML:Simple_UI_Core:0.6.0`           |
-| XML | `com.github.Rhpark.Simple_UI_XML:Simple_UI_XML:0.6.0`            |
-| Compose | `com.github.Rhpark.Simple_UI_XML:Simple_UI_Compose:0.6.0`        |
-| System Manager | `com.github.Rhpark.Simple_UI_XML:Simple_UI_System_Manager:0.6.0` |
+| Core | `com.github.Rhpark.Simple_UI_XML:Simple_UI_Core:0.6.1`           |
+| XML | `com.github.Rhpark.Simple_UI_XML:Simple_UI_XML:0.6.1`            |
+| Compose | `com.github.Rhpark.Simple_UI_XML:Simple_UI_Compose:0.6.1`        |
+| System Manager | `com.github.Rhpark.Simple_UI_XML:Simple_UI_System_Manager:0.6.1` |
 
 Add only the required coordinates to the app module's `dependencies` block.
 

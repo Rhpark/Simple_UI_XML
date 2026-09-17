@@ -3,11 +3,11 @@
 ## Module Information (모듈 정보)
 
 - **Module**: `simple_compose`
-- **Maven Central**: `io.github.rhpark:dash-droid-compose:0.6.0`
+- **Maven Central**: `io.github.rhpark:dash-droid-compose:0.6.1`
 - **Role**: Reduces boilerplate for permissions, ViewModel event/effect Flow collection, system bars, and LazyList scroll state in Compose screens.
 
 > - **모듈**: `simple_compose`
-> - **Maven Central**: `io.github.rhpark:dash-droid-compose:0.6.0`
+> - **Maven Central**: `io.github.rhpark:dash-droid-compose:0.6.1`
 > - **역할**: Compose 화면에서 권한, ViewModel 이벤트/effect Flow 수집, 시스템 바, LazyList 스크롤 상태 처리의 보일러플레이트를 줄입니다.
 
 `simple_core` is provided as a transitive dependency. Add it directly when app source code calls
@@ -30,7 +30,7 @@ android {
 }
 
 dependencies {
-    implementation("io.github.rhpark:dash-droid-compose:0.6.0")
+    implementation("io.github.rhpark:dash-droid-compose:0.6.1")
 }
 ```
 
@@ -40,8 +40,8 @@ When app source code also uses Core APIs or model types, declare both modules di
 
 ```kotlin
 dependencies {
-    implementation("io.github.rhpark:dash-droid-core:0.6.0")
-    implementation("io.github.rhpark:dash-droid-compose:0.6.0")
+    implementation("io.github.rhpark:dash-droid-core:0.6.1")
+    implementation("io.github.rhpark:dash-droid-compose:0.6.1")
 }
 ```
 
